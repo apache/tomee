@@ -51,16 +51,24 @@ public abstract class AbstractService implements Service {
     @XmlValue
     @XmlJavaTypeAdapter(PropertiesAdapter.class)
     protected Properties properties;
+
     @XmlAttribute(required = true)
     protected String id;
+
     @XmlAttribute
     protected String jar;
+
     @XmlAttribute
     protected String provider;
+
     @XmlAttribute
     protected String type;
+
     @XmlAttribute
     protected String classpath;
+
+    @XmlAttribute(name = "classpath-api")
+    protected String classpathAPI;
 
     /**
      * Mutually exclusive with 'provider'
@@ -83,6 +91,8 @@ public abstract class AbstractService implements Service {
     @XmlAttribute(name = "properties-provider")
     private String propertiesProvider;
 
+    @XmlAttribute(name = "template")
+    private String template;
 
     protected AbstractService(final String id) {
         this(id, null, null);
@@ -203,6 +213,15 @@ public abstract class AbstractService implements Service {
         this.className = className;
     }
 
+    @Override
+    public String getClasspathAPI() {
+        return classpathAPI;
+    }
+
+    public void setClasspathAPI(final String classpathAPI) {
+        this.classpathAPI = classpathAPI;
+    }
+
     public String getConstructor() {
         return constructor;
     }
@@ -225,6 +244,14 @@ public abstract class AbstractService implements Service {
 
     public void setClasspath(final String classpath) {
         this.classpath = classpath;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(final String template) {
+        this.template = template;
     }
 
     @Override

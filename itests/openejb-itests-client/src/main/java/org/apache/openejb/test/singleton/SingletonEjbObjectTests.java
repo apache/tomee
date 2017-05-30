@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.test.singleton;
 
-import java.rmi.RemoteException;
-
 import javax.ejb.EJBHome;
+import java.rmi.RemoteException;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicSingletonTestClients
@@ -32,7 +31,7 @@ public class SingletonEjbObjectTests extends BasicSingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbObject = ejbHome.createObject();
     }
 

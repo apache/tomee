@@ -18,6 +18,11 @@
 package org.apache.openejb.resource.jdbc.dbcp;
 
 import org.apache.commons.dbcp2.ConnectionFactory;
+import org.apache.commons.dbcp2.PoolableConnection;
+import org.apache.commons.dbcp2.PoolingDataSource;
+import org.apache.commons.dbcp2.managed.ManagedConnection;
+import org.apache.commons.dbcp2.managed.ManagedDataSource;
+import org.apache.commons.dbcp2.managed.TransactionRegistry;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -26,17 +31,21 @@ import org.apache.openejb.resource.jdbc.BasicDataSourceUtil;
 import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.sql.DataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 @SuppressWarnings({"UnusedDeclaration"})
 public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.BasicManagedDataSource implements Serializable {
@@ -63,6 +72,43 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     public BasicManagedDataSource(final String name) {
         registerAsMbean(name);
         this.name = name;
+    }
+
+    @Override
+    protected DataSource createDataSourceInstance() throws SQLException {
+        final TransactionRegistry transactionRegistry = getTransactionRegistry();
+        if (transactionRegistry == null) {
+            throw new IllegalStateException("TransactionRegistry has not been set");
+        }
+        if (getConnectionPool() == null) {
+            throw new IllegalStateException("Pool has not been set");
+        }
+        final PoolingDataSource<PoolableConnection> pds = new ManagedDataSource<PoolableConnection>(getConnectionPool(), transactionRegistry) {
+            @Override
+            public Connection getConnection() throws SQLException {
+                return new ManagedConnection<PoolableConnection>(getPool(), transactionRegistry, isAccessToUnderlyingConnectionAllowed()) {
+                    @Override
+                    public void close() throws SQLException {
+                        if (!isClosedInternal()) {
+                            try {
+                                if (null != getDelegateInternal()) {
+                                    super.close();
+                                }
+                            } finally {
+                                setClosedInternal(true);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public boolean isClosed() throws SQLException {
+                        return isClosedInternal() || null != getDelegateInternal() && getDelegateInternal().isClosed();
+                    }
+                };
+            }
+        };
+        pds.setAccessToUnderlyingConnectionAllowed(isAccessToUnderlyingConnectionAllowed());
+        return pds;
     }
 
     @Override
@@ -276,7 +322,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
                 }
             } else {
                 // wrap super call with code that sets user.dir to openejb.base and then resets it
-                final Properties systemProperties = System.getProperties();
+                final Properties systemProperties = JavaSecurityManagers.getSystemProperties();
 
                 final String userDir = systemProperties.getProperty("user.dir");
                 try {
@@ -339,6 +385,11 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
         } finally {
             l.unlock();
         }
+    }
+
+    @Override
+    public ObjectName preRegister(final MBeanServer server, final ObjectName name) {
+        return name;
     }
 
     Object writeReplace() throws ObjectStreamException {

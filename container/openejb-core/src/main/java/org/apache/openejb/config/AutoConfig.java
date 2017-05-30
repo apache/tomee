@@ -427,6 +427,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     destination = properties.getProperty("destination");
                 }
 
+                if (destination == null) { // EE 7/EJB 3.2
+                    destination = properties.getProperty("destinationLookup");
+                }
+
                 // destination
                 //                String destination = properties.getProperty("destination", properties.getProperty("destinationName"));
                 if (destination == null) {
@@ -947,7 +951,15 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 resource.setId(modulePrefix + replaceJavaAndSlash(originalId));
             }
             resource.setJndi(PropertyPlaceHolderHelper.value(resource.getJndi()));
-            resource.getProperties().putAll(PropertyPlaceHolderHelper.holds(resource.getProperties()));
+
+            final Thread thread = Thread.currentThread();
+            final ClassLoader oldCl = thread.getContextClassLoader();
+            thread.setContextClassLoader(module.getClassLoader());
+            try {
+                resource.getProperties().putAll(PropertyPlaceHolderHelper.holds(resource.getProperties()));
+            } finally {
+                thread.setContextClassLoader(oldCl);
+            }
 
             final Collection<String> aliases = resource.getAliases();
             if (!aliases.isEmpty()) {
@@ -1997,6 +2009,14 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         id = findResourceId(resourceId, null, required, appResources);
         if (id != null) {
             return id;
+        }
+
+        // app resources
+        if (appResources.appId != null && !appResources.appId.isEmpty() && resourceId.startsWith(appResources.appId + '/')) {
+            id = findResourceId(resourceId.substring(appResources.appId.length() + 1), type, required, appResources);
+            if (id != null) {
+                return id;
+            }
         }
 
         // throw an exception or log an error

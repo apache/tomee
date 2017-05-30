@@ -16,17 +16,18 @@
  */
 package org.apache.openejb.mockito;
 
+import org.apache.openejb.injection.FallbackPropertyInjector;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.DefaultLiteral;
 import org.apache.webbeans.annotation.NamedLiteral;
-import org.mockito.cglib.proxy.Factory;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.lang.annotation.Annotation;
@@ -43,6 +44,11 @@ import java.util.Set;
 public class MockitoExtension implements Extension {
     private static final Annotation DEFAULT_ANNOTATION = new DefaultLiteral();
     private static final Annotation ANY_ANNOTATION = new AnyLiteral();
+
+    public void addMocks(@Observes final BeforeBeanDiscovery bbd) {
+        // ensure it is init
+        SystemInstance.get().getComponent(FallbackPropertyInjector.class);
+    }
 
     public void addMocks(@Observes final AfterBeanDiscovery abd) {
         for (Map.Entry<Class<?>, Object> instance : MockRegistry.mocksByType().entrySet()) {
@@ -77,7 +83,7 @@ public class MockitoExtension implements Extension {
                     }
                 }
                 for (Class<?> itf : clazz.getInterfaces()) {
-                    if (Factory.class.isAssignableFrom(itf)) {
+                    if (itf.getName().startsWith("org.mockito")) {
                         continue;
                     }
 

@@ -88,17 +88,17 @@ public class ArchivingTest {
 
         today.set("2015-09-02");
         try { // ensure we test the date
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
         handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the archiving
         handler.close();
 
-        final File logGzip = new File("target/ArchivingTest-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
-        withRetry(5, 1, new Runnable() {
+        withRetry(10, 3, new Runnable() {
             @Override
             public void run() {
+                final File logGzip = new File("target/ArchivingTest-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
                 assertTrue(logGzip.getAbsolutePath(), logGzip.isFile());
             }
         });
@@ -106,15 +106,15 @@ public class ArchivingTest {
         if ("gzip".equals(format)) {
             try (final GZIPInputStream gis = new GZIPInputStream(new FileInputStream("target/ArchivingTest-gzip/logs/archives/test.2015-09-01.0.log.gzip"))) {
                 final String content = IOUtils.toString(gis);
-                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
+                assertTrue(content.contains(Level.INFO.getLocalizedName() + ": abcdefghij" + System.lineSeparator()));
                 assertTrue(content.length() > 10000);
             }
         } else {
             try (final ZipInputStream zis = new ZipInputStream(new FileInputStream("target/ArchivingTest-zip/logs/archives/test.2015-09-01.0.log.zip"))) {
                 assertEquals("test.2015-09-01.0.log", zis.getNextEntry().getName());
                 final String content = IOUtils.toString(zis);
-                assertTrue(content.contains("INFO: abcdefghij" + System.lineSeparator()));
-                assertTrue(content.length() > 10000);
+                assertTrue(content, content.contains(Level.INFO.getLocalizedName() + ": abcdefghij" + System.lineSeparator())); // INFO or INFOS
+                assertTrue(content, content.length() > 10000);
                 assertNull(zis.getNextEntry());
             }
         }
@@ -161,17 +161,17 @@ public class ArchivingTest {
 
         today.set("2015-09-02");
         try {
-            Thread.sleep(1500);
+            Thread.sleep(2000);
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
         handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the archiving
-        for (int i = 0; i < 120; i++) { // async so retry
+        for (int i = 0; i < 5; i++) { // async so retry
             if (logArchive.exists()) {
                 break;
             }
             try {
-                Thread.sleep(250);
+                Thread.sleep(1800);
             } catch (final InterruptedException e) {
                 Thread.interrupted();
             }
@@ -186,7 +186,7 @@ public class ArchivingTest {
         }
         handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the purging
         handler.close();
-        withRetry(5, 1, new Runnable() {
+        withRetry(10, 2, new Runnable() {
             @Override
             public void run() {
                 assertFalse(logArchive.getAbsolutePath() + " was purged", logArchive.exists());
@@ -194,10 +194,10 @@ public class ArchivingTest {
         });
     }
 
-    private void withRetry(int countDown, long timeout, Runnable assertCallback) {
+    private void withRetry(final int countDown, final long timeout, final Runnable assertCallback) {
         try {
             assertCallback.run();
-        } catch (AssertionError e) {
+        } catch (final AssertionError e) {
             if (countDown < 1) {
                 throw e;
             }
@@ -206,7 +206,7 @@ public class ArchivingTest {
             } catch (InterruptedException e1) {
                 Thread.interrupted();
             }
-            withRetry(--countDown, timeout, assertCallback);
+            withRetry(countDown - 1, timeout, assertCallback);
         }
     }
 

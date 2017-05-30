@@ -22,36 +22,82 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.ResolvableDependencies;
+import org.gradle.api.artifacts.UnknownConfigurationException;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import static java.util.Arrays.asList;
 
 /**
- * Custom dependencies can be added using the scope "tomee-embedded".
+ * Custom dependencies can be added using the scope "tomee-embedded" or "tomeeembedded".
  */
 public class TomEEEmbeddedPlugin implements Plugin<Project> {
     @Override
     public void apply(final Project project) {
-        project.getExtensions().create(TomEEEmbeddedExtension.NAME, TomEEEmbeddedExtension.class);
+        final List<String> extensions = asList(TomEEEmbeddedExtension.NAME, TomEEEmbeddedExtension.ALIAS);
+        for (final String name : extensions) {
+            project.getExtensions().create(name, TomEEEmbeddedExtension.class);
+        }
 
         project.afterEvaluate(new Action<Project>() {
             @Override
             public void execute(final Project actionProject) {
-                final TomEEEmbeddedExtension extension = actionProject.getExtensions().findByType(TomEEEmbeddedExtension.class);
-                if (!extension.isSkipDefaultRepository()) {
-                    actionProject.getRepositories().mavenCentral();
+                for (final String name : extensions) {
+                    final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(actionProject.getExtensions().findByName(name));
+                    if (extension == null) {
+                        return;
+                    }
+                    if (extension.isSkipDefaultRepository() != null && !extension.isSkipDefaultRepository()) {
+                        actionProject.getRepositories().mavenCentral();
+                        return;
+                    }
                 }
+                actionProject.getRepositories().mavenCentral();
             }
         });
 
-        final Configuration configuration = project.getConfigurations().maybeCreate(TomEEEmbeddedExtension.NAME);
+        String configName = TomEEEmbeddedExtension.ALIAS;
+        try {
+            project.getConfigurations().getByName(configName);
+        } catch (final UnknownConfigurationException uce) {
+            configName = TomEEEmbeddedExtension.NAME;
+        }
+
+        final Configuration configuration = project.getConfigurations().maybeCreate(configName);
         configuration.getIncoming().beforeResolve(new Action<ResolvableDependencies>() {
             @Override
             public void execute(final ResolvableDependencies resolvableDependencies) {
+                String tomeeVersion = null;
+                for (final String name : extensions) {
+                    final TomEEEmbeddedExtension extension = TomEEEmbeddedExtension.class.cast(project.getExtensions().findByName(name));
+                    if (extension == null) {
+                        return;
+                    }
+                    tomeeVersion = extension.getTomeeVersion();
+                    if (tomeeVersion != null) {
+                        break;
+                    }
+                }
+                if (tomeeVersion == null) {
+                    try {
+                        try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("META-INF/maven/org.apache.tomee.gradle/tomee-embedded/pom.properties")) {
+                            final Properties p = new Properties();
+                            p.load(is);
+                            tomeeVersion = p.getProperty("version");
+                        }
+                    } catch (final IOException e) {
+                        tomeeVersion = "7.0.2"; // we should never be there
+                    }
+                }
+
                 final DependencyHandler dependencyHandler = project.getDependencies();
                 final DependencySet dependencies = configuration.getDependencies();
-                dependencies.add(dependencyHandler.create("org.apache.tomee:tomee-embedded:" +
-                        project.getExtensions().findByType(TomEEEmbeddedExtension.class).getTomeeVersion()));
+                dependencies.add(dependencyHandler.create("org.apache.tomee:tomee-embedded:" + tomeeVersion));
             }
         });
 
@@ -60,6 +106,5 @@ public class TomEEEmbeddedPlugin implements Plugin<Project> {
             put("group", "Embedded Application Server");
             put("description", "Start an embedded Apache TomEE server deploying application classpath");
         }}, TomEEEmbeddedExtension.NAME);
-        TomEEEmbeddedTask.class.cast(project.getTasks().findByName(TomEEEmbeddedExtension.NAME)).setClasspath(configuration);
     }
 }

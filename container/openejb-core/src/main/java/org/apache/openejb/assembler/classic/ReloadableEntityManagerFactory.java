@@ -86,7 +86,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
 
     private final PersistenceUnitInfoImpl unitInfoImpl;
     private ClassLoader classLoader;
-    private EntityManagerFactory delegate;
+    private volatile EntityManagerFactory delegate;
     private final EntityManagerFactoryCallable entityManagerFactoryCallable;
     private ObjectName objectName;
 
@@ -110,6 +110,21 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         classLoader = loader;
         entityManagerFactoryCallable.overrideClassLoader(loader);
         unitInfoImpl.setClassLoader(loader);
+    }
+
+    public EntityManagerFactoryCallable getEntityManagerFactoryCallable() {
+        return entityManagerFactoryCallable;
+    }
+
+    private EntityManagerFactory delegate() {
+        if (delegate == null) {
+            synchronized (this) {
+                if (delegate == null) {
+                    createDelegate();
+                }
+            }
+        }
+        return delegate;
     }
 
     public void createDelegate() {
@@ -145,7 +160,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public EntityManager createEntityManager() {
         EntityManager em;
         try {
-            em = delegate.createEntityManager();
+            em = delegate().createEntityManager();
         } catch (final LinkageError le) {
             em = delegate.createEntityManager();
         }
@@ -160,7 +175,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public EntityManager createEntityManager(final Map map) {
         EntityManager em;
         try {
-            em = delegate.createEntityManager(map);
+            em = delegate().createEntityManager(map);
         } catch (final LinkageError le) {
             em = delegate.createEntityManager(map);
         }
@@ -175,7 +190,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public EntityManager createEntityManager(final SynchronizationType synchronizationType) {
         EntityManager em;
         try {
-            em = delegate.createEntityManager(synchronizationType);
+            em = delegate().createEntityManager(synchronizationType);
         } catch (final LinkageError le) {
             em = delegate.createEntityManager(synchronizationType);
         }
@@ -190,7 +205,7 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public EntityManager createEntityManager(final SynchronizationType synchronizationType, final Map map) {
         EntityManager em;
         try {
-            em = delegate.createEntityManager(synchronizationType, map);
+            em = delegate().createEntityManager(synchronizationType, map);
         } catch (final LinkageError le) {
             em = delegate.createEntityManager(synchronizationType, map);
         }
@@ -206,56 +221,56 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
         if (cls.isAssignableFrom(getClass())) {
             return cls.cast(this);
         }
-        return delegate.unwrap(cls);
+        return delegate().unwrap(cls);
     }
 
     @Override
     public void addNamedQuery(final String name, final Query query) {
-        delegate.addNamedQuery(name, query);
+        delegate().addNamedQuery(name, query);
     }
 
     @Override
     public <T> void addNamedEntityGraph(final String graphName, final EntityGraph<T> entityGraph) {
-        delegate.addNamedEntityGraph(graphName, entityGraph);
+        delegate().addNamedEntityGraph(graphName, entityGraph);
     }
 
     @Override
     public CriteriaBuilder getCriteriaBuilder() {
-        return delegate.getCriteriaBuilder();
+        return delegate().getCriteriaBuilder();
     }
 
     @Override
     public Metamodel getMetamodel() {
-        return delegate.getMetamodel();
+        return delegate().getMetamodel();
     }
 
     @Override
     public boolean isOpen() {
-        return delegate.isOpen();
+        return delegate().isOpen();
     }
 
     @Override
     public void close() {
-        delegate.close();
+        delegate().close();
     }
 
     @Override
     public Map<String, Object> getProperties() {
-        return delegate.getProperties();
+        return delegate().getProperties();
     }
 
     @Override
     public Cache getCache() {
-        return delegate.getCache();
+        return delegate().getCache();
     }
 
     @Override
     public PersistenceUnitUtil getPersistenceUnitUtil() {
-        return delegate.getPersistenceUnitUtil();
+        return delegate().getPersistenceUnitUtil();
     }
 
     public EntityManagerFactory getDelegate() {
-        return delegate;
+        return delegate();
     }
 
     public void register() throws OpenEJBException {
@@ -616,13 +631,11 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
             persistence.setVersion(info.getPersistenceXMLSchemaVersion());
             persistence.getPersistenceUnit().add(pu);
 
-            try {
-                final FileWriter writer = new FileWriter(file);
+            try (final FileWriter writer = new FileWriter(file)) {
                 final JAXBContext jc = JAXBContextFactory.newInstance(Persistence.class);
                 final Marshaller marshaller = jc.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 marshaller.marshal(persistence, writer);
-                writer.close();
             } catch (final Exception e) {
                 LOGGER.error("can't dump pu " + reloadableEntityManagerFactory.getPUname() + " in file " + file, e);
             }

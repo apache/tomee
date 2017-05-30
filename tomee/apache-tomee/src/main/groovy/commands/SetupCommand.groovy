@@ -49,6 +49,7 @@ class SetupCommand {
         try {
             ant.delete(it)
         } catch (e) {
+            System.gc()
             log.warn("RETRY Deleting: ${it}")
             ant.delete(it)
         }
@@ -99,9 +100,7 @@ class SetupCommand {
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
-        deleteWithRetry(file: paths.getJAXBImpl())
         deleteWithRetry(file: paths.getOpenEJBTomcatLoaderJar())
-        deleteWithRetry(file: paths.findTomEELibJar('jaxb-impl'))
         deleteWithRetry(file: paths.findTomEELibJar("openejb-javaagent-${tomeeVersion}.jar" as String))
         // we need the one without version
 

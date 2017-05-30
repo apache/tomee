@@ -258,11 +258,6 @@ public class Paths implements PathsInterface {
         return findOpenEJBJar("javaee-api");
     }
 
-    @Override
-    public File getJAXBImpl() {
-        return findOpenEJBJar("jaxb-impl");
-    }
-
     /**
      * Returns the openejb-javaagent.jar file
      * @return the openejb-javaagent.jar file

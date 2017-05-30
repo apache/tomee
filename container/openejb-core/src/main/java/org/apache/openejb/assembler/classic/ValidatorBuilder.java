@@ -22,6 +22,7 @@ import org.apache.openejb.jee.bval.ExecutableValidationType;
 import org.apache.openejb.jee.bval.PropertyType;
 import org.apache.openejb.jee.bval.ValidationConfigType;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -238,7 +239,8 @@ public final class ValidatorBuilder {
     }
 
     private static <T> T newInstance(final OpenEjbConfig config, final Class<T> clazz) throws Exception {
-        final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+        final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
         if (webBeansContext == null) {
             return clazz.newInstance();
         }

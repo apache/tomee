@@ -330,4 +330,9 @@ public class LazyRealm extends LifecycleBase implements Realm {
     public String[] getRoles(final Principal principal) {
         return instance().getRoles(principal);
     }
+
+    @Override
+    public boolean isAvailable() {
+        return true;
+    }
 }

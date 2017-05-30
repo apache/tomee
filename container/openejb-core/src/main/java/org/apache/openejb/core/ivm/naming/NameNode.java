@@ -70,6 +70,10 @@ public class NameNode implements Serializable {
         }
     }
 
+    public Object getObject() {
+        return myObject;
+    }
+
     public Object resolve(final ParsedName name) throws NameNotFoundException {
         final int compareResult = name.compareTo(atomicHash);
         NameNotFoundException n = null;
@@ -107,7 +111,7 @@ public class NameNode implements Serializable {
         }
         if (myObject instanceof Federation) {
             name.reset(pos);
-            final String nameInContext = name.remaining().path();
+            final String nameInContext = compareResult != ParsedName.IS_EQUAL ? name.path() : name.remaining().path();
             Federation f = null;
             for (final Context c : (Federation) myObject) {
                 try {
@@ -389,6 +393,9 @@ public class NameNode implements Serializable {
         return parent;
     }
 
+    public NameNode getParentTree() {
+        return parentTree;
+    }
 
     @Override
     public String toString() {
@@ -406,8 +413,6 @@ public class NameNode implements Serializable {
             '}';
     }
 
-    private static class Federation extends ArrayList<Context> {
+    public static class Federation extends ArrayList<Context> {
     }
-
-    ;
 }

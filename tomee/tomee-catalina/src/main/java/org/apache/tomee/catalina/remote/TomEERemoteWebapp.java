@@ -44,6 +44,6 @@ public class TomEERemoteWebapp extends IgnoredStandardContext {
         servlet.setName(ServerServlet.class.getSimpleName());
         servlet.setServletClass(ServerServlet.class.getName());
         addChild(servlet);
-        addServletMapping(MAPPING, ServerServlet.class.getSimpleName());
+        addServletMappingDecoded(MAPPING, ServerServlet.class.getSimpleName());
     }
 }

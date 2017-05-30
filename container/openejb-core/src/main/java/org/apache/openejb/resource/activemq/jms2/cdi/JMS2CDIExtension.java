@@ -86,12 +86,38 @@ public class JMS2CDIExtension implements Extension {
             final JMSPasswordCredential credential = annotated.getAnnotation(JMSPasswordCredential.class);
 
             final String jndi = "openejb:Resource/" +
-                (jmsConnectionFactory == null ? findAnyConnectionFactory() : jmsConnectionFactory.value());
+                (jmsConnectionFactory == null ? findAnyConnectionFactory() : findMatchingConnectionFactory(jmsConnectionFactory.value()));
             return new Key(
                 jndi,
                 credential != null ? credential.userName() : null,
                 credential != null ? credential.password() : null,
                 sessionMode != null ? sessionMode.value() : null);
+        }
+
+        private String findMatchingConnectionFactory(final String value) {
+            final OpenEjbConfiguration component = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
+            if (component != null && component.facilities != null) {
+                for (final ResourceInfo ri : component.facilities.resources) {
+                    if (!ri.types.contains("javax.jms.ConnectionFactory")) {
+                        continue;
+                    }
+                    if (ri.id.equals(value)) {
+                        return ri.id;
+                    }
+                }
+                // try application ones
+                for (final ResourceInfo ri : component.facilities.resources) {
+                    if (!ri.types.contains("javax.jms.ConnectionFactory")) {
+                        continue;
+                    }
+                    if (ri.id.endsWith(value)) {
+                        return ri.id;
+                    }
+                }
+            }
+            // something is wrong, just fail
+            throw new IllegalArgumentException(
+                    "No connection factory found, either use @JMSConnectionFactory JMSContext or define a connection factory");
         }
 
         private String findAnyConnectionFactory() {
@@ -149,7 +175,7 @@ public class JMS2CDIExtension implements Extension {
     public static class TransactionAutoContextDestruction extends AutoContextDestruction {
     }
 
-    public static class Key {
+    public static class Key implements Serializable {
         private volatile ConnectionFactory connectionFactoryInstance;
         private final String connectionFactory;
         private final String username;
@@ -222,7 +248,7 @@ public class JMS2CDIExtension implements Extension {
         }
     }
 
-    public static class InternalJMSContext implements JMSContext {
+    public static class InternalJMSContext implements JMSContext, Serializable {
         private final Key key;
         private final RequestAutoContextDestruction requestStorage;
         private final TransactionAutoContextDestruction transactionStorage;

@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.embedded;
 
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Manager;
 import org.apache.catalina.Server;
@@ -73,6 +71,7 @@ import org.apache.tomee.catalina.TomEERuntimeException;
 import org.apache.tomee.catalina.TomcatLoader;
 import org.apache.tomee.catalina.remote.TomEERemoteWebapp;
 import org.apache.tomee.catalina.session.QuickSessionManager;
+import org.apache.tomee.embedded.event.TomEEEmbeddedScannerCreated;
 import org.apache.tomee.embedded.internal.StandardContextCustomizer;
 import org.apache.tomee.util.QuickServerXmlParser;
 import org.apache.velocity.Template;
@@ -81,7 +80,11 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.xbean.finder.AnnotationFinder;
+import org.apache.xbean.finder.ResourceFinder;
 import org.apache.xbean.finder.UrlSet;
+import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
@@ -97,9 +100,11 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -107,6 +112,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * @version $Rev$ $Date$
@@ -205,7 +211,7 @@ public class Container implements AutoCloseable {
 
             final List<URL> urls = new ArrayList<>(jarList.length);
             for (final File jar : jarList) {
-                urls.addAll(asList(jar.toURI().toURL()));
+                urls.addAll(singletonList(jar.toURI().toURL()));
             }
             return deployPathsAsWebapp(null, urls, null);
         } catch (final MalformedURLException e) {
@@ -219,45 +225,61 @@ public class Container implements AutoCloseable {
 
     public Container deployPathsAsWebapp(final String context, final List<URL> jarList, final File docBase,
                                          final boolean keepClassloader, final String... additionalCallers) {
+        return deploy(new DeploymentRequest(context, jarList, docBase, keepClassloader, additionalCallers, null));
+    }
+
+    public Container deploy(final DeploymentRequest request) {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         final SystemInstance systemInstance = SystemInstance.get();
 
-        String contextRoot = context == null ? "" : context;
+        String contextRoot = request.context == null ? "" : request.context;
         if (!contextRoot.isEmpty() && !contextRoot.startsWith("/")) {
-            contextRoot = "/" + context;
+            contextRoot = "/" + request.context;
         }
 
-        File jarLocation = docBase == null || !docBase.isDirectory() ? fakeRootDir() : docBase;
+        File jarLocation = request.docBase == null || !request.docBase.isDirectory() ? fakeRootDir() : request.docBase;
         final WebModule webModule = new WebModule(new WebApp(), contextRoot, loader, jarLocation.getAbsolutePath(), contextRoot.replace("/", ""));
-        if (docBase == null) {
+        if (request.docBase == null) {
             webModule.getProperties().put("fakeJarLocation", "true");
         }
-        webModule.setUrls(jarList);
+        webModule.setUrls(request.jarList);
         webModule.setAddedUrls(Collections.<URL>emptyList());
         webModule.setRarUrls(Collections.<URL>emptyList());
-        webModule.setScannableUrls(jarList);
+        webModule.setScannableUrls(request.jarList);
+        final AnnotationFinder finder;
         try {
-            final String filterContainerClasses = SystemInstance.get().getProperty("tomee.embedded.filter-container-classes");
-            webModule.setFinder(
-                    new FinderFactory.OpenEJBAnnotationFinder(
-                            // skip container classes in scanning for shades
-                            new WebappAggregatedArchive(webModule, jarList,
-                                    // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
-                                    jarList.size() <= 4 || "true".equalsIgnoreCase(filterContainerClasses) ?
-                                            new ContainerClassesFilter(configuration.getProperties()) /* shade */ : null))
-                            .link());
+            Filter filter = configuration.getClassesFilter();
+            if (filter == null &&
+                    (request.jarList.size() <= 4 || "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.embedded.filter-container-classes")))) {
+                filter = new ContainerClassesFilter(configuration.getProperties());
+            }
+
+            final Archive archive;
+            if (request.archive == null) {
+                archive = new WebappAggregatedArchive(webModule, request.jarList,
+                        // see org.apache.openejb.config.DeploymentsResolver.ClasspathSearcher.cleanUpUrlSet()
+                        filter);
+            } else if (WebappAggregatedArchive.class.isInstance(request.archive)) {
+                archive = request.archive;
+            } else {
+                archive = new WebappAggregatedArchive(request.archive, request.jarList);
+            }
+
+            finder = new FinderFactory.OpenEJBAnnotationFinder(archive).link();
+            SystemInstance.get().fireEvent(new TomEEEmbeddedScannerCreated(finder));
+            webModule.setFinder(finder);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
 
-        final File beansXml = new File(docBase, "WEB-INF/beans.xml");
+        final File beansXml = new File(request.docBase, "WEB-INF/beans.xml");
         if (beansXml.exists()) { // add it since it is not in the scanned path by default
             try {
                 webModule.getAltDDs().put("beans.xml", beansXml.toURI().toURL());
             } catch (final MalformedURLException e) {
                 // no-op
             }
-        }
+        } // else no classpath finding since we'll likely find it
         DeploymentLoader.addBeansXmls(webModule);
 
         final AppModule app = new AppModule(loader, null);
@@ -266,6 +288,26 @@ public class Container implements AutoCloseable {
         app.setModuleId(webModule.getModuleId());
         try {
             final Map<String, URL> webDescriptors = DeploymentLoader.getWebDescriptors(jarLocation);
+            if (webDescriptors.isEmpty()) { // likely so let's try to find them in the classpath
+                final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                final Collection<String> metaDir = asList("META-INF/tomee/", "META-INF/");
+                for (final String dd : asList(
+                        "app-ctx.xml", "module.properties", "application.properties",
+                        "env-entries.properties", NewLoaderLogic.EXCLUSION_FILE,
+                        "web.xml", "ejb-jar.xml", "openejb-jar.xml", "validation.xml")) {
+                    if (Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.embedded.descriptors.classpath." + dd + ".skip"))
+                            || webDescriptors.containsKey(dd)) {
+                        continue;
+                    }
+                    for (final String meta : metaDir) {
+                        final URL url = classLoader.getResource(meta + dd);
+                        if (url != null) {
+                            webDescriptors.put(dd, url);
+                            break;
+                        }
+                    }
+                }
+            }
             webDescriptors.remove("beans.xml");
             webModule.getAltDDs().putAll(webDescriptors);
             DeploymentLoader.addWebModule(webModule, app);
@@ -274,17 +316,32 @@ public class Container implements AutoCloseable {
             throw new IllegalStateException(e);
         }
 
-        addCallersAsEjbModule(loader, app, additionalCallers);
+        if (!SystemInstance.isInitialized() || Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.embedded.add-callers", "true"))) {
+            addCallersAsEjbModule(loader, app, request.additionalCallers);
+        }
 
-        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, keepClassloader));
-        systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
-            @Override
-            public File getDDFolder(final File dir) {
-                // maven
-                return dir.getName().equals("classes") && dir.getParentFile().getName().equals("target") ?
-                        new File(docBase, "WEB-INF") : null;
-            }
-        });
+        systemInstance.addObserver(new StandardContextCustomizer(configuration, webModule, request.keepClassloader));
+        if (systemInstance.getComponent(AnnotationDeployer.FolderDDMapper.class) == null) {
+            systemInstance.setComponent(AnnotationDeployer.FolderDDMapper.class, new AnnotationDeployer.FolderDDMapper() {
+                @Override
+                public File getDDFolder(final File dir) {
+                    try {
+                        return isMaven(dir) || isGradle(dir) ? new File(request.docBase, "WEB-INF") : null;
+                    } catch (final RuntimeException re) { // folder doesn't exist -> test is stopped which is expected
+                        return null;
+                    }
+                }
+
+                private boolean isGradle(final File dir) {
+                    return dir.getName().equals("classes") && dir.getParentFile().getName().equals("target");
+                }
+
+                private boolean isMaven(final File dir) {
+                    return dir.getName().equals("main") && dir.getParentFile().getName().equals("classes")
+                            && dir.getParentFile().getParentFile().getName().equals("build");
+                }
+            });
+        }
 
         try {
             final AppInfo appInfo = configurationFactory.configureApplication(app);
@@ -298,6 +355,16 @@ public class Container implements AutoCloseable {
 
     private static void addCallersAsEjbModule(final ClassLoader loader, final AppModule app, final String... additionalCallers) {
         final Set<String> callers = new HashSet<>(NewLoaderLogic.callers(Filters.classes(Container.class.getName(), "org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")));
+        // we don't care of these
+        callers.remove("org.apache.tomee.embedded.Container");
+        callers.remove("org.apache.tomee.gradle.embedded.TomEEEmbeddedTask");
+        final Iterator<String> callerIt = callers.iterator();
+        while (callerIt.hasNext()) { // TomEEEmbeddedMojo is also used with some anonymous classes (TomEEEmbeddedMojo$x)
+            if (callerIt.next().startsWith("org.apache.openejb.maven.plugins.TomEEEmbeddedMojo")) {
+                callerIt.remove();
+                // no break since we remove anonymous class+the mojo itself
+            }
+        }
         if (additionalCallers != null && additionalCallers.length > 0) {
             callers.addAll(asList(additionalCallers));
         }
@@ -365,19 +432,42 @@ public class Container implements AutoCloseable {
 
         // create basic installation in setup to be able to handle anything the caller does between setup() and start()
         base = new File(getBaseDir());
-        if (base.exists()) {
+        if (base.exists() && configuration.isDeleteBaseOnStartup()) {
             Files.delete(base);
+        } else if (!base.exists()) {
+            Files.mkdirs(base);
+            Files.deleteOnExit(base);
         }
 
-        Files.mkdirs(base);
-        Files.deleteOnExit(base);
-
-        createDirectory(base, "conf");
+        final File conf = createDirectory(base, "conf");
         createDirectory(base, "lib");
         createDirectory(base, "logs");
         createDirectory(base, "temp");
         createDirectory(base, "work");
         createDirectory(base, "webapps");
+
+        synchronize(conf, configuration.getConf());
+    }
+
+    private void synchronize(final File base, final String resourceBase) {
+        if (resourceBase == null) {
+            return;
+        }
+
+        try {
+            final Map<String, URL> urls = new ResourceFinder("").getResourcesMap(resourceBase);
+            for (final Map.Entry<String, URL> u : urls.entrySet()) {
+                try (final InputStream is = u.getValue().openStream()) {
+                    final File to = new File(base, u.getKey());
+                    IO.copy(is, to);
+                    if ("server.xml".equals(u.getKey())) {
+                        configuration.setServerXml(to.getAbsolutePath());
+                    }
+                }
+            }
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public File getBase() {
@@ -440,11 +530,13 @@ public class Container implements AutoCloseable {
         final boolean initialized;
         if (configuration.hasServerXml()) {
             final File file = new File(conf, "server.xml");
-            final FileOutputStream fos = new FileOutputStream(file);
-            try {
-                IO.copy(configuration.getServerXmlFile(), fos);
-            } finally {
-                IO.close(fos);
+            if (!file.equals(configuration.getServerXmlFile())) {
+                final FileOutputStream fos = new FileOutputStream(file);
+                try {
+                    IO.copy(configuration.getServerXmlFile(), fos);
+                } finally {
+                    IO.close(fos);
+                }
             }
 
             // respect config (host/port) of the Configuration
@@ -469,7 +561,16 @@ public class Container implements AutoCloseable {
         }
 
         if (props != null && !props.isEmpty()) {
-            final FileWriter systemProperties = new FileWriter(new File(conf, "system.properties"));
+            final File file = new File(conf, "system.properties");
+            if (file.isFile()) {
+                final Properties existing = IO.readProperties(file);
+                for (final String key : existing.stringPropertyNames()) {
+                    if (!props.containsKey(key)) {
+                        props.put(key, existing.getProperty(key));
+                    }
+                }
+            }
+            final FileWriter systemProperties = new FileWriter(file);
             try {
                 props.store(systemProperties, "");
             } finally {
@@ -749,10 +850,12 @@ public class Container implements AutoCloseable {
         } catch (final LifecycleException e) {
             e.printStackTrace();
         }
-        try {
-            deleteTree(base);
-        } catch (final Exception e) {
-            e.printStackTrace();
+        if (configuration.isDeleteBaseOnStartup()) {
+            try {
+                deleteTree(base);
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
         }
 
         OpenEJB.destroy();
@@ -878,6 +981,11 @@ public class Container implements AutoCloseable {
     }
 
     private void copyTemplateTo(final File targetDir, final String filename) throws Exception {
+        final File file = new File(targetDir, filename);
+        if (file.exists()) {
+            return;
+        }
+
         // don't break apps using Velocity facade
         final VelocityEngine engine = new VelocityEngine();
         engine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new NullLogChute());
@@ -889,17 +997,22 @@ public class Container implements AutoCloseable {
         final VelocityContext context = new VelocityContext();
         context.put("tomcatHttpPort", Integer.toString(configuration.getHttpPort()));
         context.put("tomcatShutdownPort", Integer.toString(configuration.getStopPort()));
-        final Writer writer = new FileWriter(new File(targetDir, filename));
+        final Writer writer = new FileWriter(file);
         template.merge(context, writer);
         writer.flush();
         writer.close();
     }
 
     private void copyFileTo(final File targetDir, final String filename) throws IOException {
+        final File to = new File(targetDir, filename);
+        if (to.exists()) { // user provided one
+            return;
+        }
+
         final InputStream is = getClass().getResourceAsStream("/org/apache/tomee/configs/" + filename);
         if (is != null) { // should be null since we are using default conf
             try {
-                IO.copy(is, new File(targetDir, filename));
+                IO.copy(is, to);
             } finally {
                 IO.close(is);
             }
@@ -975,24 +1088,12 @@ public class Container implements AutoCloseable {
     }
 
     private static class InternalTomcat extends Tomcat {
+        private Connector connector;
+
         private void server(final Server s) {
             server = s;
-            if (service == null) {
-                final Service[] services = server.findServices();
-                if (services.length > 0) {
-                    service = services[0];
-                    if (service.getContainer() != null) {
-                        engine = Engine.class.cast(service.getContainer());
-                        final org.apache.catalina.Container[] hosts = engine.findChildren();
-                        if (hosts.length > 0) {
-                            host = Host.class.cast(hosts[0]);
-                        }
-                    }
-                }
-                if (service.findConnectors().length > 0) {
-                    connector = service.findConnectors()[0];
-                }
-            }
+            connector = server != null && server.findServices().length > 0 && server.findServices()[0].findConnectors().length > 0 ?
+                    server.findServices()[0].findConnectors()[0] : null;
         }
 
         public Connector getRawConnector() {
@@ -1001,7 +1102,6 @@ public class Container implements AutoCloseable {
     }
 
     private static class TomcatWithFastSessionIDs extends InternalTomcat {
-
         @Override
         public void start() throws LifecycleException {
             // Use fast, insecure session ID generation for all tests
@@ -1023,6 +1123,27 @@ public class Container implements AutoCloseable {
                 }
             }
             super.start();
+        }
+    }
+
+    // there to allow to add params without breaking signature each time
+    public static class DeploymentRequest {
+        private final String context;
+        private final List<URL> jarList;
+        private final File docBase;
+        private final boolean keepClassloader;
+        private final String[] additionalCallers;
+        private final Archive archive;
+
+        public DeploymentRequest(final String context, final List<URL> jarList, final File docBase,
+                                 final boolean keepClassloader, final String[] additionalCallers,
+                                 final Archive archive) {
+            this.context = context;
+            this.jarList = jarList == null ? Collections.<URL>emptyList() : jarList;
+            this.docBase = docBase;
+            this.keepClassloader = keepClassloader;
+            this.additionalCallers = additionalCallers;
+            this.archive = archive;
         }
     }
 }

@@ -45,11 +45,16 @@ public class TomEEInjectionEnricher implements TestEnricher {
         if (!SystemInstance.isInitialized()) {
             return;
         }
-        OpenEJBEnricher.enrich(o, getAppContext(o.getClass()));
+        final Class<?> oClass = o.getClass();
+        if (oClass.getName().startsWith("org.junit.rules.")) { // no need of enrichments
+            return;
+        }
+        OpenEJBEnricher.enrich(o, getAppContext(oClass));
     }
 
     private AppContext getAppContext(final Class<?> clazz) {
         final String clazzName = clazz.getName();
+
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         if (deployment != null && deployment.get() != null) {
             final BeanContext context = containerSystem.getBeanContext(deployment.get().getDescription().getName() + "_" + clazzName);
@@ -71,11 +76,22 @@ public class TomEEInjectionEnricher implements TestEnricher {
             }
         }
 
-        if (deployment != null && deployment.get() != null && deployment.get().getDescription().testable()) {
+        if (deployment != null && deployment.get() != null && deployment.get().getDescription().testable()
+                && !isJunitComponent(clazz) /*app context will be found by classloader, no need to log anything there*/) {
             Logger.getLogger(TomEEInjectionEnricher.class.getName()).log(Level.WARNING, "Failed to find AppContext for: " + clazzName);
         }
 
         return null;
+    }
+
+    private boolean isJunitComponent(final Class<?> clazz) {
+        final ClassLoader classLoader = clazz.getClassLoader();
+        try {
+            return classLoader.loadClass("org.junit.rules.TestRule").isAssignableFrom(clazz)
+                    || classLoader.loadClass("org.junit.runners.model.Statement").isAssignableFrom(clazz);
+        } catch (final ClassNotFoundException e) {
+            return false;
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.apache.openejb.test.entity.cmp;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.ObjectNotFoundException;
-import javax.rmi.PortableRemoteObject;
 
 /**
  * [3] Should be run as the third test suite of the ComplexCmpTestClients
@@ -33,7 +32,7 @@ public class ComplexEjbHomeTests extends ComplexCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
-        ejbHome = (ComplexCmpHome) PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
+        ejbHome = (ComplexCmpHome) obj;
         ejbObject = ejbHome.createObject("Second Bean");
         ejbPrimaryKey = ejbObject.getPrimaryKey();
     }

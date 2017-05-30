@@ -19,9 +19,6 @@ package org.superbiz.applet;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
@@ -81,8 +78,7 @@ public class CalculatorApplet extends JApplet {
 
                 try {
                     final Object ref = ctx.lookup("CalculatorImplRemote");
-                    Calculator calc = (Calculator) PortableRemoteObject.narrow(
-                            ref, Calculator.class);
+                    Calculator calc = (Calculator) ref;
                     String text1 = field1.getText();
                     String text2 = field2.getText();
                     int num1 = Integer.parseInt(text1);

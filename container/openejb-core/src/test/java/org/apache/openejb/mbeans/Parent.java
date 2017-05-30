@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.mbeans;
 
-import javax.management.Description;
-import javax.management.ManagedAttribute;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.ManagedAttribute;
 
 // simply a copy of ReaderWriter but abstract to avoid CDI conflict
 public abstract class Parent {

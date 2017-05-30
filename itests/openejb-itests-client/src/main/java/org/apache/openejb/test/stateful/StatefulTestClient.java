@@ -16,13 +16,11 @@
  */
 package org.apache.openejb.test.stateful;
 
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
 import org.apache.openejb.test.TestClient;
 import org.apache.openejb.test.TestManager;
+
+import javax.naming.InitialContext;
+import java.util.Properties;
 
 public abstract class StatefulTestClient extends TestClient {
 

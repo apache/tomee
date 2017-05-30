@@ -197,7 +197,7 @@ public class TomEEMavenPluginRule implements MethodRule {
         }
         tomEEMojo.settings.setOffline(true);
         if (tomEEMojo.settings.getLocalRepository() == null || "".equals(tomEEMojo.settings.getLocalRepository())) {
-            tomEEMojo.settings.setLocalRepository(System.getProperty("user.home") + "/.m2/repository");
+            tomEEMojo.settings.setLocalRepository(System.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository"));
         }
 
         // we don't deploy anything by default

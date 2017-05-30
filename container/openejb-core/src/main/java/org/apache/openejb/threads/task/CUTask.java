@@ -22,6 +22,9 @@ import org.apache.openejb.core.ivm.ClientSecurity;
 import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public abstract class CUTask<T> extends ManagedTaskListenerTask implements Comparable<Object> {
+    // TODO: get rid of it as a static thing, make it owned by the executor probably
     private static final SecurityService SECURITY_SERVICE = SystemInstance.get().getComponent(SecurityService.class);
 
     // only updated in container startup phase, no concurrency possible, don't use it at runtime!
@@ -58,9 +62,16 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             associate = false;
         }
         final ThreadContext threadContext = ThreadContext.getThreadContext();
-        initialContext = new Context(
-            associate, stateTmp, threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class),
-            threadContext, Thread.currentThread().getContextClassLoader(), null);
+        final AbstractSecurityService.SecurityContext sc = threadContext == null ? null : threadContext.get(AbstractSecurityService.SecurityContext.class);
+        if (threadContext != null && threadContext.getBeanContext() != null &&
+                (threadContext.getBeanContext().getRunAs() != null || threadContext.getBeanContext().getRunAsUser() != null)) {
+            initialContext = new Context(
+                    associate, stateTmp,
+                    new AbstractSecurityService.SecurityContext(AbstractSecurityService.class.cast(SECURITY_SERVICE).getRunAsSubject(threadContext.getBeanContext())),
+                    threadContext, Thread.currentThread().getContextClassLoader(), null);
+        } else {
+            initialContext = new Context(associate, stateTmp, sc, threadContext, Thread.currentThread().getContextClassLoader(), null);
+        }
         if (CONTAINER_LISTENERS.length > 0) {
             containerListenerStates = new Object[CONTAINER_LISTENERS.length];
             for (int i = 0; i < CONTAINER_LISTENERS.length; i++) {
@@ -144,9 +155,10 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
             this.associate = associate;
             this.securityServiceState = initialSecurityServiceState;
             this.securityContext = securityContext;
-            this.threadContext = initialThreadContext;
             this.loader = initialLoader;
             this.stack = stack;
+            // copy to ensure we have a thread safe data map
+            this.threadContext = initialThreadContext == null ? null : new ThreadContext(initialThreadContext);
 
             /* propagation of CDI context seems wrong
             final ContextsService genericContextsService = WebBeansContext.currentInstance().getContextsService();
@@ -204,22 +216,48 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
         }
 
         public void exit() {
+            Collection<RuntimeException> errors = null;
+
             // exit tasks are designed to be in execution added post tasks so execution them before next ones
             // ie inversed ordered compared to init phase
             if (exitTasks != null) {
-                for (Runnable r : exitTasks) {
-                    r.run();
+                for (final Runnable r : exitTasks) {
+                    try {
+                        r.run();
+                    } catch (final RuntimeException re) {
+                        if (errors == null) {
+                            errors = new ArrayList<>();
+                        }
+                        errors.add(re);
+                        Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
+                    }
                 }
             }
 
             if (threadContext != null) { // ensure we use the same condition as point A, see OPENEJB-2109
-                ThreadContext.exit(currentContext.threadContext);
+                try {
+                    ThreadContext.exit(currentContext.threadContext);
+                } catch (final RuntimeException re) {
+                    if (errors == null) {
+                        errors = new ArrayList<>();
+                    }
+                    errors.add(re);
+                    Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
+                }
             }
 
-            if (!associate) {
-                SECURITY_SERVICE.setState(currentContext.securityServiceState);
-            } else {
-                SECURITY_SERVICE.disassociate();
+            try {
+                if (!associate) {
+                    SECURITY_SERVICE.setState(currentContext.securityServiceState);
+                } else {
+                    SECURITY_SERVICE.disassociate();
+                }
+            } catch (final RuntimeException re) {
+                if (errors == null) {
+                    errors = new ArrayList<>();
+                }
+                errors.add(re);
+                Logger.getInstance(LogCategory.OPENEJB, CUTask.class).warning(re.getMessage(), re);
             }
 
             /* propagation of CDI context seems wrong
@@ -236,6 +274,18 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 CURRENT.set(currentContext.stack);
             }
             currentContext = null;
+
+            if (errors != null) {
+                if (errors.size() == 1) {
+                    throw errors.iterator().next();
+                }
+                throw new OpenEJBRuntimeException(Join.join("\n", new Join.NameCallback<RuntimeException>() {
+                    @Override
+                    public String getName(final RuntimeException object) {
+                        return object.getMessage();
+                    }
+                }, errors));
+            }
         }
 
         public void pushExitTask(final Runnable runnable) {

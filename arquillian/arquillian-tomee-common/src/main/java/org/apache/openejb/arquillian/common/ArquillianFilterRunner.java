@@ -19,11 +19,16 @@ package org.apache.openejb.arquillian.common;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
+import java.util.Enumeration;
+
+import static java.util.Collections.emptyEnumeration;
 
 // this filter simply allows us to invoke arquillian servlet directly
 // instead of needing to pass through the servlet filters
@@ -44,7 +49,27 @@ public class ArquillianFilterRunner implements Filter {
     public void init(final FilterConfig filterConfig) throws ServletException {
         try {
             delegate = HttpServlet.class.cast(Thread.currentThread().getContextClassLoader().loadClass(ARQUILLIAN_SERVLET_RUNNER).newInstance());
-            delegate.init();
+            delegate.init(new ServletConfig() {
+                @Override
+                public String getServletName() {
+                    return ArquillianFilterRunner.class.getName();
+                }
+
+                @Override
+                public ServletContext getServletContext() {
+                    return filterConfig.getServletContext();
+                }
+
+                @Override
+                public String getInitParameter(final String name) {
+                    return null;
+                }
+
+                @Override
+                public Enumeration<String> getInitParameterNames() {
+                    return emptyEnumeration();
+                }
+            });
         } catch (final Exception e) {
             // no-op: can happen if the servlet is not present, that's a normal case
         }

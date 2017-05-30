@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 @Classes
 @ContainerProperties({
         @ContainerProperties.Property(name = "DATABASE_URL", value = "hsql://SA@localhost:${hsqldb}/adb"),
-        @ContainerProperties.Property(name = "db", value = "new://Resource?type=DataSource&properties-provider=org.apache.openejb.resource.heroku.HerokuDatabasePropertiesProvider")
+        @ContainerProperties.Property(name = "db", value = "new://Resource?type=DataSource&properties-provider=heroku")
 })
 @SimpleLog
 public class HerokuDatabasePropertiesProviderResourceTest {

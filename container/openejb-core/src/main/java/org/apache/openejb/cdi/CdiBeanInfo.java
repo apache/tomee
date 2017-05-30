@@ -23,6 +23,7 @@ import org.apache.openejb.jee.EjbLocalRef;
 import org.apache.openejb.jee.EjbRef;
 import org.apache.openejb.jee.EnvEntry;
 import org.apache.openejb.jee.JMSConnectionFactory;
+import org.apache.openejb.jee.JMSDestination;
 import org.apache.openejb.jee.JndiConsumer;
 import org.apache.openejb.jee.KeyedCollection;
 import org.apache.openejb.jee.LifecycleCallback;
@@ -55,6 +56,7 @@ public class CdiBeanInfo implements JndiConsumer {
     protected List<LifecycleCallback> preDestroy;
     protected KeyedCollection<String, DataSource> dataSource;
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     protected List<LifecycleCallback> postActivate;
     protected List<LifecycleCallback> prePassivate;
     protected List<SecurityRoleRef> securityRoleRef;
@@ -292,6 +294,16 @@ public class CdiBeanInfo implements JndiConsumer {
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 
     public String getJndiConsumerName() {

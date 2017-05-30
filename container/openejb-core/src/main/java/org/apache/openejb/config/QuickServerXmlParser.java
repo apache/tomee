@@ -16,16 +16,17 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 public class QuickServerXmlParser extends DefaultHandler {
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
@@ -49,7 +50,7 @@ public class QuickServerXmlParser extends DefaultHandler {
     public static final String DEFAULT_AJP_PORT = "8009";
     public static final String DEFAULT_HOST = "localhost";
     public static final String DEFAULT_APP_BASE = "webapps";
-    public static final String DEFAULT_KEYSTORE = new File(System.getProperty("user.home"), ".keystore").getAbsolutePath();
+    public static final String DEFAULT_KEYSTORE = new File(JavaSecurityManagers.getSystemProperty("user.home"), ".keystore").getAbsolutePath();
 
     private final Map<String, String> values = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 

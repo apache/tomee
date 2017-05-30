@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
-import java.rmi.RemoteException;
-
 import javax.ejb.EJBHome;
+import java.rmi.RemoteException;
 
 /**
  * [4] Should be run as the fourth test suite of the BasicStatefulTestClients
@@ -32,7 +31,7 @@ public class StatefulEjbObjectTests extends BasicStatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
-        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+        ejbHome = (BasicStatefulHome) obj;
         ejbObject = ejbHome.createObject("Second Bean");
     }
 

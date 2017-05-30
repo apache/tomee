@@ -26,4 +26,5 @@ public class ResourceInfo extends ServiceInfo {
     public String preDestroy;
     public String originAppName; // if define by an app
     public List<String> aliases = new ArrayList<>();
+    public List<String> dependsOn = new ArrayList<>();
 }

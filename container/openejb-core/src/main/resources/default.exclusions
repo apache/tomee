@@ -35,7 +35,9 @@ bcprov-
 bootstrap.jar
 bval-core
 bval-jsr
+byte-buddy
 c3p0-
+cassandra-driver-core
 catalina-
 catalina.jar
 cglib-
@@ -74,6 +76,7 @@ FastInfoset
 jce.jar
 jfr.jar
 jfxrt.jar
+jnr-
 johnzon-
 fusemq-leveldb-
 geronimo-
@@ -137,6 +140,7 @@ jsse.jar
 juli-
 junit-
 kahadb-
+kotlin-runtime
 leveldb
 log4j-
 logkit-
@@ -153,6 +157,8 @@ myfaces-impl
 mysql-connector-java-
 neethi-
 nekohtml-
+netty-
+objenesis
 openejb-api
 openejb-client
 openejb-core
@@ -168,7 +174,6 @@ openejb-javaagent
 openejb-jee
 openejb-jpa-integration
 openejb-jsf
-openejb-jstl
 openejb-loader
 openejb-openwebbeans
 openejb-provisionning
@@ -219,6 +224,7 @@ sunec.jar
 surefire-
 swizzle-
 sxc-
+taglibs-standard-
 testng-
 tomcat-annotations
 tomcat-api

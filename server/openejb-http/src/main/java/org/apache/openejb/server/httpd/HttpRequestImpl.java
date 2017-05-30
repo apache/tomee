@@ -24,6 +24,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.part.CommonsFileUploadPartFactory;
 import org.apache.openejb.server.httpd.session.SessionManager;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.ArrayEnumeration;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -45,6 +46,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -108,7 +110,7 @@ public class HttpRequestImpl implements HttpRequest {
     /**
      * the headers for this page
      */
-    private final Map<String, String> headers = new HashMap<>();
+    private final Map<String, List<String>> headers = new HashMap<>();
 
     /**
      * the form parameters for this page
@@ -177,7 +179,8 @@ public class HttpRequestImpl implements HttpRequest {
      * @return The value of the header
      */
     public String getHeader(String name) {
-        return headers.get(name);
+        List<String> strings = headers.get(name);
+        return strings == null || strings.isEmpty() ? null : strings.get(0);
     }
 
     @Override
@@ -187,12 +190,14 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<String> getHeaders(String s) {
-        return new ArrayEnumeration(Arrays.asList(headers.get(s)));
+        final List<String> list = headers.get(s);
+        return new ArrayEnumeration(list == null ? Collections.emptyList() : list);
     }
 
     @Override
-    public int getIntHeader(String s) {
-        return Integer.parseInt(s);
+    public int getIntHeader(final String s) {
+        final String header = getHeader(s);
+        return header == null ? -1 : Integer.parseInt(header);
     }
 
     /**
@@ -254,7 +259,7 @@ public class HttpRequestImpl implements HttpRequest {
             return null;
         }
         if (servletPath != null) {
-            return path.substring(servletPath.length());
+            return path.length() < servletPath.length() ? "" : path.substring(servletPath.length());
         }
         return path;
     }
@@ -403,7 +408,7 @@ public class HttpRequestImpl implements HttpRequest {
         parameters.putAll(queryParams);
 
         if (headers.containsKey("Cookie")) {
-            final String cookie = headers.get("Cookie");
+            final String cookie = getHeader("Cookie");
             if (cookie != null) {
                 final String[] cookies = cookie.split(";");
                 for (String c : cookies) {
@@ -428,7 +433,7 @@ public class HttpRequestImpl implements HttpRequest {
             final StringBuilder builder = new StringBuilder();
             builder.append("******************* REQUEST ******************\n");
             builder.append(method).append(" ").append(uri).append("\n");
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
+            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
                 builder.append(entry).append("\n");
             }
             builder.append("\n");
@@ -608,21 +613,21 @@ public class HttpRequestImpl implements HttpRequest {
             }
 
             /* [1] parse the name */
-            int colonIndex = hf.indexOf((int) ':');
-            String name = hf.substring(0, colonIndex);
-            if (name == null)
-                break;
+            final int colonIndex = hf.indexOf((int) ':');
+            final String name = hf.substring(0, colonIndex);
 
             /* [2] Parse the Value */
-            String value = hf.substring(colonIndex + 1, hf.length());
-            if (value == null)
-                break;
-            value = value.trim();
-            headers.put(name, value);
+            final String value = hf.substring(colonIndex + 1, hf.length()).trim();
+            List<String> values = headers.get(name);
+            if (values == null) {
+                values = new ArrayList<>();
+                headers.put(name, values);
+            }
+            values.add(value);
         }
 
         // Update the URI to be what the client sees the the server as.
-        String host = headers.get("Host");
+        final String host = getHeader("Host");
         if (host != null) {
             String hostName;
             int port = uri.getPort();
@@ -711,7 +716,7 @@ public class HttpRequestImpl implements HttpRequest {
 
                 formParams.put(name, value);
             }
-        } else if (hasBody && CHUNKED.equals(headers.get(TRANSFER_ENCODING))) {
+        } else if (hasBody && CHUNKED.equals(getHeader(TRANSFER_ENCODING))) {
             try {
                 ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
                 for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -1031,15 +1036,16 @@ public class HttpRequestImpl implements HttpRequest {
         return startAsync(this, HttpResponse.class.cast(getAttribute("openejb_response")));
     }
 
-    @Override // avoids the need of org.apache.openejb.server.httpd.WebBeansFilter in embedded mode
+    @Override // avoids the need of org.apache.openejb.server.httpd.EEFilter in embedded mode
     public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) {
         setAttribute("openejb_async", "true");
         final OpenEJBAsyncContext asyncContext = new OpenEJBAsyncContext(HttpServletRequest.class.cast(servletRequest) /* TODO */, servletResponse, contextPath);
         asyncContext.internalStartAsync();
         asyncStarted = true;
-        final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+        final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
         return webBeansContext != null ?
-                new WebBeansFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
+                new EEFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
     }
 
     public void addInternalParameter(final String key, final String val) {

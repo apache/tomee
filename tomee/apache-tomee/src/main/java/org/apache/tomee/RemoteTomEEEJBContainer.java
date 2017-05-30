@@ -31,14 +31,18 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.ejb.spi.EJBContainerProvider;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.validation.ValidationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import static java.lang.Thread.sleep;
 
 public class RemoteTomEEEJBContainer extends EJBContainer {
     private static RemoteTomEEEJBContainer instance;
@@ -60,7 +64,8 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
         private static final List<String> CONTAINER_NAMES = Arrays.asList(RemoteTomEEEJBContainer.class.getName(), "tomee-remote", "remote-tomee");
 
         @Override
-        public EJBContainer createEJBContainer(final Map<?, ?> properties) {
+        public EJBContainer createEJBContainer(final Map<?, ?> rawProperties) {
+            final Map<?, ?> properties = rawProperties == null ? new HashMap<>() : rawProperties;
             final Object provider = properties.get(EJBContainer.PROVIDER);
             int ejbContainerProviders = 1;
             try {
@@ -99,6 +104,7 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
             try {
                 instance = new RemoteTomEEEJBContainer();
                 instance.container = new RemoteServer();
+                instance.container.setDebug("true".equalsIgnoreCase(String.valueOf(properties.get("debug"))));
                 instance.container.setPortStartup(Integer.parseInt(parser.http()));
 
                 try {
@@ -113,14 +119,23 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
 
                 instance.context = new InitialContext(new Properties() {{
                     setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
-                    setProperty(Context.PROVIDER_URL, remoteEjb);
+                    setProperty(Context.PROVIDER_URL, String.valueOf(properties.containsKey(Context.PROVIDER_URL) ? properties.get(Context.PROVIDER_URL) : remoteEjb));
                 }});
 
                 Deployer deployer = null;
-                for (int i = 0; i < (properties.containsKey("retries") ? Integer.parseInt(String.class.cast(properties.get("retries"))) : 20); i++) {
-                    deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
-                    if (deployer != null) {
-                        break;
+                for (int i = 0; i < (properties.containsKey("retries") ? Integer.parseInt(String.class.cast(properties.get("retries"))) : 4); i++) {
+                    try {
+                        deployer = Deployer.class.cast(instance.context.lookup("openejb/DeployerBusinessRemote"));
+                        if (deployer != null) {
+                            break;
+                        }
+                    } catch (final NamingException ne) {
+                        try {
+                            sleep(250);
+                        } catch (final InterruptedException ie) {
+                            Thread.interrupted();
+                            break;
+                        }
                     }
                 }
                 if (deployer == null) {

@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.arquillian.common;
 
-import org.apache.openejb.loader.*;
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Test;

@@ -105,7 +105,7 @@ public class LiveReloadInstaller {
                 servlet.setName(DefaultServlet.class.getSimpleName());
                 servlet.setServletClass(DefaultServlet.class.getName());
                 addChild(servlet);
-                addServletMapping("/*", DefaultServlet.class.getSimpleName());
+                addServletMappingDecoded("/*", DefaultServlet.class.getSimpleName());
             }
 
             {// the js injected in the page
@@ -113,7 +113,7 @@ public class LiveReloadInstaller {
                 servlet.setName(LiveReloadJs.class.getSimpleName());
                 servlet.setServletClass(LiveReloadJs.class.getName());
                 addChild(servlet);
-                addServletMapping("/livereload.js", LiveReloadJs.class.getSimpleName());
+                addServletMappingDecoded("/livereload.js", LiveReloadJs.class.getSimpleName());
             }
         }
 

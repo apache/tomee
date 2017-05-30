@@ -287,20 +287,20 @@ public class LocalBeanProxyFactoryTest extends TestCase {
     public void testIsTrueBoolean() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
-        final boolean result = proxy.isTrue(new Boolean(true).booleanValue());
+        final boolean result = proxy.isTrue(Boolean.TRUE);
 
         assertTrue(result);
         assertEquals(1, invocationHandler.getCalls().length);
         final Call call = invocationHandler.getCalls()[0];
         assertEquals("isTrue", call.getMethodName());
-        assertTrue(Arrays.equals(new Class<?>[]{Boolean.TYPE}, call.getParameterTypes()));
+        assertTrue(Arrays.equals(new Class<?>[]{Boolean.class}, call.getParameterTypes()));
     }
 
     @Test
     public void testIsTrueBoolean1() throws Exception {
         final TestInvocationHandler invocationHandler = new TestInvocationHandler(new SampleLocalBean());
         final SampleLocalBean proxy = loadProxy(invocationHandler);
-        final Boolean result = proxy.isTrue(new Boolean(true));
+        final Boolean result = proxy.isTrue(Boolean.TRUE);
 
         assertTrue(result);
         assertEquals(1, invocationHandler.getCalls().length);

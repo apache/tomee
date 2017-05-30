@@ -41,7 +41,7 @@ public class EmailServiceTest {
 
     @Test
     public void post() throws IOException {
-        final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello Tomitribe", String.class);
+        final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello TomEE", String.class);
         assertEquals("Failed to send message: Unknown SMTP host: your.mailserver.host", message);
     }
 }

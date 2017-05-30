@@ -21,13 +21,23 @@
 
     var deps = ['lib/backbone'];
     define(deps, function () {
+        var isString = function (obj) {
+            return Object.prototype.toString.call(obj) === '[object String]';
+        };
         return Backbone.Model.extend({
             urlRoot: window.ux.ROOT_URL + 'rest/movies',
             idAttribute: 'id',
             toJSON: function () {
-                return {
-                    'movie': this.attributes
-                };
+                if (!!this.attributes.rating && isString(this.attributes.rating)) {
+                    this.attributes.rating = parseInt(this.attributes.rating, 10);
+                }
+                if (!!this.attributes.year && isString(this.attributes.year)) {
+                    this.attributes.year = parseInt(this.attributes.year, 10);
+                }
+                if (!!this.attributes.id && isString(this.attributes.id)) {
+                    this.attributes.id = parseInt(this.attributes.id, 10);
+                }
+                return this.attributes;
             },
             defaults: {
                 rating: 5,

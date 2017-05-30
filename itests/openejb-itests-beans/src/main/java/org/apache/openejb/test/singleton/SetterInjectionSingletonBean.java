@@ -434,7 +434,7 @@ public class SetterInjectionSingletonBean implements SessionBean {
 
     public void lookupBooleanEntry() throws TestFailureException {
         try {
-            final Boolean expected = new Boolean(true);
+            final Boolean expected = Boolean.TRUE;
 
             Assert.assertNotNull("The Boolean looked up is null", boooleanField);
             Assert.assertEquals(expected, boooleanField);

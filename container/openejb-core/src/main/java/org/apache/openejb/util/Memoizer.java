@@ -69,4 +69,8 @@ public class Memoizer<K, V> implements Computable<K, V> {
             }
         }
     }
+
+    public ConcurrentMap<K, Future<V>> getCache() {
+        return cache;
+    }
 }

@@ -22,6 +22,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Base64;
 
 import javax.security.auth.login.LoginException;
+import java.util.Locale;
 
 public class BasicAuthHttpListenerWrapper implements HttpListener {
 
@@ -40,7 +41,7 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
 
         String auth = request.getHeader("Authorization");
         if (auth != null && auth.length() > 0) {
-            if (auth.toUpperCase().startsWith("BASIC ")) {
+            if (auth.toUpperCase(Locale.ENGLISH).startsWith("BASIC ")) {
                 auth = auth.substring(6);
                 final String decoded = new String(Base64.decodeBase64(auth.getBytes()));
                 final String[] parts = decoded.split(":");
@@ -61,14 +62,20 @@ public class BasicAuthHttpListenerWrapper implements HttpListener {
             }
         }
 
-        if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
-            httpListener.onMessage(request, response);
-        } else {
-            // login failed,  return 401
-        }
-
-        if (token != null) {
-            getSecurityService().disassociate();
+        try {
+            if (token != null || HttpRequest.Method.GET.name().equals(request.getMethod())) {
+                httpListener.onMessage(request, response);
+            } else {
+                // login failed,  return 401
+            }
+        } finally {
+            if (token != null) {
+                final SecurityService securityService = getSecurityService();
+                final Object disassociate = securityService.disassociate();
+                if (disassociate != null) {
+                    securityService.logout(disassociate);
+                }
+            }
         }
     }
 

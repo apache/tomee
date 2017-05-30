@@ -24,7 +24,7 @@ public class Log4j2LogStreamFactory implements LogStreamFactory {
     public Log4j2LogStreamFactory() {
         // WARN: don't set all subproject loggers to log4j since API is not the same
         // and it needs log4j1 fallback module to "work" (some parts are broken like config)
-        System.setProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Log4j2LoggerFactory");
+        JavaSecurityManagers.setSystemProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Log4j2LoggerFactory");
     }
 
     @Override

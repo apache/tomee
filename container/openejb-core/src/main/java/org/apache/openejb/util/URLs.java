@@ -69,7 +69,7 @@ public final class URLs {
     }
 
     public static UrlSet cullSystemJars(final UrlSet original) throws IOException {
-        final String sunboot = System.getProperty("sun.boot.class.path", "");
+        final String sunboot = JavaSecurityManagers.getSystemProperty("sun.boot.class.path", "");
         UrlSet urls = new UrlSet(original.getUrls());
         urls = urls.exclude(ClassLoader.getSystemClassLoader().getParent());
         urls = urls.excludeJvm();

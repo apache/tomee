@@ -18,49 +18,92 @@
 package org.apache.openejb.config;
 
 import org.apache.xbean.finder.archive.Archive;
+import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.archive.CompositeArchive;
 import org.apache.xbean.finder.archive.FilteredArchive;
 import org.apache.xbean.finder.filter.Filter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
+import static org.apache.openejb.loader.JarLocation.jarLocation;
+
 public class WebappAggregatedArchive implements Archive, ScanConstants {
-    private final Map<URL, List<String>> map = new HashMap<URL, List<String>>();
+    private final Map<URL, List<String>> map = new HashMap<>();
     private ScanUtil.ScanHandler handler;
     private boolean scanXmlExists; // faster than using an empty handler
-    private final Archive archive;
+    private Archive archive;
 
     public WebappAggregatedArchive(final Module module, final Iterable<URL> urls, final Filter filter) {
-        final List<Archive> archives = new ArrayList<Archive>();
-
         final URL scanXml = (URL) module.getAltDDs().get(ScanConstants.SCAN_XML_NAME);
         if (scanXml != null) {
             try {
                 handler = ScanUtil.read(scanXml);
                 scanXmlExists = true;
+                if ((handler.getPackages() == null || handler.getPackages().isEmpty())
+                        && handler.getClasses() != null && !handler.getClasses().isEmpty()
+                        && handler.isOptimized()) { // only classes, skip scanning
+                    final Collection<Class<?>> loaded = new ArrayList<>(handler.getClasses().size());
+                    for (final String clazz : handler.getClasses()) {
+                        try {
+                            final Class<?> aClass = module.getClassLoader().loadClass(clazz);
+                            loaded.add(aClass);
+                            final URL jar = jarLocation(aClass).toURI().toURL();
+                            List<String> list = map.get(jar);
+                            if (list == null) {
+                                list = new ArrayList<>();
+                                map.put(jar, list);
+                            }
+                            list.add(clazz);
+                        } catch (final ClassNotFoundException e) {
+                            throw new IllegalArgumentException(e);
+                        }
+                    }
+                    archive = new ClassesArchive(loaded.toArray(new Class[loaded.size()]));
+                    return;
+                }
             } catch (final IOException e) {
                 // ignored, will not use filtering with scan.xml
             }
         }
 
+        archive = new CompositeArchive(doScan(module.getClassLoader(), urls, filter));
+    }
+
+    private List<Archive> doScan(final ClassLoader loader, final Iterable<URL> urls, final Filter filter) {
+        final List<Archive> archives = new ArrayList<>();
         for (final URL url : urls) {
-            final List<String> classes = new ArrayList<String>();
+            final List<String> classes = new ArrayList<>();
             final Archive archive = new FilteredArchive(
-                    new ConfigurableClasspathArchive(module.getClassLoader(), Arrays.asList(url)), new ScanXmlSaverFilter(scanXmlExists, handler, classes, filter));
+                    new ConfigurableClasspathArchive(loader, singletonList(url)),
+                    new ScanXmlSaverFilter(scanXmlExists, handler, classes, filter));
             map.put(url, classes);
             archives.add(archive);
         }
+        return archives;
+    }
 
-        archive = new CompositeArchive(archives);
+    // for internal usage mainly like faked modules
+    public WebappAggregatedArchive(final Archive delegate, final Iterable<URL> urls) {
+        final List<Archive> archives = doScan(Thread.currentThread().getContextClassLoader(), urls, null);
+        final List<String> classes = new ArrayList<String>();
+        final Archive archive = new FilteredArchive(delegate, new ScanXmlSaverFilter(scanXmlExists, handler, classes, null));
+        try {
+            this.map.put(new URL("jar:file://!/META-INF/beans.xml"), classes);
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException(e);
+        }
+        archives.add(archive);
+        this.archive = new CompositeArchive(archives);
     }
 
     public WebappAggregatedArchive(final Module module, final Iterable<URL> urls) {

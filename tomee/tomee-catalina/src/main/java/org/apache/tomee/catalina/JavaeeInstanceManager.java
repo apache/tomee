@@ -46,11 +46,17 @@ import java.util.Map;
 public class JavaeeInstanceManager implements InstanceManager {
     private final WebContext webContext;
     private final StandardContext webapp;
+    private final String[] skipContainerTags;
+    private final String[] skipPrefixes;
     private volatile InstanceManager defaultInstanceManager;
 
     public JavaeeInstanceManager(final StandardContext webapp, final WebContext webContext) {
         this.webContext = webContext;
         this.webapp = webapp;
+        this.skipContainerTags = SystemInstance.get().getProperty(
+                "tomee.tomcat.instance-manager.skip-container-tags", "org.apache.taglibs.standard.,javax.servlet.jsp.jstl.").split(" *, *");
+        final String[] skipCdi = SystemInstance.get().getProperty("tomee.tomcat.instance-manager.skip-cdi", "").split(" *, *");
+        this.skipPrefixes = skipCdi.length == 1 && skipCdi[0].isEmpty() ? new String[0] : skipCdi;
     }
 
     public ServletContext getServletContext() {
@@ -63,31 +69,34 @@ public class JavaeeInstanceManager implements InstanceManager {
             final String name = clazz.getName();
             if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
                     || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
-                    || "org.apache.openejb.server.httpd.WebBeansFilter".equals(name)
+                    || "org.apache.openejb.server.httpd.EEFilter".equals(name)
                     || "org.apache.catalina.servlets.DefaultServlet".equals(name)
                     || "org.apache.jasper.servlet.JspServlet".equals(name)) {
                 return clazz.newInstance();
             }
 
-            final Object object = webContext.newInstance(clazz);
-            if (isJsp(object.getClass())) {
-                if (defaultInstanceManager == null) { // lazy cause can not be needed
-                    synchronized (this) {
-                        if (defaultInstanceManager == null) {
-                            defaultInstanceManager = new DefaultInstanceManager(
-                                    webapp.getNamingContextListener().getEnvContext(),
-                                    TomcatInjections.buildInjectionMap(webapp.getNamingResources()), webapp,
-                                    ParentClassLoaderFinder.Helper.get());
-                        }
-                    }
-                }
+            final Object object = isSkip(name, skipPrefixes) ? clazz.newInstance() : webContext.newInstance(clazz);
+            if (isJsp(clazz)) {
+                initDefaultInstanceMgr();
                 defaultInstanceManager.newInstance(object);
-            } else {
-                postConstruct(object, clazz);
             }
+            postConstruct(object, clazz);
             return object;
         } catch (final OpenEJBException | WebBeansCreationException | WebBeansConfigurationException e) {
             throw (InstantiationException) new InstantiationException(e.getMessage()).initCause(e);
+        }
+    }
+
+    private void initDefaultInstanceMgr() {
+        if (defaultInstanceManager == null) { // lazy cause can not be needed
+            synchronized (this) {
+                if (defaultInstanceManager == null) {
+                    defaultInstanceManager = new DefaultInstanceManager(
+                            webapp.getNamingContextListener().getEnvContext(),
+                            TomcatInjections.buildInjectionMap(webapp.getNamingResources()), webapp,
+                            ParentClassLoaderFinder.Helper.get());
+                }
+            }
         }
     }
 
@@ -107,8 +116,7 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     @Override
     public Object newInstance(final String className) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
-        final ClassLoader classLoader = webContext.getClassLoader();
-        return newInstance(className, classLoader);
+        return newInstance(className, webContext.getClassLoader());
     }
 
     @Override
@@ -120,15 +128,28 @@ public class JavaeeInstanceManager implements InstanceManager {
     public void newInstance(final Object o) throws IllegalAccessException, InvocationTargetException, NamingException {
         final String name = o.getClass().getName();
         if ("org.apache.tomee.webservices.CXFJAXRSFilter".equals(name)
-            || "org.apache.tomcat.websocket.server.WsFilter".equals(name)) {
+                || "org.apache.tomcat.websocket.server.WsFilter".equals(name)
+                || isSkip(name, skipContainerTags)) {
             return;
         }
         try {
-            webContext.inject(o);
+            if (!isSkip(name, skipPrefixes)) {
+                webContext.inject(o);
+            }
             postConstruct(o, o.getClass());
         } catch (final OpenEJBException e) {
+            destroyInstance(o);
             throw new InjectionFailedException(e);
         }
+    }
+
+    private boolean isSkip(final String name, final String[] prefixes) {
+        for (final String prefix : prefixes) {
+            if (name.startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -139,27 +160,29 @@ public class JavaeeInstanceManager implements InstanceManager {
         final String name = o.getClass().getName();
         if ("org.apache.tomcat.websocket.server.WsHttpUpgradeHandler".equals(name)
                 || "org.apache.tomee.myfaces.TomEEMyFacesContextListener".equals(name)
-                || "org.apache.openejb.server.httpd.WebBeansFilter".equals(name)
+                || "org.apache.openejb.server.httpd.EEFilter".equals(name)
                 || "org.apache.catalina.servlets.DefaultServlet".equals(name)
                 || "org.apache.jasper.servlet.JspServlet".equals(name)) {
             return;
         }
 
         final Object unwrapped = unwrap(o);
-        if (isJsp(o.getClass())) {
-            defaultInstanceManager.destroyInstance(o);
-        } else {
+        try {
+            if (isJsp(o.getClass())) {
+                defaultInstanceManager.destroyInstance(o);
+            }
             preDestroy(unwrapped, unwrapped.getClass());
-        }
-        webContext.destroy(unwrapped);
-        if (unwrapped != o) { // PojoEndpointServer, they create and track a cc so release it
-            webContext.destroy(o);
+        } finally {
+            webContext.destroy(unwrapped);
+            if (unwrapped != o) { // PojoEndpointServer, they create and track a cc so release it
+                webContext.destroy(o);
+            }
         }
     }
 
     private Object unwrap(final Object o) {
         return "org.apache.tomcat.websocket.pojo.PojoEndpointServer".equals(o.getClass().getName()) ?
-            WebSocketTypes.unwrapWebSocketPojo(o) : o;
+                WebSocketTypes.unwrapWebSocketPojo(o) : o;
     }
 
     public void inject(final Object o) {
@@ -175,9 +198,8 @@ public class JavaeeInstanceManager implements InstanceManager {
      *
      * @param instance object to call postconstruct methods on
      * @param clazz    (super) class to examine for postConstruct annotation.
-     * @throws IllegalAccessException if postConstruct method is inaccessible.
-     * @throws java.lang.reflect.InvocationTargetException
-     *                                if call fails
+     * @throws IllegalAccessException                      if postConstruct method is inaccessible.
+     * @throws java.lang.reflect.InvocationTargetException if call fails
      */
     public void postConstruct(final Object instance, final Class<?> clazz)
             throws IllegalAccessException, InvocationTargetException {
@@ -224,9 +246,8 @@ public class JavaeeInstanceManager implements InstanceManager {
      *
      * @param instance object to call preDestroy methods on
      * @param clazz    (super) class to examine for preDestroy annotation.
-     * @throws IllegalAccessException if preDestroy method is inaccessible.
-     * @throws java.lang.reflect.InvocationTargetException
-     *                                if call fails
+     * @throws IllegalAccessException                      if preDestroy method is inaccessible.
+     * @throws java.lang.reflect.InvocationTargetException if call fails
      */
     protected void preDestroy(final Object instance, final Class<?> clazz)
             throws IllegalAccessException, InvocationTargetException {
@@ -268,8 +289,8 @@ public class JavaeeInstanceManager implements InstanceManager {
             Method tmp;
             try {
                 tmp = WebSocketTypes.class.getClassLoader()
-                    .loadClass("org.apache.tomcat.websocket.pojo.PojoEndpointBase")
-                    .getDeclaredMethod("getPojo");
+                        .loadClass("org.apache.tomcat.websocket.pojo.PojoEndpointBase")
+                        .getDeclaredMethod("getPojo");
                 tmp.setAccessible(true);
             } catch (final NoSuchMethodException e) {
                 if ("true".equals(SystemInstance.get().getProperty("tomee.websocket.skip", "false"))) {
@@ -299,25 +320,25 @@ public class JavaeeInstanceManager implements InstanceManager {
 
         private static Map<String, Map<String, String>> buildInjectionMap(final NamingResourcesImpl namingResources) {
             final Map<String, Map<String, String>> injectionMap = new HashMap<>();
-            for (final Injectable resource: namingResources.findLocalEjbs()) {
+            for (final Injectable resource : namingResources.findLocalEjbs()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findEjbs()) {
+            for (final Injectable resource : namingResources.findEjbs()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findEnvironments()) {
+            for (final Injectable resource : namingResources.findEnvironments()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findMessageDestinationRefs()) {
+            for (final Injectable resource : namingResources.findMessageDestinationRefs()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findResourceEnvRefs()) {
+            for (final Injectable resource : namingResources.findResourceEnvRefs()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findResources()) {
+            for (final Injectable resource : namingResources.findResources()) {
                 addInjectionTarget(resource, injectionMap);
             }
-            for (final Injectable resource: namingResources.findServices()) {
+            for (final Injectable resource : namingResources.findServices()) {
                 addInjectionTarget(resource, injectionMap);
             }
             return injectionMap;
@@ -327,7 +348,7 @@ public class JavaeeInstanceManager implements InstanceManager {
             final List<InjectionTarget> injectionTargets = resource.getInjectionTargets();
             if (injectionTargets != null && !injectionTargets.isEmpty()) {
                 final String jndiName = resource.getName();
-                for (final InjectionTarget injectionTarget: injectionTargets) {
+                for (final InjectionTarget injectionTarget : injectionTargets) {
                     final String clazz = injectionTarget.getTargetClass();
                     Map<String, String> injections = injectionMap.get(clazz);
                     if (injections == null) {

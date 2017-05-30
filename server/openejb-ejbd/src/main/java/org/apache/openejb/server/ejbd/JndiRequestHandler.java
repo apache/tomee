@@ -51,7 +51,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.omg.CORBA.ORB;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Topic;
@@ -65,8 +64,10 @@ import javax.sql.DataSource;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.xml.namespace.QName;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -80,14 +81,21 @@ import java.util.Set;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
 class JndiRequestHandler extends RequestHandler {
+    private static final Class<?> ORB_CLASS;
+
+    static {
+        Class<?> orb;
+        try {
+            orb = JndiRequestHandler.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
+        } catch (final ClassNotFoundException e) {
+            orb = null;
+        }
+        ORB_CLASS = orb;
+    }
 
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
-    private final Context ejbJndiTree;
     private Context clientJndiTree;
-    private final Context deploymentsJndiTree;
-
-    private Context globalJndiTree;
 
     private final ClusterableRequestHandler clusterableRequestHandler;
     private Context rootContext;
@@ -95,10 +103,9 @@ class JndiRequestHandler extends RequestHandler {
     JndiRequestHandler(final EjbDaemon daemon) throws Exception {
         super(daemon);
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-        ejbJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/remote");
-        deploymentsJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/Deployment");
-
-        globalJndiTree = (Context) containerSystem.getJNDIContext().lookup("openejb/global");
+        containerSystem.getJNDIContext().lookup("openejb/remote");
+        containerSystem.getJNDIContext().lookup("openejb/Deployment");
+        containerSystem.getJNDIContext().lookup("openejb/global");
 
         rootContext = containerSystem.getJNDIContext();
         try {
@@ -106,6 +113,10 @@ class JndiRequestHandler extends RequestHandler {
         } catch (NamingException ignore) {
         }
         clusterableRequestHandler = newClusterableRequestHandler();
+    }
+
+    public boolean isDebug() {
+        return logger.isDebugEnabled();
     }
 
     protected BasicClusterableRequestHandler newClusterableRequestHandler() {
@@ -210,12 +221,12 @@ class JndiRequestHandler extends RequestHandler {
 
     private void logRequestResponse(final JNDIRequest req, final JNDIResponse res) {
         final RequestInfos.RequestInfo info = RequestInfos.info();
-        final CountingInputStream cis = info.getInputStream();
-        final CountingOutputStream cos = info.getOutputStream();
+        final InputStream cis = info.getInputStream();
+        final OutputStream cos = info.getOutputStream();
 
-        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? cis.getCount() : 0)
+        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? CountingInputStream.class.cast(cis).getCount() : 0)
             + "b, remote-ip =" + info.ip
-            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? cos.getCount() : 0) + "b)");
+            + ") -- RESPONSE: " + res + " (size = " + (null != cos ? CountingOutputStream.class.cast(cos).getCount() : 0) + "b)");
     }
 
     private String getPrefix(final JNDIRequest req) throws NamingException {
@@ -290,9 +301,9 @@ class JndiRequestHandler extends RequestHandler {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ConnectionFactory.class.getName());
                 return;
-            } else if (object instanceof ORB) {
+            } else if (ORB_CLASS != null && ORB_CLASS.isInstance(object)) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
-                res.setResult(ORB.class.getName());
+                res.setResult(ORB_CLASS.getName());
                 return;
             } else if (object instanceof ValidatorFactory) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);

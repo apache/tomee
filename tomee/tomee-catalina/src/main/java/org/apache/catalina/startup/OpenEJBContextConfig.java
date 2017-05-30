@@ -39,7 +39,8 @@ import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.ServiceUtils;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.server.httpd.WebBeansFilter;
+import org.apache.openejb.server.httpd.EEFilter;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URLs;
@@ -61,7 +62,6 @@ import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.ResourceFactory;
 import org.apache.tomee.jasper.TomEEJasperInitializer;
 import org.apache.tomee.loader.TomcatHelper;
-import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
@@ -153,7 +153,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                         // add servlet to context
                         context.addChild(wrapper);
-                        context.addServletMapping(servlet.mappings.iterator().next(), wrapper.getName());
+                        context.addServletMappingDecoded(servlet.mappings.iterator().next(), wrapper.getName());
                     }
                     break;
                 }
@@ -405,13 +405,13 @@ public class OpenEJBContextConfig extends ContextConfig {
             return;
         }
 
-        if (WebBeansContext.currentInstance() != null) {
+        if (AppFinder.findAppContextOrWeb(context.getLoader().getClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE) != null) {
             final FilterDef asyncOwbFilter = new FilterDef();
             asyncOwbFilter.setAsyncSupported("true");
             asyncOwbFilter.setDescription("OpenEJB CDI Filter - to propagate @RequestScoped in async tasks");
             asyncOwbFilter.setDisplayName("OpenEJB CDI");
-            asyncOwbFilter.setFilterClass(WebBeansFilter.class.getName());
-            asyncOwbFilter.setFilterName(WebBeansFilter.class.getName());
+            asyncOwbFilter.setFilterClass(EEFilter.class.getName());
+            asyncOwbFilter.setFilterName(EEFilter.class.getName());
             context.addFilterDef(asyncOwbFilter);
 
             final FilterMap asyncOwbMapping = new FilterMap();
@@ -565,8 +565,18 @@ public class OpenEJBContextConfig extends ContextConfig {
                 if (webInfClassesAnnotationsProcessed.contains(info.name)) {
                     continue;
                 }
+
                 try {
-                    if (file.getAbsolutePath().startsWith(URLs.toFile(new URL(info.name)).getAbsolutePath())) {
+                    boolean doProcess = isIncludedIn(info.name, file);
+                    if (!doProcess) { // for sym links we can need to check each file for an exact matching
+                        for (final String path : info.list) {
+                            if (isIncludedIn(path, file)) {
+                                doProcess = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (doProcess) {
                         webInfClassesAnnotationsProcessed.add(info.name);
                         internalProcessAnnotationsStream(info.list, fragment, false);
                     }
@@ -708,16 +718,20 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
     }
 
-    private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
-        final File toFile = URLs.toFile(new URL(filePath));
+    private boolean isIncluded(final File root, final File clazz) {
         File file;
         try { // symb links
-            file = toFile.getCanonicalFile();
+            file = root.getCanonicalFile();
         } catch (final IOException e) {
-            file = toFile;
+            file = root;
         }
 
-        File current = classAsFile;
+        File current;
+        try { // symb links and windows long home names
+            current = clazz.getCanonicalFile();
+        } catch (final IOException e) {
+            current = clazz;
+        }
         while (current != null && current.exists()) {
             if (current.equals(file)) {
                 final File parent = current.getParentFile();
@@ -729,6 +743,10 @@ public class OpenEJBContextConfig extends ContextConfig {
             }
         }
         return false;
+    }
+
+    private boolean isIncludedIn(final String filePath, final File classAsFile) throws MalformedURLException {
+        return isIncluded(URLs.toFile(new URL(filePath)), classAsFile);
     }
 
 }

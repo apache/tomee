@@ -120,13 +120,14 @@ public class JtaEntityManager implements EntityManager, Serializable {
 
     public static boolean isJPA21(final EntityManagerFactory entityManagerFactory) {
         return ReloadableEntityManagerFactory.class.isInstance(entityManagerFactory) ?
-                isJPA21(ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getDelegate())
-                : hasMethod(entityManagerFactory, "createEntityManager", SynchronizationType.class);
+                hasMethod(
+                        ReloadableEntityManagerFactory.class.cast(entityManagerFactory).getEntityManagerFactoryCallable().getProvider(),
+                        "generateSchema", String.class, Map.class)
+                : hasMethod(entityManagerFactory.getClass(), "createEntityManager", SynchronizationType.class);
     }
 
-    private static boolean hasMethod(final Object object, final String name, final Class<?>... params) {
+    private static boolean hasMethod(final Class<?> objectClass, final String name, final Class<?>... params) {
         try {
-            final Class<?> objectClass = object.getClass();
             Boolean result = IS_JPA21.get(objectClass);
             if (result == null) {
                 result = !Modifier.isAbstract(objectClass.getMethod(name, params).getModifiers());

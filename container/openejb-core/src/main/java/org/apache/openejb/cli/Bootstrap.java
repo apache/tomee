@@ -17,12 +17,15 @@
 
 package org.apache.openejb.cli;
 
+import org.apache.openejb.loader.ClassPath;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemClassPath;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.util.StringTokenizer;
@@ -46,7 +49,7 @@ public class Bootstrap {
             }
         }
 
-        final String homeProperty = System.getProperty(OPENEJB_HOME_PROPERTY_NAME);
+        final String homeProperty = JavaSecurityManagers.getSystemProperty(OPENEJB_HOME_PROPERTY_NAME);
         if (homeProperty != null) {
             if (new File(homeProperty).exists()) {
                 return;
@@ -69,7 +72,7 @@ public class Bootstrap {
                     final File lib = jarFile.getParentFile();
                     final File home = lib.getParentFile().getCanonicalFile();
 
-                    System.setProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
+                    JavaSecurityManagers.setSystemProperty(OPENEJB_HOME_PROPERTY_NAME, home.getAbsolutePath());
                 }
             }
         } catch (final Exception e) {
@@ -81,15 +84,16 @@ public class Bootstrap {
         final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
         final String val = arg.substring(arg.indexOf("=") + 1);
 
-        System.setProperty(prop, val);
+        JavaSecurityManagers.setSystemProperty(prop, val);
     }
 
-    private static void setupClasspath() {
-        final String base = System.getProperty(OPENEJB_BASE_PROPERTY_NAME, "");
-        final String home = System.getProperty("catalina.home", System.getProperty(OPENEJB_HOME_PROPERTY_NAME, base));
+    private static ClassLoader setupClasspath() {
+        final String base = JavaSecurityManagers.getSystemProperty(OPENEJB_BASE_PROPERTY_NAME, "");
+        final String home = JavaSecurityManagers.getSystemProperty("catalina.home", JavaSecurityManagers.getSystemProperty(OPENEJB_HOME_PROPERTY_NAME, base));
         try {
             final File lib = new File(home + File.separator + "lib");
-            final SystemClassPath systemCP = new SystemClassPath();
+            final ClassPath systemCP = new SystemClassPath();
+            systemCP.getClassLoader();
             File config = new File(base, "conf/catalina.properties");
             if (!config.isFile()) {
                 config = new File(home, "conf/catalina.properties");
@@ -130,10 +134,12 @@ public class Bootstrap {
                 systemCP.addJarsToPath(lib);
                 systemCP.addJarToPath(lib.toURI().toURL());
             }
+            return systemCP.getClassLoader();
         } catch (final Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
             e.printStackTrace();
         }
+        return null;
     }
 
     /**
@@ -141,14 +147,30 @@ public class Bootstrap {
      */
     public static void main(final String[] args) throws Exception {
         setupHome(args);
-        setupClasspath();
+        final ClassLoader loader = setupClasspath();
+        if (loader != null) {
+            Thread.currentThread().setContextClassLoader(loader);
+            if (loader != ClassLoader.getSystemClassLoader()) {
+                System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
+            }
+        }
 
-        final Class<?> clazz = Bootstrap.class.getClassLoader().loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
-        final Main main = (Main) clazz.newInstance();
+        final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
         try {
-            main.main(args);
-        } catch (final SystemExitException e) {
-            System.exit(e.getExitCode());
+            final Object main = clazz.getConstructor().newInstance();
+            main.getClass().getMethod("main", String[].class).invoke(main, new Object[]{args});
+        } catch (final InvocationTargetException e) {
+            final Throwable cause = e.getCause();
+            if ("org.apache.openejb.cli.SystemExitException".equals(cause.getClass().getName())) {
+                System.exit(Number.class.cast(cause.getClass().getMethod("getExitCode").invoke(cause)).intValue());
+            }
+            if (Exception.class.isInstance(cause)) {
+                throw Exception.class.cast(cause);
+            }
+            if (Error.class.isInstance(cause)) {
+                throw Error.class.cast(cause);
+            }
+            throw new IllegalStateException(cause);
         }
     }
 

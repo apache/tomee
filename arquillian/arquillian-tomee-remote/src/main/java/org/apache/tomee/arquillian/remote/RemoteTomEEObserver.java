@@ -17,7 +17,7 @@
 
 package org.apache.tomee.arquillian.remote;
 
-import org.apache.openejb.cdi.ThreadSingletonServiceImpl;
+import org.apache.openejb.util.AppFinder;
 import org.apache.webbeans.config.WebBeansContext;
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -40,7 +40,8 @@ public class RemoteTomEEObserver {
     private InstanceProducer<Context> context;
 
     public void beforeSuite(@Observes final BeforeSuite event) {
-        final WebBeansContext webBeansContext = ThreadSingletonServiceImpl.get(Thread.currentThread().getContextClassLoader());
+        final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
         if (webBeansContext != null) {
             beanManager.set(webBeansContext.getBeanManagerImpl());
         }

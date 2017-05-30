@@ -20,9 +20,13 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.apache.webbeans.config.WebBeansContext;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 
-import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.ContextNotActiveException;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertTrue;
 
@@ -30,10 +34,10 @@ import static org.junit.Assert.assertTrue;
         @ContainerProperties.Property(name = "openejb.testing.start-cdi-contexts", value = "false")
 })
 @org.apache.openejb.testing.Classes(cdi = true, innerClassesAsBean = true)
-@RunWith(ApplicationComposer.class)
 public class ScopesRuleTest {
     @Rule
-    public final ScopesRule rule = new ScopesRule();
+    public final TestRule rule = RuleChain.outerRule(new ApplicationComposerRule(this))
+            .around(new ScopesRule());
 
     public static class Foo {
         public void touch() {
@@ -41,9 +45,17 @@ public class ScopesRuleTest {
         }
     }
 
+    @Inject
+    private BeanManager beanManager;
+
+    @Test(expected = ContextNotActiveException.class)
+    public void scopeDoesNotExist() {
+        beanManager.getContext(SessionScoped.class);
+    }
+
     @Test
-    @CdiScopes(RequestScoped.class)
+    @CdiScopes(SessionScoped.class)
     public void scopeExists() {
-        assertTrue(WebBeansContext.currentInstance().getContextsService().getCurrentContext(RequestScoped.class).isActive());
+        assertTrue(WebBeansContext.currentInstance().getContextsService().getCurrentContext(SessionScoped.class).isActive());
     }
 }

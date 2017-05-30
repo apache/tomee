@@ -29,8 +29,7 @@ public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestCli
         super.setUp();
         final Object obj = initialContext
             .lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
-        ejbLocalHome = (BasicStatelessLocalHome) javax.rmi.PortableRemoteObject
-            .narrow(obj, BasicStatelessLocalHome.class);
+        ejbLocalHome = (BasicStatelessLocalHome) obj;
         ejbLocalObject = ejbLocalHome.create();
     }
 

@@ -28,12 +28,13 @@ import org.apache.openejb.core.security.jacc.BasicPolicyConfiguration;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.PolicyConfigurationFactory;
-import javax.security.jacc.PolicyContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
@@ -60,7 +61,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * addition openejb-core classes.
  */
 public abstract class AbstractSecurityService implements DestroyableResource, SecurityService<UUID>, ThreadContextListener, BasicPolicyConfiguration.RoleResolver {
-
     private static final Map<Object, Identity> identities = new ConcurrentHashMap<Object, Identity>();
     protected static final ThreadLocal<Identity> clientIdentity = new ThreadLocal<Identity>();
     protected String defaultUser = "guest";
@@ -69,11 +69,11 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     protected SecurityContext defaultContext;
 
     public AbstractSecurityService() {
-        this(BasicJaccProvider.class.getName());
+        this(autoJaccProvider());
     }
 
     public AbstractSecurityService(final String jaccProvider) {
-        System.setProperty(JaccProvider.class.getName(), jaccProvider);
+        JavaSecurityManagers.setSystemProperty(JaccProvider.class.getName(), jaccProvider);
 
         installJacc();
 
@@ -88,6 +88,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void destroyResource() {
         // no-op
+    }
+
+    public void onLogout(final HttpServletRequest request) {
+        clientIdentity.remove();
     }
 
     public String getRealmName() {
@@ -145,36 +149,33 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         final String moduleID = newContext.getBeanContext().getModuleID();
-        PolicyContext.setContextID(moduleID);
-
-        Subject runAsSubject = getRunAsSubject(newContext.getBeanContext());
-        if (oldContext != null && runAsSubject == null) {
-            runAsSubject = getRunAsSubject(oldContext.getBeanContext());
-        }
+        JavaSecurityManagers.setContextID(moduleID);
 
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
             (providedSecurityContext != null ? providedSecurityContext.context : null);
-        if (providedSecurityContext == null) {
-            if (runAsSubject != null) {
-
-                securityContext = new SecurityContext(runAsSubject);
-
-            } else if (securityContext == null) {
-
-                final Identity identity = clientIdentity.get();
-                if (identity != null) {
-                    securityContext = new SecurityContext(identity.subject);
-                } else {
-                    securityContext = defaultContext;
-                }
+        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
+            final Identity identity = clientIdentity.get();
+            if (identity != null) {
+                securityContext = new SecurityContext(identity.subject);
+            } else {
+                securityContext = defaultContext;
             }
         }
 
         newContext.set(SecurityContext.class, securityContext);
     }
 
-    protected Subject getRunAsSubject(final BeanContext callingBeanContext) {
+    public UUID overrideWithRunAsContext(final ThreadContext ctx, final BeanContext newContext, final BeanContext oldContext) {
+        Subject runAsSubject = getRunAsSubject(newContext);
+        if (oldContext != null && runAsSubject == null) {
+            runAsSubject = getRunAsSubject(oldContext);
+        }
+        ctx.set(SecurityContext.class, new SecurityContext(runAsSubject));
+        return disassociate();
+    }
+
+    public Subject getRunAsSubject(final BeanContext callingBeanContext) {
         if (callingBeanContext == null) {
             return null;
         }
@@ -188,9 +189,9 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
     @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         if (reenteredContext == null) {
-            PolicyContext.setContextID(null);
+            JavaSecurityManagers.setContextID(null);
         } else {
-            PolicyContext.setContextID(reenteredContext.getBeanContext().getModuleID());
+            JavaSecurityManagers.setContextID(reenteredContext.getBeanContext().getModuleID());
         }
     }
 
@@ -216,8 +217,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void associate(final UUID securityIdentity) throws LoginException {
-        if (clientIdentity.get() != null) {
-            throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite.");
+        final Identity existing = clientIdentity.get();
+        if (existing != null && existing.getToken() != null /*can be null if enterWebApp is called, this is not a login without a token*/) {
+            throw new LoginException("Thread already associated with a client identity.  Refusing to overwrite. " +
+                    "(current=" + existing.getToken() + "/" + existing.getSubject() + ", refused=" + securityIdentity + ")");
         }
         if (securityIdentity == null) {
             throw new NullPointerException("The security token passed in is null");
@@ -326,13 +329,19 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         return true;
     }
 
+    protected static String autoJaccProvider() {
+        return SystemInstance.isInitialized() ?
+                SystemInstance.get().getProperty(JaccProvider.class.getName(), BasicJaccProvider.class.getName()) :
+                BasicJaccProvider.class.getName();
+    }
+
     protected static void installJacc() {
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         final String providerKey = "javax.security.jacc.PolicyConfigurationFactory.provider";
         try {
-            if (System.getProperty(providerKey) == null) {
-                System.setProperty(providerKey, JaccProvider.Factory.class.getName());
+            if (JavaSecurityManagers.getSystemProperty(providerKey) == null) {
+                JavaSecurityManagers.setSystemProperty(providerKey, JaccProvider.Factory.class.getName());
                 final ClassLoader cl = JaccProvider.Factory.class.getClassLoader();
                 Thread.currentThread().setContextClassLoader(cl);
             }
@@ -342,7 +351,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             // from the equivalent call in JaccPermissionsBuilder can be avoided.
             PolicyConfigurationFactory.getPolicyConfigurationFactory();
         } catch (final Exception e) {
-            throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + System.getProperty(providerKey), e);
+            throw new IllegalStateException("Could not install JACC Policy Configuration Factory: " + JavaSecurityManagers.getSystemProperty(providerKey), e);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }

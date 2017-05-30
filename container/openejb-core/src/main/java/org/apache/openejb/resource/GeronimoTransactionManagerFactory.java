@@ -36,6 +36,8 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -119,8 +121,11 @@ public class GeronimoTransactionManagerFactory {
     }
 
     public static class DestroyableTransactionManager extends GeronimoTransactionManager implements DestroyableResource {
+        private final TransactionLog txLog;
+
         public DestroyableTransactionManager(final int defaultTransactionTimeoutSeconds, final XidFactory xidFactory, final TransactionLog transactionLog) throws XAException {
             super(defaultTransactionTimeoutSeconds, xidFactory, transactionLog);
+            this.txLog = transactionLog;
         }
 
         @Override
@@ -138,6 +143,13 @@ public class GeronimoTransactionManagerFactory {
                 timer.cancel();
             } catch (final Throwable notImportant) {
                 // no-op
+            }
+            if (txLog != null) {
+                try {
+                    HOWLLog.class.cast(txLog).doStop();
+                } catch (final Throwable /*Exception + NoClassDefFoundError*/ e) {
+                    Logger.getInstance(LogCategory.OPENEJB, DestroyableTransactionManager.class).error(e.getMessage(), e);
+                }
             }
         }
     }

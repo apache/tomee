@@ -38,6 +38,7 @@ import javax.xml.ws.handler.PortInfo;
 
 import org.apache.openejb.Injection;
 import org.apache.openejb.InjectionProcessor;
+import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -86,7 +87,8 @@ public class HandlerResolverImpl implements HandlerResolver {
 
         final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
         for (final HandlerData handler : handlerChain.getHandlers()) {
-            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
+            final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
+                    Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
             if (webBeansContext != null) { // cdi
                 final BeanManagerImpl bm = webBeansContext.getBeanManagerImpl();
                 if (bm.isInUse()) {

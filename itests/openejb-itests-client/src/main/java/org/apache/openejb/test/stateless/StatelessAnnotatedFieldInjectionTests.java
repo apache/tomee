@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.test.stateless;
 
-import org.apache.openejb.test.stateful.StatefulTestClient;
-import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.TestManager;
+import org.apache.openejb.test.stateful.StatefulTestClient;
 
 /**
  * [4] Should be run as the fourth test suite of the StatefulTestClients
@@ -35,7 +35,7 @@ public class StatelessAnnotatedFieldInjectionTests extends StatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("AnnotatedFieldInjectionStatelessBean");
-        ejbHome = (EncStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatelessHome.class);
+        ejbHome = (EncStatelessHome) obj;
         ejbObject = ejbHome.create();
 
         /*[2] Create database table */

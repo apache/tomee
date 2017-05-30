@@ -17,6 +17,8 @@
 
 package org.apache.openejb.ri.sp;
 
+import org.apache.openejb.util.JavaSecurityManagers;
+
 import javax.security.jacc.PolicyConfiguration;
 import javax.security.jacc.PolicyConfigurationFactory;
 import javax.security.jacc.PolicyContextException;
@@ -29,7 +31,7 @@ import java.security.PermissionCollection;
 public class PseudoPolicyConfigurationFactory extends PolicyConfigurationFactory {
 
     public static void install() {
-        System.setProperty("javax.security.jacc.PolicyConfigurationFactory.provider", PseudoPolicyConfigurationFactory.class.getName());
+        JavaSecurityManagers.setSystemProperty("javax.security.jacc.PolicyConfigurationFactory.provider", PseudoPolicyConfigurationFactory.class.getName());
     }
 
     public PolicyConfiguration getPolicyConfiguration(final String contextID, final boolean remove) throws PolicyContextException {

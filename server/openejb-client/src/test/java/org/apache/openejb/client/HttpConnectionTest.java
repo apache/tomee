@@ -32,6 +32,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.fail;
+
 public class HttpConnectionTest {
     private HttpServer server;
 
@@ -46,6 +48,18 @@ public class HttpConnectionTest {
 
                 final OutputStream responseBody = exchange.getResponseBody();
                 responseBody.write("secure page".getBytes());
+                final String query = exchange.getRequestURI().getQuery();
+                if (query != null) {
+                    responseBody.write(query.getBytes());
+                }
+                final String authorization = exchange.getRequestHeaders().getFirst("Authorization");
+                if (authorization != null) {
+                    responseBody.write(authorization.getBytes("UTF-8"));
+                }
+                final String authorization2 = exchange.getRequestHeaders().getFirst("AltAuthorization");
+                if (authorization2 != null) {
+                    responseBody.write(("alt" + authorization2).getBytes("UTF-8"));
+                }
                 responseBody.close();
             }
         });
@@ -87,5 +101,98 @@ public class HttpConnectionTest {
 
             Assert.assertTrue("should contain", sb.toString().contains("secure"));
         }
+    }
+
+    @Test
+    public void httpBasic() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=Basic%20token";
+        for (int i = 0; i < 3; i++) {
+            final Connection connection = factory.getConnection(new URI(url));
+
+            BufferedReader br = null;
+            final StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                connection.close();
+            }
+
+            Assert.assertTrue("should contain", sb.toString().contains("secure pageBasic token"));
+        }
+    }
+
+    @Test
+    public void httpBasicSpecificConfig() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?basic.password=pwd&basic.username=test&authorizationHeader=AltAuthorization";
+        for (int i = 0; i < 3; i++) {
+            final Connection connection = factory.getConnection(new URI(url));
+
+            BufferedReader br = null;
+            final StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                connection.close();
+            }
+
+            Assert.assertTrue("should contain", sb.toString().contains("secure pagealtBasic dGVzdDpwd2Q="));
+        }
+    }
+
+    @Test
+    public void complexURIAuthorization() throws IOException, URISyntaxException {
+        final String baseHttp = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=";
+        final String uri = "failover:sticky+random:" + baseHttp + "Basic%20ABCD&" + baseHttp + "Basic%20EFG";
+        final Connection connection = ConnectionManager.getConnection(new URI(uri));
+        BufferedReader br = null;
+        final StringBuilder sb = new StringBuilder();
+        String line;
+        try {
+            br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (final IOException e) {
+            fail(e.getMessage());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            connection.close();
+        }
+        final String out = sb.toString();
+        Assert.assertTrue(out, out.contains("secure pagehttp://localhost:" + server.getAddress().getPort() + "/eBasic ABCD"));
     }
 }

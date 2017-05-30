@@ -57,14 +57,14 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
             // The fall back here is that if log4j.configuration system property is set, then that configuration file will be used.
             e.printStackTrace();
         }
-        System.setProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Log4jLoggerFactory");
+        JavaSecurityManagers.setSystemProperty("openwebbeans.logging.factory", "org.apache.openejb.cdi.logging.Log4jLoggerFactory");
     }
 
     private void configureInternal() throws IOException {
         // OpenJPA should use Log4j also
-        System.setProperty("openjpa.Log", "log4j");
-        System.setProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
-        System.setProperty(WebBeansLoggerFacade.OPENWEBBEANS_LOGGING_FACTORY_PROP, Log4jLoggerFactory.class.getName());
+        JavaSecurityManagers.setSystemProperty("openjpa.Log", "log4j");
+        JavaSecurityManagers.setSystemProperty("org.apache.cxf.Logger", "org.apache.cxf.common.logging.Log4jLogger");
+        JavaSecurityManagers.setSystemProperty(WebBeansLoggerFacade.OPENWEBBEANS_LOGGING_FACTORY_PROP, Log4jLoggerFactory.class.getName());
 
         final boolean embedded = SystemInstance.get().getOptions().get("openejb.logging.embedded", false);
 

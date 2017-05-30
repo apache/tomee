@@ -53,7 +53,7 @@ public class PropertiesService {
 
     public PropertiesService() {
         if (queryEnvOnInit) {
-            props.putAll(System.getProperties());
+            props.putAll(JavaSecurityManagers.getSystemProperties());
         }
     }
 
@@ -68,7 +68,7 @@ public class PropertiesService {
      */
     public String setProperty(final String name, final String value) {
         if (passOn) {
-            System.setProperty(name, value);
+            JavaSecurityManagers.setSystemProperty(name, value);
         }
         return (String) props.setProperty(name, value);
     }

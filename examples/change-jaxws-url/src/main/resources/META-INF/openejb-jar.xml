@@ -15,11 +15,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
-  <enterprise-beans>
-    <session>
-      <ejb-name>Rot13</ejb-name>
-      <web-service-address>/tool/rot13</web-service-address>
-    </session>
-  </enterprise-beans>
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+  <ejb-deployment ejb-name="Rot13">
+    <properties>
+      openejb.webservice.deployment.address = /tool/rot13
+    </properties>
+  </ejb-deployment>
 </openejb-jar>

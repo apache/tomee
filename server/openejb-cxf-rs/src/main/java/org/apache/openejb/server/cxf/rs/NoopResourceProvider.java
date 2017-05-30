@@ -29,7 +29,7 @@ public class NoopResourceProvider implements ResourceProvider {
     }
 
     @Override
-    public Object getInstance(Message m) {
+    public Object getInstance(final Message m) {
         return instance;
     }
 

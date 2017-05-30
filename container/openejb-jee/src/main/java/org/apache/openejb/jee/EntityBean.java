@@ -105,6 +105,7 @@ import java.util.Map;
     "preDestroy",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "securityRoleRef",
     "securityIdentity",
     "query"
@@ -170,6 +171,8 @@ public class EntityBean implements RemoteBean {
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    @XmlElement(name = "jms-destination")
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     @XmlElement(name = "security-role-ref", required = true)
     protected List<SecurityRoleRef> securityRoleRef;
     @XmlElement(name = "security-identity")
@@ -612,5 +615,15 @@ public class EntityBean implements RemoteBean {
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 }

@@ -28,9 +28,11 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppBuilder;
+import org.apache.openejb.cdi.CdiBuilder;
 import org.apache.openejb.cdi.CdiScanner;
 import org.apache.openejb.cdi.OptimizedLoaderService;
 import org.apache.openejb.cdi.ScopeHelper;
+import org.apache.openejb.cdi.ThreadSingletonService;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.ConnectorModule;
@@ -72,6 +74,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.rest.RESTResourceFinder;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.testing.rest.ContextProvider;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
@@ -728,9 +731,9 @@ public class ApplicationComposers {
 
         enrich(inputTestInstance, context);
 
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+        JavaSecurityManagers.setSystemProperty(Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
 
-        System.getProperties().put(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
+        JavaSecurityManagers.setSystemProperty(OPENEJB_APPLICATION_COMPOSER_CONTEXT, appContext.getGlobalJndiContext());
 
         final List<Field> fields = new ArrayList<>(testClassFinder.findAnnotatedFields(AppResource.class));
         fields.addAll(testClassFinder.findAnnotatedFields(org.apache.openejb.junit.AppResource.class));
@@ -979,7 +982,7 @@ public class ApplicationComposers {
         }
     }
 
-    private Collection<File> findFiles(final Jars jarsAnnotation) {
+    public static Collection<File> findFiles(final Jars jarsAnnotation) {
         if (jarsAnnotation == null) {
             return null;
         }
@@ -1183,12 +1186,15 @@ public class ApplicationComposers {
             }
 
             final File file = URLs.toFile(url);
-            if (file.getName().endsWith("persistence.xml")) {
+            final String filename = file.getName();
+            if (filename.endsWith("persistence.xml")) {
                 final String parent = file.getParentFile().getName();
                 if (parent.equalsIgnoreCase("META-INF")) {
                     return file.getParentFile().getParentFile().getAbsolutePath();
                 }
                 return file.getParentFile().getAbsolutePath();
+            } else if (filename.endsWith(".jar")) {
+                return file.toURI().toURL().toExternalForm();
             }
             return url.toExternalForm();
         } catch (final IOException e) {
@@ -1226,7 +1232,7 @@ public class ApplicationComposers {
         return new HashMap<>();
     }
 
-    private IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others, final String[] excludes) {
+    private static IAnnotationFinder finderFromClasses(final DeploymentModule module, final Class<?>[] value, final Collection<File> others, final String[] excludes) {
         final Collection<Archive> archives = new ArrayList<>(1 + (others == null ? 0 : others.size()));
 
         final Filter filter = excludes == null || excludes.length == 0 ? null : Filters.invert(Filters.prefixes(excludes));
@@ -1284,7 +1290,7 @@ public class ApplicationComposers {
     }
 
     public void startContainer(final Object instance) throws Exception {
-        originalProperties = (Properties) System.getProperties().clone();
+        originalProperties = (Properties) JavaSecurityManagers.getSystemProperties().clone();
         originalLoader = Thread.currentThread().getContextClassLoader();
         fixFakeClassFinder(instance);
 
@@ -1373,6 +1379,9 @@ public class ApplicationComposers {
         }
 
         SystemInstance.init(configuration);
+        if (SystemInstance.get().getComponent(ThreadSingletonService.class) == null) {
+            CdiBuilder.initializeOWB();
+        }
         for (final Map.Entry<Object, ClassFinder> finder : testClassFinders.entrySet()) {
             for (final Field field : finder.getValue().findAnnotatedFields(RandomPort.class)) {
                 if (!field.isAccessible()) {
@@ -1482,7 +1491,7 @@ public class ApplicationComposers {
             for (final String name : propertiesToSetAgain) {
                 final String value = PropertyPlaceHolderHelper.simpleValue(SystemInstance.get().getProperty(name));
                 configuration.put(name, value);
-                System.setProperty(name, value); // done lazily to support placeholders so container will not do it here
+                JavaSecurityManagers.setSystemProperty(name, value); // done lazily to support placeholders so container will not do it here
             }
             propertiesToSetAgain.clear();
         }
@@ -1492,6 +1501,7 @@ public class ApplicationComposers {
         private final Class<? extends Extension>[] extensions;
 
         protected ExtensionAwareOptimizedLoaderService(final Class<? extends Extension>[] extensions) {
+            super(new Properties());
             this.extensions = extensions;
         }
 

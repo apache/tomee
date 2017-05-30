@@ -20,6 +20,7 @@ package org.apache.openejb.core.webservices;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.w3c.dom.Element;
@@ -60,6 +61,8 @@ import java.util.concurrent.Executor;
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
 
+    private static final String JAXWSPROVIDER_PROPERTY = Provider.class.getName();
+
     //
     // Magic to get our provider wrapper installed with the PortRefData
     //
@@ -70,13 +73,15 @@ public class ProviderWrapper extends Provider {
         // Axis JAXWS api is non compliant and checks system property before classloader
         // so we replace system property so this wrapper is selected.  The original value
         // is saved into an openejb property so we can load the class in the find method
-        final String oldProperty = System.getProperty(JAXWSPROVIDER_PROPERTY);
+        final String oldProperty = JavaSecurityManagers.getSystemProperty(JAXWSPROVIDER_PROPERTY);
         if (oldProperty != null && !oldProperty.equals(ProviderWrapper.class.getName())) {
-            System.setProperty("openejb." + JAXWSPROVIDER_PROPERTY, oldProperty);
-            System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+            JavaSecurityManagers.setSystemProperty("openejb." + JAXWSPROVIDER_PROPERTY, oldProperty);
+            JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
         }
 
-        System.setProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        if (oldProperty == null || !oldProperty.equals(ProviderWrapper.class.getName())) {
+            JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        }
 
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {
@@ -360,7 +365,7 @@ public class ProviderWrapper extends Provider {
 
         // 0. System.getProperty("openejb.javax.xml.ws.spi.Provider")
         // This is so those using old axis rules still work as expected
-        String providerClass = System.getProperty("openejb." + JAXWSPROVIDER_PROPERTY);
+        String providerClass = JavaSecurityManagers.getSystemProperty("openejb." + JAXWSPROVIDER_PROPERTY);
         Provider provider = createProviderInstance(providerClass, classLoader);
         if (provider != null) {
             return provider;
@@ -395,7 +400,7 @@ public class ProviderWrapper extends Provider {
         }
 
         // 2. $java.home/lib/jaxws.properties
-        final String javaHome = System.getProperty("java.home");
+        final String javaHome = JavaSecurityManagers.getSystemProperty("java.home");
         final File jaxrpcPropertiesFile = new File(new File(javaHome, "lib"), "jaxrpc.properties");
         if (jaxrpcPropertiesFile.exists()) {
             try {
@@ -412,7 +417,7 @@ public class ProviderWrapper extends Provider {
         }
 
         // 3. System.getProperty("javax.xml.ws.spi.Provider")
-        providerClass = System.getProperty(JAXWSPROVIDER_PROPERTY);
+        providerClass = JavaSecurityManagers.getSystemProperty(JAXWSPROVIDER_PROPERTY);
         provider = createProviderInstance(providerClass, classLoader);
         if (provider != null) {
             return provider;
@@ -421,14 +426,14 @@ public class ProviderWrapper extends Provider {
 
         // 4. Use javax.xml.ws.spi.Provider default
         try {
-            System.getProperties().remove(JAXWSPROVIDER_PROPERTY);
+            JavaSecurityManagers.removeSystemProperty(JAXWSPROVIDER_PROPERTY);
             provider = Provider.provider();
             if (provider != null && !provider.getClass().getName().equals(ProviderWrapper.class.getName())) {
                 return provider;
             }
         } finally {
             // restore original jax provider property
-            System.setProperty(JAXWSPROVIDER_PROPERTY, providerClass);
+            JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, providerClass);
         }
 
         throw new WebServiceException("No " + JAXWSPROVIDER_PROPERTY + " implementation found");
@@ -464,9 +469,9 @@ public class ProviderWrapper extends Provider {
                     tempFile = File.createTempFile("openejb-jaxws-provider", "tmp", tmp);
                 }
                 tempFile.deleteOnExit();
-                final OutputStream out = IO.write(tempFile);
-                out.write(ProviderWrapper.class.getName().getBytes());
-                out.close();
+                try (final OutputStream out = IO.write(tempFile)) {
+                    out.write(ProviderWrapper.class.getName().getBytes());
+                }
                 PROVIDER_URL = tempFile.toURI().toURL();
             } catch (final IOException e) {
                 throw new OpenEJBRuntimeException("Cound not create openejb-jaxws-provider file");

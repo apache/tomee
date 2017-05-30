@@ -58,7 +58,7 @@ public class SuspendedTest {
             }
         }.start();
         final WebClient client = WebClient.create(url.toExternalForm() + "touch");
-        while (!client.reset().path("check").accept(TEXT_PLAIN_TYPE).get(Boolean.class)) {
+        for (int i = 0; i < 120 && !client.reset().path("check").accept(TEXT_PLAIN_TYPE).get(Boolean.class); i++) {
             sleep(1000);
         }
         client.reset().path("answer").post("hello");

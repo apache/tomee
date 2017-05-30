@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.rmi.PortableRemoteObject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -35,7 +34,7 @@ public class UnknownHomeIntfcTests extends UnknownCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
-        ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
+        ejbHome = (UnknownCmpHome) obj;
     }
 
     //===============================
@@ -89,7 +88,7 @@ public class UnknownHomeIntfcTests extends UnknownCmpTestClient {
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
             for (final Object object : objects) {
-                ejbObject = (UnknownCmpObject) PortableRemoteObject.narrow(object, UnknownCmpObject.class);
+                ejbObject = (UnknownCmpObject) object;
 
                 // This could be problematic, it assumes the order of the collection.
                 final Object foundKey = ejbObject.getPrimaryKey();

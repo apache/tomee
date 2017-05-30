@@ -288,7 +288,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
 
         logger.info("Importing a Tomcat Resource with id '" + resourceInfo.id + "' of type '" + type + "'.");
         try {
-            assembler.createResource(resourceInfo);
+            assembler.createResource(null, resourceInfo);
         } catch (final OpenEJBException e) {
             logger.error("Unable to bind Global Tomcat resource " + name + " into OpenEJB", e);
         }

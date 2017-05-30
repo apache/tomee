@@ -42,8 +42,8 @@ public class JsCustomizertest {
         "" +
         "var junit = resolver.resolve('junit', 'junit', '4.12');" +
         "Files.copy(junit.toPath(), new File(catalinaBase, 'lib/JsCustomizertest.jar').toPath(), StandardCopyOption.REPLACE_EXISTING);"
-    );
 
+    );
     @Config
     private final File catalinaBase = new File("target/JsCustomizertest");
 

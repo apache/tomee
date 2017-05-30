@@ -102,7 +102,7 @@ public class SuperProperties extends Properties {
     /**
      * The line separator to use when storing.  Defaults to system line separator.
      */
-    protected String lineSeparator = System.getProperty("line.separator");
+    protected String lineSeparator = JavaSecurityManagers.getSystemProperty("line.separator");
 
     /**
      * Number of spaces to indent each line of the properties file.

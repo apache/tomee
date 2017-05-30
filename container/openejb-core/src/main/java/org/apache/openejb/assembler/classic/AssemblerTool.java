@@ -20,17 +20,18 @@ package org.apache.openejb.assembler.classic;
 import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Messages;
 import org.apache.openejb.util.SafeToolkit;
 import org.apache.openejb.util.proxy.ProxyFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class AssemblerTool {
 
@@ -51,7 +52,7 @@ public class AssemblerTool {
     protected Properties props = new Properties();
 
     static {
-        System.setProperty("noBanner", "true");
+        JavaSecurityManagers.setSystemProperty("noBanner", "true");
     }
 
     protected static void checkImplementation(final Class intrfce, final Class factory, final String serviceType, final String serviceName) throws OpenEJBException {

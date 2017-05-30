@@ -33,10 +33,14 @@ import java.util.logging.Logger;
 public class RoutedDataSource implements DataSource {
     private static final String OPENEJB_RESOURCE_PREFIX = "openejb:Resource/";
 
-    private Router delegate;
+    protected Router delegate;
 
     public RoutedDataSource() {
         // no-op
+    }
+
+    public RoutedDataSource(final Router router) {
+        delegate = router;
     }
 
     public RoutedDataSource(final String router) {

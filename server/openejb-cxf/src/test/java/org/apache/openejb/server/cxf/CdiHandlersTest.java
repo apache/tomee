@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.enterprise.context.Dependent;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
@@ -73,6 +74,7 @@ public class CdiHandlersTest {
         assertTrue(SimpleHandler.post);
     }
 
+    @Dependent
     public static class ACdiSimpleTaste {
         public String ok() {
             return "ok";

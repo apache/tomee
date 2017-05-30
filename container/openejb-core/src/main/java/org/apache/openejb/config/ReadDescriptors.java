@@ -825,7 +825,7 @@ public class ReadDescriptors implements DynamicDeployer {
     public static WebApp readWebApp(final URL url) throws OpenEJBException {
         final WebApp webApp;
         try {
-            webApp = (WebApp) WebXml.unmarshal(url);
+            webApp = WebXml.unmarshal(url);
         } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
         } catch (final JAXBException e) {
@@ -840,7 +840,7 @@ public class ReadDescriptors implements DynamicDeployer {
 
     public static TldTaglib readTldTaglib(final URL url) throws OpenEJBException {
         // TOMEE-164 Optimization on reading built-in tld files
-        if (url.getPath().contains("jstl-1.2.jar")) {
+        if (url.getPath().contains("jstl-1.2.jar") || (url.getPath().contains("taglibs-standard-") && url.getPath().contains(".jar!"))) {
             return SKIP_TAGLIB;
         }
         if (url.getPath().contains("myfaces-impl")) { // we should return SKIP_TAGLIB too
@@ -931,18 +931,30 @@ public class ReadDescriptors implements DynamicDeployer {
         public URL getUrl() {
             return url;
         }
+
+        @Override
+        public String toString() {
+            return "UrlSource{url=" + url + '}';
+        }
     }
 
     public static class StringSource implements Source {
         private final byte[] bytes;
+        private final String toString;
 
         public StringSource(final String content) {
+            toString = content;
             bytes = content.getBytes();
         }
 
         @Override
         public InputStream get() throws IOException {
             return new ByteArrayInputStream(bytes);
+        }
+
+        @Override
+        public String toString() {
+            return "StringSource{content=" + toString + '}';
         }
     }
 }

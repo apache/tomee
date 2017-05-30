@@ -57,12 +57,12 @@ public class FailoverConnectionFactory implements ConnectionFactory {
         // failover:sticky:ejbd://foo:4201,ejbd://bar:4202
 
         // trim off the "failover:"
-        final String remainder = failoverUri.getSchemeSpecificPart();
+        final String remainder = failoverUri.getRawSchemeSpecificPart();
 
         final URI uri = URI.create(remainder);
 
         String strategy = uri.getScheme();
-        String servers = uri.getSchemeSpecificPart();
+        String servers = uri.getRawSchemeSpecificPart();
 
         if (servers.startsWith("//")) {
             strategy = "default";

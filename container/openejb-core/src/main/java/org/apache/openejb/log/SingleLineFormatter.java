@@ -17,13 +17,15 @@
 
 package org.apache.openejb.log;
 
+import org.apache.openejb.util.JavaSecurityManagers;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 public class SingleLineFormatter extends Formatter {
-    private static final String SEP = System.getProperty("line.separator", "\n");
+    private static final String SEP = JavaSecurityManagers.getSystemProperty("line.separator", "\n");
 
     @Override
     public synchronized String format(final LogRecord record) {

@@ -17,6 +17,8 @@
 
 package org.apache.openejb.table;
 
+import org.apache.openejb.util.JavaSecurityManagers;
+
 import java.io.PrintStream;
 
 public class Line {
@@ -26,7 +28,7 @@ public class Line {
     public static final char EMPTY_CHAR = ' ';
 
     private final String[] columns;
-    private String cr = System.getProperty("line.separator");
+    private String cr = JavaSecurityManagers.getSystemProperty("line.separator");
 
     public Line(final String... columns) {
         this.columns = columns;

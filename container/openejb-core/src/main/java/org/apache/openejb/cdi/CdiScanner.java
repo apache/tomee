@@ -205,7 +205,7 @@ public class CdiScanner implements ScannerService {
             }
         }
     }
-    private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
+    private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader,final ClassLoaderComparator comparator,
                            final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
                            final BeanArchiveService beanArchiveService, final boolean openejb,
                            final BeansInfo.BDAInfo bda) {

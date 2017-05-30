@@ -39,6 +39,27 @@ public class CountingInputStream extends InputStream {
     }
 
     @Override
+    public int read(final byte[] b) throws IOException {
+        final int read = delegate.read(b);
+        count += read;
+        return read;
+    }
+
+    @Override
+    public int read(final byte[] b, final int off, final int len) throws IOException {
+        final int read = delegate.read(b, off, len);
+        count += read;
+        return read;
+    }
+
+    @Override
+    public long skip(final long n) throws IOException {
+        final long skip = delegate.skip(n);
+        count += skip;
+        return skip;
+    }
+
+    @Override
     public int available() throws IOException {
         return delegate.available();
     }
@@ -49,7 +70,7 @@ public class CountingInputStream extends InputStream {
     }
 
     @Override
-    public void mark(int readlimit) {
+    public void mark(final int readlimit) {
         delegate.mark(readlimit);
     }
 

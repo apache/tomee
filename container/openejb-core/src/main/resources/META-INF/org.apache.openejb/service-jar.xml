@@ -325,6 +325,7 @@
 
     CloseTimeout = 5 minutes
 
+    # if set to true,
     # back to previous behavior (TomEE 1.x) where 1 scheduler thread was used for stateless eviction
     # by bean (ie for 500 stateless beans you get 500 eviction threads)
     UseOneSchedulerThreadByBean = false
@@ -481,7 +482,7 @@
 
     # Specifies the activation spec class
 
-    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
+    ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
 
     # Specifies the maximum number of bean instances that are
     # allowed to exist for each MDB deployment.
@@ -589,7 +590,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     # Determines wether or not this data source should be JTA managed
     # or user managed.  If set to 'true' it will automatically be enrolled
@@ -621,6 +622,8 @@
     Password =
 
     PasswordCipher = PlainText
+
+    OpenEJBResourceClasspath = false
   </ServiceProvider>
 
   <ServiceProvider
@@ -628,7 +631,7 @@
           service="Resource"
           types="javax.sql.DataSource, DataSource"
           factory-name="create"
-          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime"
+          constructor="ServiceId, JtaManaged, JdbcDriver, Definition, MaxWaitTime, TimeBetweenEvictionRuns, MinEvictableIdleTime, OpenEJBResourceClasspath"
           class-name="org.apache.openejb.resource.jdbc.DataSourceFactory">
     JtaManaged = false
 
@@ -649,6 +652,8 @@
     Password =
 
     PasswordCipher = PlainText
+
+    OpenEJBResourceClasspath = false
   </ServiceProvider>
 
   <!--

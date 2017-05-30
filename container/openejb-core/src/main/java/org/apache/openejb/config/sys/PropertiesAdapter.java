@@ -18,6 +18,7 @@
 package org.apache.openejb.config.sys;
 
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.SuperProperties;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -44,7 +45,7 @@ public class PropertiesAdapter extends XmlAdapter<String, Properties> {
 
         if (!(properties instanceof SuperProperties)) {
             // First comment is added by properties.store()
-            string = string.replaceFirst("#.*?" + System.getProperty("line.separator"), "");
+            string = string.replaceFirst("#.*?" + JavaSecurityManagers.getSystemProperty("line.separator"), "");
         }
 
         return string;

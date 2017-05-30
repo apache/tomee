@@ -17,13 +17,25 @@
 
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.OpenEJB;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
+import org.apache.webbeans.config.WebBeansContext;
+import org.apache.webbeans.container.InjectableBeanManager;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.ValidationMode;
 import javax.persistence.spi.PersistenceProvider;
+import javax.transaction.Transaction;
 import javax.validation.ValidatorFactory;
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -35,14 +47,33 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
     private final String persistenceProviderClassName;
     private final PersistenceUnitInfoImpl unitInfo;
     private final Map<ComparableValidationConfig, ValidatorFactory> potentialValidators;
+    private final boolean cdi;
     private ClassLoader appClassLoader;
+    private Class<?> provider;
 
     public EntityManagerFactoryCallable(final String persistenceProviderClassName, final PersistenceUnitInfoImpl unitInfo,
-                                        final ClassLoader cl, final Map<ComparableValidationConfig, ValidatorFactory> validators) {
+                                        final ClassLoader cl, final Map<ComparableValidationConfig, ValidatorFactory> validators,
+                                        final boolean hasCdi) {
         this.persistenceProviderClassName = persistenceProviderClassName;
         this.unitInfo = unitInfo;
         this.appClassLoader = cl;
         this.potentialValidators = validators;
+        this.cdi = hasCdi;
+    }
+
+    public Class<?> getProvider() {
+        if (provider != null) { // no need of thread safety
+            return provider;
+        }
+        final ClassLoader old = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(appClassLoader);
+        try {
+            return (provider = appClassLoader.loadClass(persistenceProviderClassName));
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
     }
 
     @Override
@@ -58,14 +89,33 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validation.factory", new ValidatorFactoryWrapper(potentialValidators));
             }
+            if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
+                    && "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jpa.cdi", "true"))) {
+                properties.put("javax.persistence.bean.manager",
+                        Proxy.newProxyInstance(appClassLoader, new Class<?>[]{BeanManager.class}, new BmHandler()));
+            }
 
             customizeProperties(properties);
 
-            final EntityManagerFactory emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            // ensure no tx is there cause a managed connection would fail if the provider setAutocCommit(true) and some hib* have this good idea
+            final Transaction transaction;
+            if (unitInfo.isLazilyInitialized()) {
+                transaction = OpenEJB.getTransactionManager().suspend();
+            } else {
+                transaction = null;
+            }
+            final EntityManagerFactory emf;
+            try {
+                emf = persistenceProvider.createContainerEntityManagerFactory(unitInfo, properties);
+            } finally {
+                if (unitInfo.isLazilyInitialized() && transaction != null) {
+                    OpenEJB.getTransactionManager().resume(transaction);
+                }
+            }
 
             if (unitInfo.getProperties() != null
-                && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
-                || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
+                    && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty(OPENEJB_JPA_INIT_ENTITYMANAGER))
+                    || SystemInstance.get().getOptions().get(OPENEJB_JPA_INIT_ENTITYMANAGER, false)) {
                 emf.createEntityManager().close();
             }
 
@@ -97,5 +147,31 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     public void overrideClassLoader(final ClassLoader loader) {
         appClassLoader = loader;
+    }
+
+    private static class BmHandler implements InvocationHandler, Serializable {
+        private transient volatile BeanManager bm;
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            try {
+                return method.invoke(findBm(), args);
+            } catch (final InvocationTargetException ite) {
+                Logger.getInstance(LogCategory.OPENEJB_JPA, EntityManagerFactoryCallable.class)
+                        .warning("Exception calling CDI, if a lifecycle issue you should maybe set tomee.jpa.factory.lazy=true", ite.getCause());
+                throw ite.getCause();
+            }
+        }
+
+        private Object findBm() {
+            if (bm == null) {
+                synchronized (this) {
+                    if (bm == null) {
+                        bm = new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
+                    }
+                }
+            }
+            return bm;
+        }
     }
 }

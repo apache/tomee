@@ -167,24 +167,25 @@ public class CheckClassLoading extends ValidationBase {
 
             final List<String> files = new ArrayList<String>();
 
-            final JarFile file = new JarFile(archive);
-            final Enumeration<JarEntry> entries = file.entries();
-            while (entries.hasMoreElements()) {
-                final JarEntry entry = entries.nextElement();
-                final String name = entry.getName();
-                for (final String ext : extensions) {
-                    if (name.endsWith(ext)) {
-                        if (CLASS_EXT.equals(ext)) {
-                            files.add(name.replace("/", "."));
-                        } else {
-                            files.add(name);
+            try (JarFile file = new JarFile(archive)) {
+                final Enumeration<JarEntry> entries = file.entries();
+                while (entries.hasMoreElements()) {
+                    final JarEntry entry = entries.nextElement();
+                    final String name = entry.getName();
+                    for (final String ext : extensions) {
+                        if (name.endsWith(ext)) {
+                            if (CLASS_EXT.equals(ext)) {
+                                files.add(name.replace("/", "."));
+                            } else {
+                                files.add(name);
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
-            }
 
-            return files;
+                return files;
+            }
         }
     }
 

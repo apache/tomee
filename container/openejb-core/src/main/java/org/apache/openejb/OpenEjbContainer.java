@@ -43,6 +43,7 @@ import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Exceptions;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.JuliLogStreamFactory;
 import org.apache.openejb.util.LogCategory;
@@ -90,7 +91,7 @@ import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
 public final class OpenEjbContainer extends EJBContainer {
     static {
         // if tomee embedded was ran we'll lost log otherwise
-        final String logManger = System.getProperty("java.util.logging.manager");
+        final String logManger = JavaSecurityManagers.getSystemProperty("java.util.logging.manager");
         if (logManger != null) {
             try {
                 Thread.currentThread().getContextClassLoader().loadClass(logManger);
@@ -242,8 +243,8 @@ public final class OpenEjbContainer extends EJBContainer {
 
             try {
                 // reset to be able to run this container then tomee one etc...
-                if (System.getProperties().containsKey(Context.URL_PKG_PREFIXES)) {
-                    System.getProperties().remove(Context.URL_PKG_PREFIXES);
+                if (JavaSecurityManagers.getSystemProperty(Context.URL_PKG_PREFIXES) != null) {
+                    JavaSecurityManagers.removeSystemProperty(Context.URL_PKG_PREFIXES);
                 }
 
                 final Properties properties = new Properties();

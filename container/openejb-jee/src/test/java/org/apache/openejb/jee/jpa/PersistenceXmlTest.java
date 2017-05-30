@@ -19,22 +19,22 @@ package org.apache.openejb.jee.jpa;
 
 
 import junit.framework.TestCase;
+import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEventHandler;
-import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.Marshaller;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
 import java.io.BufferedInputStream;
-import java.io.IOException;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-
-import org.apache.openejb.jee.jpa.unit.Persistence;
-import org.apache.openejb.jee.JAXBContextFactory;
-import org.custommonkey.xmlunit.Diff;
 
 /**
  * @version $Revision$ $Date$
@@ -65,6 +65,7 @@ public class PersistenceXmlTest extends TestCase {
         final String actual = new String(baos.toByteArray());
 
         final Diff myDiff = new Diff(expected, actual);
+        myDiff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 
@@ -92,6 +93,7 @@ public class PersistenceXmlTest extends TestCase {
         final String actual = new String(baos.toByteArray());
 
         final Diff myDiff = new Diff(expected, actual);
+        myDiff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
         assertTrue("Files are similar " + myDiff, myDiff.similar());
     }
 

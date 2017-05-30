@@ -23,6 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.table.Line;
 import org.apache.openejb.table.Lines;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.util.Arrays;
 
@@ -32,7 +33,7 @@ public final class CommandHelper {
     }
 
     public static Lines listEJBs() throws Exception {
-        return listEJBs(System.getProperty("line.separator"));
+        return listEJBs(JavaSecurityManagers.getSystemProperty("line.separator"));
     }
 
     public static Lines listEJBs(final String cr) throws Exception {

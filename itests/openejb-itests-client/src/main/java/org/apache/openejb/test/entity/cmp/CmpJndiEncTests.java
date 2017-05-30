@@ -33,7 +33,7 @@ public class CmpJndiEncTests extends CmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/EncBean");
-        ejbHome = (EncCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, EncCmpHome.class);
+        ejbHome = (EncCmpHome) obj;
         ejbObject = ejbHome.create("Enc Bean");
     }
 

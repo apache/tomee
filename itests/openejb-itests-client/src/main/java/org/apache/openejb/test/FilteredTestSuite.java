@@ -18,8 +18,8 @@ package org.apache.openejb.test;
 
 import junit.framework.Test;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version $Rev$ $Date$

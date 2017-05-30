@@ -23,6 +23,7 @@ import org.apache.openejb.testing.SimpleLog;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import static org.junit.Assert.assertEquals;
@@ -32,11 +33,29 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 @ContainerProperties(@ContainerProperties.Property(name = "Default Stateless Container.useOneSchedulerThreadByBean", value = "false"))
 public class SchedulerThreadStatelessTest {
-    @Stateless public static class S1 {}
-    @Stateless public static class S2 {}
+    @Stateless
+    public static class S1 {
+        public void touch() {
+        }
+    }
+
+    @Stateless
+    public static class S2 {
+        public void touch() {
+        }
+    }
+
+    @EJB
+    private S1 s1;
+
+    @EJB
+    private S2 s2;
 
     @Test
     public void run() {
+        s1.touch();
+        s2.touch();
+
         final int count = Thread.activeCount();
         final Thread[] all = new Thread[count];
         Thread.enumerate(all);

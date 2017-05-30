@@ -19,6 +19,7 @@ package org.apache.openejb.core.stateful;
 
 import org.apache.openejb.SystemException;
 import org.apache.openejb.spi.Serializer;
+import org.apache.openejb.util.JavaSecurityManagers;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -52,10 +53,11 @@ public class RAFPassivater implements PassivationStrategy {
     @Override
     public synchronized void passivate(final Map stateTable)
         throws SystemException {
-        try {
+        try(final RandomAccessFile ras = new RandomAccessFile(
+                JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
+                        File.separator + "passivation" + fileID + ".ser", "rw")) {
             fileID++;
 
-            final RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + fileID + ".ser", "rw");
             final Iterator iterator = stateTable.keySet().iterator();
             Pointer lastPointer = null;
             while (iterator.hasNext()) {
@@ -73,7 +75,6 @@ public class RAFPassivater implements PassivationStrategy {
                 masterTable.put(id, lastPointer);
                 ras.write(bytes);
             }
-            ras.close();
         } catch (final Exception e) {
             throw new SystemException(e);
         }
@@ -88,12 +89,12 @@ public class RAFPassivater implements PassivationStrategy {
             return null;
         }
 
-        try {
-            final RandomAccessFile ras = new RandomAccessFile(System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "passivation" + pointer.fileid + ".ser", "r");
-            final byte[] bytes = new byte[(int) pointer.bytesize];
+        try (final RandomAccessFile ras =
+                     new RandomAccessFile(JavaSecurityManagers.getSystemProperty("java.io.tmpdir", File.separator + "tmp") +
+                             File.separator + "passivation" + pointer.fileid + ".ser", "r")) {
+            final byte[] bytes = new byte[pointer.bytesize];
             ras.seek(pointer.filepointer);
             ras.readFully(bytes);
-            ras.close();
             return Serializer.deserialize(bytes);
         } catch (final Exception e) {
             throw new SystemException(e);

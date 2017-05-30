@@ -38,6 +38,8 @@ import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
+import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
@@ -47,6 +49,7 @@ import org.apache.cxf.validation.BeanValidationFeature;
 import org.apache.cxf.validation.BeanValidationInInterceptor;
 import org.apache.cxf.validation.BeanValidationOutInterceptor;
 import org.apache.cxf.validation.BeanValidationProvider;
+import org.apache.cxf.validation.ResponseConstraintViolationException;
 import org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.BeanContext;
@@ -103,8 +106,11 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -158,6 +164,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private final DestinationFactory transportFactory;
     private final String wildcard;
+    private final CxfRSService service;
     private HttpDestination destination;
     private Server server;
     private String context = "";
@@ -185,9 +192,10 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     private String pattern;
 
-    public CxfRsHttpListener(final DestinationFactory destinationFactory, final String star) {
+    public CxfRsHttpListener(final DestinationFactory destinationFactory, final String star, final CxfRSService cxfRSService) {
         transportFactory = destinationFactory;
         wildcard = star;
+        service = cxfRSService;
     }
 
     public void setUrlPattern(final String pattern) {
@@ -273,16 +281,16 @@ public class CxfRsHttpListener implements RsHttpListener {
                 pathInfo = pathInfo.substring(0, indexOf);
             }
         }
-        InputStream is = request.getServletContext().getResourceAsStream(pathInfo);
-        if (is == null && ("/".equals(pathInfo) || pathInfo.isEmpty())) {
+        if ("/".equals(pathInfo) || pathInfo.isEmpty()) { // root is redirected to welcomefiles
             for (final String n : welcomeFiles) {
-                is = request.getServletContext().getResourceAsStream(n);
+                final InputStream is = request.getServletContext().getResourceAsStream(n);
                 if (is != null) {
-                    break;
+                    return is;
                 }
             }
+            return null; // "/" resolves to an empty string otherwise, we need to avoid it
         }
-        return is;
+        return request.getServletContext().getResourceAsStream(pathInfo);
     }
 
     public boolean serveStaticContent(final HttpServletRequest request,
@@ -307,6 +315,12 @@ public class CxfRsHttpListener implements RsHttpListener {
             response.setStatus(HttpURLConnection.HTTP_OK);
         } catch (final IOException ex) {
             throw new ServletException("Static resource " + pathInfo + " can not be written to the output stream");
+        } finally {
+            try {
+                is.close();
+            } catch (final IOException e) {
+                // no-op
+            }
         }
         return true;
     }
@@ -479,12 +493,11 @@ public class CxfRsHttpListener implements RsHttpListener {
         return false;
     }
 
-    private static boolean shouldSkipProvider(final String name) {
-        return "false".equalsIgnoreCase(SystemInstance.get().getProperty(name + ".activated", "true"))
-                || name.startsWith("org.apache.wink.common.internal.");
+    private boolean shouldSkipProvider(final String name) {
+        return !service.isActive(name) || name.startsWith("org.apache.wink.common.internal.");
     }
 
-    private static void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
+    private void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
         if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
             instances.add(new WadlDocumentMessageBodyWriter());
         }
@@ -867,44 +880,59 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
-        // activate bval
-        boolean bvalActive = Boolean.parseBoolean(
-                SystemInstance.get().getProperty("openejb.cxf.rs.bval.active",
-                        serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.active", "true")));
-        if (factory.getFeatures() == null && bvalActive) {
-            factory.setFeatures(new ArrayList<Feature>());
-        } else if (bvalActive) { // check we should activate it and user didn't configure it
-            for (final Feature f : factory.getFeatures()) {
-                if (BeanValidationFeature.class.isInstance(f)) {
-                    bvalActive = false;
-                    break;
+        boolean enforceCxfBvalMapper = false;
+        if (ctx == null || !ctx.getBeanManagerImpl().isInUse()) { // activate bval
+            boolean bvalActive = Boolean.parseBoolean(
+                    SystemInstance.get().getProperty("openejb.cxf.rs.bval.active",
+                            serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.active", "true")));
+            if (factory.getFeatures() == null && bvalActive) {
+                factory.setFeatures(new ArrayList<Feature>());
+            } else if (bvalActive) { // check we should activate it and user didn't configure it
+                for (final Feature f : factory.getFeatures()) {
+                    if (BeanValidationFeature.class.isInstance(f)) {
+                        bvalActive = false;
+                        break;
+                    }
+                }
+                for (final Interceptor<?> i : factory.getInInterceptors()) {
+                    if (BeanValidationInInterceptor.class.isInstance(i)) {
+                        bvalActive = false;
+                        break;
+                    }
+                }
+                for (final Interceptor<?> i : factory.getOutInterceptors()) {
+                    if (BeanValidationOutInterceptor.class.isInstance(i)) {
+                        bvalActive = false;
+                        break;
+                    }
                 }
             }
-            for (final Interceptor<?> i : factory.getInInterceptors()) {
-                if (BeanValidationInInterceptor.class.isInstance(i)) {
-                    bvalActive = false;
-                    break;
-                }
-            }
-            for (final Interceptor<?> i : factory.getOutInterceptors()) {
-                if (BeanValidationOutInterceptor.class.isInstance(i)) {
-                    bvalActive = false;
-                    break;
-                }
-            }
-        }
-        if (bvalActive) {
-            final BeanValidationProvider provider = new BeanValidationProvider();
+            if (bvalActive) { // bval doesn't need the actual instance so faking it to avoid to lookup the bean
+                final BeanValidationProvider provider = new BeanValidationProvider();
 
-            final BeanValidationInInterceptor in = new BeanValidationInInterceptor();
-            in.setProvider(provider);
-            in.setServiceObject(FAKE_SERVICE_OBJECT);
-            factory.getInInterceptors().add(in);
+                final BeanValidationInInterceptor in = new JAXRSBeanValidationInInterceptor() {
+                    @Override
+                    protected Object getServiceObject(final Message message) {
+                        return CxfRsHttpListener.this.getServiceObject(message);
+                    }
+                };
+                in.setProvider(provider);
+                in.setServiceObject(FAKE_SERVICE_OBJECT);
+                factory.getInInterceptors().add(in);
 
-            final BeanValidationOutInterceptor out = new BeanValidationOutInterceptor();
-            out.setProvider(provider);
-            out.setServiceObject(FAKE_SERVICE_OBJECT);
-            factory.getOutInterceptors().add(out);
+                final BeanValidationOutInterceptor out = new JAXRSBeanValidationOutInterceptor() {
+                    @Override
+                    protected Object getServiceObject(final Message message) {
+                        return CxfRsHttpListener.this.getServiceObject(message);
+                    }
+                };
+                out.setProvider(provider);
+                out.setServiceObject(FAKE_SERVICE_OBJECT);
+                factory.getOutInterceptors().add(out);
+
+                // and add a mapper to get back a 400 like for bval
+                enforceCxfBvalMapper = true;
+            }
         }
 
         final Collection<ServiceInfo> services = serviceConfiguration.getAvailableServices();
@@ -984,6 +1012,11 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         if (!ignoreAutoProviders) {
             addMandatoryProviders(providers, serviceConfiguration);
+            if (enforceCxfBvalMapper) {
+                if (!shouldSkipProvider(CxfResponseValidationExceptionMapper.class.getName())) {
+                    providers.add(new CxfResponseValidationExceptionMapper());
+                }
+            }
         }
 
         SystemInstance.get().fireEvent(new ExtensionProviderRegistration(
@@ -992,6 +1025,22 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (!providers.isEmpty()) {
             factory.setProviders(providers);
         }
+    }
+
+    private Object getServiceObject(final Message message) {
+        final OperationResourceInfo ori = message.getExchange().get(OperationResourceInfo.class);
+        if (ori == null) {
+            return null;
+        }
+        if (!ori.getClassResourceInfo().isRoot()) {
+            return message.getExchange().get("org.apache.cxf.service.object.last");
+        }
+        final ResourceProvider resourceProvider = ori.getClassResourceInfo().getResourceProvider();
+        if (resourceProvider.isSingleton()) {
+            return resourceProvider.getInstance(message);
+        }
+        final Object o = message.getExchange().get(CdiResourceProvider.INSTANCE_KEY);
+        return o != null || !OpenEJBPerRequestPojoResourceProvider.class.isInstance(resourceProvider) ? o : resourceProvider.getInstance(message);
     }
 
     private Comparator<?> findProviderComparator(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx) {
@@ -1324,6 +1373,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         @Description("All available methods")
         public TabularData getOperations() {
             return operations;
+        }
+    }
+
+    @Provider
+    public static class CxfResponseValidationExceptionMapper implements ExceptionMapper<ResponseConstraintViolationException> {
+        @Override
+        public Response toResponse(final ResponseConstraintViolationException exception) {
+            return JAXRSUtils.toResponse(Response.Status.BAD_REQUEST);
         }
     }
 }

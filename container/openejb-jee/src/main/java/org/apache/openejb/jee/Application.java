@@ -93,7 +93,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "persistenceUnitRef",
     "messageDestination",
     "dataSource",
-    "jmsConnectionFactories"
+    "jmsConnectionFactories",
+    "jmsDestinations"
 })
 public class Application implements JndiConsumer, NamedModule {
 
@@ -139,6 +140,8 @@ public class Application implements JndiConsumer, NamedModule {
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    @XmlElement(name = "jms-destination")
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     protected java.lang.String version;
@@ -427,5 +430,15 @@ public class Application implements JndiConsumer, NamedModule {
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQSession;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 import org.apache.activemq.util.IdGenerator;
@@ -34,8 +35,23 @@ public class TomEEConnection extends ActiveMQConnection {
     }
 
     @Override
+    public Session createSession(boolean transacted, int acknowledgeMode) throws JMSException {
+        checkClosedOrFailed();
+        ensureConnectionInfoSent();
+        if (!transacted) {
+            if (acknowledgeMode == Session.SESSION_TRANSACTED) {
+                throw new JMSException("acknowledgeMode SESSION_TRANSACTED cannot be used for an non-transacted Session");
+            } else if (acknowledgeMode < Session.SESSION_TRANSACTED || acknowledgeMode > ActiveMQSession.MAX_ACK_CONSTANT) {
+                throw new JMSException("invalid acknowledgeMode: " + acknowledgeMode + ". Valid values are Session.AUTO_ACKNOWLEDGE (1), " +
+                        "Session.CLIENT_ACKNOWLEDGE (2), Session.DUPS_OK_ACKNOWLEDGE (3), ActiveMQSession.INDIVIDUAL_ACKNOWLEDGE (4) or for transacted sessions Session.SESSION_TRANSACTED (0)");
+            }
+        }
+        return new TomEESession(this, getNextSessionId(), transacted ? Session.SESSION_TRANSACTED : acknowledgeMode, isDispatchAsync(), isAlwaysSessionAsync());
+    }
+
+    @Override
     public Session createSession(final int sessionMode) throws JMSException {
-        return super.createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
+        return createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
     }
 
     @Override

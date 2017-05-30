@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
 import javax.ejb.Singleton;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -108,6 +109,7 @@ public class EJBProviderTest {
         }
     }
 
+    @Dependent
     public static class Helper {
         String data() {
             return "Oh Yeah!";

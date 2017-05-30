@@ -77,6 +77,7 @@ import java.util.Map;
     "preDestroy",
     "dataSource",
     "jmsConnectionFactories",
+    "jmsDestinations",
     "postActivate",
     "prePassivate",
     "afterBegin",
@@ -115,6 +116,8 @@ public class Interceptor implements JndiConsumer, Session {
     protected KeyedCollection<String, DataSource> dataSource;
     @XmlElement(name = "jms-connection-factory", required = true)
     protected KeyedCollection<String, JMSConnectionFactory> jmsConnectionFactories;
+    @XmlElement(name = "jms-destination")
+    protected KeyedCollection<String, JMSDestination> jmsDestinations;
     @XmlElement(name = "post-construct", required = true)
     protected List<LifecycleCallback> postConstruct;
     @XmlElement(name = "pre-destroy", required = true)
@@ -447,5 +450,15 @@ public class Interceptor implements JndiConsumer, Session {
     @Override
     public Map<String, JMSConnectionFactory> getJMSConnectionFactoriesMap() {
         return KeyedCollection.class.cast(getJMSConnectionFactories()).toMap();
+    }
+
+    @Override
+    public Collection<JMSDestination> getJMSDestination() {
+        return jmsDestinations == null ? (jmsDestinations = new KeyedCollection<>()) : jmsDestinations;
+    }
+
+    @Override
+    public Map<String, JMSDestination> getJMSDestinationMap() {
+        return KeyedCollection.class.cast(getJMSDestination()).toMap();
     }
 }
