@@ -79,6 +79,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- Override the bcprov from the previous artifact -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>1.57</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
@@ -208,4 +214,3 @@
     </profile>
   </profiles>
 </project>
-
