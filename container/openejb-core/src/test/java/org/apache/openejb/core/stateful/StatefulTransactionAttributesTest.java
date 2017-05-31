@@ -319,7 +319,7 @@ public class StatefulTransactionAttributesTest extends TestCase {
 
     }
 
-    public static ThreadLocal<String> expected = new ThreadLocal<String>();
+    public static ThreadLocal<String> expected = new ThreadLocal<>();
 
     @LocalHome(ColorEjbLocalHome.class)
     @RemoteHome(ColorEjbHome.class)

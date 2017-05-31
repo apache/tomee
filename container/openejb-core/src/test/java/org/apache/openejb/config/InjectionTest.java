@@ -57,7 +57,7 @@ public class InjectionTest extends TestCase {
         assertEquals("2", widget.getString());
         assertEquals(3.0D, widget.getDouble());
         assertEquals(new Long(4), widget.getLong());
-        assertEquals(new Float(5f), widget.getFloat());
+        assertEquals(5f, widget.getFloat());
         assertEquals(new Integer(6), widget.getInteger());
         assertEquals(new Short((short) 7), widget.getShort());
         assertEquals(Boolean.FALSE, widget.getBoolean());

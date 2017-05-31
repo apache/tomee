@@ -29,7 +29,6 @@ import javax.decorator.Decorator;
 import javax.decorator.Delegate;
 import javax.ejb.ApplicationException;
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateful;
@@ -39,7 +38,6 @@ import java.io.Serializable;
 import java.security.Principal;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**

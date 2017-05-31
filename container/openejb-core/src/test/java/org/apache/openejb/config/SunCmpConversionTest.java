@@ -121,7 +121,7 @@ public class SunCmpConversionTest extends TestCase {
             final String expected = readContent(in);
 
             // Sun doen't really support generated primary keys, so we need to add them by hand here
-            final Set<String> generatedPks = new HashSet<String>(Arrays.asList("BasicCmp2", "AOBasicCmp2", "EncCmp2", "Cmp2RmiIiop"));
+            final Set<String> generatedPks = new HashSet<>(Arrays.asList("BasicCmp2", "AOBasicCmp2", "EncCmp2", "Cmp2RmiIiop"));
             final EntityMappings cmpMappings = appModule.getCmpMappings();
             for (final Entity entity : cmpMappings.getEntity()) {
                 if (generatedPks.contains(entity.getName())) {

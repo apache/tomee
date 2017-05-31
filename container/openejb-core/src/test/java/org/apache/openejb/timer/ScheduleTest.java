@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ScheduleTest extends TestCase {
 
-    private static final List<Call> result = new ArrayList<Call>();
+    private static final List<Call> result = new ArrayList<>();
     private static final CountDownLatch countDownLatch = new CountDownLatch(3);
 
     @Override

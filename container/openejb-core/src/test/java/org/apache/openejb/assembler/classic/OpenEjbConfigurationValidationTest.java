@@ -54,7 +54,7 @@ import java.util.Set;
  */
 public class OpenEjbConfigurationValidationTest extends TestCase {
 
-    private final List<Class> seen = new ArrayList<Class>();
+    private final List<Class> seen = new ArrayList<>();
 
     public void testValidate() throws Exception {
         seen.add(Object.class);

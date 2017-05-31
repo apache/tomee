@@ -26,7 +26,7 @@ import java.util.HashSet;
 public class KeysAnnotationVisitor extends EmptyVisitor {
     private ClassInfo current;
     private MethodInfo currentMethod;
-    public static HashSet<ClassInfo> classInfos = new HashSet<ClassInfo>();
+    public static HashSet<ClassInfo> classInfos = new HashSet<>();
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
@@ -88,7 +88,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
 
         public ClassInfo(final String clazz) {
             this.clazz = clazz;
-            methuds = new HashSet<MethodInfo>();
+            methuds = new HashSet<>();
         }
 
         @Override
@@ -123,7 +123,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
 
         public MethodInfo(final String methud) {
             this.methud = methud;
-            keys = new HashSet<String>();
+            keys = new HashSet<>();
         }
 
         @Override

@@ -57,7 +57,7 @@ public class BookBean implements EntityBean, Cmp2Entity {
     private transient boolean deleted;
 
     private String title;
-    private final Set<AuthorBean> authors = new HashSet<AuthorBean>();
+    private final Set<AuthorBean> authors = new HashSet<>();
     private final transient SetValuedCmr authorsCmr = new SetValuedCmr(this, "authors", AuthorBean.class, "books");
 
     public BookBean() {

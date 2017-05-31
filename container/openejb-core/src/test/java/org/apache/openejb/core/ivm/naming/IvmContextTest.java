@@ -22,10 +22,7 @@ import org.apache.openejb.util.Join;
 
 import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
-import javax.naming.NameClassPair;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -58,7 +55,7 @@ public class IvmContextTest extends TestCase {
             visit(context, name, new Visitor() {
                 public void visit(final Context context, final String name, final String parentName) throws NamingException {
 
-                    final Map<String, Object> expected = new TreeMap<String, Object>();
+                    final Map<String, Object> expected = new TreeMap<>();
 
                     for (final Map.Entry<String, Integer> entry : map.entrySet()) {
                         String key = entry.getKey();
@@ -77,7 +74,7 @@ public class IvmContextTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        map = new LinkedHashMap<String, Integer>();
+        map = new LinkedHashMap<>();
         map.put("color/orange", 1);
         map.put("color/blue", 2);
         map.put("color/red/scarlet", 3);
@@ -230,14 +227,14 @@ public class IvmContextTest extends TestCase {
     public void test() throws Exception {
 
         final IvmContext context = new IvmContext();
-        context.bind("comp/env/rate/work/doc/lot/pop", new Integer(1));
-        context.bind("comp/env/rate/work/doc/lot/price", new Integer(2));
-        context.bind("comp/env/rate/work/doc/lot/break/story", new Integer(3));
+        context.bind("comp/env/rate/work/doc/lot/pop", 1);
+        context.bind("comp/env/rate/work/doc/lot/price", 2);
+        context.bind("comp/env/rate/work/doc/lot/break/story", 3);
 
         final Object o = context.lookup("comp/env/rate/work/doc/lot/pop");
         assertNotNull(o);
         assertTrue(o instanceof Integer);
-        assertEquals(o, new Integer(1));
+        assertEquals(o, 1);
 
         context.unbind("comp/env/rate/work/doc/lot/pop");
 

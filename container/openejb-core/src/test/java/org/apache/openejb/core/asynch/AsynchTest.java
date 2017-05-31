@@ -200,14 +200,14 @@ public class AsynchTest {
         public Future<String> testB(final long callerThreadId) {
             Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testB";
-            return new AsyncResult<String>("testB");
+            return new AsyncResult<>("testB");
         }
 
         @Override
         public Future<String> testC(final long callerThreadId) {
             Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testC";
-            return new AsyncResult<String>("testC");
+            return new AsyncResult<>("testC");
         }
 
         @Override
@@ -239,14 +239,14 @@ public class AsynchTest {
         public Future<String> testB(final long callerThreadId) {
             Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testB";
-            return new AsyncResult<String>("testB");
+            return new AsyncResult<>("testB");
         }
 
         @Override
         public Future<String> testC(final long callerThreadId) {
             Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testC";
-            return new AsyncResult<String>("testC");
+            return new AsyncResult<>("testC");
         }
 
         @Override
@@ -276,7 +276,7 @@ public class AsynchTest {
         public Future<String> testB(final long callerThreadId) {
             Assert.assertFalse("testB should be executed in asynchronous mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testB";
-            return new AsyncResult<String>("testB" + callerThreadId);
+            return new AsyncResult<>("testB" + callerThreadId);
         }
 
     }
@@ -293,7 +293,7 @@ public class AsynchTest {
         public Future<String> testC(final long callerThreadId) {
             Assert.assertTrue("testC should be executed in blocing mode", Thread.currentThread().getId() == callerThreadId);
             lastInvokeMethod = "testC";
-            return new AsyncResult<String>("testC");
+            return new AsyncResult<>("testC");
         }
 
         @Override
@@ -336,7 +336,7 @@ public class AsynchTest {
             }
             Assert.assertTrue(sessionContext.wasCancelCalled());
             lastInvokeMethod = "testB";
-            return new AsyncResult<String>("echoB");
+            return new AsyncResult<>("echoB");
         }
 
         @Override

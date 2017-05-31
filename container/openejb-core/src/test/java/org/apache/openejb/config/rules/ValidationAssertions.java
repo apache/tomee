@@ -43,7 +43,7 @@ public class ValidationAssertions {
     }
 
     private static void assertValidation(final List<String> expectedKeys, final ValidationException[] validations) {
-        final List<String> actualKeys = new ArrayList<String>();
+        final List<String> actualKeys = new ArrayList<>();
         for (final ValidationException validation : validations) {
             actualKeys.add(validation.getMessageKey());
         }
@@ -72,7 +72,7 @@ public class ValidationAssertions {
             for (final Integer level : Arrays.asList(1, 2, 3)) {
                 final String message = validation.getMessage(level);
                 Assert.assertFalse("No message text (key=" + key + ", level=" + level + "): " + message, message.contains(key));
-                Assert.assertFalse("Not all parameters substituted (key=" + key + ", level=" + level + "): " + message, message.matches(".*\\{[0-9]\\}.*"));
+                Assert.assertFalse("Not all parameters substituted (key=" + key + ", level=" + level + "): " + message, message.matches(".*\\{[0-9]}.*"));
             }
 
         }

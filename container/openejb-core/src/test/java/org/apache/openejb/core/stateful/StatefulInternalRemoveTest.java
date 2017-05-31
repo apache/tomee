@@ -122,7 +122,7 @@ public class StatefulInternalRemoveTest extends TestCase {
     @LocalBean
     public static class Widget implements WidgetLocal, WidgetRemote {
 
-        public static LinkedList<Object> lifecycle = new LinkedList<Object>();
+        public static LinkedList<Object> lifecycle = new LinkedList<>();
 
         public Widget() {
             lifecycle.add(Lifecycle.CONSTRUCTOR);

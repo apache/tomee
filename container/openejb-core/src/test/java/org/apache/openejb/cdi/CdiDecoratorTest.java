@@ -118,8 +118,8 @@ public class CdiDecoratorTest extends TestCase {
         }
     }
 
-    private static final List<String> businessMethod = new ArrayList<String>();
-    private static final List<String> callback = new ArrayList<String>();
+    private static final List<String> businessMethod = new ArrayList<>();
+    private static final List<String> callback = new ArrayList<>();
 
     @Local
     public static interface Color {

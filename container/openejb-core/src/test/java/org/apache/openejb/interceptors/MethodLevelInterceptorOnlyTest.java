@@ -59,7 +59,7 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
 
         assert bean != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("MethodLevelInterceptorOne");
         expected.add("makePersistent");
 

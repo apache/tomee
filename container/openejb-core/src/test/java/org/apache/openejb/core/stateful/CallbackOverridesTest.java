@@ -90,7 +90,7 @@ public class CallbackOverridesTest extends TestCase {
         PRE_DESTROY,
     }
 
-    public static List<Class> callbacks = new ArrayList<Class>();
+    public static List<Class> callbacks = new ArrayList<>();
 
     public static class ParentInterceptor {
 

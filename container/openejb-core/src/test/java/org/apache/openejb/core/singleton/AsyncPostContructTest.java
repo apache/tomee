@@ -75,8 +75,8 @@ public class AsyncPostContructTest {
         private Future<Boolean> future;
         private final AtomicLong startEnd = new AtomicLong();
         private final AtomicLong asyncStart = new AtomicLong();
-        private final AtomicReference<Object> startInstance = new AtomicReference<Object>();
-        private final AtomicReference<Object> asyncInstance = new AtomicReference<Object>();
+        private final AtomicReference<Object> startInstance = new AtomicReference<>();
+        private final AtomicReference<Object> asyncInstance = new AtomicReference<>();
 
         @PostConstruct
         public void start() {
@@ -94,7 +94,7 @@ public class AsyncPostContructTest {
         public Future<Boolean> async() {
             asyncStart.set(System.nanoTime());
             asyncInstance.set(this);
-            return new AsyncResult<Boolean>(true);
+            return new AsyncResult<>(true);
         }
 
         public void waitFuture() {

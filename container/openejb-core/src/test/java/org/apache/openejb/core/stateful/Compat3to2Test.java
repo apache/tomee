@@ -102,7 +102,7 @@ public class Compat3to2Test extends TestCase {
         assertEquals(join("\n", expected), join("\n", calls));
     }
 
-    public static List<Call> calls = new ArrayList<Call>();
+    public static List<Call> calls = new ArrayList<>();
 
     public static enum Call {
         // construction

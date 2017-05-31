@@ -92,7 +92,7 @@ public class StatelessSessionBeanInterfaceTest extends Assert {
 
     }
 
-    private static final List<String> lifecycle = new Stack<String>();
+    private static final List<String> lifecycle = new Stack<>();
 
 
     public static class GreenBean implements SessionBean {

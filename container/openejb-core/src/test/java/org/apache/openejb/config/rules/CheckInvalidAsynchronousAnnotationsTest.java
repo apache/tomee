@@ -124,7 +124,7 @@ public class CheckInvalidAsynchronousAnnotationsTest {
     public static class AsyncBeanMethodWithFutureReturnType {
         @Asynchronous
         public Future<String> validReturnType() {
-            return new AsyncResult<String>("returning from async call");
+            return new AsyncResult<>("returning from async call");
         }
     }
 
@@ -144,7 +144,7 @@ public class CheckInvalidAsynchronousAnnotationsTest {
     @Asynchronous
     public static class AsyncBeanWithFutureReturnType {
         public Future<String> validReturnType() {
-            return new AsyncResult<String>("returning from async call");
+            return new AsyncResult<>("returning from async call");
         }
     }
 

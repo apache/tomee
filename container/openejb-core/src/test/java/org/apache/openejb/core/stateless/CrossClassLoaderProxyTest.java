@@ -284,7 +284,7 @@ public class CrossClassLoaderProxyTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        public static Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        public static Stack<Lifecycle> lifecycle = new Stack<>();
 
         public WidgetBean() {
             WidgetBean.lifecycle.push(Lifecycle.CONSTRUCTOR);

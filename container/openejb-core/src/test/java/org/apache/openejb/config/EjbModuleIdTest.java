@@ -40,7 +40,7 @@ public class EjbModuleIdTest extends Assert {
 
     @Test
     public void testDefault() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar/>");
 
         final File file = Archives.jarArchive(map, "test", OrangeBean.class);
@@ -55,7 +55,7 @@ public class EjbModuleIdTest extends Assert {
 
     @Test
     public void testId() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"orange\"/>");
 
         final File file = Archives.jarArchive(map, "test", OrangeBean.class);
@@ -70,7 +70,7 @@ public class EjbModuleIdTest extends Assert {
 
     @Test
     public void testModuleName() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar><module-name>orange</module-name></ejb-jar>");
 
         final File file = Archives.jarArchive(map, "test", OrangeBean.class);
@@ -86,7 +86,7 @@ public class EjbModuleIdTest extends Assert {
 
     @Test
     public void testModuleNameAndId() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"orangeId\"><module-name>orangeName</module-name></ejb-jar>");
 
         final File file = Archives.jarArchive(map, "test", OrangeBean.class);
@@ -106,7 +106,7 @@ public class EjbModuleIdTest extends Assert {
      */
     @Test
     public void testSystemProperty() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"orangeId\"><module-name>orangeName</module-name></ejb-jar>");
 
         final File file = Archives.jarArchive(map, "test", OrangeBean.class);
@@ -129,10 +129,10 @@ public class EjbModuleIdTest extends Assert {
      */
     @Test
     public void testInvalidNames() throws Exception {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         map.put("META-INF/ejb-jar.xml", "<ejb-jar/>");
 
-        final List<String> dirs = new ArrayList<String>();
+        final List<String> dirs = new ArrayList<>();
         dirs.add("orangeDir");
         dirs.add("classes");   // invalid
         dirs.add("test-classes");   // invalid

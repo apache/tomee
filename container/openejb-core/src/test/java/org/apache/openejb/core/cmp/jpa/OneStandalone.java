@@ -28,7 +28,7 @@ public class OneStandalone {
     @Id
     private long id;
     @OneToMany
-    private Collection<ManyStandalone> many = new ArrayList<ManyStandalone>();
+    private Collection<ManyStandalone> many = new ArrayList<>();
 
     public OneStandalone() {
     }

@@ -138,7 +138,7 @@ public class StatelessContainerTest extends TestCase {
 
     public static class WidgetBean implements Widget, RemoteWidget {
 
-        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<>();
 
         public WidgetBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);

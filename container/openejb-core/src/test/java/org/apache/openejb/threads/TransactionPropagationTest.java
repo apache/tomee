@@ -27,12 +27,10 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.enterprise.concurrent.ContextService;
 import javax.enterprise.concurrent.ManagedTask;
-import javax.enterprise.concurrent.ManagedTaskListener;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

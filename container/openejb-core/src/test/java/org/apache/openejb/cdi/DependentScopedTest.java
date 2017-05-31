@@ -88,8 +88,8 @@ public class DependentScopedTest extends TestCase {
         return beans;
     }
 
-    public static final List<Class> destroyed = new ArrayList<Class>();
-    public static final List<Class> created = new ArrayList<Class>();
+    public static final List<Class> destroyed = new ArrayList<>();
+    public static final List<Class> created = new ArrayList<>();
 
     public static interface ColorWheelLocal {
         public List<Color> getColors();
@@ -97,7 +97,7 @@ public class DependentScopedTest extends TestCase {
 
     public static class ColorWheel implements ColorWheelLocal {
 
-        private final List<Color> colors = new ArrayList<Color>();
+        private final List<Color> colors = new ArrayList<>();
 
         @Inject
         public void set(final Red color) {

@@ -125,7 +125,7 @@ public class CustomMdbContainerTest extends TestCase {
         public static Lock lock = new ReentrantLock();
         public static Condition messageRecieved = lock.newCondition();
 
-        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<>();
 
         public EmailBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
@@ -153,7 +153,7 @@ public class CustomMdbContainerTest extends TestCase {
     public static class EmailResourceAdapter implements javax.resource.spi.ResourceAdapter {
         public boolean started;
 
-        private final Map<String, EmailConsumer> consumers = new HashMap<String, EmailConsumer>();
+        private final Map<String, EmailConsumer> consumers = new HashMap<>();
 
         public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
         }

@@ -145,7 +145,7 @@ public @interface MetaTest {
                 assembler.createTransactionManager(factory.configureService(TransactionServiceInfo.class));
                 assembler.createSecurityService(factory.configureService(SecurityServiceInfo.class));
 
-                final ArrayList<File> files = new ArrayList<File>();
+                final ArrayList<File> files = new ArrayList<>();
 
                 { // expected archive
                     final HashMap map = new HashMap();
@@ -181,7 +181,7 @@ public @interface MetaTest {
         private Class[] getClasses(final MetaTest annotation) {
             final Class clazz = annotation.actual();
 
-            final List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<>();
 
             getClasses(clazz, classes);
 

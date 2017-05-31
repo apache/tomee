@@ -28,7 +28,7 @@ public class ExampleBBean_BBean extends LicenseBean implements Cmp2Entity {
     private Integer field3;
     private String field4;
     private ExampleABean_ABean a;
-    private final SingleValuedCmr<ExampleABean_ABean, PersonLocal> aCmr = new SingleValuedCmr<ExampleABean_ABean, PersonLocal>(this, "a", ExampleABean_ABean.class, "b");
+    private final SingleValuedCmr<ExampleABean_ABean, PersonLocal> aCmr = new SingleValuedCmr<>(this, "a", ExampleABean_ABean.class, "b");
 
     public Integer getId() {
         return field1;

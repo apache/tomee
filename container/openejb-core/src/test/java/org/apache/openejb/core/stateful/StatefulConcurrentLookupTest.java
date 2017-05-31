@@ -100,7 +100,7 @@ public class StatefulConcurrentLookupTest {
         final CountDownLatch startingLine = new CountDownLatch(THREAD_COUNT);
         final CountDownLatch finishingLine = new CountDownLatch(THREAD_COUNT);
 
-        final List<TestRunnable> runnables = new ArrayList<TestRunnable>();
+        final List<TestRunnable> runnables = new ArrayList<>();
 
         int i = 0;
         for (; i < THREAD_COUNT; i++) {

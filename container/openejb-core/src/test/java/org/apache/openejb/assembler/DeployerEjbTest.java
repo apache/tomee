@@ -43,8 +43,6 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -60,8 +58,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(ApplicationComposer.class)
 public class DeployerEjbTest {
 
-    private static final AtomicReference<String> property = new AtomicReference<String>(null);
-    private static final AtomicReference<File> warArchive = new AtomicReference<File>(null);
+    private static final AtomicReference<String> property = new AtomicReference<>(null);
+    private static final AtomicReference<File> warArchive = new AtomicReference<>(null);
     private static final String OPENEJB_DEPLOYER_SAVE_DEPLOYMENTS = "openejb.deployer.save-deployments";
 
     @BeforeClass
@@ -158,7 +156,7 @@ public class DeployerEjbTest {
         Collection<AppInfo> deployedApps = deployer.getDeployedApps();
 
         if (null == deployedApps) {
-            deployedApps = new ArrayList<AppInfo>();
+            deployedApps = new ArrayList<>();
         }
 
         if (deployedApps.size() < 1) {

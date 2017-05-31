@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MdbInvoker implements MessageListener {
-    private final Map<String, Method> signatures = new TreeMap<String, Method>();
+    private final Map<String, Method> signatures = new TreeMap<>();
     private final Object target;
     private Connection connection;
     private Session session;
@@ -100,7 +100,7 @@ public class MdbInvoker implements MessageListener {
             MessageProducer producer = null;
             try {
                 // create response
-                final Map<String, Object> response = new TreeMap<String, Object>();
+                final Map<String, Object> response = new TreeMap<>();
                 if (exception) {
                     response.put("exception", "true");
                 }

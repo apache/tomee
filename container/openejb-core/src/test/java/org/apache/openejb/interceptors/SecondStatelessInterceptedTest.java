@@ -60,7 +60,7 @@ public class SecondStatelessInterceptedTest extends TestCase {
 
         assert bean != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("ClassLevelInterceptorOne");
         expected.add("ClassLevelInterceptorTwo");
         expected.add("MethodLevelInterceptorOne");

@@ -50,7 +50,7 @@ import java.util.List;
  */
 public class TimeoutAroundTest extends TestCase {
 
-    private static final List<Call> result = new ArrayList<Call>();
+    private static final List<Call> result = new ArrayList<>();
 
     public void test() {
     }

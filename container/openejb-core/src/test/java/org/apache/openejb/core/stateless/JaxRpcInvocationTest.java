@@ -143,7 +143,7 @@ public class JaxRpcInvocationTest extends TestCase {
         WebServiceProvider_Invoke_AFTER,
     }
 
-    public static List<Call> calls = new ArrayList<Call>();
+    public static List<Call> calls = new ArrayList<>();
 
     public EjbModule buildTestApp() {
         final EjbJar ejbJar = new EjbJar();

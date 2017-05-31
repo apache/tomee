@@ -16,8 +16,6 @@
  */
 package org.apache.openejb.core.security;
 
-import org.apache.openejb.core.security.jaas.GroupPrincipal;
-import org.apache.openejb.core.security.jaas.UserPrincipal;
 import org.apache.openejb.core.security.jaas.UsernamePasswordCallbackHandler;
 import org.apache.openejb.jee.Beans;
 import org.apache.openejb.junit.ApplicationComposer;

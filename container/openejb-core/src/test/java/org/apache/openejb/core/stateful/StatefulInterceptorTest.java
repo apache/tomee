@@ -157,7 +157,7 @@ public class StatefulInterceptorTest extends TestCase {
         return new EjbModule(this.getClass().getClassLoader(), this.getClass().getSimpleName(), "test", ejbJar, null);
     }
 
-    public static List<Call> calls = new ArrayList<Call>();
+    public static List<Call> calls = new ArrayList<>();
 
     public static class TargetBean implements Target {
 

@@ -116,7 +116,7 @@ public class QuartzMdbContainerTest extends TestCase {
 
         public static CountDownLatch latch = new CountDownLatch(1);
 
-        private static final Stack<Lifecycle> lifecycle = new Stack<Lifecycle>();
+        private static final Stack<Lifecycle> lifecycle = new Stack<>();
 
         public CronBean() {
             lifecycle.push(Lifecycle.CONSTRUCTOR);
