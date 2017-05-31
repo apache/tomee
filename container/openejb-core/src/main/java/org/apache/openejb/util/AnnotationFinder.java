@@ -235,8 +235,9 @@ public class AnnotationFinder {
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
-            final JarFile jarFile = new JarFile(url.getFile().replace("%20", " ").replace("%23", "#"));
-            return jar(jarFile);
+            try (JarFile jarFile = new JarFile(url.getFile().replace("%20", " ").replace("%23", "#"))) {
+                return jar(jarFile);
+            }
         } else {
             InputStream in = url.openStream();
             in = new BufferedInputStream(in);
