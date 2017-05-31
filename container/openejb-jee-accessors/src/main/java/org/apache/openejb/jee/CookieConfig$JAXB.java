@@ -27,9 +27,6 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
 
-@SuppressWarnings({
-    "StringEquality"
-})
 public class CookieConfig$JAXB
     extends JAXBObject<CookieConfig> {
 
@@ -72,7 +69,7 @@ public class CookieConfig$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("cookie-configType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"cookie-configType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, CookieConfig.class);
             }
         }
@@ -91,7 +88,7 @@ public class CookieConfig$JAXB
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: name
                 final String nameRaw = elementReader.getElementAsString();
 
@@ -104,7 +101,7 @@ public class CookieConfig$JAXB
                 }
 
                 cookieConfig.name = name;
-            } else if (("domain" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("domain".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: domain
                 final String domainRaw = elementReader.getElementAsString();
 
@@ -117,7 +114,7 @@ public class CookieConfig$JAXB
                 }
 
                 cookieConfig.domain = domain;
-            } else if (("path" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("path".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: path
                 final String pathRaw = elementReader.getElementAsString();
 
@@ -130,7 +127,7 @@ public class CookieConfig$JAXB
                 }
 
                 cookieConfig.path = path;
-            } else if (("comment" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("comment".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: comment
                 final String commentRaw = elementReader.getElementAsString();
 
@@ -143,15 +140,15 @@ public class CookieConfig$JAXB
                 }
 
                 cookieConfig.comment = comment;
-            } else if (("http-only" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("http-only".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: httpOnly
                 final Boolean httpOnly = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 cookieConfig.httpOnly = httpOnly;
-            } else if (("secure" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("secure".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: secure
                 final Boolean secure = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 cookieConfig.secure = secure;
-            } else if (("max-age" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("max-age".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: maxAge
                 final Integer maxAge = Integer.valueOf(elementReader.getElementAsString());
                 cookieConfig.maxAge = maxAge;

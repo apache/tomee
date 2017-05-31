@@ -36,9 +36,6 @@ import static org.apache.openejb.jee.Text$JAXB.writeText;
 import static org.apache.openejb.jee.TransAttribute$JAXB.parseTransAttribute;
 import static org.apache.openejb.jee.TransAttribute$JAXB.toStringTransAttribute;
 
-@SuppressWarnings({
-    "StringEquality"
-})
 public class ContainerTransaction$JAXB
     extends JAXBObject<ContainerTransaction> {
 
@@ -83,14 +80,14 @@ public class ContainerTransaction$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("container-transactionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"container-transactionType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ContainerTransaction.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, containerTransaction);
@@ -102,14 +99,14 @@ public class ContainerTransaction$JAXB
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("description".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
-            } else if (("method" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("method".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: method
                 final Method methodItem = readMethod(elementReader, context);
                 if (method == null) {
@@ -121,7 +118,7 @@ public class ContainerTransaction$JAXB
                     }
                 }
                 method.add(methodItem);
-            } else if (("trans-attribute" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("trans-attribute".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: transAttribute
                 final TransAttribute transAttribute = parseTransAttribute(elementReader, context, elementReader.getElementAsString());
                 if (transAttribute != null) {

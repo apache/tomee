@@ -29,9 +29,6 @@ import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({
-    "StringEquality"
-})
 public class ConstructorParameterOrder$JAXB
     extends JAXBObject<ConstructorParameterOrder> {
 
@@ -75,14 +72,14 @@ public class ConstructorParameterOrder$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("constructor-parameter-orderType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"constructor-parameter-orderType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ConstructorParameterOrder.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, constructorParameterOrder);
@@ -94,7 +91,7 @@ public class ConstructorParameterOrder$JAXB
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("element-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("element-name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: elementName
                 final String elementNameItemRaw = elementReader.getElementAsString();
 
