@@ -32,9 +32,7 @@ import java.util.List;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.readConfigProperty;
 import static org.apache.openejb.jee.ConfigProperty$JAXB.writeConfigProperty;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class AdminObject$JAXB
     extends JAXBObject<AdminObject> {
 
@@ -78,26 +76,26 @@ public class AdminObject$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("adminobjectType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"adminobjectType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, AdminObject.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, adminObject);
                 adminObject.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("adminobject-interface" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("adminobject-interface".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: adminObjectInterface
                 final String adminObjectInterfaceRaw = elementReader.getElementAsString();
 
@@ -110,7 +108,7 @@ public class AdminObject$JAXB
                 }
 
                 adminObject.adminObjectInterface = adminObjectInterface;
-            } else if (("adminobject-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("adminobject-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: adminObjectClass
                 final String adminObjectClassRaw = elementReader.getElementAsString();
 
@@ -123,7 +121,7 @@ public class AdminObject$JAXB
                 }
 
                 adminObject.adminObjectClass = adminObjectClass;
-            } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("config-property".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: configProperty
                 final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {

@@ -46,9 +46,7 @@ import static org.apache.openejb.jee.MethodPermission$JAXB.writeMethodPermission
 import static org.apache.openejb.jee.SecurityRole$JAXB.readSecurityRole;
 import static org.apache.openejb.jee.SecurityRole$JAXB.writeSecurityRole;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class AssemblyDescriptor$JAXB
     extends JAXBObject<AssemblyDescriptor> {
 
@@ -98,26 +96,26 @@ public class AssemblyDescriptor$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("assembly-descriptorType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"assembly-descriptorType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, AssemblyDescriptor.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, assemblyDescriptor);
                 assemblyDescriptor.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("security-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("security-role".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: securityRole
                 final SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
                 if (securityRole == null) {
@@ -129,7 +127,7 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 securityRole.add(securityRoleItem);
-            } else if (("method-permission" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("method-permission".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: methodPermission
                 final MethodPermission methodPermissionItem = readMethodPermission(elementReader, context);
                 if (methodPermission == null) {
@@ -141,7 +139,7 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 methodPermission.add(methodPermissionItem);
-            } else if (("container-transaction" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("container-transaction".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: containerTransaction
                 final ContainerTransaction containerTransactionItem = readContainerTransaction(elementReader, context);
                 if (containerTransaction == null) {
@@ -153,7 +151,7 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 containerTransaction.add(containerTransactionItem);
-            } else if (("container-concurrency" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("container-concurrency".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: containerConcurrency
                 final ContainerConcurrency containerConcurrencyItem = readContainerConcurrency(elementReader, context);
                 if (containerConcurrency == null) {
@@ -165,7 +163,7 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 containerConcurrency.add(containerConcurrencyItem);
-            } else if (("interceptor-binding" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("interceptor-binding".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: interceptorBinding
                 final InterceptorBinding interceptorBindingItem = readInterceptorBinding(elementReader, context);
                 if (interceptorBinding == null) {
@@ -177,7 +175,7 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 interceptorBinding.add(interceptorBindingItem);
-            } else if (("message-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("message-destination".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: messageDestination
                 final MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
                 if (messageDestination == null) {
@@ -189,11 +187,11 @@ public class AssemblyDescriptor$JAXB
                     }
                 }
                 messageDestination.add(messageDestinationItem);
-            } else if (("exclude-list" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("exclude-list".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: excludeList
                 final ExcludeList excludeList = readExcludeList(elementReader, context);
                 assemblyDescriptor.excludeList = excludeList;
-            } else if (("application-exception" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("application-exception".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: applicationException
                 final ApplicationException applicationExceptionItem = readApplicationException(elementReader, context);
                 if (applicationException == null) {

@@ -26,10 +26,9 @@ import org.metatype.sxc.util.XoXMLStreamWriter;
 import javax.xml.XMLConstants;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.namespace.QName;
+import java.util.Objects;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class ApplicationException$JAXB
     extends JAXBObject<ApplicationException> {
 
@@ -72,26 +71,26 @@ public class ApplicationException$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("application-exceptionType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"application-exceptionType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ApplicationException.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && ((Objects.equals("", attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, applicationException);
                 applicationException.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("exception-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("exception-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: exceptionClass
                 final String exceptionClassRaw = elementReader.getElementAsString();
 
@@ -104,11 +103,11 @@ public class ApplicationException$JAXB
                 }
 
                 applicationException.exceptionClass = exceptionClass;
-            } else if (("rollback" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("rollback".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: rollback
                 final Boolean rollback = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 applicationException.rollback = rollback;
-            } else if (("inherited" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("inherited".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: inherited
                 final Boolean inherited = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 applicationException.inherited = inherited;

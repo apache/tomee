@@ -34,9 +34,7 @@ import static org.apache.openejb.jee.ConfigProperty$JAXB.writeConfigProperty;
 import static org.apache.openejb.jee.RequiredConfigProperty$JAXB.readRequiredConfigProperty;
 import static org.apache.openejb.jee.RequiredConfigProperty$JAXB.writeRequiredConfigProperty;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class ActivationSpec$JAXB
     extends JAXBObject<ActivationSpec> {
 
@@ -81,26 +79,26 @@ public class ActivationSpec$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("activationspecType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"activationspecType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, ActivationSpec.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, activationSpec);
                 activationSpec.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("activationspec-class" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("activationspec-class".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: activationSpecClass
                 final String activationSpecClassRaw = elementReader.getElementAsString();
 
@@ -113,7 +111,7 @@ public class ActivationSpec$JAXB
                 }
 
                 activationSpec.activationSpecClass = activationSpecClass;
-            } else if (("required-config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("required-config-property".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: requiredConfigProperty
                 final RequiredConfigProperty requiredConfigPropertyItem = readRequiredConfigProperty(elementReader, context);
                 if (requiredConfigProperty == null) {
@@ -125,7 +123,7 @@ public class ActivationSpec$JAXB
                     }
                 }
                 requiredConfigProperty.add(requiredConfigPropertyItem);
-            } else if (("config-property" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("config-property".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: configProperty
                 final ConfigProperty configPropertyItem = readConfigProperty(elementReader, context);
                 if (configProperty == null) {

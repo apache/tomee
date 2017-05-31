@@ -32,9 +32,7 @@ import java.util.List;
 import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class AuthConstraint$JAXB
     extends JAXBObject<AuthConstraint> {
 
@@ -79,33 +77,33 @@ public class AuthConstraint$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("auth-constraintType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"auth-constraintType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, AuthConstraint.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, authConstraint);
                 authConstraint.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("description".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
-            } else if (("role-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("role-name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: roleName
                 final String roleNameItemRaw = elementReader.getElementAsString();
 

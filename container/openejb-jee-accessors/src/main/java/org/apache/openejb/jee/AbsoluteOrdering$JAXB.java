@@ -31,9 +31,7 @@ import java.util.List;
 import static org.apache.openejb.jee.OrderingOthers$JAXB.readOrderingOthers;
 import static org.apache.openejb.jee.OrderingOthers$JAXB.writeOrderingOthers;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class AbsoluteOrdering$JAXB
     extends JAXBObject<AbsoluteOrdering> {
 
@@ -77,21 +75,21 @@ public class AbsoluteOrdering$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("absoluteOrderingType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"absoluteOrderingType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, AbsoluteOrdering.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute);
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: nameOrOthers
                 final java.lang.String nameOrOthersItem = elementReader.getElementAsString();
                 if (nameOrOthers == null) {
@@ -103,7 +101,7 @@ public class AbsoluteOrdering$JAXB
                     }
                 }
                 nameOrOthers.add(nameOrOthersItem);
-            } else if (("others" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("others".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: nameOrOthers
                 final org.apache.openejb.jee.OrderingOthers nameOrOthersItem1 = readOrderingOthers(elementReader, context);
                 if (nameOrOthers == null) {

@@ -60,9 +60,7 @@ import static org.apache.openejb.jee.ServiceRef$JAXB.writeServiceRef;
 import static org.apache.openejb.jee.Text$JAXB.readText;
 import static org.apache.openejb.jee.Text$JAXB.writeText;
 
-@SuppressWarnings({
-    "StringEquality"
-})
+
 public class Application$JAXB
     extends JAXBObject<Application> {
 
@@ -121,29 +119,29 @@ public class Application$JAXB
         // Check xsi:type
         final QName xsiType = reader.getXsiType();
         if (xsiType != null) {
-            if (("applicationType" != xsiType.getLocalPart()) || ("http://java.sun.com/xml/ns/javaee" != xsiType.getNamespaceURI())) {
+            if ((!"applicationType".equals(xsiType.getLocalPart())) || (!"http://java.sun.com/xml/ns/javaee".equals(xsiType.getNamespaceURI()))) {
                 return context.unexpectedXsiType(reader, Application.class);
             }
         }
 
         // Read attributes
         for (final Attribute attribute : reader.getAttributes()) {
-            if (("version" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            if (("version".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: version
                 application.version = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
-            } else if (("id" == attribute.getLocalName()) && (("" == attribute.getNamespace()) || (attribute.getNamespace() == null))) {
+            } else if (("id".equals(attribute.getLocalName())) && (("".equals(attribute.getNamespace())) || (attribute.getNamespace() == null))) {
                 // ATTRIBUTE: id
                 final String id = Adapters.collapsedStringAdapterAdapter.unmarshal(attribute.getValue());
                 context.addXmlId(reader, id, application);
                 application.id = id;
-            } else if (XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI != attribute.getNamespace()) {
+            } else if (!XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI.equals(attribute.getNamespace())) {
                 context.unexpectedAttribute(attribute, new QName("", "version"), new QName("", "id"));
             }
         }
 
         // Read elements
         for (final XoXMLStreamReader elementReader : reader.getChildElements()) {
-            if (("application-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            if (("application-name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: applicationName
                 final String applicationNameRaw = elementReader.getElementAsString();
 
@@ -156,21 +154,21 @@ public class Application$JAXB
                 }
 
                 application.applicationName = applicationName;
-            } else if (("description" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("description".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: descriptions
                 final Text descriptionsItem = readText(elementReader, context);
                 if (descriptions == null) {
                     descriptions = new ArrayList<Text>();
                 }
                 descriptions.add(descriptionsItem);
-            } else if (("display-name" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("display-name".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: displayNames
                 final Text displayNamesItem = readText(elementReader, context);
                 if (displayNames == null) {
                     displayNames = new ArrayList<Text>();
                 }
                 displayNames.add(displayNamesItem);
-            } else if (("icon" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("icon".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: icon
                 final Icon iconItem = readIcon(elementReader, context);
                 if (icon == null) {
@@ -182,11 +180,11 @@ public class Application$JAXB
                     }
                 }
                 icon.add(iconItem);
-            } else if (("initialize-in-order" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("initialize-in-order".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: initializeInOrder
                 final Boolean initializeInOrder = ("1".equals(elementReader.getElementAsString()) || "true".equals(elementReader.getElementAsString()));
                 application.initializeInOrder = initializeInOrder;
-            } else if (("module" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("module".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: module
                 final Module moduleItem = readModule(elementReader, context);
                 if (module == null) {
@@ -198,7 +196,7 @@ public class Application$JAXB
                     }
                 }
                 module.add(moduleItem);
-            } else if (("security-role" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("security-role".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: securityRole
                 final SecurityRole securityRoleItem = readSecurityRole(elementReader, context);
                 if (securityRole == null) {
@@ -210,7 +208,7 @@ public class Application$JAXB
                     }
                 }
                 securityRole.add(securityRoleItem);
-            } else if (("library-directory" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("library-directory".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: libraryDirectory
                 final String libraryDirectoryRaw = elementReader.getElementAsString();
 
@@ -223,7 +221,7 @@ public class Application$JAXB
                 }
 
                 application.libraryDirectory = libraryDirectory;
-            } else if (("env-entry" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("env-entry".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: envEntry
                 final EnvEntry envEntryItem = readEnvEntry(elementReader, context);
                 if (envEntry == null) {
@@ -235,7 +233,7 @@ public class Application$JAXB
                     }
                 }
                 envEntry.add(envEntryItem);
-            } else if (("ejb-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("ejb-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: ejbRef
                 final EjbRef ejbRefItem = readEjbRef(elementReader, context);
                 if (ejbRef == null) {
@@ -247,7 +245,7 @@ public class Application$JAXB
                     }
                 }
                 ejbRef.add(ejbRefItem);
-            } else if (("ejb-local-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("ejb-local-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: ejbLocalRef
                 final EjbLocalRef ejbLocalRefItem = readEjbLocalRef(elementReader, context);
                 if (ejbLocalRef == null) {
@@ -259,7 +257,7 @@ public class Application$JAXB
                     }
                 }
                 ejbLocalRef.add(ejbLocalRefItem);
-            } else if (("service-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("service-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: serviceRef
                 final ServiceRef serviceRefItem = readServiceRef(elementReader, context);
                 if (serviceRef == null) {
@@ -271,7 +269,7 @@ public class Application$JAXB
                     }
                 }
                 serviceRef.add(serviceRefItem);
-            } else if (("resource-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("resource-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: resourceRef
                 final ResourceRef resourceRefItem = readResourceRef(elementReader, context);
                 if (resourceRef == null) {
@@ -283,7 +281,7 @@ public class Application$JAXB
                     }
                 }
                 resourceRef.add(resourceRefItem);
-            } else if (("resource-env-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("resource-env-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: resourceEnvRef
                 final ResourceEnvRef resourceEnvRefItem = readResourceEnvRef(elementReader, context);
                 if (resourceEnvRef == null) {
@@ -295,7 +293,7 @@ public class Application$JAXB
                     }
                 }
                 resourceEnvRef.add(resourceEnvRefItem);
-            } else if (("message-destination-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("message-destination-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: messageDestinationRef
                 final MessageDestinationRef messageDestinationRefItem = readMessageDestinationRef(elementReader, context);
                 if (messageDestinationRef == null) {
@@ -307,7 +305,7 @@ public class Application$JAXB
                     }
                 }
                 messageDestinationRef.add(messageDestinationRefItem);
-            } else if (("persistence-context-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("persistence-context-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: persistenceContextRef
                 final PersistenceContextRef persistenceContextRefItem = readPersistenceContextRef(elementReader, context);
                 if (persistenceContextRef == null) {
@@ -319,7 +317,7 @@ public class Application$JAXB
                     }
                 }
                 persistenceContextRef.add(persistenceContextRefItem);
-            } else if (("persistence-unit-ref" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("persistence-unit-ref".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: persistenceUnitRef
                 final PersistenceUnitRef persistenceUnitRefItem = readPersistenceUnitRef(elementReader, context);
                 if (persistenceUnitRef == null) {
@@ -331,7 +329,7 @@ public class Application$JAXB
                     }
                 }
                 persistenceUnitRef.add(persistenceUnitRefItem);
-            } else if (("message-destination" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("message-destination".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: messageDestination
                 final MessageDestination messageDestinationItem = readMessageDestination(elementReader, context);
                 if (messageDestination == null) {
@@ -343,7 +341,7 @@ public class Application$JAXB
                     }
                 }
                 messageDestination.add(messageDestinationItem);
-            } else if (("data-source" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+            } else if (("data-source".equals(elementReader.getLocalName())) && ("http://java.sun.com/xml/ns/javaee".equals(elementReader.getNamespaceURI()))) {
                 // ELEMENT: dataSource
                 final DataSource dataSourceItem = readDataSource(elementReader, context);
                 if (dataSource == null) {
