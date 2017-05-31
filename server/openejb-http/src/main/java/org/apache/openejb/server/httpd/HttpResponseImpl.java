@@ -560,11 +560,19 @@ public class HttpResponseImpl implements HttpResponse {
             }
         } else {
             final InputStream in = content.getInputStream();
-            final byte[] buf = new byte[1024];
+            try {
+                final byte[] buf = new byte[1024];
 
-            int i;
-            while ((i = in.read(buf)) != -1) {
-                out.write(buf, 0, i);
+                int i;
+                while ((i = in.read(buf)) != -1) {
+                    out.write(buf, 0, i);
+                }
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException ex) {
+                    // no-op
+                }
             }
         }
     }
