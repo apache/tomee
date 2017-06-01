@@ -24,6 +24,9 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.StringTemplate;
 
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,13 +46,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 
 @SuppressWarnings("UnusedDeclaration")
 @Managed
-public class ServiceDaemon implements ServerService {
+public class ServiceDaemon extends UnwrappbleServerService {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER, ServiceDaemon.class);
 
@@ -266,6 +266,11 @@ public class ServiceDaemon implements ServerService {
     @Override
     public String getName() {
         return this.next.getName();
+    }
+
+    @Override
+    protected Object getDelegate() {
+        return next;
     }
 
     private static class SocketListener implements Runnable {

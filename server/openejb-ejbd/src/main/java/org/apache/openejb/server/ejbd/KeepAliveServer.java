@@ -18,10 +18,10 @@ package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.KeepAliveStyle;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.server.Unwrappable;
 import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -161,7 +161,7 @@ public class KeepAliveServer implements ServerService {
     private BlockingQueue<Runnable> getQueue() {
         if (this.threadQueue == null) {
             // this can be null if timer fires before service is fully initialized
-            final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
+            final ServicePool incoming = Unwrappable.class.isInstance(service) ? Unwrappable.class.cast(service).unwrap(ServicePool.class) : null;
             if (incoming == null) {
                 return null;
             }

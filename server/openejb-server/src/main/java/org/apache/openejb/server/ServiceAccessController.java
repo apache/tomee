@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 @Managed
-public class ServiceAccessController extends ServerServiceFilter {
+public class ServiceAccessController extends ServerServiceFilter implements Unwrappable {
 
     private final Event rejections = new Event();
 

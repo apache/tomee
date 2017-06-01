@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -165,7 +167,11 @@ public class ServicePool extends ServerServiceFilter {
                 }
             });
 
-        SystemInstance.get().setComponent(ServicePool.class, this);
+        Registry registry = SystemInstance.get().getComponent(Registry.class);
+        if (registry == null) {
+            registry = new Registry();
+            SystemInstance.get().setComponent(Registry.class, registry);
+        }
 
         if (log.isInfoEnabled()) {
             log.info(String.format("Created ServicePool '%1$s' with (%2$s) core threads, limited to (%3$s) threads with a queue of (%4$s)", getName(), c, t, q));
@@ -352,6 +358,14 @@ public class ServicePool extends ServerServiceFilter {
             if (log.isInfoEnabled()) {
                 log.info(String.format("Set ServicePool '" + ServicePool.this.getName() + "' keep alive time to (%1$s) nanoseconds", time));
             }
+        }
+    }
+
+    public static class Registry {
+        private final Collection<ServicePool> pools = new ArrayList<>();
+
+        public Collection<ServicePool> getPools() {
+            return pools;
         }
     }
 }
