@@ -46,6 +46,7 @@ import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
+import org.apache.openejb.testing.rest.ContextProvider;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -54,9 +55,18 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import javax.naming.Context;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.ext.ReaderInterceptor;
+import javax.ws.rs.ext.WriterInterceptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -545,7 +555,16 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private static <T> boolean isProvider(final Class<T> clazz) {
-        return new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
+        return MessageBodyReader.class.isAssignableFrom(clazz) ||
+                MessageBodyWriter.class.isAssignableFrom(clazz) ||
+                ParamConverter.class.isAssignableFrom(clazz) ||
+                ContainerRequestFilter.class.isAssignableFrom(clazz) ||
+                ContainerResponseFilter.class.isAssignableFrom(clazz) ||
+                ReaderInterceptor.class.isAssignableFrom(clazz) ||
+                WriterInterceptor.class.isAssignableFrom(clazz) ||
+                ParamConverterProvider.class.isAssignableFrom(clazz) ||
+                ContextResolver.class.isAssignableFrom(clazz) ||
+                new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
     }
 
     private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final String clazz) {
