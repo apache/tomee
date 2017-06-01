@@ -47,6 +47,7 @@ import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,6 +61,17 @@ public class TransactionalTest {
 
     @Inject
     private TxBean bean;
+
+    @Test
+    public void dontRollbackCommits() throws SystemException {
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+        try {
+            bean.dontRollback();
+        } catch (final TransactionalException e) {
+            // expected
+        }
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+    }
 
     @Test(expected = TransactionalException.class)
     public void mandatoryKO() {
@@ -359,6 +371,11 @@ public class TransactionalTest {
             } catch (final SystemException e) {
                 fail("no active tx");
             }
+        }
+
+        @Transactional(dontRollbackOn = AnException.class)
+        public void dontRollback() {
+            throw new AnException();
         }
 
         @Transactional(value = MANDATORY, rollbackOn = AnException.class)
