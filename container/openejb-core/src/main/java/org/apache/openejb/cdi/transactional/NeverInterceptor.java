@@ -25,6 +25,7 @@ import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import javax.transaction.InvalidTransactionException;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import java.rmi.RemoteException;
@@ -38,7 +39,7 @@ public class NeverInterceptor extends InterceptorBase {
         try {
             return super.intercept(ic);
         } catch (final RemoteException re) {
-            throw new TransactionalException(re.getMessage(), re);
+            throw new TransactionalException(re.getMessage(), new InvalidTransactionException(re.getMessage()));
         }
     }
 
