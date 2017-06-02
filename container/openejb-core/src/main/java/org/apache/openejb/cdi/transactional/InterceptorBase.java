@@ -158,11 +158,11 @@ public abstract class InterceptorBase implements Serializable {
         return OpenEJB.getTransactionManager();
     }
 
-    private static final class ExceptionPriotiryRules {
+    protected static final class ExceptionPriotiryRules {
         private final Class<?>[] includes;
         private final Class<?>[] excludes;
 
-        private ExceptionPriotiryRules(final Class<?>[] includes, final Class<?>[] excludes) {
+        protected ExceptionPriotiryRules(final Class<?>[] includes, final Class<?>[] excludes) {
             this.includes = includes;
             this.excludes = excludes;
         }
@@ -176,9 +176,9 @@ public abstract class InterceptorBase implements Serializable {
             final int excludeScore = contains(excludes, e);
 
             if (excludeScore < 0) {
-                return includeScore >= 0 || isNotChecked(e, exceptionTypes);
+                return includeScore > 0 || isNotChecked(e, exceptionTypes);
             }
-            return includeScore - excludeScore >= 0;
+            return includeScore - excludeScore > 0;
         }
 
         private static int contains(final Class<?>[] list, final Exception e) {

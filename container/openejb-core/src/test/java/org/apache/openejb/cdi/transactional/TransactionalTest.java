@@ -21,6 +21,7 @@ import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +38,8 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,8 +49,10 @@ import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -60,6 +65,14 @@ public class TransactionalTest {
 
     @Inject
     private TxBean bean;
+
+    @Test
+    public void exceptionPriorityRules() {
+        assertFalse(new InterceptorBase.ExceptionPriotiryRules(new Class[] {IllegalArgumentException.class}, new Class[]{IllegalArgumentException.class})
+                .accept(new IllegalArgumentException(""), new Class[0]));
+        assertTrue(new InterceptorBase.ExceptionPriotiryRules(new Class[] {SQLException.class}, new Class[]{SQLWarning.class})
+                .accept(new SQLWarning(""), new Class[0]));
+    }
 
     @Test
     public void dontRollbackCommits() throws SystemException {
