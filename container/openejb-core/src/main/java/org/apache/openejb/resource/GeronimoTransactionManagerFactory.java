@@ -32,6 +32,7 @@ import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.api.jmx.ManagedOperation;
 import org.apache.openejb.api.resource.DestroyableResource;
+import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
@@ -39,6 +40,8 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import javax.transaction.NotSupportedException;
+import javax.transaction.SystemException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Field;
@@ -93,29 +96,29 @@ public class GeronimoTransactionManagerFactory {
 
             xidFactory = new XidFactoryImpl(tmId == null ? DEFAULT_TM_ID : tmId);
             txLog = new HOWLLog(bufferClassName == null ? "org.objectweb.howl.log.BlockLogBuffer" : bufferClassName,
-                bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
-                checksumEnabled,
-                adler32Checksum,
-                flushSleepTimeMilliseconds,
-                logFileDir,
-                logFileExt,
-                logFileName,
-                maxBlocksPerFile,
-                maxBuffers,
-                maxLogFiles,
-                minBuffers,
-                threadsWaitingForceThreshold,
-                xidFactory,
-                SystemInstance.get().getBase().getDirectory("."));
+                    bufferSizeKb == 0 ? DEFAULT_BUFFER_SIZE : bufferSizeKb,
+                    checksumEnabled,
+                    adler32Checksum,
+                    flushSleepTimeMilliseconds,
+                    logFileDir,
+                    logFileExt,
+                    logFileName,
+                    maxBlocksPerFile,
+                    maxBuffers,
+                    maxLogFiles,
+                    minBuffers,
+                    threadsWaitingForceThreshold,
+                    xidFactory,
+                    SystemInstance.get().getBase().getDirectory("."));
             ((HOWLLog) txLog).doStart();
         }
 
         final GeronimoTransactionManager geronimoTransactionManager = new DestroyableTransactionManager(defaultTransactionTimeoutSeconds, xidFactory, txLog);
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management")
-            .set("j2eeType", "TransactionManager");
+                .set("j2eeType", "TransactionManager");
         LocalMBeanServer.registerDynamicWrapperSilently(
-            new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
-            jmxName.build());
+                new TransactionManagerMBean(geronimoTransactionManager, defaultTransactionTimeout, txLog),
+                jmxName.build());
 
         return geronimoTransactionManager;
     }
@@ -150,6 +153,19 @@ public class GeronimoTransactionManagerFactory {
                 } catch (final Throwable /*Exception + NoClassDefFoundError*/ e) {
                     Logger.getInstance(LogCategory.OPENEJB, DestroyableTransactionManager.class).error(e.getMessage(), e);
                 }
+            }
+        }
+
+        @Override
+        public void begin() throws NotSupportedException, SystemException {
+            try {
+                super.begin();
+            } catch (final NotSupportedException nse) {
+                final RuntimeException re = CoreUserTransaction.error();
+                if (re != null) {
+                    throw re;
+                }
+                throw nse;
             }
         }
     }
