@@ -176,7 +176,7 @@ public abstract class InterceptorBase implements Serializable {
             final int excludeScore = contains(excludes, e);
 
             if (excludeScore < 0) {
-                return includeScore > 0 || isNotChecked(e, exceptionTypes);
+                return includeScore >= 0 || isNotChecked(e, exceptionTypes);
             }
             return includeScore - excludeScore > 0;
         }

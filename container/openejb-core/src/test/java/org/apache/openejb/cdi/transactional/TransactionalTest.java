@@ -337,6 +337,39 @@ public class TransactionalTest {
         }
     }
 
+    @Test
+    public void tomee2051() {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.tomee2051(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final AnException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_ROLLEDBACK, status.get());
+        }
+    }
+
     @Transactional(value = REQUIRED, rollbackOn = AnCheckedException.class)
     public static class TxBean {
         @Resource
@@ -402,6 +435,12 @@ public class TransactionalTest {
 
         @Transactional(dontRollbackOn = AnException.class)
         public void dontRollback() {
+            throw new AnException();
+        }
+
+        @Transactional(rollbackOn = AnException.class)
+        public void tomee2051(final Runnable r) throws AnException {
+            r.run();
             throw new AnException();
         }
 
