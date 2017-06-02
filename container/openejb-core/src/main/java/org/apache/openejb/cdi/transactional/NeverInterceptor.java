@@ -26,6 +26,8 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.transaction.Transactional;
+import javax.transaction.TransactionalException;
+import java.rmi.RemoteException;
 
 @Interceptor
 @Transactional(Transactional.TxType.NEVER)
@@ -33,7 +35,11 @@ import javax.transaction.Transactional;
 public class NeverInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
-        return super.intercept(ic);
+        try {
+            return super.intercept(ic);
+        } catch (final RemoteException re) {
+            throw new TransactionalException(re.getMessage(), re);
+        }
     }
 
     @Override

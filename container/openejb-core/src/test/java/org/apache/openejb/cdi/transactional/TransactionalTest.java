@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javax.transaction.Transactional.TxType.MANDATORY;
+import static javax.transaction.Transactional.TxType.NEVER;
 import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
@@ -66,6 +67,23 @@ public class TransactionalTest {
         try {
             bean.dontRollback();
         } catch (final AnException e) {
+            // expected
+        }
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+    }
+
+    @Test
+    public void neverInTx() throws SystemException {
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+        try {
+            bean.createTx(new Runnable() {
+                @Override
+                public void run() {
+                    bean.never();
+                }
+            });
+            fail();
+        } catch (final TransactionalException e) {
             // expected
         }
         assertNull(OpenEJB.getTransactionManager().getTransaction());
@@ -406,6 +424,16 @@ public class TransactionalTest {
         public void checked(Runnable runnable) throws AnCheckedException {
             runnable.run();
             throw new AnCheckedException();
+        }
+
+        @Transactional(REQUIRED)
+        public void createTx(Runnable runnable) {
+            runnable.run();
+        }
+
+        @Transactional(NEVER)
+        public void never() {
+            // no-op
         }
 
         @Transactional(REQUIRED)
