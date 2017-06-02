@@ -30,6 +30,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.interceptor.InvocationContext;
 import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import java.io.Serializable;
@@ -120,7 +121,10 @@ public abstract class InterceptorBase implements Serializable {
                 }
             }
 
-            throw new TransactionalException(e.getMessage(), error);
+            if (error == null || TransactionRequiredException.class.isInstance(error)) {
+                throw new TransactionalException(e.getMessage(), error);
+            }
+            throw error;
         } finally {
             if (forbidsUt) {
                 CoreUserTransaction.resetError(oldEx);

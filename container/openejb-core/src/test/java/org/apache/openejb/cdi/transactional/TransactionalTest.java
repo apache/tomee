@@ -45,10 +45,8 @@ import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
@@ -67,7 +65,7 @@ public class TransactionalTest {
         assertNull(OpenEJB.getTransactionManager().getTransaction());
         try {
             bean.dontRollback();
-        } catch (final TransactionalException e) {
+        } catch (final AnException e) {
             // expected
         }
         assertNull(OpenEJB.getTransactionManager().getTransaction());
@@ -128,7 +126,7 @@ public class TransactionalTest {
             try {
                 bean.anException();
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             OpenEJB.getTransactionManager().rollback();
@@ -162,7 +160,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_ROLLEDBACK, status.get());
@@ -195,7 +193,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnCheckedException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -228,7 +226,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -261,7 +259,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnCheckedException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -275,7 +273,7 @@ public class TransactionalTest {
             try {
                 bean.anotherException(status);
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnotherException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -304,9 +302,8 @@ public class TransactionalTest {
         try {
             bean.exceptionOnCompletion();
             fail();
-        } catch (final TransactionalException te) {
-            assertNotNull(te);
-            assertTrue(IllegalArgumentException.class.isInstance(te.getCause()));
+        } catch (final IllegalArgumentException te) {
+            // ok
         }
     }
 
