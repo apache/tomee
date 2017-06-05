@@ -572,6 +572,8 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
                 // jaxrs 2
             || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
+                // jsonp
+            || "META-INF/services/javax.json.spi.JsonProvider".equals(name)
                 // jcache
             || "META-INF/services/javax.cache.spi.CachingProvider".equals(name)
                 // javamail
