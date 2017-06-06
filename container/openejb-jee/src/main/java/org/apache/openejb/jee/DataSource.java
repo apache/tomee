@@ -384,7 +384,9 @@ public class DataSource implements Keyable<String> {
     @Override
     public String getKey() {
         final String name = getName();
-        if (name == null || name.startsWith("java:")) return name;
-        return "java:comp/env/" + name;
+        if (name.startsWith("java:comp/env/")) {
+            return name.substring("java:comp/env/".length());
+        }
+        return name;
     }
 }
