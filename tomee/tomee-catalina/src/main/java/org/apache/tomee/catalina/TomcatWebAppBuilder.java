@@ -541,14 +541,16 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     if (standardContext.getDocBase() == null) {
                         standardContext.setDocBase(webApp.path);
                     }
-                    if (standardContext.getDocBase() != null && standardContext.getDocBase().endsWith(".war")) {
-                        DeploymentLoader.unpack(new File(standardContext.getDocBase()));
+                    String docBase = standardContext.getDocBase();
+                    File docBaseFile = new File(docBase);
+                    if (docBase != null && docBaseFile.isFile() && docBase.endsWith(".war")) {
+                        DeploymentLoader.unpack(docBaseFile);
                         if (standardContext.getPath().endsWith(".war")) {
                             standardContext.setPath(removeFirstSlashAndWar("/" + standardContext.getPath()));
                             standardContext.setName(standardContext.getPath());
                             webApp.contextRoot = standardContext.getPath();
                         }
-                        standardContext.setDocBase(standardContext.getDocBase().substring(0, standardContext.getDocBase().length() - 4));
+                        standardContext.setDocBase(docBase.substring(0, docBase.length() - 4));
                     }
                     if (isRoot(standardContext.getName())) {
                         standardContext.setName("");
