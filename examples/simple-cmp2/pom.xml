@@ -28,7 +28,7 @@
   <name>OpenEJB :: Examples :: Simple CMP2 Entity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.6.0.3-TT.8-SNAPSHOT</openejb.version>
+    <openejb.version>4.6.0.3-TT.8</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
