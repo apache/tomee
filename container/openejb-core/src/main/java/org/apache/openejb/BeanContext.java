@@ -49,6 +49,7 @@ import org.apache.webbeans.component.CdiInterceptorBean;
 import org.apache.webbeans.component.InjectionTargetBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
+import org.apache.webbeans.context.creational.DependentCreationalContext;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.intercept.DecoratorHandler;
 import org.apache.webbeans.intercept.InterceptorResolutionService;
@@ -102,6 +103,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 
 @SuppressWarnings("unchecked")
 public class BeanContext extends DeploymentContext {
@@ -110,6 +112,17 @@ public class BeanContext extends DeploymentContext {
 
     public static final String USER_INTERCEPTOR_KEY = "org.apache.openejb.default.system.interceptors";
     public static final String USER_INTERCEPTOR_SEPARATOR = ",| |;";
+
+    private static final Field DEPENDENTS_OBJECTS;
+
+    static {
+        try {
+            DEPENDENTS_OBJECTS = CreationalContextImpl.class.getDeclaredField("dependentObjects");
+            DEPENDENTS_OBJECTS.setAccessible(true);
+        } catch (final NoSuchFieldException e) {
+            throw new IllegalStateException("Invalid OpenWebBeans version", e);
+        }
+    }
 
     private ConstructorInjectionBean<Object> constructorInjectionBean;
     private final boolean passivable;
@@ -1634,6 +1647,7 @@ public class BeanContext extends DeploymentContext {
                 interceptorInstances.put(clazz.getName(), interceptorInstance.getInterceptor());
             }
 
+            final Collection<DependentCreationalContext<?>> createdDependents = getDependents(creationalContext);
             for (final InterceptorData interceptorData : this.getInstanceScopedInterceptors()) {
                 if (interceptorData.getInterceptorClass().equals(beanClass)) {
                     continue;
@@ -1643,17 +1657,30 @@ public class BeanContext extends DeploymentContext {
 
                 final Object iInstance;
                 if (webBeansContext != null) {
-                    ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
-                    if (interceptorConstructor == null) {
-                        synchronized (this) {
-                            interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
-                            if (interceptorConstructor == null) {
-                                interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
-                                interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
+                    Object preInstantiated = null;
+                    if (createdDependents != null) {
+                        for (final DependentCreationalContext<?> dcc : createdDependents) {
+                            if (clazz.isInstance(dcc.getInstance())) { // is that enough? do we have more to match?
+                                preInstantiated = dcc.getInstance();
+                                break;
                             }
                         }
                     }
-                    iInstance = interceptorConstructor.create(creationalContext);
+                    if (preInstantiated != null) {
+                        iInstance = preInstantiated;
+                    } else {
+                        ConstructorInjectionBean interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                        if (interceptorConstructor == null) {
+                            synchronized (this) {
+                                interceptorConstructor = interceptorData.get(ConstructorInjectionBean.class);
+                                if (interceptorConstructor == null) {
+                                    interceptorConstructor = new ConstructorInjectionBean(webBeansContext, clazz, webBeansContext.getAnnotatedElementFactory().newAnnotatedType(clazz));
+                                    interceptorData.set(ConstructorInjectionBean.class, interceptorConstructor);
+                                }
+                            }
+                        }
+                        iInstance = interceptorConstructor.create(creationalContext);
+                    }
                 } else {
                     iInstance = clazz.newInstance();
                 }
@@ -1740,6 +1767,14 @@ public class BeanContext extends DeploymentContext {
             return new InstanceContext(this, beanInstance, interceptorInstances, creationalContext);
         } finally {
             ThreadContext.exit(oldContext);
+        }
+    }
+
+    private Collection<DependentCreationalContext<?>> getDependents(final CreationalContext<Object> creationalContext) {
+        try {
+            return Collection.class.cast(DEPENDENTS_OBJECTS.get(creationalContext));
+        } catch (final Exception e) {
+            return emptyList();
         }
     }
 
