@@ -27,6 +27,7 @@ import javax.interceptor.AroundConstruct;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InterceptorBinding;
+import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -37,21 +38,40 @@ import static org.junit.Assert.assertEquals;
 
 // ensure @AroundConstruct doesnt fail and prevent to use EJB in its both flavors/signatures
 @RunWith(ApplicationComposer.class)
-@Classes(cdi = true, innerClassesAsBean = true, cdiInterceptors = {AroundConstructCdiTest.AC1.class, AroundConstructCdiTest.AC2.class})
+@Classes(cdi = true, innerClassesAsBean = true, cdiInterceptors = {
+        AroundConstructCdiTest.AC1.class, AroundConstructCdiTest.AC2.class
+})
 public class AroundConstructCdiTest {
     @Inject
     private Bean bean;
 
     @Test
     public void run() {
-        assertEquals("truetrueget", bean.get());
+        assertEquals("truetruetrueget", bean.get());
     }
 
     @B1 @B2
     @Singleton
+    @Interceptors(AC3.class)
     public static class Bean {
         public String get() {
             return "get";
+        }
+    }
+
+    @Interceptor
+    public static class AC3 {
+        private boolean constructured = false;
+
+        @AroundConstruct
+        public Object ac(InvocationContext ic) throws Exception {
+            constructured = true;
+            return ic.proceed();
+        }
+
+        @AroundInvoke
+        public Object ai(final InvocationContext ic) throws Exception {
+            return constructured + ic.proceed().toString();
         }
     }
 

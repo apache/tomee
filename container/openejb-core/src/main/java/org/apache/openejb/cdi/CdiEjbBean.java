@@ -36,6 +36,7 @@ import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.util.GenericsUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -522,7 +523,21 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
             final CreationalContextImpl<T> ccImpl = CreationalContextImpl.class.cast(creationalContext);
             // super.produce(cc) will not work since we need the unproxied instance - decorator case
-            final T produce = super.produce(super.createInterceptorInstances(ccImpl), ccImpl);
+            final Map<javax.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances = super.createInterceptorInstances(ccImpl);
+            final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = super.getInterceptorInfo();
+            if (interceptorInfo != null) {
+                final Map<Constructor<?>, InterceptorResolutionService.BusinessMethodInterceptorInfo> constructorInterceptorInfos =
+                        interceptorInfo.getConstructorInterceptorInfos();
+                if (!constructorInterceptorInfos.isEmpty()) { // were missed by OWB
+                    for (final javax.enterprise.inject.spi.Interceptor interceptorBean : constructorInterceptorInfos.values().iterator().next().getEjbInterceptors()) {
+                        if (!interceptorInstances.containsKey(interceptorBean)) {
+                            ccImpl.putContextual(interceptorBean);
+                            interceptorInstances.put(interceptorBean, interceptorBean.create(ccImpl));
+                        }
+                    }
+                }
+            }
+            final T produce = super.produce(interceptorInstances, ccImpl);
             if (produce == null) { // user didnt call ic.proceed() in @AroundConstruct
                 return super.newInstance(ccImpl);
             }
