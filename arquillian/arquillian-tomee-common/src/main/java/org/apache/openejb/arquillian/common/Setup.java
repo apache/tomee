@@ -372,7 +372,7 @@ public class Setup {
                 .addManifest() // avoid NPE from org.apache.tomcat.util.scan.StandardJarScanner.processManifest()
                 .addClasses(BeanDicovererInstaller.class, TestClassDiscoverer.class, ArquillianFilterRunner.class, Discover.class)
                 .addAsManifestResource(new StringAsset(BeanDicovererInstaller.class.getName()), ArchivePaths.create("org.apache.openejb.extension"))
-                .as(ZipExporter.class).exportTo(destination, false);
+                .as(ZipExporter.class).exportTo(destination, true);
     }
 
     public static void removeArquillianBeanDiscoverer(final File home) {
