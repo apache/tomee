@@ -52,6 +52,11 @@
       <artifactId>eclipselink</artifactId>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.components</groupId>
+      <artifactId>geronimo-transaction</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
