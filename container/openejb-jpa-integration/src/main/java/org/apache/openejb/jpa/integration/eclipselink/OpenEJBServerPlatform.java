@@ -16,11 +16,14 @@
  */
 package org.apache.openejb.jpa.integration.eclipselink;
 
+import org.apache.geronimo.transaction.manager.TransactionImpl;
 import org.eclipse.persistence.platform.server.JMXServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
+import org.eclipse.persistence.transaction.AbstractSynchronizationListener;
 import org.eclipse.persistence.transaction.JTATransactionController;
 
 import javax.management.MBeanServer;
+import javax.transaction.Synchronization;
 import javax.transaction.TransactionManager;
 
 public class OpenEJBServerPlatform extends JMXServerPlatformBase {
@@ -51,6 +54,13 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase {
             return TransactionManager.class.cast(
                 OpenEJBJTATransactionController.class.getClassLoader().loadClass("org.apache.openejb.OpenEJB")
                     .getDeclaredMethod("getTransactionManager").invoke(null));
+        }
+
+        @Override
+        protected void registerSynchronization_impl(AbstractSynchronizationListener listener, Object txn) throws Exception {
+            final TransactionImpl transaction = (TransactionImpl) txn;
+            final Synchronization synchronization = (Synchronization) listener;
+            transaction.registerInterposedSynchronization(synchronization);
         }
     }
 }
