@@ -32,7 +32,7 @@ import java.rmi.RemoteException;
 
 @Interceptor
 @Transactional(Transactional.TxType.NEVER)
-@Priority(200)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class NeverInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {

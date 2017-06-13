@@ -28,7 +28,7 @@ import javax.transaction.Transactional;
 
 @Interceptor
 @Transactional(Transactional.TxType.REQUIRED)
-@Priority(200)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class RequiredInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
