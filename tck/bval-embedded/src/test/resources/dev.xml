@@ -16,10 +16,11 @@
   limitations under the License.
   -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="JSR-303-TCK" verbose="1">
-    <test name="JSR-303-TCK">
+<suite name="BVAL-TCK" verbose="1">
+    <test name="BVAL-TCK">
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.executable.types.ExecutableTypesTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.integration.ee.cdi.ConstraintValidatorInjectionTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.factory.ConstraintValidatorInjectionTest" />
       </classes>
     </test>
 </suite>
