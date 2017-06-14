@@ -18,10 +18,10 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.6.0.3-TT.7</version>
+    <version>1.6.0.3-TT.7-SNAPSHOT</version>
   </parent>
   <artifactId>tomee-webaccess</artifactId>
-  <version>1.6.0.3-TT.7</version>
+  <version>1.6.0.3-TT.7-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>OpenEJB :: TomEE :: webaccess</name>
   <properties>
