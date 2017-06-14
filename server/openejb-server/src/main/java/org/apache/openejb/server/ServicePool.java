@@ -183,6 +183,28 @@ public class ServicePool extends ServerServiceFilter {
     }
 
     @Override
+    public void start() throws ServiceException {
+        final Registry registry = SystemInstance.get().getComponent(Registry.class);
+        if (registry == null) {
+            return;
+        }
+        synchronized (registry) {
+            registry.pools.add(this);
+        }
+    }
+
+    @Override
+    public void stop() throws ServiceException {
+        final Registry registry = SystemInstance.get().getComponent(Registry.class);
+        if (registry == null) {
+            return;
+        }
+        synchronized (registry) {
+            registry.pools.remove(this);
+        }
+    }
+
+    @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
     }
 
@@ -364,8 +386,8 @@ public class ServicePool extends ServerServiceFilter {
     public static class Registry {
         private final Collection<ServicePool> pools = new ArrayList<>();
 
-        public Collection<ServicePool> getPools() {
-            return pools;
+        public synchronized Collection<ServicePool> getPools() {
+            return new ArrayList<>(pools);
         }
     }
 }
