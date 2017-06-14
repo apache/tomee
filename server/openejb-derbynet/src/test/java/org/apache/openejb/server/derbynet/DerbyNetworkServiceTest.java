@@ -53,7 +53,7 @@ public class DerbyNetworkServiceTest {
 
         serviceManager.init();
         serviceManager.start(false);
-
+		Thread.sleep(2000L);
         final Socket derbyClient = new Socket("127.0.0.1", port);
 
         serviceManager.stop();
