@@ -22,6 +22,9 @@ public abstract class UnwrappbleServerService implements ServerService, Unwrappa
         if (type.isAssignableFrom(getClass())) {
             return type.cast(this);
         }
+        if (type.isInstance(getDelegate())) {
+            return type.cast(getDelegate());
+        }
         return Unwrappable.class.isInstance(getDelegate()) ? Unwrappable.class.cast(getDelegate()).unwrap(type) : null;
     }
 
