@@ -529,10 +529,14 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
                 final Map<Constructor<?>, InterceptorResolutionService.BusinessMethodInterceptorInfo> constructorInterceptorInfos =
                         interceptorInfo.getConstructorInterceptorInfos();
                 if (!constructorInterceptorInfos.isEmpty()) { // were missed by OWB
-                    for (final javax.enterprise.inject.spi.Interceptor interceptorBean : constructorInterceptorInfos.values().iterator().next().getEjbInterceptors()) {
-                        if (!interceptorInstances.containsKey(interceptorBean)) {
-                            ccImpl.putContextual(interceptorBean);
-                            interceptorInstances.put(interceptorBean, interceptorBean.create(ccImpl));
+                    final javax.enterprise.inject.spi.Interceptor<?>[] ejbInterceptors = constructorInterceptorInfos.values().iterator().next().getEjbInterceptors();
+
+                    if (null != ejbInterceptors) {
+                        for (final javax.enterprise.inject.spi.Interceptor interceptorBean : ejbInterceptors) {
+                            if (!interceptorInstances.containsKey(interceptorBean)) {
+                                ccImpl.putContextual(interceptorBean);
+                                interceptorInstances.put(interceptorBean, interceptorBean.create(ccImpl));
+                            }
                         }
                     }
                 }
