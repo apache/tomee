@@ -184,6 +184,7 @@ public class ServicePool extends ServerServiceFilter {
 
     @Override
     public void start() throws ServiceException {
+        super.start();
         final Registry registry = SystemInstance.get().getComponent(Registry.class);
         if (registry == null) {
             return;
@@ -195,6 +196,7 @@ public class ServicePool extends ServerServiceFilter {
 
     @Override
     public void stop() throws ServiceException {
+        super.stop();
         final Registry registry = SystemInstance.get().getComponent(Registry.class);
         if (registry == null) {
             return;
