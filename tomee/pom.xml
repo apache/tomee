@@ -196,7 +196,7 @@
   </profiles>
 
   <properties>
-    <openejb.version>4.6.0.3-TT.7</openejb.version>
+    <openejb.version>4.6.0.3-TT.7-SNAPSHOT</openejb.version>
   </properties>
 </project>
 
