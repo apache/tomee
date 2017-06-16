@@ -65,6 +65,7 @@ public class DataSourceDefinitionTest {
                 .addClass(DataSourceDefinitionTest.class)
                 .addClass(DataSourceServlet.class)
                 .addClass(DataSourceBean.class)
+                .addClass(DataSourcePojo.class)
                 .addClass(Runner.class)
                 .addAsLibraries(JarLocation.jarLocation(Test.class))
                 .addAsWebInfResource(new ClassLoaderAsset(CONTENT_LOCATION_EJB_JAR_XML), RESOURCE_EJB_JAR_XML)
@@ -89,8 +90,28 @@ public class DataSourceDefinitionTest {
     }
 
     @Test
+    public void testDataSourceFromPojoInjectionInServlet() throws IOException {
+        validateTest("testDataSourceFromPojoInjectionInServlet");
+    }
+
+    @Test
+    public void testDataSourceFromPojoLookUpFromServlet() throws IOException {
+        validateTest("testDataSourceFromPojoLookUpFromServlet");
+    }
+
+    @Test
     public void testDataSourceLookUpFromEjb() throws IOException {
         validateTest("testDataSourceLookUpFromEjb");
+    }
+
+    @Test
+    public void testDataSourceFromPojoInjectionInEjbDSFromPojo() throws IOException {
+        validateTest("testDataSourceFromPojoInjectionInEjbDSFromPojo");
+    }
+
+    @Test
+    public void testDataSourceFromPojoLookUpFromEjb() throws IOException {
+        validateTest("testDataSourceFromPojoLookUpFromEjb");
     }
 
     private void validateTest(String testName) throws IOException {

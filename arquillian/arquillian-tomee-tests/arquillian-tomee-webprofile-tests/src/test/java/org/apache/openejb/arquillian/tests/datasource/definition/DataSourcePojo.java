@@ -17,27 +17,13 @@
 
 package org.apache.openejb.arquillian.tests.datasource.definition;
 
-import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
 
-@Stateless
-@LocalBean
-@DataSourceDefinition(name = "jdbc/database", className = "org.hsqldb.jdbcDriver", url = "jdbc:hsqldb:mem:unexpected")
-public class DataSourceBean {
-    @Resource(name = "jdbc/database")
-    private DataSource dataSource;
-
-    @Resource(name = "jdbc/pojodb")
-    private DataSource dataSourceFromPojo;
-
-    public DataSource getDataSource() {
-        return dataSource;
-    }
-
-    public DataSource getDataSourceFromPojo() {
-        return dataSourceFromPojo;
-    }
+@DataSourceDefinition(name = "jdbc/pojodb",
+        className = "org.hsqldb.jdbcDriver",
+        url = "jdbc:hsqldb:mem:pojo",
+        user = "sa",
+        password = "sa"
+)
+public class DataSourcePojo {
 }
