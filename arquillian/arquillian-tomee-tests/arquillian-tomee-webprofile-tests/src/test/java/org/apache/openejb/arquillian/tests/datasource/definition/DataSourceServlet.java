@@ -65,8 +65,8 @@ public class DataSourceServlet extends HttpServlet {
         }
     }
 
-    public void testDataSourceLookUpFromEjb() throws SQLException {
-        final String dataSourceUrl = dataSourceBean.getUrlFromInjectedDataSource();
+    public void testDataSourceLookUpFromEjb() throws Exception {
+        final String dataSourceUrl = dataSourceBean.getUrlFromLookedUpDataSource();
         if (!EXPECTED_URL.equals(dataSourceUrl)) {
             throw new IllegalStateException("[BEAN - LOOKUP] Unexpected URL: " + dataSourceUrl);
         }
