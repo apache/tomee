@@ -48,6 +48,13 @@ public class ConvertDataSourceDefinitions extends BaseConvertDefinitions {
                 continue;
             }
 
+            if (consumer instanceof org.apache.openejb.config.CompManagedBean) {
+                /*
+                 * TOMEE-2053: It may contain invalid datasource definitions
+                 * because it is never updated with content from the ejb-jar.xml
+                 */
+                continue;
+            }
             dataSources.addAll(consumer.getDataSource());
         }
 
