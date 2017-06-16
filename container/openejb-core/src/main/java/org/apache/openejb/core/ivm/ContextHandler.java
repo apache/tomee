@@ -19,6 +19,7 @@ package org.apache.openejb.core.ivm;
 
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.ivm.naming.ContextWrapper;
+import org.apache.openejb.core.ivm.naming.IvmContext;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
@@ -95,6 +96,12 @@ public class ContextHandler extends ContextWrapper {
                 // ignore, let it be thrown
             }
             throw nnfe;
+        }
+    }
+    
+    public void setReadOnly() {
+        if(this.context instanceof IvmContext) {
+            ((IvmContext) context).setReadOnly(true);
         }
     }
 }

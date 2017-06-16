@@ -87,7 +87,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     public IvmContext(final NameNode node) {
+        this(node, false);
+    }
+    
+    public IvmContext(final NameNode node, final boolean isReadOnly) {
         mynode = node;
+        readOnly = isReadOnly;
 //        mynode.setMyContext(this);
     }
 
@@ -147,7 +152,7 @@ public class IvmContext implements Context, Serializable {
         Object obj = fastCache.get(compoundName);
         if (obj == null) {
             try {
-                obj = mynode.resolve(new ParsedName(compoundName));
+                obj = mynode.resolve(new ParsedName(compoundName), readOnly);
             } catch (final NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
@@ -293,7 +298,9 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void bind(String name, final Object obj) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            return;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -328,7 +335,9 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void unbind(String name) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            return;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -399,7 +408,10 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Context createSubcontext(String name) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            //TODO: throw exception or return null? tomcat returns null
+            return null;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -411,7 +423,7 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            return mynode.createSubcontext(new ParsedName(name));
+            return mynode.createSubcontext(new ParsedName(name), readOnly);
         }
     }
 
@@ -477,9 +489,36 @@ public class IvmContext implements Context, Serializable {
     public void close() throws NamingException {
     }
 
-    protected void checkReadOnly() throws OperationNotSupportedException {
+    //TODO: rename? isReadOnly?
+    /*
+     * return false if current naming context is not marked as read only
+     * return true if current naming context is marked as read only and system property jndiExceptionOnFailedWrite is set to false
+     * 
+     * throws OperationNotSupportedException if naming context:
+     *   - is marked as read only and
+     *   - system property jndiExceptionOnFailedWrite is set to true
+     *   
+     * jndiExceptionOnFailedWrite property is defined by tomcat and is used in similar context for web app components
+     * https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#jndiExceptionOnFailedWrite
+     * 
+     */
+    protected boolean checkReadOnly() throws OperationNotSupportedException {
+      //TODO: should it log?
         if (readOnly) {
-            throw new OperationNotSupportedException();
+            //alignment with tomcat behavior
+            if("true".equals(System.getProperty("jndiExceptionOnFailedWrite"))) {
+                throw new OperationNotSupportedException();
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public void setReadOnly(boolean isReadOnly) {
+        //TODO: should it log?
+        this.readOnly = isReadOnly;
+        if(mynode != null) {
+            mynode.setReadOnly(readOnly);
         }
     }
 

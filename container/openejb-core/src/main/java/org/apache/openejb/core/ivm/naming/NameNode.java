@@ -26,6 +26,7 @@ import javax.naming.NamingException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class NameNode implements Serializable {
     private final String atomicName;
@@ -59,12 +60,17 @@ public class NameNode implements Serializable {
         this.myContext = myContext;
     }
 
+    //TODO: probably can be removed, doesn't seem to be used anywhere
     public Object getBinding() {
+        return getBinding(false);
+    }
+    
+    public Object getBinding(boolean createReadOnlyContext) {
         if (myObject != null && !(myObject instanceof Federation)) {
             return myObject;// if NameNode has an object it must be a binding
         } else {
             if (myContext == null) {
-                myContext = new IvmContext(this);
+                myContext = new IvmContext(this, createReadOnlyContext);
             }
             return myContext;
         }
@@ -73,8 +79,13 @@ public class NameNode implements Serializable {
     public Object getObject() {
         return myObject;
     }
-
+    
+    //TODO: probably can be removed, doesn't seem to be used anywhere
     public Object resolve(final ParsedName name) throws NameNotFoundException {
+        return resolve(name, false);
+    }
+
+    public Object resolve(final ParsedName name, boolean createReadOnlyContext) throws NameNotFoundException {
         final int compareResult = name.compareTo(atomicHash);
         NameNotFoundException n = null;
         final int pos = name.getPos();
@@ -83,30 +94,30 @@ public class NameNode implements Serializable {
             if (name.next()) {
                 if (subTree != null) {
                     try {
-                        return subTree.resolve(name);
+                        return subTree.resolve(name, createReadOnlyContext);
                     } catch (final NameNotFoundException e) {
                         n = e;
                     }
                 } else if (!subTreeUnbound && !unbound && myContext != null && !Federation.class.isInstance(myObject)) {
                     try {
-                        return myContext.mynode.resolve(name);
+                        return myContext.mynode.resolve(name, createReadOnlyContext);
                     } catch (final NameNotFoundException e) {
                         n = e;
                     }
                 }
             } else if (!unbound) {
-                return getBinding();
+                return getBinding(createReadOnlyContext);
             }
         } else if (compareResult == ParsedName.IS_LESS) {
             // parsed hash is less than
             if (lessTree != null) {
-                return lessTree.resolve(name);
+                return lessTree.resolve(name, createReadOnlyContext);
             }
 
         } else {
             //ParsedName.IS_GREATER
             if (grtrTree != null) {
-                return grtrTree.resolve(name);
+                return grtrTree.resolve(name,createReadOnlyContext);
             }
         }
         if (myObject instanceof Federation) {
@@ -130,7 +141,7 @@ public class NameNode implements Serializable {
             }
             if (f != null) {
                 final NameNode node = new NameNode(null, new ParsedName(""), f, null);
-                return new IvmContext(node);
+                return new IvmContext(node, createReadOnlyContext);
             }
         }
         if (n != null) {
@@ -292,6 +303,32 @@ public class NameNode implements Serializable {
         }
         rebalance(node);
     }
+    
+    void setReadOnly(boolean isReadOnly) { 
+        if(myContext != null) {
+            myContext.readOnly = isReadOnly;
+        }
+        
+        if(myObject instanceof Federation) {
+            Iterator<Context> federatedContextsIterator = ((Federation) myObject).iterator();
+            while(federatedContextsIterator.hasNext()) {
+                Context current = federatedContextsIterator.next();
+                //TODO: what other types of federated contexts than IvmContext? 
+                if(current instanceof IvmContext) {
+                    ((IvmContext)current).setReadOnly(isReadOnly);
+                }
+            }
+        }
+        if (subTree != null) {
+            subTree.setReadOnly(isReadOnly);;
+        }
+        if (lessTree != null) {
+            lessTree.setReadOnly(isReadOnly);
+        }
+        if (grtrTree != null) {
+            grtrTree.setReadOnly(isReadOnly);
+        }
+    }
 
     private void rebalance(final NameNode node) {
         if (node.subTree != null) {
@@ -361,12 +398,17 @@ public class NameNode implements Serializable {
             subTree.clearCache();
         }
     }
-
+    
+    //TODO: probably can be removed, doesn't seem to be used anywhere
     public IvmContext createSubcontext(final ParsedName name) throws NameAlreadyBoundException {
+        return createSubcontext(name, false);
+    }
+
+    public IvmContext createSubcontext(final ParsedName name, final boolean createReadOnlyContext) throws NameAlreadyBoundException {
         try {
             bind(name, null);
             name.reset();
-            return (IvmContext) resolve(name);
+            return (IvmContext) resolve(name, createReadOnlyContext);
         } catch (final NameNotFoundException exception) {
             exception.printStackTrace();
             throw new OpenEJBRuntimeException(exception);

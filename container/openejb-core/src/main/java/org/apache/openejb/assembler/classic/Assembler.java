@@ -81,6 +81,7 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -1029,6 +1030,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, appContext, allDeployments));
                 logger.info("createApplication.success", appInfo.path);
+                
+                //TODO: set proper default
+                //required by spec: EE.5.3.4, used together with tomcat#jndiExceptionOnFailedWrite 
+                if("true".equals(SystemInstance.get().getProperty("forceReadOnlyAppNamingContext", "true"))) {
+                    ensureAppNamingContextIsReadOnly(allDeployments);
+                    //TODO message
+                    logger.info("createApplication.success", appInfo.path);
+                }
 
                 return appContext;
             } catch (final ValidationException | DeploymentException ve) {
@@ -1045,6 +1054,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // cleanup there as well by safety cause we have multiple deployment mode (embedded, tomcat...)
             for (final WebAppInfo webApp : appInfo.webApps) {
                 appInfo.properties.remove(webApp);
+            }
+        }
+    }
+
+    private void ensureAppNamingContextIsReadOnly(final List<BeanContext> allDeployments) {
+        for(BeanContext beanContext : allDeployments) {
+            Context ctx = beanContext.getJndiContext();
+            if(ctx instanceof IvmContext) {
+               ((IvmContext) ctx).setReadOnly(true);
+            } else if(ctx instanceof ContextHandler) {
+            ((ContextHandler)ctx).setReadOnly();
+            } else {
+                //TODO: log only?
             }
         }
     }
@@ -2143,6 +2165,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         continue;
                     }
 
+                    if(globalContext instanceof IvmContext) {
+                        ((IvmContext) globalContext).setReadOnly(false);
+                    }
                     unbind(globalContext, path);
                     unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
                     unbind(globalContext, path.substring("java:global".length()));
