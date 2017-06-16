@@ -18,7 +18,6 @@
 package org.apache.openejb.arquillian.tests.datasource.definition;
 
 import org.apache.openejb.arquillian.tests.Runner;
-import org.apache.openejb.arquillian.tests.persistence.ejb.SessionSynchronizationCallbackTest;
 import org.apache.ziplock.JarLocation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -43,7 +42,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class DataSourceDefinitionTest {
-    private static final String TEST_NAME = SessionSynchronizationCallbackTest.class.getSimpleName();
+    private static final String TEST_NAME = DataSourceDefinitionTest.class.getSimpleName();
     private static final String SERVLET_NAME = "TestServlet";
     private static final java.lang.String RESOURCE_EJB_JAR_XML = "ejb-jar.xml";
     private static final java.lang.String CONTENT_LOCATION_EJB_JAR_XML = "org/apache/openejb/arquillian/tests/datasource/ds_definition/ejb-jar.xml";
