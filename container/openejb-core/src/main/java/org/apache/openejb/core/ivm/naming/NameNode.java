@@ -313,9 +313,8 @@ public class NameNode implements Serializable {
             Iterator<Context> federatedContextsIterator = ((Federation) myObject).iterator();
             while(federatedContextsIterator.hasNext()) {
                 Context current = federatedContextsIterator.next();
-                //TODO: what other types of federated contexts than IvmContext? 
-                if(current instanceof IvmContext) {
-                    ((IvmContext)current).setReadOnly(isReadOnly);
+                if(IvmContext.class.isInstance(current)) {
+                	IvmContext.class.cast(current).setReadOnly(isReadOnly);
                 }
             }
         }

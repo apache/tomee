@@ -100,8 +100,8 @@ public class ContextHandler extends ContextWrapper {
     }
     
     public void setReadOnly() {
-        if(this.context instanceof IvmContext) {
-            ((IvmContext) context).setReadOnly(true);
+        if(IvmContext.class.isInstance(context)) {
+        	IvmContext.class.cast(context).setReadOnly(true);
         }
     }
 }

@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.naming.context.ContextUtil;
 
@@ -72,6 +73,7 @@ public class IvmContext implements Context, Serializable {
     Hashtable<String, Object> myEnv;
     boolean readOnly;
     Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
+    static final String JNDI_EXCEPTION_ON_FAILED_WRITE = "openejb.jndiExceptionOnFailedWrite";
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
@@ -409,7 +411,7 @@ public class IvmContext implements Context, Serializable {
 
     public Context createSubcontext(String name) throws NamingException {
         if(checkReadOnly()) {
-            //TODO: throw exception or return null? tomcat returns null
+            //TODO: null is fine if there is a one time - 10 calls will log a single time - log line (warning?)
             return null;
         }
         final int indx = name.indexOf(":");
@@ -489,7 +491,6 @@ public class IvmContext implements Context, Serializable {
     public void close() throws NamingException {
     }
 
-    //TODO: rename? isReadOnly?
     /*
      * return false if current naming context is not marked as read only
      * return true if current naming context is marked as read only and system property jndiExceptionOnFailedWrite is set to false
@@ -503,10 +504,9 @@ public class IvmContext implements Context, Serializable {
      * 
      */
     protected boolean checkReadOnly() throws OperationNotSupportedException {
-      //TODO: should it log?
         if (readOnly) {
             //alignment with tomcat behavior
-            if("true".equals(System.getProperty("jndiExceptionOnFailedWrite"))) {
+            if("true".equals(SystemInstance.get().getProperty(JNDI_EXCEPTION_ON_FAILED_WRITE,"true"))) {
                 throw new OperationNotSupportedException();
             }
             return true;
@@ -515,7 +515,6 @@ public class IvmContext implements Context, Serializable {
     }
     
     public void setReadOnly(boolean isReadOnly) {
-        //TODO: should it log?
         this.readOnly = isReadOnly;
         if(mynode != null) {
             mynode.setReadOnly(readOnly);
