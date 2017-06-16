@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         version="3.1"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+    <enterprise-beans>
+        <session>
+            <ejb-name>DataSourceBean</ejb-name>
+            <ejb-class>org.apache.openejb.arquillian.tests.datasource.definition.DataSourceBean</ejb-class>
+            <data-source>
+                <name>java:comp/env/jdbc/database</name>
+                <class-name>org.hsqldb.jdbcDriver</class-name>
+                <url>jdbc:hsqldb:mem:expected</url>
+                <user>sa</user>
+                <password>sa</password>
+            </data-source>
+        </session>
+    </enterprise-beans>
+</ejb-jar>
