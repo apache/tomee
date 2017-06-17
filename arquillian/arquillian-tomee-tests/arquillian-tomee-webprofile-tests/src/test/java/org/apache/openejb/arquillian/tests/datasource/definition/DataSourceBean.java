@@ -21,10 +21,7 @@ import javax.annotation.Resource;
 import javax.annotation.sql.DataSourceDefinition;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 @Stateless
 @LocalBean
@@ -33,20 +30,14 @@ public class DataSourceBean {
     @Resource(name = "jdbc/database")
     private DataSource dataSource;
 
-    public String getUrlFromInjectedDataSource() throws SQLException {
-        return getDataSourceUrl(dataSource);
+    @Resource(name = "jdbc/pojodb")
+    private DataSource dataSourceFromPojo;
+
+    public DataSource getDataSource() {
+        return dataSource;
     }
 
-    public String getUrlFromLookedUpDataSource() throws Exception {
-        final InitialContext initialContext = new InitialContext();
-        final DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/database");
-
-        return getDataSourceUrl(ds);
-    }
-
-    private String getDataSourceUrl(DataSource dataSource) throws SQLException {
-        try (Connection connection = dataSource.getConnection()) {
-            return connection.getMetaData().getURL();
-        }
+    public DataSource getDataSourceFromPojo() {
+        return dataSourceFromPojo;
     }
 }
