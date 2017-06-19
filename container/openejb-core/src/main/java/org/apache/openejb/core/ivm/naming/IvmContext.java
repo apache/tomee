@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.naming.context.ContextUtil;
 
@@ -72,6 +73,7 @@ public class IvmContext implements Context, Serializable {
     Hashtable<String, Object> myEnv;
     boolean readOnly;
     Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
+    static final String JNDI_EXCEPTION_ON_FAILED_WRITE = "openejb.jndiExceptionOnFailedWrite";
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
@@ -87,7 +89,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     public IvmContext(final NameNode node) {
+        this(node, false);
+    }
+    
+    public IvmContext(final NameNode node, final boolean isReadOnly) {
         mynode = node;
+        readOnly = isReadOnly;
 //        mynode.setMyContext(this);
     }
 
@@ -147,7 +154,7 @@ public class IvmContext implements Context, Serializable {
         Object obj = fastCache.get(compoundName);
         if (obj == null) {
             try {
-                obj = mynode.resolve(new ParsedName(compoundName));
+                obj = mynode.resolve(new ParsedName(compoundName), readOnly);
             } catch (final NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
@@ -293,7 +300,9 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void bind(String name, final Object obj) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            return;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -328,7 +337,9 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void unbind(String name) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            return;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -399,7 +410,10 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Context createSubcontext(String name) throws NamingException {
-        checkReadOnly();
+        if(checkReadOnly()) {
+            //TODO: null is fine if there is a one time - 10 calls will log a single time - log line (warning?)
+            return null;
+        }
         final int indx = name.indexOf(":");
         if (indx > -1) {
             /*
@@ -411,7 +425,7 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            return mynode.createSubcontext(new ParsedName(name));
+            return mynode.createSubcontext(new ParsedName(name), readOnly);
         }
     }
 
@@ -477,9 +491,33 @@ public class IvmContext implements Context, Serializable {
     public void close() throws NamingException {
     }
 
-    protected void checkReadOnly() throws OperationNotSupportedException {
+    /*
+     * return false if current naming context is not marked as read only
+     * return true if current naming context is marked as read only and system property jndiExceptionOnFailedWrite is set to false
+     * 
+     * throws OperationNotSupportedException if naming context:
+     *   - is marked as read only and
+     *   - system property jndiExceptionOnFailedWrite is set to true
+     *   
+     * jndiExceptionOnFailedWrite property is defined by tomcat and is used in similar context for web app components
+     * https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#jndiExceptionOnFailedWrite
+     * 
+     */
+    protected boolean checkReadOnly() throws OperationNotSupportedException {
         if (readOnly) {
-            throw new OperationNotSupportedException();
+            //alignment with tomcat behavior
+            if("true".equals(SystemInstance.get().getProperty(JNDI_EXCEPTION_ON_FAILED_WRITE,"true"))) {
+                throw new OperationNotSupportedException();
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public void setReadOnly(boolean isReadOnly) {
+        this.readOnly = isReadOnly;
+        if(mynode != null) {
+            mynode.setReadOnly(readOnly);
         }
     }
 

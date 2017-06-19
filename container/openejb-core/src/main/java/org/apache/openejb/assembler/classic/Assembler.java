@@ -81,6 +81,7 @@ import org.apache.openejb.core.ServerFederation;
 import org.apache.openejb.core.SimpleTransactionSynchronizationRegistry;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.WebContext;
+import org.apache.openejb.core.ivm.ContextHandler;
 import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.ContextualJndiReference;
 import org.apache.openejb.core.ivm.naming.IvmContext;
@@ -268,6 +269,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String TIMER_STORE_CLASS = "timerStore.class";
     private static final ReentrantLock lock = new ReentrantLock(true);
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
+    static final String FORCE_READ_ONLY_APP_NAMING = "openejb.forceReadOnlyAppNamingContext";
+
     public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class};
     public static final Class<?>[] VALIDATOR_INTERFACES = new Class<?>[]{Validator.class};
     private final boolean skipLoaderIfPossible;
@@ -1030,6 +1033,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 systemInstance.fireEvent(new AssemblerAfterApplicationCreated(appInfo, appContext, allDeployments));
                 logger.info("createApplication.success", appInfo.path);
 
+                //required by spec EE.5.3.4
+                if(setAppNamingContextReadOnly(allDeployments)) {
+        	        logger.info("createApplication.naming", appInfo.path);
+                }
+              
                 return appContext;
             } catch (final ValidationException | DeploymentException ve) {
                 throw ve;
@@ -1047,6 +1055,22 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 appInfo.properties.remove(webApp);
             }
         }
+    }
+
+    boolean setAppNamingContextReadOnly(final List<BeanContext> allDeployments) {
+        if("true".equals(SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "false"))) {
+	        for(BeanContext beanContext : allDeployments) {
+	            Context ctx = beanContext.getJndiContext();
+	         
+	            if(IvmContext.class.isInstance(ctx)) {
+	            	IvmContext.class.cast(ctx).setReadOnly(true);
+	            } else if(ContextHandler.class.isInstance(ctx)) {
+	            	ContextHandler.class.cast(ctx).setReadOnly();
+	            }
+	        }
+	        return true;
+        }
+        return false;
     }
 
     private List<String> getDuplicates(final AppInfo appInfo) {
@@ -2143,6 +2167,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         continue;
                     }
 
+                    if(IvmContext.class.isInstance(globalContext)) {
+                    	IvmContext.class.cast(globalContext).setReadOnly(false);
+                    }
+                    
                     unbind(globalContext, path);
                     unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
                     unbind(globalContext, path.substring("java:global".length()));
