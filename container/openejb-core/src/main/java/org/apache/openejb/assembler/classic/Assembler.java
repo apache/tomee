@@ -1035,7 +1035,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
                 //required by spec EE.5.3.4
                 if(setAppNamingContextReadOnly(allDeployments)) {
-        	        logger.info("createApplication.naming", appInfo.path);
+                    logger.info("createApplication.naming", appInfo.path);
                 }
               
                 return appContext;
@@ -1059,16 +1059,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     boolean setAppNamingContextReadOnly(final List<BeanContext> allDeployments) {
         if("true".equals(SystemInstance.get().getProperty(FORCE_READ_ONLY_APP_NAMING, "false"))) {
-	        for(BeanContext beanContext : allDeployments) {
-	            Context ctx = beanContext.getJndiContext();
-	         
-	            if(IvmContext.class.isInstance(ctx)) {
-	            	IvmContext.class.cast(ctx).setReadOnly(true);
-	            } else if(ContextHandler.class.isInstance(ctx)) {
-	            	ContextHandler.class.cast(ctx).setReadOnly();
-	            }
-	        }
-	        return true;
+            for(BeanContext beanContext : allDeployments) {
+                Context ctx = beanContext.getJndiContext();
+             
+                if(IvmContext.class.isInstance(ctx)) {
+                    IvmContext.class.cast(ctx).setReadOnly(true);
+                } else if(ContextHandler.class.isInstance(ctx)) {
+                    ContextHandler.class.cast(ctx).setReadOnly();
+                }
+            }
+            return true;
         }
         return false;
     }
@@ -2168,7 +2168,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     }
 
                     if(IvmContext.class.isInstance(globalContext)) {
-                    	IvmContext.class.cast(globalContext).setReadOnly(false);
+                        IvmContext.class.cast(globalContext).setReadOnly(false);
                     }
                     
                     unbind(globalContext, path);

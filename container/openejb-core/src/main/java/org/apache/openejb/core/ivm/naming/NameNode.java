@@ -314,7 +314,7 @@ public class NameNode implements Serializable {
             while(federatedContextsIterator.hasNext()) {
                 Context current = federatedContextsIterator.next();
                 if(IvmContext.class.isInstance(current)) {
-                	IvmContext.class.cast(current).setReadOnly(isReadOnly);
+                    IvmContext.class.cast(current).setReadOnly(isReadOnly);
                 }
             }
         }
