@@ -87,7 +87,10 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             // Create entity manager factories with the validator factory
             final Map<String, Object> properties = new HashMap<String, Object>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
-                properties.put("javax.persistence.validation.factory", new ValidatorFactoryWrapper(potentialValidators));
+                properties.put("javax.persistence.validation.factory",
+                        potentialValidators != null && potentialValidators.size() == 1 ? // optim to avoid lookups
+                                potentialValidators.values().iterator().next() :
+                                new ValidatorFactoryWrapper(potentialValidators));
             }
             if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
                     && "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jpa.cdi", "true"))) {
