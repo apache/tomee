@@ -89,7 +89,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validation.factory",
                         potentialValidators != null && potentialValidators.size() == 1 ? // optim to avoid lookups
-                                potentialValidators.values().iterator().next() :
+                                ensureSerializable(potentialValidators.values().iterator().next()) :
                                 new ValidatorFactoryWrapper(potentialValidators));
             }
             if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
@@ -150,6 +150,13 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     public void overrideClassLoader(final ClassLoader loader) {
         appClassLoader = loader;
+    }
+
+    private ValidatorFactory ensureSerializable(final ValidatorFactory factory) {
+        if (Serializable.class.isInstance(factory)) {
+            return factory;
+        }
+        return new SingleValidatorFactoryWrapper(factory);
     }
 
     private static class BmHandler implements InvocationHandler, Serializable {
