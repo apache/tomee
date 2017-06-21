@@ -17,6 +17,7 @@
 package org.apache.openejb.assembler.classic;
 
 import javax.validation.ValidatorFactory;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -50,7 +51,9 @@ public class LazyValidatorFactory implements InvocationHandler {
             l.lock();
             try {
                 if (factory == null) {
-                    factory = ValidatorBuilder.buildFactory(loader, info);
+                    factory = ValidatorBuilder.buildFactory(
+                            loader == null ? Thread.currentThread().getContextClassLoader() : loader,
+                            info == null ? new ValidationInfo() : info);
                 }
             } finally {
                 l.unlock();

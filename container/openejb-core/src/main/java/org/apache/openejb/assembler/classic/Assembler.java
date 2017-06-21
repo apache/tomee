@@ -271,7 +271,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     public static final String OPENEJB_TIMERS_ON = "openejb.timers.on";
     static final String FORCE_READ_ONLY_APP_NAMING = "openejb.forceReadOnlyAppNamingContext";
 
-    public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class};
+    public static final Class<?>[] VALIDATOR_FACTORY_INTERFACES = new Class<?>[]{ValidatorFactory.class, Serializable.class};
     public static final Class<?>[] VALIDATOR_INTERFACES = new Class<?>[]{Validator.class};
     private final boolean skipLoaderIfPossible;
 
