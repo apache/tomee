@@ -334,6 +334,26 @@ public class IvmContextTest extends TestCase {
         }
     }
 
+    public void testCloseNoExceptionByDefault() throws NamingException {
+        final IvmContext context = new IvmContext();
+        try {
+            context.close();
+        } catch (OperationNotSupportedException e) {
+            fail();
+        }
+    }
+
+    public void testCloseThrowsExceptionIfReadOnly() throws NamingException {
+        final IvmContext context = new IvmContext();
+        context.setReadOnly(true);
+        try {
+            context.close();
+            fail();
+        } catch (OperationNotSupportedException e) {
+            //ok
+        }
+    }
+
     private void assertContextEntry(final Context context, final String s, final Object expected) throws javax.naming.NamingException {
         assertLookup(context, s, expected);
     }
