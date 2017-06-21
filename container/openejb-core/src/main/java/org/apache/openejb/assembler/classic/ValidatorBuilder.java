@@ -17,6 +17,7 @@
 
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.bval.ValidatorUtil;
 import org.apache.openejb.jee.bval.DefaultValidatedExecutableTypesType;
 import org.apache.openejb.jee.bval.ExecutableValidationType;
 import org.apache.openejb.jee.bval.PropertyType;
@@ -31,6 +32,7 @@ import org.apache.webbeans.container.BeanManagerImpl;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.InjectionTarget;
+import javax.naming.NamingException;
 import javax.validation.BootstrapConfiguration;
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
@@ -415,55 +417,70 @@ public final class ValidatorBuilder {
         }
     }
 
-    private static final class OpenEJBValidatorFactory implements ValidatorFactory {
-        private final ValidatorFactory delegate;
-        private final Collection<Releasable<?>> toRelease;
+    private static final class OpenEJBValidatorFactory implements ValidatorFactory, Serializable {
+        private transient ValidatorFactory delegate;
+        private transient Collection<Releasable<?>> toRelease;
 
         public OpenEJBValidatorFactory(final ValidatorFactory validatorFactory, final Collection<Releasable<?>> releasables) {
             delegate = validatorFactory;
             toRelease = releasables;
         }
 
+        private ValidatorFactory delegate() {
+            if (delegate != null) {
+                return delegate;
+            }
+            try {
+                return ValidatorUtil.lookupFactory();
+            } catch (final NamingException e) {
+                return Validation.buildDefaultValidatorFactory();
+            }
+        }
+
         @Override
         public Validator getValidator() {
-            return delegate.getValidator();
+            return delegate().getValidator();
         }
 
         @Override
         public ValidatorContext usingContext() {
-            return delegate.usingContext();
+            return delegate().usingContext();
         }
 
         @Override
         public MessageInterpolator getMessageInterpolator() {
-            return delegate.getMessageInterpolator();
+            return delegate().getMessageInterpolator();
         }
 
         @Override
         public TraversableResolver getTraversableResolver() {
-            return delegate.getTraversableResolver();
+            return delegate().getTraversableResolver();
         }
 
         @Override
         public ConstraintValidatorFactory getConstraintValidatorFactory() {
-            return delegate.getConstraintValidatorFactory();
+            return delegate().getConstraintValidatorFactory();
         }
 
         @Override
         public <T> T unwrap(final Class<T> type) {
-            return delegate.unwrap(type);
+            return delegate().unwrap(type);
         }
 
         @Override
         public ParameterNameProvider getParameterNameProvider() {
-            return delegate.getParameterNameProvider();
+            return delegate().getParameterNameProvider();
         }
 
         @Override
         public void close() {
-            delegate.close();
-            for (final Releasable<?> r : toRelease) {
-                r.release();
+            if (delegate != null) {
+                delegate.close();
+            }
+            if (toRelease != null) {
+                for (final Releasable<?> r : toRelease) {
+                    r.release();
+                }
             }
         }
     }
