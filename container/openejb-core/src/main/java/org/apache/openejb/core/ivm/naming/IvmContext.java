@@ -489,6 +489,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void close() throws NamingException {
+        checkReadOnly();
     }
 
     /*
