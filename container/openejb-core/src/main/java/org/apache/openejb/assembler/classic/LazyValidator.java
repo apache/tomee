@@ -17,18 +17,20 @@
 
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.bval.ValidatorUtil;
+
+import javax.naming.NamingException;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class LazyValidator implements InvocationHandler {
-
-    private final ReentrantLock lock = new ReentrantLock();
-    private final ValidatorFactory factory;
-    private Validator validator;
+public class LazyValidator implements InvocationHandler, Serializable {
+    private transient ValidatorFactory factory;
+    private transient volatile Validator validator;
 
     public LazyValidator(final ValidatorFactory factory) {
         this.factory = factory;
@@ -46,17 +48,21 @@ public class LazyValidator implements InvocationHandler {
 
     private void ensureDelegate() {
         if (validator == null) {
-
-            final ReentrantLock l = lock;
-            l.lock();
-
-            try {
+            synchronized (this) {
                 if (validator == null) {
-                    validator = factory.usingContext().getValidator();
+                    if (validator == null) {
+                        validator = (factory == null ? findFactory() : factory).usingContext().getValidator();
+                    }
                 }
-            } finally {
-                l.unlock();
             }
+        }
+    }
+
+    private ValidatorFactory findFactory() {
+        try {
+            return ValidatorUtil.lookupFactory();
+        } catch (final NamingException ne) {
+            return Validation.buildDefaultValidatorFactory();
         }
     }
 

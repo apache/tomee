@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.locks.ReentrantLock;
 
 // TODO: make it generic (LazyDelegate + Factory + refactor LazyValidator)
-public class LazyValidatorFactory implements InvocationHandler {
+public class LazyValidatorFactory implements InvocationHandler, Serializable {
     private final ReentrantLock lock = new ReentrantLock();
     private final ClassLoader loader;
     private final ValidationInfo info;
