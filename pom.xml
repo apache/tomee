@@ -87,9 +87,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
-    <url>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <connection>scm:git:https://github.com/tomitribe/tomee.git</connection>
+    <developerConnection>scm:git:https://github.com/tomitribe/tomee.git</developerConnection>
+    <url>scm:git:https://github.com/tomitribe/tomee.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -676,6 +676,11 @@
           </releases>
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
+        </repository>
+        <repository>
+          <id>tomitribe-all</id>
+          <name>Tomitribe Repository</name>
+          <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
         </repository>
       </repositories>
 
@@ -2085,10 +2090,17 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
-    </site>
+    <repository>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <reporting>
