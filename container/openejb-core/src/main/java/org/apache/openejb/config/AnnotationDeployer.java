@@ -4255,6 +4255,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 if (ref.getMappedName() == null) {
                     ref.setMappedName(ejbLocalRef.getMappedName());
                 }
+                if(ref.getEjbLink() == null){
+                    ref.setEjbLink(ejbLocalRef.getEjbLink());
+                }
                 ref.getInjectionTarget().addAll(ejbLocalRef.getInjectionTarget());
                 return;
             }
