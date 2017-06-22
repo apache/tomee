@@ -20,6 +20,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.NamingResourcesImpl;
@@ -271,6 +272,14 @@ public class OpenEJBContextConfig extends ContextConfig {
         super.contextConfig(digester);
         if (resources instanceof OpenEJBNamingResource) {
             ((OpenEJBNamingResource) resources).setTomcatResource(false);
+        }
+
+        if (context instanceof StandardContext) {
+            final StandardContext standardContext = (StandardContext) context;
+            final NamingContextListener namingContextListener = standardContext.getNamingContextListener();
+            if (null != namingContextListener) {
+                namingContextListener.setExceptionOnFailedWrite(standardContext.getJndiExceptionOnFailedWrite());
+            }
         }
     }
 
