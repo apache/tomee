@@ -250,8 +250,10 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     }
 
     @Override
-    public void close() {
-        delegate().close();
+    public synchronized void close() {
+        if (delegate != null) {
+            delegate.close();
+        }
     }
 
     @Override
