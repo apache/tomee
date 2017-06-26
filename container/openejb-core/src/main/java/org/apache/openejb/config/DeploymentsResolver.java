@@ -464,7 +464,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
 
                 final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
-                if (!isWindows) {
+                if (!isWindows || !Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.resolver.windows.lowercase-urls", "true"))) {
                     urls = urlSet.getUrls();
                 } else {
                     urls = new ArrayList<>();
