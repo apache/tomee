@@ -248,7 +248,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     protected boolean filter(final String inName, final boolean isClassName) {
-        final String name = inName == null ||isClassName ? inName : inName.replace('/', '.').replace(".class", "");
+        final String name = inName == null || isClassName ? inName : inName.replace('/', '.').replace(".class", "");
         if ("org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             return false;
         }
@@ -421,7 +421,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     @Override
     public InputStream getResourceAsStream(final String name) {
         if (!getState().isAvailable()) {
-            return null;
+            final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
+            return loader == null ? null : loader.getResourceAsStream(name);
         }
         try {
             return super.getResourceAsStream(name);
@@ -442,7 +443,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         if (!getState().isAvailable()) {
-            return null;
+            final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
+            return loader == null ? Collections.<URL>emptyEnumeration() : loader.getResources(name);
         }
 
         if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
@@ -577,7 +579,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             if (WEB_INF_CLASSES.equals(path)) {
                 return "/";
             }
-            return path.startsWith(WEB_INF_CLASSES)? path.substring(WEB_INF_CLASSES.length()) : path;
+            return path.startsWith(WEB_INF_CLASSES) ? path.substring(WEB_INF_CLASSES.length()) : path;
         }
     }
 }
