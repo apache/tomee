@@ -53,8 +53,9 @@ public class TestObserver {
     public void observesDeploy(@Observes final AfterDeploy afterDeployment) {
         contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()));
         final ClassLoaders loader = classLoader.get();
-        if (loader != null && loader.classloaders.containsKey(afterDeployment.getDeployment().getName())) {
-            setTCCL(loader.classloaders.get(afterDeployment.getDeployment().getName()));
+        final String name = afterDeployment.getDeployment().getArchive() != null ? afterDeployment.getDeployment().getArchive().getName() : null;
+        if (loader != null && loader.classloaders.containsKey(name)) {
+            setTCCL(loader.classloaders.get(name));
         }
     }
 
