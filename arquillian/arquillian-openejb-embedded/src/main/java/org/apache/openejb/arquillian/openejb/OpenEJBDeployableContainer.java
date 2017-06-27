@@ -370,7 +370,10 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
         // reset classloader for next text
         // otherwise if it was closed something can fail
-        classLoader.get().unregister(archive.getName());
+        final TestObserver.ClassLoaders classLoaders = classLoader.get();
+        if (classLoaders != null) {
+            classLoaders.unregister(archive.getName());
+        }
 
         final AppContext ctx = appContext.get();
         if (ctx == null) {
