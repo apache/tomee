@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJB;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.arquillian.common.ArquillianUtil;
+import org.apache.openejb.arquillian.common.TestObserver;
 import org.apache.openejb.arquillian.openejb.server.ServiceManagers;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -60,6 +61,11 @@ import org.jboss.arquillian.test.spi.annotation.SuiteScoped;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
@@ -72,11 +78,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import static org.apache.openejb.cdi.ScopeHelper.startContexts;
 import static org.apache.openejb.cdi.ScopeHelper.stopContexts;
@@ -136,7 +137,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
     @Inject
     @SuiteScoped
-    private InstanceProducer<ClassLoader> classLoader;
+    private InstanceProducer<TestObserver.ClassLoaders> classLoader;
 
     @Inject
     private Instance<Closeables> closeables;
@@ -253,7 +254,14 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
             appInfoProducer.set(info.appInfo);
             appContextProducer.set(info.appCtx);
             final ClassLoader loader = info.appCtx.getWebContexts().isEmpty() ? info.appCtx.getClassLoader() : info.appCtx.getWebContexts().iterator().next().getClassLoader();
-            classLoader.set(loader == null ? info.appCtx.getClassLoader() : loader);
+            final ClassLoader classLoader = loader == null ? info.appCtx.getClassLoader() : loader;
+
+            TestObserver.ClassLoaders classLoaders = this.classLoader.get();
+            if (classLoaders == null) {
+                classLoaders = new TestObserver.ClassLoaders();
+                this.classLoader.set(classLoaders);
+            }
+            classLoaders.register(archive.getName(), classLoader);
         } catch (final Exception e) {
             throw new DeploymentException("can't deploy " + archive.getName(), e);
         }
@@ -362,7 +370,7 @@ public class OpenEJBDeployableContainer implements DeployableContainer<OpenEJBCo
 
         // reset classloader for next text
         // otherwise if it was closed something can fail
-        classLoader.set(OpenEJBDeployableContainer.class.getClassLoader());
+        classLoader.get().unregister(archive.getName());
 
         final AppContext ctx = appContext.get();
         if (ctx == null) {
