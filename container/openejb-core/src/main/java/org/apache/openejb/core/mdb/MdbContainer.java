@@ -213,6 +213,8 @@ public class MdbContainer implements RpcContainer {
             final boolean activeOnStartup = Boolean.parseBoolean(beanContext.getProperties().getProperty("MdbActiveOnStartup", "true"));
             if (activeOnStartup) {
                 activationContext.start();
+            } else {
+                logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
             }
 
             final String jmxName = beanContext.getProperties().getProperty("MdbJMXControl", "true");
@@ -536,7 +538,7 @@ public class MdbContainer implements RpcContainer {
 
     private void addJMxControl(final BeanContext current, final String name, final MdbActivationContext activationContext) throws ResourceException {
         if (name == null || "false".equalsIgnoreCase(name)) {
-            logger.debug("Not adding JMX control for " + current.getDeploymentID() + "/" + current.getEjbName());
+            logger.debug("Not adding JMX control for " + current.getDeploymentID());
             return;
         }
 
@@ -617,7 +619,7 @@ public class MdbContainer implements RpcContainer {
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
             Thread.currentThread().setContextClassLoader(oldCl);
 
-            logger.info("Activated endpoint for " + beanContext.getDeploymentID() + "/" + beanContext.getEjbName());
+            logger.info("Activated endpoint for " + beanContext.getDeploymentID());
             started.set(true);
         }
 
@@ -632,6 +634,8 @@ public class MdbContainer implements RpcContainer {
             resourceAdapter.endpointDeactivation(endpointFactory, activationSpec);
 
             Thread.currentThread().setContextClassLoader(oldCl);
+
+            logger.info("Deactivated endpoint for " + beanContext.getDeploymentID());
             started.set(false);
         }
     }
@@ -641,7 +645,9 @@ public class MdbContainer implements RpcContainer {
         private static final MBeanInfo INFO = new MBeanInfo(
                 "org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.MdbJmxControl",
                 "Allows to control a MDB (start/stop)",
-                new MBeanAttributeInfo[0],
+                new MBeanAttributeInfo[]{
+                        new MBeanAttributeInfo("started", "boolean", "started: boolean indicating whether this MDB endpoint has been activated.", true, false, true)
+                },
                 new MBeanConstructorInfo[0],
                 new MBeanOperationInfo[]{
                         new MBeanOperationInfo("start", "Ensure the listener is active.", new MBeanParameterInfo[0], "void", ACTION),
@@ -681,6 +687,10 @@ public class MdbContainer implements RpcContainer {
 
         @Override
         public Object getAttribute(final String attribute) throws AttributeNotFoundException, MBeanException, ReflectionException {
+            if ("started".equals(attribute)) {
+                return activationContext.isStarted();
+            }
+
             throw new AttributeNotFoundException();
         }
 
