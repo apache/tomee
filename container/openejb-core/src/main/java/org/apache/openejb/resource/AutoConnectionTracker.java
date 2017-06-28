@@ -128,7 +128,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
                     final Object proxy = getProxy(handle.getClass(), loader).newInstance();
                     DynamicSubclass.setHandler(proxy, invocationHandler);
                     return proxy;
-                } catch (final InstantiationException | IllegalAccessException e) {
+                } catch (final InstantiationException e) {
+                    throw new IllegalStateException(e);
+                } catch (final IllegalAccessException e) {
                     throw new IllegalStateException(e);
                 }
             } catch (final NoSuchMethodException e1) {
