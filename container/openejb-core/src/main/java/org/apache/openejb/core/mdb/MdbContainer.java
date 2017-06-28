@@ -203,7 +203,7 @@ public class MdbContainer implements RpcContainer {
         CURRENT.set(beanContext);
         try {
 
-            final MdbActivationContext activationContext = new MdbActivationContext(Thread.currentThread().getContextClassLoader(), resourceAdapter, endpointFactory, activationSpec);
+            final MdbActivationContext activationContext = new MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
             activationContexts.put(beanContext, activationContext);
 
             final boolean activeOnStartup = Boolean.parseBoolean(beanContext.getProperties().getProperty("MdbActiveOnStartup", "true"));
@@ -565,14 +565,16 @@ public class MdbContainer implements RpcContainer {
 
     private static class MdbActivationContext {
         private final ClassLoader classLoader;
+        private final BeanContext beanContext;
         private final ResourceAdapter resourceAdapter;
         private final EndpointFactory endpointFactory;
         private final ActivationSpec activationSpec;
 
         private AtomicBoolean started = new AtomicBoolean(false);
 
-        public MdbActivationContext(ClassLoader classLoader, final ResourceAdapter resourceAdapter, final EndpointFactory endpointFactory, final ActivationSpec activationSpec) {
+        public MdbActivationContext(final ClassLoader classLoader, final BeanContext beanContext, final ResourceAdapter resourceAdapter, final EndpointFactory endpointFactory, final ActivationSpec activationSpec) {
             this.classLoader = classLoader;
+            this.beanContext = beanContext;
             this.resourceAdapter = resourceAdapter;
             this.endpointFactory = endpointFactory;
             this.activationSpec = activationSpec;
@@ -604,6 +606,8 @@ public class MdbContainer implements RpcContainer {
 
             resourceAdapter.endpointActivation(endpointFactory, activationSpec);
             Thread.currentThread().setContextClassLoader(oldCl);
+
+            logger.info("Activated endpoint for " + beanContext.getDeploymentID() + "/" + beanContext.getEjbName());
             started.set(true);
         }
 
@@ -650,7 +654,8 @@ public class MdbContainer implements RpcContainer {
                 try {
                     activationContext.start();
                 } catch (ResourceException e) {
-                    throw new MBeanException(new IllegalStateException(e.getMessage()));
+                    logger.error("Error invoking " + actionName + ": " + e.getMessage());
+                    throw new MBeanException(new IllegalStateException(e.getMessage(), e));
                 }
 
             } else {
