@@ -25,6 +25,8 @@ import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTrack
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
+import sun.misc.Unsafe;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
@@ -122,20 +124,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
             loader = ClassLoader.getSystemClassLoader();
         }
         if (!Proxy.isProxyClass(handle.getClass())) {
-            try {
-                handle.getClass().getConstructor(); // if not let's the user reuse the impl-ed interfaces
-                try {
-                    final Object proxy = getProxy(handle.getClass(), loader).newInstance();
-                    DynamicSubclass.setHandler(proxy, invocationHandler);
-                    return proxy;
-                } catch (final InstantiationException e) {
-                    throw new IllegalStateException(e);
-                } catch (final IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-            } catch (final NoSuchMethodException e1) {
-                // no-op
-            }
+            final Object proxy = LocalBeanProxyFactory.Unsafe.allocateInstance(getProxy(handle.getClass(), loader));
+            DynamicSubclass.setHandler(proxy, invocationHandler);
+            return proxy;
         }
         return Proxy.newProxyInstance(loader, handle.getClass().getInterfaces(), invocationHandler);
     }

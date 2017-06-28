@@ -136,7 +136,7 @@ public class DynamicSubclass implements Opcodes {
         for (final Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
 
             for (final Method method : entry.getValue()) {
-                if (Modifier.isAbstract(method.getModifiers())) {
+                if (Modifier.isPublic(method.getModifiers())) {
                     final MethodVisitor visitor = LocalBeanProxyFactory.visit(cw, method, proxyClassFileName, "this$handler");
                     visitors.put(method.getName() + Type.getMethodDescriptor(method), visitor);
                 }

@@ -792,7 +792,7 @@ public class LocalBeanProxyFactory implements Opcodes {
             });
         }
 
-        private static Object allocateInstance(final Class clazz) {
+        public static Object allocateInstance(final Class clazz) {
             try {
                 return allocateInstance.invoke(unsafe, clazz);
             } catch (final IllegalAccessException e) {
