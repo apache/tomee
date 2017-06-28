@@ -51,7 +51,7 @@ public class TestObserver {
     private Instance<DeploymentContext> context;
 
     public void observesDeploy(@Observes final AfterDeploy afterDeployment) {
-        contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()));
+        contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()/*use as a fallback, multiple deployment can have webapp loader*/));
         final ClassLoaders loader = classLoader.get();
         final String name = afterDeployment.getDeployment().getArchive() != null ? afterDeployment.getDeployment().getArchive().getName() : null;
         if (loader != null && loader.classloaders.containsKey(name)) {
@@ -60,9 +60,14 @@ public class TestObserver {
     }
 
     public void observesUndeploy(@Observes final BeforeUnDeploy beforeUnDeploy) {
-        final DeploymentContext deploymentContext = context.get();
-        if (deploymentContext != null) {
-            setTCCL(deploymentContext.loader);
+        final ClassLoaders loader = classLoader.get();
+        if (loader != null) { // with multiple deployments order is not guaranteed so we reset it the hard way
+            setTCCL(loader.original);
+        } else {
+            final DeploymentContext deploymentContext = context.get();
+            if (deploymentContext != null) {
+                setTCCL(deploymentContext.loader);
+            }
         }
     }
 
@@ -149,6 +154,7 @@ public class TestObserver {
     }
 
     public static class ClassLoaders { // to support multiple deployments otherwise we can lead a broken classloader
+        private final ClassLoader original = Thread.currentThread().getContextClassLoader(); // created once for multiple deployment so likely container one
         private final Map<String, ClassLoader> classloaders = new HashMap<>();
 
         public void register(final String name, final ClassLoader loader) {
