@@ -600,34 +600,34 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void start() throws ResourceException {
-            if (started.get()) {
+            if (! started.compareAndSet(false, true)) {
                 return;
             }
 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                resourceAdapter.endpointActivation(endpointFactory, activationSpec);
+                logger.info("Activated endpoint for " + beanContext.getDeploymentID());
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
 
-            resourceAdapter.endpointActivation(endpointFactory, activationSpec);
-            Thread.currentThread().setContextClassLoader(oldCl);
-
-            logger.info("Activated endpoint for " + beanContext.getDeploymentID());
-            started.set(true);
         }
 
         public void stop() {
-            if (! started.get()) {
+            if (! started.compareAndSet(true, false)) {
                 return;
             }
 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(classLoader);
-
-            resourceAdapter.endpointDeactivation(endpointFactory, activationSpec);
-
-            Thread.currentThread().setContextClassLoader(oldCl);
-
-            logger.info("Deactivated endpoint for " + beanContext.getDeploymentID());
-            started.set(false);
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                resourceAdapter.endpointDeactivation(endpointFactory, activationSpec);
+                logger.info("Deactivated endpoint for " + beanContext.getDeploymentID());
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
         }
     }
 
