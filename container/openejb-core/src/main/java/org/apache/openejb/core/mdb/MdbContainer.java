@@ -536,6 +536,7 @@ public class MdbContainer implements RpcContainer {
 
     private void addJMxControl(final BeanContext current, final String name, final MdbActivationContext activationContext) throws ResourceException {
         if (name == null || "false".equalsIgnoreCase(name)) {
+            logger.debug("Not adding JMX control for " + current.getDeploymentID() + "/" + current.getEjbName());
             return;
         }
 
