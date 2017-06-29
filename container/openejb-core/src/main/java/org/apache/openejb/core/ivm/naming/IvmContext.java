@@ -571,25 +571,25 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(node, vect);
+            gatherNodes(mynode, node, vect);
 
             buildEnumeration(vect);
         }
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(final NameNode node, final Vector vect) {
-            addInListIfNeeded(mynode, node.getLessTree(), vect);
-            addInListIfNeeded(mynode, node.getGrtrTree(), vect);
-            addInListIfNeeded(mynode, node.getSubTree(), vect);
-            if (NameNode.Federation.class.isInstance(mynode.getObject())) { // tomcat mainly
-                for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
+        protected void gatherNodes(NameNode initiallyRequestedNode, final NameNode node, final Vector vect) {
+            addInListIfNeeded(initiallyRequestedNode, node.getLessTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getGrtrTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getSubTree(), vect);
+            if (NameNode.Federation.class.isInstance(node.getObject())) { // tomcat mainly
+                for (final Context c : NameNode.Federation.class.cast(initiallyRequestedNode.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
 
                     final IvmContext ctx = IvmContext.class.cast(c);
-                    if (ctx.mynode == mynode || vect.contains(ctx.mynode)) {
+                    if (ctx.mynode == node || vect.contains(ctx.mynode)) {
                         continue;
                     }
 
@@ -605,7 +605,7 @@ public class IvmContext implements Context, Serializable {
                 return;
             }
             vect.addElement(node);
-            gatherNodes(node, vect);
+            gatherNodes(parent, node, vect);
         }
 
         private boolean isMyChild(final NameNode parent, final NameNode node) {
