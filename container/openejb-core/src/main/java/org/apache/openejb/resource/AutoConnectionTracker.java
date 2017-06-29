@@ -23,10 +23,7 @@ import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
 import org.apache.openejb.dyni.DynamicSubclass;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
-import sun.misc.Unsafe;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
@@ -137,7 +134,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             synchronized (this) {
                 found = proxies.get(aClass);
                 if (found == null) {
-                    proxies.put(aClass, DynamicSubclass.createSubclass(aClass, loader));
+                    proxies.put(aClass, DynamicSubclass.createSubclass(aClass, loader, true));
                     found = proxies.get(aClass);
                 }
             }

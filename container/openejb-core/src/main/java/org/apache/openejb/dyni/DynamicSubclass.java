@@ -61,6 +61,10 @@ public class DynamicSubclass implements Opcodes {
     }
 
     public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl) {
+        return createSubclass(abstractClass, cl, false);
+    }
+
+    public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl, boolean proxyNonAbstractMethods) {
         final String proxyName = getSubclassName(abstractClass);
 
         try {
@@ -80,7 +84,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, generateBytes(abstractClass));
+            return LocalBeanProxyFactory.Unsafe.defineClass(abstractClass, proxyName, generateBytes(abstractClass, proxyNonAbstractMethods));
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
@@ -103,7 +107,7 @@ public class DynamicSubclass implements Opcodes {
         }
     }
 
-    private static byte[] generateBytes(final Class<?> classToProxy) throws ProxyGenerationException {
+    private static byte[] generateBytes(final Class<?> classToProxy, final boolean proxyNonAbstractMethods) throws ProxyGenerationException {
 
         final Map<String, MethodVisitor> visitors = new HashMap<String, MethodVisitor>();
 
@@ -136,7 +140,7 @@ public class DynamicSubclass implements Opcodes {
         for (final Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
 
             for (final Method method : entry.getValue()) {
-                if (Modifier.isPublic(method.getModifiers())) {
+                if (Modifier.isAbstract(method.getModifiers()) || (proxyNonAbstractMethods && Modifier.isPublic(method.getModifiers()))) {
                     final MethodVisitor visitor = LocalBeanProxyFactory.visit(cw, method, proxyClassFileName, "this$handler");
                     visitors.put(method.getName() + Type.getMethodDescriptor(method), visitor);
                 }
