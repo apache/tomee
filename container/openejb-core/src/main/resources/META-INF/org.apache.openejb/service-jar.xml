@@ -481,6 +481,10 @@
 
     InstanceLimit 10
 
+    # log a warning if true or throw an exception if false is an activation spec can't be respected
+
+    FailOnUnknowActivationSpec = true
+
   </ServiceProvider>
 
   <!--
