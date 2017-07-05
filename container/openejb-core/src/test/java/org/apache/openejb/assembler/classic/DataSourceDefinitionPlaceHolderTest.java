@@ -56,7 +56,7 @@ public class DataSourceDefinitionPlaceHolderTest {
         properties.setProperty("jndi", "java:comp/env/superDS");
         properties.setProperty("driver", "org.hsqldb.jdbc.JDBCDataSource");
         properties.setProperty("user", "sa");
-        properties.setProperty("pwd", "");
+        properties.setProperty("pwd", "cipher:Static3DES:snYpqPMRcXg=");
         properties.setProperty("url", "jdbc:hsqldb:mem:superDS");
         return properties;
     }
@@ -86,7 +86,7 @@ public class DataSourceDefinitionPlaceHolderTest {
 
         final BasicDataSource bds = (BasicDataSource) ds;
         assertEquals("sa", bds.getUsername());
-        assertEquals("", bds.getPassword());
+        assertEquals("hello", bds.getPassword());
 
         final Field fieldDs = bds.getClass().getDeclaredField("ds");
         fieldDs.setAccessible(true);

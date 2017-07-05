@@ -436,9 +436,13 @@ public class JNDIContext implements InitialContextFactory, Context {
         try {
             res = request(req);
         } catch (Exception e) {
-            if (e instanceof RemoteException && e.getCause() instanceof ConnectException) {
-                e = (Exception) e.getCause();
-                throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
+            if (e instanceof RemoteException) {
+                if (e.getCause() instanceof ConnectException) {
+                    e = (Exception) e.getCause();
+                    throw (ServiceUnavailableException) new ServiceUnavailableException("Cannot lookup '" + name + "'.").initCause(e);
+                } else if (AuthenticationException.class.isInstance(e.getCause())) {
+                    throw AuthenticationException.class.cast(e.getCause());
+                }
             }
 
             if (e instanceof RemoteException && e.getCause() instanceof AuthenticationException) {
@@ -857,15 +861,6 @@ public class JNDIContext implements InitialContextFactory, Context {
     @Override
     public Context createSubcontext(final Name name) throws NamingException {
         return createSubcontext(name.toString());
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
     }
 
     private static final class SimpleNameParser implements NameParser {

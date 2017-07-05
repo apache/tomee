@@ -53,17 +53,6 @@ public class RemoteTomEEEJBContainer extends EJBContainer {
     private InitialContext context;
 
     @Override
-    protected void finalize() throws Throwable {
-        try {
-            this.close();
-        } catch (final Exception e) {
-            //no-op
-        } finally {
-            super.finalize();
-        }
-    }
-
-    @Override
     public void close() {
         final ReentrantLock lock = LOCK;
         lock.lock();

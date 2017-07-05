@@ -22,6 +22,8 @@ import org.apache.geronimo.connector.outbound.ConnectionReturnAction;
 import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
+import org.apache.openejb.dyni.DynamicSubclass;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
@@ -38,6 +40,7 @@ import java.util.concurrent.ConcurrentMap;
 public class AutoConnectionTracker implements ConnectionTracker {
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
+    private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<Class<?>, Class<?>>();
 
     public Set<ManagedConnectionInfo> connections() {
         return references.keySet();
@@ -103,13 +106,40 @@ public class AutoConnectionTracker implements ConnectionTracker {
         try {
             final Object handle = connectionInfo.getConnectionHandle();
             final ConnectionInvocationHandler invocationHandler = new ConnectionInvocationHandler(handle);
-            final Object proxy = Proxy.newProxyInstance(handle.getClass().getClassLoader(), handle.getClass().getInterfaces(), invocationHandler);
+            final Object proxy = newProxy(handle, invocationHandler);
             connectionInfo.setConnectionProxy(proxy);
             final ProxyPhantomReference reference = new ProxyPhantomReference(interceptor, connectionInfo.getManagedConnectionInfo(), invocationHandler, referenceQueue);
             references.put(connectionInfo.getManagedConnectionInfo(), reference);
         } catch (final Throwable e) {
             throw new ResourceException("Unable to construct connection proxy", e);
         }
+    }
+
+    private Object newProxy(final Object handle, final InvocationHandler invocationHandler) {
+        ClassLoader loader = handle.getClass().getClassLoader();
+        if (loader == null) {
+            loader = ClassLoader.getSystemClassLoader();
+        }
+        if (!Proxy.isProxyClass(handle.getClass())) {
+            final Object proxy = LocalBeanProxyFactory.Unsafe.allocateInstance(getProxy(handle.getClass(), loader));
+            DynamicSubclass.setHandler(proxy, invocationHandler);
+            return proxy;
+        }
+        return Proxy.newProxyInstance(loader, handle.getClass().getInterfaces(), invocationHandler);
+    }
+
+    private Class<?> getProxy(final Class<?> aClass, final ClassLoader loader) {
+        Class<?> found = proxies.get(aClass);
+        if (found == null) {
+            synchronized (this) {
+                found = proxies.get(aClass);
+                if (found == null) {
+                    proxies.put(aClass, DynamicSubclass.createSubclass(aClass, loader, true));
+                    found = proxies.get(aClass);
+                }
+            }
+        }
+        return found;
     }
 
     public static class ConnectionInvocationHandler implements InvocationHandler {

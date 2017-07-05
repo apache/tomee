@@ -100,8 +100,8 @@
     <openejb.version>4.7.5-SNAPSHOT</openejb.version>
     <tomee.version>1.7.5-SNAPSHOT</tomee.version>
 
-    <openjpa.version>2.4.0</openjpa.version>
-    <org.apache.openwebbeans.version>1.2.7</org.apache.openwebbeans.version>
+    <openjpa.version>2.4.2</openjpa.version>
+    <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.69</tomcat.version>
+    <tomcat.version>7.0.78</tomcat.version>
 
     <cxf.version>2.6.16</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -2113,4 +2113,3 @@
     </plugins>
   </reporting>
 </project>
-

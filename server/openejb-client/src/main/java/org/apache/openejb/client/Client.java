@@ -271,6 +271,9 @@ public class Client {
                 in = conn.getInputStream();
 
             } catch (final IOException e) {
+                if (AuthenticationException.class.isInstance(e.getCause())) {
+                    throw e.getCause();
+                }
                 throw newIOException("Cannot open input stream to server: ", e);
             }
 

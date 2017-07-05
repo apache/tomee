@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.client;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
+import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,8 +25,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,7 +75,10 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 throw new IllegalArgumentException("Invalid uri " + uri.toString(), e);
             }
 
-            httpURLConnection = (HttpURLConnection) url.openConnection();
+            final String authorization = params.get("authorization");
+
+            httpURLConnection = (HttpURLConnection) (authorization == null ?
+                    url : new URL(stripQuery(url.toExternalForm(), "authorization"))).openConnection();
             httpURLConnection.setDoOutput(true);
 
             final int timeout;
@@ -92,9 +94,13 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
 
-            if (uri.getUserInfo() != null) {
-                String authorization = "Basic "
+            if (authorization == null && uri.getUserInfo() != null) {
+                String basicAuth = "Basic "
                         + printBase64Binary((url.getUserInfo()).getBytes(StandardCharsets.UTF_8));
+                httpURLConnection.setRequestProperty("Authorization", basicAuth);
+            }
+            
+            if (authorization != null) {
                 httpURLConnection.setRequestProperty("Authorization", authorization);
             }
 
@@ -103,13 +109,14 @@ public class HttpConnectionFactory implements ConnectionFactory {
                     SSLSocketFactory sslSocketFactory = socketFactoryMap.get(uri);
                     if (sslSocketFactory == null) {
                         sslSocketFactory = new SSLContextBuilder(params).build().getSocketFactory();
-                        socketFactoryMap.put(uri, sslSocketFactory);
+                        final SSLSocketFactory existing = socketFactoryMap.putIfAbsent(uri, sslSocketFactory);
+                        if (existing != null) {
+                            sslSocketFactory = existing;
+                        }
                     }
 
                     ((HttpsURLConnection) httpURLConnection).setSSLSocketFactory(sslSocketFactory);
-                } catch (final NoSuchAlgorithmException e) {
-                    throw new ClientRuntimeException(e.getMessage(), e);
-                } catch (final KeyManagementException e) {
+                } catch (final Exception e) {
                     throw new ClientRuntimeException(e.getMessage(), e);
                 }
             }
@@ -119,6 +126,18 @@ public class HttpConnectionFactory implements ConnectionFactory {
             } catch (final IOException e) {
                 httpURLConnection.connect();
             }
+        }
+
+        private String stripQuery(final String url, final String param) {
+            String result = url;
+            do {
+                final int h = result.indexOf(param + '=');
+                final int end = result.indexOf('&', h);
+                if (h <= 0) {
+                    return result;
+                }
+                result = result.substring(0, h - 1) + (end < 0 ? "" : result.substring(end + 1, result.length()));
+            } while (true);
         }
 
         @Override
@@ -183,6 +202,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
         @Override
         public InputStream getInputStream() throws IOException {
             if (inputStream == null) {
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    throw new IOException(new AuthenticationException());
+                }
                 inputStream = httpURLConnection.getInputStream();
             }
             return inputStream;

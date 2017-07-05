@@ -58,7 +58,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -148,7 +147,7 @@ public class StatelessInstanceManager {
             final ThreadContext ctx = new ThreadContext(beanContext, null);
             final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
-                return createInstance(ctx, ctx.getBeanContext());
+                return createInstance(ctx.getBeanContext());
             } catch (final OpenEJBException e) {
                 logger.error("Unable to fill pool: for deployment '" + beanContext.getDeploymentID() + "'", e);
             } finally {
@@ -196,31 +195,15 @@ public class StatelessInstanceManager {
         }
 
         if (null == instance) {
-            instance = createInstance(callContext, beanContext);
+            instance = createInstance(beanContext);
         }
 
         return instance;
     }
 
-    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
+    private Instance createInstance(final BeanContext beanContext) throws ApplicationException {
         try {
             final InstanceContext context = beanContext.newInstance();
-            if (context.getBean() instanceof SessionBean) {
-                final Operation originalOperation = callContext.getCurrentOperation();
-                try {
-                    callContext.setCurrentOperation(Operation.CREATE);
-                    final InterceptorStack ejbCreate = new InterceptorStack(
-                        context.getBean(),
-                        beanContext.getCreateMethod(),
-                        Operation.CREATE,
-                        new ArrayList<InterceptorData>(),
-                        new HashMap<String, Object>()
-                    );
-                    ejbCreate.invoke();
-                } finally {
-                    callContext.setCurrentOperation(originalOperation);
-                }
-            }
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
 
         } catch (Throwable e) {

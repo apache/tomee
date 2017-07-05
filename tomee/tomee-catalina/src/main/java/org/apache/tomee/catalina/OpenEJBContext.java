@@ -290,15 +290,5 @@ public class OpenEJBContext implements Context {
         return threadContext == null || DeployerEjb.class.equals(threadContext.getBeanContext().getBeanClass());
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-            this.close();
-        } catch (final Exception e) {
-            //no-op
-        } finally {
-            super.finalize();
-        }
-    }
 }
 
