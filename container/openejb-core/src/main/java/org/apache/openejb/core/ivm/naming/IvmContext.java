@@ -583,7 +583,7 @@ public class IvmContext implements Context, Serializable {
             addInListIfNeeded(initiallyRequestedNode, node.getGrtrTree(), vect);
             addInListIfNeeded(initiallyRequestedNode, node.getSubTree(), vect);
             if (NameNode.Federation.class.isInstance(node.getObject())) { // tomcat mainly
-                for (final Context c : NameNode.Federation.class.cast(initiallyRequestedNode.getObject())) {
+                for (final Context c : NameNode.Federation.class.cast(node.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
