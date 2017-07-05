@@ -461,7 +461,7 @@
       id="Default MDB Container"
       service="Container"
       types="MESSAGE"
-      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit"
+      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknowActivationSpec"
       class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
