@@ -64,7 +64,7 @@ public class DynamicSubclass implements Opcodes {
         return createSubclass(abstractClass, cl, false);
     }
 
-    public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl, boolean proxyNonAbstractMethods) {
+    public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl, final boolean proxyNonAbstractMethods) {
         final String proxyName = getSubclassName(abstractClass);
 
         try {

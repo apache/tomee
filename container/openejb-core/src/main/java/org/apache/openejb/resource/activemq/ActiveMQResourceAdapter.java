@@ -18,28 +18,19 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.ra.ActiveMQEndpointActivationKey;
-import org.apache.activemq.ra.ActiveMQEndpointWorker;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.reflection.Reflections;
 
-import javax.management.ObjectName;
-import javax.resource.ResourceException;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -49,7 +40,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String useDatabaseLock;
     private String startupTimeout = "60000";
     private BootstrapContext bootstrapContext;
-    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<BeanContext, ObjectName>();
 
     public String getDataSource() {
         return dataSource;
@@ -150,17 +140,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                 setBrokerXmlConfig(brokerXmlConfig);
             }
         }
-    }
-
-    private ActiveMQEndpointWorker getWorker(final BeanContext beanContext) throws ResourceException {
-        final Map<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> workers = Map.class.cast(Reflections.get(
-                MdbContainer.class.cast(beanContext.getContainer()).getResourceAdapter(), "endpointWorkers"));
-        for (final Map.Entry<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> entry : workers.entrySet()) {
-            if (entry.getKey().getMessageEndpointFactory() == beanContext.getContainerData()) {
-                return entry.getValue();
-            }
-        }
-        throw new IllegalStateException("No worker for " + beanContext.getDeploymentID());
     }
 
     @Override
