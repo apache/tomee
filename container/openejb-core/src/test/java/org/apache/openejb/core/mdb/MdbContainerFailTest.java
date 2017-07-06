@@ -23,10 +23,7 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
-import org.apache.openjpa.lib.util.Files;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,11 +40,6 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -57,25 +49,10 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(ApplicationComposer.class)
-public class MdbContainerTest {
+public class MdbContainerFailTest {
 
     private static final String TEXT = "foo";
 
-    @BeforeClass
-    public static void beforeClass() throws URISyntaxException, IOException {
-        URL url = MdbContainerTest.class.getResource("/META-INF/org.apache.openejb/service-jar.txt");
-        File txtFile = new File(url.toURI());
-        File xmlFile = new File(txtFile.getParentFile(), "service-jar.xml");
-        Files.copy(txtFile, xmlFile);
-
-    }
-
-    @AfterClass
-    public static void afterClass() throws URISyntaxException {
-        URL stream = MdbContainerTest.class.getResource("/META-INF/org.apache.openejb/service-jar.xml");
-        File file = new File(stream.toURI());
-        file.delete();
-    }
 
     @Configuration
     public Properties config() {
