@@ -66,6 +66,7 @@ public class MdbContainerTest {
         URL url = MdbContainerTest.class.getResource("/META-INF/org.apache.openejb/service-jar.txt");
         File txtFile = new File(url.toURI());
         File xmlFile = new File(txtFile.getParentFile(), "service-jar.xml");
+        xmlFile.createNewFile();
         Files.copy(txtFile, xmlFile);
 
     }
