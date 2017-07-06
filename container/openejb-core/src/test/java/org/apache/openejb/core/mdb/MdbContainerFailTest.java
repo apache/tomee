@@ -17,6 +17,7 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.activemq.AMQXASupportTest;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -73,7 +74,6 @@ public class MdbContainerFailTest {
                 .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
                 .p("xaCf.BrokerURL", "vm://localhost")
                 .p("mdb.activation.ignore", "testString")
-                .p("mdb.activation.ignore2", "testString")
                 .p("openejb.provider.default", "org.apache.openejb.actproptrue") // service-jar.xml with FailOnUnknowActivationSpec = true
                 .build();
     }
@@ -97,8 +97,8 @@ public class MdbContainerFailTest {
         AMQXASupportTest.Listener.reset();
     }
 
-    @Test
-    public void standardCode() throws Exception {
+    @Test(expected = OpenEJBException.class)
+    public void shouldReturnsError() throws Exception {
         assertNotNull(cf);
 
 

@@ -98,7 +98,7 @@ public class MdbContainerTest {
     }
 
     @Test
-    public void standardCode() throws Exception {
+    public void shouldSendMessage() throws Exception {
         assertNotNull(cf);
 
 
