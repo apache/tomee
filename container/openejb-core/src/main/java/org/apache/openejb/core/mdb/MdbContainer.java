@@ -104,10 +104,10 @@ public class MdbContainer implements RpcContainer {
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
-    private final boolean failOnUnknowActivationSpec;
+    private final boolean failOnUnknownActivationSpec;
 
     public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface,
-                        final Class activationSpecClass, final int instanceLimit, final boolean failOnUnknowActivationSpec) {
+                        final Class activationSpecClass, final int instanceLimit, final boolean failOnUnknownActivationSpec) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
@@ -116,7 +116,7 @@ public class MdbContainer implements RpcContainer {
         this.instanceLimit = instanceLimit;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
-        this.failOnUnknowActivationSpec = failOnUnknowActivationSpec;
+        this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
     }
 
     public BeanContext[] getBeanContexts() {
@@ -258,7 +258,7 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
                 String text = "No setter found for the activation spec properties: " + unusedProperties;
-                if (failOnUnknowActivationSpec) {
+                if (failOnUnknownActivationSpec) {
                     throw new IllegalArgumentException(text);
                 } else {
                     logger.warning(text);
