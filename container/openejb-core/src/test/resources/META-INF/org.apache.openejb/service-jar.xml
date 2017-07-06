@@ -45,7 +45,7 @@
 
     InstanceLimit 10
 
-    # log a warning if true or throw an exception if false is an activation spec can't be respected
+    # log a warning if false or throw an exception if true is an activation spec can't be respected
 
     FailOnUnknowActivationSpec = false
 
