@@ -74,6 +74,7 @@ public class MdbContainerFailTest {
                 .p("xaCf.BrokerURL", "vm://localhost")
                 .p("mdb.activation.ignore", "testString")
                 .p("mdb.activation.ignore2", "testString")
+                .p("openejb.provider.default", "org.apache.openejb.actproptrue") // service-jar.xml with FailOnUnknowActivationSpec = true
                 .build();
     }
 
