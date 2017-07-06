@@ -80,10 +80,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javax.management.MBeanOperationInfo.ACTION;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
-import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
+import static org.apache.openejb.core.transaction.EjbTransactionUtil.*;
 
 public class MdbContainer implements RpcContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -226,10 +223,6 @@ public class MdbContainer implements RpcContainer {
         } finally {
             CURRENT.remove();
         }
-    }
-
-    private static String getOrDefault(final Map<String, String> map, final String key, final String defaultValue) {
-        return map.get(key) != null ? map.get(key) : defaultValue;
     }
 
     private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
