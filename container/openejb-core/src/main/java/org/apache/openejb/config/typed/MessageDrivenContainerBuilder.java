@@ -44,7 +44,7 @@ public class MessageDrivenContainerBuilder extends Container {
         setType("MESSAGE");
         setId("MessageDrivenContainer");
 
-        setConstructor("id, securityService, resourceAdapter, messageListenerInterface, activationSpecClass, instanceLimit");
+        setConstructor("id, securityService, resourceAdapter, messageListenerInterface, activationSpecClass, instanceLimit, failOnUnknownActivationSpec");
 
     }
 
