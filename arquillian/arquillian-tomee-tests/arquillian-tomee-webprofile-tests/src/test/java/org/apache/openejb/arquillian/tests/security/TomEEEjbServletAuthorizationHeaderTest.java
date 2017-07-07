@@ -131,7 +131,7 @@ public class TomEEEjbServletAuthorizationHeaderTest extends TestSetup  {
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-        return new TomEEEjbServletAuthorizationHeaderTest().createDeployment(TestRun.class, BusinessBean.class);
+        return new TomEEEjbServletAuthorizationHeaderTest().createDeployment(TestRun.class, BusinessBean.class, BusinessRemote.class);
     }
 
     @Override
