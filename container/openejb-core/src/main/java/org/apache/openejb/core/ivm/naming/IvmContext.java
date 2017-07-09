@@ -571,7 +571,7 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(mynode, node, vect);
+            gatherNodes(parentNode, node, vect);
 
             buildEnumeration(vect);
         }
@@ -582,8 +582,9 @@ public class IvmContext implements Context, Serializable {
             addInListIfNeeded(initiallyRequestedNode, node.getLessTree(), vect);
             addInListIfNeeded(initiallyRequestedNode, node.getGrtrTree(), vect);
             addInListIfNeeded(initiallyRequestedNode, node.getSubTree(), vect);
-            if (NameNode.Federation.class.isInstance(node.getObject())) { // tomcat mainly
-                for (final Context c : NameNode.Federation.class.cast(node.getObject())) {
+
+            if (NameNode.Federation.class.isInstance(initiallyRequestedNode.getObject())) { // tomcat mainly
+                for (final Context c : NameNode.Federation.class.cast(initiallyRequestedNode.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
@@ -612,17 +613,14 @@ public class IvmContext implements Context, Serializable {
             if (node.getParent() == parent) {
                 return true;
             }
-            if (node.getParentTree() == node.getParent()) { // no need to browse the tree
-                return false;
+
+            /*
+             * Handle the special case of the top-level contexts like global, module, app, etc
+             */
+            if (null == node.getParent() && null == parent.getParentTree()) {
+                return true;
             }
 
-            NameNode current = node.getParentTree();
-            while (current != null) {
-                if (current == parent) {
-                    return true;
-                }
-                current = current.getParentTree();
-            }
             return false;
         }
 
