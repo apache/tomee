@@ -469,7 +469,7 @@
           id="Default MDB Container"
           service="Container"
           types="MESSAGE"
-          constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknowActivationSpec"
+          constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknownActivationSpec"
           class-name="org.apache.openejb.core.mdb.MdbContainer">
 
     # The resource adapter delivers messages to the container
@@ -491,7 +491,7 @@
 
     # log a warning if true or throw an exception if false is an activation spec can't be respected
 
-    FailOnUnknowActivationSpec = true
+    FailOnUnknownActivationSpec = true
 
   </ServiceProvider>
 
