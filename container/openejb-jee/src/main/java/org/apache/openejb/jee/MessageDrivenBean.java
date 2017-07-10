@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -176,7 +177,7 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     protected String id;
 
     @XmlAttribute
-    protected Map<String, String> configuration = new HashMap<>();
+    protected Properties configuration;
 
     public MessageDrivenBean() {
     }
@@ -643,11 +644,11 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
     }
 
-    public Map<String, String> getConfiguration() {
+    public Properties getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(Map<String, String> configuration) {
+    public void setConfiguration(Properties configuration) {
         this.configuration = configuration;
     }
 
