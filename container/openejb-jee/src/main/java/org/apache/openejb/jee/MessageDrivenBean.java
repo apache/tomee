@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -173,6 +174,9 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
+
+    @XmlAttribute
+    protected Map<String, String> configuration = new HashMap<>();
 
     public MessageDrivenBean() {
     }
@@ -637,6 +641,14 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     public void addAroundTimeout(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
+    }
+
+    public Map<String, String> getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Map<String, String> configuration) {
+        this.configuration = configuration;
     }
 
     @Override

@@ -88,8 +88,8 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                     }
                 }
 
-                Map<String, String> containerConfiguration = mdb.getConfiguation();
-                List<String> keysToRemove = new ArrayList<>();
+                //get all the configurations here
+                Map<String, String> containerConfiguration = mdb.getConfiguration();
 
 
                 // now try to use special keys
@@ -98,6 +98,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbName + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
 
+                //overides any configuration there already exist
                 for (String key : containerConfiguration.keySet()) {
                     String mdbKey = "mdb." + key;
                     if (overrides.contains(mdbKey)) {
