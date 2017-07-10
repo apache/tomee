@@ -250,7 +250,7 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationType");
             unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
-                String text = "No setter found for the activation spec properties: " + unusedProperties;
+                final String text = "No setter found for the activation spec properties: " + unusedProperties;
                 if (failOnUnknownActivationSpec) {
                     throw new IllegalArgumentException(text);
                 } else {
