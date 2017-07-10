@@ -101,8 +101,10 @@ public class MdbContainer implements RpcContainer {
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
+    private final boolean failOnUnknownActivationSpec;
 
-    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit) {
+    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface,
+                        final Class activationSpecClass, final int instanceLimit, final boolean failOnUnknownActivationSpec) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
@@ -111,6 +113,7 @@ public class MdbContainer implements RpcContainer {
         this.instanceLimit = instanceLimit;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
+        this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
     }
 
     public BeanContext[] getBeanContexts() {
@@ -145,8 +148,8 @@ public class MdbContainer implements RpcContainer {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
-                beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
-                messageListenerInterface);
+                    beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
+                    messageListenerInterface);
         }
 
         // create the activation spec
@@ -247,7 +250,12 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationType");
             unusedProperties.remove("beanClass");
             if (!unusedProperties.isEmpty()) {
-                throw new IllegalArgumentException("No setter found for the activation spec properties: " + unusedProperties);
+                String text = "No setter found for the activation spec properties: " + unusedProperties;
+                if (failOnUnknownActivationSpec) {
+                    throw new IllegalArgumentException(text);
+                } else {
+                    logger.warning(text);
+                }
             }
 
 
@@ -399,7 +407,7 @@ public class MdbContainer implements RpcContainer {
 
         // verify the delivery method passed to beforeDeliver is the same method that was invoked
         if (!mdbCallContext.deliveryMethod.getName().equals(method.getName()) ||
-            !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
+                !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
             throw new IllegalStateException("Delivery method specified in beforeDelivery is not the delivery method called");
         }
 
@@ -441,12 +449,12 @@ public class MdbContainer implements RpcContainer {
     }
 
     private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
-        ApplicationException {
+            ApplicationException {
         final Object returnValue;
         try {
             final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
             final InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
-                interceptors, ((Instance) instance).interceptors);
+                    interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
             return returnValue;
         } catch (Throwable e) {
@@ -593,7 +601,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void start() throws ResourceException {
-            if (! started.compareAndSet(false, true)) {
+            if (!started.compareAndSet(false, true)) {
                 return;
             }
 
@@ -609,7 +617,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void stop() {
-            if (! started.compareAndSet(true, false)) {
+            if (!started.compareAndSet(true, false)) {
                 return;
             }
 
