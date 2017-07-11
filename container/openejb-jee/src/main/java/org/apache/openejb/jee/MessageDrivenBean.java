@@ -29,10 +29,8 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 
 /**
@@ -175,9 +173,6 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     protected String id;
-
-    @XmlAttribute
-    protected Properties configuration;
 
     public MessageDrivenBean() {
     }
@@ -642,14 +637,6 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     public void addAroundTimeout(final String method) {
         assert ejbClass != null : "Set the ejbClass before calling this method";
         getAroundTimeout().add(new AroundTimeout(ejbClass, method));
-    }
-
-    public Properties getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(Properties configuration) {
-        this.configuration = configuration;
     }
 
     @Override
