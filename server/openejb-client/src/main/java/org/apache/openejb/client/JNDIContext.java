@@ -76,6 +76,8 @@ public class JNDIContext implements InitialContextFactory, Context {
     public static final String POOL_THREAD_NUMBER = "openejb.client.invoker.threads";
     public static final String AUTHENTICATION_REALM_NAME = "openejb.authentication.realmName";
     public static final String IDENTITY_TIMEOUT = "tomee.authentication.identity.timeout";
+    public static final String BASIC_AUTH_LOGIN = "tomee.ejb.authentication.basic.login";
+    public static final String BASIC_AUTH_PASSWORD = "tomee.ejb.authentication.basic.password";
 
     private final AtomicBoolean isShutdown = new AtomicBoolean(false);
     private String tail = "/";
@@ -252,6 +254,12 @@ public class JNDIContext implements InitialContextFactory, Context {
                     e.getMessage()).initCause(e);
         }
         this.server = new ServerMetaData(location);
+
+        final String basicAuthLogin = (String) env.get(BASIC_AUTH_LOGIN);
+        final String basicAuthPassword = (String) env.get(BASIC_AUTH_PASSWORD);
+        if (basicAuthLogin != null) {
+            this.server = new ServerMetaData(server, basicAuthLogin, basicAuthPassword);
+        }
 
         final Client.Context context = Client.getContext(this.server);
         context.getProperties().putAll(environment);
@@ -436,6 +444,16 @@ public class JNDIContext implements InitialContextFactory, Context {
                     throw AuthenticationException.class.cast(e.getCause());
                 }
             }
+
+            if (e instanceof RemoteException && e.getCause() instanceof AuthenticationException) {
+                throw (AuthenticationException) new AuthenticationException(
+                        "Cannot Basic Auth into server. Please use " +
+                        BASIC_AUTH_LOGIN +
+                        " and " +
+                        BASIC_AUTH_PASSWORD +
+                        " to set up credentials.").initCause(e);
+            }
+
             throw (NamingException) new NamingException("Cannot lookup '" + name + "'.").initCause(e);
         }
 

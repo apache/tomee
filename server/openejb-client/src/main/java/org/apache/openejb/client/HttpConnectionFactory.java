@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 package org.apache.openejb.client;
-
+import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import javax.naming.AuthenticationException;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,11 +24,15 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * @version $Revision$ $Date$
@@ -91,6 +93,13 @@ public class HttpConnectionFactory implements ConnectionFactory {
             if (params.containsKey("readTimeout")) {
                 httpURLConnection.setReadTimeout(Integer.parseInt(params.get("readTimeout")));
             }
+
+            if (authorization == null && uri.getUserInfo() != null) {
+                String basicAuth = "Basic "
+                        + printBase64Binary((url.getUserInfo()).getBytes(StandardCharsets.UTF_8));
+                httpURLConnection.setRequestProperty("Authorization", basicAuth);
+            }
+            
             if (authorization != null) {
                 httpURLConnection.setRequestProperty("Authorization", authorization);
             }
@@ -200,6 +209,9 @@ public class HttpConnectionFactory implements ConnectionFactory {
             }
             return inputStream;
         }
-    }
 
+        public int getResponseCode() throws IOException {
+            return httpURLConnection.getResponseCode();
+        }
+    }
 }

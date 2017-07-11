@@ -33,6 +33,14 @@
         openejb.ear.use-as-webcontext-base=true
         embedded = true
       </property>
+      <property name="users">
+        tomee=password
+        admin=admin
+      </property>
+      <property name="roles">
+        tomee=tomee-admin
+        admin=tomee-admin
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-remote">
@@ -44,6 +52,7 @@
       <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
       <property name="portRange">23001-26000</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="conf">src/test/tomee/conf</property>
       <property name="properties">
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
@@ -61,6 +70,7 @@
       <property name="dir">target/tomee-webapp</property>
       <property name="appWorkingDir">target/arquillian-webapp-working-dir</property>
       <property name="portRange">26001-30000</property>
+      <property name="conf">src/test/tomee/conf</property>
       <property name="properties">
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
