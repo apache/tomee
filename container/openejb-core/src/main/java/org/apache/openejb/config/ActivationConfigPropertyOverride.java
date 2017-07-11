@@ -31,7 +31,6 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -88,14 +87,11 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                     }
                 }
 
-
                 // now try to use special keys
                 final Properties overrides = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, mdb.getMessagingType() + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbName + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
-//                overrides.putAll(ConfigurationFactory.getOverrides(configuration, "mdb.activation", "EnterpriseBean"));
-                //overides any configuration there already exist
 
                 // If we don't have any overrides, skip to the next
                 if (overrides.size() == 0) {

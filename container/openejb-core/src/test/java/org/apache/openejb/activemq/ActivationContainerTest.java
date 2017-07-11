@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.activemq;
 
@@ -50,29 +50,29 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
-public class AMQXASupportTest {
+public class ActivationContainerTest {
     private static final String TEXT = "foo";
 
     @Configuration
     public Properties config() {
         return new PropertiesBuilder()
 
-            .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
-            .p("amq.DataSource", "")
-            .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
+                .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
+                .p("amq.DataSource", "")
+                .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
 
-            .p("target", "new://Resource?type=Queue")
+                .p("target", "new://Resource?type=Queue")
 
-            .p("mdbs", "new://Container?type=MESSAGE")
-            .p("mdbs.ResourceAdapter", "amq")
+                .p("mdbs", "new://Container?type=MESSAGE")
+                .p("mdbs.ResourceAdapter", "amq")
 
-            .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
-            .p("cf.ResourceAdapter", "amq")
+                .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
+                .p("cf.ResourceAdapter", "amq")
 
-            .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
-            .p("xaCf.BrokerURL", "vm://localhost")
+                .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
+                .p("xaCf.BrokerURL", "vm://localhost")
 
-            .build();
+                .build();
     }
 
     @Module
@@ -128,8 +128,9 @@ public class AMQXASupportTest {
     }
 
     @MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
+            @ActivationConfigProperty(propertyName = "activation.configuration", propertyValue = "aaaa")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
