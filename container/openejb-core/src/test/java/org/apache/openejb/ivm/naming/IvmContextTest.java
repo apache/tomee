@@ -195,7 +195,8 @@ public class IvmContextTest {
 
     /*
      * verify that list() will return the correct number of contexts and properties
-     * Some of the contexts appear twice -> i.e there is a federated and ordinary "configurations"
+     * Some of the contexts have two internal instances -> i.e there is a federated
+     * and ordinary "configurations"
      */
     @Test
     public void testContextList_moduleEnv() throws NamingException {
@@ -232,7 +233,7 @@ public class IvmContextTest {
         }
 
         if (numberOfListedItems != expected.size()) {
-            fail("IvmContext.list() returned fifferent number of elements than expected. " +
+            fail("IvmContext.list() returned different number of elements than expected. " +
                     "Expected=" + expected.size() + "\tActual=" + numberOfListedItems);
         }
     }
@@ -308,6 +309,7 @@ public class IvmContextTest {
             writer.print("\t[looking up: " + (ctxName + "/" + name) + "]");
 
             try {
+                //Intentionally lookup from the "current" context object using the relative name: TOMEE-2087
                 final Object object = context.lookup(name);
                 if (object instanceof Context) {
                     subContexts.put((Context) object, ctxName + "/" + name);
