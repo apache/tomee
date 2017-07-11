@@ -130,7 +130,7 @@ public class ActivationContainerTest {
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
             @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
-            @ActivationConfigProperty(propertyName = "activation.configuration", propertyValue = "aaaa")
+            @ActivationConfigProperty(propertyName = "activation.configuration", propertyValue = "anyconfiguration")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
