@@ -107,7 +107,7 @@ public class MdbContainer implements RpcContainer {
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
-    private Properties configuration;
+    private final Properties configuration = new Properties();
 
     public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter,
                         final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit,
@@ -125,10 +125,6 @@ public class MdbContainer implements RpcContainer {
 
     public Properties getConfiguration() {
         return configuration;
-    }
-
-    public void setConfiguration(Properties configuration) {
-        this.configuration = configuration;
     }
 
     public BeanContext[] getBeanContexts() {
@@ -163,8 +159,8 @@ public class MdbContainer implements RpcContainer {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
-                beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
-                messageListenerInterface);
+                    beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
+                    messageListenerInterface);
         }
 
         // create the activation spec
@@ -258,6 +254,9 @@ public class MdbContainer implements RpcContainer {
             final Map<String, String> activationProperties = beanContextActivationProperties;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
+                if (entry.getKey().startsWith("activation")) {
+                    configuration.put("mdb." + entry.getKey(), entry.getValue());
+                }
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 
@@ -429,7 +428,7 @@ public class MdbContainer implements RpcContainer {
 
         // verify the delivery method passed to beforeDeliver is the same method that was invoked
         if (!mdbCallContext.deliveryMethod.getName().equals(method.getName()) ||
-            !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
+                !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
             throw new IllegalStateException("Delivery method specified in beforeDelivery is not the delivery method called");
         }
 
@@ -468,12 +467,12 @@ public class MdbContainer implements RpcContainer {
     }
 
     private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
-        ApplicationException {
+            ApplicationException {
         final Object returnValue;
         try {
             final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
             final InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
-                interceptors, ((Instance) instance).interceptors);
+                    interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
             return returnValue;
         } catch (Throwable e) {
@@ -620,7 +619,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void start() throws ResourceException {
-            if (! started.compareAndSet(false, true)) {
+            if (!started.compareAndSet(false, true)) {
                 return;
             }
 
@@ -636,7 +635,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void stop() {
-            if (! started.compareAndSet(true, false)) {
+            if (!started.compareAndSet(true, false)) {
                 return;
             }
 
