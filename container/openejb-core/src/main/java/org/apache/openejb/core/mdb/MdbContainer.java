@@ -246,13 +246,7 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-            final Properties containerActivationProperties = new Properties();
-            addActivationProperties(containerActivationProperties, "activation.", properties);
-            addActivationProperties(containerActivationProperties, "mdb.container." + containerID + ".activation.", SystemInstance.get().getProperties());
 
-            for (final String propertyName : containerActivationProperties.stringPropertyNames()) {
-                objectRecipe.setMethodProperty(propertyName, containerActivationProperties.getProperty(propertyName));
-            }
 
             final Map<String, String> beanContextActivationProperties = beanContext.getActivationProperties();
             final Map<String, String> activationProperties = beanContextActivationProperties;
@@ -260,6 +254,14 @@ public class MdbContainer implements RpcContainer {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
+
+            final Properties containerActivationProperties = new Properties();
+            addActivationProperties(containerActivationProperties, "activation.", properties);
+            addActivationProperties(containerActivationProperties, "mdb.container." + containerID + ".activation.", SystemInstance.get().getProperties());
+
+            for (final String propertyName : containerActivationProperties.stringPropertyNames()) {
+                objectRecipe.setMethodProperty(propertyName, containerActivationProperties.getProperty(propertyName));
+            }
 
             // create the activationSpec
             final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
@@ -271,6 +273,7 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationLookup");
             unusedProperties.remove("connectionFactoryLookup");
             unusedProperties.remove("beanClass");
+
             if (!unusedProperties.isEmpty()) {
                 final String text = "No setter found for the activation spec properties: " + unusedProperties;
                 if (failOnUnknownActivationSpec) {
@@ -310,7 +313,7 @@ public class MdbContainer implements RpcContainer {
 
     private void addActivationProperties(final Properties target, final String prefix, final Properties source) {
         for (final String propertyName : source.stringPropertyNames()) {
-            if (! propertyName.startsWith(prefix)) continue;
+            if (!propertyName.startsWith(prefix)) continue;
 
             final String activationPropertyName = propertyName.substring(prefix.length());
             target.setProperty(activationPropertyName, source.getProperty(propertyName));
@@ -629,7 +632,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void start() throws ResourceException {
-            if (! started.compareAndSet(false, true)) {
+            if (!started.compareAndSet(false, true)) {
                 return;
             }
 
@@ -645,7 +648,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void stop() {
-            if (! started.compareAndSet(true, false)) {
+            if (!started.compareAndSet(true, false)) {
                 return;
             }
 

@@ -38,15 +38,12 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import javax.jms.XAConnection;
 import javax.jms.XAConnectionFactory;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
@@ -65,6 +62,7 @@ public class ActivationContainerTest {
 
                 .p("mdbs", "new://Container?type=MESSAGE")
                 .p("mdbs.ResourceAdapter", "amq")
+                .p("mdbs.activation.destination", "target")
 
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
@@ -95,7 +93,7 @@ public class ActivationContainerTest {
     }
 
     @Test
-    public void standardCode() throws Exception {
+    public void test() throws Exception {
         assertNotNull(cf);
 
 
@@ -103,14 +101,6 @@ public class ActivationContainerTest {
         testConnection(connection);
     }
 
-    @Test
-    public void xaCode() throws Exception {
-        assertNotNull(xacf);
-
-        final Connection connection = xacf.createXAConnection();
-        assertThat(connection, instanceOf(XAConnection.class));
-        testConnection(connection);
-    }
 
     private void testConnection(final Connection connection) throws JMSException, InterruptedException {
         try {
@@ -128,8 +118,7 @@ public class ActivationContainerTest {
     }
 
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
