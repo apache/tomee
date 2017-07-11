@@ -70,6 +70,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -251,11 +252,13 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
             final Map<String, String> beanContextActivationProperties = beanContext.getActivationProperties();
+            List<String> activations = new ArrayList<>();
             final Map<String, String> activationProperties = beanContextActivationProperties;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
                 if (entry.getKey().startsWith("activation")) {
                     configuration.put("mdb." + entry.getKey(), entry.getValue());
+                    activations.add(entry.getKey());
                 }
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
@@ -270,6 +273,9 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationLookup");
             unusedProperties.remove("connectionFactoryLookup");
             unusedProperties.remove("beanClass");
+            for (String activation : activations) {
+                unusedProperties.remove(activation);
+            }
             if (!unusedProperties.isEmpty()) {
                 final String text = "No setter found for the activation spec properties: " + unusedProperties;
                 if (failOnUnknownActivationSpec) {

@@ -89,7 +89,6 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 }
 
 
-
                 // now try to use special keys
                 final Properties overrides = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, mdb.getMessagingType() + ".activation", "EnterpriseBean"));

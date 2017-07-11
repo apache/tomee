@@ -130,7 +130,7 @@ public class AMQXASupportTest {
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
             @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
-            @ActivationConfigProperty(propertyName = "configuration", propertyValue = "aaaa")
+            @ActivationConfigProperty(propertyName = "activation.configuration", propertyValue = "aaaa")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
