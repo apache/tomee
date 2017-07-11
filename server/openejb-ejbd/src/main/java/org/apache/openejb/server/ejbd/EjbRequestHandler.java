@@ -103,11 +103,17 @@ class EjbRequestHandler extends RequestHandler {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         boolean failed = false;
         final CallContext call;
+        Object oldClientIdentity = null;
+
 
         try {
             try {
                 final Object clientIdentity = req.getClientIdentity();
                 if (clientIdentity != null) {//noinspection unchecked
+                    if (securityService.getCallerPrincipal() != null) {
+                        oldClientIdentity = securityService.disassociate();
+                    }
+
                     securityService.associate(clientIdentity);
                 }
             } catch (final LoginException t) {
@@ -158,6 +164,10 @@ class EjbRequestHandler extends RequestHandler {
         } finally {
             if (failed) {
                 securityService.disassociate();
+
+                if (oldClientIdentity != null) {
+                    securityService.associate(oldClientIdentity);
+                }
             }
         }
 
@@ -268,6 +278,10 @@ class EjbRequestHandler extends RequestHandler {
                 try {
                     //noinspection unchecked
                     securityService.logout(securityToken);
+
+                    if (oldClientIdentity != null) {
+                        securityService.associate(oldClientIdentity);
+                    }
                 } catch (final LoginException e) {
                     // no-op
                 }
