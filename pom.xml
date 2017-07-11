@@ -101,7 +101,7 @@
     <version.javaee-api>7.0-1</version.javaee-api>
 
     <openjpa.version>2.4.2</openjpa.version>
-    <org.apache.openwebbeans.version>1.7.4-SNAPSHOT</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.7.4</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.0.0</johnzon.version>
 
