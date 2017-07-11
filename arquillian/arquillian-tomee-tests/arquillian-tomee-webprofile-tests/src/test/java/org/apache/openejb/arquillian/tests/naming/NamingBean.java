@@ -79,8 +79,8 @@ public class NamingBean {
     /*
     * Verifies TOMEE-2087: context.list()/listBindings()
     * returns more entries than it should. The false positives
-    * cannot be looked up, so try to execute the context and look
-    * up every name-class pair. If the lookup fails, then execute()
+    * cannot be looked up, so try to list the context and look
+    * up every name-class pair. If the lookup fails, then list()
     * returns incorrect results.
     */
     private static boolean listContext(Context context, String ctxName, ListOperation listOperation, PrintWriter writer) throws javax.naming.NamingException {
@@ -102,8 +102,8 @@ public class NamingBean {
 
             /*
              *  Skip the SystemComponentReference because they might internally
-             *  throw NameNotFoundException althoug being correctly bound to the
-             *  provided name.
+             *  throw NameNotFoundException although being correctly bound to
+             *  the provided name.
              */
             if (!SystemComponentReference.class.getName().equals(className)) {
                 try {
@@ -133,5 +133,4 @@ public class NamingBean {
 
         return hasErrors;
     }
-
 }
