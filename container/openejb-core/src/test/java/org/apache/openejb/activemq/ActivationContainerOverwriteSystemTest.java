@@ -22,6 +22,7 @@ import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +74,11 @@ public class ActivationContainerOverwriteSystemTest {
                 .p("xaCf.BrokerURL", "vm://localhost")
 
                 .build();
+    }
+
+    @AfterClass
+    public static void afterTest() {
+        System.clearProperty("mdbs.activation.destination");
     }
 
     @Module
