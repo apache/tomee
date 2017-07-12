@@ -2484,6 +2484,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if (!binding.getName().equals(objName)) {
                     continue;
                 }
+                if (DestroyableResource.class.isInstance(binding.getObject())) {
+                    final DestroyableResource destroyableResource = DestroyableResource.class.cast(binding.getObject());
+                    destroyableResource.destroyResource();
+                    globalContext.unbind(name);
+                    return;
+                }
+
                 if (!LazyObjectReference.class.isInstance(binding.getObject())) {
                     continue;
                 }
