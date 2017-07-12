@@ -123,10 +123,6 @@ public class MdbContainer implements RpcContainer {
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
     }
 
-    public Properties getProperties() {
-        return properties;
-    }
-
     public BeanContext[] getBeanContexts() {
         return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
