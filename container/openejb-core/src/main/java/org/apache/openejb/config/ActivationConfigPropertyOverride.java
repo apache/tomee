@@ -99,7 +99,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                     overrides.putAll(ConfigurationFactory.getOverrides(mdbContainer.getProperties(), "activation", "EnterpriseBean"));
                 }
 
-
+                overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, mdb.getMessagingType() + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbName + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
@@ -145,6 +145,10 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
     private MdbContainer getMdbContainer(final String containerId) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        if (containerSystem == null) {
+            return null;
+        }
 
         if (containerId == null || containerId.length() == 0) {
             final Container[] containers = containerSystem.containers();
