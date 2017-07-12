@@ -47,7 +47,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
-public class ActivationContainerTest2 {
+public class ActivationContainerOverwriteIdContainerConfigurationTest {
     private static final String TEXT = "foo";
 
     @Configuration
