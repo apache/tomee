@@ -247,21 +247,12 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
 
-
-            final Map<String, String> beanContextActivationProperties = beanContext.getActivationProperties();
-            final Map<String, String> activationProperties = beanContextActivationProperties;
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 
-//            final Properties containerActivationProperties = new Properties();
-//            addActivationProperties(containerActivationProperties, "activation.", properties);
-//            addActivationProperties(containerActivationProperties, "mdb.container." + containerID + ".activation.", SystemInstance.get().getProperties());
-//
-//            for (final String propertyName : containerActivationProperties.stringPropertyNames()) {
-//                objectRecipe.setMethodProperty(propertyName, containerActivationProperties.getProperty(propertyName));
-//            }
 
             // create the activationSpec
             final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
@@ -308,15 +299,6 @@ public class MdbContainer implements RpcContainer {
             return activationSpec;
         } catch (final Exception e) {
             throw new OpenEJBException("Unable to create activation spec", e);
-        }
-    }
-
-    private void addActivationProperties(final Properties target, final String prefix, final Properties source) {
-        for (final String propertyName : source.stringPropertyNames()) {
-            if (!propertyName.startsWith(prefix)) continue;
-
-            final String activationPropertyName = propertyName.substring(prefix.length());
-            target.setProperty(activationPropertyName, source.getProperty(propertyName));
         }
     }
 
