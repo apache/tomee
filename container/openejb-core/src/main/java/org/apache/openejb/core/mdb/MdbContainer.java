@@ -151,6 +151,10 @@ public class MdbContainer implements RpcContainer {
         return activationSpecClass;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
@@ -251,13 +255,13 @@ public class MdbContainer implements RpcContainer {
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
 
-            final Properties containerActivationProperties = new Properties();
-            addActivationProperties(containerActivationProperties, "activation.", properties);
-            addActivationProperties(containerActivationProperties, "mdb.container." + containerID + ".activation.", SystemInstance.get().getProperties());
-
-            for (final String propertyName : containerActivationProperties.stringPropertyNames()) {
-                objectRecipe.setMethodProperty(propertyName, containerActivationProperties.getProperty(propertyName));
-            }
+//            final Properties containerActivationProperties = new Properties();
+//            addActivationProperties(containerActivationProperties, "activation.", properties);
+//            addActivationProperties(containerActivationProperties, "mdb.container." + containerID + ".activation.", SystemInstance.get().getProperties());
+//
+//            for (final String propertyName : containerActivationProperties.stringPropertyNames()) {
+//                objectRecipe.setMethodProperty(propertyName, containerActivationProperties.getProperty(propertyName));
+//            }
 
             // create the activationSpec
             final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());

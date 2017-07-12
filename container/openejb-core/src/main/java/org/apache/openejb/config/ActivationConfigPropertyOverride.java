@@ -90,12 +90,21 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                     }
                 }
                 final MdbContainer mdbContainer = getMdbContainer(ejbDeployment.getContainerId());
-                
+                Properties propertiesContainer = mdbContainer.getProperties();
                 // now try to use special keys
                 final Properties overrides = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, mdb.getMessagingType() + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbName + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
+
+                if (propertiesContainer != null) {
+                    for (Map.Entry<Object, Object> entry : propertiesContainer.entrySet()) {
+                        if (entry.getKey().toString().startsWith("activation.")) {
+                            overrides.put(entry.getKey(), entry.getValue());
+                        }
+                    }
+
+                }
 
                 // If we don't have any overrides, skip to the next
                 if (overrides.size() == 0) {
