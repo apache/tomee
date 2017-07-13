@@ -18,51 +18,20 @@
 package org.apache.openejb.resource.activemq;
 
 import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.ra.ActiveMQEndpointActivationKey;
-import org.apache.activemq.ra.ActiveMQEndpointWorker;
-import org.apache.activemq.ra.MessageActivationSpec;
-import org.apache.openejb.BeanContext;
-import org.apache.openejb.core.mdb.MdbContainer;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
-import org.apache.openejb.util.reflection.Reflections;
 
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.MBeanParameterInfo;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.ReflectionException;
-import javax.resource.NotSupportedException;
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
-import static javax.management.MBeanOperationInfo.ACTION;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQResourceAdapter {
@@ -71,7 +40,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String useDatabaseLock;
     private String startupTimeout = "60000";
     private BootstrapContext bootstrapContext;
-    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<BeanContext, ObjectName>();
 
     public String getDataSource() {
         return dataSource;
@@ -175,76 +143,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     }
 
     @Override
-    public void endpointActivation(final MessageEndpointFactory endpointFactory, final ActivationSpec activationSpec) throws ResourceException {
-        final BeanContext current = MdbContainer.current();
-        if (current != null && "false".equalsIgnoreCase(current.getProperties().getProperty("MdbActiveOnStartup"))) {
-            if (!equals(activationSpec.getResourceAdapter())) {
-                throw new ResourceException("Activation spec not initialized with this ResourceAdapter instance (" + activationSpec.getResourceAdapter() + " != " + this + ")");
-            }
-            if (!(activationSpec instanceof MessageActivationSpec)) {
-                throw new NotSupportedException("That type of ActivationSpec not supported: " + activationSpec.getClass());
-            }
-
-            final ActiveMQEndpointActivationKey key = new ActiveMQEndpointActivationKey(endpointFactory, MessageActivationSpec.class.cast(activationSpec));
-            Map.class.cast(Reflections.get(this, "endpointWorkers")).put(key, new ActiveMQEndpointWorker(this, key) {
-            });
-            // we dont want that worker.start();
-        } else {
-            super.endpointActivation(endpointFactory, activationSpec);
-        }
-
-        if (current != null) {
-            addJMxControl(current, current.getProperties().getProperty("MdbJMXControl"));
-        }
-    }
-
-    private void addJMxControl(final BeanContext current, final String name) throws ResourceException {
-        if (name == null || "false".equalsIgnoreCase(name)) {
-            return;
-        }
-
-        final ActiveMQEndpointWorker worker = getWorker(current);
-        final ObjectName jmxName;
-        try {
-            jmxName = "true".equalsIgnoreCase(name) ? new ObjectNameBuilder()
-                    .set("J2EEServer", "openejb")
-                    .set("J2EEApplication", null)
-                    .set("EJBModule", current.getModuleID())
-                    .set("StatelessSessionBean", current.getEjbName())
-                    .set("j2eeType", "control")
-                    .set("name", current.getEjbName())
-                    .build() : new ObjectName(name);
-        } catch (final MalformedObjectNameException e) {
-            throw new IllegalArgumentException(e);
-        }
-        mbeanNames.put(current, jmxName);
-
-        LocalMBeanServer.registerSilently(new MdbJmxControl(worker), jmxName);
-        log.info("Deployed MDB control for " + current.getDeploymentID() + " on " + jmxName);
-    }
-
-    @Override
-    public void endpointDeactivation(final MessageEndpointFactory endpointFactory, final ActivationSpec activationSpec) {
-        final BeanContext current = MdbContainer.current();
-        if (current != null && "true".equalsIgnoreCase(current.getProperties().getProperty("MdbJMXControl"))) {
-            LocalMBeanServer.unregisterSilently(mbeanNames.remove(current));
-            log.info("Undeployed MDB control for " + current.getDeploymentID());
-        }
-        super.endpointDeactivation(endpointFactory, activationSpec);
-    }
-
-    private ActiveMQEndpointWorker getWorker(final BeanContext beanContext) throws ResourceException {
-        final Map<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> workers = Map.class.cast(Reflections.get(
-                MdbContainer.class.cast(beanContext.getContainer()).getResourceAdapter(), "endpointWorkers"));
-        for (final Map.Entry<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> entry : workers.entrySet()) {
-            if (entry.getKey().getMessageEndpointFactory() == beanContext.getContainerData()) {
-                return entry.getValue();
-            }
-        }
-        throw new IllegalStateException("No worker for " + beanContext.getDeploymentID());
-    }
-
-    @Override
     public BootstrapContext getBootstrapContext() {
         return this.bootstrapContext;
     }
@@ -310,73 +208,6 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             method.invoke(null);
         } catch (final Throwable e) {
             //Ignore
-        }
-    }
-
-    public static final class MdbJmxControl implements DynamicMBean {
-        private static final AttributeList ATTRIBUTE_LIST = new AttributeList();
-        private static final MBeanInfo INFO = new MBeanInfo(
-                "org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.MdbJmxControl",
-                "Allows to control a MDB (start/stop)",
-                new MBeanAttributeInfo[0],
-                new MBeanConstructorInfo[0],
-                new MBeanOperationInfo[]{
-                        new MBeanOperationInfo("start", "Ensure the listener is active.", new MBeanParameterInfo[0], "void", ACTION),
-                        new MBeanOperationInfo("stop", "Ensure the listener is not active.", new MBeanParameterInfo[0], "void", ACTION)
-                },
-                new MBeanNotificationInfo[0]);
-
-        private final ActiveMQEndpointWorker worker;
-
-        private MdbJmxControl(final ActiveMQEndpointWorker worker) {
-            this.worker = worker;
-        }
-
-        @Override
-        public Object invoke(final String actionName, final Object[] params, final String[] signature) throws MBeanException, ReflectionException {
-            if (actionName.equals("stop")) {
-                try {
-                    worker.stop();
-                } catch (final InterruptedException e) {
-                    Thread.interrupted();
-                }
-
-            } else if (actionName.equals("start")) {
-                try {
-                    worker.start();
-                } catch (ResourceException e) {
-                    throw new MBeanException(new IllegalStateException(e.getMessage()));
-                }
-
-            } else {
-                throw new MBeanException(new IllegalStateException("unsupported operation: " + actionName));
-            }
-            return null;
-        }
-
-        @Override
-        public MBeanInfo getMBeanInfo() {
-            return INFO;
-        }
-
-        @Override
-        public Object getAttribute(final String attribute) throws AttributeNotFoundException, MBeanException, ReflectionException {
-            throw new AttributeNotFoundException();
-        }
-
-        @Override
-        public void setAttribute(final Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException {
-            throw new AttributeNotFoundException();
-        }
-
-        @Override
-        public AttributeList getAttributes(final String[] attributes) {
-            return ATTRIBUTE_LIST;
-        }
-
-        @Override
-        public AttributeList setAttributes(final AttributeList attributes) {
-            return ATTRIBUTE_LIST;
         }
     }
 }

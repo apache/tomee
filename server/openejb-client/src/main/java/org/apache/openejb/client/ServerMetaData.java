@@ -21,11 +21,17 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ServerMetaData implements Externalizable {
 
     private static final long serialVersionUID = -915541900332460068L;
+    private static final transient Pattern urlPattern = Pattern.compile("http(?s):\\/\\/(.+):(.+)@.*");
     private transient URI[] locations;
     private transient URI location;
     private transient ProtocolMetaData metaData;
@@ -36,6 +42,42 @@ public class ServerMetaData implements Externalizable {
     public ServerMetaData(final URI... locations) {
         this.locations = locations;
         location = locations[0];
+    }
+
+    public ServerMetaData(ServerMetaData server, String securityPrincipal, String securityCredentials) {
+        List<URI> locationList = new ArrayList<URI>(server.locations.length);
+        for (URI uri : server.locations) {
+            uri = addUserToURI(securityPrincipal, securityPrincipal, uri);
+            locationList.add(uri);
+        }
+        locations = locationList.toArray(new URI[server.locations.length]);
+        location = addUserToURI(securityPrincipal, securityCredentials, server.location);
+        this.metaData = server.metaData;
+    }
+
+    private URI addUserToURI(String securityPrincipal, String securityCredentials, URI uri) {
+        String uriString = uri.toString();
+        Matcher matcher = urlPattern.matcher(uriString);
+        if (!matcher.matches()) {
+            String restOfUrl = null;
+            String scheme = null;
+            if (uriString.startsWith("http://")) {
+                restOfUrl = uriString.substring("http://".length());
+                scheme = "http://";
+            } else if (uriString.startsWith("https://")) {
+                restOfUrl = uriString.substring("https://".length());
+                scheme = "https://";
+            }
+            if (restOfUrl != null) {
+                try {
+                    uri = new URI(scheme + securityPrincipal + ":" + (securityCredentials == null ? "" : securityCredentials) + "@"
+                            + restOfUrl);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return uri;
     }
 
     public void setMetaData(final ProtocolMetaData metaData) {
@@ -100,4 +142,3 @@ public class ServerMetaData implements Externalizable {
         return (location != null ? location.hashCode() : 0);
     }
 }
-

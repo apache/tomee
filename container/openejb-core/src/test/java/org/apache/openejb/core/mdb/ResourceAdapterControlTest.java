@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.activemq;
+package org.apache.openejb.core.mdb;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.openejb.config.EjbModule;
@@ -57,11 +57,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
-public class ActiveMQResourceAdapterControlTest {
+public class ResourceAdapterControlTest {
     
-    private static final Logger logger = Logger.getLogger(ActiveMQResourceAdapterControlTest.class.getName());
+    private static final Logger logger = Logger.getLogger(ResourceAdapterControlTest.class.getName());
     
-    @Resource(name = "ActiveMQResourceAdapterControlTest/test/ejb/Mdb")
+    @Resource(name = "ResourceAdapterControlTest/test/ejb/Mdb")
     private Queue queue;
 
     @Resource
