@@ -2469,43 +2469,40 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
     }
 
     private void destroyLookedUpResource(final Context globalContext, final String id, final String name) throws NamingException {
+        // check to see if the resource is a LazyObjectReference that has not been initialized
+        // if it is, we'll remove the LazyObjectReference, rather than do a lookup causing it
+        // to be instantiated
+        final String ctx = name.substring(0, name.lastIndexOf("/"));
+        final String objName = name.substring(ctx.length() + 1);
 
-        final Object object;
-
-        try {
-            object = globalContext.lookup(name);
-        } catch (final NamingException e) {
-            // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
-            final String ctx = name.substring(0, name.lastIndexOf("/"));
-            final String objName = name.substring(ctx.length() + 1);
-            final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
-            while (bindings.hasMoreElements()) {
-                final Binding binding = bindings.nextElement();
-                if (!binding.getName().equals(objName)) {
-                    continue;
-                }
-                if (DestroyableResource.class.isInstance(binding.getObject())) {
-                    final DestroyableResource destroyableResource = DestroyableResource.class.cast(binding.getObject());
-                    destroyableResource.destroyResource();
-                    globalContext.unbind(name);
-                    return;
-                }
-
-                if (!LazyObjectReference.class.isInstance(binding.getObject())) {
-                    continue;
-                }
-
-                final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
-                if (! ref.isInitialized()) {
-                    globalContext.unbind(name);
-                    removeResourceInfo(name);
-                    return;
-                }
+        final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
+        while (bindings.hasMoreElements()) {
+            final Binding binding = bindings.nextElement();
+            if (!binding.getName().equals(objName)) {
+                continue;
             }
 
-            throw e;
+            if (DestroyableResource.class.isInstance(binding.getObject())) {
+                final DestroyableResource destroyableResource = DestroyableResource.class.cast(binding.getObject());
+                destroyableResource.destroyResource();
+                globalContext.unbind(name);
+                return;
+            }
+
+            if (!LazyObjectReference.class.isInstance(binding.getObject())) {
+                continue;
+            }
+
+            final LazyObjectReference<?> ref = LazyObjectReference.class.cast(binding.getObject());
+            if (!ref.isInitialized()) {
+                globalContext.unbind(name);
+                removeResourceInfo(id);
+                return;
+            }
         }
 
+        // otherwise, look the object up and remove it
+        final Object object = globalContext.lookup(name);
         final String clazz;
         if (object == null) { // should it be possible?
             clazz = "?";
