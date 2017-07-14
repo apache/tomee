@@ -17,7 +17,6 @@
 
 package org.apache.openejb.arquillian.tests.naming;
 
-import org.apache.openejb.core.interceptor.Interceptor;
 import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 
 import javax.ejb.LocalBean;
@@ -70,7 +69,7 @@ public class NamingBean {
 
     private String getPrintedJndiTree(ByteArrayOutputStream buffer) {
         try {
-            return buffer.toString("utf-8");
+            return buffer.toString(StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             return null; //should never happen
         }

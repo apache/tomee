@@ -41,7 +41,7 @@ public class IvmContextTest {
     private static final String CONTENT_LOCATION_EJB_JAR_XML = "org/apache/openejb/arquillian/tests/naming/list-context-ejbjar.xml";
 
     @EJB
-    NamingBean namingBean;
+    private NamingBean namingBean;
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
