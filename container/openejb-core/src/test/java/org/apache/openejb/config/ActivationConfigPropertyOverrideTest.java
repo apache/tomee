@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.config;
 
-import junit.framework.TestCase;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.activemq.ActivationContainerOverwriteBothConfigurationTest;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
@@ -29,8 +29,11 @@ import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
@@ -48,7 +51,13 @@ import static org.junit.Assert.assertTrue;
 4. -Dmdb.activation.<property>=<value>
 Order: 4 is overriden by 3 (and so on)
 */
+@RunWith(ApplicationComposer.class)
 public class ActivationConfigPropertyOverrideTest{
+
+    @Module
+    public MessageDrivenBean jar() {
+        return new MessageDrivenBean(ActivationContainerOverwriteBothConfigurationTest.Listener.class);
+    }
 
 
     /**
