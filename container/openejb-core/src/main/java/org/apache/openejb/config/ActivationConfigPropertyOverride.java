@@ -37,7 +37,6 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * @version $Rev$ $Date$
@@ -145,10 +144,6 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
     private MdbContainer getMdbContainer(final String containerId) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
-
-        if (containerSystem == null) {
-            return null;
-        }
 
         if (containerId == null || containerId.length() == 0) {
             final Container[] containers = containerSystem.containers();
