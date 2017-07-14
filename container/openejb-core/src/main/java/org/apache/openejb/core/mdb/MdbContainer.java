@@ -73,6 +73,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -102,6 +103,8 @@ public class MdbContainer implements RpcContainer {
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
     private final boolean failOnUnknownActivationSpec;
+
+    private final Properties properties = new Properties();
 
     public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter, final Class messageListenerInterface,
                         final Class activationSpecClass, final int instanceLimit, final boolean failOnUnknownActivationSpec) {
@@ -142,6 +145,10 @@ public class MdbContainer implements RpcContainer {
 
     public Class getActivationSpecClass() {
         return activationSpecClass;
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
