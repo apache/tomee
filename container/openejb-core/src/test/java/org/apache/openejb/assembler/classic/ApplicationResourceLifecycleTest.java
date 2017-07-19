@@ -27,15 +27,17 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import java.util.concurrent.Callable;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-@Classes
 @SimpleLog
 public class ApplicationResourceLifecycleTest {
     @Resource(name = "test")
     private MyResource resource;
 
+    @Classes({MyResource.class})
     @Module
     public Resources resources() {
         return new Resources() {{
@@ -48,11 +50,12 @@ public class ApplicationResourceLifecycleTest {
 
     @Test
     public void lifecycle() throws Exception {
-        new ApplicationComposers(this).evaluate(this, new Runnable() {
+        new ApplicationComposers(this).evaluate(this, new Callable<Void>() {
             @Override
-            public void run() {
+            public Void call() throws Exception {
                 assertTrue(resource.init);
                 assertFalse(resource.destroy);
+                return null;
             }
         });
         assertTrue(resource.init);
