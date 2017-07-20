@@ -91,7 +91,7 @@ public class IvmContextTest {
         final IvmContext context = new IvmContext("");
         context.bind("global/foo/Bar", "Bar");
 
-        Contexts.createSubcontexts(context, "global/foo/Bar").bind("Bar", "Foo");
+        Contexts.createSubcontexts(context, "global/foo/Bar");
 
         assertEquals("Bar", context.lookup("global/foo/Bar"));
 
