@@ -73,6 +73,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,6 +106,8 @@ public class MdbContainer implements RpcContainer {
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
+
+    private final Properties properties = new Properties();
 
     public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter,
                         final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit,
@@ -148,12 +151,16 @@ public class MdbContainer implements RpcContainer {
         return activationSpecClass;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
-                beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
-                messageListenerInterface);
+                    beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
+                    messageListenerInterface);
         }
 
         // create the activation spec
@@ -232,10 +239,6 @@ public class MdbContainer implements RpcContainer {
         }
     }
 
-    private static String getOrDefault(final Map<String, String> map, final String key, final String defaultValue) {
-        return map.get(key) != null ? map.get(key) : defaultValue;
-    }
-
     private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
         try {
             // initialize the object recipe
@@ -243,12 +246,13 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
-            final Map<String, String> beanContextActivationProperties = beanContext.getActivationProperties();
-            final Map<String, String> activationProperties = beanContextActivationProperties;
+
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
             objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
+
 
             // create the activationSpec
             final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
@@ -260,6 +264,7 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destinationLookup");
             unusedProperties.remove("connectionFactoryLookup");
             unusedProperties.remove("beanClass");
+
             if (!unusedProperties.isEmpty()) {
                 final String text = "No setter found for the activation spec properties: " + unusedProperties;
                 if (failOnUnknownActivationSpec) {
@@ -418,7 +423,7 @@ public class MdbContainer implements RpcContainer {
 
         // verify the delivery method passed to beforeDeliver is the same method that was invoked
         if (!mdbCallContext.deliveryMethod.getName().equals(method.getName()) ||
-            !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
+                !Arrays.deepEquals(mdbCallContext.deliveryMethod.getParameterTypes(), method.getParameterTypes())) {
             throw new IllegalStateException("Delivery method specified in beforeDelivery is not the delivery method called");
         }
 
@@ -457,12 +462,12 @@ public class MdbContainer implements RpcContainer {
     }
 
     private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
-        ApplicationException {
+            ApplicationException {
         final Object returnValue;
         try {
             final List<InterceptorData> interceptors = beanContext.getMethodInterceptors(runMethod);
             final InterceptorStack interceptorStack = new InterceptorStack(((Instance) instance).bean, runMethod, interfaceType == InterfaceType.TIMEOUT ? Operation.TIMEOUT : Operation.BUSINESS,
-                interceptors, ((Instance) instance).interceptors);
+                    interceptors, ((Instance) instance).interceptors);
             returnValue = interceptorStack.invoke(args);
             return returnValue;
         } catch (Throwable e) {
@@ -609,7 +614,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void start() throws ResourceException {
-            if (! started.compareAndSet(false, true)) {
+            if (!started.compareAndSet(false, true)) {
                 return;
             }
 
@@ -625,7 +630,7 @@ public class MdbContainer implements RpcContainer {
         }
 
         public void stop() {
-            if (! started.compareAndSet(true, false)) {
+            if (!started.compareAndSet(true, false)) {
                 return;
             }
 
