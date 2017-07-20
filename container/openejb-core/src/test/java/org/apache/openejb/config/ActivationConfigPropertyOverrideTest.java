@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import junit.framework.TestCase;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.activemq.ActivationContainerOverwriteBothConfigurationTest;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
@@ -29,20 +29,12 @@ import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.testing.Module;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.util.Properties;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /*
 1  -D<deploymentId>.activation.<property>=<value>
@@ -51,19 +43,12 @@ import static org.junit.Assert.assertTrue;
 4. -Dmdb.activation.<property>=<value>
 Order: 4 is overriden by 3 (and so on)
 */
-@RunWith(ApplicationComposer.class)
-public class ActivationConfigPropertyOverrideTest{
-
-    @Module
-    public MessageDrivenBean jar() {
-        return new MessageDrivenBean(ActivationContainerOverwriteBothConfigurationTest.Listener.class);
-    }
+public class ActivationConfigPropertyOverrideTest extends TestCase {
 
 
     /**
      * Test internal method used in ActivationConfigPropertyOverride
      */
-    @Test
     public void testGetOverridesShouldTrimAwayPrefixesCorrectly() {
         final Properties properties = new Properties();
         properties.put("ENTERPRISEBEAN.mdb.activation.destinationType", "something");
@@ -76,7 +61,6 @@ public class ActivationConfigPropertyOverrideTest{
      *
      * @throws OpenEJBException
      */
-    @Test
     public void testOverrideActivationConfigProperty() throws OpenEJBException {
 
         // set overrides for destinationType and check
@@ -97,7 +81,6 @@ public class ActivationConfigPropertyOverrideTest{
      *
      * @throws OpenEJBException
      */
-    @Test
     public void testAddActivationConfigPropertyIfNotAlreadyPresent() throws OpenEJBException {
 
         // set overrides
@@ -127,7 +110,6 @@ public class ActivationConfigPropertyOverrideTest{
         return false;
     }
 
-    @Test
     public void testNoOverrideSetShouldNotOverride() throws OpenEJBException {
         if (SystemInstance.get().getProperties().containsKey("ENTERPRISEBEAN.mdb.activation.destinationType")) {
             SystemInstance.get().getProperties().remove("ENTERPRISEBEAN.mdb.activation.destinationType");
@@ -142,7 +124,6 @@ public class ActivationConfigPropertyOverrideTest{
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "shouldNotBeOverriddenString"));
     }
 
-    @Test
     public void testNotOverridden() throws Exception {
         SystemInstance.reset();
         final Assembler assembler = new Assembler();
@@ -170,7 +151,6 @@ public class ActivationConfigPropertyOverrideTest{
         assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
     }
 
-    @Test
     public void testMdbOverrideSystem() throws Exception {
         SystemInstance.reset();
         final Properties systProps = SystemInstance.get().getProperties();
@@ -210,7 +190,6 @@ public class ActivationConfigPropertyOverrideTest{
         }
     }
 
-    @Test
     public void testMdbOverrideOpenejbJar() throws Exception {
         SystemInstance.reset();
 
@@ -274,7 +253,6 @@ public class ActivationConfigPropertyOverrideTest{
 
     }
 
-    @Test
     public void testEjbNameOverrideSystem() throws Exception {
         SystemInstance.reset();
         final Properties properties = SystemInstance.get().getProperties();
@@ -308,7 +286,6 @@ public class ActivationConfigPropertyOverrideTest{
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
     }
 
-    @Test
     public void testEjbNameOverrideOpenejbJar() throws Exception {
         SystemInstance.reset();
 
@@ -374,10 +351,10 @@ public class ActivationConfigPropertyOverrideTest{
 
 
     @MessageDriven(activationConfig = {
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "7"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "4"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "ORANGE.QUEUE")
     })
     public static class Orange implements MessageListener {
 
@@ -387,10 +364,10 @@ public class ActivationConfigPropertyOverrideTest{
     }
 
     @MessageDriven(activationConfig = {
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
-            @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxSessions", propertyValue = "5"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "maxMessagesPerSessions", propertyValue = "10"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic"),
+        @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "YELLOW.TOPIC")
     })
     public static class Yellow implements MessageListener {
 
