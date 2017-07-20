@@ -335,4 +335,122 @@ public class IvmContextTest {
 
         return hasErrors;
     }
+
+    @Test(expected = NameAlreadyBoundException.class)
+    public void testBindThrowsNameAlreadyBoundException() throws Exception{
+        IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/object", new Object());
+
+        IvmContext b = (IvmContext) root.lookup("a/b");
+        //already bound from root -> must fail
+        b.bind("object", new Object());
+    }
+
+    @Test
+    public void testBindRelativeToRootAndLookupRelativeToTheCurrentContext() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        final Object boundObject = new Object();
+        root.bind("a/b/object", boundObject);
+
+        IvmContext b = (IvmContext) root.lookup("a/b");
+        final Object lookedUpObject = b.lookup("object");
+        assertSame(boundObject, lookedUpObject);
+    }
+
+    @Test
+    public void testBindRelativeToRootAndLookupRelativeToRoot() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        final Object boundObject = new Object();
+        root.bind("a/b/object", boundObject);
+
+        final Object lookedUpObject = root.lookup("a/b/object");
+        assertSame(boundObject, lookedUpObject);
+    }
+
+    @Test
+    public void testBindRelativeToCurrentContextAndLookupRelativeToRoot() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/c", null);
+
+        final Object boundObject = new Object();
+        IvmContext b = (IvmContext) root.lookup("a/b");
+        b.bind("object", boundObject);
+
+
+        final Object lookedUpObject = root.lookup("a/b/object");
+        assertSame(boundObject, lookedUpObject);
+    }
+
+    @Test(expected = NameNotFoundException.class)
+    public void testBindFromRootUnbindFromCurrentContext() throws Exception{
+        IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/object", new Object());
+
+        IvmContext b = (IvmContext) root.lookup("a/b");
+        b.unbind("object");
+
+        //must fail with NameNotFoundException
+        Object object = root.lookup("a/b/object");
+
+        fail("Lookup should have failed. Instead it returned: " + object);
+    }
+
+    @Test(expected = NameNotFoundException.class)
+    public void testBindFromRootUnbindFromRoot() throws Exception{
+        IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/object", new Object());
+        root.unbind("a/b/object");
+
+        //must fail with NameNotFoundException
+        Object object = root.lookup("a/b/object");
+
+        fail("Lookup should have failed. Instead it returned: " + object);
+    }
+
+    @Test
+    public void testBindFromRootSetsTheCorrectParent_lookupRelativeToRoot() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/c", null);
+
+        IvmContext a = (IvmContext) root.lookup("a");
+        //TODO Do we want ROOT to be a parent to the top-level contexts ?
+        requireCorrectParentChildRelationship(null, a);
+
+        IvmContext b = (IvmContext) root.lookup("a/b");
+        requireCorrectParentChildRelationship(a, b);
+    }
+
+    @Test
+    public void testBindFromRootSetsTheCorrectParent_lookupRelativeToTheCurrentNode() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/c", null);
+
+        IvmContext a = (IvmContext) root.lookup("a");
+        //TODO Do we want ROOT to be a parent to the top-level contexts ?
+        requireCorrectParentChildRelationship(null, a);
+
+        IvmContext b = (IvmContext) a.lookup("b");
+        requireCorrectParentChildRelationship(a, b);
+    }
+
+    @Test
+    public void testBindFromCorrectContextSetsTheCorrectParent_lookupRelativeToTheCurrentNode() throws Exception{
+        final IvmContext root = IvmContext.createRootContext();
+        root.bind("a/b/c", null);
+
+        IvmContext a = (IvmContext) root.lookup("a");
+        a.bind("object", null);
+        requireCorrectParentChildRelationship(a, (IvmContext) a.lookup("object"));
+
+        IvmContext b = (IvmContext) a.lookup("b");
+        b.bind("object", null);
+        requireCorrectParentChildRelationship(b, (IvmContext) b.lookup("object"));
+    }
+
+    private void requireCorrectParentChildRelationship(IvmContext parent, IvmContext child){
+        final NameNode parentNode = null == parent ? null : parent.mynode;
+        final NameNode childNode = child.mynode;
+
+        assertSame(parentNode, childNode.getParent());
+    }
 }
