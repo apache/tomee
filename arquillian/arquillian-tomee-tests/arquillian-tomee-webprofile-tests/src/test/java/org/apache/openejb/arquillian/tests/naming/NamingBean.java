@@ -22,10 +22,7 @@ import org.apache.openejb.core.ivm.naming.SystemComponentReference;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.naming.*;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,42 +33,31 @@ public class NamingBean {
         NamingEnumeration<? extends NameClassPair> execute(Context context, String address) throws NamingException;
     }
 
-    public void verifyContextList() throws NamingException {
-        verifyContextListInternal(new ListOperation() {
+    public void verifyListContext(PrintWriter logSink) throws NamingException {
+        verifyContextListOperation(new ListOperation() {
             @Override
             public NamingEnumeration<NameClassPair> execute(Context context, String address) throws NamingException {
                 return context.list(address);
             }
-        });
+        }, logSink);
     }
 
-    public void verifyContextListBindings() throws NamingException {
-        verifyContextListInternal(new ListOperation() {
+    public void verifyContextListBindings(PrintWriter logSink) throws NamingException {
+        verifyContextListOperation(new ListOperation() {
             @Override
             public NamingEnumeration<Binding> execute(Context context, String address) throws NamingException {
                 return context.listBindings(address);
             }
-        });
+        }, logSink);
     }
 
-    private void verifyContextListInternal(ListOperation listOperation) throws NamingException {
-        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        final PrintWriter logSink = new PrintWriter(buffer);
-
+    private void verifyContextListOperation(ListOperation listOperation, PrintWriter logSink) throws NamingException {
         final InitialContext ctx = new InitialContext();
         final boolean hasErrors = listContext(ctx, "", listOperation, logSink);
         logSink.flush();
 
         if (hasErrors) {
-            throw new IllegalStateException("Failed to lookup some of the listed entries:\n" + getPrintedJndiTree(buffer));
-        }
-    }
-
-    private String getPrintedJndiTree(ByteArrayOutputStream buffer) {
-        try {
-            return buffer.toString(StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            return null; //should never happen
+            throw new IllegalStateException("Failed to lookup some of the listed entries.");
         }
     }
 
@@ -132,4 +118,5 @@ public class NamingBean {
 
         return hasErrors;
     }
+
 }
