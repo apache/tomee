@@ -304,7 +304,7 @@ public class IvmContextTest extends TestCase {
       */
      public void testGetBindingPropagatesReadOnlyFlag() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         final IvmContext context = new IvmContext("comp");
-        context.bind("comp/env/test", "test");
+        context.bind("env/test", "test");
 
         context.setReadOnly(true);
         Object result = context.lookup("env");
