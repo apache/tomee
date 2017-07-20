@@ -434,7 +434,7 @@ public class IvmContextTest {
     }
 
     @Test
-    public void testBindFromCorrectContextSetsTheCorrectParent_lookupRelativeToTheCurrentNode() throws Exception{
+    public void testBindFromCurrentContextSetsTheCorrectParent_lookupRelativeToTheCurrentNode() throws Exception{
         final IvmContext root = IvmContext.createRootContext();
         root.bind("a/b/c", null);
 
