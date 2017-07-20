@@ -324,7 +324,7 @@ public class IvmContextTest extends TestCase {
      public void testGetFromFederatedContextPropagatesReadOnlyFlag() throws NamingException {
         final IvmContext context = new IvmContext();
         final IvmContext federatedContext = new IvmContext("comp");
-        federatedContext.bind("comp/env/test", "test");
+        federatedContext.bind("env/test", "test");
         context.bind("", federatedContext);
 
         context.setReadOnly(true);
