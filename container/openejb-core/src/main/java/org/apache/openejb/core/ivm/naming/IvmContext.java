@@ -314,9 +314,13 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            final ParsedName parsedName = new ParsedName(name);
+            final ParsedName parsedName = getParsedNameFor(name);
             mynode.bind(parsedName, obj);
         }
+    }
+
+    private ParsedName getParsedNameFor(String name){
+        return new ParsedName(mynode.getAtomicName() + "/" + name);
     }
 
     public void bind(final Name name, final Object obj) throws NamingException {
@@ -351,7 +355,7 @@ public class IvmContext implements Context, Serializable {
         fastCache.clear();
         mynode.clearCache();
 
-        mynode.unbind(new ParsedName(name));
+        mynode.unbind(getParsedNameFor(name));
     }
 
     public void unbind(final Name name) throws NamingException {
@@ -425,7 +429,7 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            return mynode.createSubcontext(new ParsedName(name), readOnly);
+            return mynode.createSubcontext(getParsedNameFor(name), readOnly);
         }
     }
 
