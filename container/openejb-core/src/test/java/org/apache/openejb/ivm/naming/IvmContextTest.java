@@ -36,7 +36,7 @@ public class IvmContextTest {
         final IvmContext root = IvmContext.createRootContext();
         root.rebind("global/App.EAR/foo", "test");
         final Context last = Contexts.createSubcontexts(root, "global/App.EAR/foo");
-        last.bind("foo", "test");
+        last.rebind("foo", "test");
 
         // first ensure all is bound correctly
         assertEquals("test", root.lookup("global/App.EAR/foo"));
