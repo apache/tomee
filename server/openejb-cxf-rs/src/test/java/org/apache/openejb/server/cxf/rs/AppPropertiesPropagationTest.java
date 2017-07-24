@@ -83,6 +83,10 @@ public class AppPropertiesPropagationTest {
     public static class Registrator implements Feature {
         @Override
         public boolean configure(final FeatureContext context) {
+            if (!context.getConfiguration().getProperties().containsKey("AppPropertiesPropagationTest")) {
+                return false;
+            }
+
             context.register(new Writer(context.getConfiguration().getProperty("AppPropertiesPropagationTest")
                     .toString().getBytes(StandardCharsets.UTF_8)));
             return true;
@@ -94,7 +98,7 @@ public class AppPropertiesPropagationTest {
     public static class Writer implements MessageBodyWriter<MyEndpoint> {
         private final byte[] value;
 
-        Writer(byte[] value) {
+        public Writer(byte[] value) {
             this.value = value;
         }
 
@@ -115,7 +119,9 @@ public class AppPropertiesPropagationTest {
                             final Annotation[] annotations, final MediaType mediaType,
                             final MultivaluedMap<String, Object> httpHeaders,
                             final OutputStream entityStream) throws IOException, WebApplicationException {
-            entityStream.write(value);
+            if (value != null) {
+                entityStream.write(value);
+            }
         }
     }
 
