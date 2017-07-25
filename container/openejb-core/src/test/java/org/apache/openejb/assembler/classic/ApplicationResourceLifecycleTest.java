@@ -16,7 +16,9 @@
  */
 package org.apache.openejb.assembler.classic;
 
+import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.config.sys.Resources;
+import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.testing.ApplicationComposers;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
@@ -26,7 +28,6 @@ import org.junit.Test;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-
 import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertFalse;
@@ -39,13 +40,17 @@ public class ApplicationResourceLifecycleTest {
 
     @Classes({MyResource.class})
     @Module
-    public Resources resources() {
-        return new Resources() {{
+    public EjbModule resources() {
+
+        final EjbModule ejbModule = new EjbModule(new EjbJar());
+        ejbModule.initResources(new Resources() {{
             getResource().add(new org.apache.openejb.config.sys.Resource() {{
                 setId("test");
                 setClassName(MyResource.class.getName());
             }});
-        }};
+        }});
+
+        return ejbModule;
     }
 
     @Test
