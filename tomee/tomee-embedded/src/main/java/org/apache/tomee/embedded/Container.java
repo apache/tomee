@@ -42,6 +42,7 @@ import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
+import org.apache.openejb.assembler.classic.ManagedBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.AnnotationDeployer;
 import org.apache.openejb.config.AppModule;
@@ -890,6 +891,12 @@ public class Container implements AutoCloseable {
             appInfo = configurationFactory.configureApplication(file);
             // ensure to activate CDI for classpath deployment, we can desire to move it but it breaks less apps this way
             for (final EjbJarInfo jar : appInfo.ejbJars) {
+                if (jar.enterpriseBeans.size() == 1) {
+                    final EnterpriseBeanInfo next = jar.enterpriseBeans.iterator().next();
+                    if (ManagedBeanInfo.class.isInstance(next) && ManagedBeanInfo.class.cast(next).hidden) {
+                        continue;
+                    }
+                }
                 if (jar.beans == null) {
                     if (!jar.enterpriseBeans.isEmpty()) {
                         jar.beans = new BeansInfo();
