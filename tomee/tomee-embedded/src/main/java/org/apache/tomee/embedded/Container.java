@@ -39,6 +39,7 @@ import org.apache.openejb.UndeployException;
 import org.apache.openejb.assembler.WebAppDeployer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.BeansInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -887,6 +888,26 @@ public class Container implements AutoCloseable {
             }
         } else {
             appInfo = configurationFactory.configureApplication(file);
+            // ensure to activate CDI for classpath deployment, we can desire to move it but it breaks less apps this way
+            for (final EjbJarInfo jar : appInfo.ejbJars) {
+                if (jar.beans == null) {
+                    if (!jar.enterpriseBeans.isEmpty()) {
+                        jar.beans = new BeansInfo();
+                        jar.beans.version = "1.1";
+                        jar.beans.discoveryMode = "annotated";
+                        final BeansInfo.BDAInfo info = new BeansInfo.BDAInfo();
+                        info.discoveryMode = "annotated";
+                        info.uri = jar.moduleUri;
+                        jar.beans.noDescriptorBdas.add(info);
+                        for (final EnterpriseBeanInfo bean : jar.enterpriseBeans) {
+                            if (bean.ejbClass == null) {
+                                continue;
+                            }
+                            info.managedClasses.add(bean.ejbClass);
+                        }
+                    }
+                }
+            }
             if (overrideName) {
                 appInfo.appId = name;
                 for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
