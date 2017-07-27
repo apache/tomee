@@ -16,13 +16,10 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
@@ -35,35 +32,21 @@ import org.junit.runner.RunWith;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.management.ObjectName;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+
+import java.lang.IllegalStateException;
 
 @RunWith(ApplicationComposer.class)
-public class ResourceAdapterControlTest {
-    
-    private static final Logger logger = Logger.getLogger(ResourceAdapterControlTest.class.getName());
-    
-    @Resource(name = "ResourceAdapterControlTest/test/ejb/Mdb")
+public class ResourceAdapterDeliveryActiveTest {
+    private static final Logger logger = Logger.getLogger(ResourceAdapterDeliveryActiveTest.class.getName());
+    @Resource(name = "ResourceAdapterDeliveryActiveTest/test/ejb/Mdb")
     private Queue queue;
 
     @Resource
@@ -94,7 +77,7 @@ public class ResourceAdapterControlTest {
             new EjbJar("test") {{
                 addEnterpriseBean(new MessageDrivenBean("ejb/Mdb", Mdb.class) {{
                     setActivationConfig(new ActivationConfig());
-                    getActivationConfig().addProperty("MdbActiveOnStartup", "false");
+                    getActivationConfig().addProperty("DeliveryActive", "false");
                     getActivationConfig().addProperty("MdbJMXControl", "default:type=test");
                 }});
             }});
@@ -102,32 +85,32 @@ public class ResourceAdapterControlTest {
 
     @Test
     public void ensureControl() throws Exception {
-        Mdb.awaiter.messages.clear();
-
-        assertFalse(Mdb.awaiter.messages.poll(), sendAndWait("Will be received after", 10, TimeUnit.SECONDS));
+        assertFalse(Mdb.awaiter.message, sendAndWait("Will be received after", 10, TimeUnit.SECONDS));
 
         setControl("start");
         assertTrue(Mdb.awaiter.semaphore.tryAcquire(1, TimeUnit.MINUTES));
-        assertEquals("Will be received after", Mdb.awaiter.messages.poll());
+        assertEquals("Will be received after", Mdb.awaiter.message);
 
         final long start = System.currentTimeMillis();
         assertTrue(sendAndWait("First", 1, TimeUnit.MINUTES));
-        assertEquals("First", Mdb.awaiter.messages.poll());
+        assertEquals("First", Mdb.awaiter.message);
         final long end = System.currentTimeMillis();
 
+        Mdb.awaiter.message = null;
         setControl("stop");
         // default would be wait 10s, but if machine is slow we compute it from the first msg stats
         final long waitWithoutResponse = Math.max(10, 5 * (end - start) / 1000);
-        logger.info("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
-        assertFalse(Mdb.awaiter.messages.poll(), sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
-        assertNull(Mdb.awaiter.messages.poll());
+        System.out.println("We'll wait " + waitWithoutResponse + "s to get a message on a stopped listener");
+        assertFalse(Mdb.awaiter.message, sendAndWait("Will be received after", waitWithoutResponse, TimeUnit.SECONDS));
+        assertNull(Mdb.awaiter.message);
 
         setControl("start");
         assertTrue(sendAndWait("Second", 1, TimeUnit.MINUTES));
-        assertEquals("Will be received after", Mdb.awaiter.messages.poll());
+        assertEquals("Will be received after", Mdb.awaiter.message);
 
+        Mdb.awaiter.message = null;
         assertTrue(Mdb.awaiter.semaphore.tryAcquire(1, TimeUnit.MINUTES));
-        assertEquals("Second", Mdb.awaiter.messages.poll());
+        assertEquals("Second", Mdb.awaiter.message);
     }
 
     private void setControl(final String action) throws Exception {
@@ -152,13 +135,11 @@ public class ResourceAdapterControlTest {
         try {
             c = connectionFactory.createConnection();
             Session session = null;
-
             try {
                 session = c.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 MessageProducer producer = null;
                 try {
                     producer = session.createProducer(queue);
-                    logger.log(Level.INFO, "Sending Message {0}", txt);
                     producer.send(session.createTextMessage(txt));
                 } finally {
                     if (producer != null) {
@@ -187,10 +168,7 @@ public class ResourceAdapterControlTest {
         @Override
         public synchronized void onMessage(final Message message) {
             try {
-                String text = TextMessage.class.cast(message).getText();
-                logger.log(Level.INFO, "Got Messag: {0}", text);
-                awaiter.messages.add(text);
-                logger.log(Level.INFO, "Mssages on store: {0}", ArrayUtils.toString(awaiter.messages.toArray(new String[0])) );
+                awaiter.message = TextMessage.class.cast(message).getText();
             } catch (final JMSException e) {
                 throw new IllegalStateException(e);
             } finally {
@@ -201,6 +179,6 @@ public class ResourceAdapterControlTest {
 
     public static class MessageAwaiter {
         private final Semaphore semaphore = new Semaphore(0);
-        private ConcurrentLinkedQueue<String> messages = new ConcurrentLinkedQueue<String>();
+        private volatile String message;
     }
 }
