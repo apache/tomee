@@ -18,6 +18,7 @@ package org.apache.openejb.server.cxf.rs;
 
 import org.apache.cxf.BusException;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.EndpointException;
 import org.apache.cxf.endpoint.ManagedEndpoint;
@@ -37,6 +38,7 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
+import org.apache.cxf.jaxrs.utils.InjectionUtils;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
@@ -90,6 +92,7 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 
+import javax.annotation.Priority;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.management.ObjectName;
@@ -102,6 +105,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.Priorities;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
@@ -1050,7 +1054,8 @@ public class CxfRsHttpListener implements RsHttpListener {
 
         Comparator<Object> comparator = null;
         if (comparatorClass == null) {
-            return null; // try to rely on CXF behavior otherwise just reactivate DefaultProviderComparator.INSTANCE if it is an issue
+            // sort by priority
+            return new PriorityProviderComparator();
         } else {
             final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
             if (bm != null && bm.isInUse()) {
@@ -1247,6 +1252,159 @@ public class CxfRsHttpListener implements RsHttpListener {
         @Override
         public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
             return delegate.compare(o1.getProvider(), o2.getProvider());
+        }
+    }
+
+    private static final class PriorityProviderComparator implements Comparator<ProviderInfo<?>> {
+
+        @Override
+        public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
+
+            final int p1 = getPriority(o1.getProvider().getClass());
+            final int p2 = getPriority(o2.getProvider().getClass());
+
+            final int compare = Integer.compare(p1, p2);
+
+            if (compare != 0) {
+                return compare;
+            }
+
+            if (MessageBodyReader.class.isAssignableFrom(o1.getProvider().getClass())
+                && MessageBodyReader.class.isAssignableFrom(o1.getProvider().getClass())) {
+
+
+                ProviderInfo<MessageBodyReader<?>> m1 = (ProviderInfo<MessageBodyReader<?>>) o1;
+                ProviderInfo<MessageBodyReader<?>> m2 = (ProviderInfo<MessageBodyReader<?>>) o2;
+                return compareMessageBodyReader(m1, m2);
+            }
+
+            if (MessageBodyWriter.class.isAssignableFrom(o1.getProvider().getClass())
+                && MessageBodyWriter.class.isAssignableFrom(o1.getProvider().getClass())) {
+
+
+                ProviderInfo<MessageBodyWriter<?>> m1 = (ProviderInfo<MessageBodyWriter<?>>) o1;
+                ProviderInfo<MessageBodyWriter<?>> m2 = (ProviderInfo<MessageBodyWriter<?>>) o2;
+                return compareMessageBodyWriter(m1, m2);
+            }
+
+            return 0;
+        }
+
+        /* clone the sortReader() / sortWriter() comparison functionality from CXF */
+
+        public static int compareMessageBodyReader(ProviderInfo<MessageBodyReader<?>> p1,
+                           ProviderInfo<MessageBodyReader<?>> p2) {
+            MessageBodyReader<?> e1 = p1.getProvider();
+            MessageBodyReader<?> e2 = p2.getProvider();
+
+            List<MediaType> types1 = JAXRSUtils.getProviderConsumeTypes(e1);
+            types1 = JAXRSUtils.sortMediaTypes(types1, null);
+            List<MediaType> types2 = JAXRSUtils.getProviderConsumeTypes(e2);
+            types2 = JAXRSUtils.sortMediaTypes(types2, null);
+
+            int result = JAXRSUtils.compareSortedMediaTypes(types1, types2, null);
+            if (result != 0) {
+                return result;
+            }
+            result = compareClasses(e1, e2);
+            if (result != 0) {
+                return result;
+            }
+            return compareCustomStatus(p1, p2);
+        }
+
+        public static int compareMessageBodyWriter(ProviderInfo<MessageBodyWriter<?>> p1,
+                           ProviderInfo<MessageBodyWriter<?>> p2) {
+            MessageBodyWriter<?> e1 = p1.getProvider();
+            MessageBodyWriter<?> e2 = p2.getProvider();
+
+            int result = compareClasses(e1, e2);
+            if (result != 0) {
+                return result;
+            }
+            List<MediaType> types1 =
+                    JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(e1), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+            List<MediaType> types2 =
+                    JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(e2), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+
+            result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
+            if (result != 0) {
+                return result;
+            }
+            return compareCustomStatus(p1, p2);
+        }
+
+        protected static int compareClasses(Object o1, Object o2) {
+            return compareClasses(null, o1, o2);
+        }
+
+        protected static int compareClasses(Class<?> expectedCls, Object o1, Object o2) {
+            Class<?> cl1 = ClassHelper.getRealClass(o1);
+            Class<?> cl2 = ClassHelper.getRealClass(o2);
+            Type[] types1 = getGenericInterfaces(cl1, expectedCls);
+            Type[] types2 = getGenericInterfaces(cl2, expectedCls);
+            if (types1.length == 0 && types2.length == 0) {
+                return 0;
+            } else if (types1.length == 0 && types2.length > 0) {
+                return 1;
+            } else if (types1.length > 0 && types2.length == 0) {
+                return -1;
+            }
+
+            Class<?> realClass1 = InjectionUtils.getActualType(types1[0]);
+            Class<?> realClass2 = InjectionUtils.getActualType(types2[0]);
+            if (realClass1 == realClass2) {
+                return 0;
+            }
+            if (realClass1.isAssignableFrom(realClass2)) {
+                // subclass should go first
+                return 1;
+            }
+            return -1;
+        }
+
+        private static Type[] getGenericInterfaces(Class<?> cls, Class<?> expectedClass) {
+            if (Object.class == cls) {
+                return new Type[]{};
+            }
+            if (expectedClass != null) {
+                Type genericSuperType = cls.getGenericSuperclass();
+                if (genericSuperType instanceof ParameterizedType) {
+                    Class<?> actualType = InjectionUtils.getActualType(genericSuperType);
+                    if (actualType != null && actualType.isAssignableFrom(expectedClass)) {
+                        return new Type[]{genericSuperType};
+                    } else if (expectedClass.isAssignableFrom(actualType)) {
+                        return new Type[]{};
+                    }
+                }
+            }
+            Type[] types = cls.getGenericInterfaces();
+            if (types.length > 0) {
+                return types;
+            }
+            return getGenericInterfaces(cls.getSuperclass(), expectedClass);
+        }
+
+        private static int compareCustomStatus(ProviderInfo<?> p1, ProviderInfo<?> p2) {
+            Boolean custom1 = p1.isCustom();
+            Boolean custom2 = p2.isCustom();
+            int result = custom1.compareTo(custom2) * -1;
+            if (result == 0 && custom1) {
+                Boolean busGlobal1 = p1.isBusGlobal();
+                Boolean busGlobal2 = p2.isBusGlobal();
+                result = busGlobal1.compareTo(busGlobal2);
+            }
+            return result;
+        }
+
+        private int getPriority(final Class<?> clazz) {
+
+            final Priority annotation = clazz.getAnnotation(Priority.class);
+            if (annotation == null) {
+                return Priorities.USER;
+            }
+
+            return annotation.value();
         }
     }
 
