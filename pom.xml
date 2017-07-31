@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.78</tomcat.version>
 
-    <cxf.version>2.6.16</cxf.version>
+    <cxf.version>2.6.16-TT.2</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
