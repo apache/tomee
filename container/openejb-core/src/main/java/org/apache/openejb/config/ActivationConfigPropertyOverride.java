@@ -132,7 +132,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
 
         if (containerId == null || containerId.length() == 0) {
             final Container[] containers = containerSystem.containers();
-            for (Container container : containers) {
+            for (final Container container : containers) {
                 if (MdbContainer.class.isInstance(container)) {
                     return MdbContainer.class.cast(container);
                 }
