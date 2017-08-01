@@ -680,7 +680,7 @@
     <dependency> <!-- licence apache, only 110ko -->
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>1.8</version>
+      <version>1.16</version>
     </dependency>
   </dependencies>
   <profiles>
