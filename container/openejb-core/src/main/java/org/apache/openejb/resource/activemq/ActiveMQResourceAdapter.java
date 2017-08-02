@@ -47,6 +47,7 @@ import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -234,18 +235,27 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                         Connection connection = connectionFactory.createConnection();
                         if (Proxy.isProxyClass(connection.getClass())) { // not great, we should find a better want without bypassing ra layer
                             final InvocationHandler invocationHandler = Proxy.getInvocationHandler(connection);
-                            if (AutoConnectionTracker.ConnectionInvocationHandler.class.isInstance(invocationHandler)) {
-                                final Object handle = Reflections.get(invocationHandler, "handle");
-                                if (TomEEManagedConnectionProxy.class.isInstance(handle)) {
-                                    final ActiveMQManagedConnection c = ActiveMQManagedConnection.class.cast(Reflections.get(handle, "connection"));
-                                    final ActiveMQConnection physicalConnection = ActiveMQConnection.class.cast(Reflections.get(c, "physicalConnection"));
-                                    final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
-                                    if (redeliveryPolicy != null) {
-                                        physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
-                                    }
+                            final ActiveMQConnection physicalConnection = getActiveMQConnection(activationSpec, invocationHandler);
+                            if (physicalConnection != null) {
+                                return physicalConnection;
+                            }
+                        }
+
+                        // see if this is a dynamic subclass as opposed to a regular proxy
+                        try {
+                            final Field handler = connection.getClass().getDeclaredField("this$handler");
+                            handler.setAccessible(true);
+                            final Object o = handler.get(connection);
+
+                            if (InvocationHandler.class.isInstance(o)) {
+                                final InvocationHandler invocationHandler = InvocationHandler.class.cast(o);
+                                final ActiveMQConnection physicalConnection = getActiveMQConnection(activationSpec, invocationHandler);
+                                if (physicalConnection != null) {
                                     return physicalConnection;
                                 }
                             }
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            // ignore, this is not a dynamic subclass
                         }
 
                         /*
@@ -264,6 +274,22 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             }
         }
         return super.makeConnection(activationSpec);
+    }
+
+    private ActiveMQConnection getActiveMQConnection(MessageActivationSpec activationSpec, InvocationHandler invocationHandler) {
+        if (AutoConnectionTracker.ConnectionInvocationHandler.class.isInstance(invocationHandler)) {
+            final Object handle = Reflections.get(invocationHandler, "handle");
+            if (TomEEManagedConnectionProxy.class.isInstance(handle)) {
+                final ActiveMQManagedConnection c = ActiveMQManagedConnection.class.cast(Reflections.get(handle, "connection"));
+                final ActiveMQConnection physicalConnection = ActiveMQConnection.class.cast(Reflections.get(c, "physicalConnection"));
+                final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
+                if (redeliveryPolicy != null) {
+                    physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
+                }
+                return physicalConnection;
+            }
+        }
+        return null;
     }
 
     @Override
