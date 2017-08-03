@@ -1870,8 +1870,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         callPreDestroy(name, object);
         removeResourceInfo(name);
     }
-	
-	private void callPreDestroy(final String name, final Object object) {
+    
+    private void callPreDestroy(final String name, final Object object) {
         if (object == null) {
             return;
         }
@@ -1911,8 +1911,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
-    private ResourceInfo findResourceInfo(String name) {
-        List<ResourceInfo> resourceInfos = config.facilities.resources;
+    private ResourceInfo findResourceInfo(final String name) {
+        final List<ResourceInfo> resourceInfos = config.facilities.resources;
         for (final ResourceInfo resourceInfo : resourceInfos) {
             if (resourceInfo.id.equals(name)) {
                 return resourceInfo;
@@ -1920,7 +1920,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
 
         return null;
-	}
+    }
 
     public void removeResourceInfo(final String name) {
         try {
