@@ -40,4 +40,3 @@ To build TomEE Embedded to be able to develop with its maven plugin execute:
 
 `$> mvn clean install -pl maven/tomee-embedded-maven-plugin -am -Dmaven.test.skip=true`
 
- 

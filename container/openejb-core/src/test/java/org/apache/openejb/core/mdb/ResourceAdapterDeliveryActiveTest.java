@@ -20,8 +20,6 @@ import org.apache.openejb.config.EjbModule;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
-import org.apache.openejb.jee.oejb3.EjbDeployment;
-import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Classes;
@@ -34,31 +32,21 @@ import org.junit.runner.RunWith;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
-import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import javax.management.ObjectName;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+
+import java.lang.IllegalStateException;
 
 @RunWith(ApplicationComposer.class)
-public class ResourceAdapterControlTest {
-    private static final Logger logger = Logger.getLogger(ResourceAdapterControlTest.class.getName());
-    @Resource(name = "ResourceAdapterControlTest/test/ejb/Mdb")
+public class ResourceAdapterDeliveryActiveTest {
+    private static final Logger logger = Logger.getLogger(ResourceAdapterDeliveryActiveTest.class.getName());
+    @Resource(name = "ResourceAdapterDeliveryActiveTest/test/ejb/Mdb")
     private Queue queue;
 
     @Resource
@@ -89,7 +77,7 @@ public class ResourceAdapterControlTest {
             new EjbJar("test") {{
                 addEnterpriseBean(new MessageDrivenBean("ejb/Mdb", Mdb.class) {{
                     setActivationConfig(new ActivationConfig());
-                    getActivationConfig().addProperty("MdbActiveOnStartup", "false");
+                    getActivationConfig().addProperty("DeliveryActive", "false");
                     getActivationConfig().addProperty("MdbJMXControl", "default:type=test");
                 }});
             }});
