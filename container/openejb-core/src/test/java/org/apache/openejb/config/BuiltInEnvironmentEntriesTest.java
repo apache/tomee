@@ -29,6 +29,10 @@ import javax.ejb.EJBContext;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
+import javax.enterprise.concurrent.ContextService;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
@@ -98,6 +102,18 @@ public class BuiltInEnvironmentEntriesTest {
         @Resource(name = "java:comp/ComponentName")
         private String component;
 
+        @Resource(name = "java:comp/DefaultContextService")
+        private ContextService contextService;
+
+        @Resource(name = "java:comp/DefaultManagedThreadFactory")
+        private ManagedThreadFactory managedThreadFactory;
+
+        @Resource(name = "java:comp/DefaultManagedScheduledExecutorService")
+        private ManagedScheduledExecutorService managedScheduledExecutorService;
+
+        @Resource(name = "java:comp/DefaultManagedExecutorService")
+        private ManagedExecutorService managedExecutorService;
+
         public void test() throws Exception {
 
             final Field[] fields = this.getClass().getDeclaredFields();
@@ -138,6 +154,18 @@ public class BuiltInEnvironmentEntriesTest {
 
         @Resource
         private BeanManager beanManager;
+
+        @Resource
+        private ContextService contextService;
+
+        @Resource
+        private ManagedThreadFactory managedThreadFactory;
+
+        @Resource
+        private ManagedScheduledExecutorService managedScheduledExecutorService;
+
+        @Resource
+        private ManagedExecutorService managedExecutorService;
 
         public void test() throws Exception {
 
