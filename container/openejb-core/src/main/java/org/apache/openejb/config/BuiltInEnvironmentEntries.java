@@ -52,7 +52,7 @@ public class BuiltInEnvironmentEntries implements DynamicDeployer {
                 continue;
             }
 
-            add(consumer, module, appModule, false);
+            add(consumer, module, appModule, addDefaults);
         }
 
         for (final WebModule module : appModule.getWebModules()) {
