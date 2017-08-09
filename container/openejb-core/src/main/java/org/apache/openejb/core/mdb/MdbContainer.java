@@ -213,14 +213,28 @@ public class MdbContainer implements RpcContainer {
             final MdbActivationContext activationContext = new MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
             activationContexts.put(beanContext, activationContext);
 
-            final boolean activeOnStartup = Boolean.parseBoolean(beanContext.getProperties().getProperty("MdbActiveOnStartup", "true"));
+            boolean activeOnStartup = true;
+            String activeOnStartupSetting = beanContext.getActivationProperties().get("MdbActiveOnStartup");
+
+            if (activeOnStartupSetting == null) {
+                activeOnStartupSetting = beanContext.getActivationProperties().get("DeliveryActive");
+            }
+
+            if (activeOnStartupSetting != null) {
+                activeOnStartup = Boolean.parseBoolean(activeOnStartupSetting);
+            }
+
             if (activeOnStartup) {
                 activationContext.start();
             } else {
                 logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
             }
 
-            final String jmxName = beanContext.getProperties().getProperty("MdbJMXControl", "true");
+            String jmxName = beanContext.getActivationProperties().get("MdbJMXControl");
+            if (jmxName == null) {
+                jmxName  = "true";
+            }
+
             addJMxControl(beanContext, jmxName, activationContext);
 
         } catch (final ResourceException e) {
@@ -256,6 +270,9 @@ public class MdbContainer implements RpcContainer {
             unusedProperties.remove("destination");
             unusedProperties.remove("destinationType");
             unusedProperties.remove("beanClass");
+            unusedProperties.remove("MdbActiveOnStartup");
+            unusedProperties.remove("MdbJMXControl");
+            unusedProperties.remove("DeliveryActive");
             if (!unusedProperties.isEmpty()) {
                 final String text = "No setter found for the activation spec properties: " + unusedProperties;
                 if (failOnUnknownActivationSpec) {
