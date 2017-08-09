@@ -69,6 +69,24 @@
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
       <version>2.6.4</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ca.juliusdavies</groupId>
+          <artifactId>not-yet-commons-ssl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-httpclient</groupId>
+          <artifactId>commons-httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.owasp.esapi</groupId>
+          <artifactId>esapi</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
