@@ -28,7 +28,7 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.apache.openejb" % "javaee-api" % "7.0-1",
-  "org.apache.openejb" % "openejb-core" % "7.0.4-SNAPSHOT" % "test",
+  "org.apache.openejb" % "openejb-core" % "8.0.0-SNAPSHOT" % "test",
   "org.scalatest" %% "scalatest_2.11" % "2.2.0" % "test"
 )
 
