@@ -51,7 +51,7 @@ public class WebappBeanManagerTest {
         wbm.fireEvent(new GProcessProducerMethod(null, null, null), true);
         wbm.fireEvent(new GProcessInjectionTarget(null, null), true);
         wbm.fireEvent(new GProcessBean(null, null), true);
-        wbm.fireEvent(new GProcessAnnotatedType(null), true);
+        wbm.fireEvent(new GProcessAnnotatedType(ctx, null), true);
         wbm.fireEvent(new GProcessSessionBean(null, null, null, null), true);
         wbm.fireEvent(new AfterBeanDiscoveryImpl(ctx), true);
         wbm.fireEvent(new AfterDeploymentValidationImpl(wbm), true);

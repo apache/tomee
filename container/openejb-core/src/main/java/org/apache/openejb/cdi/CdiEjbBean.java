@@ -523,7 +523,8 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
             final CreationalContextImpl<T> ccImpl = CreationalContextImpl.class.cast(creationalContext);
             // super.produce(cc) will not work since we need the unproxied instance - decorator case
-            final Map<javax.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances = super.createInterceptorInstances(ccImpl);
+            final Map<javax.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances
+                    = webBeansContext.getInterceptorResolutionService().createInterceptorInstances(getInterceptorInfo(), ccImpl);
             final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = super.getInterceptorInfo();
             if (interceptorInfo != null) {
                 final Map<Constructor<?>, InterceptorResolutionService.BusinessMethodInterceptorInfo> constructorInterceptorInfos =

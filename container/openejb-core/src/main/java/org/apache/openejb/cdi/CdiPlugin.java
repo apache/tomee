@@ -391,9 +391,11 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
         webBeansUtil.fireProcessProducerFieldBeanEvent(annotatedFields);
         webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessProducerField event observers for producer field beans. Look at logs for further details");
 
-        //Fire ObservableMethods
-        webBeansUtil.fireProcessObservableMethodBeanEvent(observerMethodsMap);
-        webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
+        //Fire ProcessObserverMethods
+        //X TODO ProcessObserverMethod now has a way to SET a new ObserverMethod. So the old method doesn't work anymore
+        //X TODO created TOMEE-2117 for it.
+        //X webBeansUtil.fireProcessObserverMethodBeanEvent(observerMethodsMap);
+        //X webBeansUtil.inspectDeploymentErrorStack("There are errors that are added by ProcessObserverMethod event observers for observer methods. Look at logs for further details");
 
         if (!webBeansUtil.isAnnotatedTypeDecoratorOrInterceptor(annotatedType)) {
             for (final ProducerMethodBean<?> producerMethod : producerMethods) {
