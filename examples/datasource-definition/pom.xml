@@ -40,8 +40,8 @@
           <classpath>
             <dependency>
               <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-annotation_1.1_spec</artifactId>
-              <version>1.0.1</version>
+              <artifactId>geronimo-annotation_1.3_spec</artifactId>
+              <version>1.0</version>
             </dependency>
           </classpath>
         </configuration>
@@ -95,8 +95,8 @@
     </dependency>
     <dependency> <!-- for the plugin to endorse the build -->
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.1_spec</artifactId>
-      <version>1.0.1</version>
+      <artifactId>geronimo-annotation_1.3_spec</artifactId>
+      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
