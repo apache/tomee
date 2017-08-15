@@ -170,6 +170,8 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
         return get().getServletContextName();
     }
 
+
+
     @Override
     public ServletRegistration.Dynamic addServlet(final String servletName, final String className) throws IllegalArgumentException, IllegalStateException {
         return get().addServlet(servletName, className);
@@ -298,5 +300,9 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
     @Override
     public JspConfigDescriptor getJspConfigDescriptor() {
         return get().getJspConfigDescriptor();
+    }
+
+    public void setResponseCharacterEncoding(String encoding) {
+        return get().setResponseCharacterEncoding(encoding);
     }
 }

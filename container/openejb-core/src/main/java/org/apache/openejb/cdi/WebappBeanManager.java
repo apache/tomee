@@ -67,17 +67,17 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
-        getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
+        fireEvent(event, metadata, isLifecycleEvent);
         if (isEvent(event)) {
             final BeanManagerImpl parentBm = getParentBm();
             if (parentBm != null) {
-                parentBm.getNotificationManager().fireEvent(event, metadata, isLifecycleEvent);
+                parentBm.fireEvent(event, metadata, isLifecycleEvent);
             }
         }
     }
 
     @Override
-    public List<Interceptor<?>> resolveInterceptors(final InterceptionType type, final Annotation... interceptorBindings) {
+    public List<Interceptor<?>> resolveInterceptors(InterceptionType type, Annotation... interceptorBindings) {
         final List<Interceptor<?>> interceptors = super.resolveInterceptors(type, interceptorBindings);
         final List<Interceptor<?>> parentInterceptors = getParentBm().resolveInterceptors(type, interceptorBindings);
         for (final Interceptor<?> i : parentInterceptors) {
@@ -91,12 +91,12 @@ public class WebappBeanManager extends BeanManagerImpl {
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
         final Set<ObserverMethod<? super T>> set = new HashSet<>();
-        set.addAll(getNotificationManager().resolveObservers(event, metadata, false));
+        set.addAll(super.resolveObserverMethods(event, metadata));
 
         if (isEvent(event)) {
             final BeanManagerImpl parentBm = getParentBm();
             if (parentBm != null) {
-                set.addAll(parentBm.getNotificationManager().resolveObservers(event, metadata, false));
+                set.addAll(parentBm.resolveObserverMethods(event, metadata));
             }
         } // else nothing since extensions are loaded by classloader so we already have it
 
@@ -137,7 +137,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public <T> CreationalContextImpl<T> createCreationalContext(final Contextual<T> contextual) {
+    public <T> CreationalContextImpl<T> createCreationalContext(Contextual<T> contextual) {
         try {
             return super.createCreationalContext(contextual);
         } catch (final RuntimeException e) { // can happen?
@@ -163,7 +163,7 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public boolean isPassivatingScope(final Class<? extends Annotation> annotationType) {
+    public boolean isPassivatingScope(Class<? extends Annotation> annotationType) {
         try {
             return super.isPassivatingScope(annotationType);
         } catch (final RuntimeException e) {

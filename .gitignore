@@ -12,3 +12,4 @@ quick.bat
 /tomee/tomee-plus-webapp/overlays/
 /temp
 /report.txt
+nb-configuration.xml
