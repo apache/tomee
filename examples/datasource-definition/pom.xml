@@ -89,8 +89,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>7.0</version>
+            <artifactId>javaee-api</artifactId>
+       <version>8.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- for the plugin to endorse the build -->
