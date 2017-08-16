@@ -165,9 +165,6 @@ public class Index<K, V> extends AbstractMap<K, V> {
         return toArray(new Object[entries.length]);
     }
 
-    public interface ListSet extends List, Set {
-    }
-
     public Object[] toArray(Object[] values) {
         if (values.length < entries.length) {
             values = (Object[]) Array.newInstance(values.getClass().getComponentType(), entries.length);
