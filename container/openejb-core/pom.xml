@@ -315,11 +315,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.17</version>
+        <version>${surefire.version}</version>
         <configuration>
           <childDelegation>true</childDelegation>
           <reuseForks>false</reuseForks>
-          <forkCount>2</forkCount>
+          <forkCount>1</forkCount>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>
             -javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar
