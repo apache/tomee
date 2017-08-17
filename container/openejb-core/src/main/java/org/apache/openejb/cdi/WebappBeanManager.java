@@ -67,7 +67,7 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
-        fireEvent(event, metadata, isLifecycleEvent);
+        super.fireEvent(event, metadata, isLifecycleEvent);
         if (isEvent(event)) {
             final BeanManagerImpl parentBm = getParentBm();
             if (parentBm != null) {
