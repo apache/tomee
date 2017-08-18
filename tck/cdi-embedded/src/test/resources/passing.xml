@@ -174,12 +174,6 @@
         </methods>
       </class>
 
-      <!-- CDITCK-463 -->
-      <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.custom.CustomCDIProviderTest">
-        <methods>
-          <exclude name=".*" />
-        </methods>
-      </class>
 
       <!-- CDITCK-466 -->
       <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.bbd.broken.passivatingScope.AddingPassivatingScopeTest">
