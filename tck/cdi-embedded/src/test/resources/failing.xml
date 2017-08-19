@@ -34,8 +34,12 @@
     -Dopenejb.embedded.try-jsp=true
     -Dopenejb.cdi.conversation.http.use-get-parameter=true
     -->
+
+    <!--
+    TODO these are tests we finally need to pass!
+    -->
     <classes>
-      <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest" />
+      <class name="org.jboss.cdi.tck.tests.context.conversation.determination.ConversationDeterminationTest" />
     </classes>
   </test>
 </suite>
