@@ -36,6 +36,16 @@
     </listeners>
 
     <test name="JSR-346 TCK">
+        <groups>
+            <run> 
+                <!-- 
+                 The SE TCK currently uses an invalid setup.
+                 We have to verify this again when it is setup in a sane way.
+                 -->
+                <exclude name="se" />
+            </run>
+        </groups>
+
         <packages>
             <package name="org.jboss.cdi.tck.tests.*">
             </package>
