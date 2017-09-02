@@ -163,9 +163,9 @@
       <version>${commons-beanutils.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-jstlel</artifactId>
-      <version>1.2.5</version>
+      <groupId>org.apache.openejb.patch</groupId>
+      <artifactId>openejb-jstl</artifactId>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
