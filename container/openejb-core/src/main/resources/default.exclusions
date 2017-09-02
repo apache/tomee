@@ -147,6 +147,7 @@ openejb-javaagent
 openejb-jee
 openejb-jpa-integration
 openejb-jsf
+openejb-jstl
 openejb-loader
 openejb-openwebbeans
 openejb-provisionning
@@ -196,7 +197,6 @@ stax2-api-
 surefire-
 swizzle-
 sxc-
-taglibs-standard-
 testng-
 tomcat-annotations
 tomcat-api
