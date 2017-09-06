@@ -1051,10 +1051,19 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                         clazz = containerSystemContext.lookup(OPENEJB_RESOURCE_JNDI_PREFIX + resourceInfo.id).getClass();
                     }
 
-                    final AnnotationFinder finder = new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
-                    final List<Method> postConstructs = finder.findAnnotatedMethods(PostConstruct.class);
-                    final List<Method> preDestroys = finder.findAnnotatedMethods(PreDestroy.class);
                     final boolean initialize = "true".equalsIgnoreCase(String.valueOf(resourceInfo.properties.remove("InitializeAfterDeployment")));
+                    final AnnotationFinder finder = Proxy.isProxyClass(clazz) ?
+                            null : new AnnotationFinder(new ClassesArchive(ancestors(clazz)));
+                    final List<Method> postConstructs = finder == null ?
+                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PostConstruct.class);
+                    final List<Method> preDestroys = finder == null ?
+                            Collections.<Method>emptyList() : finder.findAnnotatedMethods(PreDestroy.class);
+
+                    resourceInfo.postConstructMethods = new ArrayList<String>();
+                    resourceInfo.preDestroyMethods = new ArrayList<String>();
+
+                    addMethodsToResourceInfo(resourceInfo.postConstructMethods, PostConstruct.class, postConstructs);
+                    addMethodsToResourceInfo(resourceInfo.preDestroyMethods, PreDestroy.class, preDestroys);
 
                     CreationalContext<?> creationalContext = null;
                     Object originalResource = null;
@@ -1112,6 +1121,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             if (originalResource == null) {
                                 originalResource = containerSystemContext.lookup(name);
                             }
+
                             this.bindResource(resourceInfo.id, new ResourceInstance(name, originalResource, preDestroys, creationalContext), true);
                         }
                     }
@@ -1131,6 +1141,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         } finally {
             thread.setContextClassLoader(oldCl);
+        }
+    }
+
+    private void addMethodsToResourceInfo(final List<String> list, final Class type, final List<Method> methodList) throws OpenEJBException {
+        for (final Method method : methodList) {
+            if (method.getParameterTypes().length > 0) {
+                throw new OpenEJBException(type.getSimpleName() + " method " +
+                        method.getDeclaringClass().getName() + "."
+                        + method.getName() + " should have zero arguments");
+            }
+
+            list.add(method.getName());
         }
     }
 
@@ -1748,6 +1770,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
     private void destroyResource(final String name, final String className, final Object object) {
 
+
         if (ResourceAdapterReference.class.isInstance(object)) {
             final ResourceAdapterReference resourceAdapter = ResourceAdapterReference.class.cast(object);
             try {
@@ -1844,7 +1867,59 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.debug("Not processing resource on destroy: " + className);
         }
 
+        callPreDestroy(name, object);
         removeResourceInfo(name);
+    }
+    
+    private void callPreDestroy(final String name, final Object object) {
+        if (object == null) {
+            return;
+        }
+
+        if (ResourceInstance.class.isInstance(object)) {
+            ResourceInstance.class.cast(object).destroyResource();
+            return;
+        }
+
+        final Class<?> objectClass = object.getClass();
+
+        final ResourceInfo ri = findResourceInfo(name);
+        if (ri == null) {
+            return;
+        }
+
+        final Set<String> destroyMethods = new HashSet<String>();
+        if (ri.preDestroy != null) {
+            destroyMethods.add(ri.preDestroy);
+        }
+
+        if (ri.preDestroyMethods != null && ri.preDestroyMethods.size() > 0) {
+            destroyMethods.addAll(ri.preDestroyMethods);
+        }
+
+        for (final String destroyMethod : destroyMethods) {
+            try {
+                final Method p = objectClass.getDeclaredMethod(destroyMethod);
+                if (!p.isAccessible()) {
+                    SetAccessible.on(p);
+                }
+                p.invoke(object);
+            } catch (Exception e) {
+                logger.error("Unable to call pre destroy method " + destroyMethod + " on "
+                        + objectClass.getName() + ". Continuing with resource destruction.", e);
+            }
+        }
+    }
+
+    private ResourceInfo findResourceInfo(final String name) {
+        final List<ResourceInfo> resourceInfos = config.facilities.resources;
+        for (final ResourceInfo resourceInfo : resourceInfos) {
+            if (resourceInfo.id.equals(name)) {
+                return resourceInfo;
+            }
+        }
+
+        return null;
     }
 
     public void removeResourceInfo(final String name) {
@@ -2281,6 +2356,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (!binding.getName().equals(objName)) {
                 continue;
             }
+
 
             if (!LazyObjectReference.class.isInstance(binding.getObject())) {
                 continue;

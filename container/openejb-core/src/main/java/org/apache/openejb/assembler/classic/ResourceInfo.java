@@ -24,6 +24,8 @@ public class ResourceInfo extends ServiceInfo {
     public String jndiName = "";
     public String postConstruct;
     public String preDestroy;
+    public List<String> postConstructMethods;
+    public List<String> preDestroyMethods;
     public String originAppName; // if define by an app
     public List<String> aliases = new ArrayList<String>();
 }

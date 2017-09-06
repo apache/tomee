@@ -17,7 +17,9 @@
 
 package org.apache.openejb.config;
 
+import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbJar;
@@ -26,6 +28,7 @@ import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -73,7 +76,15 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
 
                 final MessageDrivenBean mdb = (MessageDrivenBean) bean;
 
-                final Properties overrides = ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean");
+                final Properties overrides = new Properties();
+
+                final MdbContainer mdbContainer = getMdbContainer(ejbDeployment.getContainerId());
+                if (mdbContainer != null) {
+                    overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.container." + mdbContainer.getContainerID() + ".activation", "EnterpriseBean"));
+                    overrides.putAll(ConfigurationFactory.getOverrides(mdbContainer.getProperties(), "activation", "EnterpriseBean"));
+                }
+
+                overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, mdb.getMessagingType() + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbName + ".activation", "EnterpriseBean"));
                 overrides.putAll(ConfigurationFactory.getOverrides(properties, ejbDeployment.getDeploymentId() + ".activation", "EnterpriseBean"));
@@ -113,6 +124,29 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         }
 
         return appModule;
+    }
+
+    private MdbContainer getMdbContainer(final String containerId) {
+
+        final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+        if (containerId == null || containerId.length() == 0) {
+            final Container[] containers = containerSystem.containers();
+            for (final Container container : containers) {
+                if (MdbContainer.class.isInstance(container)) {
+                    return MdbContainer.class.cast(container);
+                }
+            }
+
+            return null;
+        }
+
+        final Container container = containerSystem.getContainer(containerId);
+        if (MdbContainer.class.isInstance(container)) {
+            return MdbContainer.class.cast(container);
+        }
+        return null;
+
     }
 
     private ActivationConfigProperty findActivationProperty(final List<ActivationConfigProperty> activationConfigList, final String nameOfProperty) {

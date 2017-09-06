@@ -18,7 +18,9 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -88,14 +90,14 @@ public class ResourceAdapterControlTest {
     @Module
     @Classes(value = Mdb.class)
     public EjbModule app() {
-        return new EjbModule(new EjbJar("test"), new OpenejbJar() {{
-            setId("test");
-            getEjbDeployment().add(new EjbDeployment() {{
-                setEjbName("ejb/Mdb");
-                getProperties().put("MdbActiveOnStartup", "false");
-                getProperties().put("MdbJMXControl", "default:type=test");
+        return new EjbModule(
+            new EjbJar("test") {{
+                addEnterpriseBean(new MessageDrivenBean("ejb/Mdb", Mdb.class) {{
+                    setActivationConfig(new ActivationConfig());
+                    getActivationConfig().addProperty("MdbActiveOnStartup", "false");
+                    getActivationConfig().addProperty("MdbJMXControl", "default:type=test");
+                }});
             }});
-        }});
     }
 
     @Test

@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.5-TT.12</version>
+  <version>4.7.5-TT.14</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -97,8 +97,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.5-TT.12</openejb.version>
-    <tomee.version>1.7.5-TT.12</tomee.version>
+    <openejb.version>4.7.5-TT.14</openejb.version>
+    <tomee.version>1.7.5-TT.14</tomee.version>
 
     <openjpa.version>2.4.2</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.78</tomcat.version>
 
-    <cxf.version>2.6.16</cxf.version>
+    <cxf.version>2.6.17</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -164,7 +164,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>0.5</bval.version>
-    <org.apache.activemq.version>5.13.3</org.apache.activemq.version>
+    <org.apache.activemq.version>5.14.5</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -1684,7 +1684,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.15</version>
+        <version>1.6.19</version>
         <exclusions>
           <exclusion>
             <artifactId>commons-logging</artifactId>
