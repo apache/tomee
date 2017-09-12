@@ -554,14 +554,9 @@ public class OpenEJBContextConfig extends ContextConfig {
                         final ProxyDirContext dirContext = ProxyDirContext.class.cast(Reflections.get(handler, "context"));
                         final String host = String.class.cast(Reflections.get(dirContext, "hostName"));
                         final String contextPath = String.class.cast(Reflections.get(dirContext, "contextPath"));
-                        final Object context = Reflections.get(dirContext, "dirContext");
+                        final BaseDirContext context = getBaseDirContext(dirContext);
 
-                        if (BaseDirContext.class.isInstance(context)) {
-                            file = file.replace("/" + host + contextPath, BaseDirContext.class.cast(context).getDocBase());
-                        } else {
-                            throw new OpenEJBRuntimeException("Context not supported: " + context);
-                        }
-
+                        file = file.replace("/" + host + contextPath, BaseDirContext.class.cast(context).getDocBase());
                         currentUrlAsFile = new File(file);
                     } else {
                         throw new OpenEJBRuntimeException("can't find webapp [" + webAppInfo.contextRoot + "], connection is not a DirContextURLConnection " + connection);
@@ -575,6 +570,20 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         internalProcessAnnotations(currentUrlAsFile, webAppInfo, fragment);
+    }
+
+    private BaseDirContext getBaseDirContext(final ProxyDirContext dirContext) {
+        final Object context = Reflections.get(dirContext, "dirContext");
+
+        if (BaseDirContext.class.isInstance(context)) {
+            return BaseDirContext.class.cast(context);
+        }
+
+        if (ProxyDirContext.class.isInstance(context)) {
+            return getBaseDirContext(ProxyDirContext.class.cast(context));
+        }
+
+        throw new OpenEJBRuntimeException("Context not supported: " + context.toString());
     }
 
     private void internalProcessAnnotations(final File currentUrlAsFile, final WebAppInfo webAppInfo, final WebXml fragment) {
