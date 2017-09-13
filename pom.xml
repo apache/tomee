@@ -182,7 +182,7 @@
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.14</version.axiom>
-    <version.xalan>2.7.1</version.xalan>
+    <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
     <version.eclipselink>2.6.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
