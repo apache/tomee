@@ -153,7 +153,7 @@
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-cli.version>1.2</commons-cli.version>
-    <commons-logging.version>1.1.1</commons-logging.version>
+    <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-dbcp.version>2.1</commons-dbcp.version>
     <commons-pool.version>2.3</commons-pool.version>
@@ -166,7 +166,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.14.3</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.0</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -1692,6 +1692,16 @@
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-core</artifactId>
         <version>2.3.0-b170127.1453</version>
+      </dependency>
+      <dependency> <!-- licence apache, only 110ko -->
+        <groupId>org.fusesource.jansi</groupId>
+        <artifactId>jansi</artifactId>
+        <version>1.16</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-jstlel</artifactId>
+        <version>1.2.5</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

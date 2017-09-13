@@ -236,9 +236,9 @@
         <excludes>
           <!--
           This file is encoded in UTF-16LE so it causes trouble
-          as the default encoding is UTF-8. However as it's 
+          as the default encoding is UTF-8. However as it's
           obviously only used as an input file for the corresponding
-          properties we're just ignoring it here. 
+          properties we're just ignoring it here.
           -->
           <exclude>**/Messages_hi_input.txt</exclude>
         </excludes>
@@ -423,6 +423,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -701,7 +702,6 @@
     <dependency> <!-- licence apache, only 110ko -->
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>1.8</version>
       <scope>provided</scope>
     </dependency>
 
@@ -711,7 +711,9 @@
       <version>${batchee.version}</version>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
+
   <profiles>
     <profile>
       <id>openejb.debug</id>
