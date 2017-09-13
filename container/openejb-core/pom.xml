@@ -530,7 +530,7 @@
           <groupId>commons-pool</groupId>
           <artifactId>commons-pool</artifactId>
         </exclusion>
-      </exclusions>	  
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-pool</groupId>
@@ -634,8 +634,8 @@
     <dependency> <!-- licence apache, only 110ko -->
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>1.8</version>
-    </dependency>    
+      <version>1.16</version>
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
@@ -662,4 +662,3 @@
     </profile>
   </profiles>
 </project>
-
