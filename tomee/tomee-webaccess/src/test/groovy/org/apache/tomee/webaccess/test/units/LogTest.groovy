@@ -21,6 +21,7 @@ package org.apache.tomee.webaccess.test.units
 import groovy.json.JsonSlurper
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
 import org.apache.tomee.webaccess.rest.ApplicationConfig
 import org.apache.tomee.webaccess.rest.Authentication
 import org.apache.tomee.webaccess.rest.Log
@@ -53,7 +54,8 @@ class LogTest {
                 Authentication,
                 Log,
                 LogServiceImpl,
-                LogTest
+                LogTest,
+                ListFilesResultDto
         ).addAsWebResource(new File('src/test/resources/test/context.xml'), 'META-INF/context.xml')
     }
 
@@ -63,9 +65,8 @@ class LogTest {
             def json = new JsonSlurper().parseText(
                     Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/log/list-files")))
             )
-            Assert.assertEquals(
-                    new JsonSlurper().parseText('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}'),
-                    json
+            Assert.assertTrue(
+                    new JsonSlurper().parseText('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}').toString().contains(json.toString())
             )
             Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive")))
         })
