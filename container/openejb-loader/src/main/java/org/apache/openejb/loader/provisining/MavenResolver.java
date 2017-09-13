@@ -40,8 +40,8 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware {
-    private static final String REPO1 = System.getProperty("openejb.deployer.repository", "http://repo1.maven.org/maven2/");
-    private static final String APACHE_SNAPSHOT = System.getProperty("openejb.deployer.repository.snapshots", "https://repository.apache.org/snapshots/");
+    private static final String REPO1 = "http://repo1.maven.org/maven2/";
+    private static final String APACHE_SNAPSHOT = "https://repository.apache.org/snapshots/";
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
     private static final AtomicReference<DocumentBuilder> BUILDER = new AtomicReference<>(null);
 
@@ -96,9 +96,9 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
     public String quickMvnUrl(final String raw) throws MalformedURLException {
         final String base;
         if (raw.contains(SNAPSHOT_SUFFIX) && raw.contains("apache")) {
-            base = APACHE_SNAPSHOT;
+            base = System.getProperty("openejb.deployer.snapshot.repository", APACHE_SNAPSHOT);
         } else {
-            base = REPO1;
+            base = System.getProperty("openejb.deployer.repository", REPO1);
         }
 
         final StringBuilder builder = new StringBuilder();

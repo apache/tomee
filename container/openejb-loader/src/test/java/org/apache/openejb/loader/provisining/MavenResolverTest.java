@@ -42,7 +42,7 @@ public class MavenResolverTest {
 
     @Test
     public void local() throws Exception {
-        try(InputStream is = resolver.resolve("mvn:junit:junit:4.12:jar")) {
+        try (InputStream is = resolver.resolve("mvn:junit:junit:4.12:jar")) {
             Assert.assertNotNull(is); // use version of the pom to ensure it is local
         }
     }
@@ -59,7 +59,7 @@ public class MavenResolverTest {
         return file;
     }
 
-    public void resolveCommon(String path) throws Exception {
+    public void resolveCommon(final String path) throws Exception {
         final File file = getAvailableFile();
         final FileOutputStream to = new FileOutputStream(file);
         IO.copy(resolver.resolve(path), to);
@@ -73,5 +73,13 @@ public class MavenResolverTest {
         resolveCommon("mvn:junit:junit:4.12:jar");
         resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:4.12:jar");
         resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:LATEST:jar");
+    }
+
+    @Test
+    public void overrideRepo() throws Exception {
+        System.setProperty("openejb.deployer.repository", "https://bob.smith/repo/");
+        final String url = resolver.quickMvnUrl("!junit/junit/4.12/jar");
+        assertEquals("https://bob.smith/repo/junit/junit/4.12/junit-4.12.jar", url);
+        System.clearProperty("openejb.deployer.repository");
     }
 }
