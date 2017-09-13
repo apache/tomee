@@ -181,7 +181,7 @@
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <version.hsqldb>2.3.2</version.hsqldb>
-    <version.axiom>1.2.14</version.axiom>
+    <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
     <version.eclipselink>2.6.4</version.eclipselink>
@@ -1389,11 +1389,6 @@
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-impl</artifactId>
         <version>${version.axiom}</version>
-      </dependency>
-      <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>
