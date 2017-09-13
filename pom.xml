@@ -172,7 +172,7 @@
     <commons-io.version>1.4</commons-io.version>
     <commons-net.version>3.2</commons-net.version>
     <version.axiom>1.2.14</version.axiom>
-    <version.xalan>2.7.1</version.xalan>
+    <version.xalan>2.7.2</version.xalan>
   </properties>
 
   <build>
@@ -1807,4 +1807,3 @@
     </plugins>
   </reporting>
 </project>
-
