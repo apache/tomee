@@ -18,11 +18,13 @@ package org.apache.openejb.loader.provisining;
 
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.jar.JarFile;
 
@@ -40,7 +42,9 @@ public class MavenResolverTest {
 
     @Test
     public void local() throws Exception {
-        assertEquals(ProvisioningResolver.LocalInputStream.class.getName(), resolver.resolve("mvn:junit:junit:4.12:jar").getClass().getName()); // use version of the pom to ensure it is local
+        try(InputStream is = resolver.resolve("mvn:junit:junit:4.12:jar")) {
+            Assert.assertNotNull(is); // use version of the pom to ensure it is local
+        }
     }
 
     private File getAvailableFile() {

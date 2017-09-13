@@ -35,14 +35,18 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware {
-    private static final String REPO1 = "http://repo1.maven.org/maven2/";
-    private static final String APACHE_SNAPSHOT = "https://repository.apache.org/snapshots/";
+    private static final String REPO1 = System.getProperty("openejb.deployer.repository", "http://repo1.maven.org/maven2/");
+    private static final String APACHE_SNAPSHOT = System.getProperty("openejb.deployer.repository.snapshots", "https://repository.apache.org/snapshots/");
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
+    private static final AtomicReference<DocumentBuilder> BUILDER = new AtomicReference<>(null);
 
     private static final SAXParserFactory FACTORY = SAXParserFactory.newInstance();
+
     static {
         FACTORY.setNamespaceAware(false);
         FACTORY.setValidating(false);
@@ -86,7 +90,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         if (resolver != null) {
             return resolver.resolveStream(repo1Url);
         }
-        return SystemInstance.get().getComponent(ProvisioningResolver.class).resolveStream(repo1Url);
+        return Objects.requireNonNull(SystemInstance.get().getComponent(ProvisioningResolver.class)).resolveStream(repo1Url);
     }
 
     public String quickMvnUrl(final String raw) throws MalformedURLException {
@@ -120,6 +124,12 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         return builder.toString();
     }
 
+    /**
+     * Locate the .m2 repository
+     * First look for the settings.xml value, else assume it is in the .m2 directory
+     *
+     * @return String path to repository
+     */
     private static String m2Home() {
 
         final Properties properties;
@@ -130,23 +140,32 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         }
 
         String home = "";
-        File f = new File(properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/"));
 
+        File f = new File(properties.getProperty("openejb.m2.settings", System.getProperty("user.home") + "/.m2/settings.xml"));
         if (f.exists()) {
-            home = f.getAbsolutePath();
-        } else {
-            f = new File(properties.getProperty("openejb.m2.settings", System.getProperty("user.home") + "/.m2/settings.xml"));
-            if (f.exists()) {
-                try {
+            try {
+
+                DocumentBuilder builder = BUILDER.get();
+                if (null == builder) {
                     final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    final DocumentBuilder builder = factory.newDocumentBuilder();
-                    final Document document = builder.parse(f);
-                    final XPathFactory xpf = XPathFactory.newInstance();
-                    final XPath xp = xpf.newXPath();
-                    home = xp.evaluate("//settings/localRepository/text()", document.getDocumentElement());
-                } catch (final Exception ignore) {
-                    //no-op
+                    builder = factory.newDocumentBuilder();
+                    BUILDER.set(builder);
                 }
+
+                final Document document = builder.parse(f);
+                final XPathFactory xpf = XPathFactory.newInstance();
+                final XPath xp = xpf.newXPath();
+                home = xp.evaluate("//settings/localRepository/text()", document.getDocumentElement());
+            } catch (final Exception ignore) {
+                //no-op
+            }
+        }
+
+        if (home.isEmpty()) {
+            f = new File(properties.getProperty("openejb.m2.home", System.getProperty("user.home") + "/.m2/repository/"));
+
+            if (f.exists()) {
+                home = f.getAbsolutePath();
             }
         }
 
@@ -301,13 +320,14 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         }
 
         @Override
-        public void characters(final char[] ch, final int start, final int length) throws SAXException {
+        public void characters(final char[] ch, final int start, final int length) {
             if (text != null) {
                 text.append(new String(ch, start, length));
             }
         }
 
-        public void endElement(final String uri, final String localName, final String qName) throws SAXException {
+        @Override
+        public void endElement(final String uri, final String localName, final String qName) {
             text = null;
         }
     }
