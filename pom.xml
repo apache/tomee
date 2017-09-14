@@ -1697,6 +1697,12 @@
         <groupId>org.apache.taglibs</groupId>
         <artifactId>taglibs-standard-jstlel</artifactId>
         <version>1.2.5</version>
+        <exclusions>
+          <exclusion>
+              <groupId>xalan</groupId>
+              <artifactId>xalan</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
     </dependencies>
   </dependencyManagement>

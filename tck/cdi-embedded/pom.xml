@@ -68,6 +68,11 @@
       <artifactId>taglibs-standard-jstlel</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

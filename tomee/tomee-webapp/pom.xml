@@ -171,6 +171,10 @@
       <artifactId>taglibs-standard-jstlel</artifactId>
     </dependency>
     <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
