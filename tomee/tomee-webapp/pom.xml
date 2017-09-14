@@ -287,5 +287,9 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+    </dependency>
   </dependencies>
 </project>
