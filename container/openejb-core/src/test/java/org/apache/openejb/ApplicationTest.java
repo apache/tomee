@@ -27,6 +27,7 @@ public class ApplicationTest extends TestCase {
         System.setProperty("openejb.assembler", org.apache.openejb.assembler.classic.Assembler.class.getName());
         System.setProperty("openejb.deployments.classpath.include", ".*openejb-itests-app.*");
         System.setProperty("openejb.deployments.classpath.filter.descriptors", "true");
+        System.setProperty("org.apache.activemq.SERIALIZABLE_PACKAGES", "*");
         return iTest.suite();
     }
 }
