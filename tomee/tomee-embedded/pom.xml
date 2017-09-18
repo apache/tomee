@@ -121,9 +121,10 @@
       <version>1.8.3</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-jstlel</artifactId>
-      <version>1.2.5</version>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
