@@ -524,6 +524,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>maven</module>
         <module>container</module>
@@ -592,6 +593,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>maven</module>
         <module>container</module>
         <module>server</module>
@@ -604,6 +606,7 @@
     <profile>
       <id>openejb</id>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
