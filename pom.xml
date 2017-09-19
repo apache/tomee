@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.78</tomcat.version>
+    <tomcat.version>7.0.81</tomcat.version>
 
     <cxf.version>2.6.17</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -524,6 +524,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>maven</module>
         <module>container</module>
@@ -592,6 +593,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>maven</module>
         <module>container</module>
         <module>server</module>
@@ -604,6 +606,7 @@
     <profile>
       <id>openejb</id>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
