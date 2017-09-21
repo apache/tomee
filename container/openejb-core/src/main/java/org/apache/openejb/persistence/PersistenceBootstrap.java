@@ -91,7 +91,7 @@ public class PersistenceBootstrap {
             final URL provider = clzz.getResource(name);
             if (provider != null) {
                 final String trim = IO.slurp(provider).trim();
-                Logger.getLogger(PersistenceBootstrap.class.getName()).info("Default JPA Provider changed to " + trim);
+                Logger.getLogger(PersistenceBootstrap.class.getName()).info("Default JPA Provider changed to " + trim + " specified by " + provider.toExternalForm());
                 return trim;
             }
         } catch (final Exception e) {
