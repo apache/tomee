@@ -82,13 +82,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>7.0.4-SNAPSHOT</version>
+      <version>7.0.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.0.4-SNAPSHOT</version>
+      <version>7.0.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
