@@ -77,8 +77,6 @@ public class MeetingPlannerTest {
         final JAXBContext jc = JAXBContext.newInstance(MeetingPlannerImpl.class);
         final Dispatch<Object> dispatch = service.createDispatch(new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplPort"), jc, Service.Mode.PAYLOAD);
 
-        final MeetingPlannerImpl msg = new MeetingPlannerImpl();
-        final Object response = dispatch.invoke(msg);
-        System.out.println("response = " + response);
+        //TODO - Complete
     }
 }
