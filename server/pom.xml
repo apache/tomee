@@ -18,13 +18,14 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.7.5-SNAPSHOT</version>
   </parent>
 
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>server</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Server</name>
@@ -50,26 +51,6 @@
     <module>openejb-bonecp</module>
     <module>openejb-hessian</module>
   </modules>
-
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <id>staged-releases</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <id>staged-releases</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
-    </pluginRepository>
-  </pluginRepositories>
 
 </project>
 
