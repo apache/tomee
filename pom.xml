@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.81</tomcat.version>
 
-    <cxf.version>2.6.17</cxf.version>
+    <cxf.version>2.6.17-TomEE</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -679,6 +679,13 @@
           </releases>
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
+        </repository>
+        <repository>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>TomEE-CXF</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
         </repository>
       </repositories>
 

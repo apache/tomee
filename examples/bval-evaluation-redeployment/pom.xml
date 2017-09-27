@@ -28,8 +28,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>1.7.2-SNAPSHOT</tomee.test.version>
-    <openejb.test.version>4.7.2-SNAPSHOT</openejb.test.version>
+    <tomee.test.version>1.7.5-SNAPSHOT</tomee.test.version>
+    <openejb.test.version>4.7.5-SNAPSHOT</openejb.test.version>
   </properties>
 
   <modules>
@@ -44,7 +44,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -109,7 +109,7 @@
       <dependency>
         <groupId>org.apache.openejb</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>1.7.5-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -125,9 +125,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>org.apache.tomee.patch</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>2.6.13</version>
+        <version>2.6.17-TomEE</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
