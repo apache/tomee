@@ -700,6 +700,16 @@
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </pluginRepository>
+        <pluginRepository>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+          <id>TomEE-CXF</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+        </pluginRepository>
       </pluginRepositories>
     </profile>
 
