@@ -25,16 +25,20 @@
     <groupId>org.apache.openejb</groupId>
     <version>4.7.5-SNAPSHOT</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
+
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: CXF</name>
+
   <properties>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
     </openejb.osgi.import.pkg>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -144,5 +148,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>
 
