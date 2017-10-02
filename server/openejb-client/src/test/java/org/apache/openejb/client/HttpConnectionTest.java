@@ -168,6 +168,38 @@ public class HttpConnectionTest {
     }
 
     @Test
+    public void httpBasicSpecificConfigAmpersand() throws URISyntaxException, IOException {
+        final HttpConnectionFactory factory = new HttpConnectionFactory();
+        final String url = "http://localhost:" + server.getAddress().getPort() + "/e?basic.password=pwd&basic.username=te%26st&authorizationHeader=AltAuthorization";
+        for (int i = 0; i < 3; i++) {
+            final Connection connection = factory.getConnection(new URI(url));
+
+            BufferedReader br = null;
+            final StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
+                }
+            } catch (final IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (final IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                connection.close();
+            }
+
+            Assert.assertTrue("should contain", sb.toString().contains("secure pagealtBasic dGUmc3Q6cHdk"));
+        }
+    }
+
+    @Test
     public void complexURIAuthorization() throws IOException, URISyntaxException {
         final String baseHttp = "http://localhost:" + server.getAddress().getPort() + "/e?authorization=";
         final String uri = "failover:sticky+random:" + baseHttp + "Basic%20ABCD&" + baseHttp + "Basic%20EFG";
