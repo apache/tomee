@@ -63,6 +63,7 @@ public class JavaeeInstanceManager implements InstanceManager {
 
     @Override
     public Object newInstance(final String className, final ClassLoader classLoader) throws IllegalAccessException, InvocationTargetException, NamingException, InstantiationException, ClassNotFoundException {
+        System.out.println(String.format("### newInstance() thread:%s className:%s classLoader:%s", Thread.currentThread().getName(), className, classLoader.toString()));
         return newInstance(classLoader.loadClass(className));
     }
 
