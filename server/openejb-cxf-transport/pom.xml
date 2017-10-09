@@ -16,12 +16,13 @@
       limitations under the License.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.7.5-TT.15</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-transport</artifactId>
   <name>OpenEJB :: Server :: CXF Transport</name>
@@ -33,14 +34,15 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
       <version>${cxf.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-management</artifactId>
       <version>${cxf.version}</version>
     </dependency>
   </dependencies>
+
 </project>

@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>17</version>
+    <version>18</version>
   </parent>
 
   <groupId>org.apache.openejb</groupId>
@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.81</tomcat.version>
+    <tomcat.version>7.0.82</tomcat.version>
 
     <cxf.version>2.6.17-TT.1</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -695,6 +695,13 @@
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
         </pluginRepository>
+        <pluginRepository>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <id>staged-releases</id>
+          <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+        </pluginRepository>
       </pluginRepositories>
     </profile>
 
@@ -771,18 +778,13 @@
     </profile>
   </profiles>
   <repositories>
-    <!--<repository>-->
-    <!--<id>codehaus-snapshot</id>-->
-    <!--<name>CodeHaus SNAPSHOT repository</name>-->
-    <!--<url>http://snapshots.repository.codehaus.org</url>-->
-    <!--<releases>-->
-    <!--<enabled>false</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--</repository>-->
-    <!-- Apache snapshots -->
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
@@ -871,7 +873,16 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
+
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </pluginRepository>
   </pluginRepositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

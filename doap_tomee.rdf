@@ -117,15 +117,15 @@
     <release>
       <Version>
         <name>Apache TomEE</name>
-        <revision>1.7.2</revision>
-        <file-release>http://repo.maven.apache.org/maven2/org/apache/openejb/tomee/1.7.2/tomee-1.7.2.pom</file-release>
+        <revision>1.7.5</revision>
+        <file-release>http://repo.maven.apache.org/maven2/org/apache/openejb/tomee/1.7.5/tomee-1.7.5.pom</file-release>
       </Version>
     </release>
     <release>
       <Version>
         <name>Apache OpenEJB</name>
-        <revision>4.7.2</revision>
-        <file-release>http://central.maven.org/maven2/org/apache/openejb/openejb/4.7.2/openejb-4.7.2.pom</file-release>
+        <revision>4.7.5</revision>
+        <file-release>http://central.maven.org/maven2/org/apache/openejb/openejb/4.7.5/openejb-4.7.5.pom</file-release>
       </Version>
     </release>
 

@@ -20,21 +20,26 @@
 <!-- $Rev$ $Date$ -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
     <version>4.7.5-TT.15</version>
   </parent>
+
   <modelVersion>4.0.0</modelVersion>
+
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: CXF</name>
+
   <properties>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
     </openejb.osgi.import.pkg>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -105,7 +110,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
@@ -120,7 +125,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
@@ -144,5 +149,26 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>staged-releases</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>
 
