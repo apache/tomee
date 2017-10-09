@@ -261,6 +261,12 @@ public class Client {
             /*----------------------------------*/
 
             try {
+                if (conn instanceof HttpConnectionFactory.HttpConnection) {
+                    final HttpConnectionFactory.HttpConnection httpConn = (HttpConnectionFactory.HttpConnection) conn;
+                    if (httpConn.getResponseCode() == 401) {
+                        throw new AuthenticationException();
+                    }
+                }
 
                 in = conn.getInputStream();
 
