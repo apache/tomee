@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>17</version>
+    <version>18</version>
     <relativePath><!--Resolve on repository--></relativePath>
   </parent>
 
@@ -131,7 +131,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.21</tomcat.version>
+    <tomcat.version>8.5.23</tomcat.version>
 
     <cxf.version>3.1.13</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
