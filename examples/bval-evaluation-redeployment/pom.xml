@@ -125,9 +125,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.tomee.patch</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>2.6.17-TomEE</version>
+        <version>2.6.17-TT.1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

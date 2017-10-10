@@ -30,7 +30,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee.patch</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-bundle</artifactId>
     </dependency>
     <dependency>
