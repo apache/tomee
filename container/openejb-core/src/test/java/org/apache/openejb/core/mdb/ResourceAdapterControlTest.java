@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.resource.activemq;
+package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -45,6 +47,7 @@ import javax.management.ObjectName;
 import java.util.Properties;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -53,8 +56,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(ApplicationComposer.class)
-public class ActiveMQResourceAdapterControlTest {
-    @Resource(name = "ActiveMQResourceAdapterControlTest/test/ejb/Mdb")
+public class ResourceAdapterControlTest {
+    private static final Logger logger = Logger.getLogger(ResourceAdapterControlTest.class.getName());
+    @Resource(name = "ResourceAdapterControlTest/test/ejb/Mdb")
     private Queue queue;
 
     @Resource
@@ -81,14 +85,14 @@ public class ActiveMQResourceAdapterControlTest {
     @Module
     @Classes(value = Mdb.class)
     public EjbModule app() {
-        return new EjbModule(new EjbJar("test"), new OpenejbJar() {{
-            setId("test");
-            getEjbDeployment().add(new EjbDeployment() {{
-                setEjbName("ejb/Mdb");
-                getProperties().put("MdbActiveOnStartup", "false");
-                getProperties().put("MdbJMXControl", "default:type=test");
+        return new EjbModule(
+            new EjbJar("test") {{
+                addEnterpriseBean(new MessageDrivenBean("ejb/Mdb", Mdb.class) {{
+                    setActivationConfig(new ActivationConfig());
+                    getActivationConfig().addProperty("MdbActiveOnStartup", "false");
+                    getActivationConfig().addProperty("MdbJMXControl", "default:type=test");
+                }});
             }});
-        }});
     }
 
     @Test

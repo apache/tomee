@@ -93,7 +93,7 @@ public class ConnectorProxyNoNoArgConstructorTest {
 
         final Connection connection = jndi.getConnection();
         assertTrue(MyConAPI.class.isInstance(connection));
-        assertFalse(MyCon.class.isInstance(connection));
+        assertTrue(MyCon.class.isInstance(connection));
     }
 
     public static class MyRa implements javax.resource.spi.ResourceAdapter {

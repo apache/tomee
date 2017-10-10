@@ -19,9 +19,11 @@ package org.apache.openejb.arquillian.embedded;
 import org.apache.openejb.arquillian.common.ArquillianFilterRunner;
 import org.apache.openejb.arquillian.common.Files;
 import org.apache.openejb.arquillian.common.TestClassDiscoverer;
+import org.apache.openejb.arquillian.common.TestObserver;
 import org.apache.openejb.arquillian.common.TomEEContainer;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.config.AdditionalBeanDiscoverer;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.tomee.embedded.Configuration;
@@ -57,7 +59,7 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
     @Inject
     @SuiteScoped
-    private InstanceProducer<ClassLoader> classLoader;
+    private InstanceProducer<TestObserver.ClassLoaders> classLoader;
 
     @Override
     public Class<EmbeddedTomEEConfiguration> getConfigurationClass() {
@@ -164,7 +166,14 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             if (dump.isCreated() || !configuration.isSingleDeploymentByArchiveName(name)) {
                 ARCHIVES.put(archive, file);
-                this.container.deploy(name, file);
+                final Thread current = Thread.currentThread();
+                final ClassLoader loader = current.getContextClassLoader();
+                current.setContextClassLoader(ParentClassLoaderFinder.Helper.get()); // multiple deployments, don't leak a loader
+                try {
+                    this.container.deploy(name, file);
+                } finally {
+                    current.setContextClassLoader(loader);
+                }
             }
 
             final AppInfo info = this.container.getInfo(name);
@@ -176,7 +185,12 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
 
             startCdiContexts(name); // ensure tests can use request/session scopes even if we don't have a request
 
-            classLoader.set(SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(info.appId).getClassLoader());
+            TestObserver.ClassLoaders classLoaders = this.classLoader.get();
+            if (classLoaders == null) {
+                classLoaders = new TestObserver.ClassLoaders();
+                this.classLoader.set(classLoaders);
+            }
+            classLoaders.register(archive.getName(), SystemInstance.get().getComponent(ContainerSystem.class).getAppContext(info.appId).getClassLoader());
 
             return new ProtocolMetaData().addContext(httpContext);
         } catch (final Exception e) {
@@ -196,18 +210,21 @@ public class EmbeddedTomEEContainer extends TomEEContainer<EmbeddedTomEEConfigur
             this.container.undeploy(name);
         } catch (final Exception e) {
             throw new DeploymentException("Unable to undeploy", e);
-        }
-        final File file = ARCHIVES.remove(archive);
-        if (!configuration.isSingleDumpByArchiveName()) {
-            final File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 4));
-            if (folder.exists()) {
-                Files.delete(folder);
-            }
-            Files.delete(file);
-            final File parentFile = file.getParentFile();
-            final File[] parentChildren = parentFile.listFiles();
-            if (parentChildren == null || parentChildren.length == 0) {
-                Files.delete(file.getParentFile());
+        } finally {
+            this.classLoader.get().unregister(archive.getName());
+
+            final File file = ARCHIVES.remove(archive);
+            if (!configuration.isSingleDumpByArchiveName()) {
+                final File folder = new File(file.getParentFile(), file.getName().substring(0, file.getName().length() - 4));
+                if (folder.exists()) {
+                    Files.delete(folder);
+                }
+                Files.delete(file);
+                final File parentFile = file.getParentFile();
+                final File[] parentChildren = parentFile.listFiles();
+                if (parentChildren == null || parentChildren.length == 0) {
+                    Files.delete(file.getParentFile());
+                }
             }
         }
     }

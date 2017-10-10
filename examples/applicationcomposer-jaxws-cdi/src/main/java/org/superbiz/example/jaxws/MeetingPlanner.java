@@ -16,10 +16,13 @@
  */
 package org.superbiz.example.jaxws;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.Date;
 
 @WebService
 public interface MeetingPlanner {
+
+    @WebMethod(operationName = "book", exclude = false)
     boolean book(final Date date);
 }

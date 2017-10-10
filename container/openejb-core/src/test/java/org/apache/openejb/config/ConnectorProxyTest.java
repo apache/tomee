@@ -203,8 +203,14 @@ public class ConnectorProxyTest {
     }
 
     public static class MyCon implements MyConAPI {
+        private final String arg;
+
+        public MyCon(String arg) {
+            this.arg = arg;
+        }
+
         public String specific() {
-            return "yes";
+            return arg;
         }
 
         @Override
@@ -236,7 +242,7 @@ public class ConnectorProxyTest {
     public static class MyMC implements ManagedConnection {
         @Override
         public Object getConnection(final Subject subject, final ConnectionRequestInfo cxRequestInfo) throws ResourceException {
-            return new MyCon();
+            return new MyCon("yes");
         }
 
         @Override

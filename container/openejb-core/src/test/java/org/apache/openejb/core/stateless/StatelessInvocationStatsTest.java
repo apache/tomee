@@ -5,18 +5,17 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.core.stateless;
 
-import junit.framework.TestCase;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.api.Monitor;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -24,10 +23,15 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.core.OpenEJBInitialContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -58,7 +62,8 @@ import java.util.logging.Logger;
  * javax.management.MBeanAttributeInfo[description=, name=InvocationCount, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=InvocationTime, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=MonitoredMethods, type=long, read-only, descriptor={}]
- * javax.management.MBeanOperationInfo[description=, name=FilterAttributes, returnType=void, signature=[javax.management.MBeanParameterInfo[description="", name=excludeRegex, type=java.lang.String, descriptor={}], javax.management.MBeanParameterInfo[description="", name=includeRegex, type=java.lang.String, descriptor={}]], impact=unknown, descriptor={}]
+ * javax.management.MBeanOperationInfo[description=, name=FilterAttributes, returnType=void, signature=[javax.management.MBeanParameterInfo[description="", name=excludeRegex, type=java
+ * .lang.String, descriptor={}], javax.management.MBeanParameterInfo[description="", name=includeRegex, type=java.lang.String, descriptor={}]], impact=unknown, descriptor={}]
  * <p/>
  * Then for every method there will be these attributes and operations:
  * <p/>
@@ -81,7 +86,8 @@ import java.util.logging.Logger;
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Sum, type=double, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Sumsq, type=double, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Variance, type=double, read-only, descriptor={}]
- * javax.management.MBeanOperationInfo[description=, name=someMethod().setSampleSize, returnType=void, signature=[javax.management.MBeanParameterInfo[description=, name=p1, type=int, descriptor={}]], impact=unknown, descriptor={}]
+ * javax.management.MBeanOperationInfo[description=, name=someMethod().setSampleSize, returnType=void, signature=[javax.management.MBeanParameterInfo[description=, name=p1, type=int,
+ * descriptor={}]], impact=unknown, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=someMethod().sortedValues, returnType=[D, signature=[], impact=unknown, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=someMethod().values, returnType=[D, signature=[], impact=unknown, descriptor={}]
  * <p/>
@@ -102,13 +108,14 @@ import java.util.logging.Logger;
  *
  * @version $Rev$ $Date$
  */
-public class StatelessInvocationStatsTest extends TestCase {
-    @Override
+public class StatelessInvocationStatsTest {
+
+    @Before
     public void setUp() {
         System.setProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE, Boolean.TRUE.toString());
     }
 
-    @Override
+    @After
     public void tearDown() {
         System.clearProperty(LocalMBeanServer.OPENEJB_JMX_ACTIVE);
     }
@@ -122,8 +129,9 @@ public class StatelessInvocationStatsTest extends TestCase {
      * This whole method is a template, feel free to split it anyway you like
      * Fine to have one big
      *
-     * @throws Exception
+     * @throws Exception On error
      */
+    @Test
     public void testBasic() throws Exception {
         // some pre-load to avoid to load the class lazily with the first invocation
         new CounterBean().red();
@@ -131,7 +139,7 @@ public class StatelessInvocationStatsTest extends TestCase {
         new CounterBean().green();
         // end preload
 
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, org.apache.openejb.core.LocalInitialContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, OpenEJBInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -164,20 +172,21 @@ public class StatelessInvocationStatsTest extends TestCase {
         bean.blue();
 
         final MBeanServer server = LocalMBeanServer.get();
-        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsModule,StatelessSessionBean=CounterBean," +
+                "j2eeType=Invocations,name=CounterBean");
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters
 
         /*
-        * Invocation MBeanInfo
-        *
-        */
-        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
+         * Invocation MBeanInfo
+         *
+         */
+        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<>();
         expectedAttributes.add(new MBeanAttributeInfo("InvocationCount", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("InvocationTime", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("MonitoredMethods", "long", "", true, false, false));
 
-        final Map<String, Object> expectedValues = new TreeMap<String, Object>();
+        final Map<String, Object> expectedValues = new TreeMap<>();
         expectedValues.put("InvocationCount", (long) 6);
         expectedValues.put("InvocationTime", (long) 0);
         expectedValues.put("MonitoredMethods", (long) 4);
@@ -229,8 +238,8 @@ public class StatelessInvocationStatsTest extends TestCase {
             expectedValues.put(s + ".Variance", 0.0);
         }
 
-        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
-        final Map<String, Object> actualValues = new TreeMap<String, Object>();
+        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<>();
+        final Map<String, Object> actualValues = new TreeMap<>();
         final MBeanInfo beanInfo = server.getMBeanInfo(invocationsName);
         for (final MBeanAttributeInfo info : beanInfo.getAttributes()) {
             actualAttributes.add(info);
@@ -238,35 +247,37 @@ public class StatelessInvocationStatsTest extends TestCase {
         }
 
         //Verify invocation attributes and values
-        assertEquals(expectedAttributes, actualAttributes);
+        Assert.assertEquals(expectedAttributes, actualAttributes);
         boolean ok = true;
         for (final Map.Entry<String, Object> entry : actualValues.entrySet()) {
             final Number value = (Number) expectedValues.get(entry.getKey());
             final Number real = (Number) actualValues.get(entry.getKey());
 
             if (!value.equals(real)) { // tolerating a 1 wide range
-                Logger.getLogger(StatelessInvocationStatsTest.class.getName()).log(Level.WARNING, "Test tolerance: " + entry.getKey() + " => " + entry.getValue() + "/" + expectedValues.get(entry.getKey()));
+                Logger.getLogger(StatelessInvocationStatsTest.class.getName()).log(Level.WARNING, "Test tolerance: " + entry.getKey() + " => " + entry.getValue() + "/" + expectedValues
+                        .get(entry.getKey()));
                 final Double abs = Math.abs(real.doubleValue() - value.doubleValue());
                 if (abs.intValue() > 1) {
                     ok = false;
                 }
             }
         }
-        // assertEquals(expectedValues, actualValues);
-        assertTrue(ok);
+
+        Assert.assertTrue("Expected status to be true, but was: " + ok, ok);
 
         // Grab invocation mbean operations
         final MBeanParameterInfo[] invocationParameters1 = {
-            new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
-            new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
+                new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
+                new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
         final MBeanParameterInfo[] invocationParameters2 = {
-            new MBeanParameterInfo("p1", "int", "")};
+                new MBeanParameterInfo("p1", "int", "")};
 
-        final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> expectedOperations = new ArrayList<>();
         expectedOperations.add(new MBeanOperationInfo(
-            "FilterAttributes",
-            "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
-            invocationParameters1, "void", MBeanOperationInfo.UNKNOWN));
+                "FilterAttributes",
+                "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to " +
+                        "disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
+                invocationParameters1, "void", MBeanOperationInfo.UNKNOWN));
 
         for (final String s : methods) {
             expectedOperations.add(new MBeanOperationInfo(s + ".setSampleSize", "", invocationParameters2, "void", MBeanOperationInfo.UNKNOWN));
@@ -274,18 +285,19 @@ public class StatelessInvocationStatsTest extends TestCase {
             expectedOperations.add(new MBeanOperationInfo(s + ".values", "", new MBeanParameterInfo[0], "[D", MBeanOperationInfo.UNKNOWN));
         }
 
-        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<>();
         actualOperations1.addAll(Arrays.asList(beanInfo.getOperations()));
 
         //Verify invocation operation information and remove bean.
-        assertEquals(expectedOperations, actualOperations1);
+        Assert.assertEquals(expectedOperations, actualOperations1);
     }
 
     /**
-     * @throws Exception
+     * @throws Exception On error
      */
+    @Test
     public void testInvocation() throws Exception {
-        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, org.apache.openejb.core.LocalInitialContextFactory.class.getName());
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, OpenEJBInitialContextFactory.class.getName());
 
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
@@ -319,26 +331,27 @@ public class StatelessInvocationStatsTest extends TestCase {
         bean.waitSecs();
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsInvocModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean");
+        final ObjectName invocationsName = new ObjectName("openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=StatsInvocModule,StatelessSessionBean=CounterBean," +
+                "j2eeType=Invocations,name=CounterBean");
 
         // Grab the mbeanInfo and check the expected attributes exist and have the correct return types and parameters        
         final MBeanInfo invocationsMBeanInfo = server.getMBeanInfo(invocationsName);
         for (final MBeanAttributeInfo info : invocationsMBeanInfo.getAttributes()) {
-//            System.out.println("//" + info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
+            //            System.out.println("//" + info.getName() + " " + server.getAttribute(invocationsName, info.getName()));
             if (info.getName().equals("waitSecs().GeometricMean")
-                || info.getName().equals("waitSecs().Max")
-                || info.getName().equals("waitSecs().Mean")
-                || info.getName().equals("waitSecs().Min")
-                || info.getName().equals("waitSecs().Percentile01")
-                || info.getName().equals("waitSecs().Percentile10")
-                || info.getName().equals("waitSecs().Percentile25")
-                || info.getName().equals("waitSecs().Percentile50")
-                || info.getName().equals("waitSecs().Percentile75")
-                || info.getName().equals("waitSecs().Percentile90")
-                || info.getName().equals("waitSecs().Percentile99")
-                || info.getName().equals("waitSecs().Sum")) {
+                    || info.getName().equals("waitSecs().Max")
+                    || info.getName().equals("waitSecs().Mean")
+                    || info.getName().equals("waitSecs().Min")
+                    || info.getName().equals("waitSecs().Percentile01")
+                    || info.getName().equals("waitSecs().Percentile10")
+                    || info.getName().equals("waitSecs().Percentile25")
+                    || info.getName().equals("waitSecs().Percentile50")
+                    || info.getName().equals("waitSecs().Percentile75")
+                    || info.getName().equals("waitSecs().Percentile90")
+                    || info.getName().equals("waitSecs().Percentile99")
+                    || info.getName().equals("waitSecs().Sum")) {
                 final Double actual = (Double) (server.getAttribute(invocationsName, info.getName()));
-                assertTrue("Expected: " + actual + " >= 999", actual >= 999);
+                Assert.assertTrue("Expected: " + actual + " >= 999", actual >= 999);
             }
         }
         ejbJar.removeEnterpriseBean("StatsInvocModule");
@@ -357,10 +370,10 @@ public class StatelessInvocationStatsTest extends TestCase {
      * // Release them all back into the pool
      * startingPistol.countDown();
      *
-     * @param bean
-     * @param count
-     * @return
-     * @throws InterruptedException
+     * @param bean CounterBean
+     * @param count int
+     * @return CountDownLatch
+     * @throws InterruptedException On error
      */
     private CountDownLatch checkout(final CounterBean bean, final int count) throws InterruptedException {
         final CountDownLatch startingLine = new CountDownLatch(count);

@@ -2073,8 +2073,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String firstMatching(final String prefix, final String type, final Properties required, final AppResources appResources) {
-        final List<String> resourceIds = new ArrayList<String>(getResourceIds(appResources, type, required));
-        Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
+        final List<String> resourceIds = getResourceIds(appResources, type, required);
+        if(resourceIds.isEmpty()){
+            return null;
+        }
+
+        return Collections.min(resourceIds, new Comparator<String>() { // sort from webapp to global resources
             @Override
             public int compare(final String o1, final String o2) { // don't change global order, just put app scoped resource before others
                 if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
@@ -2088,11 +2092,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
             }
         });
-        String idd = null;
-        if (resourceIds.size() > 0) {
-            idd = resourceIds.get(0);
-        }
-        return idd;
     }
 
     private String findResourceId(final String resourceId, final String type, final Properties required, final AppResources appResources) {
