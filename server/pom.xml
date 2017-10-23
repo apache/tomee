@@ -52,5 +52,12 @@
     <module>openejb-bonecp</module>
     <module>openejb-hessian</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
 </project>
 

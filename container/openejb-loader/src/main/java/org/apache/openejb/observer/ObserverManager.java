@@ -132,7 +132,7 @@ public class ObserverManager {
         }
     }
 
-    private static enum Phase {
+    private enum Phase {
         BEFORE,
         INVOKE,
         AFTER

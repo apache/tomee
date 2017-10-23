@@ -24,10 +24,16 @@ import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
+import org.codehaus.stax2.io.Stax2StringSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -55,11 +61,22 @@ public class MeetingPlannerTest {
     }
 
     @Test
-    public void book() throws MalformedURLException {
+    public void bookPort() throws Exception {
         final Service service = Service.create(
                 new URL("http://127.0.0.1:" + JAX_WS_PORT + "/demo/meeting-planner?wsdl"),
                 new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplService"));
         final MeetingPlanner planner = service.getPort(MeetingPlanner.class);
         assertTrue(planner.book(new Date(System.currentTimeMillis() + 1000000)));
+    }
+
+    @Test
+    public void bookDispatch() throws Exception {
+        final Service service = Service.create(
+                new URL("http://127.0.0.1:" + JAX_WS_PORT + "/demo/meeting-planner?wsdl"),
+                new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplService"));
+        final JAXBContext jc = JAXBContext.newInstance(MeetingPlannerImpl.class);
+        final Dispatch<Object> dispatch = service.createDispatch(new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplPort"), jc, Service.Mode.PAYLOAD);
+
+        //TODO - Complete
     }
 }

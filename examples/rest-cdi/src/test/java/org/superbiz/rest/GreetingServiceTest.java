@@ -65,6 +65,7 @@ public class GreetingServiceTest {
     public void postXml() throws IOException {
         final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }
@@ -81,6 +82,7 @@ public class GreetingServiceTest {
     public void postJson() throws IOException {
         final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }

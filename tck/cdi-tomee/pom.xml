@@ -83,7 +83,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
-      <version>${org.apache.openwebbeans.version}</version>
+      <version>${openwebbeans.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

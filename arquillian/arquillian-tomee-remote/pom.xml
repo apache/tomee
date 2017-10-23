@@ -154,7 +154,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>${org.apache.openwebbeans.version}</version>
+      <version>${openwebbeans.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
