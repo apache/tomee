@@ -37,4 +37,12 @@
     <module>log4j2-tomee</module>
     <module>livereload-tomee</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+  </dependencies>
+
 </project>
