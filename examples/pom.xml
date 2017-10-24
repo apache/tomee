@@ -41,7 +41,10 @@
     <module>application-composer</module>
     <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
+<!--
+BROKEN, see TOMEE-2140
     <module>arquillian-jpa</module>
+-->
     <module>async-methods</module>
     <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
