@@ -28,7 +28,7 @@
   <name>OpenEJB :: TCK</name>
 
   <properties>
-    <cdi.tck.20.version>2.0.0.Final</cdi.tck.20.version>
+    <cdi.tck.20.version>2.0.3.Final</cdi.tck.20.version>
   </properties>
 
   <modules>

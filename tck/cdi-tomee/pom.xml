@@ -60,7 +60,7 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.descriptors</groupId>
       <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
-      <version>2.0.0-alpha-3</version>
+      <version>${version.shrinkwrap.descriptor}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

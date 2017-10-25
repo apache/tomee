@@ -28,6 +28,10 @@
   <name>OpenEJB :: TCK :: CDI Embedded</name>
   <version>8.0.0-SNAPSHOT</version>
 
+  <properties>
+    <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -189,7 +193,7 @@
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
+            <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
           </suiteXmlFiles>
           <properties>
             <property> <!-- broken cause @RequestScoped beans are parameters and testng logs parameters -->

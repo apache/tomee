@@ -37,19 +37,14 @@
 
     <test name="JSR-346 TCK">
         <groups>
-            <run> 
-                <!-- 
+            <run>
+                <!--
                  The SE TCK currently uses an invalid setup.
                  We have to verify this again when it is setup in a sane way.
                  -->
                 <exclude name="se" />
             </run>
         </groups>
-
-        <packages>
-            <package name="org.jboss.cdi.tck.tests.*">
-            </package>
-        </packages>
 
         <classes>
             <!-- somehow blocks forever, we finally need to pass this test, just commented out temporarily! -->
@@ -61,6 +56,27 @@
 
 
             <!-- Tests broken in the CDI-2.0 TCK: -->
+
+            <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-602, invalid assumption that a situation cannot be resolved -->
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity03Test">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity05Test">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity06Test">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity07Test">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
+            <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-600, uses illegal fireEvent to @ApplicationScoped bean in ProcessInjectionTarget -->
+            <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.processInjectionTarget.WrappedInjectionTargetTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
 
             <!-- https://issues.jboss.org/projects/CDITCK/issues/CDITCK-576 -->
             <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.builtin.BuiltinBeanPassivationDependencyTest">
@@ -152,6 +168,11 @@
             </class>
 
         </classes>
+
+        <packages>
+            <package name="org.jboss.cdi.tck.tests.*">
+            </package>
+        </packages>
     </test>
 </suite>
 

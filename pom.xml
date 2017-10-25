@@ -129,7 +129,7 @@
     <batchee.version>0.4-incubating</batchee.version>    
 
     <version.arquillian>1.1.13.Final</version.arquillian>
-    <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.shrinkwrap.descriptor>2.0.0-alpha-10</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
     <tomcat.version>8.5.23</tomcat.version>
