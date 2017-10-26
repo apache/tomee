@@ -1594,8 +1594,6 @@ public class BeanContext extends DeploymentContext {
             } finally {
                 EjbTransactionUtil.afterInvoke(transactionPolicy, callContext);
             }
-            Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                    .info("instance.created", beanInstance.getClass().getName());
 
             // handle cdi decorators
             if (cdiEjbBean != null) {

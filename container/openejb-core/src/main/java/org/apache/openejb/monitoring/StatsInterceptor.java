@@ -21,6 +21,8 @@ import org.apache.openejb.api.Monitor;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.math.stat.descriptive.SynchronizedDescriptiveStatistics;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
@@ -106,7 +108,12 @@ public class StatsInterceptor {
 
     @PostConstruct
     public void PostConstruct(final InvocationContext invocationContext) throws Exception {
+        long start = System.nanoTime();
         record(invocationContext, PostConstruct());
+        long end = System.nanoTime();
+        org.apache.openejb.util.Logger
+                .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                .info("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PreDestroy() throws NoSuchMethodException {
@@ -115,7 +122,12 @@ public class StatsInterceptor {
 
     @PreDestroy
     public void PreDestroy(final InvocationContext invocationContext) throws Exception {
+        long start = System.nanoTime();
         record(invocationContext, PreDestroy());
+        long end = System.nanoTime();
+        org.apache.openejb.util.Logger
+                .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                .info("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PostActivate() throws NoSuchMethodException {

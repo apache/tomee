@@ -922,9 +922,6 @@ public class Pool<T> {
             }
             try {
                 supplier.discard(expired, event);
-                org.apache.openejb.util.Logger
-                        .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                        .info("instance.discarded", expired.getClass().getName());
             } finally {
                 out.countDown();
             }
