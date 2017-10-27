@@ -314,9 +314,13 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            final ParsedName parsedName = new ParsedName(name);
+            final ParsedName parsedName = getParsedNameFor(name);
             mynode.bind(parsedName, obj);
         }
+    }
+
+    private ParsedName getParsedNameFor(String name){
+        return new ParsedName(mynode.getAtomicName() + "/" + name);
     }
 
     public void bind(final Name name, final Object obj) throws NamingException {
@@ -351,7 +355,7 @@ public class IvmContext implements Context, Serializable {
         fastCache.clear();
         mynode.clearCache();
 
-        mynode.unbind(new ParsedName(name));
+        mynode.unbind(getParsedNameFor(name));
     }
 
     public void unbind(final Name name) throws NamingException {
@@ -425,7 +429,7 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            return mynode.createSubcontext(new ParsedName(name), readOnly);
+            return mynode.createSubcontext(getParsedNameFor(name), readOnly);
         }
     }
 
@@ -571,25 +575,26 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(node, vect);
+            gatherNodes(parentNode, node, vect);
 
             buildEnumeration(vect);
         }
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(final NameNode node, final Vector vect) {
-            addInListIfNeeded(mynode, node.getLessTree(), vect);
-            addInListIfNeeded(mynode, node.getGrtrTree(), vect);
-            addInListIfNeeded(mynode, node.getSubTree(), vect);
-            if (NameNode.Federation.class.isInstance(mynode.getObject())) { // tomcat mainly
-                for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
+        protected void gatherNodes(NameNode initiallyRequestedNode, final NameNode node, final Vector vect) {
+            addInListIfNeeded(initiallyRequestedNode, node.getLessTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getGrtrTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getSubTree(), vect);
+
+            if (NameNode.Federation.class.isInstance(initiallyRequestedNode.getObject())) { // tomcat mainly
+                for (final Context c : NameNode.Federation.class.cast(initiallyRequestedNode.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
 
                     final IvmContext ctx = IvmContext.class.cast(c);
-                    if (ctx.mynode == mynode || vect.contains(ctx.mynode)) {
+                    if (ctx.mynode == node || vect.contains(ctx.mynode)) {
                         continue;
                     }
 
@@ -605,24 +610,21 @@ public class IvmContext implements Context, Serializable {
                 return;
             }
             vect.addElement(node);
-            gatherNodes(node, vect);
+            gatherNodes(parent, node, vect);
         }
 
         private boolean isMyChild(final NameNode parent, final NameNode node) {
             if (node.getParent() == parent) {
                 return true;
             }
-            if (node.getParentTree() == node.getParent()) { // no need to browse the tree
-                return false;
+
+            /*
+             * Handle the special case of the top-level contexts like global, module, app, etc
+             */
+            if (null == node.getParent() && null == parent.getParentTree()) {
+                return true;
             }
 
-            NameNode current = node.getParentTree();
-            while (current != null) {
-                if (current == parent) {
-                    return true;
-                }
-                current = current.getParentTree();
-            }
             return false;
         }
 

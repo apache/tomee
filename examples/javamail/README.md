@@ -51,7 +51,7 @@ You can find much more detailed information on the [Javamail API here](https://j
                 //Create a message
                 final MimeMessage msg = new MimeMessage(session);
                 msg.setFrom(new InternetAddress("your@email.address"));
-                final InternetAddress[] address = {new InternetAddress("general@tomitribe.com")};
+                final InternetAddress[] address = {new InternetAddress("general@email.com")};
                 msg.setRecipients(Message.RecipientType.TO, address);
                 msg.setSubject("JavaMail API test");
                 msg.setSentDate(new Date());
@@ -108,7 +108,7 @@ Finally to test it we use cxf client API to call the REST service post() method.
 
         @Test
         public void post() throws IOException {
-            final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello Tomitribe", String.class);
+            final String message = WebClient.create("http://localhost:4204").path("/test/email/").post("Hello General", String.class);
             assertEquals("Failed to send message: Unknown SMTP host: your.mailserver.host", message);
         }
     }

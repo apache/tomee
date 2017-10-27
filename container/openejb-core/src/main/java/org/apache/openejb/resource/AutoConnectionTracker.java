@@ -25,6 +25,7 @@ import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTrack
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
@@ -126,18 +127,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
             loader = ClassLoader.getSystemClassLoader();
         }
         if (!Proxy.isProxyClass(handle.getClass())) {
-            try {
-                handle.getClass().getConstructor(); // if not let's the user reuse the impl-ed interfaces
-                try {
-                    final Object proxy = getProxy(handle.getClass(), loader).newInstance();
-                    DynamicSubclass.setHandler(proxy, invocationHandler);
-                    return proxy;
-                } catch (final InstantiationException | IllegalAccessException e) {
-                    throw new IllegalStateException(e);
-                }
-            } catch (final NoSuchMethodException e1) {
-                // no-op
-            }
+            final Object proxy = LocalBeanProxyFactory.Unsafe.allocateInstance(getProxy(handle.getClass(), loader));
+            DynamicSubclass.setHandler(proxy, invocationHandler);
+            return proxy;
         }
 
         return Proxy.newProxyInstance(loader, getAPi(handle.getClass()), invocationHandler);
@@ -165,7 +157,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             synchronized (this) {
                 found = proxies.get(aClass);
                 if (found == null) {
-                    proxies.put(aClass, DynamicSubclass.createSubclass(aClass, loader));
+                    proxies.put(aClass, DynamicSubclass.createSubclass(aClass, loader, true));
                     found = proxies.get(aClass);
                 }
             }

@@ -29,6 +29,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.naming.OperationNotSupportedException;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.SystemException;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 
 /**
  * @version $Rev$ $Date$
@@ -301,7 +304,7 @@ public class IvmContextTest extends TestCase {
       */
      public void testGetBindingPropagatesReadOnlyFlag() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         final IvmContext context = new IvmContext("comp");
-        context.bind("comp/env/test", "test");
+        context.bind("env/test", "test");
 
         context.setReadOnly(true);
         Object result = context.lookup("env");
@@ -321,7 +324,7 @@ public class IvmContextTest extends TestCase {
      public void testGetFromFederatedContextPropagatesReadOnlyFlag() throws NamingException {
         final IvmContext context = new IvmContext();
         final IvmContext federatedContext = new IvmContext("comp");
-        federatedContext.bind("comp/env/test", "test");
+        federatedContext.bind("env/test", "test");
         context.bind("", federatedContext);
 
         context.setReadOnly(true);
@@ -353,6 +356,36 @@ public class IvmContextTest extends TestCase {
             //ok
         }
     }
+    
+   public void testListContextListsAllFederatedContextBindings() throws SystemException, NamingException {
+	   //mimic logic from EnterpriseBeanBuilder.build, create compJndiContext and bind in it module, app, global 
+	   Context compContext = new IvmContext();
+        compContext.bind("java:comp/env/dummy", "dummy");
+
+        Context moduleContext = new IvmContext();
+        moduleContext.bind("module/env/test", String.class);
+        moduleContext.bind("module/env/sub/test2", String.class);
+        Context originalModuleSubContext = (IvmContext)moduleContext.lookup("module");
+        compContext.bind("module", originalModuleSubContext);
+
+        Context referencedModuleEnvSubContext = (IvmContext)compContext.lookup("module/env");
+        NamingEnumeration<NameClassPair> referencedEnvLookupResult = referencedModuleEnvSubContext.list("");
+
+        boolean testFound= false;
+        boolean subFound = false;
+        while(referencedEnvLookupResult.hasMore()) {
+            String currentName = referencedEnvLookupResult.next().getName();
+            if("test".equals(currentName)) {
+                testFound = true;
+            } else if("sub".equals(currentName)) {
+                subFound = true;
+            } else {
+                fail();
+            }
+        }
+        assertTrue(testFound);
+        assertTrue(subFound);
+     }
 
     private void assertContextEntry(final Context context, final String s, final Object expected) throws javax.naming.NamingException {
         assertLookup(context, s, expected);

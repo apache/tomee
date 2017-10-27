@@ -27,7 +27,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.4-SNAPSHOT</version>
+    <version>7.0.4-TT.1</version>
   </parent>
 
   <artifactId>openejb-ejbd</artifactId>
@@ -151,6 +151,7 @@
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>3.2.5</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

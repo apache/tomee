@@ -17,6 +17,7 @@
 package org.apache.tomee.jul.handler.rotating;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -25,8 +26,15 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -34,6 +42,9 @@ import java.util.logging.LogRecord;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,6 +53,10 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class ArchivingTest {
+
+    private static final AtomicReference<WatchEvent<?>> lastEvent = new AtomicReference<>();
+    private static final AtomicReference<CountDownLatch> latch = new AtomicReference<>(null);
+
     @Parameterized.Parameters(name = "{0}")
     public static String[][] formats() {
         return new String[][]{{"zip"}, {"gzip"}};
@@ -120,8 +135,9 @@ public class ArchivingTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void logAndRotateAndPurge() throws IOException, NoSuchMethodException {
+    public void logAndRotateAndPurge() throws Exception {
         clean("target/ArchivingTestPurge-" + format + "/logs");
 
         final AtomicReference<String> today = new AtomicReference<>();
@@ -157,26 +173,43 @@ public class ArchivingTest {
             handler.publish(new LogRecord(Level.INFO, string10chars));
         }
 
-        final File logArchive = new File("target/ArchivingTestPurge-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
-
         today.set("2015-09-02");
         try {
             Thread.sleep(2000);
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
-        handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the archiving
-        for (int i = 0; i < 5; i++) { // async so retry
-            if (logArchive.exists()) {
-                break;
-            }
-            try {
-                Thread.sleep(1800);
-            } catch (final InterruptedException e) {
-                Thread.interrupted();
-            }
+
+        final File logArchive = new File("target/ArchivingTestPurge-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
+        if (logArchive.delete()) {
+            System.out.println("Deleted existing test file: " + logArchive);
         }
-        assertTrue(logArchive.getAbsolutePath() + " was archived", logArchive.exists());
+
+        final File parentFile = logArchive.getParentFile();
+        if (!parentFile.exists() && !parentFile.mkdirs()) {
+            Assert.fail("Unable to create: " + parentFile);
+        }
+        final Path dir = parentFile.toPath();
+        final WatchService watcher = FileSystems.getDefault().newWatchService();
+        final WatchKey key = dir.register(watcher,
+                ENTRY_CREATE,
+                ENTRY_DELETE,
+                ENTRY_MODIFY);
+
+        latch.set(new CountDownLatch(1));
+        watch(key);
+
+        handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the archiving
+
+        assertTrue("Failed to get archived log", latch.get().await(20, TimeUnit.SECONDS));
+        final WatchEvent<?> watchEvent = lastEvent.get();
+
+        assertTrue(StandardWatchEventKinds.ENTRY_CREATE.equals(watchEvent.kind()) || StandardWatchEventKinds.ENTRY_MODIFY.equals(watchEvent.kind()));
+
+        final WatchEvent<Path> ev = (WatchEvent<Path>) watchEvent;
+
+        final String io = ev.context().toString();
+        assertTrue(io.startsWith("test.2015-09-01.") && io.endsWith(format));
 
         today.set("2015-09-03");
         try {
@@ -184,6 +217,7 @@ public class ArchivingTest {
         } catch (final InterruptedException e) {
             Thread.interrupted();
         }
+
         handler.publish(new LogRecord(Level.INFO, string10chars)); // will trigger the purging
         handler.close();
         withRetry(10, 2, new Runnable() {
@@ -203,7 +237,7 @@ public class ArchivingTest {
             }
             try {
                 TimeUnit.SECONDS.sleep(timeout);
-            } catch (InterruptedException e1) {
+            } catch (final InterruptedException e1) {
                 Thread.interrupted();
             }
             withRetry(countDown - 1, timeout, assertCallback);
@@ -211,35 +245,56 @@ public class ArchivingTest {
     }
 
     private static void clean(final String base) {
-        {
-            final File out = new File(base);
-            if (out.exists()) {
-                for (final File file : asList(out.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(final File pathname) {
-                        return pathname.getName().startsWith("test");
-                    }
-                }))) {
+        cleanUp(new File(base));
+        cleanUp(new File(base + "/archives"));
+    }
+
+    private static void cleanUp(final File out) {
+        if (out.exists()) {
+            final File[] files = out.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(final File pathname) {
+                    return pathname.getName().startsWith("test");
+                }
+            });
+            if (null != files) {
+                for (final File file : asList(files)) {
                     if (!file.delete()) {
                         file.deleteOnExit();
                     }
                 }
             }
         }
-        {
-            final File out = new File(base + "/archives");
-            if (out.exists()) {
-                for (final File file : asList(out.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(final File pathname) {
-                        return pathname.getName().startsWith("test");
+    }
+
+    private static void watch(final WatchKey key) {
+
+        final Thread t = new Thread("ArchivingTest.watch") {
+            @Override
+            public void run() {
+
+
+                for (; ; ) {
+                    for (final WatchEvent<?> event : key.pollEvents()) {
+                        final WatchEvent.Kind<?> kind = event.kind();
+
+                        if (kind == StandardWatchEventKinds.OVERFLOW) {
+                            continue;
+                        }
+
+                        lastEvent.set(event);
+                        latch.get().countDown();
                     }
-                }))) {
-                    if (!file.delete()) {
-                        file.deleteOnExit();
+
+                    final boolean valid = key.reset();
+                    if (!valid) {
+                        System.out.println("ArchivingTest.watch terminated");
+                        break;
                     }
                 }
             }
-        }
+        };
+
+        t.start();
     }
 }
