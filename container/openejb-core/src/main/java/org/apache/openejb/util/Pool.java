@@ -20,8 +20,22 @@ import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.monitoring.Managed;
 
 import java.lang.ref.SoftReference;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -908,9 +922,6 @@ public class Pool<T> {
             }
             try {
                 supplier.discard(expired, event);
-                org.apache.openejb.util.Logger
-                        .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                        .info("instance.discarded", expired.getClass().getName());
             } finally {
                 out.countDown();
             }
