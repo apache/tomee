@@ -112,7 +112,7 @@ public class StatsInterceptor {
         record(invocationContext, PostConstruct());
         long end = System.nanoTime();
         org.apache.openejb.util.Logger
-                .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
                 .info("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
@@ -126,7 +126,7 @@ public class StatsInterceptor {
         record(invocationContext, PreDestroy());
         long end = System.nanoTime();
         org.apache.openejb.util.Logger
-                .getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
+                .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
                 .info("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
