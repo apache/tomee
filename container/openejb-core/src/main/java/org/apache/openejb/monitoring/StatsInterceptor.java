@@ -113,7 +113,7 @@ public class StatsInterceptor {
         long end = System.nanoTime();
         org.apache.openejb.util.Logger
                 .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
-                .info("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
+                .debug("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PreDestroy() throws NoSuchMethodException {
@@ -127,7 +127,7 @@ public class StatsInterceptor {
         long end = System.nanoTime();
         org.apache.openejb.util.Logger
                 .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
-                .info("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
+                .debug("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
     public Method PostActivate() throws NoSuchMethodException {
