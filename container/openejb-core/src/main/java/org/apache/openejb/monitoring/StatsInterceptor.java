@@ -108,11 +108,10 @@ public class StatsInterceptor {
 
     @PostConstruct
     public void PostConstruct(final InvocationContext invocationContext) throws Exception {
-        long start = System.nanoTime();
+        final long start = System.nanoTime();
         record(invocationContext, PostConstruct());
-        long end = System.nanoTime();
-        org.apache.openejb.util.Logger
-                .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
+        final long end = System.nanoTime();
+        Logger.getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
                 .debug("instance.created", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
@@ -122,11 +121,10 @@ public class StatsInterceptor {
 
     @PreDestroy
     public void PreDestroy(final InvocationContext invocationContext) throws Exception {
-        long start = System.nanoTime();
+        final long start = System.nanoTime();
         record(invocationContext, PreDestroy());
-        long end = System.nanoTime();
-        org.apache.openejb.util.Logger
-                .getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
+        final long end = System.nanoTime();
+        Logger.getInstance(LogCategory.MONITORING, "org.apache.openejb.monitoring")
                 .debug("instance.discarded", invocationContext.getTarget().getClass().getName(), end - start);
     }
 
