@@ -2298,7 +2298,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     Thread.currentThread().setContextClassLoader(old);
                 }
             }
-			
+
             for (final String id : appInfo.containerIds) {
                 removeContainer(id);
             }
