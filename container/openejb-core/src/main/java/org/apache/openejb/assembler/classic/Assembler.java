@@ -2299,6 +2299,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
+            for (final String id : appInfo.containerIds) {
+                removeContainer(id);
+            }
+
             containerSystem.removeAppContext(appInfo.appId);
 
             if (!appInfo.properties.containsKey("tomee.destroying")) { // destroy tomee classloader after resources cleanup
@@ -2547,6 +2551,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
         final Object service = serviceRecipe.create();
 
+        serviceRecipe.getUnsetProperties().remove("id"); // we forced it
+        serviceRecipe.getUnsetProperties().remove("securityService"); // we forced it
         logUnusedProperties(serviceRecipe, serviceInfo);
 
         final Class interfce = serviceInterfaces.get(serviceInfo.service);
