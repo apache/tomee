@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.5-TT.15</version>
+  <version>4.7.5-TT.16</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -87,9 +87,9 @@
   </ciManagement>
 
   <scm>
-    <connection>scm:git:https://github.com/tomitribe/tomee.git</connection>
-    <developerConnection>scm:git:https://github.com/tomitribe/tomee.git</developerConnection>
-    <url>scm:git:https://github.com/tomitribe/tomee.git</url>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
+    <url>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -97,8 +97,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.5-TT.15</openejb.version>
-    <tomee.version>1.7.5-TT.15</tomee.version>
+    <openejb.version>4.7.5-TT.16</openejb.version>
+    <tomee.version>1.7.5-TT.16</tomee.version>
 
     <openjpa.version>2.4.2</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.82</tomcat.version>
 
-    <cxf.version>2.6.17-TT.1</cxf.version>
+    <cxf.version>2.6.17-TomEE</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -164,7 +164,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>0.5</bval.version>
-    <org.apache.activemq.version>5.14.5</org.apache.activemq.version>
+    <org.apache.activemq.version>5.10.2</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -679,11 +679,6 @@
           </releases>
           <id>Codehaus Snapshots</id>
           <url>http://snapshots.repository.codehaus.org/</url>
-        </repository>
-        <repository>
-          <id>tomitribe-all</id>
-          <name>Tomitribe Repository</name>
-          <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
         </repository>
       </repositories>
 
@@ -2104,17 +2099,10 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
-      <id>tomitribe.releases.https</id>
-      <name>Tomitribe Release Distribution Repository</name>
-      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
-    </repository>
-
-    <snapshotRepository>
-      <id>tomitribe.snapshots.https</id>
-      <name>Tomitribe Development Snapshot Repository</name>
-      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
-    </snapshotRepository>
+    <site>
+      <id>openejb-website</id>
+      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
+    </site>
   </distributionManagement>
 
   <reporting>

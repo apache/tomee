@@ -24,7 +24,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.5-TT.15</version>
+    <version>4.7.5-TT.16</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -110,7 +110,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
@@ -125,7 +125,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
       <version>${cxf.version}</version>
       <exclusions>

@@ -149,9 +149,9 @@
 
       <!-- client -->
       <dependency>
-        <groupId>org.apache.cxf</groupId>
+        <groupId>org.apache.tomee.patch</groupId>
         <artifactId>cxf-bundle</artifactId>
-        <version>2.6.17-TT.1</version>
+        <version>2.6.17-TomEE</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -179,8 +179,8 @@
   <properties>
     <xbean.version>3.17</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>1.7.5-TT.15</version.tomee>
-    <version.openejb>4.7.5-TT.15</version.openejb>
+    <version.tomee>1.7.5-TT.16</version.tomee>
+    <version.openejb>4.7.5-TT.16</version.openejb>
   </properties>
 
   <!--
