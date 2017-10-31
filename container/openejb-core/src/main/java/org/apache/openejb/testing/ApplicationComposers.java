@@ -43,6 +43,7 @@ import org.apache.openejb.config.WebModule;
 import org.apache.openejb.config.sys.JSonConfigReader;
 import org.apache.openejb.config.sys.JaxbOpenejb;
 import org.apache.openejb.config.sys.Openejb;
+import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.LocalInitialContextFactory;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
@@ -126,12 +127,13 @@ public final class ApplicationComposers {
 
     public static final String OPENEJB_APPLICATION_COMPOSER_CONTEXT = "openejb.application.composer.context";
     private static final Class[] MODULE_TYPES = {IAnnotationFinder.class, ClassesArchive.class,
-            AppModule.class, WebModule.class, EjbModule.class,
-            Application.class,
-            WebApp.class, EjbJar.class, EnterpriseBean.class,
-            Persistence.class, PersistenceUnit.class,
-            Connector.class, Beans.class,
-            Class[].class, Class.class
+        AppModule.class, WebModule.class, EjbModule.class,
+        Application.class,
+        WebApp.class, EjbJar.class, EnterpriseBean.class,
+        Persistence.class, PersistenceUnit.class,
+        Connector.class, Beans.class,
+        Class[].class, Class.class,
+        Resources.class
     };
 
     static {
@@ -710,6 +712,10 @@ public final class ApplicationComposers {
                     ejbModule.setFinder(new AnnotationFinder((Archive) obj).link());
                     ejbModule.setBeans(new Beans());
                     appModule.getEjbModules().add(ejbModule);
+                } else if (obj instanceof Resources) {
+                    final Resources asResources = Resources.class.cast(obj);
+                    appModule.getResources().addAll(asResources.getResource());
+                    appModule.getContainers().addAll(asResources.getContainer());
                 } else if (obj instanceof AppModule) {
                     // we can probably go further here
                     final AppModule module = (AppModule) obj;
