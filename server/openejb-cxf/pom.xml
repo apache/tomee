@@ -110,7 +110,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee.patch</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
@@ -125,7 +125,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee.patch</groupId>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
@@ -171,4 +171,3 @@
   </pluginRepositories>
 
 </project>
-
