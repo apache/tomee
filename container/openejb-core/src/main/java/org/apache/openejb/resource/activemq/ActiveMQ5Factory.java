@@ -28,6 +28,7 @@ import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterFactory;
 import org.apache.activemq.store.jdbc.JDBCPersistenceAdapter;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
+import org.apache.activemq.usage.SystemUsage;
 import org.apache.activemq.util.IntrospectionSupport;
 import org.apache.activemq.util.URISupport;
 import org.apache.openejb.loader.SystemInstance;
@@ -94,11 +95,23 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                 persistenceAdapter = null;
             }
 
+            final String systemUsage = params.remove("systemUsage");
+            final SystemUsage systemUsageInstance;
+            if ("true".equalsIgnoreCase(systemUsage)) {
+                systemUsageInstance = newSystemUsage(params);
+            } else {
+                systemUsageInstance = null;
+            }
+
             final BrokerPlugin[] plugins = createPlugins(params);
             final URI uri = new URI(cleanUpUri(brokerURI.getRawSchemeSpecificPart(), compositeData.getParameters(), params));
             broker = "broker".equals(uri.getScheme()) ? newDefaultBroker(uri) : BrokerFactory.createBroker(uri);
             if (plugins != null) {
                 broker.setPlugins(plugins);
+            }
+
+            if (systemUsageInstance != null) {
+                broker.setSystemUsage(systemUsageInstance);
             }
             brokers.put(brokerURI, broker);
 
@@ -257,6 +270,45 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
         }
 
         return broker;
+    }
+
+    private SystemUsage newSystemUsage(final Map<String, String> params) {
+        final SystemUsage systemUsage = new SystemUsage();
+
+        {
+            final String memory = params.remove("systemUsage.memory.limit");
+            if (memory != null) {
+                systemUsage.getMemoryUsage().setLimit(Integer.parseInt(memory.trim()));
+            } else {
+                systemUsage.getMemoryUsage().setLimit(1024L * 1024 * 1024);
+            }
+        }
+        {
+            final String memory = params.remove("systemUsage.temp.limit");
+            if (memory != null) {
+                systemUsage.getTempUsage().setLimit(Integer.parseInt(memory.trim()));
+            } else {
+                systemUsage.getTempUsage().setLimit(1024L * 1024 * 1024 * 50);
+            }
+        }
+        {
+            final String memory = params.remove("systemUsage.store.limit");
+            if (memory != null) {
+                systemUsage.getStoreUsage().setLimit(Integer.parseInt(memory.trim()));
+            } else {
+                systemUsage.getStoreUsage().setLimit(1024L * 1024 * 1024 * 100);
+            }
+        }
+        {
+            final String memory = params.remove("systemUsage.scheduler.limit");
+            if (memory != null) {
+                systemUsage.getJobSchedulerUsage().setLimit(Integer.parseInt(memory.trim()));
+            } else {
+                systemUsage.getJobSchedulerUsage().setLimit(1024L * 1024 * 1024);
+            }
+        }
+
+        return systemUsage;
     }
 
     // forking org.apache.activemq.broker.DefaultBrokerFactory.createBroker() to support network connector properties
