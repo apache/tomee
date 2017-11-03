@@ -33,6 +33,7 @@
     <module>moviefun-business-logic</module>
     <module>moviefun-webapp</module>
     <module>moviefun-ear</module>
+    <module>moviefun-functional-tests</module>
   </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
