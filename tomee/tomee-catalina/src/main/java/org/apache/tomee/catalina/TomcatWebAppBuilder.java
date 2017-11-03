@@ -1130,6 +1130,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             return;
         }
 
+        if (shouldNotDeploy(standardContext)) {
+            return;
+        }
+
         final CoreContainerSystem cs = getContainerSystem();
 
         final Assembler a = getAssembler();
@@ -1422,6 +1426,23 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         realms.put(standardContext.getName(), realm);
     }
 
+    private static boolean shouldNotDeploy(StandardContext standardContext) {
+        if (StandardHost.class.isInstance(standardContext.getParent())) {
+            final StandardHost host = StandardHost.class.cast(standardContext.getParent());
+            if (host.getAutoDeploy() && new File(host.getAppBase(), standardContext.getPath()).isDirectory() && (
+                    new File(host.getAppBase(), standardContext.getPath() + ".ear").exists() ||
+                    new File(host.getAppBase(), standardContext.getPath() + ".rar").exists())
+            ) {
+
+                logger.info(String.format("Not deploying exploded directory %s as Java EE artifact exists which will be deployed.",
+                        new File(host.getAppBase(), standardContext.getPath()).getAbsolutePath()));
+
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static File rootPath(final File file) {
         if (file.isDirectory() && file.getName().equals("classes") && file.getParentFile() != null && file.getParentFile().getName().equals("WEB-INF")) {
             return file.getParentFile().getParentFile();
@@ -1569,6 +1590,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     @Override
     public void afterStart(final StandardContext standardContext) {
         if (isIgnored(standardContext)) {
+            return;
+        }
+
+        if (shouldNotDeploy(standardContext)) {
             return;
         }
 
