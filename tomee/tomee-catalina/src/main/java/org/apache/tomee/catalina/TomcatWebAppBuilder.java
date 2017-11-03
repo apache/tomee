@@ -2233,6 +2233,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         }
 
                         appInfo = configurationFactory.configureApplication(appModule);
+                        if (file.isFile() && file.getName().toLowerCase().endsWith(".ear")) {
+                            // this is to prevent any WARs inside the EARs being unpacked in a directory where they'll then be deployed again
+                            appInfo.properties.setProperty("tomcat.unpackWar", "false");
+                        }
 
                         // if this is an unpacked dir, tomcat will pick it up as a webapp so undeploy it first
                         if (file.isDirectory()) {
