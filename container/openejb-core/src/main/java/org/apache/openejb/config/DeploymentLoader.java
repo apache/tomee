@@ -25,6 +25,7 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.jee.Application;
@@ -519,6 +520,22 @@ public class DeploymentLoader implements DeploymentFilterable {
             appModule.getWatchedResources().add(appId);
             if (applicationXmlUrl != null) {
                 appModule.getWatchedResources().add(URLs.toFilePath(applicationXmlUrl));
+            }
+            if (appDescriptors.containsKey(RESOURCES_XML)) {
+                final Map<String, Object> altDd = new HashMap<String, Object>(appDescriptors);
+                ReadDescriptors.readResourcesXml(new org.apache.openejb.config.Module(false) {
+                    @Override
+                    public Map<String, Object> getAltDDs() {
+                        return altDd;
+                    }
+
+                    @Override
+                    public void initResources(final Resources resources) {
+                        appModule.getContainers().addAll(resources.getContainer());
+                        appModule.getResources().addAll(resources.getResource());
+                        appModule.getServices().addAll(resources.getService());
+                    }
+                });
             }
 
             // EJB modules
