@@ -313,7 +313,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
                 final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
                 securityService.associate(localClientIdentity);
             }
-            if (strategy == CLASSLOADER_COPY || getBeanContext().getInterfaceType(interfce) == InterfaceType.BUSINESS_REMOTE) {
+            if (strategy == CLASSLOADER_COPY) {
 
                 IntraVmCopyMonitor.pre(strategy);
                 final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
