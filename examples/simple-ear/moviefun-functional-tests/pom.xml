@@ -58,7 +58,7 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -67,11 +67,6 @@
       <artifactId>moviefun-ear</artifactId>
       <version>${project.version}</version>
       <type>ear</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -86,9 +81,9 @@
       <version>1.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.5-SNAPSHOT</version>
+      <version>4.7.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -104,9 +99,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>7.0.5-SNAPSHOT</version>
+      <version>1.7.5-SNAPSHOT</version>
       <!--<classifier>uber</classifier> -->
       <scope>test</scope>
     </dependency>
@@ -134,9 +129,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
+      <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>7.0.5-SNAPSHOT</version>
+      <version>1.7.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
