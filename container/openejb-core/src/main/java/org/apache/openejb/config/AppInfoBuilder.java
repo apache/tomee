@@ -319,7 +319,15 @@ class AppInfoBuilder {
         }
 
         final ReportValidationResults reportValidationResults = new ReportValidationResults();
-        reportValidationResults.deploy(appModule);
+        try {
+            reportValidationResults.deploy(appModule);
+        } catch (OpenEJBException e) {
+            SystemInstance.killJvm();
+            throw e;
+        }
+        if (appModule.hasFailures() || appModule.hasErrors()) {
+            SystemInstance.killJvm();
+        }
 
         logger.info("config.appLoaded", appInfo.path);
 

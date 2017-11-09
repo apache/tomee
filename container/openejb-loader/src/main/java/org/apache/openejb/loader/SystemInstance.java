@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 /**
  * This class aims to be the one and only static in the entire system
@@ -40,6 +41,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @org.apache.xbean.XBean element="system"
  */
 public final class SystemInstance {
+    private static final Logger logger = Logger.getLogger(SystemInstance.class.getName());
+
     private static final String PROFILE_PROP = "openejb.profile";
     private static final String DEFAULT_PROFILE = "development";
 
@@ -405,5 +408,18 @@ public final class SystemInstance {
 
     public void removeObservers() {
         observerManager.destroy();
+    }
+
+    public static void killJvm() {
+        if (System.getProperty("tomee.kill.jvm.on.deployment.failure") != null) {
+            logger.warning("System property tomee.kill.jvm.on.deployment.failure activated. We will kill the JVM due to deployment failure.");
+            int returnCode = 0;
+            try {
+                returnCode = Integer.parseInt(System.getProperty("tomee.kill.jvm.on.deployment.failure"));
+            } catch (NumberFormatException e) {
+                returnCode = 1;
+            }
+            System.exit(returnCode);
+        }
     }
 }

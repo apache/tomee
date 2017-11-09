@@ -548,10 +548,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 sys.containerSystem.applications.add(appInfo);
 
             } catch (final OpenEJBException alreadyHandled) {
-                if (Boolean.parseBoolean(System.getProperty("tomee.kill.jvm.on.deployment.failure"))) {
-                    logger.warning("System property tomee.kill.jvm.on.deployment.failure activated. We will kill the JVM due to deployment failure.");
-                    System.exit(1);
-                }
                 final DeploymentExceptionManager exceptionManager = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                 if (exceptionManager != null) {
                     exceptionManager.pushDelpoymentException(alreadyHandled);
