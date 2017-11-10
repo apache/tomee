@@ -2888,6 +2888,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (resourceAdapter == null) {
                 throw new OpenEJBException("No existing resource adapter defined with id '" + id + "'.");
             }
+
+            // if the resource adapter looked up is wrapped in a ResourceAdapterReference, unwrap it
+            if (ResourceAdapterReference.class.isInstance(resourceAdapter)) {
+                resourceAdapter = ResourceAdapterReference.class.cast(resourceAdapter).getRa();
+            }
+
             if (!(resourceAdapter instanceof ResourceAdapter)) {
                 throw new OpenEJBException(messages.format("assembler.resourceAdapterNotResourceAdapter", id, resourceAdapter.getClass()));
             }

@@ -92,7 +92,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 // now try to use special keys
                 final Properties overrides = new Properties();
 
-                final MdbContainer mdbContainer = getMdbContainer(ejbDeployment.getContainerId());
+                final MdbContainer mdbContainer = getMdbContainer(ejbDeployment.getContainerId(), appModule.getModuleId());
                 if (mdbContainer != null) {
                     overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.container." + mdbContainer.getContainerID() + ".activation", "EnterpriseBean"));
                     overrides.putAll(ConfigurationFactory.getOverrides(mdbContainer.getProperties(), "activation", "EnterpriseBean"));
@@ -141,7 +141,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return appModule;
     }
 
-    private MdbContainer getMdbContainer(final String containerId) {
+    private MdbContainer getMdbContainer(final String containerId, final String moduleId) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
 
@@ -156,12 +156,17 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
             return null;
         }
 
+        final Container appContainer = containerSystem.getContainer(moduleId + "/" + containerId);
+        if (appContainer != null && MdbContainer.class.isInstance(appContainer)) {
+            return MdbContainer.class.cast(appContainer);
+        }
+
         final Container container = containerSystem.getContainer(containerId);
         if (MdbContainer.class.isInstance(container)) {
             return MdbContainer.class.cast(container);
         }
-        return null;
 
+        return null;
     }
 
 
