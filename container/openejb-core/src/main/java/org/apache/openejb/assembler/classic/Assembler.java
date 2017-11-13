@@ -573,6 +573,14 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             reservedResourceIds.addAll(appInfo.resourceIds);
         }
 
+        final Map<AppInfo, ClassLoader> appInfoClassLoaders = new HashMap<AppInfo, ClassLoader>();
+        final Map<String, ClassLoader> appClassLoaders = new HashMap<String, ClassLoader>();
+
+        for (final AppInfo appInfo : containerSystemInfo.applications) {
+            appInfoClassLoaders.put(appInfo, createAppClassLoader(appInfo));
+            appClassLoaders.put(appInfo.appId, createAppClassLoader(appInfo));
+        }
+
         final Set<String> rIds = new HashSet<>(configInfo.facilities.resources.size());
         for (final ResourceInfo resourceInfo : configInfo.facilities.resources) {
             createResource(configInfo.facilities.services, resourceInfo);
@@ -582,13 +590,41 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final ContainerSystem component = systemInstance.getComponent(ContainerSystem.class);
         if (component != null) {
             postConstructResources(rIds, ParentClassLoaderFinder.Helper.get(), component.getJNDIContext(), null);
-        }else{
+        }else {
             throw new RuntimeException("ContainerSystem has not been initialzed");
         }
 
-        // Containers
+        // Containers - create containers using the application's classloader
+        final Map<String, List<ContainerInfo>> appContainers = new HashMap<String, List<ContainerInfo>>();
+
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
-            createContainer(serviceInfo);
+            List<ContainerInfo> containerInfos = appContainers.get(serviceInfo.originAppName);
+            if (containerInfos == null) {
+                containerInfos = new ArrayList<ContainerInfo>();
+                appContainers.put(serviceInfo.originAppName, containerInfos);
+            }
+
+            containerInfos.add(serviceInfo);
+        }
+
+        final Set<String> apps = appContainers.keySet();
+        for (final String app : apps) {
+            final List<ContainerInfo> containerInfos = appContainers.get(app);
+            final ClassLoader classLoader = appClassLoaders.get(app);
+
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+
+            try {
+                if (classLoader != null) {
+                    Thread.currentThread().setContextClassLoader(classLoader);
+                }
+
+                for (final ContainerInfo containerInfo : containerInfos) {
+                    createContainer(containerInfo);
+                }
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
         }
 
         createJavaGlobal(); // before any deployment bind global to be able to share the same context
@@ -596,7 +632,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         for (final AppInfo appInfo : containerSystemInfo.applications) {
 
             try {
-                createApplication(appInfo, createAppClassLoader(appInfo));
+                createApplication(appInfo, appInfoClassLoaders.get(appInfo)); // use the classloader from the map above
             } catch (final DuplicateDeploymentIdException e) {
                 // already logged.
             } catch (final Throwable e) {
