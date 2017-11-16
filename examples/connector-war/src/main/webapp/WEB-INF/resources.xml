@@ -10,5 +10,6 @@
 
     <Resource id="SampleConnectionFactory" type="org.superbiz.connector.api.SampleConnectionFactory" class-name="org.superbiz.connector.adapter.SampleManagedConnectionFactory">
         ResourceAdapter=SampleResourceAdapter
+        TransactionSupport=none
     </Resource>
 </resources>

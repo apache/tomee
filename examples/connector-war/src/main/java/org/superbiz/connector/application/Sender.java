@@ -49,12 +49,11 @@ public class Sender {
     @Consumes(MediaType.TEXT_PLAIN)
     public void sendMessage(final String message) {
         try {
-            SampleConnectionFactory factory = (SampleConnectionFactory) new InitialContext().lookup("java:comp/env/org.superbiz.connector.application.Sender/cf");
             final SampleConnection connection = cf.getConnection();
             connection.sendMessage(message);
             connection.close();
         } catch (Exception e) {
-            // ignore
+            e.printStackTrace();
         }
     }
 
