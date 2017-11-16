@@ -19,6 +19,6 @@ public class Receiver implements InboundListener {
     
     @Override
     public void receiveMessage(String message) {
-        System.out.println(message);
+        messagesReceived.messageReceived(message);
     }
 }
