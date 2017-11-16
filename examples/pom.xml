@@ -54,6 +54,7 @@
     <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
+    <module>connector-war</module>
     <module>cucumber-jvm</module>
     <module>custom-injection</module>
     <module>datasource-ciphered-password</module>
