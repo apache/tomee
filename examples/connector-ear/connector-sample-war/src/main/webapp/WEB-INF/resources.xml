@@ -1,0 +1,15 @@
+<resources>
+    <Resource id="SampleResourceAdapter" class-name="org.superbiz.connector.adapter.SampleResourceAdapter">
+    </Resource>
+
+    <Container id="SampleMDBContainer" ctype="MESSAGE">
+        ResourceAdapter=SampleResourceAdapter
+        ActivationSpecClass=org.superbiz.connector.adapter.SampleActivationSpec
+        MessageListenerInterface=org.superbiz.connector.api.InboundListener
+    </Container>
+
+    <Resource id="SampleConnectionFactory" type="org.superbiz.connector.api.SampleConnectionFactory" class-name="org.superbiz.connector.adapter.SampleManagedConnectionFactory">
+        ResourceAdapter=SampleResourceAdapter
+        TransactionSupport=none
+    </Resource>
+</resources>

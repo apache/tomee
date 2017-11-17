@@ -14,34 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.connector.application;
+package org.superbiz;
 
-import org.superbiz.connector.api.SampleConnection;
-import org.superbiz.connector.api.SampleConnectionFactory;
+import org.tomitribe.connector.starter.api.SampleConnection;
+import org.tomitribe.connector.starter.api.SampleConnectionFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
+import javax.resource.ResourceException;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Singleton
 @Lock(LockType.READ)
-@Path("")
+@Path("sender")
 public class Sender {
 
     @Resource
     private SampleConnectionFactory cf;
-
-    @Inject
-    private MessagesReceived messagesReceived;
 
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
@@ -50,27 +44,9 @@ public class Sender {
             final SampleConnection connection = cf.getConnection();
             connection.sendMessage(message);
             connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ResourceException e) {
+            // ignore
         }
-    }
-
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getMessages() {
-
-        final StringBuilder sb = new StringBuilder();
-
-        final List<String> messages = this.messagesReceived.getMessagesReceived();
-        for (int i = 0; i < messages.size(); i++) {
-            if (i > 0) {
-                sb.append("\n");
-            }
-
-            sb.append(messages.get(i));
-        }
-
-        return sb.toString();
     }
 
 }
