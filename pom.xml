@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.5-TT.16</version>
+  <version>4.7.5-TT.17</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -97,8 +97,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.5-TT.16</openejb.version>
-    <tomee.version>1.7.5-TT.16</tomee.version>
+    <openejb.version>4.7.5-TT.17</openejb.version>
+    <tomee.version>1.7.5-TT.17</tomee.version>
 
     <openjpa.version>2.4.2</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.82</tomcat.version>
 
-    <cxf.version>2.6.17-TT.1</cxf.version>
+    <cxf.version>2.6.17-TT.2</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -850,6 +850,11 @@
     <!--<url>http://download.java.net/maven/1</url>-->
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
