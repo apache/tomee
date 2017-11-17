@@ -34,7 +34,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.4-TT.1</version>
+  <version>7.0.4-TT.2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -134,7 +134,7 @@
 
     <tomcat.version>8.5.23</tomcat.version>
 
-    <cxf.version>3.1.13</cxf.version>
+    <cxf.version>3.1.14</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>

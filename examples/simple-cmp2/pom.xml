@@ -32,7 +32,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.4-TT.1</tomee.version>
+    <tomee.version>7.0.4-TT.2</tomee.version>
   </properties>
 
   <build>
