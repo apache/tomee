@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.connector.application;
+package org.superbiz.application;
 
-import org.superbiz.connector.api.SampleConnection;
-import org.superbiz.connector.api.SampleConnectionFactory;
+import org.superbiz.connector.starter.api.SampleConnection;
+import org.superbiz.connector.starter.api.SampleConnectionFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Lock;
