@@ -1,16 +1,21 @@
-= TomEE EAP 1.7.5-TT.16
+= TomEE EAP 1.7.5-TT.17
 
 == Downloads
 
-* TomEE EAP 1.7.5-TT.16-plume.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plume.tar.gz
-* TomEE EAP 1.7.5-TT.16-plume.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plume.zip
-* TomEE EAP 1.7.5-TT.16-plus.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plus.tar.gz
-* TomEE EAP 1.7.5-TT.16-plus.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plus.zip
-* TomEE EAP 1.7.5-TT.16-webprofile.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-webprofile.tar.gz
-* TomEE EAP 1.7.5-TT.16-webprofile.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-webprofile.zip
+* TomEE EAP 1.7.5-TT.17-plume.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plume.tar.gz
+* TomEE EAP 1.7.5-TT.17-plume.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plume.zip
+* TomEE EAP 1.7.5-TT.17-plus.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plus.tar.gz
+* TomEE EAP 1.7.5-TT.17-plus.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plus.zip
+* TomEE EAP 1.7.5-TT.17-webprofile.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-webprofile.tar.gz
+* TomEE EAP 1.7.5-TT.17-webprofile.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-webprofile.zip
 
  
 == Change log
+
+=== Changes in TomEE EAP 1.7.5-TT.17
+
+CVE-2017-12624 - Apache CXF web services that process attachments are vulnerable to Denial of Service (DoS) attacks. Message attachment headers that are greater than 300 characters will be rejected by default. This value is configurable
+via the property "attachment-max-header-size".
 
 === Changes in TomEE EAP 1.7.5-TT.16
 
