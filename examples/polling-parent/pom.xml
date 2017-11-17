@@ -61,6 +61,11 @@
       <id>staged-releases</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
