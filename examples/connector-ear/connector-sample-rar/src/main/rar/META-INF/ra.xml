@@ -27,7 +27,7 @@
         <license-required>false</license-required>
     </license>
     <resourceadapter>
-        <resourceadapter-class>org.superbiz.connector.starter.adapter.SampleResourceAdapter</resourceadapter-class>
+        <resourceadapter-class>org.superbiz.connector.adapter.SampleResourceAdapter</resourceadapter-class>
         <config-property>
             <config-property-name>interval</config-property-name>
             <config-property-type>int</config-property-type>
@@ -35,11 +35,11 @@
         </config-property>
         <outbound-resourceadapter>
             <connection-definition>
-                <managedconnectionfactory-class>org.superbiz.connector.starter.adapter.SampleManagedConnectionFactory</managedconnectionfactory-class>
+                <managedconnectionfactory-class>org.superbiz.connector.adapter.SampleManagedConnectionFactory</managedconnectionfactory-class>
                 <connectionfactory-interface>SampleConnectionFactory</connectionfactory-interface>
-                <connectionfactory-impl-class>org.superbiz.connector.starter.adapter.SampleConnectionFactoryImpl</connectionfactory-impl-class>
+                <connectionfactory-impl-class>org.superbiz.connector.adapter.SampleConnectionFactoryImpl</connectionfactory-impl-class>
                 <connection-interface>SampleConnection</connection-interface>
-                <connection-impl-class>org.superbiz.connector.starter.adapter.SampleConnectionImpl</connection-impl-class>
+                <connection-impl-class>org.superbiz.connector.adapter.SampleConnectionImpl</connection-impl-class>
             </connection-definition>
             <transaction-support>NoTransaction</transaction-support>
             <reauthentication-support>false</reauthentication-support>
@@ -47,9 +47,9 @@
         <inbound-resourceadapter>
             <messageadapter>
                 <messagelistener>
-                    <messagelistener-type>org.superbiz.connector.starter.api.InboundListener</messagelistener-type>
+                    <messagelistener-type>org.superbiz.connector.api.InboundListener</messagelistener-type>
                     <activationspec>
-                        <activationspec-class>org.superbiz.connector.starter.adapter.SampleActivationSpec</activationspec-class>
+                        <activationspec-class>org.superbiz.connector.adapter.SampleActivationSpec</activationspec-class>
                     </activationspec>
                 </messagelistener>
             </messageadapter>

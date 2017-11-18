@@ -16,13 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.superbiz.connector.starter.api;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import java.io.Serializable;
+package org.superbiz.connector.api;
 
-public interface SampleConnectionFactory extends Serializable, Referenceable {
-    public SampleConnection getConnection() throws ResourceException;
+public interface SampleConnection {
+    public void sendMessage(final String message);
 
+    public void close();
 }

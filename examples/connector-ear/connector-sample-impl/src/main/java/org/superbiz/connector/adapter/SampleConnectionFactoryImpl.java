@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.superbiz.connector.starter.adapter;
+package org.superbiz.connector.adapter;
 
-import org.superbiz.connector.starter.api.SampleConnection;
-import org.superbiz.connector.starter.api.SampleConnectionFactory;
+import org.superbiz.connector.api.SampleConnection;
+import org.superbiz.connector.api.SampleConnectionFactory;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;

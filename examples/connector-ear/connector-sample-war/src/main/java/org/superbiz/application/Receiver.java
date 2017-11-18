@@ -1,7 +1,7 @@
 package org.superbiz.application;
 
 
-import org.superbiz.connector.starter.api.InboundListener;
+import org.superbiz.connector.api.InboundListener;
 
 import javax.annotation.Resource;
 import javax.ejb.MessageDriven;
