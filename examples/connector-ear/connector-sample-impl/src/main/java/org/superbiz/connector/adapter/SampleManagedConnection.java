@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.superbiz.connector.starter.adapter;
+package org.superbiz.connector.adapter;
 
-import org.superbiz.connector.starter.api.SampleConnection;
+import org.superbiz.connector.api.SampleConnection;
 
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;

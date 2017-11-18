@@ -16,8 +16,8 @@
  */
 package org.superbiz.application;
 
-import org.superbiz.connector.starter.api.SampleConnection;
-import org.superbiz.connector.starter.api.SampleConnectionFactory;
+import org.superbiz.connector.api.SampleConnection;
+import org.superbiz.connector.api.SampleConnectionFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.Lock;

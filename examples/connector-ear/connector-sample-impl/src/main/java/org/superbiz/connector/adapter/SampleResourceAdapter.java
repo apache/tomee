@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.connector.starter.adapter;
+package org.superbiz.connector.adapter;
 
-import org.superbiz.connector.starter.api.InboundListener;
+import org.superbiz.connector.api.InboundListener;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;

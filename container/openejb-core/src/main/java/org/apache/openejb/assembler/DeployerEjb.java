@@ -120,13 +120,10 @@ public class DeployerEjb implements Deployer {
 
 
     private final DeploymentLoader deploymentLoader;
-    private final ConfigurationFactory configurationFactory;
     private final Assembler assembler;
 
     public DeployerEjb() {
         deploymentLoader = new DeploymentLoader();
-        final ConfigurationFactory component = SystemInstance.get().getComponent(ConfigurationFactory.class);
-        configurationFactory = component == null ? new ConfigurationFactory() : component;
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 
@@ -242,17 +239,43 @@ public class DeployerEjb implements Deployer {
                 }
             }
 
+            final OpenEjbConfiguration configuration = new OpenEjbConfiguration();
+            configuration.containerSystem = new ContainerSystemInfo();
+            configuration.facilities = new FacilitiesInfo();
+
+            final ConfigurationFactory configurationFactory = new ConfigurationFactory(false, configuration);
             appInfo = configurationFactory.configureApplication(appModule);
             appInfo.autoDeploy = autoDeploy;
 
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
             }
-
+			
             if (!appInfo.webApps.isEmpty()) {
                 appInfo.properties.setProperty("tomcat.unpackWar", "false");
             }
-            assembler.createApplication(appInfo);
+
+            // create any resources and containers defined in the application itself
+            if (!appInfo.webApps.isEmpty()) {
+            final ClassLoader appClassLoader = assembler.createAppClassLoader(appInfo);
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+                appInfo.properties.setProperty("tomcat.unpackWar", "false");
+            try {
+                Thread.currentThread().setContextClassLoader(appClassLoader);
+
+                for (final ResourceInfo resource : configuration.facilities.resources) {
+                    assembler.createResource(resource);
+                }
+
+                for (final ContainerInfo container : configuration.containerSystem.containers) {
+                    assembler.createContainer(container);
+                }
+
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
+
+            assembler.createApplication(appInfo, appClassLoader);
 
             saveIfNeeded(properties, file, appInfo);
 

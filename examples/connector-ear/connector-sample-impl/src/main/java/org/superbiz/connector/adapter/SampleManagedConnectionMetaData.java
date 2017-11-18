@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.superbiz.connector.starter.adapter;
+package org.superbiz.connector.adapter;
 
 import java.util.logging.Logger;
 

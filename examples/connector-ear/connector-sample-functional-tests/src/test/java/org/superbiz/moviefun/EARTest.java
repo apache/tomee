@@ -16,6 +16,7 @@
  */
 package org.superbiz.moviefun;
 
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,11 +29,16 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.application6.ApplicationDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 @RunAsClient
@@ -42,11 +48,11 @@ public class EARTest {
     public static EnterpriseArchive createDeployment() {
 
         final JavaArchive apiJar = ShrinkWrap.create(JavaArchive.class, "connector-sample-api.jar");
-        apiJar.addPackage("org.superbiz.connector.starter.api");
+        apiJar.addPackage("org.superbiz.connector.api");
         System.out.println("API JAR:\n" + apiJar.toString(true));
 
         final JavaArchive implJar = ShrinkWrap.create(JavaArchive.class, "connector-sample-impl.jar");
-        implJar.addPackage("org.superbiz.connector.starter.adapter");
+        implJar.addPackage("org.superbiz.connector.adapter");
         System.out.println("IMPL JAR:\n" + implJar.toString(true));
 
         final ResourceAdapterArchive rar = ShrinkWrap.create(ResourceAdapterArchive.class,"connector-sample-ra.rar");
@@ -59,8 +65,14 @@ public class EARTest {
         final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "connector-sample-war.war");
         webArchive.addPackage("org.superbiz.application");
 
+        final WebAppDescriptor webAppDescriptor = Descriptors.create(WebAppDescriptor.class);
+        webAppDescriptor.version("3.0");
+
         final File resourcesXml = Basedir.basedir("../connector-sample-war/src/main/webapp/WEB-INF/resources.xml");
         webArchive.addAsWebInfResource(resourcesXml);
+        webArchive.setWebXML(new StringAsset(webAppDescriptor.exportAsString()));
+        webArchive.addAsWebInfResource(resourcesXml);
+        webArchive.addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
         System.out.println("Webapp:\n" + webArchive.toString(true));
 
         final EnterpriseArchive enterpriseArchive = ShrinkWrap.create(EnterpriseArchive.class, "connector-sample.ear");
@@ -74,7 +86,8 @@ public class EARTest {
                 .getOrCreateWeb()
                     .webUri("connector-sample-war.war")
                     .contextRoot("/sample")
-                .up().connector("connector-sample-ra.rar")
+                .up().up()
+                .createModule().connector("connector-sample-ra.rar")
                 .up().libraryDirectory("lib");
 
         enterpriseArchive.setApplicationXML(new StringAsset(applicationXml.exportAsString()));
@@ -88,6 +101,15 @@ public class EARTest {
 
     @Test
     public void testShouldMakeSureWebappIsWorking() throws Exception {
+        final String url = "http://" + deploymentUrl.getHost() + ":" + deploymentUrl.getPort() + "/sample/";
+
+        final WebClient webClient = WebClient.create(url);
+        final Response response = webClient.path("").type(MediaType.TEXT_PLAIN_TYPE).post("Hello, world");
+
+        assertEquals(204, response.getStatus());
+        final String result = webClient.path("").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+
+        assertEquals("Hello, world", result);
 
     }
 
