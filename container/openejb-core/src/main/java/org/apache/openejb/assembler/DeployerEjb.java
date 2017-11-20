@@ -22,9 +22,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -257,9 +255,11 @@ public class DeployerEjb implements Deployer {
 
             // create any resources and containers defined in the application itself
             if (!appInfo.webApps.isEmpty()) {
-            final ClassLoader appClassLoader = assembler.createAppClassLoader(appInfo);
-            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
                 appInfo.properties.setProperty("tomcat.unpackWar", "false");
+            }
+
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            final ClassLoader appClassLoader = assembler.createAppClassLoader(appInfo);
             try {
                 Thread.currentThread().setContextClassLoader(appClassLoader);
 
