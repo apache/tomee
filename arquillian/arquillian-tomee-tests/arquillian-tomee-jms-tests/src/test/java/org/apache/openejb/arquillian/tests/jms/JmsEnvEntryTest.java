@@ -28,16 +28,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import java.net.URL;
 import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public class JmsEnvEntryTest {
-    @ArquillianResource
-    private URL url;
-
     @EJB
     private MessageBean messageBean;
 
