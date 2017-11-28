@@ -80,7 +80,7 @@
       <groupId>org.superbiz</groupId>
       <artifactId>connector-sample-war</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <classifier>classes</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>

@@ -60,6 +60,8 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <attachClasses>true</attachClasses>
+          <classesClassifier>classes</classesClassifier>
         </configuration>
       </plugin>
     </plugins>
