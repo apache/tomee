@@ -284,8 +284,6 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         switch (state) {
             case RELEASED:
                 throw new IllegalStateException("Message endpoint factory has been released");
-            case BEFORE_CALLED:
-                throw new IllegalStateException("Exactally one message must be delivered between beforeDelivery and afterDelivery");
             case NONE:
                 throw new IllegalStateException("afterDelivery may only be called if message delivery began with a beforeDelivery call");
         }
