@@ -20,10 +20,10 @@ import org.superbiz.connector.api.SampleConnection;
 import org.superbiz.connector.api.SampleConnectionFactory;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -40,7 +40,7 @@ public class Sender {
     @Resource
     private SampleConnectionFactory cf;
 
-    @Inject
+    @EJB
     private MessagesReceived messagesReceived;
 
     @POST
