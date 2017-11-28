@@ -22,8 +22,7 @@ import org.apache.openejb.NoSuchApplicationException;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.UndeployException;
-import org.apache.openejb.assembler.classic.AppInfo;
-import org.apache.openejb.assembler.classic.Assembler;
+import org.apache.openejb.assembler.classic.*;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.DeploymentLoader;
@@ -50,11 +49,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.util.*;
 
 import static javax.ejb.TransactionManagementType.BEAN;
 import static org.apache.openejb.config.ConfigurationFactory.ADDITIONAL_DEPLOYMENTS;
@@ -115,13 +110,10 @@ public class DeployerEjb implements Deployer {
 
 
     private final DeploymentLoader deploymentLoader;
-    private final ConfigurationFactory configurationFactory;
     private final Assembler assembler;
 
     public DeployerEjb() {
         deploymentLoader = new DeploymentLoader();
-        final ConfigurationFactory component = SystemInstance.get().getComponent(ConfigurationFactory.class);
-        configurationFactory = component == null ? new ConfigurationFactory() : component;
         assembler = (Assembler) SystemInstance.get().getComponent(org.apache.openejb.spi.Assembler.class);
     }
 
@@ -237,6 +229,11 @@ public class DeployerEjb implements Deployer {
                 }
             }
 
+            final OpenEjbConfiguration configuration = new OpenEjbConfiguration();
+            configuration.containerSystem = new ContainerSystemInfo();
+            configuration.facilities = new FacilitiesInfo();
+
+            final ConfigurationFactory configurationFactory = new ConfigurationFactory(false, configuration);
             appInfo = configurationFactory.configureApplication(appModule);
             appInfo.autoDeploy = autoDeploy;
 
@@ -244,7 +241,27 @@ public class DeployerEjb implements Deployer {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
             }
 
-            assembler.createApplication(appInfo);
+            // create any resources and containers defined in the application itself
+
+            final ClassLoader appClassLoader = assembler.createAppClassLoader(appInfo);
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+
+            try {
+                Thread.currentThread().setContextClassLoader(appClassLoader);
+
+                for (final ResourceInfo resource : configuration.facilities.resources) {
+                    assembler.createResource(resource);
+                }
+
+                for (final ContainerInfo container : configuration.containerSystem.containers) {
+                    assembler.createContainer(container);
+                }
+
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
+
+            assembler.createApplication(appInfo, appClassLoader);
 
             saveIfNeeded(properties, file, appInfo);
 
