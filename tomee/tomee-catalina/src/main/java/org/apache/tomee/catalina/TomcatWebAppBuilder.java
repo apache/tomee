@@ -1922,6 +1922,11 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
      */
     @Override
     public void beforeStop(final StandardContext standardContext) {
+        // if it failed to deploy and we have the kill jvm flag on, simply exit the system
+        if (LifecycleState.FAILED.equals(standardContext.getState())) {
+            SystemInstance.killJvm();
+        }
+
         // if it is not our custom loader clean up now otherwise wait afterStop
         if (!(standardContext.getLoader() instanceof LazyStopLoader)) {
             jsfClasses.remove(standardContext.getLoader().getClassLoader());
