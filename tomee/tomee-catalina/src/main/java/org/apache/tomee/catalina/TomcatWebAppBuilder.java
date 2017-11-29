@@ -1426,7 +1426,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         realms.put(standardContext.getName(), realm);
     }
 
-    private static boolean shouldNotDeploy(StandardContext standardContext) {
+    private static boolean shouldNotDeploy(final StandardContext standardContext) {
         if (StandardHost.class.isInstance(standardContext.getParent())) {
             final StandardHost host = StandardHost.class.cast(standardContext.getParent());
             if (host.getAutoDeploy() && new File(host.getAppBase(), standardContext.getPath()).isDirectory() && (
