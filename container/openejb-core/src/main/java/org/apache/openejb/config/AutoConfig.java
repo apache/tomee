@@ -2345,7 +2345,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             //
 
             for (final ContainerInfo containerInfo : containerInfos) {
-                if (!MdbContainerInfo.class.isInstance(containerInfo)) continue;
+                if (!MdbContainerInfo.class.isInstance(containerInfo)) {
+                    continue;
+                }
+                
                 final MdbContainerInfo mdbContainerInfo = MdbContainerInfo.class.cast(containerInfo);
                 final String messageListenerInterface = mdbContainerInfo.properties.getProperty("MessageListenerInterface");
                 if (messageListenerInterface != null) {

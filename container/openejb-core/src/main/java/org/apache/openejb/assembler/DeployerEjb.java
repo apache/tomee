@@ -248,7 +248,7 @@ public class DeployerEjb implements Deployer {
             if (properties != null && properties.containsKey(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP)) {
                 appInfo.appId = properties.getProperty(OPENEJB_DEPLOYER_FORCED_APP_ID_PROP);
             }
-			
+
             if (!appInfo.webApps.isEmpty()) {
                 appInfo.properties.setProperty("tomcat.unpackWar", "false");
             }
