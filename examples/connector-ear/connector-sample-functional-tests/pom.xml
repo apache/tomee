@@ -115,19 +115,19 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-jaxrs</artifactId>
       <version>${tomee.version}</version>
       <scope>test</scope>
