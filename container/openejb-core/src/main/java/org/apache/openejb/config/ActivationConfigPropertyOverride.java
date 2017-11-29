@@ -215,7 +215,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         private final String containerId;
         private final Properties properties;
 
-        public MdbContainerDetails(String containerId, Properties properties) {
+        public MdbContainerDetails(final String containerId, final Properties properties) {
             this.containerId = containerId;
             this.properties = properties;
         }
