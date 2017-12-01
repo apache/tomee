@@ -168,6 +168,7 @@ public class StackHandler extends DefaultHandler {
             attributes.add("constructor");
             attributes.add("factory-name");
             attributes.add("classpath");
+            attributes.add("properties-provider");
             return attributes;
         }
 
