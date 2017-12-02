@@ -187,6 +187,10 @@ public class StackHandler extends DefaultHandler {
                 service.setClasspathAPI(attributes.getValue("classpath-api"));
             }
 
+            if (attributes.getValue("properties-provider") != null) {
+                service.setPropertiesProvider(attributes.getValue("properties-provider"));
+            }
+
             checkAttributes(attributes, getAttributes());
         }
 
