@@ -155,6 +155,10 @@ public class StackHandler extends DefaultHandler {
                 service.setClasspath(attributes.getValue("classpath"));
             }
 
+            if (attributes.getValue("properties-provider") != null) {
+                service.setPropertiesProvider(attributes.getValue("properties-provider"));
+            }
+
             checkAttributes(attributes, getAttributes());
         }
 
@@ -197,6 +201,9 @@ public class StackHandler extends DefaultHandler {
             service.setPostConstruct(attributes.getValue("post-construct"));
             service.setPreDestroy(attributes.getValue("pre-destroy"));
             service.setPropertiesProvider(attributes.getValue("property-provider"));
+            if (service.getPropertiesProvider() == null) {
+                service.setPropertiesProvider(attributes.getValue("properties-provider"));
+            }
 
             final String aliases = attributes.getValue("aliases");
             if (aliases != null) {
