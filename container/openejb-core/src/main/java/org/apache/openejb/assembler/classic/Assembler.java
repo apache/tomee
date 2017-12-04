@@ -2562,6 +2562,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             for (final String id : appInfo.containerIds) {
                 removeContainer(id);
             }
+            for (final ContainerInfo containerInfo : appInfo.containers) {
+                removeContainer(containerInfo.id);
+            }
+
             containerSystem.removeAppContext(appInfo.appId);
 
             if (!appInfo.properties.containsKey("tomee.destroying")) { // destroy tomee classloader after resources cleanup
