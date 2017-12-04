@@ -20,8 +20,8 @@ package org.apache.openejb.config;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -183,13 +183,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     @Override
     public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
-        final AppResources appResources = new AppResources(appModule);
+        final List<ContainerInfo> containerInfos = ContainerUtils.getContainerInfos(appModule, configFactory);
+        final AppResources appResources = new AppResources(appModule, containerInfos);
 
         appResources.dump();
 
         processApplicationResources(appModule);
-        processApplicationContainers(appModule, appResources);
-
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
         }
@@ -886,25 +885,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 }
             }
 
-        }
-    }
-
-    private void processApplicationContainers(final AppModule module, final AppResources appResources) throws OpenEJBException {
-        if (module.getContainers().isEmpty()) {
-            return;
-        }
-
-        final String prefix = module.getModuleId() + "/";
-        for (final Container container : module.getContainers()) {
-            if (container.getId() == null) {
-                throw new IllegalStateException("a container can't get a null id: " + container.getType() + " from " + module.getModuleId());
-            }
-            if (!container.getId().startsWith(prefix)) {
-                container.setId(prefix + container.getId());
-            }
-            final ContainerInfo containerInfo = configFactory.createContainerInfo(container);
-            configFactory.install(containerInfo);
-            appResources.addContainer(containerInfo);
         }
     }
 
@@ -2292,14 +2272,31 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         public AppResources() {
         }
 
-        public AppResources(final AppModule appModule) {
-
+        public AppResources(final AppModule appModule, final List<ContainerInfo> containerInfos) {
+            this.containerInfos.addAll(containerInfos);
             this.appId = appModule.getModuleId();
 
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
             // the id generation code in ConfigurationFactory.configureApplication(AppModule appModule)
             //
+
+            for (final ContainerInfo containerInfo : containerInfos) {
+                if (!MdbContainerInfo.class.isInstance(containerInfo)) {
+                    continue;
+                }
+
+                final MdbContainerInfo mdbContainerInfo = MdbContainerInfo.class.cast(containerInfo);
+                final String messageListenerInterface = mdbContainerInfo.properties.getProperty("MessageListenerInterface");
+                if (messageListenerInterface != null) {
+                    List<String> containerIds = containerIdsByType.get(messageListenerInterface);
+                    if (containerIds == null) {
+                        containerIds = new ArrayList<String>();
+                        containerIdsByType.put(messageListenerInterface, containerIds);
+                    }
+                    containerIds.add(containerInfo.id);
+                }
+            }
 
             for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
                 final Connector connector = connectorModule.getConnector();

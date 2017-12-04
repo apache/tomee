@@ -30,4 +30,13 @@
   <properties>
     <profile-under-test>plus</profile-under-test>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>2.6.17</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
