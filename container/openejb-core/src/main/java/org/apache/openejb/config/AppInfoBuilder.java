@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
@@ -144,6 +145,7 @@ class AppInfoBuilder {
         this.buildPojoConfiguration(appModule, appInfo);
 
         this.buildAppResources(appModule, appInfo);
+        this.buildAppContainers(appModule, appInfo);
         this.buildAppServices(appModule, appInfo);
 
         //
@@ -363,6 +365,15 @@ class AppInfoBuilder {
                 info.containerIds.add(def.getId());
             }
         }
+    }
+
+    private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
+        final List<ContainerInfo> containerInfos = ContainerUtils.getContainerInfos(module, configFactory);
+        if (containerInfos == null) {
+            return;
+        }
+
+        info.containers.addAll(containerInfos);
     }
 
     private void buildClientModules(final AppModule appModule, final AppInfo appInfo, final JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {

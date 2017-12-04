@@ -22,7 +22,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -184,16 +183,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     @Override
     public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
-        final List<ContainerInfo> containerInfos = processApplicationContainers(appModule);
+        final List<ContainerInfo> containerInfos = ContainerUtils.getContainerInfos(appModule, configFactory);
         final AppResources appResources = new AppResources(appModule, containerInfos);
 
         appResources.dump();
 
         processApplicationResources(appModule);
-        for (final ContainerInfo containerInfo : containerInfos) {
-            configFactory.install(containerInfo);
-        }
-
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
         }
@@ -891,29 +886,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
         }
-    }
-
-    private List<ContainerInfo> processApplicationContainers(final AppModule module) throws OpenEJBException {
-        if (module.getContainers().isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        final List<ContainerInfo> containerInfos = new ArrayList<ContainerInfo>();
-
-        final String prefix = module.getModuleId() + "/";
-        for (final Container container : module.getContainers()) {
-            if (container.getId() == null) {
-                throw new IllegalStateException("a container can't get a null id: " + container.getType() + " from " + module.getModuleId());
-            }
-            if (!container.getId().startsWith(prefix)) {
-                container.setId(prefix + container.getId());
-            }
-            final ContainerInfo containerInfo = configFactory.createContainerInfo(container);
-            containerInfo.originAppName = module.getModuleId();
-            containerInfos.add(containerInfo);
-        }
-
-        return containerInfos;
     }
 
     private void processApplicationResources(final AppModule module) throws OpenEJBException {

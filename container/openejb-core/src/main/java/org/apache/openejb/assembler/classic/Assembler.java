@@ -744,6 +744,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // This is a conflict we fail to handle.
         this.checkForDuplicates(appInfo);
 
+        final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(classLoader);
+            for (final ContainerInfo container : appInfo.containers) {
+                createContainer(container);
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldCl);
+        }
+
         //Construct the global and app jndi contexts for this app
         final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
 
@@ -2337,6 +2347,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             for (final String id : appInfo.containerIds) {
                 removeContainer(id);
+            }
+
+            for (final ContainerInfo containerInfo : appInfo.containers) {
+                removeContainer(containerInfo.id);
             }
 
             containerSystem.removeAppContext(appInfo.appId);
