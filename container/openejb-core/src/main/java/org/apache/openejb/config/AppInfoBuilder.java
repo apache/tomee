@@ -368,15 +368,12 @@ class AppInfoBuilder {
     }
 
     private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
-        final List<ContainerInfo> containerInfos = getContainerInfos(module);
-        if (containerInfos == null) return;
-
+        final List<ContainerInfo> containerInfos = ContainerUtils.getContainerInfos(module, configFactory);
+        if (containerInfos == null) {
+            return;
+        }
 
         info.containers.addAll(containerInfos);
-    }
-
-    private List<ContainerInfo> getContainerInfos(AppModule module) throws OpenEJBException {
-        return ContainerUtils.getContainerInfos(module, configFactory);
     }
 
     private void buildClientModules(final AppModule appModule, final AppInfo appInfo, final JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {
