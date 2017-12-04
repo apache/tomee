@@ -790,6 +790,16 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 throw new DuplicateDeploymentIdException(message);
             }
 
+            final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(classLoader);
+                for (final ContainerInfo container : appInfo.containers) {
+                    createContainer(container);
+                }
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCl);
+            }
+
             //Construct the global and app jndi contexts for this app
             final InjectionBuilder injectionBuilder = new InjectionBuilder(classLoader);
 
