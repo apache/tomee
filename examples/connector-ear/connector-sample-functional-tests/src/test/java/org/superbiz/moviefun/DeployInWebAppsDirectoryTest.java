@@ -102,10 +102,10 @@ public class DeployInWebAppsDirectoryTest {
     @Test
     public void test() throws Exception {
         final RemoteTomEEConfiguration configuration = new RemoteTomEEConfiguration();
-        configuration.setGroupId("org.apache.openejb");
+        configuration.setGroupId("org.apache.tomee");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("1.7.6-SNAPSHOT");
+        configuration.setVersion("7.0.5-SNAPSHOT");
 //        configuration.setDebug(true);
         configuration.setHttpPort(-1);
 
