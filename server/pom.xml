@@ -23,7 +23,7 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.5-TT.17</version>
+    <version>4.7.5-TT.18</version>
   </parent>
 
   <artifactId>server</artifactId>

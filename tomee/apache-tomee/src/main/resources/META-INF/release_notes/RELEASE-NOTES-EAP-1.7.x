@@ -1,16 +1,12 @@
-= TomEE EAP 1.7.5-TT.17
+= TomEE EAP 1.7.5-TT.18
 
-== Downloads
-
-* TomEE EAP 1.7.5-TT.17-plume.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plume.tar.gz
-* TomEE EAP 1.7.5-TT.17-plume.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plume.zip
-* TomEE EAP 1.7.5-TT.17-plus.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plus.tar.gz
-* TomEE EAP 1.7.5-TT.17-plus.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-plus.zip
-* TomEE EAP 1.7.5-TT.17-webprofile.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-webprofile.tar.gz
-* TomEE EAP 1.7.5-TT.17-webprofile.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.17-webprofile.zip
-
- 
 == Change log
+
+=== Changes in TomEE EAP 1.7.5-TT.18
+
+TOMEE-2145 - fix double deploy issue when deploying an EAR from the webapps directory
+TOMEE-2149 - Allow beforeDelivery/afterDelivery calls with message delivery in between, as per JSR-322 section 13.5.6
+TOMEE-2151 - Use correct classloader for creating application resources specified in resources.xml. Added examples and arquillian tests
 
 === Changes in TomEE EAP 1.7.5-TT.17
 

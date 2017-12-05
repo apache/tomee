@@ -17,8 +17,13 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
+import org.apache.activemq.ra.ActiveMQActivationSpec;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
+import org.apache.openejb.config.sys.Container;
+import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.oejb2.AuthMethodType;
@@ -26,6 +31,7 @@ import org.apache.openejb.jee.oejb2.TransportGuaranteeType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 
+import javax.jms.MessageListener;
 import java.util.List;
 import java.util.Properties;
 
@@ -144,5 +150,28 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals("CONFIDENTIAL", info.transportGuarantee);
         assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.in.action"));
         assertEquals("Timestamp", portInfo.properties.getProperty("wss4j.out.action"));
+    }
+
+    public void testShouldCreateContainer() throws Exception {
+        final EjbJar ejbJar = new EjbJar();
+        final OpenejbJar openejbJar = new OpenejbJar();
+
+        final EjbModule ejbModule = new EjbModule(ejbJar, openejbJar);
+
+        final AppModule appModule = new AppModule(ejbModule);
+        appModule.getContainers().add(new Container("my-container", "MESSAGE", null));
+
+        final AppInfo appInfo = new AppInfoBuilder(new ConfigurationFactory()).build(appModule);
+        assertEquals(1, appInfo.containers.size());
+        final ContainerInfo containerInfo = appInfo.containers.get(0);
+        assertEquals(appInfo.appId + "/my-container", containerInfo.id);
+        assertEquals(1, containerInfo.types.size());
+        assertEquals("MESSAGE", containerInfo.types.get(0));
+        assertEquals(MdbContainer.class.getName(), containerInfo.className);
+        assertEquals("Default JMS Resource Adapter", containerInfo.properties.get("ResourceAdapter"));
+        assertEquals(MessageListener.class.getName(), containerInfo.properties.get("MessageListenerInterface"));
+        assertEquals(ActiveMQActivationSpec.class.getName(), containerInfo.properties.get("ActivationSpecClass"));
+        assertEquals("10", containerInfo.properties.get("InstanceLimit"));
+        assertEquals("true", containerInfo.properties.get("FailOnUnknownActivationSpec"));
     }
 }
