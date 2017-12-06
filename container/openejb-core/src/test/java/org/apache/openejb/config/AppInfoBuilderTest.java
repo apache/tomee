@@ -17,7 +17,6 @@
 package org.apache.openejb.config;
 
 import junit.framework.TestCase;
-import org.apache.activemq.ra.ActiveMQActivationSpec;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -30,6 +29,7 @@ import org.apache.openejb.jee.oejb2.AuthMethodType;
 import org.apache.openejb.jee.oejb2.TransportGuaranteeType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.resource.activemq.TomEEMessageActivationSpec;
 
 import javax.jms.MessageListener;
 import java.util.List;
@@ -170,7 +170,7 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals(MdbContainer.class.getName(), containerInfo.className);
         assertEquals("Default JMS Resource Adapter", containerInfo.properties.get("ResourceAdapter"));
         assertEquals(MessageListener.class.getName(), containerInfo.properties.get("MessageListenerInterface"));
-        assertEquals(ActiveMQActivationSpec.class.getName(), containerInfo.properties.get("ActivationSpecClass"));
+        assertEquals(TomEEMessageActivationSpec.class.getName(), containerInfo.properties.get("ActivationSpecClass"));
         assertEquals("10", containerInfo.properties.get("InstanceLimit"));
         assertEquals("true", containerInfo.properties.get("FailOnUnknownActivationSpec"));
     }
