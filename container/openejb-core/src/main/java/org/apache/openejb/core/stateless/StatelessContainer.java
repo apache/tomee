@@ -27,6 +27,7 @@ import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.instance.InstanceManager;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -159,7 +160,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
         final ThreadContext oldCallContext = ThreadContext.enter(callContext);
 
-        Instance bean = null;
+        InstanceManager.Instance bean = null;
         final CurrentCreationalContext currentCreationalContext = beanContext.get(CurrentCreationalContext.class);
 
         try {
@@ -210,7 +211,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
     }
 
     @SuppressWarnings("ThrowFromFinallyBlock")
-    private Object _invoke(final Method callMethod, final Method runMethod, final Object[] args, final Instance instance, final ThreadContext callContext, final InterfaceType type)
+    private Object _invoke(final Method callMethod, final Method runMethod, final Object[] args, final InstanceManager.Instance instance, final ThreadContext callContext, final InterfaceType type)
         throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
@@ -255,7 +256,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
         return returnValue;
     }
 
-    private Object invokeWebService(final Object[] args, final BeanContext beanContext, final Method runMethod, final Instance instance) throws Exception {
+    private Object invokeWebService(final Object[] args, final BeanContext beanContext, final Method runMethod, final InstanceManager.Instance instance) throws Exception {
         if (args.length < 2) {
             throw new IllegalArgumentException("WebService calls must follow format {messageContext, interceptor, [arg...]}.");
         }
