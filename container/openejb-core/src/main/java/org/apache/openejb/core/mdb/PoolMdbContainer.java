@@ -29,6 +29,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.stateless.StatelessInstanceManager;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.loader.Options;
@@ -39,8 +40,11 @@ import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.DaemonThreadFactory;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.apache.openejb.util.Pool;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
@@ -78,6 +82,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static javax.management.MBeanOperationInfo.ACTION;
@@ -86,7 +91,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTrans
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
-public class MdbContainer implements RpcContainer, BaseMdbContainer {
+public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<>();
@@ -102,16 +107,27 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
     private final Class activationSpecClass;
     private final int instanceLimit;
     private final boolean failOnUnknownActivationSpec;
-
+    private final MdbInstanceManager instanceManager;
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
     private final Properties properties = new Properties();
 
-    public MdbContainer(final Object containerID, final SecurityService securityService, final ResourceAdapter resourceAdapter,
-                        final Class messageListenerInterface, final Class activationSpecClass, final int instanceLimit,
-                        final boolean failOnUnknownActivationSpec) {
+    public PoolMdbContainer(final Object containerID,
+                            final SecurityService securityService,
+                            final ResourceAdapter resourceAdapter,
+                            final Class messageListenerInterface,
+                            final Class activationSpecClass,
+                            final int instanceLimit,
+                            final boolean failOnUnknownActivationSpec,
+                            final Duration accessTimeout,
+                            final Duration closeTimeout,
+                            final Pool.Builder poolBuilder,
+                            final int callbackThreads,
+                            final boolean useOneSchedulerThreadByBean,
+                            final int evictionThreads
+            ) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
@@ -121,40 +137,54 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
+        this.instanceManager = new MdbInstanceManager(
+                securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads,
+                useOneSchedulerThreadByBean ?
+                        null :
+                        Executors.newScheduledThreadPool(Math.max(evictionThreads, 1), new DaemonThreadFactory(containerID)));
     }
 
+    @Override
     public BeanContext[] getBeanContexts() {
         return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
+    @Override
     public BeanContext getBeanContext(final Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
+    @Override
     public ContainerType getContainerType() {
         return ContainerType.MESSAGE_DRIVEN;
     }
 
+    @Override
     public Object getContainerID() {
         return containerID;
     }
 
+    @Override
     public ResourceAdapter getResourceAdapter() {
         return resourceAdapter;
     }
 
+    @Override
     public Class getMessageListenerInterface() {
         return messageListenerInterface;
     }
 
+    @Override
     public Class getActivationSpecClass() {
         return activationSpecClass;
     }
 
+    @Override
     public Properties getProperties() {
         return properties;
     }
 
+    @Override
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final Object deploymentId = beanContext.getDeploymentID();
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
@@ -162,6 +192,9 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
                     beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
                     messageListenerInterface);
         }
+
+
+
 
         // create the activation spec
         final ActivationSpec activationSpec = createActivationSpec(beanContext);
@@ -319,6 +352,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public void start(final BeanContext info) throws OpenEJBException {
         final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
@@ -326,10 +360,12 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public void stop(final BeanContext info) throws OpenEJBException {
         info.stop();
     }
 
+    @Override
     public void undeploy(final BeanContext beanContext) throws OpenEJBException {
         if (!(beanContext instanceof BeanContext)) {
             return;
@@ -371,6 +407,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public Object invoke(final Object deploymentId, final InterfaceType type, final Class callInterface, final Method method, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = getBeanContext(deploymentId);
 
@@ -393,6 +430,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public void beforeDelivery(final BeanContext deployInfo, final Object instance, final Method method, final XAResource xaResource) throws SystemException {
         // intialize call context
         final ThreadContext callContext = new ThreadContext(deployInfo, null);
@@ -424,6 +462,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public Object invoke(final Object instance, final Method method, final InterfaceType type, Object... args) throws SystemException, ApplicationException {
         if (args == null) {
             args = NO_ARGS;
@@ -513,6 +552,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         throw new AssertionError("Should not get here");
     }
 
+    @Override
     public void afterDelivery(final Object instance) throws SystemException {
         // get the mdb call context
         final ThreadContext callContext = ThreadContext.getThreadContext();
@@ -528,6 +568,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
+    @Override
     public void release(final BeanContext deployInfo, final Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
