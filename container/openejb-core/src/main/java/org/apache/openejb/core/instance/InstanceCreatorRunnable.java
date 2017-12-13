@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.core.instance;
 
+import org.apache.openejb.core.mdb.Instance;
+
 public final class InstanceCreatorRunnable implements Runnable {
     private final long maxAge;
     private final long iteration;
@@ -36,7 +38,7 @@ public final class InstanceCreatorRunnable implements Runnable {
 
     @Override
     public void run() {
-        final InstanceManager.Instance obj = supplier.create();
+        final Instance obj = supplier.create();
         if (obj != null) {
             final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
             data.getPool().add(obj, offset);
