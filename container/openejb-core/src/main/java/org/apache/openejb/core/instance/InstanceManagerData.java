@@ -24,7 +24,6 @@ import org.apache.openejb.util.Pool;
 import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 import java.util.concurrent.TimeoutException;
 
 public class InstanceManagerData  {
