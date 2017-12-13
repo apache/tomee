@@ -41,6 +41,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.NamingException;
+import java.io.Flushable;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -84,16 +86,25 @@ public class StatelessInstanceManager extends InstanceManager {
         builder.setExecutor(executor);
         builder.setScheduledExecutor(scheduledExecutor);
 
-        final InstanceManagerData data = new InstanceManagerData(builder.build(), accessTimeout, closeTimeout,
-                securityService);
+
+        final InstanceManagerData data = new InstanceManagerData(builder.build(), accessTimeout, closeTimeout);
+
+        StatelessContext statelessContext = new StatelessContext(securityService, new Flushable() {
+            @Override
+            public void flush() throws IOException {
+                data.flush();
+            }
+        });
+        data.setBaseContext(statelessContext);
+
         beanContext.setContainerData(data);
 
-        beanContext.set(EJBContext.class, data.getSessionContext());
+        beanContext.set(EJBContext.class, data.getBaseContext());
 
         try {
             final Context context = beanContext.getJndiEnc();
-            context.bind("comp/EJBContext", data.getSessionContext());
-            context.bind("comp/WebServiceContext", new EjbWsContext(data.getSessionContext()));
+            context.bind("comp/EJBContext", data.getBaseContext());
+            context.bind("comp/WebServiceContext", new EjbWsContext(statelessContext));
             context.bind("comp/TimerService", new TimerServiceWrapper());
         } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
