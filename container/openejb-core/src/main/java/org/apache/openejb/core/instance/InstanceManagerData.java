@@ -24,22 +24,21 @@ import org.apache.openejb.util.Pool;
 import javax.management.ObjectName;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.TimeoutException;
 
-public class InstanceManagerData {
+public class InstanceManagerData  {
 
     private final Pool<InstanceManager.Instance> pool;
     private final Duration accessTimeout;
     private final Duration closeTimeout;
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
-    private final BaseContext sessionContext;
+    private BaseContext sessionContext;
 
-    public InstanceManagerData(final Pool<InstanceManager.Instance> pool, final Duration accessTimeout, final Duration closeTimeout,
-                               BaseContext sessionContext) {
+    public InstanceManagerData(final Pool<InstanceManager.Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
         this.pool = pool;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
-        this.sessionContext = sessionContext;
     }
 
     public Duration getAccessTimeout() {
@@ -74,5 +73,7 @@ public class InstanceManagerData {
         return jmxNames;
     }
 
-
+    public void setSessionContext(BaseContext sessionContext) {
+        this.sessionContext = sessionContext;
+    }
 }
