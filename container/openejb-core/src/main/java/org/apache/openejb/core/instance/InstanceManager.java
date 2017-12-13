@@ -213,7 +213,7 @@ public abstract class InstanceManager {
      */
     public Instance getInstance(final ThreadContext callContext) throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
-        final Data data = (Data) beanContext.getContainerData();
+        final InstanceManagerData data = (InstanceManagerData) beanContext.getContainerData();
 
         Instance instance = null;
         try {
@@ -224,7 +224,7 @@ public abstract class InstanceManager {
                 instance.setPoolEntry(entry);
             }
         } catch (final TimeoutException e) {
-            final String msg = "No instances available in Stateless Session Bean pool.  Waited " + data.accessTimeout.toString();
+            final String msg = "No instances available in Stateless Session Bean pool.  Waited " + data.getAccessTimeout().toString();
             final ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException(msg);
             timeoutException.fillInStackTrace();
             throw new ApplicationException(timeoutException);
@@ -277,7 +277,7 @@ public abstract class InstanceManager {
 
         final Instance instance = Instance.class.cast(bean);
         final BeanContext beanContext = callContext.getBeanContext();
-        final Data data = (Data) beanContext.getContainerData();
+        final InstanceManagerData data = (InstanceManagerData) beanContext.getContainerData();
         final Pool<Instance> pool = data.getPool();
 
         if (instance.getPoolEntry() != null) {
@@ -302,7 +302,7 @@ public abstract class InstanceManager {
 
         final Instance instance = Instance.class.cast(bean);
         final BeanContext beanContext = callContext.getBeanContext();
-        final Data data = (Data) beanContext.getContainerData();
+        final InstanceManagerData data = (InstanceManagerData) beanContext.getContainerData();
 
         if (null != data) {
             final Pool<Instance> pool = data.getPool();
@@ -354,13 +354,13 @@ public abstract class InstanceManager {
     }
 
     public void undeploy(final BeanContext beanContext) {
-        final Data data = (Data) beanContext.getContainerData();
+        final InstanceManagerData data = (InstanceManagerData) beanContext.getContainerData();
         if (data == null) {
             return;
         }
 
         final MBeanServer server = LocalMBeanServer.get();
-        for (final ObjectName objectName : data.jmxNames) {
+        for (final ObjectName objectName : data.getJmxNames()) {
             try {
                 server.unregisterMBean(objectName);
             } catch (final Exception e) {
@@ -380,77 +380,6 @@ public abstract class InstanceManager {
         beanContext.setContainerData(null);
     }
 
-    public final class Data {
-        private final Pool<Instance> pool;
-        private final Duration accessTimeout;
-        private final Duration closeTimeout;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
-        private final SessionContext sessionContext;
-
-        public Data(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
-            this.pool = pool;
-            this.accessTimeout = accessTimeout;
-            this.closeTimeout = closeTimeout;
-            this.sessionContext = new StatelessContext(securityService, new Flushable() {
-                @Override
-                public void flush() throws IOException {
-                    getPool().flush();
-                }
-            });
-        }
-
-        public Duration getAccessTimeout() {
-            return accessTimeout;
-        }
-
-        public Pool<Instance>.Entry poolPop() throws InterruptedException, TimeoutException {
-            return pool.pop(accessTimeout.getTime(), accessTimeout.getUnit());
-        }
-
-        public Pool<Instance> getPool() {
-            return pool;
-        }
-
-        public boolean closePool() throws InterruptedException {
-            return pool.close(closeTimeout.getTime(), closeTimeout.getUnit());
-        }
-
-        public ObjectName add(final ObjectName name) {
-            jmxNames.add(name);
-            return name;
-        }
-
-        public SessionContext getSessionContext() {
-            return sessionContext;
-        }
-    }
-
-    public final class InstanceCreatorRunnable implements Runnable {
-        private final long maxAge;
-        private final long iteration;
-        private final double maxAgeOffset;
-        private final long min;
-        private final Data data;
-        private final StatelessSupplier supplier;
-
-        public InstanceCreatorRunnable(final long maxAge, final long iteration, final long min, final double maxAgeOffset, final Data data, final StatelessSupplier supplier) {
-            this.maxAge = maxAge;
-            this.iteration = iteration;
-            this.min = min;
-            this.maxAgeOffset = maxAgeOffset;
-            this.data = data;
-            this.supplier = supplier;
-        }
-
-        @Override
-        public void run() {
-            final Instance obj = supplier.create();
-            if (obj != null) {
-                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
-                data.getPool().add(obj, offset);
-            }
-        }
-    }
 
     /**
      * @version $Rev$ $Date$
