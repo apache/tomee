@@ -25,7 +25,7 @@ import javax.resource.spi.ResourceAdapter;
 public class MdbContainerFactory {
 
 
-    private Object containerID;
+    private Object id;
     private SecurityService securityService;
     private ResourceAdapter resourceAdapter;
     private Class messageListenerInterface;
@@ -40,8 +40,8 @@ public class MdbContainerFactory {
     private int evictionThreads = 1;
 
 
-    public void setContainerID(Object containerID) {
-        this.containerID = containerID;
+    public void setId(Object id) {
+        this.id = id;
     }
 
     public void setSecurityService(SecurityService securityService) {
@@ -94,7 +94,7 @@ public class MdbContainerFactory {
 
     public PoolMdbContainer create() {
 
-        return new PoolMdbContainer(containerID, securityService, resourceAdapter,
+        return new PoolMdbContainer(id, securityService, resourceAdapter,
                 messageListenerInterface, activationSpecClass,
                 instanceLimit, failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
                 callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
