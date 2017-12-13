@@ -53,6 +53,7 @@ public class StatelessInstanceManager extends InstanceManager {
         super(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads, ses);
     }
 
+
     @SuppressWarnings("unchecked")
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final Options options = new Options(beanContext.getProperties());
