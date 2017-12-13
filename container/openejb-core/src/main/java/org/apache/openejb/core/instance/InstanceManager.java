@@ -318,8 +318,6 @@ public abstract class InstanceManager {
 
     }
 
-    public abstract void deploy(final BeanContext beanContext) throws OpenEJBException;
-
     protected void setDefault(final Duration duration, final TimeUnit unit) {
         if (duration.getUnit() == null) {
             duration.setUnit(unit);
