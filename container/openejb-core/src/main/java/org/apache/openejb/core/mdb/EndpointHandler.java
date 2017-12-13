@@ -62,7 +62,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         RELEASED
     }
 
-    private final MdbContainer container;
+    private final BaseMdbContainer container;
     private final BeanContext deployment;
     private final MdbInstanceFactory instanceFactory;
     private final XAResource xaResource;
@@ -70,7 +70,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
     private State state = State.NONE;
     private Object instance;
 
-    public EndpointHandler(final MdbContainer container, final BeanContext deployment, final MdbInstanceFactory instanceFactory, final XAResource xaResource) throws UnavailableException {
+    public EndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceFactory instanceFactory, final XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceFactory = instanceFactory;

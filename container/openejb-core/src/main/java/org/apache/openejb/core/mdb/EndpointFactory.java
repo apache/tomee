@@ -35,7 +35,7 @@ import java.util.List;
 public class EndpointFactory implements MessageEndpointFactory {
 
     private final ActivationSpec activationSpec;
-    private final MdbContainer container;
+    private final BaseMdbContainer container;
     private final BeanContext beanContext;
     private final MdbInstanceFactory instanceFactory;
     private final ClassLoader classLoader;
@@ -44,7 +44,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final Class<?> proxy;
 
-    public EndpointFactory(final ActivationSpec activationSpec, final MdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final XAResourceWrapper xaResourceWrapper) {
+    public EndpointFactory(final ActivationSpec activationSpec, final BaseMdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final XAResourceWrapper xaResourceWrapper) {
         this.activationSpec = activationSpec;
         this.container = container;
         this.beanContext = beanContext;
