@@ -88,13 +88,13 @@ public class StatelessInstanceManager extends InstanceManager {
 
         final InstanceManagerData data = new InstanceManagerData(builder.build(), accessTimeout, closeTimeout);
 
-        StatelessContext sessionContext = new StatelessContext(securityService, new Flushable() {
+        StatelessContext statelessContext = new StatelessContext(securityService, new Flushable() {
             @Override
             public void flush() throws IOException {
                 data.flush();
             }
         });
-        data.setBaseContext(sessionContext);
+        data.setBaseContext(statelessContext);
 
         beanContext.setContainerData(data);
 
@@ -103,7 +103,7 @@ public class StatelessInstanceManager extends InstanceManager {
         try {
             final Context context = beanContext.getJndiEnc();
             context.bind("comp/EJBContext", data.getBaseContext());
-            context.bind("comp/WebServiceContext", new EjbWsContext(sessionContext));
+            context.bind("comp/WebServiceContext", new EjbWsContext(statelessContext));
             context.bind("comp/TimerService", new TimerServiceWrapper());
         } catch (final NamingException e) {
             throw new OpenEJBException("Failed to bind EJBContext/WebServiceContext/TimerService", e);
