@@ -18,6 +18,7 @@
 package org.apache.openejb.core.instance;
 
 import org.apache.openejb.core.BaseContext;
+import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
 
@@ -28,13 +29,13 @@ import java.util.concurrent.TimeoutException;
 
 public class InstanceManagerData  {
 
-    private final Pool<InstanceManager.Instance> pool;
+    private final Pool<Instance> pool;
     private final Duration accessTimeout;
     private final Duration closeTimeout;
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private BaseContext baseContext;
 
-    public InstanceManagerData(final Pool<InstanceManager.Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
+    public InstanceManagerData(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
         this.pool = pool;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
@@ -44,11 +45,11 @@ public class InstanceManagerData  {
         return accessTimeout;
     }
 
-    public Pool<InstanceManager.Instance>.Entry poolPop() throws InterruptedException, TimeoutException {
+    public Pool<Instance>.Entry poolPop() throws InterruptedException, TimeoutException {
         return pool.pop(accessTimeout.getTime(), accessTimeout.getUnit());
     }
 
-    public Pool<InstanceManager.Instance> getPool() {
+    public Pool<Instance> getPool() {
         return pool;
     }
     public void flush() {
