@@ -27,6 +27,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.spi.SecurityService;
@@ -360,29 +361,4 @@ public abstract class InstanceManager {
         beanContext.setContainerData(null);
     }
 
-
-    /**
-     * @version $Rev$ $Date$
-     */
-    public static class Instance {
-        public final Object bean;
-        public final Map<String, Object> interceptors;
-        public final CreationalContext creationalContext;
-
-        private Pool<Instance>.Entry poolEntry;
-
-        public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {
-            this.bean = bean;
-            this.interceptors = interceptors;
-            this.creationalContext = creationalContext;
-        }
-
-        public Pool<Instance>.Entry getPoolEntry() {
-            return poolEntry;
-        }
-
-        public void setPoolEntry(final Pool<Instance>.Entry poolEntry) {
-            this.poolEntry = poolEntry;
-        }
-    }
 }
