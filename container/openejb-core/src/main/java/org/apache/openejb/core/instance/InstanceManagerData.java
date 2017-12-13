@@ -17,15 +17,11 @@
 
 package org.apache.openejb.core.instance;
 
-import org.apache.openejb.core.stateless.StatelessContext;
-import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.core.BaseContext;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
 
-import javax.ejb.SessionContext;
 import javax.management.ObjectName;
-import java.io.Flushable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -36,21 +32,14 @@ public class InstanceManagerData {
     private final Duration accessTimeout;
     private final Duration closeTimeout;
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
-    private final SessionContext sessionContext;
-    private final SecurityService securityService;
+    private final BaseContext sessionContext;
 
     public InstanceManagerData(final Pool<InstanceManager.Instance> pool, final Duration accessTimeout, final Duration closeTimeout,
-                               SecurityService securityService) {
+                               BaseContext sessionContext) {
         this.pool = pool;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
-        this.securityService = securityService;
-        this.sessionContext = new StatelessContext(securityService, new Flushable() {
-            @Override
-            public void flush() throws IOException {
-                getPool().flush();
-            }
-        });
+        this.sessionContext = sessionContext;
     }
 
     public Duration getAccessTimeout() {
@@ -64,6 +53,9 @@ public class InstanceManagerData {
     public Pool<InstanceManager.Instance> getPool() {
         return pool;
     }
+    public void flush() {
+        this.pool.flush();
+    }
 
     public boolean closePool() throws InterruptedException {
         return pool.close(closeTimeout.getTime(), closeTimeout.getUnit());
@@ -74,7 +66,7 @@ public class InstanceManagerData {
         return name;
     }
 
-    public SessionContext getSessionContext() {
+    public BaseContext getSessionContext() {
         return sessionContext;
     }
 
