@@ -19,7 +19,9 @@ package org.apache.openejb.core.stateless;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.instance.InstanceCreatorRunnable;
 import org.apache.openejb.core.instance.InstanceManager;
+import org.apache.openejb.core.instance.InstanceManagerData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
@@ -82,7 +84,8 @@ public class StatelessInstanceManager extends InstanceManager {
         builder.setExecutor(executor);
         builder.setScheduledExecutor(scheduledExecutor);
 
-        final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
+        final InstanceManagerData data = new InstanceManagerData(builder.build(), accessTimeout, closeTimeout,
+                securityService);
         beanContext.setContainerData(data);
 
         beanContext.set(EJBContext.class, data.getSessionContext());
