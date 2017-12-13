@@ -28,6 +28,7 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorInstance;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.stateless.StatelessContext;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.LocalMBeanServer;
