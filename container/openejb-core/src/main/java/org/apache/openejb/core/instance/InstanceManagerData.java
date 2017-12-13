@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
-class InstanceManagerData {
+public class InstanceManagerData {
 
     private final Pool<InstanceManager.Instance> pool;
     private final Duration accessTimeout;
