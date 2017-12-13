@@ -32,7 +32,7 @@ public class InstanceManagerData  {
     private final Duration accessTimeout;
     private final Duration closeTimeout;
     private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
-    private BaseContext sessionContext;
+    private BaseContext baseContext;
 
     public InstanceManagerData(final Pool<InstanceManager.Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {
         this.pool = pool;
@@ -64,15 +64,15 @@ public class InstanceManagerData  {
         return name;
     }
 
-    public BaseContext getSessionContext() {
-        return sessionContext;
-    }
-
     public List<ObjectName> getJmxNames() {
         return jmxNames;
     }
 
-    public void setSessionContext(BaseContext sessionContext) {
-        this.sessionContext = sessionContext;
+    public BaseContext getBaseContext() {
+        return baseContext;
+    }
+
+    public void setBaseContext(BaseContext baseContext) {
+        this.baseContext = baseContext;
     }
 }

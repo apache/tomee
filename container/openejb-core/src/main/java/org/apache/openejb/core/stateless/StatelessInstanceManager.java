@@ -94,15 +94,15 @@ public class StatelessInstanceManager extends InstanceManager {
                 data.flush();
             }
         });
-        data.setSessionContext(sessionContext);
+        data.setBaseContext(sessionContext);
 
         beanContext.setContainerData(data);
 
-        beanContext.set(EJBContext.class, data.getSessionContext());
+        beanContext.set(EJBContext.class, data.getBaseContext());
 
         try {
             final Context context = beanContext.getJndiEnc();
-            context.bind("comp/EJBContext", data.getSessionContext());
+            context.bind("comp/EJBContext", data.getBaseContext());
             context.bind("comp/WebServiceContext", new EjbWsContext(sessionContext));
             context.bind("comp/TimerService", new TimerServiceWrapper());
         } catch (final NamingException e) {
