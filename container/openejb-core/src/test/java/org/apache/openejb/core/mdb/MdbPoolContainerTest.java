@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(ApplicationComposer.class)
-public class PoolMdbContainerTest {
+public class MdbPoolContainerTest {
 
     private static final String TEXT = "foo";
 
