@@ -18,19 +18,17 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.transaction.TransactionType;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
-import javax.management.ObjectName;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PoolEndpointFactory implements MessageEndpointFactory {
 
@@ -41,7 +39,6 @@ public class PoolEndpointFactory implements MessageEndpointFactory {
     private final ClassLoader classLoader;
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
-    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final Class<?> proxy;
 
     public PoolEndpointFactory(final ActivationSpec activationSpec, final BaseMdbContainer container, final BeanContext beanContext, final MdbInstanceManager instanceManager, final XAResourceWrapper xaResourceWrapper) {
@@ -66,17 +63,14 @@ public class PoolEndpointFactory implements MessageEndpointFactory {
         return activationSpec;
     }
 
-    public MdbInstanceManager getInstanceManager() {
-        return instanceManager;
-    }
-
     @Override
     public MessageEndpoint createEndpoint(XAResource xaResource) throws UnavailableException {
         if (xaResource != null && xaResourceWrapper != null) {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
-        final PoolEndpointHandler endpointHandler = new PoolEndpointHandler(container, beanContext, instanceManager, xaResource);
+        PoolEndpointHandler endpointHandler = null;
         try {
+            endpointHandler = new PoolEndpointHandler(container, beanContext, instanceManager, xaResource);
             return (MessageEndpoint) LocalBeanProxyFactory.constructProxy(proxy, endpointHandler);
         } catch (final InternalError e) { // should be useless
             //try to create the proxy with tccl once again.
@@ -90,6 +84,8 @@ public class PoolEndpointFactory implements MessageEndpointFactory {
                 }
             }
             throw e;
+        } catch (OpenEJBException e){
+            throw new UnavailableException(e);
         }
     }
 

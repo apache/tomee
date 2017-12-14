@@ -19,7 +19,10 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.core.instance.InstanceCreatorRunnable;
 import org.apache.openejb.core.instance.InstanceManager;
+import org.apache.openejb.core.instance.InstanceManagerData;
+import org.apache.openejb.core.stateless.StatelessContext;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -27,7 +30,10 @@ import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.PassthroughFactory;
 import org.apache.openejb.util.Pool;
+import org.apache.xbean.recipe.ObjectRecipe;
+import org.apache.xbean.recipe.Option;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -48,9 +54,16 @@ import javax.management.ReflectionException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
+import java.io.Flushable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static javax.management.MBeanOperationInfo.ACTION;
 
@@ -58,6 +71,7 @@ public class MdbInstanceManager extends InstanceManager {
 
     private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
+    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;
     private final Object containerID;
@@ -86,7 +100,38 @@ public class MdbInstanceManager extends InstanceManager {
         }
 
         final Options options = new Options(beanContext.getProperties());
-        final int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
+        final int instanceLimit = options.get("InstanceLimit", this.instanceLimit); //TODO: REMOVE INSTANCE LIMIT
+
+        final ObjectRecipe recipe = PassthroughFactory.recipe(new Pool.Builder(poolBuilder));
+        recipe.allow(Option.CASE_INSENSITIVE_FACTORY);
+        recipe.allow(Option.CASE_INSENSITIVE_PROPERTIES);
+        recipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+        recipe.setAllProperties(beanContext.getProperties());
+
+        final Pool.Builder builder = (Pool.Builder) recipe.create();
+        setDefault(builder.getMaxAge(), TimeUnit.HOURS);
+        setDefault(builder.getIdleTimeout(), TimeUnit.MINUTES);
+        setDefault(builder.getInterval(), TimeUnit.MINUTES);
+
+        final InstanceSupplier supplier = new InstanceSupplier(beanContext);
+        builder.setSupplier(supplier);
+        builder.setExecutor(executor);
+        builder.setScheduledExecutor(scheduledExecutor);
+
+        final int min = builder.getMin();
+        final long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
+        final double maxAgeOffset = builder.getMaxAgeOffset();
+
+        final InstanceManagerData data = new InstanceManagerData(builder.build(), accessTimeout, closeTimeout);
+
+        MdbContext mdbContext = new MdbContext(securityService, new Flushable() {
+            @Override
+            public void flush() throws IOException {
+                data.flush();
+            }
+        });
+        data.setBaseContext(mdbContext);
+        beanContext.setContainerData(data);
 
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
@@ -110,7 +155,7 @@ public class MdbInstanceManager extends InstanceManager {
                     server.unregisterMBean(objectName);
                 }
                 server.registerMBean(new ManagedMBean(stats), objectName);
-                endpointFactory.jmxNames.add(objectName);
+                jmxNames.add(objectName);
             } catch (final Exception e) {
                 logger.error("Unable to register MBean ", e);
             }
@@ -149,6 +194,22 @@ public class MdbInstanceManager extends InstanceManager {
         } catch (final ResourceException e) {
             throw new OpenEJBException(e);
         }
+
+        // Finally, fill the pool and start it
+        if (!options.get("BackgroundStartup", false) && min > 0) {
+            final ExecutorService es = Executors.newFixedThreadPool(min);
+            for (int i = 0; i < min; i++) {
+                es.submit(new InstanceCreatorRunnable(maxAge, i, min, maxAgeOffset, data, supplier));
+            }
+            es.shutdown();
+            try {
+                es.awaitTermination(5, TimeUnit.MINUTES);
+            } catch (final InterruptedException e) {
+                logger.error("can't fill the stateless pool", e);
+            }
+        }
+
+        data.getPool().start();
     }
 
     public void undeploy(final BeanContext beanContext){
@@ -167,7 +228,7 @@ public class MdbInstanceManager extends InstanceManager {
             }
 
             final MBeanServer server = LocalMBeanServer.get();
-            for (final ObjectName objectName : endpointFactory.jmxNames) {
+            for (final ObjectName objectName : jmxNames) {
                 try {
                     server.unregisterMBean(objectName);
                 } catch (final Exception e) {

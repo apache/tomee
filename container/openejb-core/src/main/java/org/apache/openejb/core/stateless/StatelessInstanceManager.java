@@ -81,7 +81,7 @@ public class StatelessInstanceManager extends InstanceManager {
         setDefault(builder.getIdleTimeout(), TimeUnit.MINUTES);
         setDefault(builder.getInterval(), TimeUnit.MINUTES);
 
-        final StatelessSupplier supplier = new StatelessSupplier(beanContext);
+        final InstanceSupplier supplier = new InstanceSupplier(beanContext);
         builder.setSupplier(supplier);
         builder.setExecutor(executor);
 

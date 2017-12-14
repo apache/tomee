@@ -122,10 +122,10 @@ public abstract class InstanceManager {
         });
     }
 
-    protected final class StatelessSupplier implements Pool.Supplier<Instance> {
+    protected final class InstanceSupplier implements Pool.Supplier<Instance> {
         private final BeanContext beanContext;
 
-        public StatelessSupplier(final BeanContext beanContext) {
+        public InstanceSupplier(final BeanContext beanContext) {
             this.beanContext = beanContext;
         }
 
@@ -178,7 +178,7 @@ public abstract class InstanceManager {
             }
         }
     }
-
+    //TODO: REMOVE ALL REFERENCES TO STATELESS IN COMMENTS OR CODE
     /**
      * Removes an instance from the pool and returns it for use
      * by the container in business methods.

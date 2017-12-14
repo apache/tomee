@@ -24,10 +24,10 @@ public final class InstanceCreatorRunnable implements Runnable {
     private final double maxAgeOffset;
     private final long min;
     private final InstanceManagerData data;
-    private final InstanceManager.StatelessSupplier supplier;
+    private final InstanceManager.InstanceSupplier supplier;
 
     public InstanceCreatorRunnable(final long maxAge, final long iteration, final long min, final double maxAgeOffset,
-                                   final InstanceManagerData data, final InstanceManager.StatelessSupplier supplier) {
+                                   final InstanceManagerData data, final InstanceManager.InstanceSupplier supplier) {
         this.maxAge = maxAge;
         this.iteration = iteration;
         this.min = min;

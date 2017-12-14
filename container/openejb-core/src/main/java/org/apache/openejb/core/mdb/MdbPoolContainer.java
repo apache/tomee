@@ -177,7 +177,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
         beanContext.setContainer(this);
-        beanContext.setContainerData(endpointFactory);
         deployments.put(deploymentId, beanContext);
         try {
             instanceManager.deploy(beanContext, activationSpec, endpointFactory);
@@ -222,9 +221,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         final BeanContext beanContext = getBeanContext(deploymentId);
 
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
-
-        final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
-        final MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
         final Instance instance = this.instanceManager.getInstance(callContext);
 
         try {
@@ -240,7 +236,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                     this.instanceManager.poolInstance(callContext, instance);
                 }
             }
-            instanceFactory.freeInstance(instance, true);
         }
     }
 
@@ -379,6 +374,18 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         // invoke the tx after method
         try {
             afterInvoke(mdbCallContext.txPolicy, callContext);
+            if (instance != null) {
+                if (callContext.isDiscardInstance()) {
+                    this.instanceManager.discardInstance(callContext, instance);
+                } else {
+                    try {
+                        this.instanceManager.poolInstance(callContext, instance);
+                    } catch (OpenEJBException e){
+                        e.printStackTrace(); // TODO: Check this, find a way to remove
+                    }
+
+                }
+            }
         } catch (final ApplicationException e) {
             throw new SystemException("Should never get an Application exception", e);
         } finally {
@@ -406,8 +413,11 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                 } catch (final Exception e) {
                     logger.error("error while releasing message endpoint", e);
                 } finally {
-                    final EndpointFactory endpointFactory = (EndpointFactory) deployInfo.getContainerData();
-                    endpointFactory.getInstanceFactory().freeInstance((Instance) instance, false);
+                    try {
+                        instanceManager.poolInstance(callContext, instance);
+                    } catch (OpenEJBException e){
+                        e.printStackTrace();
+                    }
                 }
             }
         } finally {
@@ -442,10 +452,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
 
         public ResourceAdapter getResourceAdapter() {
             return resourceAdapter;
-        }
-
-        public PoolEndpointFactory getEndpointFactory() {
-            return endpointFactory;
         }
 
         public ActivationSpec getActivationSpec() {
