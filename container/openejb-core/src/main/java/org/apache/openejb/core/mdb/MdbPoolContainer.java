@@ -70,7 +70,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTrans
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
-public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
+public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private static final Object[] NO_ARGS = new Object[0];
@@ -89,7 +89,7 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
 
     private final Properties properties = new Properties();
 
-    public PoolMdbContainer(final Object containerID,
+    public MdbPoolContainer(final Object containerID,
                             final SecurityService securityService,
                             final ResourceAdapter resourceAdapter,
                             final Class messageListenerInterface,

@@ -92,9 +92,9 @@ public class MdbContainerFactory {
         this.evictionThreads = evictionThreads;
     }
 
-    public PoolMdbContainer create() {
+    public MdbPoolContainer create() {
 
-        return new PoolMdbContainer(id, securityService, resourceAdapter,
+        return new MdbPoolContainer(id, securityService, resourceAdapter,
                 messageListenerInterface, activationSpecClass,
                 instanceLimit, failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
                 callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
