@@ -77,7 +77,7 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
     private State state = State.NONE;
     private Object instance;
     private ThreadContext callContext;
-    public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws OpenEJBException, UnavailableException {
+    public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceManager = instanceManager;

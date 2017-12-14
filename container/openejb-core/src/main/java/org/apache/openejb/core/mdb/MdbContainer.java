@@ -174,7 +174,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         final int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
         final MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
-        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
+        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, null, xaResourceWrapper, false);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
