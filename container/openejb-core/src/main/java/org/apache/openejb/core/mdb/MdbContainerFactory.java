@@ -38,6 +38,7 @@ public class MdbContainerFactory {
     private int callbackThreads = 5;
     private boolean useOneSchedulerThreadByBean = false;
     private int evictionThreads = 1;
+    private boolean pool;
 
 
     public void setId(Object id) {
@@ -92,11 +93,17 @@ public class MdbContainerFactory {
         this.evictionThreads = evictionThreads;
     }
 
-    public MdbPoolContainer create() {
+    public BaseMdbContainer create() {
 
-        return new MdbPoolContainer(id, securityService, resourceAdapter,
-                messageListenerInterface, activationSpecClass,
-                instanceLimit, failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
-                callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
+        if (pool) {
+            return new MdbPoolContainer(id, securityService, resourceAdapter,
+                    messageListenerInterface, activationSpecClass,
+                    instanceLimit, failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
+                    callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
+        } else {
+            return new MdbContainer(id, securityService, resourceAdapter,
+                    messageListenerInterface, activationSpecClass, instanceLimit,
+                    failOnUnknownActivationSpec);
+        }
     }
 }
