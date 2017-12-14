@@ -66,7 +66,7 @@ public class MdbContainerTest {
 
                 .p("mdbs", "new://Container?type=MESSAGE")
                 .p("mdbs.ResourceAdapter", "amq")
-
+                .p("mdbs.pool", "false")
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
 
