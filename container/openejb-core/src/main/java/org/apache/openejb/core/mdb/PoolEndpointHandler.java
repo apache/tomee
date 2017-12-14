@@ -77,17 +77,12 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
     private State state = State.NONE;
     private Object instance;
     private ThreadContext callContext;
-    public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws UnavailableException {
+    public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws OpenEJBException, UnavailableException {
         this.container = container;
         this.deployment = deployment;
         this.instanceManager = instanceManager;
         this.xaResource = xaResource;
         this.callContext = ThreadContext.getThreadContext();
-        try {
-            instance = instanceManager.getInstance(callContext);
-        } catch (OpenEJBException e) {
-            e.printStackTrace();
-        }
     }
 
 //    private static void logTx() {
@@ -198,10 +193,13 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
 
         // call beforeDelivery on the container
         try {
+            instance = instanceManager.getInstance(new ThreadContext(deployment, null));
             container.beforeDelivery(deployment, instance, method, xaResource);
         } catch (final SystemException se) {
             final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throw new ApplicationServerInternalException(throwable);
+        } catch (OpenEJBException oe){
+            throw new ApplicationServerInternalException(oe);
         }
 
         // before completed successfully we are now ready to invoke bean
