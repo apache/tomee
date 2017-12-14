@@ -24,9 +24,11 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.core.instance.InstanceManager;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -100,7 +102,7 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
                             final int callbackThreads,
                             final boolean useOneSchedulerThreadByBean,
                             final int evictionThreads
-            ) {
+    ) {
         this.containerID = containerID;
         this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
@@ -183,7 +185,7 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
         deployments.put(deploymentId, beanContext);
         try {
             instanceManager.deploy(beanContext, activationSpec, endpointFactory);
-        } catch (OpenEJBException e){
+        } catch (OpenEJBException e) {
             beanContext.setContainer(null);
             beanContext.setContainerData(null);
             deployments.remove(deploymentId);
@@ -209,9 +211,9 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
         if (!(beanContext instanceof BeanContext)) {
             return;
         }
-        try{
+        try {
             instanceManager.undeploy(beanContext);
-        }finally {
+        } finally {
             beanContext.setContainer(null);
             beanContext.setContainerData(null);
             deployments.remove(beanContext.getDeploymentID());
@@ -223,14 +225,13 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
     public Object invoke(final Object deploymentId, final InterfaceType type, final Class callInterface, final Method method, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = getBeanContext(deploymentId);
 
+        final ThreadContext callContext = new ThreadContext(beanContext, primKey);
+        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
+
+
         final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
         final MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
-        final Instance instance;
-        try {
-            instance = (Instance) instanceFactory.createInstance(true);
-        } catch (final UnavailableException e) {
-            throw new SystemException("Unable to create instance for invocation", e);
-        }
+        final Instance instance = this.instanceManager.getInstance(callContext);
 
         try {
             beforeDelivery(beanContext, instance, method, null);
@@ -238,6 +239,13 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
             afterDelivery(instance);
             return value;
         } finally {
+            if (instance != null) {
+                if (callContext.isDiscardInstance()) {
+                    this.instanceManager.discardInstance(callContext, instance);
+                } else {
+                    this.instanceManager.poolInstance(callContext, instance);
+                }
+            }
             instanceFactory.freeInstance(instance, true);
         }
     }
@@ -310,7 +318,7 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
             callContext.set(Method.class, targetMethod);
 
             // invoke the target method
-            returnValue = _invoke(instance, targetMethod, args, deployInfo, type, mdbCallContext);
+            returnValue = _invoke(instance, targetMethod, args, deployInfo, type, mdbCallContext, callContext);
             return returnValue;
         } catch (final ApplicationException | SystemException e) {
             openEjbException = e;
@@ -329,7 +337,10 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext, final InterfaceType interfaceType, final MdbCallContext mdbCallContext) throws SystemException,
+    private Object _invoke(final Object instance, final Method runMethod, final Object[] args, final BeanContext beanContext,
+                           final InterfaceType interfaceType,
+                           final MdbCallContext mdbCallContext,
+                           final ThreadContext callContext) throws SystemException,
             ApplicationException {
         final Object returnValue;
         try {
@@ -355,6 +366,7 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
                 //
                 /// System Exception ****************************
                 handleSystemException(mdbCallContext.txPolicy, e, ThreadContext.getThreadContext());
+                callContext.setDiscardInstance(true);
             } else {
                 //
                 // Application Exception ***********************
@@ -490,7 +502,8 @@ public class PoolMdbContainer implements RpcContainer, BaseMdbContainer {
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
 
-            final Map<String, String> activationProperties = beanContext.getActivationProperties();;
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();
+            ;
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }
