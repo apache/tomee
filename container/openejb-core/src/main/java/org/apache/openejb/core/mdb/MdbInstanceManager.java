@@ -57,7 +57,7 @@ import static javax.management.MBeanOperationInfo.ACTION;
 public class MdbInstanceManager extends InstanceManager {
 
     private  static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<>();
-    private final Map<BeanContext, PoolMdbContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
+    private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;
@@ -120,7 +120,7 @@ public class MdbInstanceManager extends InstanceManager {
         // activate the endpoint
         try {
 
-            final PoolMdbContainer.MdbActivationContext activationContext = new PoolMdbContainer.MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
+            final MdbPoolContainer.MdbActivationContext activationContext = new MdbPoolContainer.MdbActivationContext(Thread.currentThread().getContextClassLoader(), beanContext, resourceAdapter, endpointFactory, activationSpec);
             activationContexts.put(beanContext, activationContext);
 
             boolean activeOnStartup = true;
@@ -162,7 +162,7 @@ public class MdbInstanceManager extends InstanceManager {
                 logger.info("Undeployed MDB control for " + beanContext.getDeploymentID());
             }
 
-            final PoolMdbContainer.MdbActivationContext activationContext = activationContexts.remove(beanContext);
+            final MdbPoolContainer.MdbActivationContext activationContext = activationContexts.remove(beanContext);
             if (activationContext != null && activationContext.isStarted()) {
                 resourceAdapter.endpointDeactivation(endpointFactory, endpointFactory.getActivationSpec());
             }
@@ -178,7 +178,7 @@ public class MdbInstanceManager extends InstanceManager {
         }
     }
 
-    private void addJMxControl(final BeanContext current, final String name, final PoolMdbContainer.MdbActivationContext activationContext) throws ResourceException {
+    private void addJMxControl(final BeanContext current, final String name, final MdbPoolContainer.MdbActivationContext activationContext) throws ResourceException {
         if (name == null || "false".equalsIgnoreCase(name)) {
             logger.debug("Not adding JMX control for " + current.getDeploymentID());
             return;
@@ -218,9 +218,9 @@ public class MdbInstanceManager extends InstanceManager {
                 },
                 new MBeanNotificationInfo[0]);
 
-        private final PoolMdbContainer.MdbActivationContext activationContext;
+        private final MdbPoolContainer.MdbActivationContext activationContext;
 
-        private MdbJmxControl(final PoolMdbContainer.MdbActivationContext activationContext) {
+        private MdbJmxControl(final MdbPoolContainer.MdbActivationContext activationContext) {
             this.activationContext = activationContext;
         }
 
