@@ -461,7 +461,7 @@
   <ServiceProvider
           id="Pool MDB Container"
           service="Container"
-          types="MESSAGEPOOL"
+          types="MESSAGE"
           factory-name="create"
           class-name="org.apache.openejb.core.mdb.MdbContainerFactory">
 
