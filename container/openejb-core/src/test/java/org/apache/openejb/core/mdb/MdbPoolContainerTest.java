@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(ApplicationComposer.class)
-public class MdbContainerTest {
+public class MdbPoolContainerTest {
 
     private static final String TEXT = "foo";
 
@@ -64,9 +64,9 @@ public class MdbContainerTest {
 
                 .p("target", "new://Resource?type=Queue")
 
-                .p("mdbs", "new://Container?type=MESSAGE")
+                .p("mdbs", "new://Container?type=MESSAGEPOOL")
                 .p("mdbs.ResourceAdapter", "amq")
-                .p("mdbs.pool", "false")
+
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
 

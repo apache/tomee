@@ -467,7 +467,7 @@
   -->
 
   <ServiceProvider
-          id="Default MDB Container"
+          id="Pool MDB Container"
           service="Container"
           types="MESSAGE"
           factory-name="create"
@@ -483,6 +483,7 @@
     CallbackThreads 5
     UseOneSchedulerThreadByBean false
     EvictionThreads 1
+    Pool true
 
   </ServiceProvider>
 
