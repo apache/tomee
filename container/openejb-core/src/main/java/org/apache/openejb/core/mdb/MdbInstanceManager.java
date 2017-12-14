@@ -22,7 +22,6 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.core.instance.InstanceCreatorRunnable;
 import org.apache.openejb.core.instance.InstanceManager;
 import org.apache.openejb.core.instance.InstanceManagerData;
-import org.apache.openejb.core.stateless.StatelessContext;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ManagedMBean;
@@ -93,7 +92,7 @@ public class MdbInstanceManager extends InstanceManager {
     }
 
 
-    public void deploy(final BeanContext beanContext, final ActivationSpec activationSpec, final PoolEndpointFactory endpointFactory)
+    public void deploy(final BeanContext beanContext, final ActivationSpec activationSpec, final EndpointFactory endpointFactory)
             throws OpenEJBException{
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
@@ -213,7 +212,7 @@ public class MdbInstanceManager extends InstanceManager {
     }
 
     public void undeploy(final BeanContext beanContext){
-        final PoolEndpointFactory endpointFactory = (PoolEndpointFactory) beanContext.getContainerData();
+        final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
         if (endpointFactory != null) {
 
             final ObjectName jmxBeanToRemove = mbeanNames.remove(beanContext);

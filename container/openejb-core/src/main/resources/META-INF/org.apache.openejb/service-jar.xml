@@ -459,7 +459,7 @@
   -->
 
   <ServiceProvider
-          id="Pool MDB Container"
+          id="Default MDB Container"
           service="Container"
           types="MESSAGE"
           factory-name="create"
@@ -479,35 +479,35 @@
 
   </ServiceProvider>
 
-  <ServiceProvider
-      id="Default MDB Container"
-      service="Container"
-      types="MESSAGE"
-      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknownActivationSpec"
-      class-name="org.apache.openejb.core.mdb.MdbContainer">
+  <!--<ServiceProvider-->
+          <!--id="Default MDB Container"-->
+          <!--service="Container"-->
+          <!--types="MESSAGE"-->
+          <!--constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknownActivationSpec"-->
+          <!--class-name="org.apache.openejb.core.mdb.MdbContainer">-->
 
-    # The resource adapter delivers messages to the container
+    <!--# The resource adapter delivers messages to the container-->
 
-    ResourceAdapter Default JMS Resource Adapter
+    <!--ResourceAdapter Default JMS Resource Adapter-->
 
-    # Specifies the message listener interface handled by this container
+    <!--# Specifies the message listener interface handled by this container-->
 
-    MessageListenerInterface javax.jms.MessageListener
+    <!--MessageListenerInterface javax.jms.MessageListener-->
 
-    # Specifies the activation spec class
+    <!--# Specifies the activation spec class-->
 
-    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
+    <!--ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec-->
 
-    # Specifies the maximum number of bean instances that are
-    # allowed to exist for each MDB deployment.
+    <!--# Specifies the maximum number of bean instances that are-->
+    <!--# allowed to exist for each MDB deployment.-->
 
-    InstanceLimit 10
+    <!--InstanceLimit 10-->
 
-    # log a warning if false or throw an exception if true is an activation spec can't be respected
+    <!--# log a warning if true or throw an exception if false is an activation spec can't be respected-->
 
-    FailOnUnknownActivationSpec = true
+    <!--FailOnUnknownActivationSpec = true-->
 
-  </ServiceProvider>
+  <!--</ServiceProvider>-->
 
   <!--
   # ================================================

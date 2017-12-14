@@ -172,7 +172,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         // create the activation spec
         final ActivationSpec activationSpec = createActivationSpec(beanContext);
 
-        final PoolEndpointFactory endpointFactory = new PoolEndpointFactory(activationSpec, this, beanContext, instanceManager, xaResourceWrapper);
+        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, null, instanceManager, xaResourceWrapper, true);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
@@ -437,12 +437,12 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         private final ClassLoader classLoader;
         private final BeanContext beanContext;
         private final ResourceAdapter resourceAdapter;
-        private final PoolEndpointFactory endpointFactory;
+        private final EndpointFactory endpointFactory;
         private final ActivationSpec activationSpec;
 
         private AtomicBoolean started = new AtomicBoolean(false);
 
-        public MdbActivationContext(final ClassLoader classLoader, final BeanContext beanContext, final ResourceAdapter resourceAdapter, final PoolEndpointFactory endpointFactory, final ActivationSpec activationSpec) {
+        public MdbActivationContext(final ClassLoader classLoader, final BeanContext beanContext, final ResourceAdapter resourceAdapter, final EndpointFactory endpointFactory, final ActivationSpec activationSpec) {
             this.classLoader = classLoader;
             this.beanContext = beanContext;
             this.resourceAdapter = resourceAdapter;
