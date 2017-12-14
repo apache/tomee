@@ -51,7 +51,7 @@
 
 
     <ServiceProvider
-            id="Pool MDB Container"
+            id="Default MDB Container"
             service="Container"
             types="MESSAGE"
             factory-name="create"
