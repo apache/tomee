@@ -24,11 +24,9 @@ import org.apache.openejb.InterfaceType;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.cdi.CurrentCreationalContext;
 import org.apache.openejb.core.ExceptionType;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.core.instance.InstanceManager;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.EjbTimerService;
@@ -48,7 +46,6 @@ import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.UnavailableException;
 import javax.transaction.xa.XAResource;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -175,8 +172,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         // create the activation spec
         final ActivationSpec activationSpec = createActivationSpec(beanContext);
 
-        final MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
-        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
+        final PoolEndpointFactory endpointFactory = new PoolEndpointFactory(activationSpec, this, beanContext, instanceManager, xaResourceWrapper);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
@@ -226,8 +222,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         final BeanContext beanContext = getBeanContext(deploymentId);
 
         final ThreadContext callContext = new ThreadContext(beanContext, primKey);
-        final ThreadContext oldCallContext = ThreadContext.enter(callContext);
-
 
         final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
         final MdbInstanceFactory instanceFactory = endpointFactory.getInstanceFactory();
@@ -433,12 +427,12 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         private final ClassLoader classLoader;
         private final BeanContext beanContext;
         private final ResourceAdapter resourceAdapter;
-        private final EndpointFactory endpointFactory;
+        private final PoolEndpointFactory endpointFactory;
         private final ActivationSpec activationSpec;
 
         private AtomicBoolean started = new AtomicBoolean(false);
 
-        public MdbActivationContext(final ClassLoader classLoader, final BeanContext beanContext, final ResourceAdapter resourceAdapter, final EndpointFactory endpointFactory, final ActivationSpec activationSpec) {
+        public MdbActivationContext(final ClassLoader classLoader, final BeanContext beanContext, final ResourceAdapter resourceAdapter, final PoolEndpointFactory endpointFactory, final ActivationSpec activationSpec) {
             this.classLoader = classLoader;
             this.beanContext = beanContext;
             this.resourceAdapter = resourceAdapter;
@@ -450,7 +444,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
             return resourceAdapter;
         }
 
-        public EndpointFactory getEndpointFactory() {
+        public PoolEndpointFactory getEndpointFactory() {
             return endpointFactory;
         }
 

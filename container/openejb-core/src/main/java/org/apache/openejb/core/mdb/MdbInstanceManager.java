@@ -56,7 +56,6 @@ import static javax.management.MBeanOperationInfo.ACTION;
 
 public class MdbInstanceManager extends InstanceManager {
 
-    private  static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<>();
     private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
     private final ResourceAdapter resourceAdapter;
@@ -80,7 +79,7 @@ public class MdbInstanceManager extends InstanceManager {
     }
 
 
-    public void deploy(final BeanContext beanContext, final ActivationSpec activationSpec, final EndpointFactory endpointFactory)
+    public void deploy(final BeanContext beanContext, final ActivationSpec activationSpec, final PoolEndpointFactory endpointFactory)
             throws OpenEJBException{
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
@@ -153,7 +152,7 @@ public class MdbInstanceManager extends InstanceManager {
     }
 
     public void undeploy(final BeanContext beanContext){
-        final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
+        final PoolEndpointFactory endpointFactory = (PoolEndpointFactory) beanContext.getContainerData();
         if (endpointFactory != null) {
 
             final ObjectName jmxBeanToRemove = mbeanNames.remove(beanContext);
