@@ -158,7 +158,7 @@ public class MdbContainerFactory {
         if (pool) {
             return new MdbPoolContainer(id, securityService, resourceAdapter,
                     messageListenerInterface, activationSpecClass,
-                    instanceLimit, failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
+                    failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
                     callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
         } else {
             return new MdbContainer(id, securityService, resourceAdapter,

@@ -468,7 +468,6 @@
     ResourceAdapter Default JMS Resource Adapter
     MessageListenerInterface javax.jms.MessageListener
     ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
-    InstanceLimit 10
     FailOnUnknownActivationSpec false
     AccessTimeout 5 minutes
     CloseTimeout 5 minutes

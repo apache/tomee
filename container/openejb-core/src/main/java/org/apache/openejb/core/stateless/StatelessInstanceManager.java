@@ -50,11 +50,14 @@ import java.util.concurrent.TimeUnit;
 
 public class StatelessInstanceManager extends InstanceManager {
 
+    private final SecurityService securityService;
+
     public StatelessInstanceManager(final SecurityService securityService,
                                     final Duration accessTimeout, final Duration closeTimeout,
                                     final Pool.Builder poolBuilder, final int callbackThreads,
                                     final ScheduledExecutorService ses) {
-        super(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads, ses);
+        super(accessTimeout, closeTimeout, poolBuilder, callbackThreads, ses);
+        this.securityService = securityService;
     }
 
 

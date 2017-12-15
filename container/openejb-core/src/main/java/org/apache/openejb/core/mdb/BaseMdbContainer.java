@@ -42,8 +42,6 @@ public interface BaseMdbContainer {
 
     Class getMessageListenerInterface();
 
-    Class getActivationSpecClass();
-
     Properties getProperties();
 
     void deploy(BeanContext beanContext) throws OpenEJBException;

@@ -74,21 +74,20 @@ public class MdbInstanceManager extends InstanceManager {
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;
     private final Object containerID;
-    private int instanceLimit;
+    private final SecurityService securityService;
 
-    public MdbInstanceManager(final ResourceAdapter resourceAdapter,
+    public MdbInstanceManager(final SecurityService securityService,
+                              final ResourceAdapter resourceAdapter,
                               final InboundRecovery inboundRecovery,
                               final Object containerID,
-                              final int instanceLimit,
-                              final SecurityService securityService,
-                                    final Duration accessTimeout, final Duration closeTimeout,
-                                    final Pool.Builder poolBuilder, final int callbackThreads,
-                                    final ScheduledExecutorService ses) {
-        super(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads, ses);
+                              final Duration accessTimeout, final Duration closeTimeout,
+                              final Pool.Builder poolBuilder, final int callbackThreads,
+                              final ScheduledExecutorService ses) {
+        super(accessTimeout, closeTimeout, poolBuilder, callbackThreads, ses);
+        this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
         this.inboundRecovery = inboundRecovery;
         this.containerID = containerID;
-        this.instanceLimit = instanceLimit;
     }
 
 
@@ -97,9 +96,6 @@ public class MdbInstanceManager extends InstanceManager {
         if (inboundRecovery != null) {
             inboundRecovery.recover(resourceAdapter, activationSpec, containerID.toString());
         }
-
-        final Options options = new Options(beanContext.getProperties());
-        final int instanceLimit = options.get("InstanceLimit", this.instanceLimit); //TODO: REMOVE INSTANCE LIMIT
 
         final ObjectRecipe recipe = PassthroughFactory.recipe(new Pool.Builder(poolBuilder));
         recipe.allow(Option.CASE_INSENSITIVE_FACTORY);
@@ -194,6 +190,7 @@ public class MdbInstanceManager extends InstanceManager {
             throw new OpenEJBException(e);
         }
 
+        final Options options = new Options(beanContext.getProperties());
         // Finally, fill the pool and start it
         if (!options.get("BackgroundStartup", false) && min > 0) {
             final ExecutorService es = Executors.newFixedThreadPool(min);
