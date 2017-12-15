@@ -25,18 +25,23 @@ import javax.ejb.EJBException;
 import javax.jms.Message;
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
+import javax.resource.spi.endpoint.MessageEndpoint;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-abstract class AbstractEndpointHandler {
+abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndpoint {
 
     protected State state = State.NONE;
     protected volatile Boolean isAmq;
 
     protected Object instance;
 
-    //final
-    protected BaseMdbContainer container;
+    protected final BaseMdbContainer container;
+
+    AbstractEndpointHandler(BaseMdbContainer container) {
+        this.container = container;
+    }
 
 
     public abstract void beforeDelivery(final Method method) throws ApplicationServerInternalException;
