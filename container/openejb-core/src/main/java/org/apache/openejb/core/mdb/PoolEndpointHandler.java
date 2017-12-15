@@ -38,36 +38,7 @@ import java.util.Arrays;
 public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
     private volatile Boolean isAmq;
 
-    private static enum State {
-        /**
-         * The handler has been initialized and is ready for invoation
-         */
-        NONE,
-
-        /**
-         * The beforeDelivery method has been called, and the next method called must be a message delivery method
-         * or release.
-         */
-        BEFORE_CALLED,
-
-        /**
-         * The message delivery method has been called successfully, and the next method called must be
-         * another message delivery method, afterDelivery, or release.
-         */
-        METHOD_CALLED,
-
-        /**
-         * The message delivery threw a system exception, and the next method called must be afterDelivery
-         * or release.  This state notified the afterDelivery method that the instace must be replaced with a new
-         * instance.
-         */
-        SYSTEM_EXCEPTION,
-
-        /**
-         * This message endpoint handler has been released and can no longer be used.
-         */
-        RELEASED
-    }
+ 
 
     private final BaseMdbContainer container;
     private final BeanContext deployment;
