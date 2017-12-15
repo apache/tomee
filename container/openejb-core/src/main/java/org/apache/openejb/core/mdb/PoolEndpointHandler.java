@@ -57,10 +57,6 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
     }
 
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-//        System.out.println("\n" +
-//                "***************************************\n" +
-//                "Endpoint invoked " + method + "\n" +
-//                "***************************************\n\n");
 
         final String methodName = method.getName();
         final Class<?>[] parameterTypes = method.getParameterTypes();
@@ -77,7 +73,6 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
             }
         }
 
-//        try {
         if ("beforeDelivery".equals(methodName) && Arrays.deepEquals(new Class[]{Method.class}, parameterTypes)) {
             beforeDelivery((Method) args[0]);
             return null;
@@ -91,7 +86,6 @@ public class PoolEndpointHandler implements InvocationHandler, MessageEndpoint {
             final Object value = deliverMessage(method, args);
             return value;
         }
-//        } finally { logTx(); }
     }
 
     public void beforeDelivery(final Method method) throws ApplicationServerInternalException {
