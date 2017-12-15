@@ -66,6 +66,7 @@ public class EndpointHandler extends AbstractEndpointHandler {
         // before completed successfully we are now ready to invoke bean
         state = State.BEFORE_CALLED;
     }
+
     @Override
     protected void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
         try {
@@ -82,6 +83,7 @@ public class EndpointHandler extends AbstractEndpointHandler {
         }
     }
 
+    @Override
     public void release() {
         if (state == State.RELEASED) {
             return;
@@ -95,19 +97,5 @@ public class EndpointHandler extends AbstractEndpointHandler {
             instanceFactory.freeInstance((Instance) instance, false);
             instance = null;
         }
-    }
-
-    private boolean isValidException(final Method method, final Throwable throwable) {
-        if (throwable instanceof RuntimeException || throwable instanceof Error) {
-            return true;
-        }
-
-        final Class<?>[] exceptionTypes = method.getExceptionTypes();
-        for (final Class<?> exceptionType : exceptionTypes) {
-            if (exceptionType.isInstance(throwable)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
