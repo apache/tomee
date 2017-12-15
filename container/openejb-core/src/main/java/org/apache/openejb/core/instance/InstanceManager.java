@@ -141,7 +141,7 @@ public abstract class InstanceManager {
             final ThreadContext ctx = new ThreadContext(beanContext, null);
             final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
-                return createInstance(ctx, ctx.getBeanContext());
+                return createInstance(ctx.getBeanContext());
             } catch (final OpenEJBException e) {
                 logger.error("Unable to fill pool: for deployment '" + beanContext.getDeploymentID() + "'", e);
             } finally {
@@ -211,13 +211,13 @@ public abstract class InstanceManager {
         }
 
         if (null == instance) {
-            instance = createInstance(callContext, beanContext);
+            instance = createInstance(beanContext);
         }
 
         return instance;
     }
 
-    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
+    private Instance createInstance(final BeanContext beanContext) throws ApplicationException {
         try {
             final InstanceContext context = beanContext.newInstance();
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
