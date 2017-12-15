@@ -73,11 +73,9 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
     private static final Object[] NO_ARGS = new Object[0];
 
     private final Object containerID;
-    private final SecurityService securityService;
     private final ResourceAdapter resourceAdapter;
     private final Class messageListenerInterface;
     private final Class activationSpecClass;
-    private final int instanceLimit;
     private final boolean failOnUnknownActivationSpec;
     private final MdbInstanceManager instanceManager;
     private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
@@ -91,7 +89,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                             final ResourceAdapter resourceAdapter,
                             final Class messageListenerInterface,
                             final Class activationSpecClass,
-                            final int instanceLimit,
                             final boolean failOnUnknownActivationSpec,
                             final Duration accessTimeout,
                             final Duration closeTimeout,
@@ -101,74 +98,63 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                             final int evictionThreads
     ) {
         this.containerID = containerID;
-        this.securityService = securityService;
         this.resourceAdapter = resourceAdapter;
         this.messageListenerInterface = messageListenerInterface;
         this.activationSpecClass = activationSpecClass;
-        this.instanceLimit = instanceLimit;
         this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
         xaResourceWrapper = SystemInstance.get().getComponent(XAResourceWrapper.class);
         inboundRecovery = SystemInstance.get().getComponent(InboundRecovery.class);
         this.instanceManager = new MdbInstanceManager(
+                securityService,
                 resourceAdapter,
                 inboundRecovery,
                 containerID,
-                instanceLimit,
-                securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads,
+                accessTimeout, closeTimeout, poolBuilder, callbackThreads,
                 useOneSchedulerThreadByBean ?
                         null :
                         Executors.newScheduledThreadPool(Math.max(evictionThreads, 1), new DaemonThreadFactory(containerID)));
     }
 
-    @Override
     public BeanContext[] getBeanContexts() {
         return deployments.values().toArray(new BeanContext[deployments.size()]);
     }
 
-    @Override
     public BeanContext getBeanContext(final Object deploymentID) {
         return deployments.get(deploymentID);
     }
 
-    @Override
     public ContainerType getContainerType() {
         return ContainerType.MESSAGE_DRIVEN;
     }
 
-    @Override
     public Object getContainerID() {
         return containerID;
     }
 
-    @Override
     public ResourceAdapter getResourceAdapter() {
         return resourceAdapter;
     }
 
-    @Override
     public Class getMessageListenerInterface() {
         return messageListenerInterface;
     }
 
-    @Override
     public Class getActivationSpecClass() {
         return activationSpecClass;
     }
 
-    @Override
     public Properties getProperties() {
         return properties;
     }
 
-    @Override
     public void deploy(final BeanContext beanContext) throws OpenEJBException {
         final Object deploymentId = beanContext.getDeploymentID();
-
         if (!beanContext.getMdbInterface().equals(messageListenerInterface)) {
             throw new OpenEJBException("Deployment '" + deploymentId + "' has message listener interface " +
                     beanContext.getMdbInterface().getName() + " but this MDB container only supports " +
                     messageListenerInterface);
         }
+
         // create the activation spec
         final ActivationSpec activationSpec = createActivationSpec(beanContext);
 
@@ -188,7 +174,72 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    @Override
+    private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
+        try {
+            // initialize the object recipe
+            final ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
+            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
+            objectRecipe.disallow(Option.FIELD_INJECTION);
+
+
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();
+            for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
+                objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
+            }
+            objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
+
+
+            // create the activationSpec
+            final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
+
+            // verify all properties except "destination" and "destinationType" were consumed
+            final Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
+            unusedProperties.remove("destination");
+            unusedProperties.remove("destinationType");
+            unusedProperties.remove("destinationLookup");
+            unusedProperties.remove("connectionFactoryLookup");
+            unusedProperties.remove("beanClass");
+            unusedProperties.remove("MdbActiveOnStartup");
+            unusedProperties.remove("MdbJMXControl");
+            unusedProperties.remove("DeliveryActive");
+
+            if (!unusedProperties.isEmpty()) {
+                final String text = "No setter found for the activation spec properties: " + unusedProperties;
+                if (failOnUnknownActivationSpec) {
+                    throw new IllegalArgumentException(text);
+                } else {
+                    logger.warning(text);
+                }
+            }
+
+
+            // validate the activation spec
+            try {
+                activationSpec.validate();
+            } catch (final UnsupportedOperationException uoe) {
+                logger.info("ActivationSpec does not support validate. Implementation of validate is optional");
+            }
+            // also try validating using Bean Validation if there is a Validator available in the context.
+            try {
+                final Validator validator = (Validator) beanContext.getJndiContext().lookup("comp/Validator");
+
+                final Set generalSet = validator.validate(activationSpec);
+                if (!generalSet.isEmpty()) {
+                    throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet);
+                }
+            } catch (final NamingException e) {
+                logger.debug("No Validator bound to JNDI context");
+            }
+
+            // set the resource adapter into the activation spec
+            activationSpec.setResourceAdapter(resourceAdapter);
+
+            return activationSpec;
+        } catch (final Exception e) {
+            throw new OpenEJBException("Unable to create activation spec", e);
+        }
+    }
+
     public void start(final BeanContext info) throws OpenEJBException {
         final EjbTimerService timerService = info.getEjbTimerService();
         if (timerService != null) {
@@ -196,12 +247,10 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    @Override
     public void stop(final BeanContext info) throws OpenEJBException {
         info.stop();
     }
 
-    @Override
     public void undeploy(final BeanContext beanContext) throws OpenEJBException {
         if (!(beanContext instanceof BeanContext)) {
             return;
@@ -216,7 +265,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
 
     }
 
-    @Override
     public Object invoke(final Object deploymentId, final InterfaceType type, final Class callInterface, final Method method, final Object[] args, final Object primKey) throws OpenEJBException {
         final BeanContext beanContext = getBeanContext(deploymentId);
 
@@ -239,7 +287,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    @Override
     public void beforeDelivery(final BeanContext deployInfo, final Object instance, final Method method, final XAResource xaResource) throws SystemException {
         // intialize call context
         final ThreadContext callContext = new ThreadContext(deployInfo, null);
@@ -271,7 +318,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    @Override
     public Object invoke(final Object instance, final Method method, final InterfaceType type, Object... args) throws SystemException, ApplicationException {
         if (args == null) {
             args = NO_ARGS;
@@ -365,7 +411,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         throw new AssertionError("Should not get here");
     }
 
-    @Override
     public void afterDelivery(final Object instance) throws SystemException {
         // get the mdb call context
         final ThreadContext callContext = ThreadContext.getThreadContext();
@@ -381,7 +426,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                     try {
                         this.instanceManager.poolInstance(callContext, instance);
                     } catch (OpenEJBException e){
-                        e.printStackTrace(); // TODO: Check this, find a way to remove
+                        throw new SystemException("Should never get an OpenEJBException exception", e);
                     }
 
                 }
@@ -393,7 +438,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         }
     }
 
-    @Override
     public void release(final BeanContext deployInfo, final Object instance) {
         // get the mdb call context
         ThreadContext callContext = ThreadContext.getThreadContext();
@@ -416,7 +460,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                     try {
                         instanceManager.poolInstance(callContext, instance);
                     } catch (OpenEJBException e){
-                        e.printStackTrace();
+                        logger.error("error while releasing message endpoint", e);
                     }
                 }
             }
@@ -491,73 +535,6 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
             } finally {
                 Thread.currentThread().setContextClassLoader(oldCl);
             }
-        }
-    }
-
-    private ActivationSpec createActivationSpec(final BeanContext beanContext) throws OpenEJBException {
-        try {
-            // initialize the object recipe
-            final ObjectRecipe objectRecipe = new ObjectRecipe(activationSpecClass);
-            objectRecipe.allow(Option.IGNORE_MISSING_PROPERTIES);
-            objectRecipe.disallow(Option.FIELD_INJECTION);
-
-
-            final Map<String, String> activationProperties = beanContext.getActivationProperties();
-            ;
-            for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
-                objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
-            }
-            objectRecipe.setMethodProperty("beanClass", beanContext.getBeanClass());
-
-
-            // create the activationSpec
-            final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
-
-            // verify all properties except "destination" and "destinationType" were consumed
-            final Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
-            unusedProperties.remove("destination");
-            unusedProperties.remove("destinationType");
-            unusedProperties.remove("destinationLookup");
-            unusedProperties.remove("connectionFactoryLookup");
-            unusedProperties.remove("beanClass");
-            unusedProperties.remove("MdbActiveOnStartup");
-            unusedProperties.remove("MdbJMXControl");
-            unusedProperties.remove("DeliveryActive");
-
-            if (!unusedProperties.isEmpty()) {
-                final String text = "No setter found for the activation spec properties: " + unusedProperties;
-                if (failOnUnknownActivationSpec) {
-                    throw new IllegalArgumentException(text);
-                } else {
-                    logger.warning(text);
-                }
-            }
-
-
-            // validate the activation spec
-            try {
-                activationSpec.validate();
-            } catch (final UnsupportedOperationException uoe) {
-                logger.info("ActivationSpec does not support validate. Implementation of validate is optional");
-            }
-            // also try validating using Bean Validation if there is a Validator available in the context.
-            try {
-                final Validator validator = (Validator) beanContext.getJndiContext().lookup("comp/Validator");
-
-                final Set generalSet = validator.validate(activationSpec);
-                if (!generalSet.isEmpty()) {
-                    throw new ConstraintViolationException("Constraint violation for ActivationSpec " + activationSpecClass.getName(), generalSet);
-                }
-            } catch (final NamingException e) {
-                logger.debug("No Validator bound to JNDI context");
-            }
-
-            // set the resource adapter into the activation spec
-            activationSpec.setResourceAdapter(resourceAdapter);
-
-            return activationSpec;
-        } catch (final Exception e) {
-            throw new OpenEJBException("Unable to create activation spec", e);
         }
     }
 }

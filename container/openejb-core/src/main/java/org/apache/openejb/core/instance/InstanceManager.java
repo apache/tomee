@@ -30,7 +30,6 @@ import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
@@ -39,14 +38,12 @@ import org.apache.openejb.util.Pool;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
 import javax.ejb.SessionBean;
-import javax.enterprise.context.spi.CreationalContext;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -75,20 +72,18 @@ public abstract class InstanceManager {
 
     protected final Duration accessTimeout;
     protected final Duration closeTimeout;
-    protected final SecurityService securityService;
     protected final Pool.Builder poolBuilder;
     protected final ThreadPoolExecutor executor;
     protected final ScheduledExecutorService scheduledExecutor;
 
-    public InstanceManager(final SecurityService securityService,
-                                    final Duration accessTimeout, final Duration closeTimeout,
+    public InstanceManager(final Duration accessTimeout, final Duration closeTimeout,
                                     final Pool.Builder poolBuilder, final int callbackThreads,
                                     final ScheduledExecutorService ses) {
-        this.securityService = securityService;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
         this.scheduledExecutor = ses;
+
         if (ScheduledThreadPoolExecutor.class.isInstance(ses) && !ScheduledThreadPoolExecutor.class.cast(ses).getRemoveOnCancelPolicy()) {
             ScheduledThreadPoolExecutor.class.cast(ses).setRemoveOnCancelPolicy(true);
         }
@@ -98,7 +93,7 @@ public abstract class InstanceManager {
         }
 
         final int qsize = callbackThreads > 1 ? callbackThreads - 1 : 1;
-        final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
+        final ThreadFactory threadFactory = new DaemonThreadFactory("InstanceManagerPool.worker.");
         this.executor = new ThreadPoolExecutor(
                 callbackThreads, callbackThreads * 2,
                 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
@@ -178,7 +173,6 @@ public abstract class InstanceManager {
             }
         }
     }
-    //TODO: REMOVE ALL REFERENCES TO STATELESS IN COMMENTS OR CODE
     /**
      * Removes an instance from the pool and returns it for use
      * by the container in business methods.
@@ -187,7 +181,7 @@ public abstract class InstanceManager {
      * cause this thread to wait.
      * <p/>
      * If StrictPooling is not enabled this method will create a
-     * new stateless bean instance performing all required injection
+     * new bean instance performing all required injection
      * and callbacks before returning it in a method ready state.
      *
      * @param callContext ThreadContext
@@ -207,7 +201,7 @@ public abstract class InstanceManager {
                 instance.setPoolEntry(entry);
             }
         } catch (final TimeoutException e) {
-            final String msg = "No instances available in Stateless Session Bean pool.  Waited " + data.getAccessTimeout().toString();
+            final String msg = "No instances available in Session Bean pool.  Waited " + data.getAccessTimeout().toString();
             final ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException(msg);
             timeoutException.fillInStackTrace();
             throw new ApplicationException(timeoutException);
@@ -240,7 +234,7 @@ public abstract class InstanceManager {
 
     /**
      * All instances are removed from the pool in getInstance(...).  They are only
-     * returned by the StatelessContainer via this method under two circumstances.
+     * returned by the Container via this method under two circumstances.
      * <p/>
      * 1.  The business method returns normally
      * 2.  The business method throws an application exception
@@ -351,7 +345,7 @@ public abstract class InstanceManager {
 
         try {
             if (!data.closePool()) {
-                logger.error("Timed-out waiting for stateless pool to close: for deployment '" + beanContext.getDeploymentID() + "'");
+                logger.error("Timed-out waiting for instance manager pool to close: for deployment '" + beanContext.getDeploymentID() + "'");
             }
 
         } catch (final InterruptedException e) {
