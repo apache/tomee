@@ -66,7 +66,6 @@ public class EndpointHandler extends AbstractEndpointHandler {
         // before completed successfully we are now ready to invoke bean
         state = State.BEFORE_CALLED;
     }
-
     @Override
     protected void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
         try {
