@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.ApplicationException;
-import org.apache.openejb.BeanContext;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.resource.activemq.jms2.DelegateMessage;
 import org.apache.openejb.resource.activemq.jms2.JMS2;
@@ -27,31 +25,25 @@ import javax.ejb.EJBException;
 import javax.jms.Message;
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
-import javax.resource.spi.endpoint.MessageEndpoint;
-import javax.transaction.xa.XAResource;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class EndpointHandler implements InvocationHandler, MessageEndpoint {
-    private volatile Boolean isAmq;
+abstract class AbstractEndpointHandler {
+
+    protected State state = State.NONE;
+    protected volatile Boolean isAmq;
+
+    protected Object instance;
+
+    //final
+    protected BaseMdbContainer container;
 
 
-    private final BaseMdbContainer container;
-    private final BeanContext deployment;
-    private final MdbInstanceFactory instanceFactory;
-    private final XAResource xaResource;
+    public abstract void beforeDelivery(final Method method) throws ApplicationServerInternalException;
 
-    private State state = State.NONE;
-    private Object instance;
+    protected abstract void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException;
 
-    public EndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceFactory instanceFactory, final XAResource xaResource) throws UnavailableException {
-        this.container = container;
-        this.deployment = deployment;
-        this.instanceFactory = instanceFactory;
-        this.xaResource = xaResource;
-        instance = instanceFactory.createInstance(false);
-    }
+    public abstract void release();
 
 
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -84,30 +76,6 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
             final Object value = deliverMessage(method, args);
             return value;
         }
-    }
-
-    public void beforeDelivery(final Method method) throws ApplicationServerInternalException {
-        // verify current state
-        switch (state) {
-            case RELEASED:
-                throw new IllegalStateException("Message endpoint factory has been released");
-            case BEFORE_CALLED:
-                throw new IllegalStateException("beforeDelivery can not be called again until message is delivered and afterDelivery is called");
-            case METHOD_CALLED:
-            case SYSTEM_EXCEPTION:
-                throw new IllegalStateException("The last message delivery must be completed with an afterDeliver before beforeDeliver can be called again");
-        }
-
-        // call beforeDelivery on the container
-        try {
-            container.beforeDelivery(deployment, instance, method, xaResource);
-        } catch (final SystemException se) {
-            final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
-            throw new ApplicationServerInternalException(throwable);
-        }
-
-        // before completed successfully we are now ready to invoke bean
-        state = State.BEFORE_CALLED;
     }
 
     public Object deliverMessage(final Method method, final Object[] args) throws Throwable {
@@ -169,27 +137,7 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         return value;
     }
 
-    // workaround for AMQ 5/JMS 2 support
-    private Object[] wrapMessageForAmq5(final Object[] args) {
-        if (args == null || args.length != 1 || DelegateMessage.class.isInstance(args[0])) {
-            return args;
-        }
-
-        if (isAmq == null) {
-            synchronized (this) {
-                if (isAmq == null) {
-                    isAmq = args[0].getClass().getName().startsWith("org.apache.activemq.");
-                }
-            }
-        }
-        if (isAmq) {
-            args[0] = JMS2.wrap(Message.class.cast(args[0]));
-        }
-        return args;
-    }
-
     public void afterDelivery() throws ApplicationServerInternalException, UnavailableException {
-        // verify current state
         switch (state) {
             case RELEASED:
                 throw new IllegalStateException("Message endpoint factory has been released");
@@ -217,34 +165,23 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
     }
 
-    private void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
-        try {
-            instance = instanceFactory.recreateInstance(instance);
-        } catch (final UnavailableException e) {
-            // an error occured wile attempting to create the replacement instance
-            // this endpoint is now failed
-            state = State.RELEASED;
+    // workaround for AMQ 5/JMS 2 support
+    private Object[] wrapMessageForAmq5(final Object[] args) {
+        if (args == null || args.length != 1 || DelegateMessage.class.isInstance(args[0])) {
+            return args;
+        }
 
-            // if bean threw an exception, do not override that exception
-            if (!exceptionAlreadyThrown) {
-                throw e;
+        if (isAmq == null) {
+            synchronized (this) {
+                if (isAmq == null) {
+                    isAmq = args[0].getClass().getName().startsWith("org.apache.activemq.");
+                }
             }
         }
-    }
-
-    public void release() {
-        if (state == State.RELEASED) {
-            return;
+        if (isAmq) {
+            args[0] = JMS2.wrap(Message.class.cast(args[0]));
         }
-        state = State.RELEASED;
-
-        // notify the container
-        try {
-            container.release(deployment, instance);
-        } finally {
-            instanceFactory.freeInstance((Instance) instance, false);
-            instance = null;
-        }
+        return args;
     }
 
     private boolean isValidException(final Method method, final Throwable throwable) {
@@ -260,4 +197,5 @@ public class EndpointHandler implements InvocationHandler, MessageEndpoint {
         }
         return false;
     }
+
 }
