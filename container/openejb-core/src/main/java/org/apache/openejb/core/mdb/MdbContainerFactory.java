@@ -41,56 +41,116 @@ public class MdbContainerFactory {
     private boolean pool;
 
 
+    public Object getId() {
+        return id;
+    }
+
     public void setId(Object id) {
         this.id = id;
+    }
+
+    public SecurityService getSecurityService() {
+        return securityService;
     }
 
     public void setSecurityService(SecurityService securityService) {
         this.securityService = securityService;
     }
 
+    public ResourceAdapter getResourceAdapter() {
+        return resourceAdapter;
+    }
+
     public void setResourceAdapter(ResourceAdapter resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
+    }
+
+    public Class getMessageListenerInterface() {
+        return messageListenerInterface;
     }
 
     public void setMessageListenerInterface(Class messageListenerInterface) {
         this.messageListenerInterface = messageListenerInterface;
     }
 
+    public Class getActivationSpecClass() {
+        return activationSpecClass;
+    }
+
     public void setActivationSpecClass(Class activationSpecClass) {
         this.activationSpecClass = activationSpecClass;
+    }
+
+    public int getInstanceLimit() {
+        return instanceLimit;
     }
 
     public void setInstanceLimit(int instanceLimit) {
         this.instanceLimit = instanceLimit;
     }
 
+    public boolean isFailOnUnknownActivationSpec() {
+        return failOnUnknownActivationSpec;
+    }
+
     public void setFailOnUnknownActivationSpec(boolean failOnUnknownActivationSpec) {
         this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
+    }
+
+    public Duration getAccessTimeout() {
+        return accessTimeout;
     }
 
     public void setAccessTimeout(Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
+    public Duration getCloseTimeout() {
+        return closeTimeout;
+    }
+
     public void setCloseTimeout(Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
+    }
+
+    public Pool.Builder getPoolBuilder() {
+        return poolBuilder;
     }
 
     public void setPoolBuilder(Pool.Builder poolBuilder) {
         this.poolBuilder = poolBuilder;
     }
 
+    public int getCallbackThreads() {
+        return callbackThreads;
+    }
+
     public void setCallbackThreads(int callbackThreads) {
         this.callbackThreads = callbackThreads;
+    }
+
+    public boolean isUseOneSchedulerThreadByBean() {
+        return useOneSchedulerThreadByBean;
     }
 
     public void setUseOneSchedulerThreadByBean(boolean useOneSchedulerThreadByBean) {
         this.useOneSchedulerThreadByBean = useOneSchedulerThreadByBean;
     }
 
+    public int getEvictionThreads() {
+        return evictionThreads;
+    }
+
     public void setEvictionThreads(int evictionThreads) {
         this.evictionThreads = evictionThreads;
+    }
+
+    public boolean isPool() {
+        return pool;
+    }
+
+    public void setPool(boolean pool) {
+        this.pool = pool;
     }
 
     public BaseMdbContainer create() {
