@@ -17,7 +17,6 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
-import org.apache.openejb.activemq.AMQXASupportTest;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
@@ -48,7 +47,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.*;
 
 @RunWith(ApplicationComposer.class)
 public class PoolEndpointHandlerTest {
@@ -73,7 +71,6 @@ public class PoolEndpointHandlerTest {
 
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
-
                 .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
                 .p("xaCf.BrokerURL", "vm://localhost")
                 .p("mdb.activation.ignore", "testString")
@@ -111,18 +108,19 @@ public class PoolEndpointHandlerTest {
                 final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 final MessageProducer producer = session.createProducer(destination);
                 producer.send(session.createTextMessage(TEXT));
-                assertTrue(Listener.sync());
             } finally {
                 connection.close();
             }
         }
+        assertTrue(Listener.sync());
         Assert.assertTrue(Listener.COUNTER.get() <= 10);
 
     }
 
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
+            @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "true")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
@@ -140,7 +138,6 @@ public class PoolEndpointHandlerTest {
                 try {
                     ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
                 } catch (final JMSException e) {
-                    // no-op
                 }
             } finally {
                 latch.countDown();
@@ -148,7 +145,7 @@ public class PoolEndpointHandlerTest {
         }
 
         public static void reset() {
-            latch = new CountDownLatch(1);
+            latch = new CountDownLatch(1000);
             ok = false;
         }
 
