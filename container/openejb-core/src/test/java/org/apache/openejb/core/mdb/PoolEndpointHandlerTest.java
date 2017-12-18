@@ -116,7 +116,7 @@ public class PoolEndpointHandlerTest {
                 connection.close();
             }
         }
-        Assert.assertTrue(Listener.COUNTER.get() < 10);
+        Assert.assertTrue(Listener.COUNTER.get() <= 10);
 
     }
 
