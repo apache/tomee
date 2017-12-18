@@ -40,7 +40,9 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -113,7 +115,7 @@ public class PoolEndpointHandlerTest {
             }
         }
         assertTrue(Listener.sync());
-        Assert.assertTrue(Listener.COUNTER.get() <= 10);
+        Assert.assertTrue(Listener.COUNTER.get() == 10);
 
     }
 
@@ -124,7 +126,7 @@ public class PoolEndpointHandlerTest {
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
-        public static boolean ok = false;
+        private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<>();
 
         static final AtomicLong COUNTER = new AtomicLong();
 
@@ -136,7 +138,8 @@ public class PoolEndpointHandlerTest {
         public void onMessage(final Message message) {
             try {
                 try {
-                    ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    boolean ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    BOOLEANS.add(ok);
                 } catch (final JMSException e) {
                 }
             } finally {
@@ -146,12 +149,17 @@ public class PoolEndpointHandlerTest {
 
         public static void reset() {
             latch = new CountDownLatch(1000);
-            ok = false;
+            BOOLEANS.clear();
         }
 
         public static boolean sync() throws InterruptedException {
             latch.await(1, TimeUnit.MINUTES);
-            return ok;
+            for (boolean result : BOOLEANS) {
+                if(!result) {
+                  return false;
+                }
+            }
+            return true;
         }
     }
 
