@@ -120,7 +120,7 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
             container.release(deployment, instance);
         } finally {
             try {
-                instanceManager.poolInstance(callContext, instance);
+                instanceManager.poolInstance(new ThreadContext(deployment, null), instance);
             } catch (OpenEJBException e) {
                 e.printStackTrace();
             }
