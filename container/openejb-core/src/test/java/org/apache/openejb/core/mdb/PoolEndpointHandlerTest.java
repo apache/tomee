@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.core.mdb.connector.api.InboundListener;
+import org.apache.openejb.core.mdb.connector.api.SampleConnection;
+import org.apache.openejb.core.mdb.connector.api.SampleConnectionFactory;
+import org.apache.openejb.core.mdb.connector.impl.SampleActivationSpec;
+import org.apache.openejb.core.mdb.connector.impl.SampleManagedConnectionFactory;
+import org.apache.openejb.core.mdb.connector.impl.SampleResourceAdapter;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -31,8 +37,6 @@ import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.management.ObjectName;
 import java.util.List;
 import java.util.Properties;
@@ -62,9 +66,10 @@ public class PoolEndpointHandlerTest {
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
-                .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
-                .p("cf.ResourceAdapter", "amq")
-                .build();
+            .p("cf", "new://Resource?type=" + SampleConnectionFactory.class.getName() + "&class-name=" + SampleManagedConnectionFactory.class.getName())
+            .p("cf.ResourceAdapter", "sra")
+            .p("cf.TransactionSupport", "none")
+            .build();
     }
 
     @Module
@@ -110,8 +115,6 @@ public class PoolEndpointHandlerTest {
     }
 
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
             @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "false"),
             @ActivationConfigProperty(propertyName = "MdbJMXControl", propertyValue = "default:type=test")
     })
