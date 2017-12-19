@@ -17,7 +17,6 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
-import org.apache.openejb.activemq.AMQXASupportTest;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
@@ -41,14 +40,15 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.jms.XAConnectionFactory;
+import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.*;
 
 @RunWith(ApplicationComposer.class)
 public class PoolEndpointHandlerTest {
@@ -73,7 +73,6 @@ public class PoolEndpointHandlerTest {
 
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
-
                 .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
                 .p("xaCf.BrokerURL", "vm://localhost")
                 .p("mdb.activation.ignore", "testString")
@@ -111,22 +110,23 @@ public class PoolEndpointHandlerTest {
                 final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 final MessageProducer producer = session.createProducer(destination);
                 producer.send(session.createTextMessage(TEXT));
-                assertTrue(Listener.sync());
             } finally {
                 connection.close();
             }
         }
-        Assert.assertTrue(Listener.COUNTER.get() <= 10);
+        assertTrue(Listener.sync());
+        Assert.assertTrue(Listener.COUNTER.get() == 10);
 
     }
 
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
+            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
+            @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "true")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
-        public static boolean ok = false;
+        private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<>();
 
         static final AtomicLong COUNTER = new AtomicLong();
 
@@ -138,9 +138,9 @@ public class PoolEndpointHandlerTest {
         public void onMessage(final Message message) {
             try {
                 try {
-                    ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    boolean ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
+                    BOOLEANS.add(ok);
                 } catch (final JMSException e) {
-                    // no-op
                 }
             } finally {
                 latch.countDown();
@@ -148,13 +148,18 @@ public class PoolEndpointHandlerTest {
         }
 
         public static void reset() {
-            latch = new CountDownLatch(1);
-            ok = false;
+            latch = new CountDownLatch(1000);
+            BOOLEANS.clear();
         }
 
         public static boolean sync() throws InterruptedException {
             latch.await(1, TimeUnit.MINUTES);
-            return ok;
+            for (boolean result : BOOLEANS) {
+                if(!result) {
+                  return false;
+                }
+            }
+            return true;
         }
     }
 
