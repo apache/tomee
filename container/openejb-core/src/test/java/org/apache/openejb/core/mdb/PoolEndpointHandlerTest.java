@@ -16,17 +16,17 @@
  */
 package org.apache.openejb.core.mdb;
 
-import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.testng.Assert;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -39,7 +39,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-import javax.jms.XAConnectionFactory;
+import javax.management.ObjectName;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,15 +47,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
 public class PoolEndpointHandlerTest {
 
-
     private static final String TEXT = "foo";
-
 
     @Configuration
     public Properties config() {
@@ -73,11 +72,6 @@ public class PoolEndpointHandlerTest {
 
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
-                .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
-                .p("xaCf.BrokerURL", "vm://localhost")
-                .p("mdb.activation.ignore", "testString")
-                .p("mdb.activation.ignore2", "testString")
-                .p("openejb.provider.default", "org.apache.openejb.actpropfalse") // service-jar.xml with FailOnUnknowActivationSpec = false
                 .build();
     }
 
@@ -88,9 +82,6 @@ public class PoolEndpointHandlerTest {
 
     @Resource(name = "target")
     private Queue destination;
-
-    @Resource(name = "xaCf")
-    private XAConnectionFactory xacf;
 
     @Resource(name = "cf")
     private ConnectionFactory cf;
@@ -114,15 +105,25 @@ public class PoolEndpointHandlerTest {
                 connection.close();
             }
         }
-        assertTrue(Listener.sync());
-        Assert.assertTrue(Listener.COUNTER.get() == 10);
 
+        // start MDB delivery
+        setControl("start");
+
+        assertTrue(Listener.sync());
+        assertEquals(10, Listener.COUNTER.get());
+    }
+
+    private void setControl(final String action) throws Exception {
+        LocalMBeanServer.get().invoke(
+                new ObjectName("default:type=test"),
+                action, new Object[0], new String[0]);
     }
 
     @MessageDriven(activationConfig = {
             @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
             @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
-            @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "true")
+            @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "false"),
+            @ActivationConfigProperty(propertyName = "MdbJMXControl", propertyValue = "default:type=test")
     })
     public static class Listener implements MessageListener {
         public static CountDownLatch latch;
@@ -130,7 +131,8 @@ public class PoolEndpointHandlerTest {
 
         static final AtomicLong COUNTER = new AtomicLong();
 
-        public Listener() {
+        @PostConstruct
+        public void postConstruct() {
             COUNTER.incrementAndGet();
         }
 
