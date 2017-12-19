@@ -16,6 +16,12 @@
  */
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.core.mdb.connector.api.InboundListener;
+import org.apache.openejb.core.mdb.connector.api.SampleConnection;
+import org.apache.openejb.core.mdb.connector.api.SampleConnectionFactory;
+import org.apache.openejb.core.mdb.connector.impl.SampleActivationSpec;
+import org.apache.openejb.core.mdb.connector.impl.SampleManagedConnectionFactory;
+import org.apache.openejb.core.mdb.connector.impl.SampleResourceAdapter;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.monitoring.LocalMBeanServer;
@@ -30,15 +36,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.MessageProducer;
 import javax.jms.Queue;
-import javax.jms.Session;
-import javax.jms.TextMessage;
 import javax.management.ObjectName;
 import java.util.List;
 import java.util.Properties;
@@ -60,19 +58,18 @@ public class PoolEndpointHandlerTest {
     public Properties config() {
         return new PropertiesBuilder()
 
-                .p("amq", "new://Resource?type=ActiveMQResourceAdapter")
-                .p("amq.DataSource", "")
-                .p("amq.BrokerXmlConfig", "broker:(vm://localhost)")
+            .p("sra", "new://Resource?class-name=" + SampleResourceAdapter.class.getName())
 
-                .p("target", "new://Resource?type=Queue")
+            .p("mdbs", "new://Container?type=MESSAGE")
+            .p("mdbs.ResourceAdapter", "sra")
+            .p("mdbs.pool", "false")
+            .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
+            .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
-                .p("mdbs", "new://Container?type=MESSAGE")
-                .p("mdbs.ResourceAdapter", "amq")
-                .p("mdbs.pool", "true")
-
-                .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
-                .p("cf.ResourceAdapter", "amq")
-                .build();
+            .p("cf", "new://Resource?type=" + SampleConnectionFactory.class.getName() + "&class-name=" + SampleManagedConnectionFactory.class.getName())
+            .p("cf.ResourceAdapter", "sra")
+            .p("cf.TransactionSupport", "none")
+            .build();
     }
 
     @Module
@@ -84,7 +81,7 @@ public class PoolEndpointHandlerTest {
     private Queue destination;
 
     @Resource(name = "cf")
-    private ConnectionFactory cf;
+    private SampleConnectionFactory cf;
 
     @Before
     public void resetLatch() {
@@ -95,12 +92,10 @@ public class PoolEndpointHandlerTest {
     public void shouldSendMessage() throws Exception {
         assertNotNull(cf);
 
-        for (int i = 0; i < 1_000; i++) {
-            final Connection connection = cf.createConnection();
+        for (int i = 0; i < 100; i++) {
+            final SampleConnection connection = cf.getConnection();
             try {
-                final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                final MessageProducer producer = session.createProducer(destination);
-                producer.send(session.createTextMessage(TEXT));
+                connection.sendMessage(TEXT);
             } finally {
                 connection.close();
             }
@@ -120,12 +115,10 @@ public class PoolEndpointHandlerTest {
     }
 
     @MessageDriven(activationConfig = {
-            @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-            @ActivationConfigProperty(propertyName = "destination", propertyValue = "target"),
             @ActivationConfigProperty(propertyName = "DeliveryActive", propertyValue = "false"),
             @ActivationConfigProperty(propertyName = "MdbJMXControl", propertyValue = "default:type=test")
     })
-    public static class Listener implements MessageListener {
+    public static class Listener implements InboundListener {
         public static CountDownLatch latch;
         private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<>();
 
@@ -136,21 +129,8 @@ public class PoolEndpointHandlerTest {
             COUNTER.incrementAndGet();
         }
 
-        @Override
-        public void onMessage(final Message message) {
-            try {
-                try {
-                    boolean ok = TextMessage.class.isInstance(message) && TEXT.equals(TextMessage.class.cast(message).getText());
-                    BOOLEANS.add(ok);
-                } catch (final JMSException e) {
-                }
-            } finally {
-                latch.countDown();
-            }
-        }
-
         public static void reset() {
-            latch = new CountDownLatch(1000);
+            latch = new CountDownLatch(100);
             BOOLEANS.clear();
         }
 
@@ -162,6 +142,16 @@ public class PoolEndpointHandlerTest {
                 }
             }
             return true;
+        }
+
+        @Override
+        public void receiveMessage(String message) {
+            try {
+                boolean ok = TEXT.equals(message);
+                BOOLEANS.add(ok);
+            } finally {
+                latch.countDown();
+            }
         }
     }
 
