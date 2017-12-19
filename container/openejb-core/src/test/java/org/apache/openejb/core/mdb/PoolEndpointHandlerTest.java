@@ -62,7 +62,7 @@ public class PoolEndpointHandlerTest {
 
             .p("mdbs", "new://Container?type=MESSAGE")
             .p("mdbs.ResourceAdapter", "sra")
-            .p("mdbs.pool", "false")
+            .p("mdbs.pool", "true")
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
