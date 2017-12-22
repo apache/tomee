@@ -778,7 +778,7 @@
         <enabled>true</enabled>
       </releases>
       <id>staged-releases</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
+      <url>https://repository.tomitribe.com/content/repositories/tomitribe-1473/</url>
     </repository>
     <repository>
       <id>apache-snapshots</id>
