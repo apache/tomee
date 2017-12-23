@@ -102,7 +102,7 @@
     <version.javaee-api>8.0-SNAPSHOT</version.javaee-api>
 
     <openjpa.version>3.0.0-SNAPSHOT</openjpa.version>
-    <openwebbeans.version>2.0.3-SNAPSHOT</openwebbeans.version>
+    <openwebbeans.version>2.0.4-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.1.2</johnzon.version>
 
@@ -134,7 +134,7 @@
 
     <tomcat.version>8.5.23</tomcat.version>
 
-    <cxf.version>3.1.13</cxf.version>
+    <cxf.version>3.2.1</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
