@@ -34,7 +34,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.4-TT.2</version>
+  <version>7.0.5-TT.1</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -132,7 +132,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.23</tomcat.version>
+    <tomcat.version>8.5.24</tomcat.version>
 
     <cxf.version>3.1.14</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -167,7 +167,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.14.5</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.2</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -175,13 +175,13 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.2.12</myfaces.version>
+    <myfaces.version>2.2.13-TT.1</myfaces.version>
     <mojarra.version>2.2.12</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.hsqldb>2.3.2</version.hsqldb>
+    <version.hsqldb>2.3.5</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
@@ -685,6 +685,17 @@
     </profile>
   </profiles>
   <repositories>
+    <repository>
+      <id>staging</id>
+      <name>Staging</name>
+      <url>https://repository.tomitribe.com/content/repositories/tomitribe-1473</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
