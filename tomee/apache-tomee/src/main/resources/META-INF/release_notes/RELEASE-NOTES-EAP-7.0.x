@@ -15,7 +15,4 @@
 
 This release has the following changes:
 
-* TOMEE-2145 fix double deploy issue when deploying an EAR from the webapps directory
-* TOMEE-2146 system usage configuration for AMQ broker
-* Update CXF to 3.1.14
-* CVE-2017-12624 - Apache CXF web services that process attachments are vulnerable to Denial of Service (DoS) attacks. Message attachment headers that are greater than 300 characters will be rejected by default. This value is configurable via the property "attachment-max-header-size".
+* MYFACES-4133 Don't deserialize the ViewState-ID if the state saving method is server
