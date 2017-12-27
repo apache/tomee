@@ -59,6 +59,8 @@
     <module>change-jaxws-url</module>
     <module>component-interfaces</module>
     <module>client-resource-lookup-preview</module>
+    <module>connector-ear</module>
+    <module>connector-war</module>
     <module>cucumber-jvm</module>
     <module>custom-injection</module>
     <module>datasource-ciphered-password</module>
@@ -125,6 +127,7 @@
     <module>schedule-methods</module>
     <module>server-events</module>
     <module>simple-cdi-interceptor</module>
+    <module>simple-ear</module>
     <module>simple-cmp2</module>
     <module>simple-mdb-and-cdi</module>
     <module>simple-mdb</module>

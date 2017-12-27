@@ -36,4 +36,13 @@
     <skip.remote.plume>true</skip.remote.plume>
     <skip.webapp.plume>true</skip.webapp.plume>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+      <version>3.1.14</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
