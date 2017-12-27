@@ -370,8 +370,7 @@ class AppInfoBuilder {
 
     private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
         final List<ContainerInfo> containerInfos = getContainerInfos(module);
-        if (containerInfos == null) return;
-
+        if (containerInfos == null) { return; }
 
         info.containers.addAll(containerInfos);
     }
