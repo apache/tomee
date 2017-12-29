@@ -1,6 +1,10 @@
-= TomEE EAP 1.7.5-TT.18
+= TomEE EAP 1.7.6-TT.1
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.1
+
+MYFACES-4133 - Don't deserialize the ViewState-ID if the state saving method is server
 
 === Changes in TomEE EAP 1.7.5-TT.18
 

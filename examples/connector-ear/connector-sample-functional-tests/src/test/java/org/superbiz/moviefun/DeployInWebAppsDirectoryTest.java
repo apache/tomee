@@ -105,7 +105,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setGroupId("org.apache.openejb");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("1.7.5-TT.18");
+        configuration.setVersion("1.7.6-TT.1");
 //        configuration.setDebug(true);
         configuration.setHttpPort(-1);
 
