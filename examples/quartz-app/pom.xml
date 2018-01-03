@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz.quartz</groupId>
   <artifactId>quartz-app</artifactId>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.1.1-TT.1</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Quartz</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<version.openejb>4.7.5-TT.18</version.openejb>
+	<version.openejb>4.7.6-TT.1</version.openejb>
   </properties>
   <modules>
     <module>quartz-ra</module>
