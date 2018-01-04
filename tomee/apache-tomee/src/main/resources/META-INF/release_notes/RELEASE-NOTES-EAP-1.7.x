@@ -1,10 +1,4 @@
-= TomEE EAP 1.7.6-TT.1
-
-=== Changes in TomEE EAP 1.7.6-TT.1
-
-This security release fixes the following issues:
-
-SONATYPE-2017-0413 - Apache MyFaces, when unsafe deserialization is permitted, has a potential Remote Code Execution vulnerability.
+= TomEE EAP 1.7.5-TT.18
 
 == Change log
 
@@ -25,7 +19,7 @@ This release has the following changes:
 
 * TOMEE-1574 - Backport from TomEE 7.0.x improvement to allow <Container> and <Service> definitions in an application's resources.xml
 * TOMEE-2141 - Logging EJB bean instance creation and removal
-
+ 
 === Changes in TomEE EAP 1.7.5-TT.15
 
 This security release fixes the following issues:
