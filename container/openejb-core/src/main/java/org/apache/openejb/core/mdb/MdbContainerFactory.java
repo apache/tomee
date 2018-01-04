@@ -85,8 +85,21 @@ public class MdbContainerFactory {
         return instanceLimit;
     }
 
+    /**
+     * @deprecated use MaxSize
+     */
+    @Deprecated
     public void setInstanceLimit(int instanceLimit) {
+        setMaxSize(instanceLimit);
+    }
+
+    public void setMaxSize(final int max) {
         this.instanceLimit = instanceLimit;
+        this.poolBuilder.setPoolSize(max);
+    }
+
+    public void setMinSize(final int min) {
+        this.poolBuilder.setMinSize(min);
     }
 
     public boolean isFailOnUnknownActivationSpec() {
@@ -143,6 +156,38 @@ public class MdbContainerFactory {
 
     public void setEvictionThreads(int evictionThreads) {
         this.evictionThreads = evictionThreads;
+    }
+
+    public void setStrictPooling(final boolean strict) {
+        poolBuilder.setStrictPooling(strict);
+    }
+
+    public void setMaxAge(final Duration maxAge) {
+        poolBuilder.setMaxAge(maxAge);
+    }
+
+    public void setIdleTimeout(final Duration idleTimeout) {
+        poolBuilder.setIdleTimeout(idleTimeout);
+    }
+
+    public void setSweepInterval(final Duration interval) {
+        poolBuilder.setSweepInterval(interval);
+    }
+
+    public void setReplaceAged(final boolean replaceAged) {
+        poolBuilder.setReplaceAged(replaceAged);
+    }
+
+    public void setReplaceFlushed(final boolean replaceFlushed) {
+        poolBuilder.setReplaceFlushed(replaceFlushed);
+    }
+
+    public void setGarbageCollection(final boolean garbageCollection) {
+        poolBuilder.setGarbageCollection(garbageCollection);
+    }
+
+    public void setMaxAgeOffset(final double maxAgeOffset) {
+        poolBuilder.setMaxAgeOffset(maxAgeOffset);
     }
 
     public boolean isPool() {

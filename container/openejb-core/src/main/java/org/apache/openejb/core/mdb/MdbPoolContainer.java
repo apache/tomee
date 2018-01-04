@@ -457,10 +457,12 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
                 } catch (final Exception e) {
                     logger.error("error while releasing message endpoint", e);
                 } finally {
-                    try {
-                        instanceManager.poolInstance(callContext, instance);
-                    } catch (OpenEJBException e){
-                        logger.error("error while releasing message endpoint", e);
+                    if(instance != null) {
+                        try {
+                            instanceManager.poolInstance(callContext, instance);
+                        } catch (OpenEJBException e){
+                            logger.error("error while releasing message endpoint", e);
+                        }
                     }
                 }
             }
