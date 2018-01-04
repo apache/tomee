@@ -5,6 +5,7 @@
 === Changes in TomEE EAP 1.7.6-TT.1
 
 MYFACES-4133 - Don't deserialize the ViewState-ID if the state saving method is server
+TOMEE-2158 update Majorra library to 2.1.29-09
 
 === Changes in TomEE EAP 1.7.5-TT.18
 
@@ -23,7 +24,7 @@ This release has the following changes:
 
 * TOMEE-1574 - Backport from TomEE 7.0.x improvement to allow <Container> and <Service> definitions in an application's resources.xml
 * TOMEE-2141 - Logging EJB bean instance creation and removal
- 
+
 === Changes in TomEE EAP 1.7.5-TT.15
 
 This security release fixes the following issues:
