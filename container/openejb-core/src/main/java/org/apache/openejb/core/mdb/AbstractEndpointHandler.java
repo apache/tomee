@@ -132,7 +132,6 @@ abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndp
         }
 
         if (throwable != null) {
-            throwable.printStackTrace();
             if (isValidException(method, throwable)) {
                 throw throwable;
             } else {
@@ -159,7 +158,6 @@ abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndp
             exceptionThrown = true;
 
             final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
-            throwable.printStackTrace();
             throw new ApplicationServerInternalException(throwable);
         } finally {
             if (state == State.SYSTEM_EXCEPTION) {
