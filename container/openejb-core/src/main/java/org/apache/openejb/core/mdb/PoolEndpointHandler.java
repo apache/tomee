@@ -21,6 +21,8 @@ import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
@@ -29,6 +31,7 @@ import java.lang.reflect.Method;
 
 public class PoolEndpointHandler extends AbstractEndpointHandler {
 
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final BeanContext deployment;
     private final MdbInstanceManager instanceManager;
@@ -89,24 +92,16 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
 
 
         // call afterDelivery on the container
-        boolean exceptionThrown = false;
         try {
             container.afterDelivery(instance);
         } catch (final SystemException se) {
-            exceptionThrown = true;
-
             final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
-            throwable.printStackTrace();
             throw new ApplicationServerInternalException(throwable);
         } finally {
-            if (state == State.SYSTEM_EXCEPTION) {
-//                recreateInstance(exceptionThrown);
-            }
             // we are now in the default NONE state
             state = State.NONE;
         }
     }
-
 
     @Override
     public void release() {
@@ -122,7 +117,7 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
             try {
                 instanceManager.poolInstance(new ThreadContext(deployment, null), instance);
             } catch (OpenEJBException e) {
-                e.printStackTrace();
+                LOGGER.error("Unable to add instance back to the pool", e);
             }
             instance = null;
         }
