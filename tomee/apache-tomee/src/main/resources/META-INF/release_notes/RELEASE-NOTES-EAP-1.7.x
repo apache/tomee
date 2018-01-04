@@ -1,12 +1,13 @@
 = TomEE EAP 1.7.6-TT.1
 
+== Change log
+
 === Changes in TomEE EAP 1.7.6-TT.1
 
 This security release fixes the following issues:
 
 SONATYPE-2017-0413 - Apache MyFaces, when unsafe deserialization is permitted, has a potential Remote Code Execution vulnerability.
-
-== Change log
+TOMEE-2158 - update Majorra library to 2.1.29-09
 
 === Changes in TomEE EAP 1.7.5-TT.18
 
