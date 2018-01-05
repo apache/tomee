@@ -139,7 +139,7 @@ public class MdbInstanceManager extends InstanceManager {
             jmxName.set("J2EEServer", "openejb");
             jmxName.set("J2EEApplication", null);
             jmxName.set("EJBModule", beanContext.getModuleID());
-            jmxName.set("StatelessSessionBean", beanContext.getEjbName());
+            jmxName.set("MessageDrivenBean", beanContext.getEjbName());
             jmxName.set("j2eeType", "");
             jmxName.set("name", beanContext.getEjbName());
 

@@ -482,7 +482,7 @@
     CallbackThreads 5
     UseOneSchedulerThreadByBean false
     EvictionThreads 1
-    Pool true
+    Pool false
 
   </ServiceProvider>
 
