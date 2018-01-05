@@ -21,6 +21,7 @@ import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
 
 import javax.resource.spi.ResourceAdapter;
+import java.util.Properties;
 
 public class MdbContainerFactory {
 
@@ -39,6 +40,8 @@ public class MdbContainerFactory {
     private boolean useOneSchedulerThreadByBean = false;
     private int evictionThreads = 1;
     private boolean pool;
+    private Properties properties = new Properties();
+
 
 
     public Object getId() {
@@ -198,17 +201,27 @@ public class MdbContainerFactory {
         this.pool = pool;
     }
 
+    public Properties getProperties() {
+        return properties;
+    }
+
     public BaseMdbContainer create() {
 
         if (pool) {
-            return new MdbPoolContainer(id, securityService, resourceAdapter,
+            final MdbPoolContainer mdbPoolContainer = new MdbPoolContainer(id, securityService, resourceAdapter,
                     messageListenerInterface, activationSpecClass,
                     failOnUnknownActivationSpec, accessTimeout, closeTimeout, poolBuilder,
                     callbackThreads, useOneSchedulerThreadByBean, evictionThreads);
+
+            mdbPoolContainer.getProperties().putAll(this.getProperties());
+            return mdbPoolContainer;
         } else {
-            return new MdbContainer(id, securityService, resourceAdapter,
+            final MdbContainer mdbContainer = new MdbContainer(id, securityService, resourceAdapter,
                     messageListenerInterface, activationSpecClass, instanceLimit,
                     failOnUnknownActivationSpec);
+
+            mdbContainer.getProperties().putAll(this.getProperties());
+            return mdbContainer;
         }
     }
 }
