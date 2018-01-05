@@ -116,7 +116,6 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
         } finally {
             if (instance != null) {
                 try {
-
                     instanceManager.poolInstance(new ThreadContext(deployment, null), instance);
                 } catch (OpenEJBException e) {
                     LOGGER.error("Unable to add instance back to the pool", e);

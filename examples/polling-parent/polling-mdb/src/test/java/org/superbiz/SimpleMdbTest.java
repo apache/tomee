@@ -26,6 +26,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.mdb.Api;
+import org.superbiz.mdb.ApiLog;
+import org.superbiz.mdb.LogMdb;
 import org.superbiz.mdb.LogsBean;
 
 import javax.ejb.EJB;
@@ -41,8 +43,8 @@ public class SimpleMdbTest {
 
     @Deployment
     public static WebArchive createDeployment() {
-        return ShrinkWrap.create(WebArchive.class, "test.war")
-                .addPackage(Api.class.getPackage())
+        return ShrinkWrap.create(WebArchive.class)
+                .addClasses(Api.class, ApiLog.class, LogMdb.class, LogsBean.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/beans.xml"), "META-INF/beans.xml")
                 .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
     }
@@ -56,7 +58,7 @@ public class SimpleMdbTest {
     @Test
     public void testDataSourceOne() throws Exception {
         final Client client = ClientBuilder.newClient();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 2; i++) {
             client.target(baseURL.toExternalForm())
                     .request("log/lala_" + i)
                     .get();
