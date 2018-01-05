@@ -27,16 +27,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.mdb.Api;
 import org.superbiz.mdb.ApiLog;
+import org.superbiz.mdb.CounterBean;
 import org.superbiz.mdb.LogMdb;
-import org.superbiz.mdb.LogsBean;
 
 import javax.ejb.EJB;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(Arquillian.class)
 public class SimpleMdbTest {
@@ -44,32 +50,67 @@ public class SimpleMdbTest {
     @Deployment
     public static WebArchive createDeployment() {
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(Api.class, ApiLog.class, LogMdb.class, LogsBean.class)
+                .addClasses(Api.class, ApiLog.class, LogMdb.class, CounterBean.class)
                 .addAsResource(new ClassLoaderAsset("META-INF/beans.xml"), "META-INF/beans.xml")
                 .addAsResource(new ClassLoaderAsset("META-INF/ejb-jar.xml"), "META-INF/ejb-jar.xml");
     }
 
     @ArquillianResource
-    private URL baseURL;
+    private URL deploymentUrl;
 
     @EJB
-    private LogsBean logs;
+    private CounterBean logs;
 
     @Test
     public void testDataSourceOne() throws Exception {
-        final Client client = ClientBuilder.newClient();
-        for (int i = 0; i < 2; i++) {
-            client.target(baseURL.toExternalForm())
-                    .request("log/lala_" + i)
-                    .get();
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        for (int i = 0; i < 200; i++) {
+            executor.submit(new CallGet(this.deploymentUrl, i));
         }
-        Thread.sleep(2000);
-        List<String> expected = new ArrayList<>();
-        expected.add("BEAN_1 [7] -> lala_61");
-        List<String> actual = this.logs.getMessages();
-        Collections.sort(expected);
-        Collections.sort(actual);
-        Assert.assertEquals(expected, actual);
+        executor.shutdown();
+        Assert.assertTrue("Unable to execute all the GET calls", executor.awaitTermination(10, TimeUnit.SECONDS));
+        Map<Integer, AtomicInteger> expected = new TreeMap<>();
+        expected.put(1, new AtomicInteger(20));
+        expected.put(2, new AtomicInteger(20));
+        expected.put(3, new AtomicInteger(20));
+        expected.put(4, new AtomicInteger(20));
+        expected.put(5, new AtomicInteger(20));
+        expected.put(6, new AtomicInteger(20));
+        expected.put(7, new AtomicInteger(20));
+        expected.put(8, new AtomicInteger(20));
+        expected.put(9, new AtomicInteger(20));
+        expected.put(10, new AtomicInteger(20));
+        for(int i = 0; i < 10; i++) {
+            if (expected.toString().equals(logs.getUsage().toString())) {
+                break;
+            }
+            Thread.sleep(1000);
+        }
+        Assert.assertEquals(expected.toString(), logs.getUsage().toString());
     }
 
+    private class CallGet implements Runnable {
+        private final URL url;
+        private final int index;
+
+        private CallGet(URL url, int index) {
+            this.url = url;
+            this.index = index;
+        }
+
+        @Override
+        public void run() {
+            try {
+                HttpURLConnection conn = (HttpURLConnection) url.toURI().resolve("log/lala_" + index).toURL().openConnection();
+                conn.setRequestMethod("GET");
+                try (BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    while (rd.readLine() != null) {
+                        // ignore
+                    }
+                }
+            } catch (IOException | URISyntaxException e) {
+                // ignore
+            }
+        }
+    }
 }

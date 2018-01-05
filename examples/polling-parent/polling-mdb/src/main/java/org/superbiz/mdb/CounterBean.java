@@ -19,21 +19,25 @@ package org.superbiz.mdb;
 
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
 @Startup
-public class LogsBean {
-    private List<String> logs = new ArrayList<>();
+public class CounterBean {
+    private Map<Integer, AtomicInteger> logs = new TreeMap<>();
 
-    public void add(String txt) {
-        this.logs.add(txt);
+    public void add(Integer beanId) {
+        if(!this.logs.containsKey(beanId)) {
+            this.logs.put(beanId, new AtomicInteger(0));
+        }
+        this.logs.get(beanId).incrementAndGet();
     }
 
-    public List<String> getMessages() {
-        List<String> copy = new ArrayList<>();
-        copy.addAll(this.logs);
+    public Map<Integer, AtomicInteger> getUsage() {
+        Map<Integer, AtomicInteger> copy = new TreeMap<>();
+        copy.putAll(this.logs);
         return copy;
     }
 }
