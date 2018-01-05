@@ -43,7 +43,7 @@ public class ApiLog {
     private Queue vector;
 
     @EJB
-    private LogsBean logs;
+    private CounterBean logs;
 
     @GET
     @Path("/{txt}")
@@ -61,10 +61,4 @@ public class ApiLog {
         return Response.ok().build();
     }
 
-    @GET
-    @Path("/")
-    @Produces("application/json")
-    public List<String> get() {
-        return logs.getMessages();
-    }
 }

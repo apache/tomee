@@ -19,30 +19,23 @@ package org.superbiz.mdb;
 
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @MessageDriven(activationConfig = {
         @javax.ejb.ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @javax.ejb.ActivationConfigProperty(propertyName = "destination", propertyValue = "LogMDB")
 })
 public class LogMdb implements MessageListener {
-    private static final AtomicLong ID_MANAGER = new AtomicLong(0);
-    private long id = ID_MANAGER.incrementAndGet();
-    private int usageCount = 0;
+    private static final AtomicInteger ID_MANAGER = new AtomicInteger(0);
+    private int id = ID_MANAGER.incrementAndGet();
 
     @EJB
-    private LogsBean logs;
+    private CounterBean logs;
 
     public void onMessage(Message message) {
-        usageCount++;
-        try {
-            logs.add("BEAN_" + this.id + " [" + usageCount + "] -> " + message.getStringProperty("txt"));
-        } catch (JMSException e) {
-            throw new IllegalStateException(e);
-        }
+        logs.add(this.id);
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

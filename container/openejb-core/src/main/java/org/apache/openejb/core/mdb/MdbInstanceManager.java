@@ -38,6 +38,7 @@ import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
 import javax.management.DynamicMBean;
+import javax.management.InstanceNotFoundException;
 import javax.management.InvalidAttributeValueException;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanConstructorInfo;
@@ -209,7 +210,11 @@ public class MdbInstanceManager extends InstanceManager {
     }
 
     public void undeploy(final BeanContext beanContext){
-        final EndpointFactory endpointFactory = (EndpointFactory) beanContext.getContainerData();
+        final MdbPoolContainer.MdbActivationContext actContext = activationContexts.get(beanContext);
+        if (actContext == null) {
+            return;
+        }
+        final EndpointFactory endpointFactory = actContext.getEndpointFactory();
         if (endpointFactory != null) {
 
             final ObjectName jmxBeanToRemove = mbeanNames.remove(beanContext);
@@ -227,8 +232,10 @@ public class MdbInstanceManager extends InstanceManager {
             for (final ObjectName objectName : jmxNames) {
                 try {
                     server.unregisterMBean(objectName);
+                } catch (final InstanceNotFoundException e) {
+                    // ignore it as the object name is gone already
                 } catch (final Exception e) {
-                    logger.error("Unable to unregister MBean " + objectName);
+                    logger.error("Unable to unregister MBean " + objectName, e);
                 }
             }
         }

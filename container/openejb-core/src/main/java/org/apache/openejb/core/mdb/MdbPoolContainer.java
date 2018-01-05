@@ -496,6 +496,10 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
             this.activationSpec = activationSpec;
         }
 
+        public EndpointFactory getEndpointFactory() {
+            return endpointFactory;
+        }
+
         public ResourceAdapter getResourceAdapter() {
             return resourceAdapter;
         }
