@@ -349,7 +349,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (myfaces.startsWith("shared.")) {
                         return true;
                     }
-                    if (myfaces.startsWith("ee6.")) {
+                    if (myfaces.startsWith("ee.")) {
                         return true;
                     }
                     if (myfaces.startsWith("lifecycle.")) {
