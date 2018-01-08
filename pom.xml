@@ -126,13 +126,13 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.4-incubating</batchee.version>    
+    <batchee.version>0.5-incubating</batchee.version>    
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0-alpha-10</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.23</tomcat.version>
+    <tomcat.version>9.0.2</tomcat.version>
 
     <cxf.version>3.2.1</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
