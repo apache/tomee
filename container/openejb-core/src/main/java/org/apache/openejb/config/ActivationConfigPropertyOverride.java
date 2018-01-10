@@ -34,6 +34,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -80,7 +81,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
 
                 final Properties overrides = new Properties();
 
-                final MdbContainerDetails mdbContainer = getMdbContainer(ejbDeployment.getContainerId(), appModule.getModuleId());
+                final MdbContainerDetails mdbContainer = getMdbContainer(appModule, ejbDeployment.getContainerId(), appModule.getModuleId());
                 if (mdbContainer != null) {
                     overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.container." + mdbContainer.getContainerId() + ".activation", "EnterpriseBean"));
                     overrides.putAll(ConfigurationFactory.getOverrides(mdbContainer.getProperties(), "activation", "EnterpriseBean"));
@@ -128,7 +129,7 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return appModule;
     }
 
-    private MdbContainerDetails getMdbContainer(final String containerId, final String moduleId) {
+    private MdbContainerDetails getMdbContainer(final AppModule appModule, final String containerId, final String moduleId) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final ConfigurationFactory configurationFactory = SystemInstance.get().getComponent(ConfigurationFactory.class);
@@ -170,6 +171,30 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         final MdbContainerDetails containerInfo = findContainerInfo(configurationFactory.getContainerInfos(), containerId);
         if (containerInfo != null) {
             return containerInfo;
+        }
+
+        final MdbContainerDetails moduleContainer = findModuleContainer(appModule, configurationFactory, containerId);
+        if (moduleContainer != null) {
+            return moduleContainer;
+        }
+
+        return null;
+    }
+
+    private MdbContainerDetails findModuleContainer(final AppModule appModule, final ConfigurationFactory configurationFactory, final String containerId) {
+        // try the containers on the AppModule
+        final Collection<org.apache.openejb.config.sys.Container> containers = appModule.getContainers();
+        for (final org.apache.openejb.config.sys.Container appMopduleContainer : containers) {
+            if (appMopduleContainer.getId().equals(containerId) || appMopduleContainer.getId().equals(appModule.getModuleId() + "/" + containerId)) {
+                try {
+                    final ContainerInfo containerInfo = configurationFactory.createContainerInfo(appMopduleContainer);
+                    if (containerInfo != null && MdbContainerInfo.class.isInstance(containerInfo)) {
+                        return convert(MdbContainerInfo.class.cast(containerInfo));
+                    }
+                } catch (OpenEJBException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return null;
