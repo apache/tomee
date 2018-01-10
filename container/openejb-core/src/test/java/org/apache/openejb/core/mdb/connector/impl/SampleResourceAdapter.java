@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 public class SampleResourceAdapter implements ResourceAdapter {
 
     private final Map<SampleActivationSpec, MessageEndpointFactory> targets = new ConcurrentHashMap<SampleActivationSpec, MessageEndpointFactory>();
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    private final ExecutorService threadPool = Executors.newFixedThreadPool(50);
 
     public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {
     }
