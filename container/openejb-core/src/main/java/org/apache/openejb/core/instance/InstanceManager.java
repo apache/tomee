@@ -159,7 +159,7 @@ public abstract class InstanceManager {
                     java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
                 }
             } catch (final InterruptedException e) {
-                Thread.interrupted();
+                Thread.currentThread().interrupt();
             }
         }
         if (scheduledExecutor != null) {
@@ -169,7 +169,7 @@ public abstract class InstanceManager {
                     java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
                 }
             } catch (final InterruptedException e) {
-                Thread.interrupted();
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -206,7 +206,7 @@ public abstract class InstanceManager {
             timeoutException.fillInStackTrace();
             throw new ApplicationException(timeoutException);
         } catch (final InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
             throw new OpenEJBException("Unexpected Interruption of current thread: ", e);
         }
 
@@ -349,7 +349,7 @@ public abstract class InstanceManager {
             }
 
         } catch (final InterruptedException e) {
-            Thread.interrupted();
+            Thread.currentThread().interrupt();
         }
 
         beanContext.setContainerData(null);
