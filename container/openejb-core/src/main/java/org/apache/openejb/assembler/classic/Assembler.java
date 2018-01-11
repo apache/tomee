@@ -1916,7 +1916,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         callPreDestroy(name, object);
         removeResourceInfo(name);
     }
-    
+
     private void callPreDestroy(final String name, final Object object) {
         if (object == null) {
             return;
@@ -2369,6 +2369,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
 
             if (undeployException.getCauses().size() > 0) {
+                // logging causes here otherwise it will be eaten in later logs.
+                for (final Throwable cause : undeployException.getCauses()) {
+                    logger.error("undeployException original cause", cause);
+                }
                 throw undeployException;
             }
 

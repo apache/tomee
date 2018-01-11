@@ -29,12 +29,14 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.mdb.Instance;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
 import org.apache.openejb.core.webservices.NoAddressingSupport;
 import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.Pool;
 import org.apache.xbean.finder.ClassFinder;
@@ -48,6 +50,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
 
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.afterInvoke;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTransactionPolicy;
@@ -70,10 +73,16 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
                               final Duration accessTimeout,
                               final Duration closeTimeout,
                               final Pool.Builder poolBuilder,
-                              final int callbackThreads) {
+                              final int callbackThreads,
+                              final boolean useOneSchedulerThreadByBean,
+                              final int evictionThreads) {
         this.containerID = id;
         this.securityService = securityService;
-        this.instanceManager = new StatelessInstanceManager(securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads);
+        this.instanceManager = new StatelessInstanceManager(
+                securityService, accessTimeout, closeTimeout, poolBuilder, callbackThreads,
+                useOneSchedulerThreadByBean ?
+                        null :
+                        Executors.newScheduledThreadPool(Math.max(evictionThreads, 1), new DaemonThreadFactory(id)));
     }
 
     @Override

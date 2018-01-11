@@ -1120,6 +1120,7 @@ public class Pool<T> {
         private Duration interval = new Duration(5 * 60, SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
+        private ScheduledExecutorService scheduledExecutorService;
         private boolean replaceAged;
         private boolean replaceFlushed;
         private boolean garbageCollection = true;
@@ -1229,6 +1230,10 @@ public class Pool<T> {
 
         public void setExecutor(final Executor executor) {
             this.executor = executor;
+        }
+
+        public void setScheduledExecutor(final ScheduledExecutorService scheduledExecutorService) {
+            this.scheduledExecutorService = scheduledExecutorService;
         }
 
         public Pool<T> build() {

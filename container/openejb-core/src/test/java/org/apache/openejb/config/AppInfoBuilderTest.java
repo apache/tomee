@@ -23,7 +23,7 @@ import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.PortInfo;
 import org.apache.openejb.config.sys.Container;
-import org.apache.openejb.core.mdb.MdbContainer;
+import org.apache.openejb.core.mdb.MdbContainerFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SessionBean;
 import org.apache.openejb.jee.oejb2.AuthMethodType;
@@ -167,7 +167,7 @@ public class AppInfoBuilderTest extends TestCase {
         assertEquals(appInfo.appId + "/my-container", containerInfo.id);
         assertEquals(1, containerInfo.types.size());
         assertEquals("MESSAGE", containerInfo.types.get(0));
-        assertEquals(MdbContainer.class.getName(), containerInfo.className);
+        assertEquals(MdbContainerFactory.class.getName(), containerInfo.className);
         assertEquals("Default JMS Resource Adapter", containerInfo.properties.get("ResourceAdapter"));
         assertEquals(MessageListener.class.getName(), containerInfo.properties.get("MessageListenerInterface"));
         assertEquals(ActiveMQActivationSpec.class.getName(), containerInfo.properties.get("ActivationSpecClass"));

@@ -461,8 +461,8 @@
       id="Default MDB Container"
       service="Container"
       types="MESSAGE"
-      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknownActivationSpec"
-      class-name="org.apache.openejb.core.mdb.MdbContainer">
+      factory-name="create"
+      class-name="org.apache.openejb.core.mdb.MdbContainerFactory">
 
     # The resource adapter delivers messages to the container
 
@@ -474,7 +474,7 @@
 
     # Specifies the activation spec class
 
-    ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
+    ActivationSpecClass org.apache.openejb.resource.activemq.TomEEMessageActivationSpec
 
     # Specifies the maximum number of bean instances that are
     # allowed to exist for each MDB deployment.
@@ -483,7 +483,13 @@
 
     # log a warning if false or throw an exception if true is an activation spec can't be respected
 
-    FailOnUnknownActivationSpec = true
+    FailOnUnknownActivationSpec true
+    AccessTimeout 5 minutes
+    CloseTimeout 5 minutes
+    CallbackThreads 5
+    UseOneSchedulerThreadByBean false
+    EvictionThreads 1
+    Pool false
 
   </ServiceProvider>
 
@@ -781,7 +787,7 @@
     # use only all set values in this config
     # will need a lot of properties but allow to not set some values
     IgnoreDefaultValues = false
-    
+
     OpenEJBResourceClasspath = false
   </ServiceProvider>
 
@@ -823,7 +829,7 @@
     #
     # NOTE - The "user" and "password" properties will be passed
     # explicitly, so they do not need to be included here.
-    
+
     ConnectionProperties
 
     # The default auto-commit state of new connections
@@ -972,7 +978,7 @@
     # original logical connection wrapper.
 
     AccessToUnderlyingConnectionAllowed false
-    
+
     OpenEJBResourceClasspath = false
   </ServiceProvider>
 
