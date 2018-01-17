@@ -110,7 +110,7 @@ abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndp
         Object value = null;
         try {
             // deliver the message
-            value = container.invoke(instance, method, null, wrapMessageForAmq5(args));
+            value = container.invoke(instance, method, null, args);
         } catch (final SystemException se) {
             throwable = se.getRootCause() != null ? se.getRootCause() : se;
             state = State.SYSTEM_EXCEPTION;
@@ -164,25 +164,6 @@ abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndp
             // we are now in the default NONE state
             state = State.NONE;
         }
-    }
-
-    // workaround for AMQ 5/JMS 2 support
-    private Object[] wrapMessageForAmq5(final Object[] args) {
-        if (args == null || args.length != 1 || DelegateMessage.class.isInstance(args[0])) {
-            return args;
-        }
-
-        if (isAmq == null) {
-            synchronized (this) {
-                if (isAmq == null) {
-                    isAmq = args[0].getClass().getName().startsWith("org.apache.activemq.");
-                }
-            }
-        }
-        if (isAmq) {
-            args[0] = JMS2.wrap(Message.class.cast(args[0]));
-        }
-        return args;
     }
 
     private boolean isValidException(final Method method, final Throwable throwable) {
