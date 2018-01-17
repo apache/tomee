@@ -18,8 +18,6 @@ package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
-import org.apache.openejb.resource.activemq.jms2.DelegateMessage;
-import org.apache.openejb.resource.activemq.jms2.JMS2;
 
 import javax.ejb.EJBException;
 import javax.jms.Message;

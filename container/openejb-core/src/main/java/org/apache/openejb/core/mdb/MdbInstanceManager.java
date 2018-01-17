@@ -109,8 +109,8 @@ public class MdbInstanceManager {
     private final ThreadPoolExecutor executor;
     private final ScheduledExecutorService scheduledExecutor;
 
-    private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
-    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
+    private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<BeanContext, MdbPoolContainer.MdbActivationContext>();
+    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<BeanContext, ObjectName>();
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;

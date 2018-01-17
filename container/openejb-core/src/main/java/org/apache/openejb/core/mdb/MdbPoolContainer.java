@@ -355,7 +355,10 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
             // invoke the target method
             returnValue = _invoke(instance, targetMethod, args, deployInfo, type, mdbCallContext, callContext);
             return returnValue;
-        } catch (final ApplicationException | SystemException e) {
+        } catch (final ApplicationException e) {
+            openEjbException = e;
+            throw e;
+        } catch (final SystemException e) {
             openEjbException = e;
             throw e;
         } finally {
