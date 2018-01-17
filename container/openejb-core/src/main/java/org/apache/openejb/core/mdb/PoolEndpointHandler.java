@@ -100,6 +100,7 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
         } finally {
             // we are now in the default NONE state
             state = State.NONE;
+            this.instance = null;
         }
     }
 

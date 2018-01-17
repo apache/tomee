@@ -28,24 +28,19 @@ import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.Queue;
 import javax.management.ObjectName;
-import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -53,6 +48,8 @@ import static org.junit.Assert.assertTrue;
 public class PoolEndpointHandlerTest {
 
     private static final String TEXT = "foo";
+    private static CountDownLatch latch;
+    private static AtomicLong counter = new AtomicLong();
 
     @Configuration
     public Properties config() {
@@ -63,6 +60,9 @@ public class PoolEndpointHandlerTest {
             .p("mdbs", "new://Container?type=MESSAGE")
             .p("mdbs.ResourceAdapter", "sra")
             .p("mdbs.pool", "true")
+            .p("mdbs.MaxSize", "10")
+            .p("mdbs.MinSize", "2")
+            .p("mdbs.StrictPooling", "true")
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
@@ -83,11 +83,6 @@ public class PoolEndpointHandlerTest {
     @Resource(name = "cf")
     private SampleConnectionFactory cf;
 
-    @Before
-    public void resetLatch() {
-        Listener.reset();
-    }
-
     @Test
     public void shouldSendMessage() throws Exception {
         assertNotNull(cf);
@@ -101,11 +96,15 @@ public class PoolEndpointHandlerTest {
             }
         }
 
+        latch = new CountDownLatch(100);
+
         // start MDB delivery
         setControl("start");
 
-        assertTrue(Listener.sync());
-        assertEquals(10, Listener.COUNTER.get());
+        latch.await(30, TimeUnit.SECONDS);
+        System.out.println("Actual instances: " + counter.get());
+        assertTrue("Expected at least 2 instances, actual:" + counter.get(), counter.get() >= 2);
+        assertTrue("Expected at most 10 instances, actual:" + counter.get(), counter.get() <= 10);
     }
 
     private void setControl(final String action) throws Exception {
@@ -119,38 +118,22 @@ public class PoolEndpointHandlerTest {
             @ActivationConfigProperty(propertyName = "MdbJMXControl", propertyValue = "default:type=test")
     })
     public static class Listener implements InboundListener {
-        public static CountDownLatch latch;
-        private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<>();
 
-        static final AtomicLong COUNTER = new AtomicLong();
-
-        @PostConstruct
-        public void postConstruct() {
-            COUNTER.incrementAndGet();
-        }
-
-        public static void reset() {
-            latch = new CountDownLatch(100);
-            BOOLEANS.clear();
-        }
-
-        public static boolean sync() throws InterruptedException {
-            latch.await(1, TimeUnit.MINUTES);
-            for (boolean result : BOOLEANS) {
-                if(!result) {
-                  return false;
-                }
-            }
-            return true;
+        public Listener() {
+            counter.incrementAndGet();
         }
 
         @Override
         public void receiveMessage(String message) {
+            latch.countDown();
+            if (!TEXT.equals(message)) {
+                throw new IllegalStateException(String.format("Expected %s, received %s", TEXT, message));
+            }
+
             try {
-                boolean ok = TEXT.equals(message);
-                BOOLEANS.add(ok);
-            } finally {
-                latch.countDown();
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
