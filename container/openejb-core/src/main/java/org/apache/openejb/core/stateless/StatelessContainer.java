@@ -29,7 +29,6 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
-import org.apache.openejb.core.security.AbstractSecurityService;
 import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.webservices.AddressingSupport;
@@ -212,7 +211,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     @SuppressWarnings("ThrowFromFinallyBlock")
     private Object _invoke(final Method callMethod, final Method runMethod, final Object[] args, final Instance instance, final ThreadContext callContext, final InterfaceType type)
-        throws OpenEJBException {
+            throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 

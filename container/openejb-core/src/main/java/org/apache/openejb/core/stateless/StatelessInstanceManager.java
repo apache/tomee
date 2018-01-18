@@ -63,15 +63,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class StatelessInstanceManager {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
@@ -92,20 +87,12 @@ public class StatelessInstanceManager {
     private final SecurityService securityService;
     private final Pool.Builder poolBuilder;
     private final ThreadPoolExecutor executor;
-    private final ScheduledExecutorService scheduledExecutor;
 
-    public StatelessInstanceManager(final SecurityService securityService,
-                                    final Duration accessTimeout, final Duration closeTimeout,
-                                    final Pool.Builder poolBuilder, final int callbackThreads,
-                                    final ScheduledExecutorService ses) {
+    public StatelessInstanceManager(final SecurityService securityService, final Duration accessTimeout, final Duration closeTimeout, final Pool.Builder poolBuilder, final int callbackThreads) {
         this.securityService = securityService;
         this.accessTimeout = accessTimeout;
         this.closeTimeout = closeTimeout;
         this.poolBuilder = poolBuilder;
-        this.scheduledExecutor = ses;
-        if (ScheduledThreadPoolExecutor.class.isInstance(ses) && !ScheduledThreadPoolExecutor.class.cast(ses).getRemoveOnCancelPolicy()) {
-            ScheduledThreadPoolExecutor.class.cast(ses).setRemoveOnCancelPolicy(true);
-        }
 
         if (accessTimeout.getUnit() == null) {
             accessTimeout.setUnit(TimeUnit.MILLISECONDS);
@@ -114,8 +101,8 @@ public class StatelessInstanceManager {
         final int qsize = callbackThreads > 1 ? callbackThreads - 1 : 1;
         final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
         this.executor = new ThreadPoolExecutor(
-            callbackThreads, callbackThreads * 2,
-            1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
+                callbackThreads, callbackThreads * 2,
+                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
 
         this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -160,36 +147,13 @@ public class StatelessInstanceManager {
             final ThreadContext ctx = new ThreadContext(beanContext, null);
             final ThreadContext oldCallContext = ThreadContext.enter(ctx);
             try {
-                return createInstance(ctx, ctx.getBeanContext());
+                return createInstance(ctx.getBeanContext());
             } catch (final OpenEJBException e) {
                 logger.error("Unable to fill pool: for deployment '" + beanContext.getDeploymentID() + "'", e);
             } finally {
                 ThreadContext.exit(oldCallContext);
             }
             return null;
-        }
-    }
-
-    public void destroy() {
-        if (executor != null) {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(10000, MILLISECONDS)) {
-                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
-                }
-            } catch (final InterruptedException e) {
-                Thread.interrupted();
-            }
-        }
-        if (scheduledExecutor != null) {
-            scheduledExecutor.shutdown();
-            try {
-                if (!scheduledExecutor.awaitTermination(10000, MILLISECONDS)) {
-                    java.util.logging.Logger.getLogger(this.getClass().getName()).log(Level.WARNING, getClass().getSimpleName() + " pool  timeout expired");
-                }
-            } catch (final InterruptedException e) {
-                Thread.interrupted();
-            }
         }
     }
 
@@ -231,13 +195,13 @@ public class StatelessInstanceManager {
         }
 
         if (null == instance) {
-            instance = createInstance(callContext, beanContext);
+            instance = createInstance(beanContext);
         }
 
-            return instance;
-        }
+        return instance;
+    }
 
-    private Instance createInstance(final ThreadContext callContext, final BeanContext beanContext) throws ApplicationException {
+    private Instance createInstance(final BeanContext beanContext) throws ApplicationException {
         try {
             final InstanceContext context = beanContext.newInstance();
             return new Instance(context.getBean(), context.getInterceptors(), context.getCreationalContext());
@@ -338,10 +302,10 @@ public class StatelessInstanceManager {
         final Options options = new Options(beanContext.getProperties());
 
         final Duration accessTimeout = getDuration(
-            options,
-            "AccessTimeout",
-            getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS), // default timeout
-            TimeUnit.MILLISECONDS
+                options,
+                "AccessTimeout",
+                getDuration(options, "Timeout", this.accessTimeout, TimeUnit.MILLISECONDS), // default timeout
+                TimeUnit.MILLISECONDS
         );
         final Duration closeTimeout = getDuration(options, "CloseTimeout", this.closeTimeout, TimeUnit.MINUTES);
 

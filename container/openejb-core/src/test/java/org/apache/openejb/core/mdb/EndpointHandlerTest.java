@@ -120,7 +120,7 @@ public class EndpointHandlerTest {
     })
     public static class Listener implements InboundListener {
         public static CountDownLatch latch;
-        private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<>();
+        private static final List<Boolean> BOOLEANS = new CopyOnWriteArrayList<Boolean>();
 
         static final AtomicLong COUNTER = new AtomicLong();
 
