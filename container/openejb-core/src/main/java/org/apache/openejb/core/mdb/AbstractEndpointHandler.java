@@ -20,7 +20,6 @@ import org.apache.openejb.ApplicationException;
 import org.apache.openejb.SystemException;
 
 import javax.ejb.EJBException;
-import javax.jms.Message;
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
