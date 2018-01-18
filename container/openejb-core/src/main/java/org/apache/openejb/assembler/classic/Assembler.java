@@ -2370,7 +2370,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             if (undeployException.getCauses().size() > 0) {
                 // logging causes here otherwise it will be eaten in later logs.
-                for (Throwable cause : undeployException.getCauses()) {
+                for (final Throwable cause : undeployException.getCauses()) {
                     logger.error("undeployException original cause", cause);
                 }
                 throw undeployException;

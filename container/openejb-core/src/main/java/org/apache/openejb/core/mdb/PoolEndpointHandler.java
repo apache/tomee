@@ -37,14 +37,11 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
     private final MdbInstanceManager instanceManager;
     private final XAResource xaResource;
 
-    private ThreadContext callContext;
-
     public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws UnavailableException {
         super(container);
         this.deployment = deployment;
         this.instanceManager = instanceManager;
         this.xaResource = xaResource;
-        this.callContext = ThreadContext.getThreadContext();
     }
 
    @Override
@@ -76,7 +73,7 @@ public class PoolEndpointHandler extends AbstractEndpointHandler {
     }
 
     @Override
-    protected void recreateInstance(boolean exceptionAlreadyThrown) throws UnavailableException {
+    protected void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
 
     }
 

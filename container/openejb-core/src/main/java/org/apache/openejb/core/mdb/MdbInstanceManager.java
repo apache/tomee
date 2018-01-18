@@ -79,7 +79,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -129,12 +128,8 @@ public class MdbInstanceManager {
         this.poolBuilder = poolBuilder;
         this.scheduledExecutor = ses;
 
-        if (ScheduledThreadPoolExecutor.class.isInstance(ses) && !ScheduledThreadPoolExecutor.class.cast(ses).getRemoveOnCancelPolicy()) {
-            ScheduledThreadPoolExecutor.class.cast(ses).setRemoveOnCancelPolicy(true);
-        }
-
         if (accessTimeout.getUnit() == null) {
-            accessTimeout.setUnit(TimeUnit.MILLISECONDS);
+            accessTimeout.setUnit(MILLISECONDS);
         }
 
         final int qsize = callbackThreads > 1 ? callbackThreads - 1 : 1;
@@ -191,12 +186,12 @@ public class MdbInstanceManager {
         builder.setScheduledExecutor(scheduledExecutor);
 
         final int min = builder.getMin();
-        final long maxAge = builder.getMaxAge().getTime(TimeUnit.MILLISECONDS);
+        final long maxAge = builder.getMaxAge().getTime(MILLISECONDS);
         final double maxAgeOffset = builder.getMaxAgeOffset();
 
         final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
 
-        MdbContext mdbContext = new MdbContext(securityService, new Flushable() {
+        final MdbContext mdbContext = new MdbContext(securityService, new Flushable() {
             @Override
             public void flush() throws IOException {
                 data.flush();
@@ -684,7 +679,7 @@ public class MdbInstanceManager {
             return baseContext;
         }
 
-        public void setBaseContext(BaseContext baseContext) {
+        public void setBaseContext(final BaseContext baseContext) {
             this.baseContext = baseContext;
         }
     }

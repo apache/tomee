@@ -37,7 +37,7 @@ public class MdbContainerFactory {
     private Duration closeTimeout;
     private Pool.Builder poolBuilder = new Pool.Builder();
     private int callbackThreads = 5;
-    private boolean useOneSchedulerThreadByBean = false;
+    private boolean useOneSchedulerThreadByBean;
     private int evictionThreads = 1;
     private boolean pool;
     private Properties properties = new Properties();
@@ -48,7 +48,7 @@ public class MdbContainerFactory {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(final Object id) {
         this.id = id;
     }
 
@@ -56,7 +56,7 @@ public class MdbContainerFactory {
         return securityService;
     }
 
-    public void setSecurityService(SecurityService securityService) {
+    public void setSecurityService(final SecurityService securityService) {
         this.securityService = securityService;
     }
 
@@ -64,7 +64,7 @@ public class MdbContainerFactory {
         return resourceAdapter;
     }
 
-    public void setResourceAdapter(ResourceAdapter resourceAdapter) {
+    public void setResourceAdapter(final ResourceAdapter resourceAdapter) {
         this.resourceAdapter = resourceAdapter;
     }
 
@@ -72,7 +72,7 @@ public class MdbContainerFactory {
         return messageListenerInterface;
     }
 
-    public void setMessageListenerInterface(Class messageListenerInterface) {
+    public void setMessageListenerInterface(final Class messageListenerInterface) {
         this.messageListenerInterface = messageListenerInterface;
     }
 
@@ -80,7 +80,7 @@ public class MdbContainerFactory {
         return activationSpecClass;
     }
 
-    public void setActivationSpecClass(Class activationSpecClass) {
+    public void setActivationSpecClass(final Class activationSpecClass) {
         this.activationSpecClass = activationSpecClass;
     }
 
@@ -92,7 +92,7 @@ public class MdbContainerFactory {
      * @deprecated use MaxSize
      */
     @Deprecated
-    public void setInstanceLimit(int instanceLimit) {
+    public void setInstanceLimit(final int instanceLimit) {
         setMaxSize(instanceLimit);
     }
 
@@ -109,7 +109,7 @@ public class MdbContainerFactory {
         return failOnUnknownActivationSpec;
     }
 
-    public void setFailOnUnknownActivationSpec(boolean failOnUnknownActivationSpec) {
+    public void setFailOnUnknownActivationSpec(final boolean failOnUnknownActivationSpec) {
         this.failOnUnknownActivationSpec = failOnUnknownActivationSpec;
     }
 
@@ -117,7 +117,7 @@ public class MdbContainerFactory {
         return accessTimeout;
     }
 
-    public void setAccessTimeout(Duration accessTimeout) {
+    public void setAccessTimeout(final Duration accessTimeout) {
         this.accessTimeout = accessTimeout;
     }
 
@@ -125,7 +125,7 @@ public class MdbContainerFactory {
         return closeTimeout;
     }
 
-    public void setCloseTimeout(Duration closeTimeout) {
+    public void setCloseTimeout(final Duration closeTimeout) {
         this.closeTimeout = closeTimeout;
     }
 
@@ -133,7 +133,7 @@ public class MdbContainerFactory {
         return poolBuilder;
     }
 
-    public void setPoolBuilder(Pool.Builder poolBuilder) {
+    public void setPoolBuilder(final Pool.Builder poolBuilder) {
         this.poolBuilder = poolBuilder;
     }
 
@@ -141,7 +141,7 @@ public class MdbContainerFactory {
         return callbackThreads;
     }
 
-    public void setCallbackThreads(int callbackThreads) {
+    public void setCallbackThreads(final int callbackThreads) {
         this.callbackThreads = callbackThreads;
     }
 
@@ -149,7 +149,7 @@ public class MdbContainerFactory {
         return useOneSchedulerThreadByBean;
     }
 
-    public void setUseOneSchedulerThreadByBean(boolean useOneSchedulerThreadByBean) {
+    public void setUseOneSchedulerThreadByBean(final boolean useOneSchedulerThreadByBean) {
         this.useOneSchedulerThreadByBean = useOneSchedulerThreadByBean;
     }
 
@@ -157,7 +157,7 @@ public class MdbContainerFactory {
         return evictionThreads;
     }
 
-    public void setEvictionThreads(int evictionThreads) {
+    public void setEvictionThreads(final int evictionThreads) {
         this.evictionThreads = evictionThreads;
     }
 
@@ -197,7 +197,7 @@ public class MdbContainerFactory {
         return pool;
     }
 
-    public void setPool(boolean pool) {
+    public void setPool(final boolean pool) {
         this.pool = pool;
     }
 

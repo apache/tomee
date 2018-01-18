@@ -36,7 +36,7 @@ abstract class AbstractEndpointHandler implements InvocationHandler, MessageEndp
 
     protected final BaseMdbContainer container;
 
-    AbstractEndpointHandler(BaseMdbContainer container) {
+    AbstractEndpointHandler(final BaseMdbContainer container) {
         this.container = container;
     }
 

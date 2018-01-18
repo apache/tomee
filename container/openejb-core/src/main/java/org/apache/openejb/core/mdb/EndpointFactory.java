@@ -47,7 +47,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final Class<?> proxy;
     private final boolean usePool;
 
-    public EndpointFactory(final ActivationSpec activationSpec, final BaseMdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final MdbInstanceManager instanceManager, final XAResourceWrapper xaResourceWrapper, boolean usePool) {
+    public EndpointFactory(final ActivationSpec activationSpec, final BaseMdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final MdbInstanceManager instanceManager, final XAResourceWrapper xaResourceWrapper, final boolean usePool) {
         this.activationSpec = activationSpec;
         this.container = container;
         this.beanContext = beanContext;

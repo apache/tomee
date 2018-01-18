@@ -32,7 +32,7 @@ import java.io.IOException;
  * @version $Rev$ $Date$
  */
 public class MdbContext extends BaseContext implements MessageDrivenContext, Flushable {
-    private Flushable flushable = null;
+    private Flushable flushable;
 
     public MdbContext(final SecurityService securityService) {
         super(securityService);
