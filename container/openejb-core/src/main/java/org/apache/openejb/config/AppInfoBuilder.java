@@ -166,7 +166,10 @@ class AppInfoBuilder {
                 containerIds.add(containerInfo.id);
             }
         }
-        containerIds.addAll(appInfo.containerIds);
+
+        for (final ContainerInfo containerInfo : appInfo.containers) {
+            containerIds.add(containerInfo.id);
+        }
 
         //
         //  EJB Jars
@@ -182,9 +185,9 @@ class AppInfoBuilder {
                 for (final EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                     final EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
                     if (d.getContainerId() != null && !containerIds.contains(d.getContainerId())) {
-                        for (final String cId : appInfo.containerIds) {
-                            if (cId.endsWith("/" + d.getContainerId())) {
-                                d.setContainerId(cId);
+                        for (final ContainerInfo containerInfo : appInfo.containers) {
+                            if (containerInfo.id.endsWith("/" + d.getContainerId())) {
+                                d.setContainerId(containerInfo.id);
                                 break;
                             }
                         }
@@ -361,11 +364,12 @@ class AppInfoBuilder {
                 info.resourceAliases.addAll(def.getAliases());
             }
         }
-        for (final Container def : module.getContainers()) {
-            if (!def.getProperties().containsKey("ApplicationWide")) {
-                info.containerIds.add(def.getId());
-            }
-        }
+
+//        for (final Container def : module.getContainers()) {
+//            if (!def.getProperties().containsKey("ApplicationWide")) {
+//                info.containerIds.add(def.getId());
+//            }
+//        }
     }
 
     private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
