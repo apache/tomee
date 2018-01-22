@@ -364,12 +364,6 @@ class AppInfoBuilder {
                 info.resourceAliases.addAll(def.getAliases());
             }
         }
-
-//        for (final Container def : module.getContainers()) {
-//            if (!def.getProperties().containsKey("ApplicationWide")) {
-//                info.containerIds.add(def.getId());
-//            }
-//        }
     }
 
     private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
