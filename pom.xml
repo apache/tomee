@@ -180,7 +180,7 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.hsqldb>2.3.5</version.hsqldb>
+    <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
