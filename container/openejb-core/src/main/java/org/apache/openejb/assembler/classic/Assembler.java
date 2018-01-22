@@ -2347,7 +2347,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
 
             for (final ContainerInfo containerInfo : appInfo.containers) {
-                removeContainer(containerInfo.id);
+                if (! containerInfo.applicationWide) {
+                    removeContainer(containerInfo.id);
+                }
             }
 
             containerSystem.removeAppContext(appInfo.appId);
