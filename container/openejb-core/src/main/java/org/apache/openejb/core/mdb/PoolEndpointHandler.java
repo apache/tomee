@@ -18,31 +18,33 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.openejb.BeanContext;
+import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
+import org.apache.openejb.core.ThreadContext;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.resource.spi.ApplicationServerInternalException;
 import javax.resource.spi.UnavailableException;
 import javax.transaction.xa.XAResource;
 import java.lang.reflect.Method;
 
-public class EndpointHandler extends AbstractEndpointHandler {
+public class PoolEndpointHandler extends AbstractEndpointHandler {
 
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private final BeanContext deployment;
-    private final MdbInstanceFactory instanceFactory;
+    private final MdbInstanceManager instanceManager;
     private final XAResource xaResource;
 
-
-    public EndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceFactory instanceFactory, final XAResource xaResource) throws UnavailableException {
+    public PoolEndpointHandler(final BaseMdbContainer container, final BeanContext deployment, final MdbInstanceManager instanceManager, final XAResource xaResource) throws UnavailableException {
         super(container);
         this.deployment = deployment;
-        this.instanceFactory = instanceFactory;
+        this.instanceManager = instanceManager;
         this.xaResource = xaResource;
-        instance = instanceFactory.createInstance(false);
     }
 
-
-    @Override
+   @Override
     public void beforeDelivery(final Method method) throws ApplicationServerInternalException {
         // verify current state
         switch (state) {
@@ -57,10 +59,13 @@ public class EndpointHandler extends AbstractEndpointHandler {
 
         // call beforeDelivery on the container
         try {
+            instance = instanceManager.getInstance(new ThreadContext(deployment, null));
             container.beforeDelivery(deployment, instance, method, xaResource);
         } catch (final SystemException se) {
             final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
             throw new ApplicationServerInternalException(throwable);
+        } catch (OpenEJBException oe) {
+            throw new ApplicationServerInternalException(oe);
         }
 
         // before completed successfully we are now ready to invoke bean
@@ -69,17 +74,30 @@ public class EndpointHandler extends AbstractEndpointHandler {
 
     @Override
     protected void recreateInstance(final boolean exceptionAlreadyThrown) throws UnavailableException {
-        try {
-            instance = instanceFactory.recreateInstance(instance);
-        } catch (final UnavailableException e) {
-            // an error occured wile attempting to create the replacement instance
-            // this endpoint is now failed
-            state = State.RELEASED;
 
-            // if bean threw an exception, do not override that exception
-            if (!exceptionAlreadyThrown) {
-                throw e;
-            }
+    }
+
+
+    public void afterDelivery() throws ApplicationServerInternalException, UnavailableException {
+        // verify current state
+        switch (state) {
+            case RELEASED:
+                throw new IllegalStateException("Message endpoint factory has been released");
+            case NONE:
+                throw new IllegalStateException("afterDelivery may only be called if message delivery began with a beforeDelivery call");
+        }
+
+
+        // call afterDelivery on the container
+        try {
+            container.afterDelivery(instance);
+        } catch (final SystemException se) {
+            final Throwable throwable = se.getRootCause() != null ? se.getRootCause() : se;
+            throw new ApplicationServerInternalException(throwable);
+        } finally {
+            // we are now in the default NONE state
+            state = State.NONE;
+            this.instance = null;
         }
     }
 
@@ -94,7 +112,13 @@ public class EndpointHandler extends AbstractEndpointHandler {
         try {
             container.release(deployment, instance);
         } finally {
-            instanceFactory.freeInstance((Instance) instance, false);
+            if (instance != null) {
+                try {
+                    instanceManager.poolInstance(new ThreadContext(deployment, null), instance);
+                } catch (OpenEJBException e) {
+                    LOGGER.error("Unable to add instance back to the pool", e);
+                }
+            }
             instance = null;
         }
     }

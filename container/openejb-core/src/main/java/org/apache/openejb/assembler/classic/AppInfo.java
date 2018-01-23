@@ -46,7 +46,6 @@ public class AppInfo extends InfoObject {
     public List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
     public final List<String> libs = new ArrayList<String>();
     public final Set<String> watchedResources = new TreeSet<String>();
-    public final Set<String> containerIds = new TreeSet<String>();
     public final Set<String> resourceIds = new TreeSet<String>();
     public final Set<String> resourceAliases = new TreeSet<String>();
     public final JndiEncInfo globalJndiEnc = new JndiEncInfo();

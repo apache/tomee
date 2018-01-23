@@ -211,7 +211,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer {
 
     @SuppressWarnings("ThrowFromFinallyBlock")
     private Object _invoke(final Method callMethod, final Method runMethod, final Object[] args, final Instance instance, final ThreadContext callContext, final InterfaceType type)
-        throws OpenEJBException {
+            throws OpenEJBException {
         final BeanContext beanContext = callContext.getBeanContext();
         final TransactionPolicy txPolicy = createTransactionPolicy(beanContext.getTransactionType(callMethod, type), callContext);
 
