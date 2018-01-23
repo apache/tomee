@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
-public class JmsEnvEntryTest {
+public class EnvEntryTest {
     @EJB
     private MessageBean messageBean;
 
