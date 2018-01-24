@@ -167,6 +167,117 @@
                 </methods>
             </class>
 
+            <!-- https://issues.jboss.org/browse/CDI-721 -->
+            <class name="org.jboss.cdi.tck.tests.extensions.configurators.invalid.ConfiguratorAndSetMethodTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+            <!-- CDI-514 (issue got moved from original CDITCK-467) -->
+            <class name="org.jboss.cdi.tck.tests.event.fires.FireEventTest">
+                <methods>
+                    <exclude name="testDuplicateBindingsToFireEventFails"/>
+                </methods>
+            </class>
+
+            <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
+            <class name="org.jboss.cdi.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+
+            <!-- CDI-517 -->
+            <class name="org.jboss.cdi.tck.tests.lookup.typesafe.resolution.parameterized.raw.RawBeanTypeParameterizedRequiredTypeTest">
+                <methods>
+                    <exclude name="testNotAssignableTypeParams"/>
+                </methods>
+            </class>
+
+
+            <!-- in discussion -->
+            <!-- seems when InjectionPoint injection in for an EJB injection point then it should be null, any real reason? -->
+            <class name="org.jboss.cdi.tck.tests.lookup.injectionpoint.non.contextual.NonContextualInjectionPointTest">
+                <methods>
+                    <exclude name="testNonContextualEjbInjectionPointGetBean" />
+                </methods>
+            </class>
+
+            <!-- CDI-312 ambiguous BDA definition (EE-module vs JAR) -->
+            <class name="org.jboss.cdi.tck.tests.interceptors.ordering.global.GlobalInterceptorOrderingTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.extensions.interceptors.InterceptorExtensionTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization02Test">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization03Test">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization05Test">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.runtime.CDIProviderRuntimeTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.war.modules.WebArchiveModulesTest">
+                <methods>
+                    <exclude name="testAlternatives"/>
+                    <exclude name="testInjectionChainVisibilityAndInterceptorEnablement"/>
+                    <exclude name="testDecoratorAndCrossModuleEventObserver"/>
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.manager.provider.init.CDIProviderInitTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
+
+
+            <!-- ears so not in web profile, Note: can be switch on if passing but dont let them block the build -->
+            <class name="org.jboss.cdi.tck.tests.lookup.dependency.resolution.broken.ambiguous.ear.MultiModuleSessionBeanAmbiguousDependencyTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.interceptors.InterceptorModularityTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity03Test"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity05Test"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity06Test"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.SpecializationModularity07Test"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.SpecializedBeanInjectionNotAvailableTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.installedLibrary.InstalledLibraryEarTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.decorators.ordering.global.EnterpriseDecoratorOrderingTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.interceptors.ordering.global.EnterpriseInterceptorOrderingTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.context.application.event.ApplicationScopeEventMultiWarTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.ear.modules.EnterpriseArchiveModulesTest"><methods><exclude name=".*" /></methods></class>
+            <class name="org.jboss.cdi.tck.tests.context.passivating.dependency.resource.remote.ResourcePassivationDependencyTest"><methods><exclude name=".*" /></methods></class>
+
+
+            <!-- not supported by embedded adapter -->
+            <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
+                <methods>
+                    <exclude name=".*" />
+                </methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
+                <methods>
+                    <exclude name="testConversationActivation" />
+                </methods>
+            </class>
+
+
         </classes>
 
         <packages>
