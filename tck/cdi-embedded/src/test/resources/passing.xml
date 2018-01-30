@@ -16,7 +16,7 @@
   limitations under the License.
   -->
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="JSR-346-TCK" verbose="2" configfailurepolicy="continue" >
+<suite name="JSR-365-TCK" verbose="2" configfailurepolicy="continue" >
     <listeners>
         <!-- debug -->
         <!--listener class-name="org.apache.openejb.tck.cdi.embedded.GCListener"/-->
@@ -35,7 +35,7 @@
         -->
     </listeners>
 
-    <test name="JSR-346 TCK">
+    <test name="JSR-365 TCK">
         <groups>
             <run>
                 <!--
@@ -110,6 +110,15 @@
             <class name="org.jboss.cdi.tck.tests.definition.bean.types.illegal.BeanTypesWithIllegalTypeTest">
                 <methods><exclude name=".*"/></methods>
             </class>
+            <class name="org.jboss.cdi.tck.tests.definition.bean.types.enterprise.illegal.BeanTypesWithIllegalTypeTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
+            <!-- CDITCK-476 -->
+            <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
 
             <!-- https://issues.jboss.org/browse/CDITCK-580 -->
             <class name="org.jboss.cdi.tck.tests.inheritance.specialization.simple.SimpleBeanSpecializationTest">
@@ -180,6 +189,12 @@
                     <exclude name="testDuplicateBindingsToFireEventFails"/>
                 </methods>
             </class>
+            <class name="org.jboss.cdi.tck.tests.event.select.SelectEventTest">
+                <methods>
+                    <exclude name=".*DuplicateBindingType"/>
+                </methods>
+            </class>
+
 
             <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
             <class name="org.jboss.cdi.tck.tests.context.conversation.LongRunningConversationPropagatedByFacesContextTest">
@@ -267,14 +282,31 @@
 
             <!-- not supported by embedded adapter -->
             <class name="org.jboss.cdi.tck.tests.lookup.injection.non.contextual.InjectionIntoNonContextualComponentTest">
-                <methods>
-                    <exclude name=".*" />
-                </methods>
+                <methods><exclude name=".*" /></methods>
             </class>
             <class name="org.jboss.cdi.tck.tests.context.conversation.filter.ConversationFilterTest">
-                <methods>
-                    <exclude name="testConversationActivation" />
-                </methods>
+                <methods><exclude name="testConversationActivation" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.el.integration.IntegrationWithUnifiedELTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.conversation.event.LongRunningConversationLifecycleEventTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.conversation.event.TransientConversationLifecycleEventTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.request.ejb.EJBRequestContextTest">
+                <methods><exclude name="testRequestScopeActiveDuringRemoteCallToEjb" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.request.event.RequestScopeEventTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.request.event.remote.RequestScopeEventRemoteTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest">
+                <methods><exclude name=".*" /></methods>
             </class>
 
 
