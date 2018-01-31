@@ -13,6 +13,8 @@
    OR CONDITIONS OF ANY KIND, either express or implied. See the
    License for the specific language governing permissions and
    limitations under the License.
+
+   Parts (c) ASF 2016-2018
 -->
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -33,7 +35,7 @@
          
 
          This is the XML Schema for the beans.xml deployment
-         descriptor for CDI 1.1.  The deployment descriptor must be named
+         descriptor for CDI 2.0.  The deployment descriptor must be named
          "META-INF/beans.xml" or "WEB-INF/beans.xml" in a war file.
          All application deployment descriptors may indicate
          the application schema by using the Java EE namespace:
@@ -46,8 +48,8 @@
          <beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
-         http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-         version="1.1">
+         http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"
+         version="2.0">
             ...
          </beans>
 
@@ -55,7 +57,7 @@
         the schema using the xsi:schemaLocation attribute for the Java EE
         namespace with the following location:
 
-        http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd
+        http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd
 
      ]]>
     </xs:documentation>
@@ -80,6 +82,7 @@
         <xs:element ref="javaee:decorators" />
         <xs:element ref="javaee:alternatives" />
         <xs:element ref="javaee:scan" />
+        <xs:element ref="javaee:trim" />
         <xs:any namespace="##other" processContents="lax"/>
       </xs:choice>
       <xs:attribute name="version" default="1.1">
@@ -345,6 +348,18 @@
               listed twice under the &lt;alternatives&gt;
               element, the container automatically detects the
               problem and treats it as a deployment problem.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+
+        <xs:element name="trim" type="xs:string" fixed="">
+          <xs:annotation>
+            <xs:documentation>
+              Trimming is enabled if a jar or classpath location with a beans.xml has a
+              &lt;trim/&gt; tag and an empty bean-discovery-mode or 'all'.
+              In this case we will fire ProcessAnnotatedType for all classes we find,
+              but only create Beans for those AnnotatedTypes which have an explicit
+              Scope annotation or are either an Interceptor or a Decorator.
             </xs:documentation>
           </xs:annotation>
         </xs:element>
