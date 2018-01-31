@@ -28,8 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class BeansTest {
     @Test
@@ -44,12 +46,12 @@ public class BeansTest {
     public void read10() throws Exception {
         final Beans b = read(
                 "<beans\n" +
-                "   xmlns=\"http://java.sun.com/xml/ns/javaee\"\n" +
+                "   xmlns=\"http://xmlns.jcp.org/xml/ns/javaee\"\n" +
                 "   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "   version=\"1.0\"\n" +
                 "   xsi:schemaLocation=\"\n" +
-                "      http://java.sun.com/xml/ns/javaee\n" +
-                "      http://java.sun.com/xml/ns/javaee/beans_1_0.xsd\">\n" +
+                "      http://xmlns.jcp.org/xml/ns/javaee\n" +
+                "      http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd\">\n" +
                 "   <interceptors>\n" +
                 "      <class>org.mycompany.myapp.TransactionInterceptor</class>\n" +
                 "   </interceptors>\n" +
@@ -59,6 +61,7 @@ public class BeansTest {
                 "   <decorators>\n" +
                 "      <class>org.mycompany.myfwk.TimestampLogger</class>\n" +
                 "   </decorators>" +
+                "   <trim/>" +
                 "</beans>");
         assertNotNull(b);
         assertEquals(1, b.getInterceptors().size());
@@ -69,6 +72,7 @@ public class BeansTest {
         assertEquals(1, b.getDecorators().size());
         assertEquals("org.mycompany.myfwk.TimestampLogger", b.getDecorators().iterator().next());
         assertEquals("1.0", b.getVersion());
+        assertTrue(b.isTrim());
     }
 
     @Test
@@ -93,6 +97,7 @@ public class BeansTest {
         assertNotNull(b);
         assertEquals("1.1", b.getVersion());
         assertNotNull(b.getScan());
+        assertFalse(b.isTrim());
         final List<Beans.Scan.Exclude> excludeList = b.getScan().getExclude();
         assertNotNull(excludeList);
         assertEquals(4, excludeList.size());
