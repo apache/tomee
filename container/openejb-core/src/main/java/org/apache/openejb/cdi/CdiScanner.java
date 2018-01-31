@@ -38,8 +38,9 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.intercept.InterceptorsManager;
 import org.apache.webbeans.spi.BDABeansXmlScanner;
+import org.apache.webbeans.spi.BdaScannerService;
 import org.apache.webbeans.spi.BeanArchiveService;
-import org.apache.webbeans.spi.ScannerService;
+import org.apache.webbeans.xml.DefaultBeanArchiveInformation;
 
 import javax.decorator.Decorator;
 import java.lang.annotation.Annotation;
@@ -59,7 +60,7 @@ import static java.util.Arrays.asList;
 /**
  * @version $Rev:$ $Date:$
  */
-public class CdiScanner implements ScannerService {
+public class CdiScanner implements BdaScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
@@ -67,7 +68,6 @@ public class CdiScanner implements ScannerService {
         RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
     };
 
-    private final Set<Class<?>> classes = new HashSet<>();
     private final Set<Class<?>> startupClasses = new HashSet<>();
     private final Set<URL> beansXml = new HashSet<>();
     private final boolean logDebug;
@@ -75,8 +75,25 @@ public class CdiScanner implements ScannerService {
     private WebBeansContext webBeansContext;
     private ClassLoader containerLoader;
 
+    /**
+     * This BdaInfo is used for all manually added beans in this scanner.
+     */
+    private final DefaultBeanArchiveInformation tomeeBeanArchiveInformation;
+
+
+    /**
+     * for having proper scan mode 'SCOPED'/trim support we need to know which bean class
+     * has which beans.xml.
+     */
+    private Map<BeanArchiveService.BeanArchiveInformation, Set<Class<?>>> beanClassesPerBda = new HashMap<>();
+
+
     public CdiScanner() {
         logDebug = "true".equals(SystemInstance.get().getProperty("openejb.cdi.noclassdeffound.log", "false"));
+
+        tomeeBeanArchiveInformation = new DefaultBeanArchiveInformation("tomee");
+        tomeeBeanArchiveInformation.setBeanDiscoveryMode(BeanArchiveService.BeanDiscoveryMode.ALL);
+
     }
 
     public void setContext(final WebBeansContext webBeansContext) {
@@ -105,6 +122,7 @@ public class CdiScanner implements ScannerService {
 
         // app beans
         for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
+            Set<Class<?>> classes = new HashSet<>();
             final BeansInfo beans = ejbJar.beans;
 
             if (beans == null || "false".equalsIgnoreCase(ejbJar.properties.getProperty("openejb.cdi.activated"))) {
@@ -194,10 +212,20 @@ public class CdiScanner implements ScannerService {
                     logger.info("    " + c);
                 }
             }
+
+           if (!classes.isEmpty()) {
+                addClasses(tomeeBeanArchiveInformation, classes);
+           }
         }
     }
 
-    private void addClasses(final Collection<String> list, final ClassLoader loader) {
+    private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<String> list, final ClassLoader loader) {
+        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
+        if (classes == null) {
+            classes = new HashSet<>();
+            beanClassesPerBda.put(bdaInfo, classes);
+        }
+
         for (final String s : list) {
             final Class<?> load = load(s, loader);
             if (load != null) {
@@ -205,10 +233,25 @@ public class CdiScanner implements ScannerService {
             }
         }
     }
-    private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader,final ClassLoaderComparator comparator,
-                           final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
-                           final BeanArchiveService beanArchiveService, final boolean openejb,
-                           final BeansInfo.BDAInfo bda) {
+    private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<Class<?>> list) {
+        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
+        if (classes == null) {
+            classes = new HashSet<>();
+            beanClassesPerBda.put(bdaInfo, classes);
+        }
+
+        classes.addAll(list);
+    }
+
+    @Override
+    public Map<BeanArchiveService.BeanArchiveInformation, Set<Class<?>>> getBeanClassesPerBda() {
+        return beanClassesPerBda;
+    }
+
+    private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
+                                                                final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
+                                                                final BeanArchiveService beanArchiveService, final boolean openejb,
+                                                                final BeansInfo.BDAInfo bda) {
         BeanArchiveService.BeanArchiveInformation information;
         if (openejb) {
             final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
@@ -226,10 +269,10 @@ public class CdiScanner implements ScannerService {
                 throw new IllegalStateException(e);
             }
         }
-        addClasses(information.getAlternativeClasses(), classLoader);
-        addClasses(information.getDecorators(), classLoader);
-        addClasses(information.getInterceptors(), classLoader);
-        addClasses(information.getAlternativeStereotypes(), classLoader);
+        addClasses(information, information.getAlternativeClasses(), classLoader);
+        addClasses(information, information.getDecorators(), classLoader);
+        addClasses(information, information.getInterceptors(), classLoader);
+        addClasses(information, information.getAlternativeStereotypes(), classLoader);
 
         final boolean scanModeAnnotated = BeanArchiveService.BeanDiscoveryMode.ANNOTATED.equals(information.getBeanDiscoveryMode());
         final boolean noScan = BeanArchiveService.BeanDiscoveryMode.NONE.equals(information.getBeanDiscoveryMode());
@@ -247,6 +290,7 @@ public class CdiScanner implements ScannerService {
                 }
             }
 
+            Set<Class<?>> classes = new HashSet<>(bda.managedClasses.size());
             for (final String name : bda.managedClasses) {
                 if (information.isClassExcluded(name)) {
                     continue;
@@ -278,6 +322,8 @@ public class CdiScanner implements ScannerService {
                     }
                 }
             }
+
+            addClasses(information, classes);
         }
 
         return information;
@@ -348,12 +394,12 @@ public class CdiScanner implements ScannerService {
 
     @Override
     public Set<Class<?>> getBeanClasses() {
-        return classes;
+        return Collections.EMPTY_SET;
     }
 
     @Override
     public void release() {
-        classes.clear();
+        beanClassesPerBda.clear();
     }
 
     public Set<Class<?>> getStartupClasses() {

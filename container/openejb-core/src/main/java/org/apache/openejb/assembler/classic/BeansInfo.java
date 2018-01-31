@@ -50,6 +50,7 @@ public class BeansInfo extends InfoObject {
         public final List<String> alternatives = new LinkedList<>();
         public final List<String> stereotypeAlternatives = new LinkedList<>();
         public String discoveryMode;
+        public boolean trim;
         public URI uri;
     }
 }

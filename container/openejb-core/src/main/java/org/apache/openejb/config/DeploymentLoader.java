@@ -1206,8 +1206,15 @@ public class DeploymentLoader implements DeploymentFilterable {
         // check is done here since later we lost the data of the origin
         ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
 
-        final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
-        current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
+        String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+        if (beanDiscoveryMode == null) {
+            beanDiscoveryMode = "ALL";
+        }
+        else if ("ALL".equalsIgnoreCase(beanDiscoveryMode) && beans.isTrim()) {
+            beanDiscoveryMode = "TRIM";
+        }
+
+        current.getDiscoveryByUrl().put(url, beanDiscoveryMode);
     }
 
     private void addBeansXmls(final AppModule appModule) {

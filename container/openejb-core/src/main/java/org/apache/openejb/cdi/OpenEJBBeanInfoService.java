@@ -37,9 +37,12 @@ public class OpenEJBBeanInfoService implements BeanArchiveService {
     }
 
     public DefaultBeanArchiveInformation createBeanArchiveInformation(final BeansInfo.BDAInfo bda, final BeansInfo info, final ClassLoader loader) {
-        final String mode = bda.discoveryMode == null? "ALL" : bda.discoveryMode;
+        String mode = bda.discoveryMode == null? "ALL" : bda.discoveryMode;
         if (info != null && info.version != null && !"1.0".equals(info.version) && info.discoveryMode == null) {
             throw new WebBeansConfigurationException("beans.xml with version 1.1 and higher must declare a bean-discovery-mode!");
+        }
+        if ("ALL".equalsIgnoreCase(mode) && bda.trim) {
+            mode = "TRIM";
         }
 
         final DefaultBeanArchiveInformation information = new DefaultBeanArchiveInformation(bda.uri.toASCIIString());
