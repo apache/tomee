@@ -171,9 +171,15 @@
 
             <!-- CDITCK-466 -->
             <class name="org.jboss.cdi.tck.tests.extensions.lifecycle.bbd.broken.passivatingScope.AddingPassivatingScopeTest">
-                <methods>
-                    <exclude name=".*"/>
-                </methods>
+                <methods><exclude name=".*"/></methods>
+            </class>
+
+            <!-- CDITCK-605 -->
+            <class name="org.jboss.cdi.tck.tests.event.broken.observer.remoteBusinessMethod.EJBObserverMethodRemoteBusinessMethodTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.event.broken.observer.remoteBusinessMethod.EJBAsyncObserverMethodRemoteBusinessMethodTest">
+                <methods><exclude name=".*"/></methods>
             </class>
 
             <!-- https://issues.jboss.org/browse/CDI-721 -->
@@ -306,6 +312,9 @@
                 <methods><exclude name=".*" /></methods>
             </class>
             <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
                 <methods><exclude name=".*" /></methods>
             </class>
 
