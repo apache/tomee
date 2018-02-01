@@ -106,7 +106,7 @@
     <johnzon.version>1.0.0</johnzon.version>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>4.5</xbeanVersion>
