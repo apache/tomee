@@ -121,6 +121,7 @@ import org.apache.openejb.resource.jdbc.DataSourceFactory;
 import org.apache.openejb.spi.ApplicationServer;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.util.Contexts;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
@@ -246,6 +247,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -1734,6 +1736,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Map<Class<?>, Object> services = new HashMap<Class<?>, Object>();
 
+            services.put(Executor.class, new ManagedExecutorServiceImpl(ForkJoinPool.commonPool()));
             services.put(JNDIService.class, new OpenEJBJndiService());
             services.put(AppContext.class, appContext);
             services.put(ScannerService.class, new CdiScanner());
