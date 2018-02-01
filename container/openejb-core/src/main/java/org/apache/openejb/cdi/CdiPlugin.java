@@ -501,8 +501,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         for (final ProducerMethodBean<?> m : methods) {
             final Method method = m.getCreatorMethod();
-            if (doResolveViewMethod(bean, method) == null) {
-                throw new WebBeansConfigurationException("@Produces " + method + " not in the ejb view of ejb " + beanContext.getEjbName());
+            final Method viewMethod = doResolveViewMethod(bean, method);
+            if (viewMethod == null || beanContext.getBusinessRemoteInterfaces().contains(viewMethod.getDeclaringClass())) {
+                throw new WebBeansConfigurationException("@Produces " + method + " not in a local ejb view of ejb " + beanContext.getEjbName());
             }
         }
     }
@@ -529,8 +530,10 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                 if (m.getParameterTypes().length > 0) {
                     for (final Annotation[] a : m.getParameterAnnotations()) {
                         for (final Annotation ann : a) {
-                            if (ann.annotationType().equals(Disposes.class) && doResolveViewMethod(bean, m) == null) {
-                                throw new WebBeansConfigurationException("@Disposes is forbidden on non business EJB methods");
+                            final Method method = doResolveViewMethod(bean, m);
+                            if (ann.annotationType().equals(Disposes.class) &&
+                                    (method == null || bean.getBeanContext().getBusinessRemoteInterfaces().contains(method.getDeclaringClass()))) {
+                                throw new WebBeansConfigurationException("@Disposes is forbidden on non business or remote EJB methods");
                             }
                         }
                     }
