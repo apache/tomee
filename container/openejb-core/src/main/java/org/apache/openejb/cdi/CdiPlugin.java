@@ -478,8 +478,14 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         for (final Map.Entry<ObserverMethod<?>, AnnotatedMethod<?>> m : methods.entrySet()) {
             final Method method = m.getValue().getJavaMember();
-            if (!Modifier.isStatic(method.getModifiers()) && doResolveViewMethod(bean, method) == null) {
-                throw new WebBeansConfigurationException("@Observes " + method + " neither in the ejb view of ejb " + bean.getBeanContext().getEjbName() + " nor static");
+            if (!Modifier.isStatic(method.getModifiers())) {
+                final Method viewMethod = doResolveViewMethod(bean, method);
+                if (viewMethod == null) {
+                    throw new WebBeansConfigurationException(
+                            "@Observes " + method + " neither in the ejb view of ejb " + bean.getBeanContext().getEjbName() + " nor static");
+                } else if (beanContext.getBusinessRemoteInterfaces().contains(viewMethod.getDeclaringClass())) {
+                    throw new WebBeansConfigurationException(viewMethod + " observer is defined in a @Remote interface");
+                }
             }
             if (m.getValue().getParameters().stream().anyMatch(p -> p.isAnnotationPresent(ObservesAsync.class))) {
                 throw new WebBeansConfigurationException("@ObservesAsync " + method + " not supported on EJB in CDI 2");
