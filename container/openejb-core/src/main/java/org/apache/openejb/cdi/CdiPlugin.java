@@ -55,6 +55,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.Context;
 import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.event.ObservesAsync;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Specializes;
 import javax.enterprise.inject.Vetoed;
@@ -479,6 +480,9 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             final Method method = m.getValue().getJavaMember();
             if (!Modifier.isStatic(method.getModifiers()) && doResolveViewMethod(bean, method) == null) {
                 throw new WebBeansConfigurationException("@Observes " + method + " neither in the ejb view of ejb " + bean.getBeanContext().getEjbName() + " nor static");
+            }
+            if (m.getValue().getParameters().stream().anyMatch(p -> p.isAnnotationPresent(ObservesAsync.class))) {
+                throw new WebBeansConfigurationException("@ObservesAsync " + method + " not supported on EJB in CDI 2");
             }
         }
     }
