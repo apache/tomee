@@ -72,9 +72,11 @@ import javax.ejb.SessionBean;
 import javax.ejb.TimedObject;
 import javax.ejb.Timer;
 import javax.enterprise.context.ConversationScoped;
+import javax.enterprise.context.spi.Contextual;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.Decorator;
 import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
@@ -243,25 +245,11 @@ public class BeanContext extends DeploymentContext {
         if (CdiInterceptorBean.class.isInstance(i)) {
             final CdiInterceptorBean cdiInterceptorBean = CdiInterceptorBean.class.cast(i);
 
-            data = new InterceptorData(i.getBeanClass());
-            data.getAroundInvoke().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_INVOKE));
-            data.getPostConstruct().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_CONSTRUCT));
-            data.getPreDestroy().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_DESTROY));
-            data.getPostActivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_ACTIVATE));
-            data.getPrePassivate().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_PASSIVATE));
-            data.getAroundTimeout().addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_TIMEOUT));
-            /*
-            AfterBegin, BeforeCompletion and AfterCompletion are ignored since not handled by CDI
-             */
+            data = new InterceptorData(cdiInterceptorBean);
         } else { // TODO: here we are not as good as in previous since we loose inheritance for instance
             data = InterceptorData.scan(i.getBeanClass());
         }
         return data;
-    }
-
-    private List<Method> getInterceptionMethodAsListOrEmpty(final CdiInterceptorBean cdiInterceptorBean, final InterceptionType aroundInvoke) {
-        final Method[] methods = cdiInterceptorBean.getInterceptorMethods(aroundInvoke);
-        return methods == null ? Collections.<Method>emptyList() : asList(methods);
     }
 
     private static void clear(final Collection<?> c) {
@@ -1679,7 +1667,22 @@ public class BeanContext extends DeploymentContext {
                                 }
                             }
                         }
-                        iInstance = interceptorConstructor.create(creationalContext);
+                        CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
+                        Object oldDelegate = cc.putDelegate(beanInstance);
+                        Bean<?> oldBean = cc.putBean(cdiEjbBean);
+                        Contextual<?> oldContextual = cc.putContextual(interceptorData.getCdiInterceptorBean() != null
+                                ? interceptorData.getCdiInterceptorBean()
+                                : interceptorConstructor); // otherwise BeanMetaData is broken
+
+                        try {
+                            iInstance = interceptorConstructor.create(creationalContext);
+                        }
+                        finally {
+                            cc.putBean(oldBean);
+                            cc.putContextual(oldContextual);
+                            cc.putDelegate(oldDelegate);
+                        }
+
                     }
                 } else {
                     iInstance = clazz.newInstance();
@@ -1754,8 +1757,20 @@ public class BeanContext extends DeploymentContext {
                         final Map<Decorator<?>, Object> instances = new HashMap<Decorator<?>, Object>();
                         for (int i = decorators.size(); i > 0; i--) {
                             final Decorator<?> decorator = decorators.get(i - 1);
-                            CreationalContextImpl.class.cast(creationalContext).putDelegate(beanInstance);
-                            final Object decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
+                            CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
+                            Object oldDelegate = cc.putDelegate(beanInstance);
+                            Bean<?> oldBean = cc.putBean(cdiEjbBean);
+                            Contextual<?> oldContextual = cc.putContextual(decorator); // otherwise BeanMetaData is broken
+
+                            Object decoratorInstance = null;
+                            try {
+                                decoratorInstance = decorator.create(CreationalContext.class.cast(creationalContext));
+                            }
+                            finally {
+                                cc.putBean(oldBean);
+                                cc.putContextual(oldContextual);
+                                cc.putDelegate(oldDelegate);
+                            }
                             instances.put(decorator, decoratorInstance);
                             beanInstance = pf.createProxyInstance(proxyClass, instance,
                                 new DecoratorHandler(interceptorInfo, decorators, instances, i - 1, instance, cdiEjbBean.getId()));

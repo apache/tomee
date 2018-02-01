@@ -19,6 +19,7 @@ package org.apache.openejb.core.interceptor;
 
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.util.SetAccessible;
+import org.apache.webbeans.component.CdiInterceptorBean;
 import org.apache.xbean.finder.ClassFinder;
 
 import javax.annotation.PostConstruct;
@@ -28,6 +29,7 @@ import javax.ejb.AfterCompletion;
 import javax.ejb.BeforeCompletion;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
+import javax.enterprise.inject.spi.InterceptionType;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
 import java.lang.annotation.Annotation;
@@ -40,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Arrays.asList;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -47,6 +51,7 @@ public class InterceptorData {
     private static final Map<Class<?>, InterceptorData> CACHE = new ConcurrentHashMap<Class<?>, InterceptorData>();
 
     private final Class clazz;
+    private final CdiInterceptorBean cdiInterceptorBean;
 
     private final Set<Method> aroundInvoke = new LinkedHashSet<Method>();
 
@@ -66,6 +71,33 @@ public class InterceptorData {
 
     public InterceptorData(final Class clazz) {
         this.clazz = clazz;
+        this.cdiInterceptorBean = null;
+    }
+
+    public InterceptorData(CdiInterceptorBean cdiInterceptorBean) {
+        this.cdiInterceptorBean = cdiInterceptorBean;
+        this.clazz = cdiInterceptorBean.getBeanClass();
+        this.aroundInvoke.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_INVOKE));
+        this.postConstruct.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_CONSTRUCT));
+        this.preDestroy.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_DESTROY));
+        this.postActivate.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.POST_ACTIVATE));
+        this.prePassivate.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.PRE_PASSIVATE));
+        this.aroundTimeout.addAll(getInterceptionMethodAsListOrEmpty(cdiInterceptorBean, InterceptionType.AROUND_TIMEOUT));
+        /*
+         AfterBegin, BeforeCompletion and AfterCompletion are ignored since not handled by CDI
+         */
+    }
+
+    private List<Method> getInterceptionMethodAsListOrEmpty(final CdiInterceptorBean cdiInterceptorBean, final InterceptionType aroundInvoke) {
+        final Method[] methods = cdiInterceptorBean.getInterceptorMethods(aroundInvoke);
+        return methods == null ? Collections.<Method>emptyList() : asList(methods);
+    }
+
+    /**
+     * @return the CdiInterceptorBean or {@code null} if not a CDI interceptor
+     */
+    public CdiInterceptorBean getCdiInterceptorBean() {
+        return cdiInterceptorBean;
     }
 
     public Class getInterceptorClass() {
