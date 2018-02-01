@@ -174,13 +174,6 @@
                 <methods><exclude name=".*"/></methods>
             </class>
 
-            <!-- CDITCK-605 -->
-            <class name="org.jboss.cdi.tck.tests.event.broken.observer.remoteBusinessMethod.EJBObserverMethodRemoteBusinessMethodTest">
-                <methods><exclude name=".*"/></methods>
-            </class>
-            <class name="org.jboss.cdi.tck.tests.event.broken.observer.remoteBusinessMethod.EJBAsyncObserverMethodRemoteBusinessMethodTest">
-                <methods><exclude name=".*"/></methods>
-            </class>
 
             <!-- https://issues.jboss.org/browse/CDI-721 -->
             <class name="org.jboss.cdi.tck.tests.extensions.configurators.invalid.ConfiguratorAndSetMethodTest">
@@ -315,6 +308,9 @@
                 <methods><exclude name=".*" /></methods>
             </class>
             <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.event.observer.context.async.enterprise.EnterpriseSecurityContextPropagationInAsyncObserverTest">
                 <methods><exclude name=".*" /></methods>
             </class>
 
