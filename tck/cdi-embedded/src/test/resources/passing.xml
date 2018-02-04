@@ -218,6 +218,18 @@
                 </methods>
             </class>
 
+            <!-- https://issues.jboss.org/browse/CDI-722 -->
+            <class name="org.jboss.cdi.tck.tests.event.observer.context.enterprise.staticMethod.SessionBeanStaticObserverMethodInvocationContextTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.event.observer.context.enterprise.SessionBeanObserverMethodInvocationContextTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.event.observer.context.ObserverMethodInvocationContextTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
+
             <!-- CDI-312 ambiguous BDA definition (EE-module vs JAR) -->
             <class name="org.jboss.cdi.tck.tests.interceptors.ordering.global.GlobalInterceptorOrderingTest">
                 <methods>
