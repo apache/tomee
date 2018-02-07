@@ -218,6 +218,11 @@
                 </methods>
             </class>
 
+            <!-- https://issues.jboss.org/browse/CDITCK-606 -->
+            <class name="org.jboss.cdi.tck.tests.deployment.discovery.enterprise.annotated.EnterpriseDefaultBeanDiscoveryModeTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
             <!-- https://issues.jboss.org/browse/CDI-722 -->
             <class name="org.jboss.cdi.tck.tests.event.observer.context.enterprise.staticMethod.SessionBeanStaticObserverMethodInvocationContextTest">
                 <methods><exclude name=".*"/></methods>
@@ -323,6 +328,9 @@
                 <methods><exclude name=".*" /></methods>
             </class>
             <class name="org.jboss.cdi.tck.tests.event.observer.context.async.enterprise.EnterpriseSecurityContextPropagationInAsyncObserverTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.implementation.builtin.metadata.ee.BuiltinMetadataEEBeanTest">
                 <methods><exclude name=".*" /></methods>
             </class>
 
