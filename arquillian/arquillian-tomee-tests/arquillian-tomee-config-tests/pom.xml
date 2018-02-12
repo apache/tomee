@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-config-tests</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: Configuration Tests</name>
+  <name>TomEE :: Arquillian :: Tests :: Configuration Tests</name>
 
   <dependencies>
     <dependency>

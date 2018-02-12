@@ -26,7 +26,7 @@
   <artifactId>schedule-methods</artifactId>
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: @Schedule Methods</name>
+  <name>TomEE :: Examples :: @Schedule Methods</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-util</artifactId>
-  <name>OpenEJB :: TomEE :: Util</name>
+  <name>TomEE :: Util</name>
 
   <dependencies>
     <dependency>

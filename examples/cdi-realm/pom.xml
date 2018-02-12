@@ -24,7 +24,7 @@
   <artifactId>cdi-realm</artifactId>
   <packaging>war</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: CDI Realm</name>
+  <name>TomEE :: Examples :: CDI Realm</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>7.0.5-SNAPSHOT</tomee.version>

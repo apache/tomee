@@ -28,7 +28,7 @@
   </parent>
   <artifactId>resources-jmx-ear</artifactId>
   <packaging>ear</packaging>
-  <name>OpenEJB :: Examples :: Resources/JMX Example :: EAR Module</name>
+  <name>TomEE :: Examples :: Resources/JMX Example :: EAR Module</name>
   <build>
     <plugins>
       <plugin>

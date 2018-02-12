@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-webprofile-tests</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: Web Profile</name>
+  <name>TomEE :: Arquillian :: Tests :: Web Profile</name>
 
   <dependencies>
     <dependency>

@@ -31,7 +31,7 @@
   
   <artifactId>tomee</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: TomEE</name>
+  <name>TomEE :: Parent</name>
 
   <modules>
     <module>tomee-loader</module>

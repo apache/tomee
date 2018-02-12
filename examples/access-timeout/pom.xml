@@ -26,7 +26,7 @@
   <artifactId>access-timeout</artifactId>
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: @AccessTimeout</name>
+  <name>TomEE :: Examples :: @AccessTimeout</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

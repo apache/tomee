@@ -27,7 +27,7 @@
   <artifactId>arquillian-tomee-common</artifactId>
   <packaging>jar</packaging>
 
-  <name>OpenEJB :: Arquillian Adaptors Parent :: TomEE Common</name>
+  <name>TomEE :: Arquillian :: TomEE Common</name>
 
   <dependencies>
     <dependency>
