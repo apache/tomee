@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>business-logic</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Examples :: Ear Testing :: Business Logic</name>
+  <name>TomEE :: Examples :: Ear Testing :: Business Logic</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

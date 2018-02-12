@@ -30,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-catalina</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Catalina</name>
+  <name>TomEE :: Catalina</name>
   <description>This module contains the classes that will be added to the catalina class loader</description>
 
   <reporting>
@@ -38,7 +38,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
+        <version>2.5</version>
       </plugin>
     </plugins>
   </reporting>

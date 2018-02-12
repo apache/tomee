@@ -29,7 +29,7 @@
   <artifactId>arquillian-common</artifactId>
   <packaging>jar</packaging>
 
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Common</name>
+  <name>TomEE :: Arquillian :: Common</name>
 
   <dependencies>
     <dependency>

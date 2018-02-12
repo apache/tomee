@@ -26,7 +26,7 @@
   <artifactId>webservice-handlerchain</artifactId>
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Web Service Handlers</name>
+  <name>TomEE :: Examples :: Web Service Handlers</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

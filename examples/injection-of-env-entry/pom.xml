@@ -26,7 +26,7 @@
   <artifactId>injection-of-env-entry</artifactId>
   <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: @Resource env-entry Injection</name>
+  <name>TomEE :: Examples :: @Resource env-entry Injection</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

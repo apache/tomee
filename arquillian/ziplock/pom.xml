@@ -27,7 +27,7 @@
   <artifactId>ziplock</artifactId>
   <packaging>jar</packaging>
 
-  <name>OpenEJB :: Arquillian Adaptors Parent :: ZipLock</name>
+  <name>TomEE :: Arquillian :: ZipLock</name>
 
   <dependencies>
     <dependency>

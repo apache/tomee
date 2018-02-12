@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-codi-tests</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: CODI</name>
+  <name>TomEE :: Arquillian :: Tests :: CODI</name>
 
   <dependencies>
     <dependency>

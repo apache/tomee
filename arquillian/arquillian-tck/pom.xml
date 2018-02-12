@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>arquillian-tck</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Arquillian TCK</name>
+  <name>TomEE :: Arquillian :: TCK</name>
   <packaging>jar</packaging>
 
   <properties>

@@ -29,7 +29,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-plus-webapp</artifactId>
-  <name>OpenEJB :: TomEE :: Plus Webapp</name>
+  <name>TomEE :: Plus Webapp</name>
   <packaging>war</packaging>
 
   <dependencies>

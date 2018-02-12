@@ -25,7 +25,7 @@
   <artifactId>cdi-ejbcontext-jaas</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>OpenEJB :: Examples :: CDI, EJBContext and JAAS</name>
+  <name>TomEE :: Examples :: CDI, EJBContext and JAAS</name>
 
   <dependencies>
     <dependency>

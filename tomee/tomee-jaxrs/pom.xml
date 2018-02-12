@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-jaxrs</artifactId>
-  <name>OpenEJB :: TomEE :: RS Web Services</name>
+  <name>TomEE :: RS Web Services</name>
 
   <dependencies>
     <dependency>

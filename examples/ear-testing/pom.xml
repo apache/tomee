@@ -27,7 +27,7 @@
   <artifactId>myear</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Examples :: Ear Testing</name>
+  <name>TomEE :: Examples :: Ear Testing</name>
   <modules>
     <module>business-model</module>
     <module>business-logic</module>

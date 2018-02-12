@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>polling-web</artifactId>
-  <name>OpenEJB :: Examples :: Polling :: Web</name>
+  <name>TomEE :: Examples :: Polling :: Web</name>
   <packaging>war</packaging>
 
   <dependencies>

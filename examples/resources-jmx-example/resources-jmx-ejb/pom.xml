@@ -30,7 +30,7 @@
   
   <artifactId>resources-jmx-ejb</artifactId>
   <packaging>ejb</packaging>
-  <name>OpenEJB :: Examples :: Resources/JMX Example :: EJB Module</name>
+  <name>TomEE :: Examples :: Resources/JMX Example :: EJB Module</name>
 
   <build>
     <plugins>
