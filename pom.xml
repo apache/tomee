@@ -126,7 +126,6 @@
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
     <batchee.version>0.4-incubating</batchee.version>
     <cxf.version>3.1.13</cxf.version>
-    <tomcat.version>8.5.24</tomcat.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.arquillian>1.1.13.Final</version.arquillian>
