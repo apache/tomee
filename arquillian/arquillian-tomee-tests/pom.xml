@@ -23,7 +23,7 @@
   <artifactId>arquillian-tomee-tests</artifactId>
   <packaging>pom</packaging>
 
-  <name>TomEE :: Arquillian :: Tests</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests</name>
 
   <modules>
     <module>arquillian-tomee-webprofile-tests</module>

@@ -31,7 +31,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: TomEE Embedded</name>
+  <name>OpenEJB :: TomEE :: TomEE Embedded</name>
   <version>7.0.5-SNAPSHOT</version>
 
   <build>

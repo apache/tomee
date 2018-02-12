@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-jdbc</artifactId>
-  <name>TomEE :: JDBC</name>
+  <name>OpenEJB :: TomEE :: JDBC</name>
 
   <dependencies>
     <dependency>

@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-jaxrs-tests</artifactId>
-  <name>TomEE :: Arquillian :: Tests :: JAXRS</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: JAXRS</name>
 
   <dependencies>
     <dependency>

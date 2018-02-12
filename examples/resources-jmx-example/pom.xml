@@ -26,7 +26,7 @@
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <name>TomEE :: Examples :: Resources/JMX Example</name>
+  <name>OpenEJB :: Examples :: Resources/JMX Example</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

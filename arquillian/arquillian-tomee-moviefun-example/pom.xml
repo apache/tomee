@@ -22,7 +22,7 @@
   </parent>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
-  <name>TomEE :: Arquillian :: Sample :: Moviefun</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Sample :: Moviefun</name>
 
   <properties>
     <version.selenium>2.40.0</version.selenium>

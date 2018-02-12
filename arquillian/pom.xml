@@ -29,7 +29,7 @@
   <artifactId>arquillian</artifactId>
   <version>7.0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>TomEE :: Arquillian</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
   <modules>
     <module>arquillian-common</module>

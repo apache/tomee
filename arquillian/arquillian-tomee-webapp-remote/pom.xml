@@ -27,7 +27,7 @@
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
   <packaging>jar</packaging>
 
-  <name>TomEE :: Arquillian :: Webapp Remote</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
 
   <dependencies>
     <dependency>

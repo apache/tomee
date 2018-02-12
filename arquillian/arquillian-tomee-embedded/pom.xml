@@ -27,7 +27,7 @@
   <artifactId>arquillian-tomee-embedded</artifactId>
   <packaging>jar</packaging>
 
-  <name>TomEE :: Arquillian :: Embedded Adaptor</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Embedded Adaptor</name>
 
   <dependencies>
 

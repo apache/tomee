@@ -30,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-tomee</artifactId>
   <packaging>jar</packaging>
-  <name>TomEE :: Apache TomEE</name>
+  <name>OpenEJB :: TomEE :: Apache TomEE</name>
 
   <properties>
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>

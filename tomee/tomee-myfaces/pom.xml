@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>tomee-myfaces</artifactId>
-  <name>TomEE :: MyFaces</name>
+  <name>OpenEJB :: TomEE :: MyFaces</name>
 
   <dependencies>
     <dependency>

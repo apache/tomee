@@ -25,7 +25,7 @@
   <artifactId>rest-jaas</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>TomEE :: Examples :: JAXRS and JAAS</name>
+  <name>OpenEJB :: Examples :: JAXRS and JAAS</name>
 
   <dependencies>
     <dependency>

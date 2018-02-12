@@ -31,7 +31,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-plume-webapp</artifactId>
-  <name>TomEE :: Plume Webapp</name>
+  <name>OpenEJB :: TomEE :: Plume Webapp</name>
   <packaging>war</packaging>
 
   <dependencies>

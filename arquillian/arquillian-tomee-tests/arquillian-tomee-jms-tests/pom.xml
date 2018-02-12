@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-jms-tests</artifactId>
-  <name>TomEE :: Arquillian :: Tests :: JMS</name>
+  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: JMS</name>
 
   <properties>
     <profile-under-test>plus</profile-under-test>

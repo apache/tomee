@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>javamail-api</artifactId>
   <version>1.1.0-SNAPSHOT</version>
-  <name>TomEE :: Examples :: JavaMail API</name>
+  <name>OpenEJB :: Examples :: JavaMail API</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

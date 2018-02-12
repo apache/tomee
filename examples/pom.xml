@@ -32,7 +32,7 @@
 
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
-  <name>TomEE :: Examples</name>
+  <name>OpenEJB :: Examples</name>
 
   <modules>
     <module>access-timeout-meta</module>
