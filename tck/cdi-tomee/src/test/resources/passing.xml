@@ -198,6 +198,11 @@
                     <exclude name=".*"/>
                 </methods>
             </class>
+            <class name="org.jboss.cdi.tck.tests.interceptors.definition.InterceptorDefinitionTest">
+                <methods>
+                    <exclude name="testSameBindingTypesToResolveInterceptorsFails"/>
+                </methods>
+            </class>
 
 
             <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
