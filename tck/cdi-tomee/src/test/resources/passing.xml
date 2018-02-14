@@ -252,6 +252,12 @@
                 <methods><exclude name=".*"/></methods>
             </class>
 
+            <!-- CDITCK-608 -->
+            <class name="org.jboss.cdi.tck.tests.context.session.event.SessionScopeEventTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
+
 
             <!-- CDI-312 ambiguous BDA definition (EE-module vs JAR) -->
             <class name="org.jboss.cdi.tck.tests.interceptors.ordering.global.GlobalInterceptorOrderingTest">
