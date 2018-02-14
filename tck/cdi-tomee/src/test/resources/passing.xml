@@ -231,6 +231,11 @@
                 <methods><exclude name=".*"/></methods>
             </class>
 
+            <!-- https://issues.jboss.org/browse/CDITCK-609 -->
+            <class name="org.jboss.cdi.tck.tests.event.observer.priority.contextLifecycleEvent.ApplicationContextLifecycleEventObserverOrderingTest">
+                <methods><exclude name=".*"/></methods>
+            </class>
+
             <!-- https://issues.jboss.org/browse/CDI-722 -->
             <class name="org.jboss.cdi.tck.tests.event.observer.context.enterprise.staticMethod.SessionBeanStaticObserverMethodInvocationContextTest">
                 <methods><exclude name=".*"/></methods>
