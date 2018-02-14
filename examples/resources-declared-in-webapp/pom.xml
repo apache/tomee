@@ -38,11 +38,6 @@
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
-    <repository>
-      <id>tomcat-m2-repo</id>
-      <name>Tomcat Dev Repository</name>
-      <url>http://tomcat.apache.org/dev/dist/m2-repository/</url>
-    </repository>
   </repositories>
 
   <pluginRepositories>
