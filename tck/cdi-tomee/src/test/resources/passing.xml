@@ -193,6 +193,11 @@
                     <exclude name=".*DuplicateBindingType"/>
                 </methods>
             </class>
+            <class name="org.jboss.cdi.tck.tests.event.resolve.binding.DuplicateBindingTypesWhenResolvingTest">
+                <methods>
+                    <exclude name=".*"/>
+                </methods>
+            </class>
 
 
             <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
