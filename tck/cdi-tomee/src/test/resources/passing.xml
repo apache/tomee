@@ -203,6 +203,11 @@
                     <exclude name="testSameBindingTypesToResolveInterceptorsFails"/>
                 </methods>
             </class>
+            <class name="org.jboss.cdi.tck.tests.extensions.bean.bytype.BeanByTypeTest">
+                <methods>
+                    <exclude name="testSameBindingTwice"/>
+                </methods>
+            </class>
 
 
             <!-- CDITCK-462 javax.enterprise.context.conversation.id is not el compliant -->
@@ -312,6 +317,16 @@
             </class>
 
 
+            <!-- OWB provides a bit more for @New than CDI requires
+               https://issues.jboss.org/browse/CDITCK-581
+            -->
+            <class name="org.jboss.cdi.tck.tests.lookup.dynamic.DynamicLookupTest">
+                <methods>
+                    <exclude name="testNewBeanNotEnabledWithouInjectionPoint"/>
+                </methods>
+            </class>
+
+
             <!-- ears so not in web profile, Note: can be switch on if passing but dont let them block the build -->
             <class name="org.jboss.cdi.tck.tests.lookup.dependency.resolution.broken.ambiguous.ear.MultiModuleSessionBeanAmbiguousDependencyTest"><methods><exclude name=".*" /></methods></class>
             <class name="org.jboss.cdi.tck.tests.lookup.modules.interceptors.InterceptorModularityTest"><methods><exclude name=".*" /></methods></class>
@@ -367,6 +382,18 @@
                 <methods><exclude name=".*" /></methods>
             </class>
 -->
+
+            <!-- EAR modules. We don't test them for now, but finally should -->
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.ear.MultiWebModuleWithExtensionTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.deployment.packaging.rar.ResourceAdapterArchiveTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+            <class name="org.jboss.cdi.tck.tests.lookup.modules.InterModuleELResolutionTest">
+                <methods><exclude name=".*" /></methods>
+            </class>
+
 
 
         </classes>
