@@ -267,6 +267,7 @@
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-jpa-integration</artifactId>
             <version>${version.openejb}</version>
+            <artifactId>xbean-asm6-shaded</artifactId>
           </dependency>
         </dependencies>
         <configuration>
