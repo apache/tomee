@@ -128,7 +128,7 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm5-shaded</artifactId>
+          <artifactId>xbean-asm6-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
@@ -147,8 +147,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm5-shaded</artifactId>
-      <version>3.18</version>
+      <artifactId>xbean-asm6-shaded</artifactId>
+      <version>4.6</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -309,8 +309,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.myfaces.test</groupId>
-      <artifactId>myfaces-test20</artifactId>
-      <version>1.0.6</version>
+      <artifactId>myfaces-test23</artifactId>
+      <version>1.0.8</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
