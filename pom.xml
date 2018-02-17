@@ -102,7 +102,7 @@
     <version.javaee-api>8.0-SNAPSHOT</version.javaee-api>
 
     <openjpa.version>3.0.0-SNAPSHOT</openjpa.version>
-    <openwebbeans.version>2.0.4-SNAPSHOT</openwebbeans.version>
+    <openwebbeans.version>2.0.4</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.1.6</johnzon.version>
 
@@ -679,7 +679,20 @@
       </build>
     </profile>
   </profiles>
+
   <repositories>
+    <repository>
+      <id>owb-staging</id>
+      <!-- just for OWB staging. Gets released once owb-2.0.4 is published -->
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1038/</url>
+    </repository>
+
     <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
@@ -738,6 +751,7 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
