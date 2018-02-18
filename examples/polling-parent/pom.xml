@@ -74,6 +74,7 @@
     <module>polling-core</module>
     <module>polling-web</module>
     <module>polling-client</module>
+    <module>polling-mdb</module>
   </modules>
 
   <dependencyManagement>
@@ -108,8 +109,20 @@
 
       <!-- test -->
       <dependency>
+        <groupId>org.jboss.arquillian.junit</groupId>
+        <artifactId>arquillian-junit-container</artifactId>
+        <version>1.1.13.Final</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
+        <version>${tomee.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>arquillian-tomee-remote</artifactId>
         <version>${tomee.version}</version>
         <scope>test</scope>
       </dependency>

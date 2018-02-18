@@ -29,6 +29,8 @@ import java.util.Properties;
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
+        System.setProperty("hsqldb.reconfig_logging", "false");
+
         final Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");

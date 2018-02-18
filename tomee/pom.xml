@@ -54,19 +54,6 @@
     <!--<module>tomee-deb</module>-->
   </modules>
 
-  <repositories>
-    <repository>
-      <id>tomcat-private-repository</id>
-      <name>Tomcat Private Repository</name>
-      <url>http://tomcat.apache.org/dev/dist/m2-repository</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
 
   <!-- just set the good JPA provider. As openejb-core is needed in all modules it is easier to do it here -->
   <profiles>

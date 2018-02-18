@@ -1,0 +1,30 @@
+# Java #
+*.class
+*.ser
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# IDEA #
+*.iml
+.idea
+*~
+
+# eclipse specific git ignore
+.project
+.metadata
+.classpath
+.settings/
+
+
+# Maven files #
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+
+# Checkstyle #
+.checkstyle

@@ -19,6 +19,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.Container;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -34,6 +36,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -92,9 +95,9 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
                 // now try to use special keys
                 final Properties overrides = new Properties();
 
-                final MdbContainer mdbContainer = getMdbContainer(ejbDeployment.getContainerId());
+                final MdbContainerDetails mdbContainer = getMdbContainer(appModule, ejbDeployment.getContainerId(), appModule.getModuleId());
                 if (mdbContainer != null) {
-                    overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.container." + mdbContainer.getContainerID() + ".activation", "EnterpriseBean"));
+                    overrides.putAll(ConfigurationFactory.getOverrides(properties, "mdb.container." + mdbContainer.getContainerId() + ".activation", "EnterpriseBean"));
                     overrides.putAll(ConfigurationFactory.getOverrides(mdbContainer.getProperties(), "activation", "EnterpriseBean"));
                 }
 
@@ -141,27 +144,101 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return appModule;
     }
 
-    private MdbContainer getMdbContainer(final String containerId) {
+    private MdbContainerDetails getMdbContainer(final AppModule appModule, final String containerId, final String moduleId) {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+        final ConfigurationFactory configurationFactory = SystemInstance.get().getComponent(ConfigurationFactory.class);
 
         if (containerId == null || containerId.length() == 0) {
             final Container[] containers = containerSystem.containers();
             for (Container container : containers) {
                 if (MdbContainer.class.isInstance(container)) {
-                    return MdbContainer.class.cast(container);
+                    return convert(MdbContainer.class.cast(container));
+                }
+            }
+
+            // not found a container, try config factory
+            final List<ContainerInfo> containerInfos = configurationFactory.getContainerInfos();
+            for (final ContainerInfo containerInfo : containerInfos) {
+                if (MdbContainerInfo.class.isInstance(containerInfo)) {
+                    return convert(MdbContainerInfo.class.cast(containerInfo));
                 }
             }
 
             return null;
         }
 
+        final Container appContainer = containerSystem.getContainer(moduleId + "/" + containerId);
+        if (appContainer != null && MdbContainer.class.isInstance(appContainer)) {
+            return convert(MdbContainer.class.cast(appContainer));
+        }
+
+        final MdbContainerDetails appContainerInfo = findContainerInfo(configurationFactory.getContainerInfos(), moduleId + "/" + containerId);
+        if (appContainerInfo != null) {
+            return appContainerInfo;
+        }
+
         final Container container = containerSystem.getContainer(containerId);
         if (MdbContainer.class.isInstance(container)) {
-            return MdbContainer.class.cast(container);
+            return convert(MdbContainer.class.cast(container));
         }
-        return null;
 
+        final MdbContainerDetails containerInfo = findContainerInfo(configurationFactory.getContainerInfos(), containerId);
+        if (containerInfo != null) {
+            return containerInfo;
+        }
+
+        final MdbContainerDetails moduleContainer = findModuleContainer(appModule, configurationFactory, containerId);
+        if (moduleContainer != null) {
+            return moduleContainer;
+        }
+
+        return null;
+    }
+
+    private MdbContainerDetails findModuleContainer(final AppModule appModule, final ConfigurationFactory configurationFactory, final String containerId) {
+        // try the containers on the AppModule
+        final Collection<org.apache.openejb.config.sys.Container> containers = appModule.getContainers();
+        for (final org.apache.openejb.config.sys.Container appMopduleContainer : containers) {
+            if (appMopduleContainer.getId().equals(containerId) || appMopduleContainer.getId().equals(appModule.getModuleId() + "/" + containerId)) {
+                try {
+                    final ContainerInfo containerInfo = configurationFactory.createContainerInfo(appMopduleContainer);
+                    if (containerInfo != null && MdbContainerInfo.class.isInstance(containerInfo)) {
+                        return convert(MdbContainerInfo.class.cast(containerInfo));
+                    }
+                } catch (OpenEJBException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private MdbContainerDetails convert(final MdbContainerInfo mdbContainerInfo) {
+        return new MdbContainerDetails(mdbContainerInfo.id, mdbContainerInfo.properties);
+    }
+
+    private MdbContainerDetails findContainerInfo(final List<ContainerInfo> containerInfos, final String id) {
+        for (final ContainerInfo containerInfo : containerInfos) {
+            if (MdbContainerInfo.class.isInstance(containerInfo) && containerInfo.id.equals(id)) {
+                return new MdbContainerDetails(containerInfo.id, containerInfo.properties);
+            }
+        }
+
+        return null;
+    }
+
+    private MdbContainerDetails convert(final MdbContainer mdbContainer) {
+        if (mdbContainer == null) {
+            return null;
+        }
+
+        if (mdbContainer.getContainerID() == null) {
+            throw new IllegalStateException("Container has no ID");
+        }
+
+        return new MdbContainerDetails(mdbContainer.getContainerID().toString(), mdbContainer.getProperties());
     }
 
 
@@ -175,4 +252,21 @@ public class ActivationConfigPropertyOverride implements DynamicDeployer {
         return null;
     }
 
+    private static class MdbContainerDetails {
+        private final String containerId;
+        private final Properties properties;
+
+        public MdbContainerDetails(String containerId, Properties properties) {
+            this.containerId = containerId;
+            this.properties = properties;
+        }
+
+        public String getContainerId() {
+            return containerId;
+        }
+
+        public Properties getProperties() {
+            return properties;
+        }
+    }
 }

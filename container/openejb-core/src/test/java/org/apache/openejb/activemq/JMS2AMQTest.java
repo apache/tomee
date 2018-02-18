@@ -268,6 +268,18 @@ public class JMS2AMQTest {
     }
 
     @Test
+    public void sendMessageToMdb() throws Exception {
+        try (final JMSContext context = cf.createContext()) {
+            Message message = context.createMessage();
+            message.setStringProperty("text", TEXT);
+            context.createProducer().send(destination, message);
+            assertTrue(Listener.sync());
+        } catch (final JMSRuntimeException ex) {
+            fail(ex.getMessage());
+        }
+    }
+
+    @Test
     public void sendToMdbWithDefaultCf() throws Exception {
         defaultContext.createProducer().send(destination, TEXT);
         assertTrue(Listener.sync());
@@ -378,9 +390,10 @@ public class JMS2AMQTest {
         public void onMessage(final Message message) {
             try {
                 try {
-                    ok = TextMessage.class.isInstance(message)
+                    ok = (TextMessage.class.isInstance(message)
                             && TEXT.equals(TextMessage.class.cast(message).getText())
-                            && TEXT.equals(message.getBody(String.class));
+                            && TEXT.equals(message.getBody(String.class)))
+                            || message.getStringProperty("text").equals(TEXT);
                 } catch (final JMSException e) {
                     // no-op
                 }
