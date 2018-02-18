@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore //X TODO TOMEE-2170
 @RunWith(Arquillian.class)
 public class SecurityEJBPropagationTest {
     @Deployment(testable = false)
