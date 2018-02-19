@@ -682,18 +682,6 @@
 
   <repositories>
     <repository>
-      <id>owb-staging</id>
-      <!-- just for OWB staging. Gets released once owb-2.0.4 is published -->
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenwebbeans-1038/</url>
-    </repository>
-
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
