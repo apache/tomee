@@ -34,11 +34,9 @@ import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.asset.UrlAsset
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@Ignore //X TODO TOMEE-2170
 @RunWith(Arquillian)
 class LogTest {
 
