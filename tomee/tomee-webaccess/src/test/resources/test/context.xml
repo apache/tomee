@@ -16,7 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<Context antiJARLocking="true" path="/webaccess">
+<Context antiJARLocking="true" path="/webaccess" preemptiveAuthentication="true">
   <Realm className="org.apache.catalina.realm.JAASRealm" appName="ScriptLogin"
          userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
          roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
