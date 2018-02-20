@@ -422,6 +422,10 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
         // invoke the tx after method
         try {
             afterInvoke(mdbCallContext.txPolicy, callContext);
+        } catch (final ApplicationException e) {
+            callContext.setDiscardInstance(true);
+            throw new SystemException("Should never get an Application exception", e);
+        } finally {
             if (instance != null) {
                 if (callContext.isDiscardInstance()) {
                     this.instanceManager.discardInstance(callContext, instance);
@@ -434,9 +438,7 @@ public class MdbPoolContainer implements RpcContainer, BaseMdbContainer {
 
                 }
             }
-        } catch (final ApplicationException e) {
-            throw new SystemException("Should never get an Application exception", e);
-        } finally {
+
             ThreadContext.exit(mdbCallContext.oldCallContext);
         }
     }
