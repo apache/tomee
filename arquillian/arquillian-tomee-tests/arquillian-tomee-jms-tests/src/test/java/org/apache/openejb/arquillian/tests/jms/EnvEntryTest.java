@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.ejbjar31.EjbJarDescriptor;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,6 +33,7 @@ import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 @RunWith(Arquillian.class)
 public class EnvEntryTest {
     @EJB
