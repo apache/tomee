@@ -29,7 +29,10 @@ import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.monitoring.*;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
@@ -201,7 +204,6 @@ public class MdbInstanceManager {
         });
         data.setBaseContext(mdbContext);
         beanContext.setContainerData(data);
-
         final MBeanServer server = LocalMBeanServer.get();
 
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
