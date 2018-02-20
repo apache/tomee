@@ -297,7 +297,7 @@ public class DynamicSubclass implements Opcodes {
         private final MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM5, movedMethod);
+            super(Opcodes.ASM6, movedMethod);
             this.newMethod = newMethod;
         }
 
@@ -323,7 +323,7 @@ public class DynamicSubclass implements Opcodes {
         private final ClassVisitor newClass;
 
         public CopyClassAnnotations(final ClassVisitor newClass) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
             this.newClass = newClass;
         }
 
@@ -337,7 +337,7 @@ public class DynamicSubclass implements Opcodes {
         private final Map<String, MethodVisitor> visitors;
 
         public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
             this.visitors = visitors;
         }
 
