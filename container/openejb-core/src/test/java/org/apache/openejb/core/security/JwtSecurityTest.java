@@ -65,7 +65,8 @@ public class JWTSecurityTest {
     public static void afterClass() throws Exception {
         OpenEJB.destroy();
         System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
-        Security.setProperty("login.configuration.provider", null);
+        // unfortunate we can't reset the value, so setting to default (See Configuration)
+        Security.setProperty("login.configuration.provider", "sun.security.provider.ConfigFile");
     }
 
     private Assembler configureAssembler(final String defaultUser) throws Exception {
