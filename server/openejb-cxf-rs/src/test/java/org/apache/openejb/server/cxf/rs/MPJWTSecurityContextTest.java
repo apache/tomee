@@ -126,6 +126,7 @@ public class MPJWTSecurityContextTest {
             final Application application = InternalApplication.class.isInstance(appInfo.getProvider())
                             ? InternalApplication.class.cast(appInfo.getProvider()).getOriginal()
                             : appInfo.getProvider();
+
             final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
             if (annotation != null && "MP-JWT".equals(annotation.authMethod())) {
                 // add the ContainerRequestFilter on the fly
