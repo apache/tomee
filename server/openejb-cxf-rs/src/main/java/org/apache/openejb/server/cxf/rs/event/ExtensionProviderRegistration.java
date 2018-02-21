@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs.event;
 
+import org.apache.cxf.endpoint.Server;
 import org.apache.openejb.AppContext;
 import org.apache.openejb.observer.Event;
 
@@ -25,10 +26,12 @@ import java.util.List;
 // this event can allow to add/remove/resort providers
 @Event
 public class ExtensionProviderRegistration {
+    private final Server server;
     private final List<Object> providers;
     private final AppContext appContext;
 
-    public ExtensionProviderRegistration(final AppContext ctx, final List<Object> existings) {
+    public ExtensionProviderRegistration(final Server server, final AppContext ctx, final List<Object> existings) {
+        this.server = server;
         this.appContext = ctx;
         this.providers = existings;
     }
@@ -39,6 +42,10 @@ public class ExtensionProviderRegistration {
 
     public List<Object> getProviders() {
         return providers;
+    }
+
+    public Server getServer() {
+        return server;
     }
 
     @Override
