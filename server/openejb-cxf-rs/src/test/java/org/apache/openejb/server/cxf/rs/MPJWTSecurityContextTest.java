@@ -103,7 +103,7 @@ public class MPJWTSecurityContextTest {
     @LoginConfig(authMethod = "MP-JWT")
     @ApplicationPath("/api")
     public static class RestApplication extends Application {
-
+        // auto discovered
     }
 
     @Path("sc")
