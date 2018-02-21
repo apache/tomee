@@ -23,6 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.server.cxf.rs.event.ServerCreated;
+import org.apache.openejb.server.rest.InternalApplication;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
@@ -101,7 +102,7 @@ public class MPJWTSecurityContextTest {
 
     @LoginConfig(authMethod = "MP-JWT")
     @ApplicationPath("/api")
-    public class RestApplication extends Application {
+    public static class RestApplication extends Application {
 
     }
 
@@ -122,22 +123,15 @@ public class MPJWTSecurityContextTest {
         public void obs(@Observes final ServerCreated event) {
             System.out.println("Observer.obs");
             final ApplicationInfo appInfo = (ApplicationInfo) event.getServer().getEndpoint().get("javax.ws.rs.core.Application");
-            final Application application = appInfo.getProvider();
-            final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
-            if (annotation != null) {
-                // add the ContainerRequestFilter on the fly
-            }
-        }
-
-        public void extension(@Observes final ExtensionProviderRegistration registration) {
-            System.out.println("Observer.extension");
-            // nothing useful here because we cannot access the application
-            final ApplicationInfo appInfo = (ApplicationInfo) registration.getServer().getEndpoint().get("javax.ws.rs.core.Application");
-            final Application application = appInfo.getProvider();
+            final Application application = InternalApplication.class.isInstance(appInfo.getProvider())
+                            ? InternalApplication.class.cast(appInfo.getProvider()).getOriginal()
+                            : appInfo.getProvider();
             final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
             if (annotation != null && "MP-JWT".equals(annotation.authMethod())) {
                 // add the ContainerRequestFilter on the fly
-                registration.getProviders().add(new MySecuCtx());
+                if (InternalApplication.class.isInstance(appInfo.getProvider())) {
+                    InternalApplication.class.cast(appInfo.getProvider()).getClasses().add(MySecuCtx.class);
+                }
             }
         }
     }
