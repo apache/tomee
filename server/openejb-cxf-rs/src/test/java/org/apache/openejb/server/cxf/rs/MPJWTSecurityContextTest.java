@@ -135,7 +135,7 @@ public class MPJWTSecurityContextTest {
             final ApplicationInfo appInfo = (ApplicationInfo) registration.getServer().getEndpoint().get("javax.ws.rs.core.Application");
             final Application application = appInfo.getProvider();
             final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
-            if (annotation != null) {
+            if (annotation != null && "MP-JWT".equals(annotation.authMethod())) {
                 // add the ContainerRequestFilter on the fly
                 registration.getProviders().add(new MySecuCtx());
             }
