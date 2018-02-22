@@ -18,11 +18,13 @@ package org.apache.tomee.microprofile.jwt;
 
 import org.eclipse.microprofile.auth.LoginConfig;
 
+import javax.inject.Inject;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HandlesTypes;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Set;
 
@@ -31,6 +33,9 @@ import java.util.Set;
  */
 @HandlesTypes(LoginConfig.class)
 public class MPJWTInitializer implements ServletContainerInitializer {
+
+    @Inject
+    private MPJWTContext context;
 
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
@@ -46,12 +51,24 @@ public class MPJWTInitializer implements ServletContainerInitializer {
                 continue;
             }
 
-            if (!Application.class.isInstance(clazz)) {
+            if (!Application.class.isAssignableFrom(clazz)) {
                 continue; // do we really want Application?
             }
 
+            final ApplicationPath applicationPath = clazz.getAnnotation(ApplicationPath.class);
+
             final FilterRegistration.Dynamic mpJwtFilter = ctx.addFilter("mp-jwt-filter", MPJWTFilter.class);
             mpJwtFilter.setAsyncSupported(true);
+
+            context.addMapping(
+                    new MPJWTContext.MPJWTConfigKey(
+                            ctx.getContextPath(),
+                            applicationPath == null ? "" : applicationPath.value()),
+                    new MPJWTContext.MPJWTConfigValue(
+                            loginConfig.authMethod(),
+                            loginConfig.realmName())
+            );
+
         }
 
     }

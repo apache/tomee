@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -27,11 +30,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Map;
+import java.util.Optional;
 
 // async is supported because we only need to do work on the way in
 @WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class MPJWTFilter implements Filter {
 
+    @Inject
+    private MPJWTContext context;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
@@ -42,21 +49,30 @@ public class MPJWTFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
-        final HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+        final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        final Optional<Map.Entry<MPJWTContext.MPJWTConfigKey, MPJWTContext.MPJWTConfigValue>> first =
+                context.findFirst(httpServletRequest.getRequestURI());
+
+        if (first.isPresent()) { // nothing found in the context
+            chain.doFilter(request, response);
+        }
 
         // todo get JWT and do validation
+        // todo not sure what to do with the realm
+
+        final JsonWebToken jsonWebToken = new DefaultJWTCallerPrincipal("bla"); // will be build during validation
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         chain.doFilter(new HttpServletRequestWrapper(httpServletRequest) {
 
             @Override
             public Principal getUserPrincipal() {
-                return null; // todo, during parsing and validation, we need to convert into the JWT Principal as specified by the spec
+                return jsonWebToken;
             }
 
             @Override
             public boolean isUserInRole(String role) {
-                return true; // replace with a check based on the claims content
+                return jsonWebToken.getGroups().contains(role);
             }
 
             @Override
