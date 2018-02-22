@@ -18,7 +18,6 @@
 package org.superbiz.mdb;
 
 import javax.annotation.Resource;
-import javax.ejb.EJB;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -29,9 +28,7 @@ import javax.jms.Session;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import java.util.List;
 
 @Path("/log")
 public class ApiLog {
@@ -42,23 +39,38 @@ public class ApiLog {
     @Resource(name = "LoggingBean")
     private Queue vector;
 
-    @EJB
-    private CounterBean logs;
-
     @GET
     @Path("/{txt}")
     public Response get(@PathParam("txt") String txt) throws JMSException {
-        try (final Connection connection = connectionFactory.createConnection()) {
+
+        Connection connection = null;
+        Session session = null;
+        MessageProducer producer = null;
+
+        try {
+            connection = connectionFactory.createConnection();
             connection.start();
-            try (final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
-                try (final MessageProducer producer = session.createProducer(vector)) {
-                    final Message msg = session.createMessage();
-                    msg.setStringProperty("txt", txt);
-                    producer.send(msg);
-                }
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            producer = session.createProducer(vector);
+
+
+            final Message msg = session.createMessage();
+            msg.setStringProperty("txt", txt);
+            producer.send(msg);
+            return Response.ok().build();
+        } finally {
+            if (producer != null) {
+                producer.close();
+            }
+
+            if (session != null) {
+                session.close();
+            }
+
+            if (connection != null) {
+                connection.close();
             }
         }
-        return Response.ok().build();
     }
 
 }

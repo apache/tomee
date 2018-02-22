@@ -31,7 +31,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm5-shaded</artifactId>
+      <artifactId>xbean-asm6-shaded</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -107,7 +107,7 @@
     <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.2</xbeanVersion>
+    <xbeanVersion>4.6</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.82</tomcat.version>
+    <tomcat.version>7.0.85</tomcat.version>
 
     <cxf.version>2.6.17-TT.2</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -1635,7 +1635,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm5-shaded</artifactId>
+        <artifactId>xbean-asm6-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
