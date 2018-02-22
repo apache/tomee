@@ -526,7 +526,7 @@ public class Pool<T> {
     }
 
     private static long now() {
-        return TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
+        return MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
     }
 
     public final class Entry {
@@ -765,7 +765,7 @@ public class Pool<T> {
                 final long idle = now - entry.used;
 
                 if (idleTimeout > 0 && idle > idleTimeout) {
-                    // too lazy -- timed out 
+                    // too lazy -- timed out
                     final Expired expired = new Expired(entry, Event.IDLE);
 
                     expiredList.add(expired);
@@ -1120,6 +1120,7 @@ public class Pool<T> {
         private Duration interval = new Duration(5 * 60, SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
+        private ScheduledExecutorService scheduledExecutorService;
         private boolean replaceAged;
         private boolean replaceFlushed;
         private boolean garbageCollection = true;
@@ -1231,9 +1232,18 @@ public class Pool<T> {
             this.executor = executor;
         }
 
+        public void setScheduledExecutor(final ScheduledExecutorService scheduledExecutorService) {
+            this.scheduledExecutorService = scheduledExecutorService;
+        }
+
+        @SuppressWarnings("unchecked")
         public Pool<T> build() {
             //noinspection unchecked
-            return new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);
+            final Pool pool = new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);
+            if (scheduledExecutorService != null) {
+                pool.scheduler.set(scheduledExecutorService);
+            }
+            return pool;
         }
     }
 

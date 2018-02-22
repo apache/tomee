@@ -88,6 +88,7 @@
     <module>polling-core</module>
     <module>polling-web</module>
     <module>polling-client</module>
+    <module>polling-mdb</module>
   </modules>
 
   <dependencyManagement>

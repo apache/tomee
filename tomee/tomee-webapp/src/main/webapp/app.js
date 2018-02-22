@@ -62,7 +62,7 @@ $(function () {
             $('.ux-server-ready-panel').removeClass('ux-hidden');
             var providerLink = $($('.ux-provider-url').get(0));
             providerLink.attr('href', window.location.href + 'ejb');
-            providerLink.html(window.location.href + 'ejb');
+            providerLink.html(window.location.origin + window.location.pathname + 'ejb');
         } else if (systemStatus.status === 'REBOOT_REQUIRED') {
             $('.ux-installer-reboot-panel').removeClass('ux-hidden');
         } else {

@@ -2345,12 +2345,11 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
             }
 
-            for (final String id : appInfo.containerIds) {
-                removeContainer(id);
-            }
 
             for (final ContainerInfo containerInfo : appInfo.containers) {
-                removeContainer(containerInfo.id);
+                if (! containerInfo.applicationWide) {
+                    removeContainer(containerInfo.id);
+                }
             }
 
             containerSystem.removeAppContext(appInfo.appId);
@@ -2369,6 +2368,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             ClassLoaderUtil.destroyClassLoader(appInfo.appId, appInfo.path);
 
             if (undeployException.getCauses().size() > 0) {
+                // logging causes here otherwise it will be eaten in later logs.
+                for (final Throwable cause : undeployException.getCauses()) {
+                    logger.error("undeployException original cause", cause);
+                }
                 throw undeployException;
             }
 

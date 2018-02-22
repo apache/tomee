@@ -21,13 +21,13 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassVisitor;
-import org.apache.xbean.asm5.ClassWriter;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.Type;
+import org.apache.xbean.asm6.AnnotationVisitor;
+import org.apache.xbean.asm6.ClassReader;
+import org.apache.xbean.asm6.ClassVisitor;
+import org.apache.xbean.asm6.ClassWriter;
+import org.apache.xbean.asm6.MethodVisitor;
+import org.apache.xbean.asm6.Opcodes;
+import org.apache.xbean.asm6.Type;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -297,7 +297,7 @@ public class DynamicSubclass implements Opcodes {
         private final MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM5, movedMethod);
+            super(Opcodes.ASM6, movedMethod);
             this.newMethod = newMethod;
         }
 
@@ -323,7 +323,7 @@ public class DynamicSubclass implements Opcodes {
         private final ClassVisitor newClass;
 
         public CopyClassAnnotations(final ClassVisitor newClass) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
             this.newClass = newClass;
         }
 
@@ -337,7 +337,7 @@ public class DynamicSubclass implements Opcodes {
         private final Map<String, MethodVisitor> visitors;
 
         public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
             this.visitors = visitors;
         }
 
