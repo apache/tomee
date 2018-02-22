@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.Bus;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.model.ApplicationInfo;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
-import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.server.cxf.rs.event.ServerCreated;
 import org.apache.openejb.server.rest.InternalApplication;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
 import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.JaxrsProviders;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
@@ -75,10 +75,10 @@ public class MPJWTSecurityContextTest {
     }
 
     @Module
-    @Classes({ Res.class, RestApplication.class})
+    @Classes({Res.class, RestApplication.class})
     public WebApp war() {
         return new WebApp()
-            .contextRoot("foo");
+                .contextRoot("foo");
     }
 
     @Test
@@ -122,35 +122,33 @@ public class MPJWTSecurityContextTest {
 
         public void obs(@Observes final ServerCreated event) {
             System.out.println("Observer.obs");
-            final ApplicationInfo appInfo = (ApplicationInfo) event.getServer().getEndpoint().get("javax.ws.rs.core.Application");
+            final Server server = event.getServer();
+            final Bus bus = (Bus) server.getEndpoint().get("org.apache.cxf.Bus");
+            final ApplicationInfo appInfo = (ApplicationInfo) server.getEndpoint().get("javax.ws.rs.core.Application");
             final Application application = InternalApplication.class.isInstance(appInfo.getProvider())
-                            ? InternalApplication.class.cast(appInfo.getProvider()).getOriginal()
-                            : appInfo.getProvider();
+                    ? InternalApplication.class.cast(appInfo.getProvider()).getOriginal()
+                    : appInfo.getProvider();
 
             final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
             if (annotation != null && "MP-JWT".equals(annotation.authMethod())) {
                 // add the ContainerRequestFilter on the fly
-                if (InternalApplication.class.isInstance(appInfo.getProvider())) {
-                    InternalApplication.class.cast(appInfo.getProvider()).getClasses().add(MySecuCtx.class);
-                }
             }
         }
     }
 
     // this should also be packaged into the same module and delegate to the security service
     @Provider
-    public static class MySecuCtx implements ContainerRequestFilter {
+    public static class MPJWTSecurityContext implements ContainerRequestFilter {
 
         private final SecurityService securityService;
 
-        public MySecuCtx() {
+        public MPJWTSecurityContext() {
             securityService = SystemInstance.get().getComponent(SecurityService.class);
             Objects.requireNonNull(securityService, "A security context needs to be properly configured to enforce security in REST services");
         }
 
         @Override
         public void filter(final ContainerRequestContext containerRequestContext) throws IOException {
-
             containerRequestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
