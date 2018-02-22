@@ -75,7 +75,7 @@ public class MPJWTSecurityContextTest {
     }
 
     @Module
-    @Classes({Res.class, RestApplication.class})
+    @Classes(cdi = true, value = {Res.class, RestApplication.class})
     public WebApp war() {
         return new WebApp()
                 .contextRoot("foo");
@@ -85,7 +85,7 @@ public class MPJWTSecurityContextTest {
     public void check() throws IOException {
         assertEquals("true", ClientBuilder.newClient()
                 .target("http://127.0.0.1:" + port)
-                .path("foo/sc")
+                .path("api/foo/sc")
                 .queryParam("role", "therole")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)
@@ -93,7 +93,7 @@ public class MPJWTSecurityContextTest {
 
         assertEquals("false", ClientBuilder.newClient()
                 .target("http://127.0.0.1:" + port)
-                .path("foo/sc")
+                .path("api/foo/sc")
                 .queryParam("role", "another")
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE)
@@ -132,6 +132,7 @@ public class MPJWTSecurityContextTest {
             final LoginConfig annotation = application.getClass().getAnnotation(LoginConfig.class);
             if (annotation != null && "MP-JWT".equals(annotation.authMethod())) {
                 // add the ContainerRequestFilter on the fly
+                // todo how to add this on the fly
             }
         }
     }
