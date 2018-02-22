@@ -20,14 +20,18 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.jwt.tck.util.ITokenParser;
 
 import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
 
-// this is only used by the TCK
+/**
+ * MP-JWT TCK harness class to parse a token string
+ */
 public class TCKTokenParser implements ITokenParser {
 
-
     @Override
-    public JsonWebToken parse(final String bearerToken, final String issuer, final PublicKey publicKey) throws Exception {
-        return null; // todo - do some work
+    public JsonWebToken parse(String bearerToken, String issuer, PublicKey publicKey) throws Exception {
+        JWTAuthContextInfo authContextInfo = new JWTAuthContextInfo((RSAPublicKey) publicKey, issuer);
+        JWTCallerPrincipalFactory factory = DefaultJWTCallerPrincipalFactory.instance();
+        return factory.parse(bearerToken, authContextInfo);
     }
 
 }
