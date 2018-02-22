@@ -14,18 +14,19 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-
 package org.apache.tomee.microprofile.jwt;
 
 
-import java.util.Optional;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import java.util.Optional;
 
 /**
  * An abstract CallerPrincipal implementation that provides access to the JWT claims that are required by
  * the microprofile token.
  */
 public abstract class JWTCallerPrincipal implements JsonWebToken {
+
     private String name;
 
     /**
@@ -51,8 +52,8 @@ public abstract class JWTCallerPrincipal implements JsonWebToken {
      */
     public abstract String toString(boolean showAll);
 
-    public <T> Optional<T> claim(String claimName) {
-        T claim = (T) getClaim(claimName);
+    public <T> Optional<T> claim(final String claimName) {
+        final T claim = (T) getClaim(claimName);
         return Optional.ofNullable(claim);
     }
 }

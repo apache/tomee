@@ -16,10 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import org.eclipse.microprofile.auth.LoginConfig;
-
 import javax.enterprise.context.ApplicationScoped;
-import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;

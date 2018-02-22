@@ -40,6 +40,9 @@ public class MPJWTFilter implements Filter {
     @Inject
     private MPJWTContext context;
 
+    @Inject
+    private JWTAuthContextInfo authContextInfo;
+
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         // get configuration
@@ -60,7 +63,7 @@ public class MPJWTFilter implements Filter {
         // todo get JWT and do validation
         // todo not sure what to do with the realm
 
-        final JsonWebToken jsonWebToken = new DefaultJWTCallerPrincipal("bla"); // will be build during validation
+        final JsonWebToken jsonWebToken = null; // will be build during validation
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         chain.doFilter(new HttpServletRequestWrapper(httpServletRequest) {
@@ -87,6 +90,11 @@ public class MPJWTFilter implements Filter {
     @Override
     public void destroy() {
 
+    }
+
+    protected JsonWebToken validate(String bearerToken) throws ParseException {
+        JWTCallerPrincipalFactory factory = JWTCallerPrincipalFactory.instance();
+        return factory.parse(bearerToken, authContextInfo);
     }
 
 }
