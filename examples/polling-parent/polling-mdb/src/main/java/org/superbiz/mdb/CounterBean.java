@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Singleton
 @Startup
 public class CounterBean {
-    private Map<Integer, AtomicInteger> logs = new TreeMap<>();
+    private Map<Integer, AtomicInteger> logs = new TreeMap<Integer, AtomicInteger>();
 
     public void add(Integer beanId) {
         if(!this.logs.containsKey(beanId)) {
@@ -36,7 +36,7 @@ public class CounterBean {
     }
 
     public Map<Integer, AtomicInteger> getUsage() {
-        Map<Integer, AtomicInteger> copy = new TreeMap<>();
+        Map<Integer, AtomicInteger> copy = new TreeMap<Integer, AtomicInteger>();
         copy.putAll(this.logs);
         return copy;
     }
