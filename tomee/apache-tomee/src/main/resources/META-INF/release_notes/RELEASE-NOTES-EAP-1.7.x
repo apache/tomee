@@ -1,6 +1,17 @@
-= TomEE EAP 1.7.6-TT.1
+= TomEE EAP 1.7.6-TT.3
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.3
+
+TOMEE-2172 Fix issue where transaction timeout causes MDB instance to not be returned to the pool or discarded.
+TOMEE-2173 Update to Tomcat 7.0.85
+Backport changes required to support ASM 6 for Java 9 class file support
+
+=== Changes in TomEE EAP 1.7.6-TT.2
+
+Implement MDB container pooling for use with resource adapters that do not pool endpoints.
+TOMEE-2162 check app module container config in resources.xml for activation config overrides.
 
 === Changes in TomEE EAP 1.7.6-TT.1
 
