@@ -85,6 +85,11 @@
       <artifactId>arquillian-container-test-spi</artifactId>
       <version>${version.arquillian}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.testng</groupId>
+      <artifactId>arquillian-testng-container</artifactId>
+      <version>${version.arquillian}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.bitbucket.b_c</groupId>
