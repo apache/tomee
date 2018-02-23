@@ -401,7 +401,7 @@ public class DependencyVisitor extends EmptyVisitor {
         private final DependencyVisitor delegate;
 
         public SignatureAdapter(final DependencyVisitor dependencyVisitor) {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM5);
             delegate = dependencyVisitor;
         }
 

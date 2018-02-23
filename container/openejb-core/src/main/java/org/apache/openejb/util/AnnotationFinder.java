@@ -327,7 +327,7 @@ public class AnnotationFinder {
         private final Filter filter;
 
         public Visitor(final Filter filter) {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM5);
             this.filter = filter;
 
             try {
