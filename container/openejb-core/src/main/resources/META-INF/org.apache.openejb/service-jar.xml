@@ -457,35 +457,29 @@
   # Default Message Driven Container
   # ==========================================================
   -->
-  <ServiceProvider
-      id="Default MDB Container"
-      service="Container"
-      types="MESSAGE"
-      constructor="id, securityService, ResourceAdapter, MessageListenerInterface, ActivationSpecClass, InstanceLimit, FailOnUnknownActivationSpec"
-      class-name="org.apache.openejb.core.mdb.MdbContainer">
 
-    # The resource adapter delivers messages to the container
+  <ServiceProvider
+          id="Default MDB Container"
+          service="Container"
+          types="MESSAGE"
+          factory-name="create"
+          class-name="org.apache.openejb.core.mdb.MdbContainerFactory">
 
     ResourceAdapter Default JMS Resource Adapter
-
-    # Specifies the message listener interface handled by this container
-
     MessageListenerInterface javax.jms.MessageListener
-
-    # Specifies the activation spec class
-
     ActivationSpecClass org.apache.activemq.ra.ActiveMQActivationSpec
-
-    # Specifies the maximum number of bean instances that are
-    # allowed to exist for each MDB deployment.
-
     InstanceLimit 10
-
-    # log a warning if false or throw an exception if true is an activation spec can't be respected
-
-    FailOnUnknownActivationSpec = true
+    FailOnUnknownActivationSpec true
+    AccessTimeout 5 minutes
+    CloseTimeout 5 minutes
+    CallbackThreads 5
+    UseOneSchedulerThreadByBean false
+    EvictionThreads 1
+    Pool false
 
   </ServiceProvider>
+
+
 
   <!--
   # ================================================

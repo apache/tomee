@@ -42,6 +42,12 @@ public class ContainerUtils {
 
             final ContainerInfo containerInfo = configFactory.createContainerInfo(container);
             containerInfo.originAppName = module.getModuleId();
+
+            final Object applicationWideProperty = containerInfo.properties.remove("ApplicationWide");
+            if (applicationWideProperty != null) {
+                containerInfo.applicationWide = Boolean.parseBoolean(applicationWideProperty.toString().trim());
+            }
+
             containerInfos.add(containerInfo);
         }
 

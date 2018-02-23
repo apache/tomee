@@ -17,6 +17,8 @@
 
 package org.apache.openejb.core.mdb;
 
+import org.apache.openejb.util.Pool;
+
 import javax.enterprise.context.spi.CreationalContext;
 import java.util.Map;
 
@@ -28,9 +30,19 @@ public class Instance {
     public final Map<String, Object> interceptors;
     public final CreationalContext creationalContext;
 
+    private Pool<Instance>.Entry poolEntry;
+
     public Instance(final Object bean, final Map<String, Object> interceptors, final CreationalContext creationalContext) {
         this.bean = bean;
         this.interceptors = interceptors;
         this.creationalContext = creationalContext;
+    }
+
+    public Pool<Instance>.Entry getPoolEntry() {
+        return poolEntry;
+    }
+
+    public void setPoolEntry(final Pool<Instance>.Entry poolEntry) {
+        this.poolEntry = poolEntry;
     }
 }

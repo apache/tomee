@@ -25,14 +25,22 @@ import org.apache.openejb.spi.SecurityService;
 import javax.ejb.EJBHome;
 import javax.ejb.EJBLocalHome;
 import javax.ejb.MessageDrivenContext;
+import java.io.Flushable;
+import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$
  */
-public class MdbContext extends BaseContext implements MessageDrivenContext {
+public class MdbContext extends BaseContext implements MessageDrivenContext, Flushable {
+    private Flushable flushable;
 
     public MdbContext(final SecurityService securityService) {
         super(securityService);
+    }
+
+    public MdbContext(final SecurityService securityService, final Flushable flushable) {
+        super(securityService);
+        this.flushable = flushable;
     }
 
     @Override
@@ -74,5 +82,10 @@ public class MdbContext extends BaseContext implements MessageDrivenContext {
                         return;
                 }
         }
+    }
+
+    @Override
+    public void flush() throws IOException {
+        flushable.flush();
     }
 }
