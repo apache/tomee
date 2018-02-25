@@ -550,7 +550,7 @@ public class MethodInfoUtil {
         for (int i = 0; i < parameterTypes.length; i++) {
             final Class<?> parameterType = parameterTypes[i];
             final String methodParam = methodParams.get(i);
-            if (!methodParam.equals(getName(parameterType)) && !methodParam.equals(parameterType.getName())) {
+            if (!methodParam.equals(getName(parameterType).replace('$', '.')) && !methodParam.equals(parameterType.getName())) {
                 return false;
             }
         }
