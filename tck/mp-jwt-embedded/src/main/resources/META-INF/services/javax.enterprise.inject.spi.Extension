@@ -1,1 +1,1 @@
-org.apache.tomee.microprofile.jwt.MPJWTCDIExtension
+org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension

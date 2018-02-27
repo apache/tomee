@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.principal.DefaultJWTCallerPrincipalFactory;
+import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.jwt.tck.util.ITokenParser;
 

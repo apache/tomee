@@ -14,8 +14,10 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.principal;
 
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.ParseException;
 import org.eclipse.microprofile.jwt.Claims;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jws.AlgorithmIdentifiers;

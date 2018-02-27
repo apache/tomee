@@ -14,7 +14,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.cdi;
 
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;

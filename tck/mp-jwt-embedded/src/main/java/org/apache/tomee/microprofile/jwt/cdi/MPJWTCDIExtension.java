@@ -14,8 +14,12 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfoProvider;
+import org.apache.tomee.microprofile.jwt.MPJWTFilter;
+import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
+import org.apache.tomee.microprofile.jwt.TCKTokenParser;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
 
@@ -68,7 +72,7 @@ public class MPJWTCDIExtension implements Extension {
      * @param beanManager cdi bean manager
      */
     public void observeBeforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd, BeanManager beanManager) {
-        log.fine(String.format("MPJWTExtension(), added JWTPrincipalProducer"));
+        log.fine("MPJWTExtension(), added JWTPrincipalProducer");
         bbd.addAnnotatedType(beanManager.createAnnotatedType(TCKTokenParser.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));

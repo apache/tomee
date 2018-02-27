@@ -14,7 +14,9 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.config;
+
+import org.apache.tomee.microprofile.jwt.KeyUtils;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;

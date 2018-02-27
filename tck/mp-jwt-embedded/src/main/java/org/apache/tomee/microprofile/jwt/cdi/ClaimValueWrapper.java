@@ -14,19 +14,41 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.cdi;
 
-import javax.enterprise.util.AnnotationLiteral;
+import org.eclipse.microprofile.jwt.ClaimValue;
 
-import org.eclipse.microprofile.jwt.Claim;
-import org.eclipse.microprofile.jwt.Claims;
+/**
+ * An implementation of the ClaimValue interface
+ *
+ * @param <T> the claim value type
+ */
+public class ClaimValueWrapper<T> implements ClaimValue<T> {
+    private String name;
 
-public class ClaimLiteral extends AnnotationLiteral<Claim> implements Claim {
-    public String value() {
-        return "";
+    private T value;
+
+    public ClaimValueWrapper(String name) {
+        this.name = name;
     }
 
-    public Claims standard() {
-        return Claims.UNKNOWN;
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ClaimValueWrapper[@%s], name=%s, value[%s]=%s", Integer.toHexString(hashCode()),
+                name, value.getClass(), value);
     }
 }

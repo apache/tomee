@@ -14,7 +14,10 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.principal;
+
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.ParseException;
 
 import java.net.URL;
 import java.security.AccessController;
