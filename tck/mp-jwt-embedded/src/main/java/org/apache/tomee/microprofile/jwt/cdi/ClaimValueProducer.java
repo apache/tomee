@@ -22,25 +22,25 @@ import org.eclipse.microprofile.jwt.Claims;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
-/**
- * A producer for the ClaimValue<T> wrapper injection sites.
- *
- * @param <T> the raw claim type
- */
 public class ClaimValueProducer<T> {
+
+    @Inject
+    private MPJWTProducer producer;
 
     @Produces
     @Claim("")
-    ClaimValue<T> produce(InjectionPoint ip) {
+    ClaimValue<T> produce(final InjectionPoint ip) {
         String name = getName(ip);
-        ClaimValue<Optional<T>> cv = MPJWTProducer.generalClaimValueProducer(name);
+        ClaimValue<Optional<T>> cv = producer.generalClaimValueProducer(name);
         ClaimValue<T> returnValue = (ClaimValue<T>) cv;
         Optional<T> value = cv.getValue();
+
         // Pull out the ClaimValue<T> T type,
         Type matchType = ip.getType();
         Type actualType = Object.class;
@@ -62,7 +62,7 @@ public class ClaimValueProducer<T> {
         return returnValue;
     }
 
-    String getName(InjectionPoint ip) {
+    String getName(final InjectionPoint ip) {
         String name = null;
         for (Annotation ann : ip.getQualifiers()) {
             if (ann instanceof Claim) {

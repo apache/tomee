@@ -76,9 +76,13 @@
       </run>
     </groups>
     <classes>
+      <!-- OK
+      -->
       <class name="org.eclipse.microprofile.jwt.tck.container.ejb.EjbTest" />
-      <class name="org.eclipse.microprofile.jwt.tck.container.jacc.SubjectTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.servlet.ServletTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.jacc.SubjectTest" />
+      <!-- KO
+      -->
     </classes>
   </test>
 

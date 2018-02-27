@@ -22,24 +22,22 @@ import org.eclipse.microprofile.jwt.Claims;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
-import java.util.logging.Logger;
 
-/**
- *
- */
 public class RawClaimTypeProducer {
-    private static Logger log = Logger.getLogger(RawClaimTypeProducer.class.getName());
+
+    @Inject
+    private MPJWTProducer producer;
 
     @Produces
     @Claim("")
     @Named("RawClaimTypeProducer#getValue")
-    public Object getValue(InjectionPoint ip) {
-        log.fine(String.format("getValue(%s)", ip));
+    public Object getValue(final InjectionPoint ip) {
         String name = getName(ip);
-        ClaimValue<Optional<Object>> cv = MPJWTProducer.generalClaimValueProducer(name);
+        ClaimValue<Optional<Object>> cv = producer.generalClaimValueProducer(name);
         Optional<Object> value = cv.getValue();
         Object returnValue = value.orElse(null);
         return returnValue;
@@ -48,15 +46,14 @@ public class RawClaimTypeProducer {
     @Produces
     @Claim("")
     @Named("RawClaimTypeProducer#getOptionalValue")
-    public Optional getOptionalValue(InjectionPoint ip) {
-        log.fine(String.format("getOptionalValue(%s)", ip));
+    public Optional getOptionalValue(final InjectionPoint ip) {
         String name = getName(ip);
-        ClaimValue<Optional<Object>> cv = MPJWTProducer.generalClaimValueProducer(name);
+        ClaimValue<Optional<Object>> cv = producer.generalClaimValueProducer(name);
         Optional<Object> value = cv.getValue();
         return value;
     }
 
-    String getName(InjectionPoint ip) {
+    String getName(final InjectionPoint ip) {
         String name = null;
         for (Annotation ann : ip.getQualifiers()) {
             if (ann instanceof Claim) {

@@ -48,20 +48,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
-/**
- * A CDI extension that provides a producer for the current authenticated JsonWebToken based on a thread
- * local value that is managed by the {@link JWTAuthMechanism} request
- * authentication handler.
- * <p>
- * This also installs the producer methods for the discovered:
- * <ul>
- * <li>@Claim ClaimValue<T> injection sites.</li>
- * <li>@Claim raw type<T> injection sites.</li>
- * <li>@Claim JsonValue injection sites.</li>
- * </ul>
- *
- * @see JWTAuthMechanism
- */
 public class MPJWTCDIExtension implements Extension {
     private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
     /**
@@ -83,6 +69,7 @@ public class MPJWTCDIExtension implements Extension {
     public void observeBeforeBeanDiscovery(@Observes BeforeBeanDiscovery bbd, BeanManager beanManager) {
         log.fine("MPJWTExtension(), added JWTPrincipalProducer");
         bbd.addAnnotatedType(beanManager.createAnnotatedType(TCKTokenParser.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JWTAuthContextInfoProvider.class));

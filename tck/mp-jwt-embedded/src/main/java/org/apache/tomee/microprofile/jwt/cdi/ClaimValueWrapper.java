@@ -18,14 +18,9 @@ package org.apache.tomee.microprofile.jwt.cdi;
 
 import org.eclipse.microprofile.jwt.ClaimValue;
 
-/**
- * An implementation of the ClaimValue interface
- *
- * @param <T> the claim value type
- */
 public class ClaimValueWrapper<T> implements ClaimValue<T> {
-    private String name;
 
+    private final String name;
     private T value;
 
     public ClaimValueWrapper(String name) {
@@ -48,7 +43,9 @@ public class ClaimValueWrapper<T> implements ClaimValue<T> {
 
     @Override
     public String toString() {
-        return String.format("ClaimValueWrapper[@%s], name=%s, value[%s]=%s", Integer.toHexString(hashCode()),
-                name, value.getClass(), value);
+        return "ClaimValueWrapper{" +
+                "name='" + name + '\'' +
+                ", value=" + value +
+                '}';
     }
 }

@@ -53,7 +53,7 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      * @param jwt  - the parsed JWT token representation
      * @param name - the extracted unqiue name to use as the principal name; from "upn", "preferred_username" or "sub" claim
      */
-    public DefaultJWTCallerPrincipal(String jwt, String type, JwtClaims claimsSet, String name) {
+    public DefaultJWTCallerPrincipal(final String jwt, final String type, final JwtClaims claimsSet, final String name) {
         super(name);
         this.jwt = jwt;
         this.type = type;
@@ -100,7 +100,7 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
     }
 
     @Override
-    public Object getClaim(String claimName) {
+    public Object getClaim(final String claimName) {
         Claims claimType = Claims.UNKNOWN;
         Object claim = null;
         try {
@@ -138,7 +138,7 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
     }
 
     @Override
-    public boolean implies(Subject subject) {
+    public boolean implies(final Subject subject) {
         return false;
     }
 

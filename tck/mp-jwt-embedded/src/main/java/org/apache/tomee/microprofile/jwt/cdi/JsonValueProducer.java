@@ -21,6 +21,7 @@ import org.eclipse.microprofile.jwt.Claims;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Inject;
 import javax.json.JsonArray;
 import javax.json.JsonNumber;
 import javax.json.JsonObject;
@@ -28,77 +29,73 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
-import java.util.logging.Logger;
 
-/**
- * A producer for JsonValue injection types
- */
 public class JsonValueProducer {
-    private static Logger log = Logger.getLogger(JsonValueProducer.class.getName());
+
+    @Inject
+    private MPJWTProducer producer;
 
     @Produces
     @Claim("")
-    public JsonString getJsonString(InjectionPoint ip) {
+    public JsonString getJsonString(final InjectionPoint ip) {
         return getValue(ip);
     }
 
     @Produces
     @Claim("")
-    public Optional<JsonString> getOptionalJsonString(InjectionPoint ip) {
+    public Optional<JsonString> getOptionalJsonString(final InjectionPoint ip) {
         return getOptionalValue(ip);
     }
 
     @Produces
     @Claim("")
-    public JsonNumber getJsonNumber(InjectionPoint ip) {
+    public JsonNumber getJsonNumber(final InjectionPoint ip) {
         return getValue(ip);
     }
 
     @Produces
     @Claim("")
-    public Optional<JsonNumber> getOptionalJsonNumber(InjectionPoint ip) {
+    public Optional<JsonNumber> getOptionalJsonNumber(final InjectionPoint ip) {
         return getOptionalValue(ip);
     }
 
     @Produces
     @Claim("")
-    public JsonArray getJsonArray(InjectionPoint ip) {
+    public JsonArray getJsonArray(final InjectionPoint ip) {
         return getValue(ip);
     }
 
     @Produces
     @Claim("")
-    public Optional<JsonArray> getOptionalJsonArray(InjectionPoint ip) {
+    public Optional<JsonArray> getOptionalJsonArray(final InjectionPoint ip) {
         return getOptionalValue(ip);
     }
 
     @Produces
     @Claim("")
-    public JsonObject getJsonObject(InjectionPoint ip) {
+    public JsonObject getJsonObject(final InjectionPoint ip) {
         return getValue(ip);
     }
 
     @Produces
     @Claim("")
-    public Optional<JsonObject> getOptionalJsonObject(InjectionPoint ip) {
+    public Optional<JsonObject> getOptionalJsonObject(final InjectionPoint ip) {
         return getOptionalValue(ip);
     }
 
-    public <T extends JsonValue> T getValue(InjectionPoint ip) {
-        log.fine(String.format("JsonValueProducer(%s).produce", ip));
+    public <T extends JsonValue> T getValue(final InjectionPoint ip) {
         String name = getName(ip);
-        T jsonValue = (T) MPJWTProducer.generalJsonValueProducer(name);
+        T jsonValue = (T) producer.generalJsonValueProducer(name);
         return jsonValue;
     }
 
-    public <T extends JsonValue> Optional<T> getOptionalValue(InjectionPoint ip) {
-        log.fine(String.format("JsonValueProducer(%s).produce", ip));
+    public <T extends JsonValue> Optional<T> getOptionalValue(final InjectionPoint ip) {
         String name = getName(ip);
-        T jsonValue = (T) MPJWTProducer.generalJsonValueProducer(name);
+        T jsonValue = (T) producer.generalJsonValueProducer(name);
         return Optional.ofNullable(jsonValue);
     }
 
-    String getName(InjectionPoint ip) {
+    String getName(final InjectionPoint ip) {
         String name = null;
         for (Annotation ann : ip.getQualifiers()) {
             if (ann instanceof Claim) {

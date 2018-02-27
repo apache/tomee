@@ -31,7 +31,7 @@ import java.security.interfaces.RSAPublicKey;
 public class TCKTokenParser implements ITokenParser {
 
     @Override
-    public JsonWebToken parse(String bearerToken, String issuer, PublicKey publicKey) throws Exception {
+    public JsonWebToken parse(final String bearerToken, final String issuer, final PublicKey publicKey) throws Exception {
         final JWTAuthContextInfo authContextInfo = new JWTAuthContextInfo((RSAPublicKey) publicKey, issuer);
         final JWTCallerPrincipalFactory factory = DefaultJWTCallerPrincipalFactory.instance();
         return factory.parse(bearerToken, authContextInfo);

@@ -21,29 +21,16 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-/**
- * An implementation of BeanAttributes<Object> that wraps the generic producer BeanAttributes
- * to allow the MPJWTExtension to collect the types of all corresponding injection sites
- */
 public class ClaimProviderBeanAttributes implements BeanAttributes<Object> {
-    private BeanAttributes<Object> delegate;
-    private Set<Type> types;
-    private Set<Annotation> qualifiers;
 
-    /**
-     * Decorate the ConfigPropertyProducer BeanAttributes to set the types the producer applies to. This set is collected
-     * from all injection points annotated with @ConfigProperty.
-     *
-     * @param delegate - the original producer method BeanAttributes
-     * @param types    - the full set of @Claim injection point types
-     */
-    public ClaimProviderBeanAttributes(BeanAttributes<Object> delegate, Set<Type> types, Set<Annotation> qualifiers) {
+    private final BeanAttributes<Object> delegate;
+    private final Set<Type> types;
+    private final Set<Annotation> qualifiers;
+
+    public ClaimProviderBeanAttributes(final BeanAttributes<Object> delegate, final Set<Type> types, final Set<Annotation> qualifiers) {
         this.delegate = delegate;
         this.types = types;
         this.qualifiers = qualifiers;
-        if (types.size() == 0) {
-            Thread.dumpStack();
-        }
     }
 
     @Override

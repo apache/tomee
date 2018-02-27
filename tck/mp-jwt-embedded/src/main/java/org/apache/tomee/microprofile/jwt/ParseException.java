@@ -22,11 +22,11 @@ package org.apache.tomee.microprofile.jwt;
 public class ParseException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    public ParseException(String message) {
+    public ParseException(final String message) {
         super(message);
     }
 
-    public ParseException(String message, Throwable cause) {
+    public ParseException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

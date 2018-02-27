@@ -16,17 +16,30 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import org.eclipse.microprofile.jwt.Claim;
-import org.eclipse.microprofile.jwt.Claims;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Produces;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import javax.enterprise.util.AnnotationLiteral;
+@ApplicationScoped
+public class JsonbProducer {
 
-public class ClaimLiteral extends AnnotationLiteral<Claim> implements Claim {
-    public String value() {
-        return "";
+    private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
+
+    @Produces
+    public Jsonb jsonb() {
+        return JsonbBuilder.create();
     }
 
-    public Claims standard() {
-        return Claims.UNKNOWN;
+    public void close(@Disposes final Jsonb jsonb) {
+        try {
+            jsonb.close();
+
+        } catch (final Exception e) {
+            log.log(Level.WARNING, e.getMessage(), e);
+        }
     }
 }

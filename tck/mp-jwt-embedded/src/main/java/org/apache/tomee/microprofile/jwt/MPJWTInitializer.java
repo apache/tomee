@@ -60,6 +60,7 @@ public class MPJWTInitializer implements ServletContainerInitializer {
             MPJWTContext.addMapping(
                     new MPJWTContext.MPJWTConfigKey(
                             ctx.getContextPath(),
+                            // todo instead of empty path, we need to look for default value
                             applicationPath == null ? "" : applicationPath.value()),
 
                     new MPJWTContext.MPJWTConfigValue(

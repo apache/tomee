@@ -69,7 +69,7 @@ public class MPJWTFilter implements Filter {
         final String token = authorizationHeader.substring("bearer ".length());
         final JsonWebToken jsonWebToken;
         try {
-            jsonWebToken = DefaultJWTCallerPrincipalFactory.instance().parse(token, authContextInfo);
+            jsonWebToken = validate(token);
 
         } catch (final ParseException e) {
             // todo properly handle the exception as required per spec
