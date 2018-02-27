@@ -1434,10 +1434,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
             final File appBase = new File(catalinaHome, host.getAppBase());
 
-            if (host.getAutoDeploy() && standardContext.getJ2EEApplication() != null &&
-                    new File(appBase, standardContext.getJ2EEApplication()).isDirectory() && (
-                    new File(appBase, standardContext.getJ2EEApplication() + ".ear").exists() ||
-                    new File(appBase, standardContext.getJ2EEApplication() + ".rar").exists())
+            if (host.getAutoDeploy() && standardContext.getDocBase() != null &&
+                    new File(appBase, standardContext.getDocBase()).isDirectory() && (
+                    new File(appBase, standardContext.getDocBase() + ".ear").exists() ||
+                    new File(appBase, standardContext.getDocBase() + ".rar").exists())
             ) {
 
                 logger.info(String.format("Not deploying exploded directory %s as Java EE artifact exists which will be deployed.",
