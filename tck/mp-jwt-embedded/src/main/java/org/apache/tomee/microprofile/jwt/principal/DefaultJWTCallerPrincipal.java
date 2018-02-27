@@ -76,7 +76,7 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
             } catch (MalformedClaimException e1) {
             }
         }
-        return audSet;
+        return audSet.isEmpty() ? null : audSet;
     }
 
     @Override

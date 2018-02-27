@@ -47,9 +47,14 @@ public class ClaimValueProducer<T> {
         boolean isOptional = false;
         if (matchType instanceof ParameterizedType) {
             actualType = ((ParameterizedType) matchType).getActualTypeArguments()[0];
-            isOptional = matchType.getTypeName().equals(Optional.class.getTypeName());
+
+            if (actualType instanceof ParameterizedType) {
+                isOptional = ParameterizedType.class.cast(actualType).getRawType().getTypeName()
+                        .startsWith(Optional.class.getTypeName());
+            }
+
             if (isOptional) {
-                actualType = ((ParameterizedType) matchType).getActualTypeArguments()[0];
+                actualType = ((ParameterizedType) actualType).getActualTypeArguments()[0];
             }
         }
 
@@ -62,7 +67,7 @@ public class ClaimValueProducer<T> {
         return returnValue;
     }
 
-    String getName(final InjectionPoint ip) {
+    private String getName(final InjectionPoint ip) {
         String name = null;
         for (Annotation ann : ip.getQualifiers()) {
             if (ann instanceof Claim) {

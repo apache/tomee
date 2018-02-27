@@ -29,6 +29,7 @@ import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
+import java.util.Set;
 
 public class JsonValueProducer {
 

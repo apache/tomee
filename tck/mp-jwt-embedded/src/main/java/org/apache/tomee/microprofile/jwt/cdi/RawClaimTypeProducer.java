@@ -25,7 +25,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class RawClaimTypeProducer {
 
@@ -34,13 +36,26 @@ public class RawClaimTypeProducer {
 
     @Produces
     @Claim("")
+    public Set<String> getSetOfString(final InjectionPoint ip) {
+        final String name = getName(ip);
+        ClaimValue<Optional<String>> cv = producer.generalClaimValueProducer(name);
+        Optional<String> value = cv.getValue();
+        if (value.isPresent()) {
+            return new HashSet<String>() {{
+                add(value.get());
+            }};
+        }
+        return null;
+    }
+
+    @Produces
+    @Claim("")
     @Named("RawClaimTypeProducer#getValue")
     public Object getValue(final InjectionPoint ip) {
         String name = getName(ip);
         ClaimValue<Optional<Object>> cv = producer.generalClaimValueProducer(name);
         Optional<Object> value = cv.getValue();
-        Object returnValue = value.orElse(null);
-        return returnValue;
+        return value.orElse(null);
     }
 
     @Produces
@@ -49,11 +64,10 @@ public class RawClaimTypeProducer {
     public Optional getOptionalValue(final InjectionPoint ip) {
         String name = getName(ip);
         ClaimValue<Optional<Object>> cv = producer.generalClaimValueProducer(name);
-        Optional<Object> value = cv.getValue();
-        return value;
+        return cv.getValue();
     }
 
-    String getName(final InjectionPoint ip) {
+    private String getName(final InjectionPoint ip) {
         String name = null;
         for (Annotation ann : ip.getQualifiers()) {
             if (ann instanceof Claim) {

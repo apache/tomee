@@ -32,8 +32,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,6 +68,16 @@ public class MPJWTFilter implements Filter {
         // todo not sure what to do with the realm
 
         final String authorizationHeader = ((HttpServletRequest) request).getHeader("Authorization");
+        if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+            HttpServletResponse.class.cast(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if (!authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith("bearer ")) {
+            HttpServletResponse.class.cast(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
         final String token = authorizationHeader.substring("bearer ".length());
         final JsonWebToken jsonWebToken;
         try {
