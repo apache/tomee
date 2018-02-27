@@ -16,8 +16,8 @@
  */
 package org.apache.tomee.microprofile.jwt.principal;
 
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.ParseException;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 
 import java.net.URL;
 import java.security.AccessController;

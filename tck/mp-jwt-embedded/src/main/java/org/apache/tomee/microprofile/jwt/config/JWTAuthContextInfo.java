@@ -22,6 +22,7 @@ import java.security.interfaces.RSAPublicKey;
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthContextInfo {
+
     private RSAPublicKey signerKey;
     private String issuedBy;
     private int expGracePeriodSecs = 60;
@@ -29,7 +30,7 @@ public class JWTAuthContextInfo {
     public JWTAuthContextInfo() {
     }
 
-    public JWTAuthContextInfo(RSAPublicKey signerKey, String issuedBy) {
+    public JWTAuthContextInfo(final RSAPublicKey signerKey, final String issuedBy) {
         this.signerKey = signerKey;
         this.issuedBy = issuedBy;
     }

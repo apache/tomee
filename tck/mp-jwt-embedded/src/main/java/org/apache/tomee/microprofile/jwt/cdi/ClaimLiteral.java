@@ -16,10 +16,10 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import javax.enterprise.util.AnnotationLiteral;
-
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
+
+import javax.enterprise.util.AnnotationLiteral;
 
 public class ClaimLiteral extends AnnotationLiteral<Claim> implements Claim {
     public String value() {

@@ -16,18 +16,20 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import javax.enterprise.inject.spi.BeanAttributes;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import javax.enterprise.inject.spi.BeanAttributes;
-
 /**
  * An implementation of BeanAttributes<Object> that wraps the generic producer BeanAttributes
  * to allow the MPJWTExtension to collect the types of all corresponding injection sites
- *
  */
 public class ClaimProviderBeanAttributes implements BeanAttributes<Object> {
+    private BeanAttributes<Object> delegate;
+    private Set<Type> types;
+    private Set<Annotation> qualifiers;
+
     /**
      * Decorate the ConfigPropertyProducer BeanAttributes to set the types the producer applies to. This set is collected
      * from all injection points annotated with @ConfigProperty.
@@ -73,11 +75,5 @@ public class ClaimProviderBeanAttributes implements BeanAttributes<Object> {
     public boolean isAlternative() {
         return delegate.isAlternative();
     }
-
-    private BeanAttributes<Object> delegate;
-
-    private Set<Type> types;
-
-    private Set<Annotation> qualifiers;
 
 }

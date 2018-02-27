@@ -46,8 +46,8 @@ import java.util.logging.Logger;
  */
 @ApplicationScoped
 public class MPJWTProducer {
-    private static Logger log = Logger.getLogger(MPJWTProducer.class.getName());
     private static final String TMP = "tmp";
+    private static Logger log = Logger.getLogger(MPJWTProducer.class.getName());
     private static ThreadLocal<JsonWebToken> currentPrincipal = new ThreadLocal<>();
 
     public static void setJWTPrincipal(JsonWebToken principal) {
@@ -55,30 +55,6 @@ public class MPJWTProducer {
     }
 
     public static JsonWebToken getJWTPrincpal() {
-        return currentPrincipal.get();
-    }
-
-    @PostConstruct
-    void init() {
-        log.fine("MPJWTProducer initialized");
-    }
-
-    void observeRequestInitialized(@Observes @Initialized(RequestScoped.class) Object event) {
-        log.finest(String.format("observeRequestInitialized, event=%s", event));
-    }
-
-    void observeRequestDestroyed(@Observes @Destroyed(RequestScoped.class) Object event) {
-        log.finest(String.format("observeRequestDestroyed, event=%s", event));
-    }
-
-    /**
-     * The @RequestScoped producer method for the current JsonWebToken
-     *
-     * @return
-     */
-    @Produces
-    @RequestScoped
-    JsonWebToken currentPrincipalOrNull() {
         return currentPrincipal.get();
     }
 
@@ -192,5 +168,29 @@ public class MPJWTProducer {
             jsonValue = replaceMap((Map) value);
         }
         return jsonValue;
+    }
+
+    @PostConstruct
+    void init() {
+        log.fine("MPJWTProducer initialized");
+    }
+
+    void observeRequestInitialized(@Observes @Initialized(RequestScoped.class) Object event) {
+        log.finest(String.format("observeRequestInitialized, event=%s", event));
+    }
+
+    void observeRequestDestroyed(@Observes @Destroyed(RequestScoped.class) Object event) {
+        log.finest(String.format("observeRequestDestroyed, event=%s", event));
+    }
+
+    /**
+     * The @RequestScoped producer method for the current JsonWebToken
+     *
+     * @return
+     */
+    @Produces
+    @RequestScoped
+    JsonWebToken currentPrincipalOrNull() {
+        return currentPrincipal.get();
     }
 }

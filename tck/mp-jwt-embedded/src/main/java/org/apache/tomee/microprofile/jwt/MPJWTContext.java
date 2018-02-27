@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;

@@ -32,8 +32,8 @@ public class TCKTokenParser implements ITokenParser {
 
     @Override
     public JsonWebToken parse(String bearerToken, String issuer, PublicKey publicKey) throws Exception {
-        JWTAuthContextInfo authContextInfo = new JWTAuthContextInfo((RSAPublicKey) publicKey, issuer);
-        JWTCallerPrincipalFactory factory = DefaultJWTCallerPrincipalFactory.instance();
+        final JWTAuthContextInfo authContextInfo = new JWTAuthContextInfo((RSAPublicKey) publicKey, issuer);
+        final JWTCallerPrincipalFactory factory = DefaultJWTCallerPrincipalFactory.instance();
         return factory.parse(bearerToken, authContextInfo);
     }
 

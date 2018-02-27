@@ -28,6 +28,9 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
 public class KeyUtils {
+    private KeyUtils() {
+    }
+
     public static PrivateKey readPrivateKey(String pemResName) throws Exception {
         InputStream contentIS = KeyUtils.class.getResourceAsStream(pemResName);
         byte[] tmp = new byte[4096];
@@ -78,7 +81,5 @@ public class KeyUtils {
         pem = pem.replaceAll("\r\n", "");
         pem = pem.replaceAll("\n", "");
         return pem.trim();
-    }
-    private KeyUtils() {
     }
 }

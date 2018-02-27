@@ -16,20 +16,20 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.Claims;
+
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
-
-import org.eclipse.microprofile.jwt.Claim;
-import org.eclipse.microprofile.jwt.ClaimValue;
-import org.eclipse.microprofile.jwt.Claims;
-
 /**
  * A producer for the ClaimValue<T> wrapper injection sites.
+ *
  * @param <T> the raw claim type
  */
 public class ClaimValueProducer<T> {

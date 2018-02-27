@@ -16,10 +16,10 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfoProvider;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
 import org.apache.tomee.microprofile.jwt.TCKTokenParser;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfoProvider;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.Claims;
 
@@ -64,6 +64,15 @@ import java.util.logging.Logger;
  */
 public class MPJWTCDIExtension implements Extension {
     private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    /**
+     * A map of claim,type pairs to the injection site information
+     */
+    private HashMap<ClaimIPType, ClaimIP> claims = new HashMap<>();
+    private Set<Type> providerOptionalTypes = new HashSet<>();
+    private Set<Type> providerTypes = new HashSet<>();
+    private Set<Type> rawTypes = new HashSet<>();
+    private Set<Annotation> rawTypeQualifiers = new HashSet<>();
+    private Set<Annotation> providerQualifiers = new HashSet<>();
 
     /**
      * Register the MPJWTProducer JsonWebToken producer bean
@@ -243,24 +252,12 @@ public class MPJWTCDIExtension implements Extension {
     }
 
     /**
-     * A map of claim,type pairs to the injection site information
-     */
-    private HashMap<ClaimIPType, ClaimIP> claims = new HashMap<>();
-
-    private Set<Type> providerOptionalTypes = new HashSet<>();
-
-    private Set<Type> providerTypes = new HashSet<>();
-
-    private Set<Type> rawTypes = new HashSet<>();
-
-    private Set<Annotation> rawTypeQualifiers = new HashSet<>();
-
-    private Set<Annotation> providerQualifiers = new HashSet<>();
-
-    /**
      * A key for a claim,injection site type pair
      */
     public static class ClaimIPType implements Comparable<ClaimIPType> {
+        private String claimName;
+        private Type ipType;
+
         public ClaimIPType(String claimName, Type ipType) {
             this.claimName = claimName;
             this.ipType = ipType;
@@ -280,16 +277,36 @@ public class MPJWTCDIExtension implements Extension {
             }
             return compareTo;
         }
-
-        private String claimName;
-
-        private Type ipType;
     }
 
     /**
      * The representation of an @Claim annotated injection site
      */
     public static class ClaimIP {
+        /**
+         * The injection site value type
+         */
+        private Type matchType;
+        /**
+         * The actual type of of the ParameterizedType matchType
+         */
+        private Type valueType;
+        /**
+         * Is valueType actually wrapped in an Optional
+         */
+        private boolean isOptional;
+        private boolean isProviderSite;
+        private boolean isNonStandard;
+        private boolean isJsonValue;
+        /**
+         * The injection site @Claim annotation value
+         */
+        private Claim claim;
+        /**
+         * The location that share the @Claim/type combination
+         */
+        private HashSet<InjectionPoint> injectionPoints = new HashSet<>();
+
         /**
          * Create a ClaimIP from the injection site information
          *
@@ -360,36 +377,5 @@ public class MPJWTCDIExtension implements Extension {
                     ", ips=" + injectionPoints +
                     '}';
         }
-
-        /**
-         * The injection site value type
-         */
-        private Type matchType;
-
-        /**
-         * The actual type of of the ParameterizedType matchType
-         */
-        private Type valueType;
-
-        /**
-         * Is valueType actually wrapped in an Optional
-         */
-        private boolean isOptional;
-
-        private boolean isProviderSite;
-
-        private boolean isNonStandard;
-
-        private boolean isJsonValue;
-
-        /**
-         * The injection site @Claim annotation value
-         */
-        private Claim claim;
-
-        /**
-         * The location that share the @Claim/type combination
-         */
-        private HashSet<InjectionPoint> injectionPoints = new HashSet<>();
     }
 }

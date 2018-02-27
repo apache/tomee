@@ -18,7 +18,6 @@ package org.apache.tomee.microprofile.jwt;
 
 import org.eclipse.microprofile.auth.LoginConfig;
 
-import javax.inject.Inject;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
