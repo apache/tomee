@@ -34,9 +34,6 @@ import java.util.Set;
 @HandlesTypes(LoginConfig.class)
 public class MPJWTInitializer implements ServletContainerInitializer {
 
-    @Inject
-    private MPJWTContext context;
-
     @Override
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
 
@@ -59,11 +56,13 @@ public class MPJWTInitializer implements ServletContainerInitializer {
 
             final FilterRegistration.Dynamic mpJwtFilter = ctx.addFilter("mp-jwt-filter", MPJWTFilter.class);
             mpJwtFilter.setAsyncSupported(true);
+            mpJwtFilter.addMappingForUrlPatterns(null, false, "/*");
 
-            context.addMapping(
+            MPJWTContext.addMapping(
                     new MPJWTContext.MPJWTConfigKey(
                             ctx.getContextPath(),
                             applicationPath == null ? "" : applicationPath.value()),
+
                     new MPJWTContext.MPJWTConfigValue(
                             loginConfig.authMethod(),
                             loginConfig.realmName())

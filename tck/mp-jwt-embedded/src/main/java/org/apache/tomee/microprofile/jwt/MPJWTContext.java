@@ -27,12 +27,11 @@ import java.util.function.Predicate;
 /**
  * Responsible for holding the runtime model
  */
-@ApplicationScoped
 public class MPJWTContext {
 
-    private final ConcurrentMap<MPJWTConfigKey, MPJWTConfigValue> configuration = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<MPJWTConfigKey, MPJWTConfigValue> configuration = new ConcurrentHashMap<>();
 
-    public MPJWTConfigValue addMapping(final MPJWTConfigKey key, final MPJWTConfigValue value) {
+    public static MPJWTConfigValue addMapping(final MPJWTConfigKey key, final MPJWTConfigValue value) {
         Objects.requireNonNull(key, "MP JWT Key is required");
         Objects.requireNonNull(value, "MP JWT Value is required");
 
@@ -44,12 +43,12 @@ public class MPJWTContext {
         return value;
     }
 
-    public Optional<MPJWTConfigValue> get(final MPJWTConfigKey key) {
+    public static Optional<MPJWTConfigValue> get(final MPJWTConfigKey key) {
         Objects.requireNonNull(key, "MP JWT Key is required to retrieve the configuration");
         return Optional.ofNullable(configuration.get(key));
     }
 
-    public Optional<Map.Entry<MPJWTConfigKey, MPJWTConfigValue>> findFirst(final String path) {
+    public static Optional<Map.Entry<MPJWTConfigKey, MPJWTConfigValue>> findFirst(final String path) {
         return configuration.entrySet()
                 .stream()
                 .filter(new Predicate<ConcurrentMap.Entry<MPJWTConfigKey, MPJWTConfigValue>>() {

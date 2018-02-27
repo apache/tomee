@@ -38,9 +38,6 @@ import java.util.Optional;
 public class MPJWTFilter implements Filter {
 
     @Inject
-    private MPJWTContext context;
-
-    @Inject
     private JWTAuthContextInfo authContextInfo;
 
     @Override
@@ -54,16 +51,31 @@ public class MPJWTFilter implements Filter {
 
         final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         final Optional<Map.Entry<MPJWTContext.MPJWTConfigKey, MPJWTContext.MPJWTConfigValue>> first =
-                context.findFirst(httpServletRequest.getRequestURI());
+                MPJWTContext.findFirst(httpServletRequest.getRequestURI());
 
-        if (first.isPresent()) { // nothing found in the context
+        if (!first.isPresent()) { // nothing found in the context
             chain.doFilter(request, response);
+            return;
         }
 
         // todo get JWT and do validation
         // todo not sure what to do with the realm
 
-        final JsonWebToken jsonWebToken = null; // will be build during validation
+        final String authorizationHeader = ((HttpServletRequest) request).getHeader("Authorization");
+        final String token = authorizationHeader.substring("bearer ".length());
+        final JsonWebToken jsonWebToken;
+        try {
+            jsonWebToken = DefaultJWTCallerPrincipalFactory.instance().parse(token, authContextInfo);
+
+        } catch (final ParseException e) {
+            // todo properly handle the exception as required per spec
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        // associate with the producer. Should not be needed.
+        // todo We should be able to retrieve it based on the HTTP Servlet Request in the producer
+        MPJWTProducer.setJWTPrincipal(jsonWebToken);
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         chain.doFilter(new HttpServletRequestWrapper(httpServletRequest) {
@@ -84,6 +96,7 @@ public class MPJWTFilter implements Filter {
             }
 
         }, response);
+
 
     }
 
