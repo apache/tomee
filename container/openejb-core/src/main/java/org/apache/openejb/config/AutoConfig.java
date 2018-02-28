@@ -851,7 +851,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     containerId = createContainer(containerInfoType, ejbDeployment, bean);
                 }
 
-                logger.debug("Setting container ID {0} for bean {0}", containerId, bean.getEjbName());
+                logger.debug("Setting container ID {0} for bean {1}", containerId, bean.getEjbName());
                 ejbDeployment.setContainerId(containerId);
             }
 
@@ -866,7 +866,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             }
 
             if (!containerIds.contains(ejbDeployment.getContainerId()) && !skipMdb(bean)) {
-                logger.debug("Desired container {0} not found. Containers availble: {1}. Creating a new container.",
+                logger.debug("Desired container {0} not found. Containers available: {1}. Creating a new container.",
                         ejbDeployment.getContainerId(),
                         Join.join(", ", containerIds)
                 );
@@ -2216,51 +2216,66 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final EnterpriseBean bean, final AppResources appResources) {
-        logger.debug("Searching for usable container for bean: {0}. Available application containers: {1}, available system containers {2}",
-                bean.getEjbName(),
-                getContainerIds(appResources.getContainerInfos()),
-                getContainerIds(configFactory.getContainerInfos())
-        );
+        if (logger.isDebugEnabled()) {
+            logger.debug("Searching for usable container for bean: {0}. Available application containers: {1}, available system containers {2}",
+                    bean.getEjbName(),
+                    getContainerIds(appResources.getContainerInfos()),
+                    getContainerIds(configFactory.getContainerInfos())
+            );
+        }
 
         if (MessageDrivenBean.class.isInstance(bean)) {
             final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
             final String messagingType = messageDrivenBean.getMessagingType();
 
             final List<String> containerIds = appResources.containerIdsByType.get(messagingType);
-            logger.debug("Searching for usable container for bean: {0} by messaging type: {1}. Potential application containers: {2}",
-                    bean.getEjbName(),
-                    messagingType,
-                    Join.join(",", containerIds));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Searching for usable container for bean: {0} by messaging type: {1}. Potential application containers: {2}",
+                        bean.getEjbName(),
+                        messagingType,
+                        containerIds == null ? "" : Join.join(",", containerIds));
+            }
 
             if (containerIds != null && !containerIds.isEmpty()) {
-                logger.debug("Returning first application container matching by type: {0} - {1}",
-                        messagingType,
-                        containerIds.get(0));
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Returning first application container matching by type: {0} - {1}",
+                            messagingType,
+                            containerIds.get(0));
+                }
 
                 return containerIds.get(0);
             }
         }
 
-        logger.debug("Attempting to find a matching container for bean: {0} from application containers {1}",
-                bean.getEjbName(),
-                getContainerIds(appResources.getContainerInfos()));
+        if (logger.isDebugEnabled()) {
+            logger.debug("Attempting to find a matching container for bean: {0} from application containers {1}",
+                    bean.getEjbName(),
+                    getContainerIds(appResources.getContainerInfos()));
+        }
 
         String containerInfo = matchContainer(containerInfoType, bean, appResources.getContainerInfos());
         if (containerInfo == null) { // avoid to build configFactory.getContainerInfos() if not needed
 
-            logger.debug("Matching application container not found. Attempting to find a matching container for bean: {0} from system containers {1}",
-                    bean.getEjbName(),
-                    getContainerIds(appResources.getContainerInfos()));
+            if (logger.isDebugEnabled()) {
+                logger.debug("Matching application container not found. Attempting to find a matching container for bean: {0} from system containers {1}",
+                        bean.getEjbName(),
+                        getContainerIds(appResources.getContainerInfos()));
+            }
 
             containerInfo = matchContainer(containerInfoType, bean, configFactory.getContainerInfos());
         }
 
         if (containerInfo != null) {
-            logger.debug("Using container {0} for bean {1}", containerInfo, bean.getEjbName());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Using container {0} for bean {1}", containerInfo, bean.getEjbName());
+            }
             return containerInfo;
         }
 
-        logger.debug("No suitable existing container found for bean {0}", bean.getEjbName());
+        if (logger.isDebugEnabled()) {
+            logger.debug("No suitable existing container found for bean {0}", bean.getEjbName());
+        }
+
         return null;
     }
 
@@ -2283,34 +2298,42 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     final String messagingType = messageDrivenBean.getMessagingType();
 
                     if (containerInfo.properties.get("MessageListenerInterface").equals(messagingType)) {
-                        logger.debug("Container {0} matches container type {1} and MessageListenerInterface {2} for bean {3}, this container will be used.",
-                                containerInfo.id,
-                                containerInfoType.getName(),
-                                messagingType,
-                                bean.getEjbName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Container {0} matches container type {1} and MessageListenerInterface {2} for bean {3}, this container will be used.",
+                                    containerInfo.id,
+                                    containerInfoType.getName(),
+                                    messagingType,
+                                    bean.getEjbName());
+                        }
 
                         return containerInfo.id;
                     } else {
-                        logger.debug("Container {0} of type {1} does not have the matching MessageListenerInterface. Bean listener interface is {2}, " +
-                                        "container listener interface is {3} for bean {4}. Skipping.",
-                                containerInfo.id,
-                                containerInfoType.getName(),
-                                messagingType,
-                                containerInfo.properties.get("MessageListenerInterface"),
-                                bean.getEjbName());
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Container {0} of type {1} does not have the matching MessageListenerInterface. Bean listener interface is {2}, " +
+                                            "container listener interface is {3} for bean {4}. Skipping.",
+                                    containerInfo.id,
+                                    containerInfoType.getName(),
+                                    messagingType,
+                                    containerInfo.properties.get("MessageListenerInterface"),
+                                    bean.getEjbName());
+                        }
 
                     }
                 } else {
-                    logger.debug("Container {0} matches container type {1} for bean {2}, this container will be used.",
-                            containerInfo.id,
-                            containerInfoType.getName(),
-                            bean.getEjbName());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Container {0} matches container type {1} for bean {2}, this container will be used.",
+                                containerInfo.id,
+                                containerInfoType.getName(),
+                                bean.getEjbName());
+                    }
 
                     return containerInfo.id;
                 }
             }
 
-            logger.debug("Skipping container {0} of type {1}", containerInfo.id, containerInfoType.getName());
+            if (logger.isDebugEnabled()) {
+                logger.debug("Skipping container {0} of type {1}", containerInfo.id, containerInfoType.getName());
+            }
         }
 
         return null;
