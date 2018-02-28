@@ -838,12 +838,20 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
             }
 
-            final Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(getType(bean));
+            final String beanType = getType(bean);
+            final Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(beanType);
+            logger.debug("Bean type of bean {0} is {1}", bean.getId(), beanType);
+
             if (ejbDeployment.getContainerId() == null && !skipMdb(bean)) {
+                logger.debug("Container for bean {0} is not set, looking for a suitable container", bean.getId());
+
                 String containerId = getUsableContainer(containerInfoType, bean, appResources);
                 if (containerId == null) {
+                    logger.debug("Suitable container for bean {0} not found, creating one", bean.getId());
                     containerId = createContainer(containerInfoType, ejbDeployment, bean);
                 }
+
+                logger.debug("Setting container ID {0} for bean {0}", containerId, bean.getId());
                 ejbDeployment.setContainerId(containerId);
             }
 
@@ -2195,42 +2203,104 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return installResource(beanName, resourceInfo);
     }
 
-    private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final AppResources appResources) {
+    private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final EnterpriseBean bean, final AppResources appResources) {
+        logger.debug("Searching for usable container for bean: {0}. Available application containers: {1}, available system containers {2}",
+                bean.getId(),
+                getContainerIds(appResources.getContainerInfos()),
+                getContainerIds(configFactory.getContainerInfos())
+        );
+
         if (MessageDrivenBean.class.isInstance(bean)) {
             final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
             final String messagingType = messageDrivenBean.getMessagingType();
+
             final List<String> containerIds = appResources.containerIdsByType.get(messagingType);
+            logger.debug("Searching for usable container for bean: {0} by messaging type: {1}. Potential application containers: {2}",
+                    bean.getId(),
+                    messagingType,
+                    Join.join(",", containerIds));
+
             if (containerIds != null && !containerIds.isEmpty()) {
+                logger.debug("Returning first application container matching by type: {0} - {1}",
+                        messagingType,
+                        containerIds.get(0));
+
                 return containerIds.get(0);
             }
         }
 
+        logger.debug("Attempting to find a matching container for bean: {0} from application containers {1}",
+                bean.getId(),
+                getContainerIds(appResources.getContainerInfos()));
+
         String containerInfo = matchContainer(containerInfoType, bean, appResources.getContainerInfos());
         if (containerInfo == null) { // avoid to build configFactory.getContainerInfos() if not needed
+
+            logger.debug("Matching application container not found. Attempting to find a matching container for bean: {0} from system containers {1}",
+                    bean.getId(),
+                    getContainerIds(appResources.getContainerInfos()));
+
             containerInfo = matchContainer(containerInfoType, bean, configFactory.getContainerInfos());
         }
+
         if (containerInfo != null) {
+            logger.debug("Using container {0} for bean {1}", containerInfo, bean.getId());
             return containerInfo;
         }
 
+        logger.debug("No suitable existing container found for bean {0}", bean.getId());
         return null;
     }
 
-    private String matchContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final Collection<ContainerInfo> list) {
+    private String getContainerIds(final Collection<ContainerInfo> containerInfos) {
+        final Set<String> containerIds = new HashSet<String>();
+
+        for (final ContainerInfo containerInfo : containerInfos) {
+            containerIds.add(containerInfo.id);
+        }
+
+        return Join.join(", ", containerIds);
+    }
+
+    private String matchContainer(final Class<? extends ContainerInfo> containerInfoType, final EnterpriseBean bean, final Collection<ContainerInfo> list) {
         for (final ContainerInfo containerInfo : list) {
             if (containerInfo.getClass().equals(containerInfoType)) {
                 // MDBs must match message listener interface type
                 if (MessageDrivenBean.class.isInstance(bean)) {
                     final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
                     final String messagingType = messageDrivenBean.getMessagingType();
+
                     if (containerInfo.properties.get("MessageListenerInterface").equals(messagingType)) {
+                        logger.debug("Container {0} matches container type {1} and MessageListenerInterface {2} for bean {3}, this container will be used.",
+                                containerInfo.id,
+                                containerInfoType.getName(),
+                                messagingType,
+                                bean.getId());
+
                         return containerInfo.id;
+                    } else {
+                        logger.debug("Container {0} of type {1} does not have the matching MessageListenerInterface. Bean listener interface is {2}, " +
+                                        "container listener interface is {3} for bean {4}. Skipping.",
+                                containerInfo.id,
+                                containerInfoType.getName(),
+                                messagingType,
+                                containerInfo.properties.get("MessageListenerInterface"),
+                                bean.getId());
+
                     }
                 } else {
+                    logger.debug("Container {0} matches container type {1} for bean {2}, this container will be used.",
+                            containerInfo.id,
+                            containerInfoType.getName(),
+                            bean.getId());
+
                     return containerInfo.id;
                 }
             }
+
+            logger.debug("Skipping container {0} of type {1}", containerInfo.id, containerInfoType.getName());
         }
+
         return null;
     }
 
