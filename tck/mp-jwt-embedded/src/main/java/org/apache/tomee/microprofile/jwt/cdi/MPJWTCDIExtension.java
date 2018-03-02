@@ -65,7 +65,7 @@ public class MPJWTCDIExtension implements Extension {
         }
     }
 
-    public void registerConfigProducer(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
+    public void registerClaimProducer(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
         final Set<Type> types = injectionPoints.stream()
                 .filter(NOT_PROVIDERS)
                 .map(ip -> REPLACED_TYPES.getOrDefault(ip.getType(), ip.getType()))
