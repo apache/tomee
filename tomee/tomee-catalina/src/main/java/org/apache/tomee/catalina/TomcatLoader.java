@@ -234,6 +234,8 @@ public class TomcatLoader implements Loader {
             }
         }
 
+        optionalService(properties, "org.apache.tomee.microprofile.MicroProfileService");
+
         // optional services
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
             // in embedded mode we use regex, in tomcat we use tomcat servlet mapping
