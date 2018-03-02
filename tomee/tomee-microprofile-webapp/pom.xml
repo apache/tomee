@@ -37,8 +37,11 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <microprofile.version>1.1.0</microprofile.version>
-    <microprofile.config.impl.version>1.0</microprofile.config.impl.version>
+    <microprofile.version>1.3</microprofile.version>
+
+    <!-- Geronimo Config 1.1 targets MP Config 1.2 API -->
+    <microprofile.config.api.version>1.2</microprofile.config.api.version>
+    <microprofile.config.impl.version>1.1</microprofile.config.impl.version>
   </properties>
 
   <dependencies>
@@ -49,14 +52,26 @@
       <type>war</type>
     </dependency>
 
-    <!--
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-microprofile</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- When we have everything
     <dependency>
       <groupId>org.eclipse.microprofile</groupId>
-      <artifactId>microprofile-bom</artifactId>
+      <artifactId>microprofile</artifactId>
       <version>${microprofile.version}</version>
       <type>pom</type>
     </dependency>
     -->
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <version>${microprofile.config.api.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.geronimo.config</groupId>
