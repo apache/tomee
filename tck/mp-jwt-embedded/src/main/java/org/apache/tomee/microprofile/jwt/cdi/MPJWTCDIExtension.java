@@ -23,6 +23,7 @@ import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfoProvider;
 import org.eclipse.microprofile.jwt.Claim;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.BeanManager;
@@ -46,6 +47,7 @@ public class MPJWTCDIExtension implements Extension {
     private static Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
 
     private static final Predicate<InjectionPoint> NOT_PROVIDERS = ip -> (ip.getType() instanceof Class) || (ip.getType() instanceof ParameterizedType && ((ParameterizedType)ip.getType()).getRawType() != Provider.class);
+    private static final Predicate<InjectionPoint> NOT_INSTANCES = ip -> (ip.getType() instanceof Class) || (ip.getType() instanceof ParameterizedType && ((ParameterizedType)ip.getType()).getRawType() != Instance.class);
     private static final Map<Type, Type> REPLACED_TYPES = new HashMap<>();
 
     static {
@@ -68,6 +70,7 @@ public class MPJWTCDIExtension implements Extension {
     public void registerClaimProducer(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
         final Set<Type> types = injectionPoints.stream()
                 .filter(NOT_PROVIDERS)
+                .filter(NOT_INSTANCES)
                 .map(ip -> REPLACED_TYPES.getOrDefault(ip.getType(), ip.getType()))
                 .collect(Collectors.toSet());
 
@@ -76,7 +79,13 @@ public class MPJWTCDIExtension implements Extension {
                 .map(ip -> ((ParameterizedType)ip.getType()).getActualTypeArguments()[0])
                 .collect(Collectors.toSet());
 
+        final Set<Type> instanceTypes = injectionPoints.stream()
+                .filter(NOT_INSTANCES.negate())
+                .map(ip -> ((ParameterizedType)ip.getType()).getActualTypeArguments()[0])
+                .collect(Collectors.toSet());
+
         types.addAll(providerTypes);
+        types.addAll(instanceTypes);
 
         types.stream()
                 .map(type -> new ClaimBean<>(bm, type))

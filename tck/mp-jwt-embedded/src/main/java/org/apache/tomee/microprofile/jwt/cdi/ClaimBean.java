@@ -168,11 +168,13 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
                 // handle Provider<T>
                 if (rawTypeClass.isAssignableFrom(Provider.class)) {
+                    final Type providerType = paramType.getActualTypeArguments()[0];
                     return getClaimValue(key);
                 }
 
                 // handle Instance<T>
                 if (rawTypeClass.isAssignableFrom(Instance.class)) {
+                    final Type instanceType = paramType.getActualTypeArguments()[0];
                     return getClaimValue(key);
                 }
 
