@@ -16,18 +16,22 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.bind.Jsonb;
+import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;

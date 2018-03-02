@@ -16,30 +16,9 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.enterprise.inject.Default;
+import javax.enterprise.util.AnnotationLiteral;
 
-@ApplicationScoped
-public class JsonbProducer {
-
-    private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
-
-    @Produces
-    public Jsonb create() {
-        return JsonbBuilder.create();
-    }
-
-    public void close(@Disposes final Jsonb jsonb) {
-        try {
-            jsonb.close();
-
-        } catch (final Exception e) {
-            log.log(Level.WARNING, e.getMessage(), e);
-        }
-    }
+class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+    public static Default INSTANCE = new DefaultLiteral();
 }

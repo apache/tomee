@@ -16,51 +16,54 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import javax.enterprise.inject.spi.BeanAttributes;
+import javax.enterprise.inject.spi.Annotated;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.InjectionPoint;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Set;
 
-public class ClaimProviderBeanAttributes implements BeanAttributes<Object> {
+class ClaimInjectionPoint implements InjectionPoint{
+    private final Bean bean;
 
-    private final BeanAttributes<Object> delegate;
-    private final Set<Type> types;
-    private final Set<Annotation> qualifiers;
-
-    public ClaimProviderBeanAttributes(final BeanAttributes<Object> delegate, final Set<Type> types, final Set<Annotation> qualifiers) {
-        this.delegate = delegate;
-        this.types = types;
-        this.qualifiers = qualifiers;
+    ClaimInjectionPoint(Bean bean) {
+        this.bean = bean;
     }
 
     @Override
-    public Set<Type> getTypes() {
-        return types;
+    public boolean isTransient() {
+        return false;
+    }
+
+    @Override
+    public boolean isDelegate() {
+        return false;
+    }
+
+    @Override
+    public Type getType() {
+        return InjectionPoint.class;
     }
 
     @Override
     public Set<Annotation> getQualifiers() {
-        return qualifiers;
+        return Collections.singleton(DefaultLiteral.INSTANCE);
     }
 
     @Override
-    public Class<? extends Annotation> getScope() {
-        return delegate.getScope();
+    public Member getMember() {
+        return null;
     }
 
     @Override
-    public String getName() {
-        return delegate.getName();
+    public Bean<?> getBean() {
+        return bean;
     }
 
     @Override
-    public Set<Class<? extends Annotation>> getStereotypes() {
-        return delegate.getStereotypes();
+    public Annotated getAnnotated() {
+        return null;
     }
-
-    @Override
-    public boolean isAlternative() {
-        return delegate.isAlternative();
-    }
-
 }
