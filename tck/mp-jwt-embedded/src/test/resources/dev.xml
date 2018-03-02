@@ -41,7 +41,6 @@
       </run>
     </groups>
     <classes>
-      <!-- OK
       <class name="org.eclipse.microprofile.jwt.tck.parsing.TokenValidationTest" />
       <class name="org.eclipse.microprofile.jwt.tck.util.TokenUtilsTest" />
       <class name="org.eclipse.microprofile.jwt.tck.parsing.TestTokenClaimTypesTest" />
@@ -50,16 +49,12 @@
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.PrimitiveInjectionTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.ClaimValueInjectionTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.JsonValueInjectionTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.ProviderInjectionTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.RolesAllowedTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.InvalidTokenTest" />
-      -->
-      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.ProviderInjectionTest" />
-      <!-- KO
-      -->
     </classes>
   </test>
 
-  <!--
   <test name="extended-tests" verbose="10">
     <groups>
       <define name="extended-groups">
@@ -83,5 +78,5 @@
       <class name="org.eclipse.microprofile.jwt.tck.container.jacc.SubjectTest" />
     </classes>
   </test>
-  -->
+
 </suite>

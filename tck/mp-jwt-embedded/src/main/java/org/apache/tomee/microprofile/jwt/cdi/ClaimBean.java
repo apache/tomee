@@ -169,12 +169,18 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                 // handle Provider<T>
                 if (rawTypeClass.isAssignableFrom(Provider.class)) {
                     final Type providerType = paramType.getActualTypeArguments()[0];
+                    if (providerType instanceof ParameterizedType && isOptional((ParameterizedType) providerType)) {
+                        return (T) Optional.ofNullable(getClaimValue(key));
+                    }
                     return getClaimValue(key);
                 }
 
                 // handle Instance<T>
                 if (rawTypeClass.isAssignableFrom(Instance.class)) {
                     final Type instanceType = paramType.getActualTypeArguments()[0];
+                    if (instanceType instanceof ParameterizedType && isOptional((ParameterizedType) instanceType)) {
+                        return (T) Optional.ofNullable(getClaimValue(key));
+                    }
                     return getClaimValue(key);
                 }
 
@@ -231,7 +237,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             return getClaimValue(key);
         }
 
-        throw new IllegalStateException("Unhandled ClaimValue type");
+        throw new IllegalStateException("Unhandled Claim type " + annotated.getBaseType());
     }
 
     public static String getClaimKey(final Claim claim) {
