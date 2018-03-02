@@ -25,7 +25,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Set;
 
-class ClaimInjectionPoint implements InjectionPoint{
+class ClaimInjectionPoint implements InjectionPoint {
     private final Bean bean;
 
     ClaimInjectionPoint(Bean bean) {

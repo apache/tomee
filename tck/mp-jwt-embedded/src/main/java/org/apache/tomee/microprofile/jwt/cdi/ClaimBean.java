@@ -64,7 +64,6 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
         } else if (type instanceof ParameterizedType) {
             final ParameterizedType paramType = (ParameterizedType) type;
-
             return (Class) paramType.getRawType();
         }
 
@@ -195,7 +194,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     private T getClaimValue(final String name, final Class clazz) {
-        final JsonWebToken jwt = MPJWTProducer.getJWTPrincpal();
+        final JsonWebToken jwt = MPJWTProducer.getJWTPrincipal();
         if (jwt == null) {
             logger.warning(String.format("Can't retrieve claim %s. No active principal.", name));
             return null;
