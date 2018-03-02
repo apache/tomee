@@ -17,48 +17,21 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
+    <artifactId>tck</artifactId>
     <version>7.0.5-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>tck</artifactId>
-  <packaging>pom</packaging>
-  <name>OpenEJB :: TCK</name>
 
-  <properties>
-    <cdi.tck.12.version>1.2.8.Final</cdi.tck.12.version>
-  </properties>
+  <artifactId>microprofile-tck</artifactId>
+  <packaging>pom</packaging>
+  <name>OpenEJB :: TCK :: MicroProfile</name>
 
   <modules>
-    <module>tck-common</module>
-    <module>cdi-embedded</module>
-    <module>cdi-tomee</module>
-    <module>bval-tomee</module>
-    <module>microprofile-tck</module>
-
-    <!-- TODO: either really use this module or delete it -->
-    <module>bval-embedded</module>
+    <module>config</module>
   </modules>
-
-  <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Maven Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>warn</checksumPolicy>
-      </snapshots>
-    </repository>
-  </repositories>
 
 </project>
