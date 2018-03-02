@@ -84,9 +84,9 @@ public class MPJWTFilter implements Filter {
             jsonWebToken = validate(token);
 
         } catch (final ParseException e) {
-            // todo properly handle the exception as required per spec
-            e.printStackTrace();
-            throw new RuntimeException(e);
+            // todo is this enough?
+            HttpServletResponse.class.cast(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         // associate with the producer. Should not be needed.
