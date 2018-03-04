@@ -51,6 +51,10 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
           </dependenciesToScan>
+          <!-- TODO - This requires a fix in geronimo-config-impl to use the Thread ClassLoader in ClassConverter. -->
+          <excludes>
+            <exclude>org.eclipse.microprofile.config.tck.ClassConverterTest</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
@@ -91,6 +95,33 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.arquillian.testng</groupId>
+      <artifactId>arquillian-testng-core</artifactId>
+      <version>1.1.13.Final</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
+      <version>2.2.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+      <version>2.2.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-spi</artifactId>
+      <version>2.2.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

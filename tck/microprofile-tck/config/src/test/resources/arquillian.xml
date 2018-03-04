@@ -33,15 +33,7 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         config.test = SUCCESS
-      </property>
-      <property name="additionalLibs">
-        mvn:org.hamcrest:hamcrest-all:1.3
-        mvn:org.hamcrest:hamcrest-core:1.3
-        mvn:org.eclipse.microprofile.config:microprofile-config-tck:1.2
-        mvn:org.testng:testng:6.9.9
-        mvn:org.jboss.arquillian.test:arquillian-test-spi:1.1.13.Final
-        mvn:org.jboss.arquillian.testng:arquillian-testng-core:1.1.13.Final
-        mvn:org.jboss.shrinkwrap:shrinkwrap-api:1.2.6
+        org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy = false
       </property>
     </configuration>
   </container>
