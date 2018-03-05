@@ -92,6 +92,13 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+    <dependency> <!-- to be sure to have it -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-microprofile-webapp</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
 
     <!-- needed for EJBContainer impl so scope compile -->
     <dependency>
