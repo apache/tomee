@@ -17,7 +17,8 @@ public class MPJWTSecurityAnnotationsInterceptor implements ContainerRequestFilt
     private final Set<Method> denyAll;
     private final Set<Method> permitAll;
 
-    public MPJWTSecurityAnnotationsInterceptor(final javax.ws.rs.container.ResourceInfo resourceInfo, final ConcurrentMap<Method, Set<String>> rolesAllowed, final Set<Method> denyAll, final Set<Method> permitAll) {
+    public MPJWTSecurityAnnotationsInterceptor(final javax.ws.rs.container.ResourceInfo resourceInfo,
+                                               final ConcurrentMap<Method, Set<String>> rolesAllowed, final Set<Method> denyAll, final Set<Method> permitAll) {
         this.resourceInfo = resourceInfo;
         this.rolesAllowed = rolesAllowed;
         this.denyAll = denyAll;
