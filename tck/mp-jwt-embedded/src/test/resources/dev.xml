@@ -21,6 +21,7 @@
   <!-- The required base JAX-RS and CDI based tests that all MP-JWT implementations
   must pass.
   -->
+
   <test name="base-tests" verbose="10">
     <groups>
       <define name="base-groups">
@@ -50,8 +51,9 @@
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.ClaimValueInjectionTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.JsonValueInjectionTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.ProviderInjectionTest" />
-      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.RolesAllowedTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.InvalidTokenTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.RolesAllowedTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.jaxrs.RolesAllowedTest" />
     </classes>
   </test>
 
@@ -73,10 +75,15 @@
       </run>
     </groups>
     <classes>
-      <class name="org.eclipse.microprofile.jwt.tck.container.ejb.EjbTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.container.ejb.EjbTest" >
+        <methods>
+          <!-- Excluded cause we never really enforce ACC context for EJB Calls in TomEE -->
+          <exclude name="getSubjectClass"/>
+        </methods>
+      </class>
+
       <class name="org.eclipse.microprofile.jwt.tck.container.servlet.ServletTest" />
       <class name="org.eclipse.microprofile.jwt.tck.container.jacc.SubjectTest" />
     </classes>
   </test>
-
 </suite>

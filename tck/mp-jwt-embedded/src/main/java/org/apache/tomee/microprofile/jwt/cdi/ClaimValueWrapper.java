@@ -18,12 +18,14 @@ package org.apache.tomee.microprofile.jwt.cdi;
 
 import org.eclipse.microprofile.jwt.ClaimValue;
 
+import java.util.function.Supplier;
+
 public class ClaimValueWrapper<T> implements ClaimValue<T> {
 
     private final String name;
-    private T value;
+    private Supplier<T> value;
 
-    public ClaimValueWrapper(String name) {
+    public ClaimValueWrapper(final String name) {
         this.name = name;
     }
 
@@ -34,10 +36,10 @@ public class ClaimValueWrapper<T> implements ClaimValue<T> {
 
     @Override
     public T getValue() {
-        return value;
+        return value.get();
     }
 
-    public void setValue(T value) {
+    void setValue(final Supplier<T> value) {
         this.value = value;
     }
 

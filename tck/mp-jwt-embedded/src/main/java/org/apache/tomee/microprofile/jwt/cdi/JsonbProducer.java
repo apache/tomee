@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @ApplicationScoped
+// todo add a qualifier here so we isolate our instance from what applications would do
 public class JsonbProducer {
 
     private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());

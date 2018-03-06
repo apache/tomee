@@ -14,8 +14,11 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.jwt.jaxrs;
 
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
+import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.eclipse.microprofile.auth.LoginConfig;
 
 import javax.servlet.FilterRegistration;
@@ -23,40 +26,21 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HandlesTypes;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Set;
 
 /**
- * Responsible for adding the filter into the chain and doing all other initialization
+ * OpenEJB/TomEE hack to register a new provider on the fly
+ * Could be package in tomee only or done in another way
+ *
+ * As soon as Roberto is done with the packaging, we can remove all this
  */
-@HandlesTypes(LoginConfig.class)
-public class MPJWTInitializer implements ServletContainerInitializer {
+public class MPJWPProviderRegistration {
 
-    @Override
-    public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
-
-        if (classes == null || classes.isEmpty()) {
-            return; // to REST application having @LoginConfig on it
-        }
-
-        for (Class<?> clazz : classes) {
-            final LoginConfig loginConfig = clazz.getAnnotation(LoginConfig.class);
-
-            if (loginConfig.authMethod() == null && !"MP-JWT".equals(loginConfig.authMethod())) {
-                continue;
-            }
-
-            if (!Application.class.isAssignableFrom(clazz)) {
-                continue; // do we really want Application?
-            }
-
-            final FilterRegistration.Dynamic mpJwtFilter = ctx.addFilter("mp-jwt-filter", MPJWTFilter.class);
-            mpJwtFilter.setAsyncSupported(true);
-            mpJwtFilter.addMappingForUrlPatterns(null, false, "/*");
-
-            break; // no need to add it more than once
-        }
-
+    public void registerProvider(@Observes final ExtensionProviderRegistration event) { // openejb hack to register the provider
+        event.getProviders().add(new MPJWTFilter.MPJWTExceptionMapper());
+        event.getProviders().add(new MPJWTSecurityAnnotationsInterceptorsFeature());
     }
 
 }

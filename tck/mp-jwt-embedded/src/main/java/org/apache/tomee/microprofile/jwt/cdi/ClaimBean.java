@@ -22,8 +22,10 @@ import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
@@ -49,6 +51,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 
+@Vetoed
 public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     private static Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
@@ -62,10 +65,14 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     @Inject
     private Jsonb jsonb;
 
+    @Inject
+    private JsonWebToken jsonWebToken;
+
     private final BeanManager bm;
     private final Class rawType;
     private final Set<Type> types;
     private final String id;
+    private final Class<? extends Annotation> scope;
 
     public ClaimBean(final BeanManager bm, final Type type) {
         this.bm = bm;
@@ -73,6 +80,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         types.add(type);
         rawType = getRawType(type);
         this.id = "ClaimBean_" + types;
+        scope = Dependent.class;
     }
 
     private Class getRawType(final Type type) {
@@ -83,8 +91,6 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             final ParameterizedType paramType = (ParameterizedType) type;
             return (Class) paramType.getRawType();
         }
-
-        // todo deal with Optional here? aka check type again
 
         throw new UnsupportedOperationException("Unsupported type " + type);
     }
@@ -122,7 +128,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     @Override
     public Class<? extends Annotation> getScope() {
-        return Dependent.class;
+        return scope;
     }
 
     @Override
@@ -156,7 +162,6 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         final Claim claim = annotated.getAnnotation(Claim.class);
         final String key = getClaimKey(claim);
 
-        System.out.println(String.format("Found Claim injection with name=%s and for InjectionPoint=%s", key, ip.toString()));
         logger.finest(String.format("Found Claim injection with name=%s and for %s", key, ip.toString()));
 
         if (annotated.getBaseType() instanceof ParameterizedType) {
@@ -190,20 +195,28 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
                     final ClaimValueWrapper claimValueWrapper = new ClaimValueWrapper(key);
                     if (claimValueType instanceof ParameterizedType && isOptional((ParameterizedType) claimValueType)) {
-                        final T claimValue = getClaimValue(key);
-                        claimValueWrapper.setValue(Optional.ofNullable(claimValue));
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = getClaimValue(key);
+                            return Optional.ofNullable(claimValue);
+                        });
 
                     } else if (claimValueType instanceof ParameterizedType && isSet((ParameterizedType) claimValueType)) {
-                        final T claimValue = getClaimValue(key);
-                        claimValueWrapper.setValue(claimValue); // todo convert to set
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = getClaimValue(key);
+                            return claimValue;
+                        });
 
                     } else if (claimValueType instanceof ParameterizedType && isList((ParameterizedType) claimValueType)) {
-                        final T claimValue = getClaimValue(key);
-                        claimValueWrapper.setValue(claimValue); // // todo convert to list
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = getClaimValue(key);
+                            return claimValue;
+                        });
 
                     } else if (claimValueType instanceof Class) {
-                        final T claimValue = getClaimValue(key);
-                        claimValueWrapper.setValue(claimValue);
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = getClaimValue(key);
+                            return claimValue;
+                        });
 
                     } else {
                         throw new IllegalArgumentException("Unsupported ClaimValue type " + claimValueType.toString());
@@ -245,13 +258,16 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     private T getClaimValue(final String name) {
-        final JsonWebToken jwt = MPJWTProducer.getJWTPrincipal();
-        if (jwt == null) {
+        final Bean<?> bean = bm.resolve(bm.getBeans(JsonWebToken.class));
+        if (RequestScoped.class.equals(bean.getScope())) {
+            jsonWebToken = JsonWebToken.class.cast(bm.getReference(bean, JsonWebToken.class, null));
+        }
+        if (jsonWebToken == null || !bean.getScope().equals(RequestScoped.class)) {
             logger.warning(String.format("Can't retrieve claim %s. No active principal.", name));
             return null;
         }
 
-        final Optional<T> claimValue = jwt.claim(name);
+        final Optional<T> claimValue = jsonWebToken.claim(name);
         logger.finest(String.format("Found ClaimValue=%s for name=%s", claimValue, name));
         return claimValue.orElse(null);
     }

@@ -21,23 +21,29 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
+import java.util.function.Function;
 
 @ApplicationScoped
 public class MPJWTProducer {
 
-    private static ThreadLocal<JsonWebToken> currentPrincipal = new ThreadLocal<>();
-
-    public static void setJWTPrincipal(final JsonWebToken principal) {
-        currentPrincipal.set(principal);
-    }
-
-    public static JsonWebToken getJWTPrincipal() {
-        return currentPrincipal.get();
-    }
+    @Inject
+    private HttpServletRequest httpServletRequest;
 
     @Produces
     @RequestScoped
-    JsonWebToken currentPrincipal() {
-        return currentPrincipal.get();
+    public JsonWebToken currentPrincipal() {
+        Objects.requireNonNull(httpServletRequest, "HTTP Servlet Request is required to produce a JSonWebToken principal.");
+
+        // not very beatiful, but avoids having the MPJWTFilter setting the request or the principal in a thread local
+        // CDI integration already has one - dunno which approach is the best for now
+        final Object tokenAttribute = httpServletRequest.getAttribute(JsonWebToken.class.getName());
+        if (tokenAttribute != null && Function.class.isInstance(tokenAttribute)) {
+            return (JsonWebToken) Function.class.cast(tokenAttribute).apply(httpServletRequest);
+        }
+
+        return null;
     }
 }
