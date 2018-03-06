@@ -33,7 +33,6 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         config.test = SUCCESS
-        org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy = false
       </property>
     </configuration>
   </container>

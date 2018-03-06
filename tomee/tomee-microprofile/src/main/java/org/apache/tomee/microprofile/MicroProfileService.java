@@ -42,5 +42,10 @@ public class MicroProfileService implements Service {
                       .getOptions()
                       .getProperties()
                       .setProperty(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES, prefixes);
+
+        final String microProfileReloadConfig =
+                System.getProperty("org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy", "false");
+        System.setProperty("org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy",
+                           microProfileReloadConfig);
     }
 }
