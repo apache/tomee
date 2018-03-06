@@ -16,31 +16,31 @@
  */
 package org.apache.tomee.microprofile;
 
-import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.Service;
 
-import java.net.URL;
 import java.util.Properties;
+
+import static org.apache.tomee.catalina.TomEEClassLoaderEnricher.TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES;
 
 /**
  * This is used as an optional service in org.apache.tomee.catalina.TomcatLoader
  */
 @SuppressWarnings("unused")
 public class MicroProfileService implements Service {
+    // Separate with comma
+    private static final String MICROPROFILE_LIBS_IMPLS_PREFIXES = "geronimo-config-impl";
+
     @Override
     public void init(final Properties props) throws Exception {
-        enrichClassLoaderWithMicroProfile();
-    }
+        String prefixes = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES, "");
+        prefixes = prefixes.isEmpty() ?
+                   MICROPROFILE_LIBS_IMPLS_PREFIXES :
+                   MICROPROFILE_LIBS_IMPLS_PREFIXES + "," + prefixes;
 
-    private void enrichClassLoaderWithMicroProfile() {
-        final ClassLoaderEnricher enricher = SystemInstance.get().getComponent(ClassLoaderEnricher.class);
-        if (null != enricher) {
-            final MicroProfileClassLoaderEnricher classLoaderEnricher = new MicroProfileClassLoaderEnricher();
-            for (final URL url : classLoaderEnricher.enrichment(null)) {
-                enricher.addUrl(url);
-            }
-        }
-        SystemInstance.get().removeObserver(this);
+        SystemInstance.get()
+                      .getOptions()
+                      .getProperties()
+                      .setProperty(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_PREFIXES, prefixes);
     }
 }

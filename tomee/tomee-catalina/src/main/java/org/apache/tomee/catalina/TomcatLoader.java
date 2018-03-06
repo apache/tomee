@@ -221,6 +221,8 @@ public class TomcatLoader implements Loader {
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
+        optionalService(properties, "org.apache.tomee.microprofile.MicroProfileService");
+
         // tomee webapp enricher
         final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();
         SystemInstance.get().setComponent(WebAppEnricher.class, classLoaderEnricher);
@@ -233,8 +235,6 @@ public class TomcatLoader implements Loader {
                 enricher.addUrl(url);
             }
         }
-
-        optionalService(properties, "org.apache.tomee.microprofile.MicroProfileService");
 
         // optional services
         if (optionalService(properties, "org.apache.tomee.webservices.TomeeJaxRsService")) {
