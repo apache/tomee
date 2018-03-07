@@ -42,10 +42,10 @@ import java.util.logging.Logger;
  */
 public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
 
-    private static Logger logger = Logger.getLogger(DefaultJWTCallerPrincipal.class.getName());
-    private String jwt;
-    private String type;
-    private JwtClaims claimsSet;
+    private static final Logger logger = Logger.getLogger(DefaultJWTCallerPrincipal.class.getName());
+    private final String jwt;
+    private final String type;
+    private final JwtClaims claimsSet;
 
     /**
      * Create the DefaultJWTCallerPrincipal from the parsed JWT token and the extracted principal name
@@ -63,17 +63,19 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
 
     @Override
     public Set<String> getAudience() {
-        Set<String> audSet = new HashSet<>();
+        final Set<String> audSet = new HashSet<>();
         try {
-            List<String> audList = claimsSet.getStringListClaimValue("aud");
+            final List<String> audList = claimsSet.getStringListClaimValue("aud");
             if (audList != null) {
                 audSet.addAll(audList);
             }
-        } catch (MalformedClaimException e) {
+
+        } catch (final MalformedClaimException e) {
             try {
-                String aud = claimsSet.getStringClaimValue("aud");
+                final String aud = claimsSet.getStringClaimValue("aud");
                 audSet.add(aud);
-            } catch (MalformedClaimException e1) {
+            } catch (final MalformedClaimException e1) {
+                logger.log(Level.FINEST, "Can't retrieve malformed 'aud' claim.", e);
             }
         }
         return audSet.isEmpty() ? null : audSet;
@@ -81,14 +83,15 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
 
     @Override
     public Set<String> getGroups() {
-        HashSet<String> groups = new HashSet<>();
+        final HashSet<String> groups = new HashSet<>();
         try {
-            List<String> globalGroups = claimsSet.getStringListClaimValue("groups");
+            final List<String> globalGroups = claimsSet.getStringListClaimValue("groups");
             if (globalGroups != null) {
                 groups.addAll(globalGroups);
             }
-        } catch (MalformedClaimException e) {
-            e.printStackTrace();
+
+        } catch (final MalformedClaimException e) {
+            logger.log(Level.FINEST, "Can't retrieve malformed 'groups' claim.", e);
         }
         return groups;
     }
@@ -119,7 +122,8 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
                     if (claim == null) {
                         claim = new Long(0);
                     }
-                } catch (MalformedClaimException e) {
+                } catch (final MalformedClaimException e) {
+                    logger.log(Level.FINEST, "Can't retrieve 'updated_at' a malformed claim.", e);
                 }
                 break;
             case groups:
@@ -177,7 +181,8 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
                 ", allowedOrigins=" + getClaim("allowedOrigins") +
                 ", updatedAt=" + getClaim("updated_at") +
                 ", acr='" + getClaim("acr") + '\'';
-        StringBuilder tmp = new StringBuilder(toString);
+
+        final StringBuilder tmp = new StringBuilder(toString);
         tmp.append(", groups=[");
         for (String group : getGroups()) {
             tmp.append(group);
@@ -201,15 +206,17 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
         if (claimsSet.hasClaim(Claims.sub_jwk.name())) {
             replaceMap(Claims.sub_jwk.name());
         }
+
         // Handle custom claims
-        Set<String> customClaimNames = filterCustomClaimNames(claimsSet.getClaimNames());
+        final Set<String> customClaimNames = filterCustomClaimNames(claimsSet.getClaimNames());
         for (String name : customClaimNames) {
-            Object claimValue = claimsSet.getClaimValue(name);
-            Class claimType = claimValue.getClass();
+            final Object claimValue = claimsSet.getClaimValue(name);
             if (claimValue instanceof List) {
                 replaceList(name);
+
             } else if (claimValue instanceof Map) {
                 replaceMap(name);
+
             } else if (claimValue instanceof Number) {
                 replaceNumber(name);
             }
@@ -222,8 +229,8 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      * @param claimNames - the current set of claim names in this token
      * @return the possibly empty set of names for non-Claims claims
      */
-    private Set<String> filterCustomClaimNames(Collection<String> claimNames) {
-        HashSet<String> customNames = new HashSet<>(claimNames);
+    private Set<String> filterCustomClaimNames(final Collection<String> claimNames) {
+        final HashSet<String> customNames = new HashSet<>(claimNames);
         for (Claims claim : Claims.values()) {
             customNames.remove(claim.name());
         }
@@ -235,35 +242,42 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      *
      * @param name - claim name
      */
-    private void replaceMap(String name) {
+    private void replaceMap(final String name) {
         try {
-            Map<String, Object> map = claimsSet.getClaimValue(name, Map.class);
-            JsonObject jsonObject = replaceMap(map);
+            final Map<String, Object> map = claimsSet.getClaimValue(name, Map.class);
+            final JsonObject jsonObject = replaceMap(map);
             claimsSet.setClaim(name, jsonObject);
-        } catch (MalformedClaimException e) {
+
+        } catch (final MalformedClaimException e) {
             logger.log(Level.WARNING, "replaceMap failure for: " + name, e);
         }
     }
 
-    private JsonObject replaceMap(Map<String, Object> map) {
-        JsonObjectBuilder builder = Json.createObjectBuilder();
+    private JsonObject replaceMap(final Map<String, Object> map) {
+        final JsonObjectBuilder builder = Json.createObjectBuilder();
+
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            Object entryValue = entry.getValue();
+            final Object entryValue = entry.getValue();
             if (entryValue instanceof Map) {
-                JsonObject entryJsonObject = replaceMap((Map<String, Object>) entryValue);
+                final JsonObject entryJsonObject = replaceMap((Map<String, Object>) entryValue);
                 builder.add(entry.getKey(), entryJsonObject);
+
             } else if (entryValue instanceof List) {
-                JsonArray array = (JsonArray) wrapValue(entryValue);
+                final JsonArray array = (JsonArray) wrapValue(entryValue);
                 builder.add(entry.getKey(), array);
+
             } else if (entryValue instanceof Long || entryValue instanceof Integer) {
-                long lvalue = ((Number) entryValue).longValue();
+                final long lvalue = ((Number) entryValue).longValue();
                 builder.add(entry.getKey(), lvalue);
+
             } else if (entryValue instanceof Double || entryValue instanceof Float) {
-                double dvalue = ((Number) entryValue).doubleValue();
-                builder.add(entry.getKey(), dvalue);
+                final double value = ((Number) entryValue).doubleValue();
+                builder.add(entry.getKey(), value);
+
             } else if (entryValue instanceof Boolean) {
-                boolean flag = ((Boolean) entryValue).booleanValue();
+                final boolean flag = ((Boolean) entryValue).booleanValue();
                 builder.add(entry.getKey(), flag);
+
             } else if (entryValue instanceof String) {
                 builder.add(entry.getKey(), entryValue.toString());
             }
@@ -271,36 +285,42 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
         return builder.build();
     }
 
-    private JsonValue wrapValue(Object value) {
+    private JsonValue wrapValue(final Object value) {
         JsonValue jsonValue = null;
         if (value instanceof Number) {
-            Number number = (Number) value;
+            final Number number = (Number) value;
             if ((number instanceof Long) || (number instanceof Integer)) {
                 jsonValue = Json.createObjectBuilder()
                         .add("tmp", number.longValue())
                         .build()
                         .getJsonNumber("tmp");
+
             } else {
                 jsonValue = Json.createObjectBuilder()
                         .add("tmp", number.doubleValue())
                         .build()
                         .getJsonNumber("tmp");
             }
+
         } else if (value instanceof Boolean) {
-            Boolean flag = (Boolean) value;
+            final Boolean flag = (Boolean) value;
             jsonValue = flag ? JsonValue.TRUE : JsonValue.FALSE;
+
         } else if (value instanceof List) {
-            JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            List list = (List) value;
+            final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            final List list = (List) value;
             for (Object element : list) {
                 if (element instanceof String) {
                     arrayBuilder.add(element.toString());
+
                 } else {
                     JsonValue jvalue = wrapValue(element);
                     arrayBuilder.add(jvalue);
                 }
+
             }
             jsonValue = arrayBuilder.build();
+
         }
         return jsonValue;
     }
@@ -311,22 +331,24 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      *
      * @param name - claim name
      */
-    private void replaceList(String name) {
+    private void replaceList(final String name) {
         try {
-            List list = claimsSet.getClaimValue(name, List.class);
-            JsonArray array = (JsonArray) wrapValue(list);
+            final List list = claimsSet.getClaimValue(name, List.class);
+            final JsonArray array = (JsonArray) wrapValue(list);
             claimsSet.setClaim(name, array);
-        } catch (MalformedClaimException e) {
+
+        } catch (final MalformedClaimException e) {
             logger.log(Level.WARNING, "replaceList failure for: " + name, e);
         }
     }
 
-    private void replaceNumber(String name) {
+    private void replaceNumber(final String name) {
         try {
-            Number number = claimsSet.getClaimValue(name, Number.class);
-            JsonNumber jsonNumber = (JsonNumber) wrapValue(number);
+            final Number number = claimsSet.getClaimValue(name, Number.class);
+            final JsonNumber jsonNumber = (JsonNumber) wrapValue(number);
             claimsSet.setClaim(name, jsonNumber);
-        } catch (MalformedClaimException e) {
+
+        } catch (final MalformedClaimException e) {
             logger.log(Level.WARNING, "replaceNumber failure for: " + name, e);
         }
     }

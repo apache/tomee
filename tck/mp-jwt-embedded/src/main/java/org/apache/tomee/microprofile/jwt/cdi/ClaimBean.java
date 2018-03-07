@@ -54,9 +54,9 @@ import java.util.logging.Logger;
 @Vetoed
 public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
-    private static Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
 
-    private final static Set<Annotation> QUALIFIERS = new HashSet<>();
+    private static final Set<Annotation> QUALIFIERS = new HashSet<>();
 
     static {
         QUALIFIERS.add(new ClaimLiteral());
@@ -64,9 +64,6 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     @Inject
     private Jsonb jsonb;
-
-    @Inject
-    private JsonWebToken jsonWebToken;
 
     private final BeanManager bm;
     private final Class rawType;
@@ -112,8 +109,8 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     @Override
-    public void destroy(T instance, CreationalContext<T> context) {
-
+    public void destroy(final T instance, final CreationalContext<T> context) {
+        logger.finest("Destroying CDI Bean for type " + types.iterator().next());
     }
 
     @Override
@@ -153,9 +150,10 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     @Override
     public T create(final CreationalContext<T> context) {
+        logger.finest("Creating CDI Bean for type " + types.iterator().next());
         final InjectionPoint ip = (InjectionPoint) bm.getInjectableReference(new ClaimInjectionPoint(this), context);
         if (ip == null) {
-            throw new IllegalStateException("Could not retrieve InjectionPoint");
+            throw new IllegalStateException("Could not retrieve InjectionPoint for type " + types.iterator().next());
         }
 
         final Annotated annotated = ip.getAnnotated();
@@ -259,6 +257,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     private T getClaimValue(final String name) {
         final Bean<?> bean = bm.resolve(bm.getBeans(JsonWebToken.class));
+        JsonWebToken jsonWebToken = null;
         if (RequestScoped.class.equals(bean.getScope())) {
             jsonWebToken = JsonWebToken.class.cast(bm.getReference(bean, JsonWebToken.class, null));
         }
@@ -277,7 +276,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         return wrapValue(claimValue);
     }
 
-    private static final String TMP = "tmp"; // todo kill this if possible
+    private static final String TMP = "tmp";
 
     private JsonValue wrapValue(Object value) {
         JsonValue jsonValue = null;

@@ -36,7 +36,7 @@ public class MPJWTInitializer implements ServletContainerInitializer {
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
 
         if (classes == null || classes.isEmpty()) {
-            return; // to REST application having @LoginConfig on it
+            return; // to classes having @LoginConfig on it
         }
 
         for (Class<?> clazz : classes) {
@@ -48,6 +48,7 @@ public class MPJWTInitializer implements ServletContainerInitializer {
 
             if (!Application.class.isAssignableFrom(clazz)) {
                 continue; // do we really want Application?
+                // See https://github.com/eclipse/microprofile-jwt-auth/issues/70 to clarify this point
             }
 
             final FilterRegistration.Dynamic mpJwtFilter = ctx.addFilter("mp-jwt-filter", MPJWTFilter.class);

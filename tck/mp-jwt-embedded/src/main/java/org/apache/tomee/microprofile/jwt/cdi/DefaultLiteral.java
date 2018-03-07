@@ -20,5 +20,5 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.util.AnnotationLiteral;
 
 class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
-    public static Default INSTANCE = new DefaultLiteral();
+    public static final Default INSTANCE = new DefaultLiteral();
 }
