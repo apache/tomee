@@ -23,14 +23,14 @@
 
   <groupId>jug</groupId>
   <artifactId>polling-parent</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0-TT.1</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Polling</name>
   
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.4-TT.2</tomee.version>
+    <tomee.version>7.0.5-TT.1</tomee.version>
   </properties>
 
   <build>

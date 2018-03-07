@@ -24,12 +24,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-declared-in-webapp</artifactId>
   <packaging>war</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0-TT.1</version>
   <name>OpenEJB :: Web Examples :: Resource Declared In A Webapp</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.4-TT.2</tomee.version>
+    <tomee.version>7.0.5-TT.1</tomee.version>
   </properties>
 
   <repositories>

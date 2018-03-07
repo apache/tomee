@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>myear</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.1.0-TT.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>business-logic</artifactId>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.4-TT.2</version>
+      <version>7.0.5-TT.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
