@@ -1484,12 +1484,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         realms.put(standardContext.getName(), realm);
     }
 
-    private static boolean shouldNotDeploy(StandardContext standardContext) {
+    private static boolean shouldNotDeploy(final StandardContext standardContext) {
         if (StandardHost.class.isInstance(standardContext.getParent())) {
             final StandardHost host = StandardHost.class.cast(standardContext.getParent());
-            if (host.getAutoDeploy() && new File(host.getAppBaseFile(), standardContext.getPath()).isDirectory() && (
-                    new File(host.getAppBaseFile(), standardContext.getPath() + ".ear").exists() ||
-                    new File(host.getAppBaseFile(), standardContext.getPath() + ".rar").exists())
+            if (host.getAutoDeploy() && standardContext.getDocBase() != null && 
+                    standardContext.getDocBase() != null &&
+                    new File(host.getAppBaseFile(), standardContext.getDocBase()).isDirectory() && (
+                    new File(host.getAppBaseFile(), standardContext.getDocBase() + ".ear").exists() ||
+                    new File(host.getAppBaseFile(), standardContext.getDocBase() + ".rar").exists())
             ) {
 
                 logger.info(String.format("Not deploying exploded directory %s as Java EE artifact exists which will be deployed.",
@@ -2233,6 +2235,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                         }
 
                         appInfo = configurationFactory.configureApplication(appModule);
+                        if (file.isFile() && file.getName().toLowerCase().endsWith(".ear")) {
+                            // this is to prevent any WARs inside the EARs being unpacked in a directory where they'll then be deployed again
+                            appInfo.properties.setProperty("tomcat.unpackWar", "false");
+                        }
 
                         // if this is an unpacked dir, tomcat will pick it up as a webapp so undeploy it first
                         if (file.isDirectory()) {

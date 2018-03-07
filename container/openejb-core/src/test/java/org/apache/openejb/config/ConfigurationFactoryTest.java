@@ -17,9 +17,12 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.api.resource.PropertiesResourceProvider;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Deployments;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.WebApp;
@@ -124,5 +127,38 @@ public class ConfigurationFactoryTest {
         final URLClassLoader cl = (URLClassLoader) deployments.getClasspath();
         final URL[] urls = cl.getURLs();
         assertEquals(urls[0], new File(path).toURI().normalize().toURL());
+    }
+
+    @Test
+    public void testUsePropertiesProviderWhenCreatingAContainer() throws Exception {
+        final ConfigurationFactory configurationFactory = new ConfigurationFactory();
+        final Container container = new Container();
+        container.setPropertiesProvider(MyPropertiesProvider.class.getName());
+        container.setCtype("STATELESS");
+
+        final ContainerInfo containerInfo = configurationFactory.createContainerInfo(container);
+        assertEquals("newproperty", containerInfo.properties.getProperty("test"));
+    }
+
+    public static class MyPropertiesProvider implements PropertiesResourceProvider {
+
+        private Properties properties;
+
+        @Override
+        public Properties provides() {
+            final Properties p = new Properties();
+            p.putAll(properties);
+            p.setProperty("test", "newproperty");
+
+            return p;
+        }
+
+        public Properties getProperties() {
+            return properties;
+        }
+
+        public void setProperties(Properties properties) {
+            this.properties = properties;
+        }
     }
 }

@@ -107,7 +107,7 @@
     <johnzon.version>1.0.0</johnzon.version>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>4.5</xbeanVersion>
@@ -132,9 +132,12 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.23</tomcat.version>
+    <tomcat.version>8.5.28</tomcat.version>
 
-    <cxf.version>3.1.14</cxf.version>
+    <cxf.version>3.1.13</cxf.version>
+    <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
+    <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.arquillian>1.1.13.Final</version.arquillian>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
