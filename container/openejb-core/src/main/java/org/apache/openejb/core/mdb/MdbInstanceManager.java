@@ -204,21 +204,20 @@ public class MdbInstanceManager {
         });
         data.setBaseContext(mdbContext);
         beanContext.setContainerData(data);
+        final MBeanServer server = LocalMBeanServer.get();
+
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("EJBModule", beanContext.getModuleID());
+        jmxName.set("MessageDrivenBean", beanContext.getEjbName());
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", beanContext.getEjbName());
 
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
             final StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
             beanContext.addFirstSystemInterceptor(stats);
-
-            final MBeanServer server = LocalMBeanServer.get();
-
-            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
-            jmxName.set("J2EEServer", "openejb");
-            jmxName.set("J2EEApplication", null);
-            jmxName.set("EJBModule", beanContext.getModuleID());
-            jmxName.set("MessageDrivenBean", beanContext.getEjbName());
-            jmxName.set("j2eeType", "");
-            jmxName.set("name", beanContext.getEjbName());
 
             // register the invocation stats interceptor
             try {
@@ -256,12 +255,12 @@ public class MdbInstanceManager {
                 logger.info("Not auto-activating endpoint for " + beanContext.getDeploymentID());
             }
 
-            String jmxName = beanContext.getActivationProperties().get("MdbJMXControl");
-            if (jmxName == null) {
-                jmxName = "true";
+            String jmxControlName = beanContext.getActivationProperties().get("MdbJMXControl");
+            if (jmxControlName == null) {
+                jmxControlName = "true";
             }
 
-            addJMxControl(beanContext, jmxName, activationContext);
+            addJMxControl(beanContext, jmxControlName, activationContext);
 
         } catch (final ResourceException e) {
             throw new OpenEJBException(e);
@@ -278,8 +277,20 @@ public class MdbInstanceManager {
             try {
                 es.awaitTermination(5, TimeUnit.MINUTES);
             } catch (final InterruptedException e) {
-                logger.error("can't fill the stateless pool", e);
+                logger.error("can't fill the message driven bean pool", e);
             }
+        }
+
+        // register the pool
+        try {
+            final ObjectName objectName = jmxName.set("j2eeType", "Pool").build();
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+            server.registerMBean(new ManagedMBean(data.pool), objectName);
+            data.add(objectName);
+        } catch (final Exception e) {
+            logger.error("Unable to register MBean ", e);
         }
 
         data.getPool().start();
@@ -497,7 +508,7 @@ public class MdbInstanceManager {
                 instance.setPoolEntry(entry);
             }
         } catch (final TimeoutException e) {
-            final String msg = "No instances available in Session Bean pool.  Waited " + data.getAccessTimeout().toString();
+            final String msg = "No instances available in Message Driven Bean pool.  Waited " + data.getAccessTimeout().toString();
             final ConcurrentAccessTimeoutException timeoutException = new ConcurrentAccessTimeoutException(msg);
             timeoutException.fillInStackTrace();
             throw new ApplicationException(timeoutException);
@@ -688,5 +699,4 @@ public class MdbInstanceManager {
             this.baseContext = baseContext;
         }
     }
-
 }
