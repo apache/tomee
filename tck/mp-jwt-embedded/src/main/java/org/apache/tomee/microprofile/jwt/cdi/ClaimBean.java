@@ -81,12 +81,12 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     private Class getRawType(final Type type) {
-        if (type instanceof Class) {
-            return (Class) type;
+        if (Class.class.isInstance(type)) {
+            return Class.class.cast(type);
 
-        } else if (type instanceof ParameterizedType) {
-            final ParameterizedType paramType = (ParameterizedType) type;
-            return (Class) paramType.getRawType();
+        } else if (ParameterizedType.class.isInstance(type)) {
+            final ParameterizedType paramType = ParameterizedType.class.cast(type);
+            return Class.class.cast(paramType.getRawType());
         }
 
         throw new UnsupportedOperationException("Unsupported type " + type);
@@ -162,17 +162,17 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
         logger.finest(String.format("Found Claim injection with name=%s and for %s", key, ip.toString()));
 
-        if (annotated.getBaseType() instanceof ParameterizedType) {
-            final ParameterizedType paramType = (ParameterizedType) annotated.getBaseType();
+        if (ParameterizedType.class.isInstance(annotated.getBaseType())) {
+            final ParameterizedType paramType = ParameterizedType.class.cast(annotated.getBaseType());
             final Type rawType = paramType.getRawType();
-            if (rawType instanceof Class && paramType.getActualTypeArguments().length == 1) {
+            if (Class.class.isInstance(rawType) && paramType.getActualTypeArguments().length == 1) {
 
                 final Class<?> rawTypeClass = ((Class<?>) rawType);
 
                 // handle Provider<T>
                 if (rawTypeClass.isAssignableFrom(Provider.class)) {
                     final Type providerType = paramType.getActualTypeArguments()[0];
-                    if (providerType instanceof ParameterizedType && isOptional((ParameterizedType) providerType)) {
+                    if (ParameterizedType.class.isInstance(providerType) && isOptional(ParameterizedType.class.cast(providerType))) {
                         return (T) Optional.ofNullable(getClaimValue(key));
                     }
                     return getClaimValue(key);
@@ -181,7 +181,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                 // handle Instance<T>
                 if (rawTypeClass.isAssignableFrom(Instance.class)) {
                     final Type instanceType = paramType.getActualTypeArguments()[0];
-                    if (instanceType instanceof ParameterizedType && isOptional((ParameterizedType) instanceType)) {
+                    if (ParameterizedType.class.isInstance(instanceType) && isOptional(ParameterizedType.class.cast(instanceType))) {
                         return (T) Optional.ofNullable(getClaimValue(key));
                     }
                     return getClaimValue(key);
@@ -192,25 +192,25 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                     final Type claimValueType = paramType.getActualTypeArguments()[0];
 
                     final ClaimValueWrapper claimValueWrapper = new ClaimValueWrapper(key);
-                    if (claimValueType instanceof ParameterizedType && isOptional((ParameterizedType) claimValueType)) {
+                    if (ParameterizedType.class.isInstance(claimValueType) && isOptional(ParameterizedType.class.cast(claimValueType))) {
                         claimValueWrapper.setValue(() -> {
                             final T claimValue = getClaimValue(key);
                             return Optional.ofNullable(claimValue);
                         });
 
-                    } else if (claimValueType instanceof ParameterizedType && isSet((ParameterizedType) claimValueType)) {
+                    } else if (ParameterizedType.class.isInstance(claimValueType) && isSet(ParameterizedType.class.cast(claimValueType))) {
                         claimValueWrapper.setValue(() -> {
                             final T claimValue = getClaimValue(key);
                             return claimValue;
                         });
 
-                    } else if (claimValueType instanceof ParameterizedType && isList((ParameterizedType) claimValueType)) {
+                    } else if (ParameterizedType.class.isInstance(claimValueType) && isList(ParameterizedType.class.cast(claimValueType))) {
                         claimValueWrapper.setValue(() -> {
                             final T claimValue = getClaimValue(key);
                             return claimValue;
                         });
 
-                    } else if (claimValueType instanceof Class) {
+                    } else if (Class.class.isInstance(claimValueType)) {
                         claimValueWrapper.setValue(() -> {
                             final T claimValue = getClaimValue(key);
                             return claimValue;
@@ -278,22 +278,22 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
     private static final String TMP = "tmp";
 
-    private JsonValue wrapValue(Object value) {
+    private JsonValue wrapValue(final Object value) {
         JsonValue jsonValue = null;
 
-        if (value instanceof JsonValue) {
+        if (JsonValue.class.isInstance(value)) {
             // This may already be a JsonValue
-            jsonValue = (JsonValue) value;
+            jsonValue = JsonValue.class.cast(value);
 
-        } else if (value instanceof String) {
+        } else if (String.class.isInstance(value)) {
             jsonValue = Json.createObjectBuilder()
                     .add(TMP, value.toString())
                     .build()
                     .getJsonString(TMP);
 
-        } else if (value instanceof Number) {
-            final Number number = (Number) value;
-            if ((number instanceof Long) || (number instanceof Integer)) {
+        } else if (Number.class.isInstance(value)) {
+            final Number number = Number.class.cast(value);
+            if ((Long.class.isInstance(number)) || (Integer.class.isInstance(number))) {
                 jsonValue = Json.createObjectBuilder()
                         .add(TMP, number.longValue())
                         .build()
@@ -306,16 +306,16 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                         .getJsonNumber(TMP);
             }
 
-        } else if (value instanceof Boolean) {
-            final Boolean flag = (Boolean) value;
+        } else if (Boolean.class.isInstance(value)) {
+            final Boolean flag = Boolean.class.cast(value);
             jsonValue = flag ? JsonValue.TRUE : JsonValue.FALSE;
 
-        } else if (value instanceof Collection) {
+        } else if (Collection.class.isInstance(value)) {
             final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-            final Collection list = (Collection) value;
+            final Collection list = Collection.class.cast(value);
 
             for (Object element : list) {
-                if (element instanceof String) {
+                if (String.class.isInstance(element)) {
                     arrayBuilder.add(element.toString());
 
                 } else {
@@ -325,7 +325,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             }
             jsonValue = arrayBuilder.build();
 
-        } else if (value instanceof Map) {
+        } else if (Map.class.isInstance(value)) {
             jsonValue = jsonb.fromJson(jsonb.toJson(value), JsonObject.class);
 
         }

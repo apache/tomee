@@ -19,6 +19,6 @@ package org.apache.tomee.microprofile.jwt.cdi;
 import javax.enterprise.inject.Default;
 import javax.enterprise.util.AnnotationLiteral;
 
-class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
+public class DefaultLiteral extends AnnotationLiteral<Default> implements Default {
     public static final Default INSTANCE = new DefaultLiteral();
 }

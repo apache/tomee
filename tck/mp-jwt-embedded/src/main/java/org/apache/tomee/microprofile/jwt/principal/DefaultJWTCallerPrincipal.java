@@ -102,6 +102,10 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
         return new HashSet<>(claimsSet.getClaimNames());
     }
 
+    public String getRawToken() {
+        return jwt;
+    }
+
     @Override
     public Object getClaim(final String claimName) {
         Claims claimType = Claims.UNKNOWN;

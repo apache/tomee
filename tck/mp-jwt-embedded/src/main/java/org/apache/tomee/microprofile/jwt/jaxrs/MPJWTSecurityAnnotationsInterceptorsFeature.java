@@ -45,7 +45,7 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
 
         final boolean hasSecurity = processSecurityAnnotations(resourceInfo.getResourceClass(), resourceInfo.getResourceMethod());
 
-        if (hasSecurity) {
+        if (hasSecurity) { // no need to add interceptor on the resources that don(t have any security requirements to enforce
             context.register(new MPJWTSecurityAnnotationsInterceptor(resourceInfo, rolesAllowed, denyAll, permitAll));
         }
 
@@ -67,11 +67,11 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
          * Process annotations at the class level
          */
         if (classSecurityAnnotations.size() > 1) {
-            // todo error to properly handle
+            throw new IllegalStateException(clazz.getName() + " has more than one security annotation (RolesAllowed, PermitAll, DenyAll).");
         }
 
         if (methodSecurityAnnotations.size() > 1) {
-            // todo proper error handling
+            throw new IllegalStateException(method.toString() + " has more than one security annotation (RolesAllowed, PermitAll, DenyAll).");
         }
 
         if (methodSecurityAnnotations.size() == 0) { // no need to deal with class level annotations if the method has some
@@ -97,9 +97,9 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
             }
         }
 
-        final RolesAllowed mthdRolesAllowed = (RolesAllowed) method.getAnnotation(RolesAllowed.class);
-        final PermitAll mthdPermitAll = (PermitAll) method.getAnnotation(PermitAll.class);
-        final DenyAll mthdDenyAll = (DenyAll) method.getAnnotation(DenyAll.class);
+        final RolesAllowed mthdRolesAllowed = method.getAnnotation(RolesAllowed.class);
+        final PermitAll mthdPermitAll = method.getAnnotation(PermitAll.class);
+        final DenyAll mthdDenyAll = method.getAnnotation(DenyAll.class);
 
         if (mthdRolesAllowed != null) {
             Set<String> roles = new HashSet<String>();

@@ -42,10 +42,10 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
 
     @Override
     public JWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException {
-        JWTCallerPrincipal principal = null;
+        JWTCallerPrincipal principal;
 
         try {
-            JwtConsumerBuilder builder = new JwtConsumerBuilder()
+            final JwtConsumerBuilder builder = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
@@ -54,15 +54,17 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
                     .setJwsAlgorithmConstraints(
                             new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                     AlgorithmIdentifiers.RSA_USING_SHA256));
+
             if (authContextInfo.getExpGracePeriodSecs() > 0) {
                 builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
+
             } else {
                 builder.setEvaluationTime(NumericDate.fromSeconds(0));
             }
 
-            JwtConsumer jwtConsumer = builder.build();
-            JwtContext jwtContext = jwtConsumer.process(token);
-            String type = jwtContext.getJoseObjects().get(0).getHeader("typ");
+            final JwtConsumer jwtConsumer = builder.build();
+            final JwtContext jwtContext = jwtConsumer.process(token);
+            final String type = jwtContext.getJoseObjects().get(0).getHeader("typ");
             //  Validate the JWT and process it to the Claims
             jwtConsumer.processContext(jwtContext);
             JwtClaims claimsSet = jwtContext.getJwtClaims();
@@ -77,9 +79,11 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
             }
             claimsSet.setClaim(Claims.raw_token.name(), token);
             principal = new DefaultJWTCallerPrincipal(token, type, claimsSet, principalName);
-        } catch (InvalidJwtException e) {
+
+        } catch (final InvalidJwtException e) {
             throw new ParseException("Failed to verify token", e);
-        } catch (MalformedClaimException e) {
+
+        } catch (final MalformedClaimException e) {
             throw new ParseException("Failed to verify token claims", e);
         }
 

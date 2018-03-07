@@ -34,7 +34,7 @@ public abstract class JWTCallerPrincipal implements JsonWebToken {
      *
      * @param name - caller's name
      */
-    public JWTCallerPrincipal(String name) {
+    public JWTCallerPrincipal(final String name) {
         this.name = name;
     }
 
@@ -50,7 +50,7 @@ public abstract class JWTCallerPrincipal implements JsonWebToken {
      *                JsonWebToken interface be displayed.
      * @return human readable presentation of the caller principal and associated JWT.
      */
-    public abstract String toString(boolean showAll);
+    public abstract String toString(final boolean showAll);
 
     public <T> Optional<T> claim(final String claimName) {
         final T claim = (T) getClaim(claimName);

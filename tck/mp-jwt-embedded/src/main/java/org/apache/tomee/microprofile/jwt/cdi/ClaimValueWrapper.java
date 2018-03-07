@@ -47,7 +47,7 @@ public class ClaimValueWrapper<T> implements ClaimValue<T> {
     public String toString() {
         return "ClaimValueWrapper{" +
                 "name='" + name + '\'' +
-                ", value=" + value +
+                ", value=" + value.get() +
                 '}';
     }
 }

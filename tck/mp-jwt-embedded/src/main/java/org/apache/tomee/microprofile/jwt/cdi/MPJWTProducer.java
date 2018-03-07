@@ -37,10 +37,10 @@ public class MPJWTProducer {
     public JsonWebToken currentPrincipal() {
         Objects.requireNonNull(httpServletRequest, "HTTP Servlet Request is required to produce a JSonWebToken principal.");
 
-        // not very beatiful, but avoids having the MPJWTFilter setting the request or the principal in a thread local
+        // not very beautiful, but avoids having the MPJWTFilter setting the request or the principal in a thread local
         // CDI integration already has one - dunno which approach is the best for now
         final Object tokenAttribute = httpServletRequest.getAttribute(JsonWebToken.class.getName());
-        if (tokenAttribute != null && Function.class.isInstance(tokenAttribute)) {
+        if (Function.class.isInstance(tokenAttribute)) {
             return (JsonWebToken) Function.class.cast(tokenAttribute).apply(httpServletRequest);
         }
 

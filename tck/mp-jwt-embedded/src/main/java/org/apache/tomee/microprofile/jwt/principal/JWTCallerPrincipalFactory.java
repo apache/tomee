@@ -28,6 +28,7 @@ import java.util.ServiceLoader;
  * The factory class that provides the token string to JWTCallerPrincipal parsing for a given implementation.
  */
 public abstract class JWTCallerPrincipalFactory {
+
     private static JWTCallerPrincipalFactory instance;
 
     /**
@@ -100,7 +101,8 @@ public abstract class JWTCallerPrincipalFactory {
                         instance = spi;
                     }
                 }
-            } catch (Throwable e) {
+
+            } catch (final Throwable e) {
                 System.err.printf("Warning: %s\n", e.getMessage());
             }
         }
@@ -112,7 +114,7 @@ public abstract class JWTCallerPrincipalFactory {
      *
      * @param resolver the instance to use.
      */
-    public static void setInstance(JWTCallerPrincipalFactory resolver) {
+    public static void setInstance(final JWTCallerPrincipalFactory resolver) {
         instance = resolver;
     }
 
@@ -123,5 +125,5 @@ public abstract class JWTCallerPrincipalFactory {
      * @return A JWTCallerPrincipal representation for the token.
      * @throws ParseException on parse or verification failure.
      */
-    public abstract JWTCallerPrincipal parse(String token, JWTAuthContextInfo authContextInfo) throws ParseException;
+    public abstract JWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException;
 }

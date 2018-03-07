@@ -35,7 +35,7 @@ public class JWTAuthContextInfo {
         this.issuedBy = issuedBy;
     }
 
-    public JWTAuthContextInfo(JWTAuthContextInfo orig) {
+    public JWTAuthContextInfo(final JWTAuthContextInfo orig) {
         this.signerKey = orig.signerKey;
         this.issuedBy = orig.issuedBy;
         this.expGracePeriodSecs = orig.expGracePeriodSecs;
@@ -45,7 +45,7 @@ public class JWTAuthContextInfo {
         return signerKey;
     }
 
-    public void setSignerKey(RSAPublicKey signerKey) {
+    public void setSignerKey(final RSAPublicKey signerKey) {
         this.signerKey = signerKey;
     }
 
@@ -53,7 +53,7 @@ public class JWTAuthContextInfo {
         return issuedBy;
     }
 
-    public void setIssuedBy(String issuedBy) {
+    public void setIssuedBy(final String issuedBy) {
         this.issuedBy = issuedBy;
     }
 
@@ -61,7 +61,7 @@ public class JWTAuthContextInfo {
         return expGracePeriodSecs;
     }
 
-    public void setExpGracePeriodSecs(int expGracePeriodSecs) {
+    public void setExpGracePeriodSecs(final int expGracePeriodSecs) {
         this.expGracePeriodSecs = expGracePeriodSecs;
     }
 }

@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 // todo add a qualifier here so we isolate our instance from what applications would do
 public class JsonbProducer {
 
-    private static Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger log = Logger.getLogger(MPJWTCDIExtension.class.getName());
 
     @Produces
     public Jsonb create() {

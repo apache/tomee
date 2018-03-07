@@ -25,10 +25,11 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Set;
 
-class ClaimInjectionPoint implements InjectionPoint {
+public class ClaimInjectionPoint implements InjectionPoint {
+
     private final Bean bean;
 
-    ClaimInjectionPoint(Bean bean) {
+    public ClaimInjectionPoint(final Bean bean) {
         this.bean = bean;
     }
 

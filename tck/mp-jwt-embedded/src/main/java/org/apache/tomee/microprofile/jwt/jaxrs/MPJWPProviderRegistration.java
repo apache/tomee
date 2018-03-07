@@ -24,11 +24,11 @@ import org.apache.tomee.microprofile.jwt.MPJWTFilter;
  * OpenEJB/TomEE hack to register a new provider on the fly
  * Could be package in tomee only or done in another way
  *
- * As soon as Roberto is done with the packaging, we can remove all this
+ * As soon as Roberto is done with the packaging, we can remove all this and providers are going to be scanned automatically
  */
 public class MPJWPProviderRegistration {
 
-    public void registerProvider(@Observes final ExtensionProviderRegistration event) { // openejb hack to register the provider
+    public void registerProvider(@Observes final ExtensionProviderRegistration event) {
         event.getProviders().add(new MPJWTFilter.MPJWTExceptionMapper());
         event.getProviders().add(new MPJWTSecurityAnnotationsInterceptorsFeature());
     }
