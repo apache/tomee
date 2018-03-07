@@ -1019,7 +1019,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
 
-        SystemInstance.get().fireEvent(new ExtensionProviderRegistration(server,
+        SystemInstance.get().fireEvent(new ExtensionProviderRegistration(
                 AppFinder.findAppContextOrWeb(Thread.currentThread().getContextClassLoader(), AppFinder.AppContextTransformer.INSTANCE), providers));
 
         if (!providers.isEmpty()) {

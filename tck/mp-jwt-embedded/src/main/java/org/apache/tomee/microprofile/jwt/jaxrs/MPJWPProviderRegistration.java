@@ -19,16 +19,6 @@ package org.apache.tomee.microprofile.jwt.jaxrs;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
-import org.eclipse.microprofile.auth.LoginConfig;
-
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.HandlesTypes;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
-import java.util.Set;
 
 /**
  * OpenEJB/TomEE hack to register a new provider on the fly
