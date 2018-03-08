@@ -979,15 +979,15 @@
             <artifactId>guava</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core-mapper</artifactId>
           </exclusion>
           <exclusion>
