@@ -170,7 +170,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.15.2</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -981,6 +981,10 @@
           <exclusion>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-databind</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.codehaus.jackson</groupId>
