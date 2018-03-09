@@ -23,6 +23,7 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
   <container qualifier="tomee-remote" default="true">
     <configuration>
+      <property name="debug">false</property>
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
