@@ -52,12 +52,6 @@
       <type>war</type>
     </dependency>
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-microprofile</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- When we have everything
     <dependency>
       <groupId>org.eclipse.microprofile</groupId>

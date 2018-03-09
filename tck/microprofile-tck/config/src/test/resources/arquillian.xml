@@ -23,6 +23,7 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
   <container qualifier="tomee-remote" default="true">
     <configuration>
+      <property name="debug">false</property>
       <property name="httpPort">-1</property>
       <property name="ajpPort">-1</property>
       <property name="stopPort">-1</property>
@@ -33,6 +34,7 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         config.test = SUCCESS
+        org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy = false
       </property>
     </configuration>
   </container>
