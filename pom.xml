@@ -34,7 +34,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.5-TT.1</version>
+  <version>7.0.5-TT.2</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -107,7 +107,7 @@
     <johnzon.version>1.0.0</johnzon.version>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
     <xbeanVersion>4.5</xbeanVersion>
@@ -132,9 +132,12 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.24</tomcat.version>
+    <tomcat.version>8.5.28</tomcat.version>
 
     <cxf.version>3.1.14</cxf.version>
+    <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
+    <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.arquillian>1.1.13.Final</version.arquillian>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -167,7 +170,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.14.5</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -181,7 +184,7 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.hsqldb>2.3.5</version.hsqldb>
+    <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
@@ -976,11 +979,15 @@
             <artifactId>guava</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core-mapper</artifactId>
           </exclusion>
           <exclusion>
