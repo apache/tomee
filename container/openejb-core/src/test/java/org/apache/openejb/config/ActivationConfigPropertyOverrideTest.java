@@ -18,11 +18,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.activemq.ActivationContainerOverwriteBothConfigurationTest;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.core.builder.AppModuleBuilder;
 import org.apache.openejb.core.builder.MdbBuilder;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -370,6 +367,41 @@ public class ActivationConfigPropertyOverrideTest{
             assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
         }
 
+    }
+
+    @Test
+    public void testOverrideFromContainerDefinedInAppModule() throws Exception {
+        SystemInstance.reset();
+
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        final EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new MessageDrivenBean("Yellow", Orange.class));
+        ejbJar.addEnterpriseBean(new MessageDrivenBean("Orange", Yellow.class));
+
+        final AppModule appModule = new AppModule(new EjbModule(ejbJar));
+        appModule.setModuleId("mymodule");
+
+        final Container container = new Container();
+        container.setId("mycontainer");
+        container.setCtype("MESSAGE");
+        container.getProperties().setProperty("activation.DeliveryActive", "false");
+        appModule.getContainers().add(container);
+
+
+        final AppInfo appInfo = config.configureApplication(appModule);
+        assertEquals(1, appInfo.ejbJars.size());
+        final EjbJarInfo ejbJarInfo = appInfo.ejbJars.get(0);
+
+        assertEquals(2, ejbJarInfo.enterpriseBeans.size());
+        final MessageDrivenBeanInfo orange = (MessageDrivenBeanInfo) ejbJarInfo.enterpriseBeans.get(0);
+        final MessageDrivenBeanInfo yellow = (MessageDrivenBeanInfo) ejbJarInfo.enterpriseBeans.get(1);
+
+        assertEquals("false", orange.activationProperties.get("DeliveryActive"));
+        assertEquals("false", yellow.activationProperties.get("DeliveryActive"));
     }
 
 

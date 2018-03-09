@@ -26,11 +26,11 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.asset.UrlAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,14 +40,17 @@ import static org.junit.Assert.assertEquals;
 public class ManagedExecutorServiceGetPrincipalInTaskTest {
     @Deployment(testable = false)
     public static Archive<?> app() {
+        ClassLoader cl = ManagedExecutorServiceGetPrincipalInTaskTest.class.getClassLoader();
+        URL tcUserFile = cl.getResource("managed/tomcat-users.xml");
+
         return ShrinkWrap.create(WebArchive.class, "mp.war")
             .addClasses(ConcurrencyServlet.class, User.class)
             .addAsManifestResource(new StringAsset(
                 "<Context>" +
                 "   <Realm className=\"" + MemoryRealm.class.getName() +
-                    "\" pathname=\"" +
-                    new File("src/test/resources/managed/tomcat-users.xml").getAbsolutePath() + "\" />" +
-                "</Context>"), "context.xml");
+                    "\" pathname=\""+ tcUserFile.getFile() + "\" />" +
+                "</Context>"), "context.xml")
+                .addAsWebInfResource(new UrlAsset(cl.getResource("managed/web.xml")), "web.xml");
     }
 
     @ArquillianResource

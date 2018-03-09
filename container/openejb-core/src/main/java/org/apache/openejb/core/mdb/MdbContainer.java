@@ -86,7 +86,7 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.createTrans
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleApplicationException;
 import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSystemException;
 
-public class MdbContainer implements RpcContainer {
+public class MdbContainer implements RpcContainer, BaseMdbContainer {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
 
     private static final ThreadLocal<BeanContext> CURRENT = new ThreadLocal<>();
@@ -174,7 +174,7 @@ public class MdbContainer implements RpcContainer {
         final int instanceLimit = options.get("InstanceLimit", this.instanceLimit);
         // create the message endpoint
         final MdbInstanceFactory instanceFactory = new MdbInstanceFactory(beanContext, securityService, instanceLimit);
-        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, xaResourceWrapper);
+        final EndpointFactory endpointFactory = new EndpointFactory(activationSpec, this, beanContext, instanceFactory, null, xaResourceWrapper, false);
 
         // update the data structures
         // this must be done before activating the endpoint since the ra may immedately begin delivering messages
@@ -261,7 +261,7 @@ public class MdbContainer implements RpcContainer {
             objectRecipe.disallow(Option.FIELD_INJECTION);
 
 
-            final Map<String, String> activationProperties = beanContext.getActivationProperties();;
+            final Map<String, String> activationProperties = beanContext.getActivationProperties();
             for (final Map.Entry<String, String> entry : activationProperties.entrySet()) {
                 objectRecipe.setMethodProperty(entry.getKey(), entry.getValue());
             }

@@ -1484,12 +1484,14 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         realms.put(standardContext.getName(), realm);
     }
 
-    private static boolean shouldNotDeploy(StandardContext standardContext) {
+    private static boolean shouldNotDeploy(final StandardContext standardContext) {
         if (StandardHost.class.isInstance(standardContext.getParent())) {
             final StandardHost host = StandardHost.class.cast(standardContext.getParent());
-            if (host.getAutoDeploy() && new File(host.getAppBaseFile(), standardContext.getPath()).isDirectory() && (
-                    new File(host.getAppBaseFile(), standardContext.getPath() + ".ear").exists() ||
-                    new File(host.getAppBaseFile(), standardContext.getPath() + ".rar").exists())
+            if (host.getAutoDeploy() && standardContext.getDocBase() != null && 
+                    standardContext.getDocBase() != null &&
+                    new File(host.getAppBaseFile(), standardContext.getDocBase()).isDirectory() && (
+                    new File(host.getAppBaseFile(), standardContext.getDocBase() + ".ear").exists() ||
+                    new File(host.getAppBaseFile(), standardContext.getDocBase() + ".rar").exists())
             ) {
 
                 logger.info(String.format("Not deploying exploded directory %s as Java EE artifact exists which will be deployed.",
