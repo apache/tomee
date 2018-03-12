@@ -130,7 +130,7 @@
 
     <tomcat.version>7.0.68</tomcat.version>
 
-    <cxf.version>2.6.16</cxf.version>
+    <cxf.version>2.6.17-TT.2</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -173,7 +173,7 @@
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
     <myfaces.version>2.1.17</myfaces.version>
-    <mojarra.version>2.1.29</mojarra.version>
+    <mojarra.version>2.1.29-09</mojarra.version>
     <slf4j.version>1.7.14</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
@@ -524,6 +524,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>maven</module>
         <module>container</module>
@@ -592,6 +593,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>maven</module>
         <module>container</module>
         <module>server</module>
@@ -604,6 +606,7 @@
     <profile>
       <id>openejb</id>
       <modules>
+        <module>deps</module>
         <module>itests</module>
         <module>container</module>
         <module>server</module>
@@ -840,6 +843,11 @@
     <!--<url>http://download.java.net/maven/1</url>-->
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1679,7 +1687,7 @@
       <dependency>
         <groupId>org.apache.ws.security</groupId>
         <artifactId>wss4j</artifactId>
-        <version>1.6.15</version>
+        <version>1.6.19</version>
         <exclusions>
           <exclusion>
             <artifactId>commons-logging</artifactId>
@@ -2085,10 +2093,17 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
-    </site>
+    <repository>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <reporting>
