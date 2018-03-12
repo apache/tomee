@@ -132,6 +132,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire.version}</version>
         <configuration>
+          <reuseForks>true</reuseForks>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
           </suiteXmlFiles>

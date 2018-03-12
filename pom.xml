@@ -96,7 +96,7 @@
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <surefire.version>2.20</surefire.version>
+    <surefire.version>2.21.0</surefire.version>
 
     <!-- To easily change the javaee api version -->
     <version.javaee-api>8.0-SNAPSHOT</version.javaee-api>
