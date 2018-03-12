@@ -120,7 +120,7 @@ public class CounterCallbacksTest implements ExecutionObserver {
 
     @Override
     public void onExecution(Object value) {
-        System.out.println("Test step -> " + value);
+        System.out.println("[" + System.currentTimeMillis() + "] Test step -> " + value);
         this.received.add(value);
     }
 }

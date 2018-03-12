@@ -36,6 +36,7 @@
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
     <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>
+    <microprofile.work-dir>${project.build.directory}/microprofile-work-dir</microprofile.work-dir>
   </properties>
 
   <dependencies>
@@ -87,6 +88,13 @@
     <dependency> <!-- to be sure to have it -->
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-plume-webapp</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency> <!-- to be sure to have it -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-microprofile-webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
       <scope>provided</scope>
@@ -225,6 +233,25 @@
               </artifactItems>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-tomcat-for-microprofile</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
+                  <type>zip</type>
+                  <outputDirectory>${microprofile.work-dir}</outputDirectory>
+                  <destFileName>apache-tomcat-${tomcat.version}.zip</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
@@ -323,6 +350,22 @@
               </source>
             </configuration>
           </execution>
+          <execution>
+            <id>execute-microprofile-installer</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <properties>
+                <tomee.workdir>${microprofile.work-dir}</tomee.workdir>
+                <tomee.webapp>tomee-microprofile-webapp</tomee.webapp>
+              </properties>
+              <source>
+                new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
+              </source>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
 
@@ -375,6 +418,21 @@
               <goal>single</goal>
             </goals>
           </execution>
+          <execution>
+            <id>microprofile</id>
+            <phase>package</phase>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/tomee-microprofile.xml</descriptor>
+              </descriptors>
+              <attach>false</attach>
+              <appendAssemblyId>false</appendAssemblyId>
+              <finalName>apache-tomee-microprofile-${project.version}</finalName>
+            </configuration>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
 
@@ -419,6 +477,16 @@
                   <file>${project.build.directory}/apache-tomee-plume-${project.version}.tar.gz</file>
                   <type>tar.gz</type>
                   <classifier>plume</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-microprofile-${project.version}.zip</file>
+                  <type>zip</type>
+                  <classifier>microprofile</classifier>
+                </artifact>
+                <artifact>
+                  <file>${project.build.directory}/apache-tomee-microprofile-${project.version}.tar.gz</file>
+                  <type>tar.gz</type>
+                  <classifier>microprofile</classifier>
                 </artifact>
               </artifacts>
             </configuration>
