@@ -53,11 +53,11 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.apache.xbean.asm5.Opcodes.ACC_PUBLIC;
-import static org.apache.xbean.asm5.Opcodes.ACC_SUPER;
-import static org.apache.xbean.asm5.Opcodes.ALOAD;
-import static org.apache.xbean.asm5.Opcodes.INVOKESPECIAL;
-import static org.apache.xbean.asm5.Opcodes.RETURN;
+import static org.apache.xbean.asm6.Opcodes.ACC_PUBLIC;
+import static org.apache.xbean.asm6.Opcodes.ACC_SUPER;
+import static org.apache.xbean.asm6.Opcodes.ALOAD;
+import static org.apache.xbean.asm6.Opcodes.INVOKESPECIAL;
+import static org.apache.xbean.asm6.Opcodes.RETURN;
 
 /**
  * @version $Rev$ $Date$

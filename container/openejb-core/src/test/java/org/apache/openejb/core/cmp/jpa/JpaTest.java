@@ -54,8 +54,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.apache.xbean.asm5.Opcodes.ACC_PRIVATE;
-import static org.apache.xbean.asm5.Opcodes.ACC_TRANSIENT;
+import static org.apache.xbean.asm6.Opcodes.ACC_PRIVATE;
+import static org.apache.xbean.asm6.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
     static {
