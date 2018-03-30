@@ -21,9 +21,9 @@
   <name>OpenEJB :: Web Examples :: Moviefun Rest</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>1.7.6-TT.3</tomee.version>
+    <tomee.version>1.7.6-TT.4</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
-    <version.openejb>4.7.6-TT.3</version.openejb>
+    <version.openejb>4.7.6-TT.4</version.openejb>
   </properties>
   <repositories>
     <repository>
