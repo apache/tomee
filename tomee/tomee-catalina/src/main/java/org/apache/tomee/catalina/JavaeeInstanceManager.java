@@ -223,7 +223,11 @@ public class JavaeeInstanceManager implements InstanceManager {
         private static Object unwrapWebSocketPojo(final Object o) {
             try {
                 return WEB_SOCKET_TYPES.getPojo == null ? o : WEB_SOCKET_TYPES.getPojo.invoke(o);
-            } catch (final IllegalAccessException | InvocationTargetException | NullPointerException e) {
+            } catch (final IllegalAccessException e) {
+                return o;
+            } catch (final InvocationTargetException e) {
+                return o;
+            } catch (final NullPointerException e) {
                 return o;
             }
         }
