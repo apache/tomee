@@ -197,7 +197,7 @@ public class JavaeeInstanceManager implements InstanceManager {
         }
     }
 
-    private static class WebSocketTypes { // extracted for lazy loading
+    private static final class WebSocketTypes { // extracted for lazy loading
         private static final WebSocketTypes WEB_SOCKET_TYPES = new WebSocketTypes();
         private final Method getPojo;
 
