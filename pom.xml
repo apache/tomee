@@ -100,7 +100,7 @@
     <!-- To easily change the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
 
-    <openjpa.version>2.4.2</openjpa.version>
+    <openjpa.version>2.4.3-SNAPSHOT</openjpa.version>
     <org.apache.openwebbeans.version>1.7.5-SNAPSHOT</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.0.0</johnzon.version>
@@ -1244,7 +1244,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm5-shaded</artifactId>
+        <artifactId>xbean-asm6-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>

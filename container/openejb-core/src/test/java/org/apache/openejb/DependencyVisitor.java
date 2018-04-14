@@ -45,16 +45,16 @@
  */
 package org.apache.openejb;
 
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.Attribute;
-import org.apache.xbean.asm5.FieldVisitor;
-import org.apache.xbean.asm5.Label;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.Type;
-import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
-import org.apache.xbean.asm5.signature.SignatureReader;
-import org.apache.xbean.asm5.signature.SignatureVisitor;
+import org.apache.xbean.asm6.AnnotationVisitor;
+import org.apache.xbean.asm6.Attribute;
+import org.apache.xbean.asm6.FieldVisitor;
+import org.apache.xbean.asm6.Label;
+import org.apache.xbean.asm6.MethodVisitor;
+import org.apache.xbean.asm6.Opcodes;
+import org.apache.xbean.asm6.Type;
+import org.apache.xbean.asm6.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm6.signature.SignatureReader;
+import org.apache.xbean.asm6.signature.SignatureVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -401,7 +401,7 @@ public class DependencyVisitor extends EmptyVisitor {
         private final DependencyVisitor delegate;
 
         public SignatureAdapter(final DependencyVisitor dependencyVisitor) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM6);
             delegate = dependencyVisitor;
         }
 
