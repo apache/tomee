@@ -68,6 +68,16 @@
 
     <!-- Test only dependencies -->
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>axis</groupId>
       <artifactId>axis</artifactId>
       <scope>test</scope>
