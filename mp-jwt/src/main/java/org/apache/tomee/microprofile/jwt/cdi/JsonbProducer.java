@@ -20,7 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
+import javax.json.bind.spi.JsonbProvider;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +32,7 @@ public class JsonbProducer {
 
     @Produces
     public Jsonb create() {
-        return JsonbBuilder.create();
+        return JsonbProvider.provider().create().build();
     }
 
     public void close(@Disposes final Jsonb jsonb) {

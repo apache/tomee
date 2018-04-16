@@ -50,7 +50,7 @@ public class ClaimInjectionPoint implements InjectionPoint {
 
     @Override
     public Set<Annotation> getQualifiers() {
-        return Collections.singleton(DefaultLiteral.INSTANCE);
+        return Collections.<Annotation>singleton(DefaultLiteral.INSTANCE);
     }
 
     @Override
