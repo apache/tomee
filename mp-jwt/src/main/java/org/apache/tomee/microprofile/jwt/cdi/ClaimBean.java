@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 @Vetoed
@@ -193,27 +194,39 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
                     final ClaimValueWrapper claimValueWrapper = new ClaimValueWrapper(key);
                     if (ParameterizedType.class.isInstance(claimValueType) && isOptional(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(() -> {
-                            final T claimValue = getClaimValue(key);
-                            return Optional.ofNullable(claimValue);
+                        claimValueWrapper.setValue(new Supplier() {
+                            @Override
+                            public Object get() {
+                                final T claimValue = ClaimBean.this.getClaimValue(key);
+                                return Optional.ofNullable(claimValue);
+                            }
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isSet(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(() -> {
-                            final T claimValue = getClaimValue(key);
-                            return claimValue;
+                        claimValueWrapper.setValue(new Supplier() {
+                            @Override
+                            public Object get() {
+                                final T claimValue = ClaimBean.this.getClaimValue(key);
+                                return claimValue;
+                            }
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isList(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(() -> {
-                            final T claimValue = getClaimValue(key);
-                            return claimValue;
+                        claimValueWrapper.setValue(new Supplier() {
+                            @Override
+                            public Object get() {
+                                final T claimValue = ClaimBean.this.getClaimValue(key);
+                                return claimValue;
+                            }
                         });
 
                     } else if (Class.class.isInstance(claimValueType)) {
-                        claimValueWrapper.setValue(() -> {
-                            final T claimValue = getClaimValue(key);
-                            return claimValue;
+                        claimValueWrapper.setValue(new Supplier() {
+                            @Override
+                            public Object get() {
+                                final T claimValue = ClaimBean.this.getClaimValue(key);
+                                return claimValue;
+                            }
                         });
 
                     } else {
