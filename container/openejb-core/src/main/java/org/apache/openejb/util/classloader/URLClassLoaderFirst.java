@@ -302,6 +302,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (commons.startsWith("cli.")) {
                         return true;
                     }
+                    if (commons.startsWith("codec.")) {
+                        return true;
+                    }
                     if (commons.startsWith("collections.")) {
                         return true;
                     }
