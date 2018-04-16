@@ -254,7 +254,7 @@
           </dependency>
           <dependency>
             <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-asm5-shaded</artifactId>
+            <artifactId>xbean-asm6-shaded</artifactId>
             <version>${xbeanVersion}</version>
           </dependency>
           <dependency>

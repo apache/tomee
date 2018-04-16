@@ -26,10 +26,10 @@ import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassVisitor;
-import org.apache.xbean.asm5.ClassWriter;
-import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm6.ClassReader;
+import org.apache.xbean.asm6.ClassVisitor;
+import org.apache.xbean.asm6.ClassWriter;
+import org.apache.xbean.asm6.Opcodes;
 import org.apache.xbean.naming.context.ImmutableContext;
 
 import javax.naming.Context;
@@ -54,8 +54,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.apache.xbean.asm5.Opcodes.ACC_PRIVATE;
-import static org.apache.xbean.asm5.Opcodes.ACC_TRANSIENT;
+import static org.apache.xbean.asm6.Opcodes.ACC_PRIVATE;
+import static org.apache.xbean.asm6.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
     static {
@@ -367,7 +367,7 @@ public class JpaTest extends TestCase {
 
     public static class FieldAdderClassVisitor extends ClassVisitor {
         public FieldAdderClassVisitor(final ClassVisitor classVisitor) {
-            super(Opcodes.ASM5, classVisitor);
+            super(Opcodes.ASM6, classVisitor);
         }
 
         public void visitEnd() {

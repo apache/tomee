@@ -100,8 +100,8 @@
     <!-- To easily change the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
 
-    <openjpa.version>2.4.2</openjpa.version>
-    <org.apache.openwebbeans.version>1.7.4</org.apache.openwebbeans.version>
+    <openjpa.version>2.4.3-SNAPSHOT</openjpa.version>
+    <org.apache.openwebbeans.version>1.7.5-SNAPSHOT</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.0.0</johnzon.version>
 
@@ -109,7 +109,7 @@
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.5</xbeanVersion>
+    <xbeanVersion>4.7</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator/>
@@ -131,9 +131,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.28</tomcat.version>
+    <tomcat.version>8.5.30</tomcat.version>
 
-    <cxf.version>3.1.13</cxf.version>
+    <cxf.version>3.1.15</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.arquillian>1.1.13.Final</version.arquillian>
@@ -1244,7 +1244,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm5-shaded</artifactId>
+        <artifactId>xbean-asm6-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
