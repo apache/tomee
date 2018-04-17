@@ -127,7 +127,7 @@ public class MockitoExtension implements Extension {
         }
 
         public boolean isAlternative() {
-            return true;
+            return false;
         }
 
         public T create(final CreationalContext<T> context) {

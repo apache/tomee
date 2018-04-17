@@ -37,6 +37,7 @@
     <module>cdi-tomee</module>
     <module>bval-tomee</module>
     <module>microprofile-tck</module>
+    <module>mp-jwt-embedded</module>
 
     <!-- TODO: either really use this module or delete it -->
     <module>bval-embedded</module>
