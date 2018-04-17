@@ -151,15 +151,17 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final String moduleID = newContext.getBeanContext().getModuleID();
         JavaSecurityManagers.setContextID(moduleID);
 
+        final SecurityContext defaultSecurityContext = getDefaultSecurityContext();
+
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
-            (providedSecurityContext != null ? providedSecurityContext.context : null);
-        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
+                (providedSecurityContext != null ? providedSecurityContext.context : null);
+        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultSecurityContext)) {
             final Identity identity = clientIdentity.get();
             if (identity != null) {
                 securityContext = new SecurityContext(identity.subject);
             } else {
-                securityContext = defaultContext;
+                securityContext = defaultSecurityContext;
             }
         }
 
@@ -396,6 +398,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         } else if (o == null) {
             clientIdentity.remove();
         }
+    }
+
+    protected SecurityContext getDefaultSecurityContext() {
+        return defaultContext;
     }
 
     public static final class ProvidedSecurityContext {

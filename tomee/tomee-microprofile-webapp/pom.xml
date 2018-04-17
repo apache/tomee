@@ -39,6 +39,9 @@
 
     <microprofile.config.api.version>1.3-SNAPSHOT</microprofile.config.api.version>
     <microprofile.config.impl.version>1.2-SNAPSHOT</microprofile.config.impl.version>
+
+    <microprofile.jwt.api.version>1.1-SNAPSHOT</microprofile.jwt.api.version>
+    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
   </properties>
 
   <dependencies>
@@ -60,6 +63,19 @@
       <artifactId>geronimo-config-impl</artifactId>
       <version>${microprofile.config.impl.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${microprofile.jwt.api.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mp-jwt</artifactId>
+      <version>${microprofile.jwt.impl.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -39,6 +39,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class TomcatSecurityService extends AbstractSecurityService {
     private static final boolean ONLY_DEFAULT_REALM = "true".equals(SystemInstance.get().getProperty("tomee.realm.only-default", "false"));
@@ -328,6 +329,26 @@ public class TomcatSecurityService extends AbstractSecurityService {
             this.oldIdentity = oldIdentity;
             this.hadRunAs = hadRunAs;
         }
+    }
+
+    @Override
+    protected SecurityContext getDefaultSecurityContext() {
+        final Request request = OpenEJBSecurityListener.requests.get();
+        if (request != null) {
+            final Object subjectCallable = request.getAttribute("javax.security.auth.subject.callable");
+            if (subjectCallable != null && Callable.class.isInstance(subjectCallable)) {
+                // maybe we should check, but it's so specific ...
+                try {
+                    final Subject subject = (Subject) Callable.class.cast(subjectCallable).call();
+                    return new SecurityContext(subject);
+
+                } catch (final Exception e) {
+                    // ignore and let it go to the default implementation
+                }
+            }
+        }
+
+        return super.getDefaultSecurityContext();
     }
 
 }
