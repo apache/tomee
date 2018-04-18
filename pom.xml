@@ -134,7 +134,7 @@
 
     <tomcat.version>9.0.6</tomcat.version>
 
-    <cxf.version>3.2.1</cxf.version>
+    <cxf.version>3.2.4</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
