@@ -1,0 +1,56 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">{{i18n "movie"}}</h4>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label for="{{id_next}}" class="col-lg-2 control-label">{{i18n "title"}}</label>
+
+                    <div class="col-lg-10">
+                        <input class="form-control ux-title" id="{{id_current}}" placeholder="{{i18n 'title'}}"
+                               type="text" value="{{title}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{id_next}}" class="col-lg-2 control-label">{{i18n "director"}}</label>
+
+                    <div class="col-lg-10">
+                        <input class="form-control ux-director" id="{{id_current}}"
+                               type="text" placeholder="{{i18n 'director'}}" value="{{director}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{id_next}}" class="col-lg-2 control-label">{{i18n "genre"}}</label>
+
+                    <div class="col-lg-10">
+                        <input class="form-control ux-genre" id="{{id_current}}" placeholder="{{i18n 'genre'}}"
+                               type="text" value="{{genre}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{id_next}}" class="col-lg-2 control-label">{{i18n "rating"}}</label>
+
+                    <div class="col-lg-10">
+                        <input class="form-control ux-rating" id="{{id_current}}"
+                               type="number" min="0" max="10" placeholder="{{i18n 'rating'}}" value="{{rating}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{id_next}}" class="col-lg-2 control-label">{{i18n "year"}}</label>
+
+                    <div class="col-lg-10">
+                        <input class="form-control ux-year" id="{{id_current}}" placeholder="{{i18n 'year'}}"
+                               type="number" min="1900" max="{{currentYear}}" value="{{year}}">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default ux-close" data-dismiss="modal">{{i18n "close"}}</button>
+            <button type="button" class="btn btn-primary ux-save" data-dismiss="modal">{{i18n "save"}}</button>
+        </div>
+    </div>
+</div>

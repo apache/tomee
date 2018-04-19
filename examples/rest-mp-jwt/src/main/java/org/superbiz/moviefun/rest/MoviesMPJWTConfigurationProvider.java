@@ -14,7 +14,9 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.config;
+package org.superbiz.moviefun.rest;
+
+import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
@@ -27,7 +29,7 @@ import java.util.Base64;
 import java.util.Optional;
 
 @Dependent
-public class JWTAuthContextInfoProvider {
+public class MoviesMPJWTConfigurationProvider {
 
     @Produces
     Optional<JWTAuthContextInfo> getOptionalContextInfo() throws NoSuchAlgorithmException, InvalidKeySpecException {

@@ -1,0 +1,50 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{i18n "movies"}}</h3>
+            </div>
+            <div class="panel-body">
+                <div class="input-group">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="ux-selected-filter">{{i18n "title"}}</span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="title" class="ux-filter">{{i18n "title"}}</a></li>
+                            <li><a href="director" class="ux-filter">{{i18n "director"}}</a></li>
+                            <li><a href="genre" class="ux-filter">{{i18n "genre"}}</a></li>
+                            <li><a href="rating" class="ux-filter">{{i18n "rating"}}</a></li>
+                            <li><a href="year" class="ux-filter">{{i18n "year"}}</a></li>
+                        </ul>
+                    </div><!-- /btn-group -->
+                    <input type="text" class="form-control ux-filter-field">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary ux-clear-filter-action" type="button">
+                            <span class="glyphicon glyphicon-remove-circle"></span>
+                        </button>
+                        <button class="btn btn-primary ux-filter-action" type="button">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>{{i18n "title"}}</th>
+                        <th>{{i18n "director"}}</th>
+                        <th>{{i18n "genre"}}</th>
+                        <th>{{i18n "rating"}}</th>
+                        <th>{{i18n "year"}}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <button type="button" class="btn btn-primary ux-add-btn">{{i18n "add.movie"}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

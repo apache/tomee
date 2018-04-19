@@ -18,7 +18,6 @@ package org.apache.tomee.microprofile.jwt.cdi;
 
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfoProvider;
 import org.eclipse.microprofile.jwt.Claim;
 
 import javax.enterprise.event.Observes;
@@ -37,24 +36,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MPJWTCDIExtension implements Extension {
 
-    private static final Predicate<InjectionPoint> NOT_PROVIDERS = new Predicate<InjectionPoint>() {
-        @Override
-        public boolean test(final InjectionPoint ip) {
-            return (Class.class.isInstance(ip.getType())) || (ParameterizedType.class.isInstance(ip.getType()) && ((ParameterizedType) ip.getType()).getRawType() != Provider.class);
-        }
-    };
-    private static final Predicate<InjectionPoint> NOT_INSTANCES = new Predicate<InjectionPoint>() {
-        @Override
-        public boolean test(final InjectionPoint ip) {
-            return (Class.class.isInstance(ip.getType())) || (ParameterizedType.class.isInstance(ip.getType()) && ((ParameterizedType) ip.getType()).getRawType() != Instance.class);
-        }
-    };
+    private static final Predicate<InjectionPoint> NOT_PROVIDERS = ip -> (Class.class.isInstance(ip.getType())) || (ParameterizedType.class.isInstance(ip.getType()) && ((ParameterizedType) ip.getType()).getRawType() != Provider.class);
+    private static final Predicate<InjectionPoint> NOT_INSTANCES = ip -> (Class.class.isInstance(ip.getType())) || (ParameterizedType.class.isInstance(ip.getType()) && ((ParameterizedType) ip.getType()).getRawType() != Instance.class);
     private static final Map<Type, Type> REPLACED_TYPES = new HashMap<>();
 
     static {
@@ -79,44 +67,24 @@ public class MPJWTCDIExtension implements Extension {
         final Set<Type> types = injectionPoints.stream()
                 .filter(NOT_PROVIDERS)
                 .filter(NOT_INSTANCES)
-                .map(new Function<InjectionPoint, Type>() {
-                    @Override
-                    public Type apply(final InjectionPoint ip) {
-                        return REPLACED_TYPES.getOrDefault(ip.getType(), ip.getType());
-                    }
-                })
+                .map(ip -> REPLACED_TYPES.getOrDefault(ip.getType(), ip.getType()))
                 .collect(Collectors.<Type>toSet());
 
         final Set<Type> providerTypes = injectionPoints.stream()
                 .filter(NOT_PROVIDERS.negate())
-                .map(new Function<InjectionPoint, Type>() {
-                    @Override
-                    public Type apply(final InjectionPoint ip) {
-                        return ((ParameterizedType) ip.getType()).getActualTypeArguments()[0];
-                    }
-                })
+                .map(ip -> ((ParameterizedType) ip.getType()).getActualTypeArguments()[0])
                 .collect(Collectors.<Type>toSet());
 
         final Set<Type> instanceTypes = injectionPoints.stream()
                 .filter(NOT_INSTANCES.negate())
-                .map(new Function<InjectionPoint, Type>() {
-                    @Override
-                    public Type apply(final InjectionPoint ip) {
-                        return ((ParameterizedType) ip.getType()).getActualTypeArguments()[0];
-                    }
-                })
+                .map(ip -> ((ParameterizedType) ip.getType()).getActualTypeArguments()[0])
                 .collect(Collectors.<Type>toSet());
 
         types.addAll(providerTypes);
         types.addAll(instanceTypes);
 
         types.stream()
-                .map(new Function<Type, ClaimBean>() {
-                    @Override
-                    public ClaimBean apply(final Type type) {
-                        return new ClaimBean<>(bm, type);
-                    }
-                })
+                .map(type -> new ClaimBean<>(bm, type))
                 .forEach(new Consumer<ClaimBean>() {
                     @Override
                     public void accept(final ClaimBean claimBean) {
@@ -129,7 +97,6 @@ public class MPJWTCDIExtension implements Extension {
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(JWTAuthContextInfoProvider.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTProducer.class));
     }
 

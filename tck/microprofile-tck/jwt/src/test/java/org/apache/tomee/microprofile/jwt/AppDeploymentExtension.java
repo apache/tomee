@@ -68,7 +68,8 @@ public class AppDeploymentExtension implements LoadableExtension {
             if (!(appArchive instanceof WebArchive)) {
                 return;
             }
-            WebArchive war = WebArchive.class.cast(appArchive);
+            final WebArchive war = WebArchive.class.cast(appArchive);
+            war.addClass(JWTAuthContextInfoProvider.class);
 
             log.info("Augmented war: \n"+war.toString(true));
         }
