@@ -508,7 +508,6 @@
         <module>gradle</module>
         <module>container</module>
         <module>server</module>
-        <module>mp-jwt</module>
         <module>examples</module>
         <module>assembly</module>
         <module>tck</module>
