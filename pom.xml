@@ -94,8 +94,8 @@
   <properties>
 
     <tomee.version>${project.version}</tomee.version>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
 
     <!-- To easily change the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
@@ -125,7 +125,7 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.4-incubating</batchee.version>    
+    <batchee.version>0.4-incubating</batchee.version>
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
@@ -193,6 +193,9 @@
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
+
+    <mp-jwt.version>1.0</mp-jwt.version>
+    <mp-jwt-tck.version>${mp-jwt.version}</mp-jwt-tck.version>
   </properties>
 
   <build>
@@ -364,8 +367,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -508,6 +511,7 @@
         <module>gradle</module>
         <module>container</module>
         <module>server</module>
+        <module>mp-jwt</module>
         <module>examples</module>
         <module>assembly</module>
         <module>tck</module>
