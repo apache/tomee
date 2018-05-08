@@ -43,7 +43,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.6-TT.4</version>
+        <version>1.7.6-TT.5</version>
       </plugin>
     </plugins>
   </build>

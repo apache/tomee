@@ -98,7 +98,7 @@
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
     <openejb.version>4.7.6-TT.4</openejb.version>
-    <tomee.version>1.7.6-TT.4</tomee.version>
+    <tomee.version>1.7.6-TT.5</tomee.version>
 
     <openjpa.version>2.4.2</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>

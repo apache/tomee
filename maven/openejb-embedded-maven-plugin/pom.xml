@@ -20,7 +20,7 @@
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.openejb.maven</groupId>
-    <version>1.7.6-TT.4</version>
+    <version>1.7.6-TT.5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>maven-util</artifactId>
-      <version>1.7.6-TT.4</version>
+      <version>1.7.6-TT.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
