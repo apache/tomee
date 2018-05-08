@@ -1429,10 +1429,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     private static boolean shouldNotDeploy(final StandardContext standardContext) {
         if (StandardHost.class.isInstance(standardContext.getParent())) {
 
-            final String catalinaHome = System.getProperty("catalina.home");
+            final String catalinaBase = System.getProperty("catalina.base");
             final StandardHost host = StandardHost.class.cast(standardContext.getParent());
 
-            final File appBase = new File(catalinaHome, host.getAppBase());
+            final File appBase = new File(catalinaBase, host.getAppBase());
 
             if (host.getAutoDeploy() && standardContext.getDocBase() != null &&
                     new File(appBase, standardContext.getDocBase()).isDirectory() && (
