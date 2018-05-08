@@ -26,7 +26,7 @@
 
   <artifactId>arquillian-openejb-embedded-4</artifactId>
   <name>OpenEJB :: Arquillian Adaptors Parent :: OpenEJB Container</name>
-  <version>4.7.6-TT.4</version>
+  <version>4.7.6-TT.5</version>
 
   <dependencies>
     <dependency>

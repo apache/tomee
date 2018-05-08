@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>1.7.6-TT.5</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
-    <version.openejb>4.7.6-TT.4</version.openejb>
+    <version.openejb>4.7.6-TT.5</version.openejb>
   </properties>
   <repositories>
     <repository>
