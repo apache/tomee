@@ -55,9 +55,6 @@ public class EarCommonsCodecTest {
         ear.addAsLibraries(codecLibs);
 
         System.out.println(ear.toString(true));
-
-        ear.as(ZipExporter.class).exportTo(new File("/tmp/codec.ear"));
-
         return ear;
     }
 
