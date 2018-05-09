@@ -1,6 +1,14 @@
-= TomEE EAP 1.7.6-TT.3
+= TomEE EAP 1.7.6-TT.5
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.5
+
+TOMEE-2190 check catalina base as opposed to catalina home for .ear and .rar files
+
+=== Changes in TomEE EAP 1.7.6-TT.4
+
+TOMEE-1694 resolve memory leak with WS http upgrade handler
 
 === Changes in TomEE EAP 1.7.6-TT.3
 

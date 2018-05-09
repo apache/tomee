@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian-tomee-tests</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.3</version>
+    <version>1.7.6-TT.5</version>
   </parent>
 
   <artifactId>arquillian-tomee-webprofile-tests</artifactId>
@@ -32,6 +32,12 @@
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
       <version>${commons-lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.11</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
