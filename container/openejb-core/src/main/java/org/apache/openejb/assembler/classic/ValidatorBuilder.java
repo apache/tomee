@@ -34,6 +34,7 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.naming.NamingException;
 import javax.validation.BootstrapConfiguration;
+import javax.validation.ClockProvider;
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
@@ -45,6 +46,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorContext;
 import javax.validation.ValidatorFactory;
 import javax.validation.executable.ExecutableType;
+import javax.validation.valueextraction.ValueExtractor;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
@@ -178,7 +180,7 @@ public final class ValidatorBuilder {
         final OpenEjbBootstrapConfig bootstrapConfig = new OpenEjbBootstrapConfig(
             providerClassName, info.constraintFactoryClass, info.messageInterpolatorClass, info.traversableResolverClass,
             info.parameterNameProviderClass, new HashSet<>(info.constraintMappings), info.executableValidationEnabled,
-            types, props);
+            types, props, info.clockProviderClassName, info.valueExtractorClassNames);
         final OpenEjbConfig config = new OpenEjbConfig(bootstrapConfig, target);
 
         target.ignoreXmlConfiguration();
@@ -274,6 +276,8 @@ public final class ValidatorBuilder {
         private final boolean executableValidationEnabled;
         private final Set<ExecutableType> validatedTypes;
         private final Map<String, String> props;
+        private final String clockProviderClassName;
+        private final Set<String> valueExtractorClassNames;
 
         public OpenEjbBootstrapConfig(final String providerClassName,
                                       final String constraintFactoryClass,
@@ -283,7 +287,9 @@ public final class ValidatorBuilder {
                                       final Set<String> constraintMappings,
                                       final boolean executableValidationEnabled,
                                       final Set<ExecutableType> validatedTypes,
-                                      final Map<String, String> props) {
+                                      final Map<String, String> props,
+                                      final String clockProviderClassName,
+                                      final Set<String> valueExtractorClassNames) {
             this.providerClassName = providerClassName;
             this.constraintFactoryClass = constraintFactoryClass;
             this.messageInterpolatorClass = messageInterpolatorClass;
@@ -293,6 +299,8 @@ public final class ValidatorBuilder {
             this.executableValidationEnabled = executableValidationEnabled;
             this.validatedTypes = validatedTypes;
             this.props = props;
+            this.clockProviderClassName = clockProviderClassName;
+            this.valueExtractorClassNames = valueExtractorClassNames;
         }
 
         @Override
@@ -338,6 +346,18 @@ public final class ValidatorBuilder {
         @Override
         public Map<String, String> getProperties() {
             return props;
+        }
+
+        @Override
+        public String getClockProviderClassName()
+        {
+            return clockProviderClassName;
+        }
+
+        @Override
+        public Set<String> getValueExtractorClassNames()
+        {
+            return valueExtractorClassNames;
         }
     }
 
@@ -415,6 +435,24 @@ public final class ValidatorBuilder {
         public BootstrapConfiguration getBootstrapConfiguration() {
             return bootstrap;
         }
+
+        @Override
+        public T clockProvider(ClockProvider clockProvider)
+        {
+            return delegate.clockProvider(clockProvider);
+        }
+
+        @Override
+        public T addValueExtractor(ValueExtractor<?> valueExtractor)
+        {
+            return delegate.addValueExtractor(valueExtractor);
+        }
+
+        @Override
+        public ClockProvider getDefaultClockProvider()
+        {
+            return delegate.getDefaultClockProvider();
+        }
     }
 
     private static final class OpenEJBValidatorFactory implements ValidatorFactory, Serializable {
@@ -470,6 +508,12 @@ public final class ValidatorBuilder {
         @Override
         public ParameterNameProvider getParameterNameProvider() {
             return delegate().getParameterNameProvider();
+        }
+
+        @Override
+        public ClockProvider getClockProvider()
+        {
+            return delegate().getClockProvider();
         }
 
         @Override

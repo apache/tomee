@@ -194,11 +194,7 @@
           <groupId>hsqldb</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>bval-core</artifactId>
-          <groupId>org.apache.bval</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>bval-jsr303</artifactId>
+          <artifactId>bval-jsr</artifactId>
           <groupId>org.apache.bval</groupId>
         </exclusion>
         <exclusion>

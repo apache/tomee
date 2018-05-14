@@ -166,7 +166,7 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-net.version>3.3</commons-net.version>
 
-    <bval.version>1.1.2</bval.version>
+    <bval.version>2.0.0-SNAPSHOT</bval.version>
     <org.apache.activemq.version>5.15.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
@@ -809,11 +809,6 @@
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-util</artifactId>
         <version>${jetty.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.bval</groupId>
-        <artifactId>bval-core</artifactId>
-        <version>${bval.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.bval</groupId>

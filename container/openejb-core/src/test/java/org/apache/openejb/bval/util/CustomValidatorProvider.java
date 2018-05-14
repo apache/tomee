@@ -21,6 +21,7 @@ import org.apache.bval.jsr.ApacheValidatorConfiguration;
 import org.apache.bval.jsr.ConfigurationImpl;
 import org.apache.bval.jsr.parameter.DefaultParameterNameProvider;
 
+import javax.validation.ClockProvider;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.ConstraintViolation;
 import javax.validation.MessageInterpolator;
@@ -34,7 +35,9 @@ import javax.validation.metadata.BeanDescriptor;
 import javax.validation.spi.BootstrapState;
 import javax.validation.spi.ConfigurationState;
 import javax.validation.spi.ValidationProvider;
+import javax.validation.valueextraction.ValueExtractor;
 import java.io.InputStream;
+import java.time.Clock;
 import java.util.Set;
 
 // simply a provider which is by default apache validation provider
@@ -76,7 +79,7 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
 
 
     public static class NullConfig extends ConfigurationImpl {
-        public NullConfig(final BootstrapState aState, final ValidationProvider<?> aProvider) {
+        public NullConfig(final BootstrapState aState, final ValidationProvider<ApacheValidatorConfiguration> aProvider) {
             super(aState, aProvider);
         }
 
@@ -168,6 +171,12 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
         }
 
         @Override
+        public ClockProvider getClockProvider()
+        {
+            return Clock::systemDefaultZone;
+        }
+
+        @Override
         public void close() {
             // no-op
         }
@@ -196,6 +205,18 @@ public class CustomValidatorProvider implements ValidationProvider<ApacheValidat
 
         @Override
         public ValidatorContext parameterNameProvider(final ParameterNameProvider parameterNameProvider) {
+            return null;
+        }
+
+        @Override
+        public ValidatorContext clockProvider(ClockProvider clockProvider)
+        {
+            return null;
+        }
+
+        @Override
+        public ValidatorContext addValueExtractor(ValueExtractor<?> valueExtractor)
+        {
             return null;
         }
     }

@@ -91,6 +91,8 @@ public class ValidationConfigType {
     @XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
     protected String version;
 
+    //X TODO add new fields from beanvalidation 2.0: clockProviderClassName and valueExtractorClassNames
+
     /**
      * Gets the value of the defaultProvider property.
      * 
