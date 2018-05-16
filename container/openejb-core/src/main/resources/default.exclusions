@@ -33,6 +33,7 @@ axis2-
 batchee-jbatch
 bcprov-
 bootstrap.jar
+bsh-
 bval-core
 bval-jsr
 byte-buddy
@@ -63,6 +64,7 @@ commons-pool2-
 cryptacular-
 cssparser-
 cxf-
+debugger-agent
 deploy.jar
 derby-
 derbyclient-
@@ -141,6 +143,7 @@ jsr311-
 jsse.jar
 juli-
 junit-
+junit5-
 kahadb-
 kotlin-runtime
 leveldb
