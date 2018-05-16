@@ -23,30 +23,37 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.Archives;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.ejb.Singleton;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * @version $Rev$ $Date$
  */
-@Ignore("this needs to get properly fixed. Currently it misses the TxMgr and thus blows up")
 public class EarModuleNamesTest {
+    private static final String[] ORIGINAL_EXCLUSIONS = NewLoaderLogic.getExclusions();
+
     @BeforeClass
     public static void preventDefaults() {
         System.setProperty("openejb.environment.default", "false");
         SystemInstance.reset();
+        // we use it in a bunch of other tests but not here
+        NewLoaderLogic.setExclusions(
+                Stream.concat(Stream.of(ORIGINAL_EXCLUSIONS),
+                        Stream.of("openejb-itest", "failover-ejb"))
+                      .toArray(String[]::new));
     }
 
     @AfterClass
     public static void reset() {
         System.clearProperty("openejb.environment.default");
+        NewLoaderLogic.setExclusions(ORIGINAL_EXCLUSIONS);
         SystemInstance.reset();
     }
 
@@ -216,7 +223,6 @@ public class EarModuleNamesTest {
         assertEquals(appInfo.webApps.size(), 1);
         assertEquals("testIdWebapp", appInfo.webApps.get(0).moduleId);
     }
-
 
     @Singleton
     public static class Orange {

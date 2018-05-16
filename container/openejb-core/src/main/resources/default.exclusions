@@ -33,6 +33,7 @@ axis2-
 batchee-jbatch
 bcprov-
 bootstrap.jar
+bsh-
 bval-core
 bval-jsr
 byte-buddy
@@ -63,6 +64,7 @@ commons-pool2-
 cryptacular-
 cssparser-
 cxf-
+debugger-agent
 deploy.jar
 derby-
 derbyclient-
@@ -80,6 +82,8 @@ jnr-
 johnzon-
 fusemq-leveldb-
 geronimo-connector
+geronimo-j2ee-
+geronimo-jpa_
 geronimo-javamail
 geronimo-transaction
 google-
@@ -141,6 +145,7 @@ jsr311-
 jsse.jar
 juli-
 junit-
+junit5-
 kahadb-
 kotlin-runtime
 leveldb
