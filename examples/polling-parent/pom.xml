@@ -28,7 +28,7 @@
   <name>OpenEJB :: Examples :: Polling</name>
   
   <properties>
-    <xbean.version>4.4</xbean.version>
+    <xbean.version>4.8</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
   </properties>
