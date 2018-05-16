@@ -886,7 +886,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     SystemInstance.get().getProperty("openejb.cxf.rs.bval.active",
                             serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.active", "true")));
             if (factory.getFeatures() == null && bvalActive) {
-                factory.setFeatures(new ArrayList<Feature>());
+                factory.setFeatures(new ArrayList<>());
             } else if (bvalActive) { // check we should activate it and user didn't configure it
                 for (final Feature f : factory.getFeatures()) {
                     if (BeanValidationFeature.class.isInstance(f)) {
@@ -908,7 +908,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
             if (bvalActive) { // bval doesn't need the actual instance so faking it to avoid to lookup the bean
-                final BeanValidationProvider provider = new BeanValidationProvider();
+                final BeanValidationProvider provider = new BeanValidationProvider(); // todo: close the factory
 
                 final BeanValidationInInterceptor in = new JAXRSBeanValidationInInterceptor() {
                     @Override
@@ -926,6 +926,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                         return CxfRsHttpListener.this.getServiceObject(message);
                     }
                 };
+                out.setEnforceOnlyBeanConstraints(true);
                 out.setProvider(provider);
                 out.setServiceObject(FAKE_SERVICE_OBJECT);
                 factory.getOutInterceptors().add(out);
