@@ -34,7 +34,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.5-TT.2</version>
+  <version>7.0.5-TT.3-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -101,7 +101,7 @@
     <!-- To easily change the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
 
-    <openjpa.version>2.4.3-SNAPSHOT</openjpa.version>
+    <openjpa.version>2.4.3</openjpa.version>
     <org.apache.openwebbeans.version>1.7.5</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.0.1</johnzon.version>
@@ -132,7 +132,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.30</tomcat.version>
+    <tomcat.version>8.5.31-TT.1</tomcat.version>
 
     <cxf.version>3.1.15</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
@@ -527,6 +527,17 @@
           <id>Apache Snapshots</id>
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
+        <repository>
+          <id>openjpa-staging</id>
+          <name>Current staging</name>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1003/</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+	</repository>
       </repositories>
     </profile>
     <profile>
@@ -627,6 +638,17 @@
           <id>tomitribe-all</id>
           <name>Tomitribe Repository</name>
           <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+        </repository>
+        <repository>
+          <id>openjpa-staging</id>
+          <name>Current staging</name>
+          <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1003/</url>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
         </repository>
       </repositories>
     </profile>
@@ -742,6 +764,17 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </repository>
+    <repository>
+      <id>openjpa-staging</id>
+      <name>Current staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1003/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
     </repository>
   </repositories>
   <pluginRepositories>
