@@ -846,6 +846,17 @@
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
     <repository>
+      <id>openjpa-staging</id>
+      <name>Current staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1003/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
       <id>tomitribe-all</id>
       <name>Tomitribe Repository</name>
       <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
