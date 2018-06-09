@@ -52,7 +52,10 @@ public class SubjectServiceTomEETest {
         return new WebModule(SubjectServiceTomEETest.class).getArchive()
                 .addClass(VoteCounter.class)
                 .addPackage(Subject.class.getPackage()) // domain
-                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+
+                //X creates duplicate perstence units :(
+                //X.addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
