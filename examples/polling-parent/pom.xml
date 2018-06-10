@@ -31,6 +31,7 @@
     <xbean.version>4.8</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+    <cxf.version>3.2.4</cxf.version>
   </properties>
 
   <build>
@@ -154,8 +155,8 @@
       <!-- client -->
       <dependency>
         <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-bundle</artifactId>
-        <version>3.2.4</version>
+        <artifactId>cxf-core</artifactId>
+        <version>${cxf.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>

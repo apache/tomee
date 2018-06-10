@@ -33,7 +33,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-bundle</artifactId>
+      <artifactId>cxf-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-client</artifactId>
+      <version>${cxf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
