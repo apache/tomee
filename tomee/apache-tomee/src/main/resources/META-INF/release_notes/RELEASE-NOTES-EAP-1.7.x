@@ -1,25 +1,28 @@
-= TomEE EAP 1.7.6-TT.5
+= TomEE EAP 1.7.6-TT.6
 
 == Change log
 
+=== Changes in TomEE EAP 1.7.6-TT.6
+
+This release fixes the following issue:
+
+* CVE-2018-8014
+
+The defaults settings for the CORS filter are insecure and enable 'supportsCredentials' for all origins. It is expected that users of the CORS filter will have configured it appropriately for their environment rather than using it in the default configuration. Therefore, it is expected that most users will not be impacted by this issue.
+
+* Update OpenJPA to 2.4.3
+
 === Changes in TomEE EAP 1.7.6-TT.5
 
-TOMEE-2190 check catalina base as opposed to catalina home for .ear and .rar files
+This release fixes the following issue:
+
+* TOMEE-2190 check catalina base as opposed to catalina home for .ear and .rar files
 
 === Changes in TomEE EAP 1.7.6-TT.4
 
-TOMEE-1694 resolve memory leak with WS http upgrade handler
+This release fixes the following issues:
 
-=== Changes in TomEE EAP 1.7.6-TT.3
-
-TOMEE-2172 Fix issue where transaction timeout causes MDB instance to not be returned to the pool or discarded.
-TOMEE-2173 Update to Tomcat 7.0.85
-Backport changes required to support ASM 6 for Java 9 class file support
-
-=== Changes in TomEE EAP 1.7.6-TT.2
-
-Implement MDB container pooling for use with resource adapters that do not pool endpoints.
-TOMEE-2162 check app module container config in resources.xml for activation config overrides.
+* TOMEE-1694 resolve memory leak with WS http upgrade handler
 
 === Changes in TomEE EAP 1.7.6-TT.1
 

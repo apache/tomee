@@ -20,7 +20,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-TT.5</version>
+    <version>4.7.6-TT.6</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -53,6 +53,11 @@
       <artifactId>javax.enterprise.concurrent-api</artifactId>
       <version>1.0</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
