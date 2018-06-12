@@ -22,7 +22,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.5-TT.2</version>
+    <version>7.0.5-TT.3</version>
   </parent>
   <artifactId>arquillian-tomee-common</artifactId>
   <packaging>jar</packaging>
@@ -151,7 +151,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm5-shaded</artifactId>
+          <artifactId>xbean-asm6-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>

@@ -24,7 +24,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.5-TT.2</version>
+    <version>7.0.5-TT.3</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webservices</artifactId>
@@ -87,6 +87,16 @@
     </dependency>
 
     <!-- Test only dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>axis</groupId>
       <artifactId>axis</artifactId>

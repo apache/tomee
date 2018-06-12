@@ -153,13 +153,13 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
-            (providedSecurityContext != null ? providedSecurityContext.context : null);
+                (providedSecurityContext != null ? providedSecurityContext.context : null);
         if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
             final Identity identity = clientIdentity.get();
             if (identity != null) {
                 securityContext = new SecurityContext(identity.subject);
             } else {
-                securityContext = defaultContext;
+                securityContext = getDefaultContext();
             }
         }
 
@@ -396,6 +396,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         } else if (o == null) {
             clientIdentity.remove();
         }
+    }
+
+    protected SecurityContext getDefaultContext() {
+        return defaultContext;
     }
 
     public static final class ProvidedSecurityContext {
