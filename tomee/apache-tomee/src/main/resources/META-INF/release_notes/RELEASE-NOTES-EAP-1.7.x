@@ -1,6 +1,14 @@
-= TomEE EAP 1.7.6-TT.3
+= TomEE EAP 1.7.4-SP.2
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.4-SP.2
+
+This release fixes the following issue:
+
+* CVE-2018-8014
+
+The defaults settings for the CORS filter are insecure and enable 'supportsCredentials' for all origins. It is expected that users of the CORS filter will have configured it appropriately for their environment rather than using it in the default configuration. Therefore, it is expected that most users will not be impacted by this issue.
 
 === Changes in TomEE EAP 1.7.4-SP.1
 
