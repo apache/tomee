@@ -10,6 +10,8 @@ This release fixes the following issue:
 
 The defaults settings for the CORS filter are insecure and enable 'supportsCredentials' for all origins. It is expected that users of the CORS filter will have configured it appropriately for their environment rather than using it in the default configuration. Therefore, it is expected that most users will not be impacted by this issue.
 
+* Update OpenJPA to 2.4.3
+
 === Changes in TomEE EAP 1.7.6-TT.5
 
 This release fixes the following issue:
