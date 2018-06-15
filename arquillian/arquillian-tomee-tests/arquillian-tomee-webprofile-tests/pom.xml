@@ -54,7 +54,7 @@
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>${openjpa.version}</version>
         <configuration>
           <includes>org/apache/openejb/arquillian/tests/datasourcerealm/*.class</includes>
           <persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/build-persistence.xml</persistenceXmlFile>

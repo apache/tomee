@@ -33,9 +33,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>1.2</version>
+        <version>${openjpa.version}</version>
 
         <configuration>
           <includes>org/apache/openejb/test/entity/**/*.class</includes>
