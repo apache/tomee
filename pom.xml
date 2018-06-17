@@ -100,7 +100,7 @@
     <!-- To easily change the javaee api version -->
     <version.javaee-api>7.0-1</version.javaee-api>
 
-    <openjpa.version>2.4.3-SNAPSHOT</openjpa.version>
+    <openjpa.version>2.4.3</openjpa.version>
     <org.apache.openwebbeans.version>1.7.5</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.0.1</johnzon.version>
