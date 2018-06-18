@@ -35,13 +35,16 @@
       <artifactId>javaee-api</artifactId>
     </dependency>
   </dependencies>
+  <properties>
+    <openjpa.version>2.4.3</openjpa.version>
+  </properties>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>2.4.0</version>
+        <version>${openjpa.version}</version>
         <configuration>
           <includes>jug/domain/*.class</includes>
           <addDefaultConstructor>true</addDefaultConstructor>
