@@ -18,7 +18,6 @@ package org.apache.tomee.jul.handler.rotating;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -52,12 +51,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-@Ignore //X TODO see TOMEE-2139 currently broken due to #f24c42e2212c575
 @RunWith(Parameterized.class)
 public class ArchivingTest {
 
     private static final AtomicReference<WatchEvent<?>> lastEvent = new AtomicReference<>();
     private static final AtomicReference<CountDownLatch> latch = new AtomicReference<>(null);
+
+    private static Thread watcherThread;
 
     @Parameterized.Parameters(name = "{0}")
     public static String[][] formats() {
@@ -271,7 +271,12 @@ public class ArchivingTest {
 
     private static void watch(final WatchKey key) {
 
-        final Thread t = new Thread("ArchivingTest.watch") {
+        if (watcherThread != null) {
+            // tell the old watchter thread to shutdown
+            watcherThread.interrupt();
+        }
+
+         watcherThread = new Thread("ArchivingTest.watch") {
             @Override
             public void run() {
 
@@ -284,7 +289,12 @@ public class ArchivingTest {
                             continue;
                         }
 
+                        if (watcherThread != this || isInterrupted()) {
+                            return;
+                        }
+
                         lastEvent.set(event);
+
                         latch.get().countDown();
                     }
 
@@ -297,6 +307,6 @@ public class ArchivingTest {
             }
         };
 
-        t.start();
+        watcherThread.start();
     }
 }
