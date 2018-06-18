@@ -271,14 +271,9 @@ public class ArchivingTest {
 
     private static void watch(final WatchKey key) {
 
-        while (watcherThread != null) {
+        if (watcherThread != null) {
+            // tell the old watchter thread to shutdown
             watcherThread.interrupt();
-            try {
-                Thread.sleep(10L);
-            }
-            catch (InterruptedException e) {
-
-            }
         }
 
          watcherThread = new Thread("ArchivingTest.watch") {
@@ -294,13 +289,11 @@ public class ArchivingTest {
                             continue;
                         }
 
-                        lastEvent.set(event);
-
-                        if (isInterrupted()) {
-                            System.out.println("stopping watcher thread");
-                            watcherThread = null;
+                        if (watcherThread != this || isInterrupted()) {
                             return;
                         }
+
+                        lastEvent.set(event);
 
                         latch.get().countDown();
                     }
