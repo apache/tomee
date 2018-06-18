@@ -57,6 +57,8 @@ public class ArchivingTest {
     private static final AtomicReference<WatchEvent<?>> lastEvent = new AtomicReference<>();
     private static final AtomicReference<CountDownLatch> latch = new AtomicReference<>(null);
 
+    private static Thread watcherThread;
+
     @Parameterized.Parameters(name = "{0}")
     public static String[][] formats() {
         return new String[][]{{"zip"}, {"gzip"}};
@@ -269,7 +271,17 @@ public class ArchivingTest {
 
     private static void watch(final WatchKey key) {
 
-        final Thread t = new Thread("ArchivingTest.watch") {
+        while (watcherThread != null) {
+            watcherThread.interrupt();
+            try {
+                Thread.sleep(10L);
+            }
+            catch (InterruptedException e) {
+
+            }
+        }
+
+         watcherThread = new Thread("ArchivingTest.watch") {
             @Override
             public void run() {
 
@@ -283,6 +295,13 @@ public class ArchivingTest {
                         }
 
                         lastEvent.set(event);
+
+                        if (isInterrupted()) {
+                            System.out.println("stopping watcher thread");
+                            watcherThread = null;
+                            return;
+                        }
+
                         latch.get().countDown();
                     }
 
@@ -295,6 +314,6 @@ public class ArchivingTest {
             }
         };
 
-        t.start();
+        watcherThread.start();
     }
 }
