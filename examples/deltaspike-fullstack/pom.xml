@@ -26,6 +26,7 @@
     <version.deltaspike>1.3.0</version.deltaspike>
     <version.extval>2.0.8</version.extval>
     <tomee.version>7.0.5-SNAPSHOT</tomee.version>
+    <openjpa.version>2.4.3</openjpa.version>
   </properties>
 
   <build>
@@ -48,7 +49,7 @@
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>2.4.0</version>
+        <version>${openjpa.version}</version>
         <configuration>
           <includes>org/superbiz/deltaspike/domain/*.class</includes>
         </configuration>
