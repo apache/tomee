@@ -14,12 +14,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>arquillian-jpa</artifactId>
   <name>OpenEJB :: Examples :: Arquillian Persistence Extension Sample</name>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>7.0.5-SNAPSHOT</version>
 
   <properties>
     <arquillian.version>1.1.10.Final</arquillian.version>
     <arquillian-persistence.version>1.0.0.Alpha7</arquillian-persistence.version>
-    <tomee.version>7.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>${project.version}</tomee.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

@@ -17,11 +17,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-war</artifactId>
   <packaging>war</packaging>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>7.0.5-SNAPSHOT</version>
   <name>OpenEJB :: Connector Examples :: Connector in WAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>${project.version}</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
