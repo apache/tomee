@@ -360,6 +360,7 @@
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
           <releaseProfiles></releaseProfiles>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
 
