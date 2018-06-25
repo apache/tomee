@@ -38,7 +38,7 @@ public class OpenEJBValve extends ValveBase {
     public void invoke(final Request request, final Response response) throws IOException, ServletException {
         final OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
 
-        if (!request.isAsync()) {
+        if (!request.isAsync() || request.getAsyncContextInternal() == null) {
             listener.enter();
             try {
                 getNext().invoke(request, response);
@@ -46,7 +46,9 @@ public class OpenEJBValve extends ValveBase {
                 listener.exit();
             }
         } else {
-            request.getAsyncContext().addListener(new OpenEJBSecurityListener(securityService, request));
+            request.getAsyncContextInternal().addListener(new OpenEJBSecurityListener(securityService, request));
+
+            // finally continue the invocation
             getNext().invoke(request, response);
         }
     }

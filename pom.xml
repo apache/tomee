@@ -128,9 +128,9 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.82</tomcat.version>
+    <tomcat.version>7.0.85</tomcat.version>
 
-    <cxf.version>2.6.17-TT.1</cxf.version>
+    <cxf.version>2.6.17-TT.2</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.7</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
@@ -169,11 +169,11 @@
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <geronimo.connector.version>3.1.1</geronimo.connector.version>
+    <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
     <myfaces.version>2.1.17</myfaces.version>
-    <mojarra.version>2.1.29</mojarra.version>
+    <mojarra.version>2.1.29-09</mojarra.version>
     <slf4j.version>1.7.14</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
@@ -845,6 +845,11 @@
     <!--<url>http://download.java.net/maven/1</url>-->
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -2099,10 +2104,17 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <site>
-      <id>openejb-website</id>
-      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
-    </site>
+    <repository>
+      <id>tomitribe.releases.https</id>
+      <name>Tomitribe Release Distribution Repository</name>
+      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>tomitribe.snapshots.https</id>
+      <name>Tomitribe Development Snapshot Repository</name>
+      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
+    </snapshotRepository>
   </distributionManagement>
 
   <reporting>

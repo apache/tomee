@@ -16,20 +16,30 @@
  */
 package org.superbiz.moviefun;
 
+import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.loader.IO;
 import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.junit.Ignore;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.application6.ApplicationDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.junit.Test;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.Callable;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
-@Ignore("Not implemented yet")
 /*
  * This test deploys the ear in a manual fashion. Normally the remote adapter deploys using the deployer.
  * Here we'll use the arquillian adapter to control the lifecycle of the server, but we'll do the deploy
@@ -38,13 +48,65 @@ import static org.junit.Assert.assertTrue;
  */
 public class DeployInWebAppsDirectoryTest {
 
+    public static EnterpriseArchive createDeployment() {
+
+        final JavaArchive apiJar = ShrinkWrap.create(JavaArchive.class, "connector-sample-api.jar");
+        apiJar.addPackage("org.superbiz.connector.api");
+        System.out.println("API JAR:\n" + apiJar.toString(true));
+
+        final JavaArchive implJar = ShrinkWrap.create(JavaArchive.class, "connector-sample-impl.jar");
+        implJar.addPackage("org.superbiz.connector.adapter");
+        System.out.println("IMPL JAR:\n" + implJar.toString(true));
+
+        final ResourceAdapterArchive rar = ShrinkWrap.create(ResourceAdapterArchive.class,"connector-sample-ra.rar");
+        rar.addAsLibraries(implJar);
+
+        final File raXml = Basedir.basedir("../connector-sample-rar/src/main/rar/META-INF/ra.xml");
+        rar.setResourceAdapterXML(raXml);
+        System.out.println("RAR:\n" + rar.toString(true));
+
+        final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "connector-sample-war.war");
+        webArchive.addPackage("org.superbiz.application");
+
+        final WebAppDescriptor webAppDescriptor = Descriptors.create(WebAppDescriptor.class);
+        webAppDescriptor.version("3.0");
+
+        final File resourcesXml = Basedir.basedir("../connector-sample-war/src/main/webapp/WEB-INF/resources.xml");
+        webArchive.addAsWebInfResource(resourcesXml);
+        webArchive.setWebXML(new StringAsset(webAppDescriptor.exportAsString()));
+        webArchive.addAsWebInfResource(resourcesXml);
+        webArchive.addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
+        System.out.println("Webapp:\n" + webArchive.toString(true));
+
+        final EnterpriseArchive enterpriseArchive = ShrinkWrap.create(EnterpriseArchive.class, "connector-sample.ear");
+        enterpriseArchive.addAsLibraries(apiJar);
+        enterpriseArchive.addAsModule(rar);
+        enterpriseArchive.addAsModule(webArchive);
+
+        ApplicationDescriptor applicationXml = Descriptors.create(ApplicationDescriptor.class);
+        applicationXml.displayName("connector-sample-ear");
+        applicationXml.createModule()
+                .getOrCreateWeb()
+                .webUri("connector-sample-war.war")
+                .contextRoot("/sample")
+                .up().up()
+                .createModule().connector("connector-sample-ra.rar")
+                .up().libraryDirectory("lib");
+
+        enterpriseArchive.setApplicationXML(new StringAsset(applicationXml.exportAsString()));
+        System.out.println(enterpriseArchive.toString(true));
+
+        return enterpriseArchive;
+    }
+
     @Test
     public void test() throws Exception {
         final RemoteTomEEConfiguration configuration = new RemoteTomEEConfiguration();
         configuration.setGroupId("org.apache.openejb");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("1.7.5-SNAPSHOT");
+        configuration.setVersion("1.7.6-SNAPSHOT");
+//        configuration.setDebug(true);
         configuration.setHttpPort(-1);
 
         final RemoteTomEEContainer container = new RemoteTomEEContainer();
@@ -56,13 +118,19 @@ public class DeployInWebAppsDirectoryTest {
             final File webapps = new File(configuration.getDir(), "apache-tomee-" + configuration.getClassifier() + "-" + configuration.getVersion() + "/webapps");
             webapps.mkdirs();
 
-            final File enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:1.1.0-SNAPSHOT")
-                    .withoutTransitivity().asSingleFile();
+            final InputStream is = createDeployment().as(ZipExporter.class).exportAsInputStream();
 
-            IO.copy(enterpriseArchive, new File(webapps, "moviefun-ear.ear"));
-            final String appUrl = "http://localhost:" + configuration.getHttpPort() + "/moviefun";
+            IO.copy(is, new File(webapps, "connector-sample.ear"));
+            final String appUrl = "http://localhost:" + configuration.getHttpPort() + "/sample/";
 
-//            runTests(appUrl);
+            attempt(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    runTests(appUrl);
+                    return null;
+                }
+            }, 30);
 
             container.stop();
 
@@ -74,13 +142,23 @@ public class DeployInWebAppsDirectoryTest {
         }
     }
 
+    public void runTests(final String appUrl) throws Exception {
+        final WebClient webClient = WebClient.create(appUrl);
+        final Response response = webClient.path("").type(MediaType.TEXT_PLAIN_TYPE).post("Hello, world");
+
+        assertEquals(204, response.getStatus());
+        final String result = webClient.path("").accept(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+
+        assertEquals("Hello, world", result);
+    }
+
     private <T> T attempt(final Callable<T> callable, int numberOfAttempts) {
         int tries = 0;
 
         while (tries < numberOfAttempts) {
             try {
                 return callable.call();
-            } catch (final Exception e) {
+            } catch (final Throwable e) {
                 // ignore the exception and try again
                 tries++;
                 try {

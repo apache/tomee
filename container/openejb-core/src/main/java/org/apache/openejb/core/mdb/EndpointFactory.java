@@ -28,6 +28,7 @@ import javax.resource.spi.UnavailableException;
 import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,24 +36,27 @@ import java.util.List;
 public class EndpointFactory implements MessageEndpointFactory {
 
     private final ActivationSpec activationSpec;
-    private final MdbContainer container;
+    private final BaseMdbContainer container;
     private final BeanContext beanContext;
     private final MdbInstanceFactory instanceFactory;
+    private final MdbInstanceManager instanceManager;
     private final ClassLoader classLoader;
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
     protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
     private final Class<?> proxy;
+    private final boolean usePool;
 
-    public EndpointFactory(final ActivationSpec activationSpec, final MdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final XAResourceWrapper xaResourceWrapper) {
+    public EndpointFactory(final ActivationSpec activationSpec, final BaseMdbContainer container, final BeanContext beanContext, final MdbInstanceFactory instanceFactory, final MdbInstanceManager instanceManager, final XAResourceWrapper xaResourceWrapper, final boolean usePool) {
         this.activationSpec = activationSpec;
         this.container = container;
         this.beanContext = beanContext;
         this.instanceFactory = instanceFactory;
+        this.instanceManager = instanceManager;
         classLoader = container.getMessageListenerInterface().getClassLoader();
         interfaces = new Class[]{container.getMessageListenerInterface(), MessageEndpoint.class};
         this.xaResourceWrapper = xaResourceWrapper;
-
+        this.usePool = usePool;
         final BeanContext.ProxyClass proxyClass = beanContext.get(BeanContext.ProxyClass.class);
         if (proxyClass == null) {
             proxy = LocalBeanProxyFactory.createProxy(beanContext.getBeanClass(), beanContext.getClassLoader(), interfaces);
@@ -75,7 +79,14 @@ public class EndpointFactory implements MessageEndpointFactory {
         if (xaResource != null && xaResourceWrapper != null) {
             xaResource = xaResourceWrapper.wrap(xaResource, container.getContainerID().toString());
         }
-        final EndpointHandler endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
+
+        InvocationHandler endpointHandler = null;
+        if (usePool) {
+            endpointHandler = new PoolEndpointHandler(container, beanContext, instanceManager, xaResource);
+        } else {
+            endpointHandler = new EndpointHandler(container, beanContext, instanceFactory, xaResource);
+        }
+
         try {
             return (MessageEndpoint) LocalBeanProxyFactory.constructProxy(proxy, endpointHandler);
         } catch (final InternalError e) { // should be useless

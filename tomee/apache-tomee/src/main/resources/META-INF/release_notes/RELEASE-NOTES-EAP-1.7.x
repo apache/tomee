@@ -1,16 +1,22 @@
-= TomEE EAP 1.7.5-TT.16
+= TomEE EAP 1.7.6-TT.1
 
-== Downloads
-
-* TomEE EAP 1.7.5-TT.16-plume.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plume.tar.gz
-* TomEE EAP 1.7.5-TT.16-plume.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plume.zip
-* TomEE EAP 1.7.5-TT.16-plus.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plus.tar.gz
-* TomEE EAP 1.7.5-TT.16-plus.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-plus.zip
-* TomEE EAP 1.7.5-TT.16-webprofile.tar.gz -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-webprofile.tar.gz
-* TomEE EAP 1.7.5-TT.16-webprofile.zip -> https://s3.amazonaws.com/support-delivery/apache-tomee-1.7.5-TT.16-webprofile.zip
-
- 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.1
+
+MYFACES-4133 - Don't deserialize the ViewState-ID if the state saving method is server
+TOMEE-2158 update Majorra library to 2.1.29-09
+
+=== Changes in TomEE EAP 1.7.5-TT.18
+
+TOMEE-2145 - fix double deploy issue when deploying an EAR from the webapps directory
+TOMEE-2149 - Allow beforeDelivery/afterDelivery calls with message delivery in between, as per JSR-322 section 13.5.6
+TOMEE-2151 - Use correct classloader for creating application resources specified in resources.xml. Added examples and arquillian tests
+
+=== Changes in TomEE EAP 1.7.5-TT.17
+
+CVE-2017-12624 - Apache CXF web services that process attachments are vulnerable to Denial of Service (DoS) attacks. Message attachment headers that are greater than 300 characters will be rejected by default. This value is configurable
+via the property "attachment-max-header-size".
 
 === Changes in TomEE EAP 1.7.5-TT.16
 
@@ -18,7 +24,7 @@ This release has the following changes:
 
 * TOMEE-1574 - Backport from TomEE 7.0.x improvement to allow <Container> and <Service> definitions in an application's resources.xml
 * TOMEE-2141 - Logging EJB bean instance creation and removal
- 
+
 === Changes in TomEE EAP 1.7.5-TT.15
 
 This security release fixes the following issues:

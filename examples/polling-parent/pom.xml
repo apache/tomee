@@ -61,6 +61,11 @@
       <id>staged-releases</id>
       <url>https://repository.apache.org/content/repositories/orgapachetomee-1109/</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -83,6 +88,7 @@
     <module>polling-core</module>
     <module>polling-web</module>
     <module>polling-client</module>
+    <module>polling-mdb</module>
   </modules>
 
   <dependencyManagement>
@@ -149,9 +155,9 @@
 
       <!-- client -->
       <dependency>
-        <groupId>org.apache.tomee.patch</groupId>
+        <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-bundle</artifactId>
-        <version>2.6.17-TomEE</version>
+        <version>2.6.17-TT.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
