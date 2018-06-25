@@ -1,6 +1,28 @@
-= TomEE EAP 1.7.6-TT.1
+= TomEE EAP 1.7.6-TT.6
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.6
+
+This release fixes the following issue:
+
+* CVE-2018-8014
+
+The defaults settings for the CORS filter are insecure and enable 'supportsCredentials' for all origins. It is expected that users of the CORS filter will have configured it appropriately for their environment rather than using it in the default configuration. Therefore, it is expected that most users will not be impacted by this issue.
+
+* Update OpenJPA to 2.4.3
+
+=== Changes in TomEE EAP 1.7.6-TT.5
+
+This release fixes the following issue:
+
+* TOMEE-2190 check catalina base as opposed to catalina home for .ear and .rar files
+
+=== Changes in TomEE EAP 1.7.6-TT.4
+
+This release fixes the following issues:
+
+* TOMEE-1694 resolve memory leak with WS http upgrade handler
 
 === Changes in TomEE EAP 1.7.6-TT.1
 

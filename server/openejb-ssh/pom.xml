@@ -21,7 +21,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-SNAPSHOT</version>
+    <version>4.7.6-TT.6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -60,6 +60,11 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
