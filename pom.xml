@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.6-TT.6</version>
+  <version>4.7.6-TT.7</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -97,8 +97,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.6-TT.6</openejb.version>
-    <tomee.version>1.7.6-TT.6</tomee.version>
+    <openejb.version>4.7.6-TT.7</openejb.version>
+    <tomee.version>1.7.6-TT.7</tomee.version>
 
     <openjpa.version>2.4.3</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
@@ -172,7 +172,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.1.17</myfaces.version>
+    <myfaces.version>2.1.19-TT.1</myfaces.version>
     <mojarra.version>2.1.29-09</mojarra.version>
     <slf4j.version>1.7.14</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
