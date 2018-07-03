@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
