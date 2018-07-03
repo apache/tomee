@@ -27,7 +27,7 @@
   <name>OpenEJB :: Examples :: DeltaSpike ProjectStage</name>
 
   <properties>
-    <tomee.version>${project.version}</tomee.version>
+    <tomee.version>7.0.5</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
