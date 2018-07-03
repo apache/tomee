@@ -75,21 +75,21 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>7.0.5</version>
         <configuration>
-          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeVersion>7.0.5</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>7.0.5</version>
         <dependencies>
           <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>apache-tomee</artifactId>
-            <version>${tomee.version}</version>
+            <version>7.0.5</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -111,25 +111,25 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
