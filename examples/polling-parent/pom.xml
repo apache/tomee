@@ -30,7 +30,7 @@
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
+    <tomee.version>7.0.5</tomee.version>
   </properties>
 
   <build>

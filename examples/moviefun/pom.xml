@@ -22,7 +22,7 @@
   <name>OpenEJB :: Web Examples :: Moviefun</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
+    <tomee.version>7.0.5</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
