@@ -27,7 +27,7 @@
   <name>OpenEJB :: Examples :: Multiple TomEE with Arquillian</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>${project.version}</tomee.version>
+    <tomee.version>7.0.5</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
