@@ -73,7 +73,7 @@
             </goals>
             <configuration>
               <skip>${maven.test.skip}</skip>
-              <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${tomee.version}/openejb-javaagent-${tomee.version}.jar"</argLine>
+              <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/7.0.5/openejb-javaagent-7.0.5.jar"</argLine>
               <systemPropertyVariables>
                 <javax.persistence.provider>org.apache.openjpa.persistence.PersistenceProviderImpl</javax.persistence.provider>
               </systemPropertyVariables>
@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -141,7 +141,7 @@
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>
