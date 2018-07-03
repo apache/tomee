@@ -57,19 +57,19 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-junit</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-mockito</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
