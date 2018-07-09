@@ -196,6 +196,12 @@
           <!-- not yet supported by wss4j/cxf but needed for java 9, when supported we just upgrade since target=1.7 so fine for the main build
           <version>1.4.0-b03</version>
           -->
+          <exclusions>
+            <exclusion>
+              <groupId>javax.xml.soap</groupId>
+              <artifactId>javax.xml.soap-api</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
       </dependencies>
     </profile>
