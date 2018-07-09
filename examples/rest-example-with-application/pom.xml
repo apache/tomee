@@ -84,7 +84,7 @@
             <webappArtifact>
               <groupId>org.apache.tomee</groupId>
               <artifactId>tomee-plus-webapp</artifactId>
-              <version>7.0.5</version>
+              <version>${tomee.version}</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

@@ -80,7 +80,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

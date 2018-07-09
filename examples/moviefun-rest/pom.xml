@@ -136,7 +136,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
@@ -190,7 +190,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -202,7 +202,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -224,7 +224,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -278,7 +278,7 @@
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>7.0.5</version>
+          <version>${tomee.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -289,7 +289,7 @@
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>7.0.5</version>
+          <version>${tomee.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
