@@ -19,15 +19,14 @@
 
 <!-- $Rev: 1090810 $ $Date: 2011-04-10 16:49:26 +0200 (dim., 10 avr. 2011) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
   <artifactId>rest-on-ejb</artifactId>
   <packaging>jar</packaging>
-  <version>7.0.5-SNAPSHOT</version>
+  <version>7.0.5</version>
   <name>OpenEJB :: Examples :: REST and EJB</name>
 
   <properties>
