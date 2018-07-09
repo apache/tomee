@@ -77,17 +77,17 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <tomeeVersion>7.0.5</tomeeVersion>
+          <tomeeVersion>${tomee.version}</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
       </plugin>
       <!--
             <plugin>
@@ -136,25 +136,25 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -89,7 +89,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-api</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -97,13 +97,13 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-core</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-cxf-rs</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>provided</scope>
       </dependency>
 
@@ -117,25 +117,25 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>tomee-webservices</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>ziplock</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

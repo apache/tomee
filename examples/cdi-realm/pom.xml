@@ -52,7 +52,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.5</version>
+        <version>${tomee.version}</version>
       </plugin>
     </plugins>
   </build>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
