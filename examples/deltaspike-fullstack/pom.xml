@@ -65,7 +65,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>7.0.6-SNAPSHOT</version>
         <configuration>
           <context>ROOT</context>
           <simpleLog>true</simpleLog>
@@ -74,7 +74,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>${tomee.version}</version>
+        <version>7.0.6-SNAPSHOT</version>
         <configuration>
           <classpathAsWar>true</classpathAsWar>
         </configuration>
@@ -120,7 +120,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>${tomee.version}</version>
+      <version>7.0.6-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
