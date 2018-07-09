@@ -52,7 +52,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
         <configuration>
-          <argLine>-javaagent:${basedir}/target/openejb-javaagent-7.0.5.jar</argLine>
+          <argLine>-javaagent:${basedir}/target/openejb-javaagent-${tomee.version}.jar</argLine>
           <workingDirectory>${basedir}/target</workingDirectory>
         </configuration>
       </plugin>
@@ -73,7 +73,7 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>7.0.5</version>
+                  <version>${tomee.version}</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
@@ -111,7 +111,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.5</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
 
