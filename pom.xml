@@ -120,10 +120,10 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.88.1</tomcat.version>
+    <tomcat.version>7.0.90</tomcat.version>
 
     <!-- used mainly by jetty modules -->
-    <cxf.version>2.6.17-TT.2</cxf.version>
+    <cxf.version>2.6.17-TT.3</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
     <ehcache.version>2.6.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
