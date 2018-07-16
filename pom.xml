@@ -93,7 +93,7 @@
 
   <properties>
 
-    <tomee.version>7.0.5</tomee.version>
+    <tomee.version>7.0.6-SNAPSHOT</tomee.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
 

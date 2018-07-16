@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar>
+    <pojo-deployment class-name="jaxrs-application">
+        <properties>
+            cxf.jaxrs.skip-provider-scanning = true
+            cxf.jaxrs.providers = johnzon,org.apache.openejb.server.cxf.rs.EJBAccessExceptionMapper
+        </properties>
+    </pojo-deployment>
+</openejb-jar>

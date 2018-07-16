@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Service id="johnzon" class-name="org.apache.johnzon.jaxrs.ConfigurableJohnzonProvider">
+        # 1M
+        maxSize = 1048576
+        bufferSize = 1048576
+
+        # ordered attributes
+        attributeOrder = $order
+
+        # Additional types to ignore
+        ignores = org.apache.cxf.jaxrs.ext.multipart.MultipartBody
+    </Service>
+</resources>
