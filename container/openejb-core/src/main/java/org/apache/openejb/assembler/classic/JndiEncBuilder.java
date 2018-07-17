@@ -73,6 +73,7 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.ws.rs.container.ResourceContext;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
@@ -341,10 +342,11 @@ public class JndiEncBuilder {
                     reference = new ObjectReference(ThreadLocalContextManager.RESOURCE_CONTEXT);
                 } else if (Configuration.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.CONFIGURATION);
+                } else if (Application.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.APPLICATION);
                 } else {
                     reference = new MapObjectReference(ThreadLocalContextManager.OTHERS, referenceInfo.referenceType);
                 }
-
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             }
         }
