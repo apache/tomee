@@ -31,7 +31,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.5</tomee.version>
+    <tomee.version>7.0.6-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
@@ -51,7 +51,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.18.1</version>
         <configuration>
-          <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/7.0.5/openejb-javaagent-7.0.5.jar"</argLine>
+          <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/7.0.6-SNAPSHOT/openejb-javaagent-7.0.6-SNAPSHOT.jar"</argLine>
         </configuration>
       </plugin>
     </plugins>
