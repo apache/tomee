@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.embedded;
 
+import org.apache.catalina.connector.Connector;
 import org.apache.openejb.loader.Files;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -43,6 +44,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class SslTomEETest {
     @Test
@@ -104,6 +106,15 @@ public class SslTomEETest {
         final Container container = new Container();
         container.setup(configuration);
         container.start();
+        Connector[] connectors = container.getTomcat().getService().findConnectors();
+        for(Connector conn : connectors) {
+        	if(conn.getPort() == 8443) {
+        		Object propertyObject = conn.getProperty("keystoreFile");
+                assertNotNull(propertyObject);
+                assertEquals(keystore.getAbsolutePath(), propertyObject.toString());
+        	}
+        }
+
         try {
             assertEquals(8443, ManagementFactory.getPlatformMBeanServer().getAttribute(new ObjectName("Tomcat:type=ProtocolHandler,port=8443"), "port"));
         } finally {

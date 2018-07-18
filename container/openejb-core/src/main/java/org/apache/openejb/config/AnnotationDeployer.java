@@ -5720,9 +5720,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } else if (clazz.isInterface()) {
                 final Class api = clazz;
-                final List<Class> impl = finder.findImplementations(api);
+                final List impl = finder.findImplementations((Class<?>)api);
                 if (impl != null && impl.size() == 1) { // single impl so that's the service
-                    final Class implClass = impl.iterator().next();
+                    final Class implClass = (Class) impl.iterator().next();
                     final String name = implClass.getName();
                     if (!isEJB(implClass)) {
                         classes.add(name);

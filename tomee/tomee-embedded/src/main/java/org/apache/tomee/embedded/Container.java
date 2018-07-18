@@ -629,7 +629,7 @@ public class Container implements AutoCloseable {
             httpsConnector.setProperty("sslProtocol", configuration.getSslProtocol());
 
             if (configuration.getKeystoreFile() != null) {
-                httpsConnector.setAttribute("", configuration.getKeystoreFile());
+                httpsConnector.setAttribute("keystoreFile", configuration.getKeystoreFile());
             }
             if (configuration.getKeystorePass() != null) {
                 httpsConnector.setAttribute("keystorePass", configuration.getKeystorePass());

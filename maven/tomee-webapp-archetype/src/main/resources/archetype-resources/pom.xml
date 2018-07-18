@@ -28,6 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <openjpa.version>2.4.1</openjpa.version>
   </properties>
 
   <dependencies>
@@ -112,7 +113,7 @@
       <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>${openjpa.version}</version>
         <configuration>
           <includes>**/entities/*.class</includes>
           <excludes>**/entities/XML*.class</excludes>
@@ -133,7 +134,7 @@
             <groupId>org.apache.openjpa</groupId>
             <artifactId>openjpa</artifactId>
             <!-- set the version to be the same as the level in your runtime -->
-            <version>2.4.1</version>
+            <version>${openjpa.version}</version>
           </dependency>
         </dependencies>
       </plugin>
