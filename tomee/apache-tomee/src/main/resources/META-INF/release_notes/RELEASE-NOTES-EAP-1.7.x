@@ -1,8 +1,13 @@
-= TomEE EAP 1.7.6-TT.6
+= TomEE EAP 1.7.6-TT.8
 
 == Change log
 
-=== Changes in TomEE EAP 1.7.6-TT.6
+=== Changes in TomEE EAP 1.7.6-TT.8
+
+* Update to Tomcat 7.0.90
+* Update to CXF 2.6.17-TT.3 to mitigate CVE-2018-8039
+
+=== Changes in TomEE EAP 1.7.6-TT.7
 
 This release fixes the following issue:
 
