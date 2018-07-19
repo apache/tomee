@@ -1,6 +1,16 @@
-= TomEE EAP 1.7.4-SP.2
+= TomEE EAP 1.7.4-SP.3
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.4-SP.3
+
+This release fixes the following issue:
+
+* CVE-2018-8039
+
+Apache TomEE is vulnerable to a man-in-the-middle attacks due to the insecure default configuration of the Apache CXF.  If you configure CXF to use the com.sun.net.ssl implementation via System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");  
+
+When this system property is set, CXF uses some reflection to try to make the HostnameVerifier work with the old com.sun.net.ssl.HostnameVerifier interface. However, the default HostnameVerifier implementation in CXF does not implement the method in this interface, and an exception is thrown. However, the exception is caught in the reflection code and not properly propagated. What this means is that if you are using the com.sun.net.ssl stack with CXF, an error with TLS hostname verification will not be thrown, leaving a CXF client subject to man-in-the-middle attacks.
 
 === Changes in TomEE EAP 1.7.4-SP.2
 
