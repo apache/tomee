@@ -29,16 +29,12 @@
   <artifactId>microprofile-config-tck</artifactId>
   <name>OpenEJB :: TCK :: MicroProfile Config TCK</name>
 
-  <!-- TODO - see ServerClassConverter: requires a fix in geronimo-config-impl to use the Thread ClassLoader in ClassConverter. -->
-
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkCount>1</forkCount>
-          <reuseForks>true</reuseForks>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
           </dependenciesToScan>
