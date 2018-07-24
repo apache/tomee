@@ -178,6 +178,9 @@ public final class Contexts {
             } else if (ResourceContext.class.equals(type)) {
                 final ResourceContext config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ResourceContext.class);
                 ThreadLocalContextManager.RESOURCE_CONTEXT.set(config);
+            } else if (Application.class.equals(type)) {
+                final Application config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Application.class);
+                ThreadLocalContextManager.APPLICATION.set(config);
             } else {
                 final Message message = exchange.getInMessage();
                 final ContextProvider<?> provider = ProviderFactory.getInstance(message).createContextProvider(type, message);
