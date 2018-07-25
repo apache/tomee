@@ -45,7 +45,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.0.5-TT.4</version>
+        <version>7.1.0-TT.1</version>
       </plugin>
     </plugins>
   </build>

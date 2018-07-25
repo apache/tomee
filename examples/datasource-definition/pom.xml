@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: Datasource Definition</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.5-TT.4</tomee.version>
+    <tomee.version>7.1.0-TT.1</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -116,7 +116,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.0.5-TT.4</version>
+      <version>7.1.0-TT.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
