@@ -76,7 +76,6 @@
       <version>${microprofile.config.impl.version}</version>
     </dependency>
 
-    <!--
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
@@ -88,8 +87,6 @@
       <artifactId>mp-jwt</artifactId>
       <version>${microprofile.jwt.impl.version}</version>
     </dependency>
-    -->
-
   </dependencies>
 
   <build>
