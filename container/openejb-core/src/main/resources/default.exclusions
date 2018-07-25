@@ -79,7 +79,9 @@ jfxrt.jar
 jnr-
 johnzon-
 fusemq-leveldb-
-geronimo-
+geronimo-connector
+geronimo-javamail
+geronimo-transaction
 google-
 gragent.jar
 groovy-

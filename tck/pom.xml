@@ -35,6 +35,7 @@
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
     <module>bval-tomee</module>
+    <module>microprofile-tck</module>
 
     <!-- TODO: either really use this module or delete it -->
     <module>bval-embedded</module>
