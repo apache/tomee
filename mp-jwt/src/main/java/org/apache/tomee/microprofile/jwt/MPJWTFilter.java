@@ -62,6 +62,7 @@ public class MPJWTFilter implements Filter {
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         if (authContextInfo.isUnsatisfied()) {
+            chain.doFilter(request,response);
             return;
         }
 
