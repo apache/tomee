@@ -368,7 +368,7 @@ When run you should see output similar to the following.
 	Running org.superbiz.resource.jmx.JMXTest
 	Apr 15, 2015 12:40:09 PM org.jboss.arquillian.container.impl.MapObject populate
 	WARNING: Configuration contain properties not supported by the backing object org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration
-	Unused property entries: {openejbVersion=${tomee.version}, tomcatVersion=}
+	Unused property entries: {openejbVersion=7.1.0, tomcatVersion=}
 	Supported property names: [additionalLibs, httpPort, httpsPort, stopCommand, portRange, conf, debug, exportConfAsSystemProperty, type, unpackWars, version, serverXml, preloadClasses, dir, deployerProperties, stopPort, singleDumpByArchiveName, appWorkingDir, host, cleanOnStartUp, quickSession, ajpPort, artifactId, properties, singleDeploymentByArchiveName, groupId, stopHost, lib, catalina_opts, debugPort, webContextToUseWithEars, simpleLog, removeUnusedWebapps, keepServerXmlAsThis, classifier, bin]
 	Apr 15, 2015 12:40:09 PM org.apache.openejb.arquillian.common.Setup findHome
 	INFO: Unable to find home in: /Users/jgallimore/tmp/tomee-1.7.x/examples/resources-jmx-example/resources-jmx-ejb/target/apache-tomee-remote

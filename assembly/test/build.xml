@@ -120,7 +120,7 @@
     </target>
 
     <target name="openejb.start">
-        <echo message="Starting OpenEJB ${tomee.version}..."/>
+        <echo message="Starting OpenEJB 7.1.0..."/>
         <exec executable="${openejb.home}/bin/openejb.bat" spawn="true" osfamily="windows">
             <env key="OPENEJB_HOME" value="${openejb.home}"/>
             <arg value="start"/>
@@ -141,7 +141,7 @@
     </target>
 
     <target name="openejb.stop">
-        <echo message="Stopping OpenEJB ${tomee.version}..."/>
+        <echo message="Stopping OpenEJB 7.1.0..."/>
         <exec executable="${openejb.home}/bin/openejb.bat" osfamily="windows">
             <env key="OPENEJB_HOME" value="${openejb.home}"/>
             <arg value="stop"/>
@@ -283,16 +283,16 @@
     </target>
 
     <target name="openejb.test.setup">
-        <property name="openejb.app.url" value="${maven.repo}/org/apache/openejb/openejb-standalone/${tomee.version}/openejb-standalone-${tomee.version}.zip"/>
-        <property name="openejb.app.file" value="${repo}/openejb/distributions/${tomee.version}/openejb.zip"/>
+        <property name="openejb.app.url" value="${maven.repo}/org/apache/openejb/openejb-standalone/7.1.0/openejb-standalone-7.1.0.zip"/>
+        <property name="openejb.app.file" value="${repo}/openejb/distributions/7.1.0/openejb.zip"/>
 
-        <property name="itests.app.url" value="${maven.repo}/org/apache/openejb/openejb-itests-app/${tomee.version}/openejb-itests-app-${tomee.version}.jar"/>
-        <property name="itests.app.file" value="${repo}/openejb/distributions/${tomee.version}/openejb-itests-app.jar"/>
+        <property name="itests.app.url" value="${maven.repo}/org/apache/openejb/openejb-itests-app/7.1.0/openejb-itests-app-7.1.0.jar"/>
+        <property name="itests.app.file" value="${repo}/openejb/distributions/7.1.0/openejb-itests-app.jar"/>
 
-        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/${tomee.version}/openejb-itests-standalone-client-${tomee.version}.jar"/>
-        <property name="itests.client.file" value="${repo}/openejb/distributions/${tomee.version}/openejb-itests-standalone-client.jar"/>
+        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/7.1.0/openejb-itests-standalone-client-7.1.0.jar"/>
+        <property name="itests.client.file" value="${repo}/openejb/distributions/7.1.0/openejb-itests-standalone-client.jar"/>
 
-        <property name="openejb.home" value="${target.dir}/openejb-${tomee.version}"/>
+        <property name="openejb.home" value="${target.dir}/openejb-7.1.0"/>
 
         <antcall target="download.file">
             <param name="download.url" value="${openejb.app.url}"/>
@@ -309,14 +309,14 @@
     </target>
 
     <target name="tomcat.test.setup">
-        <property name="openejb.war.url" value="${maven.repo}/org/apache/openejb/openejb-tomcat-webapp/${tomee.version}/openejb-tomcat-webapp-${tomee.version}.war"/>
-        <property name="openejb.war.file" value="${repo}/openejb/distributions/${tomee.version}/openejb.war"/>
+        <property name="openejb.war.url" value="${maven.repo}/org/apache/openejb/openejb-tomcat-webapp/7.1.0/openejb-tomcat-webapp-7.1.0.war"/>
+        <property name="openejb.war.file" value="${repo}/openejb/distributions/7.1.0/openejb.war"/>
 
-        <property name="itests.war.url" value="${maven.repo}/org/apache/openejb/openejb-itests-web/${tomee.version}/openejb-itests-web-${tomee.version}.war"/>
-        <property name="itests.war.file" value="${repo}/openejb/distributions/${tomee.version}/itests.war"/>
+        <property name="itests.war.url" value="${maven.repo}/org/apache/openejb/openejb-itests-web/7.1.0/openejb-itests-web-7.1.0.war"/>
+        <property name="itests.war.file" value="${repo}/openejb/distributions/7.1.0/itests.war"/>
 
-        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/${tomee.version}/openejb-itests-standalone-client-${tomee.version}.jar"/>
-        <property name="itests.client.file" value="${repo}/openejb/distributions/${tomee.version}/openejb-itests-standalone-client.jar"/>
+        <property name="itests.client.url" value="${maven.repo}/org/apache/openejb/openejb-itests-standalone-client/7.1.0/openejb-itests-standalone-client-7.1.0.jar"/>
+        <property name="itests.client.file" value="${repo}/openejb/distributions/7.1.0/openejb-itests-standalone-client.jar"/>
 
         <condition property="tomcat.url" value="http://archive.apache.org/dist/tomcat/tomcat-7/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip">
             <matches pattern="^7\." string="${tomcat.version}"/>
