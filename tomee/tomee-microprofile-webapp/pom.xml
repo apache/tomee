@@ -35,11 +35,6 @@
   <packaging>war</packaging>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <microprofile.config.api.version>1.2</microprofile.config.api.version>
-    <microprofile.config.impl.version>1.1</microprofile.config.impl.version>
-
     <microprofile.jwt.api.version>1.0</microprofile.jwt.api.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
   </properties>
@@ -55,7 +50,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.api.version}</version>
+      <version>${microprofile.config.version}</version>
     </dependency>
 
     <dependency>

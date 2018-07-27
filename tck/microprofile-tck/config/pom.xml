@@ -29,10 +29,6 @@
   <artifactId>microprofile-config-tck</artifactId>
   <name>OpenEJB :: TCK :: MicroProfile Config TCK</name>
 
-  <properties>
-    <microprofile.config.version>1.2</microprofile.config.version>
-  </properties>
-
   <!-- TODO - see ServerClassConverter: requires a fix in geronimo-config-impl to use the Thread ClassLoader in ClassConverter. -->
 
   <build>
@@ -52,21 +48,6 @@
   </build>
 
   <dependencies>
-    <!-- debug libs -->
-    <dependency>
-      <groupId>org.apache.geronimo.config</groupId>
-      <artifactId>geronimo-config-impl</artifactId>
-      <version>1.1</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- distro -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
@@ -76,7 +57,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- tck stack -->
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
@@ -94,7 +74,6 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.9</version>
       <scope>test</scope>
     </dependency>
 
@@ -109,26 +88,6 @@
       <groupId>org.jboss.arquillian.testng</groupId>
       <artifactId>arquillian-testng-core</artifactId>
       <version>${version.arquillian}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-      <version>2.2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>2.2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-spi</artifactId>
-      <version>2.2.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
