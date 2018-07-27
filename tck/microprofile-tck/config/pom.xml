@@ -29,10 +29,6 @@
   <artifactId>microprofile-config-tck</artifactId>
   <name>OpenEJB :: TCK :: MicroProfile Config TCK</name>
 
-  <properties>
-    <microprofile.config.version>1.2</microprofile.config.version>
-  </properties>
-
   <build>
     <plugins>
       <plugin>
@@ -42,32 +38,12 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
           </dependenciesToScan>
-          <!-- TODO - This requires a fix in geronimo-config-impl to use the Thread ClassLoader in ClassConverter. -->
-          <excludes>
-            <exclude>org.eclipse.microprofile.config.tck.ClassConverterTest</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
   </build>
 
   <dependencies>
-    <!-- debug libs -->
-    <dependency>
-      <groupId>org.apache.geronimo.config</groupId>
-      <artifactId>geronimo-config-impl</artifactId>
-      <version>1.1</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-catalina</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- distro -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
@@ -77,7 +53,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- tck stack -->
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>

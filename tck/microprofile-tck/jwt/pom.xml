@@ -61,14 +61,14 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${mp-jwt-tck.version}</version>
+      <version>${microprofile.jwt.version}</version>
     </dependency>
 
     <!-- This is the actual MP-JWT TCK test classes -->
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${mp-jwt-tck.version}</version>
+      <version>${microprofile.jwt.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
