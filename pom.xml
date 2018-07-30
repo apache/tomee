@@ -201,6 +201,8 @@
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <microprofile.fault-tolerance.version>1.0</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.impl.version>1.0</microprofile.fault-tolerance.impl.version>
+    <microprofile.health.version>1.0</microprofile.health.version>
+    <microprofile.health.impl.version>1.0.0</microprofile.health.impl.version>
   </properties>
 
   <build>

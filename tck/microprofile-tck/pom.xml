@@ -34,6 +34,7 @@
     <module>config</module>
     <module>jwt</module>
     <module>fault-tolerance</module>
+    <module>health</module>
   </modules>
 
 </project>

@@ -82,6 +82,18 @@
       <artifactId>safeguard-impl</artifactId>
       <version>${microprofile.fault-tolerance.impl.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-api</artifactId>
+      <version>${microprofile.health.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health</artifactId>
+      <version>${microprofile.health.impl.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
