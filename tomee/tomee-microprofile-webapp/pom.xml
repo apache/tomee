@@ -94,6 +94,18 @@
       <artifactId>geronimo-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.metrics.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
