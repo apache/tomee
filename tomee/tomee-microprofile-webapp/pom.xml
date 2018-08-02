@@ -101,6 +101,18 @@
       <artifactId>geronimo-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>${microprofile.rest-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>${microprofile.rest-client.impl.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

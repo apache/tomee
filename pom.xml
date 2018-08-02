@@ -204,6 +204,8 @@
     <microprofile.health.impl.version>1.0.0</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.0</microprofile.metrics.impl.version>
+    <microprofile.rest-client.version>1.0</microprofile.rest-client.version>
+    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
   </properties>
 
   <build>
