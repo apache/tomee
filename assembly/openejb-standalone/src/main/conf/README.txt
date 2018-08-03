@@ -149,7 +149,7 @@ DETAILS ABOUT EACH FILE
     The only thing not yet configurable via this file are ServerServices
     due to OpenEJB's embeddable nature and resulting long standing
     tradition of keeping the container system separate from the server
-    layer.  This may change someday, but untill then ServerServices are
+    layer.  This may change someday, but until then ServerServices are
     configurable via conf/<service-id>.properties files such as
     conf/ejbd.properties to configure the main protocol that services EJB
     client requests.
