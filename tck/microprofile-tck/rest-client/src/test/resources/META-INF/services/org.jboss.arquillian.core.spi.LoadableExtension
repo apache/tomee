@@ -1,1 +1,1 @@
-com.apache.openejb.tck.microprofile.rest.client.MicroProfileRestClientTCKExtension
+com.apache.tomee.microprofile.tck.rest.client.MicroProfileRestClientTCKExtension

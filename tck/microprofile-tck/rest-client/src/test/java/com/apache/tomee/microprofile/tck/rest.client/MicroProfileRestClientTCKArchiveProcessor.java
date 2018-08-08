@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.apache.openejb.tck.microprofile.rest.client;
+package com.apache.tomee.microprofile.tck.rest.client;
 
 import org.eclipse.microprofile.rest.client.tck.WiremockArquillianTest;
 import org.eclipse.microprofile.rest.client.tck.interfaces.BaseClient;
