@@ -1,1 +1,1 @@
-org.apache.openejb.tck.microprofile.metrics.MicroProfileMetricsTCKExtension
+org.apache.tomee.microprofile.tck.metrics.MicroProfileMetricsTCKExtension

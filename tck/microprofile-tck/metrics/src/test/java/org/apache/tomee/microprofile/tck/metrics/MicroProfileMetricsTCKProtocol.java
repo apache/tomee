@@ -14,18 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.tck.microprofile.metrics;
+package org.apache.tomee.microprofile.tck.metrics;
 
-import org.jboss.arquillian.container.test.spi.client.protocol.Protocol;
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
 import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
 
-public class MicroProfileMetricsTCKExtension implements LoadableExtension {
+public class MicroProfileMetricsTCKProtocol extends ServletProtocol {
     @Override
-    public void register(final ExtensionBuilder extensionBuilder) {
-        extensionBuilder
-                .override(Protocol.class, ServletProtocol.class, MicroProfileMetricsTCKProtocol.class)
-                .observer(MicroProfileMetricsTCKObserver.class)
-        ;
+    public DeploymentPackager getPackager() {
+        return new MicroProfileMetricsTCKDeploymentPackager();
     }
 }
