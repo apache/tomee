@@ -206,6 +206,8 @@
     <microprofile.metrics.impl.version>1.0.0</microprofile.metrics.impl.version>
     <microprofile.rest-client.version>1.0</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
+    <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
+    <microprofile.openapi.impl.version>1.0.1</microprofile.openapi.impl.version>
   </properties>
 
   <build>

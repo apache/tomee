@@ -46,7 +46,6 @@ import org.apache.openejb.server.httpd.BasicAuthHttpListenerWrapper;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.httpd.HttpListenerRegistry;
 import org.apache.openejb.spi.ContainerSystem;
-import org.apache.openejb.testing.rest.ContextProvider;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
@@ -165,8 +164,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
-                    application = "true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cxf-rs.cache-application", "true"))
-                            ? new InternalApplication(application) /* caches singletons and classes */ : application;
+                    application = "true".equalsIgnoreCase(
+                            appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
+                                                           SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
+                                  ?
+                                  new InternalApplication(application) /* caches singletons and classes */ :
+                                  application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
