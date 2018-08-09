@@ -22,11 +22,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.4-SP.3</version>
+    <version>4.7.4-SP.4</version>
   </parent>
 
   <artifactId>arquillian</artifactId>
-  <version>1.7.4-SP.3</version>
+  <version>1.7.4-SP.4</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Arquillian Adaptors Parent</name>
 
