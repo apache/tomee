@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.Claims;
@@ -256,9 +257,11 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             // handle JsonValue<T> (number, string, etc)
             return (T) toJson(key);
 
-        } else if (((Class<?>) ip.getType()).isEnum()) {
+        } else if (PropertyEditors.canConvert((Class<?>) ip.getType())) {
             try {
-                return (T) ((Class<?>) ip.getType()).getMethod("valueOf", String.class).invoke(null, getClaimValue(key).toString());
+                final Class<?> type = (Class<?>) ip.getType();
+                final String claimValue = getClaimValue(key).toString();
+                return (T) PropertyEditors.getValue(type, claimValue);
             } catch (Exception e) {
             }
         } else {
