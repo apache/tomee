@@ -194,9 +194,8 @@
 
     <!-- Micro Profile -->
     <microprofile.version>1.2</microprofile.version>
-    <microprofile.config.version>1.2</microprofile.config.version>
-    <!-- Geronimo Config 1.1 targets MP Config 1.2 API -->
-    <microprofile.config.impl.version>1.1</microprofile.config.impl.version>
+    <microprofile.config.version>1.1</microprofile.config.version>
+    <microprofile.config.impl.version>1.0</microprofile.config.impl.version>
     <microprofile.jwt.version>1.0</microprofile.jwt.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <microprofile.fault-tolerance.version>1.0</microprofile.fault-tolerance.version>
