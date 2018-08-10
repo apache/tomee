@@ -28,7 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.5-TT.4</tomee.version>
+    <tomee.version>7.0.6-TT.2</tomee.version>
   </properties>
 
   <repositories>
@@ -83,7 +83,7 @@
             <webappArtifact>
               <groupId>org.apache.tomee</groupId>
               <artifactId>openejb-tomcat-plus-webapp</artifactId>
-              <version>7.0.5-TT.4</version>
+              <version>7.0.6-TT.2</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

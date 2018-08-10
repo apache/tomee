@@ -1,4 +1,23 @@
-= TomEE EAP 7.0.5-TT.3
+= TomEE EAP 7.0.6-TT.2
+
+=== Changes in TomEE EAP 7.0.6-TT.2
+
+This release has the following changes:
+
+* CVE-2018-1000180 - Update to Bouncy Castle 1.60
+
+Bouncy Castle BC 1.54 - 1.59, BC-FJA 1.0.0, BC-FJA 1.0.1 and earlier have a flaw in the Low-level interface to RSA key pair generator, specifically RSA Key Pairs generated in low-level API with added certainty may have less M-R tests than expected. This appears to be fixed in versions BC 1.60 beta 4 and later, BC-FJA 1.0.2 and later.
+
+* CVE-2018-8034 - Update to Tomcat 8.5.32
+
+Apache Tomcat Websocket - Host Name Verification Missing in WebSocket Client
+
+The Apache Tomcat component is vulnerable to Man-in-the-Middle (MitM) attacks. The connectToServerRecursive and createSSLEngine methods in WsWebSocketContainer.java that are used by the WebSockets client do not validate the hostname of SSL certificates. A remote attacker can exploit this behavior to spoof a legitimate server to perform a MitM attack.
+
+* CVE-2018-8037 - Update to Tomcat 8.5.32
+
+Apache Tomcat is vulnerable to Session Hijacking. The isClosed() method in the NioSocketWrapper and Nio2SocketWrapper classes, which is accessed from multiple threads, does not use volatile variables to store the closed field of their associated Socket objects. This means that one thread might query whether the Socket is closed while another thread is in the process of closing it; this results in a race condition, wherein a user session might be reused with a Socket that formerly belonged to another user, and was presumed closed. Because the Socketbelonged to another user, the connection and session remains active. An attacker can exploit this vulnerability by attempting to trigger the race condition, allowing the attacker to possibly take control of another user's session. Note that the attacker cannot choose which session to hijack; it is entirely dependent on the non-deterministic nature of the race condition.
+
 
 === Changes in TomEE EAP 7.0.5-TT.3
 
