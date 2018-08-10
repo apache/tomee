@@ -34,11 +34,6 @@
   <name>OpenEJB :: TomEE :: MicroProfile Webapp</name>
   <packaging>war</packaging>
 
-  <properties>
-    <microprofile.jwt.api.version>1.0</microprofile.jwt.api.version>
-    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -62,7 +57,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.api.version}</version>
+      <version>${microprofile.jwt.version}</version>
     </dependency>
 
     <dependency>
