@@ -224,8 +224,7 @@ public class CxfRSService extends RESTService {
 
             final Collection<Object> defaults = new ArrayList<>();
             for (final String provider : asList(
-                    "org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider",
-                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider",
+                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider",
                     "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider")) {
                 if (!isActive(provider)) {
                     continue;
