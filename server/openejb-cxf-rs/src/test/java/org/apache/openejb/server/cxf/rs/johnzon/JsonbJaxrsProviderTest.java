@@ -17,6 +17,7 @@
 package org.apache.openejb.server.cxf.rs.johnzon;
 
 import org.apache.johnzon.mapper.JohnzonIgnore;
+import org.apache.johnzon.mapper.JohnzonProperty;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
@@ -27,6 +28,7 @@ import org.apache.openejb.testing.RandomPort;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,7 +54,7 @@ public class JsonbJaxrsProviderTest {
 
     @Test
     public void run() throws IOException {
-        assertEquals("{\"value\":\"value\"}",
+        assertEquals("{\"johnzon\":\"johnzon\",\"jsonb\":\"jsonb\",\"value\":\"value\"}",
                      IO.slurp(new URL(base.toExternalForm() + getClass().getSimpleName() + "/test")));
     }
 
@@ -63,8 +65,10 @@ public class JsonbJaxrsProviderTest {
         public Model get() {
             final Model model = new Model();
             model.setValue("value");
-            model.setIgnoreJohnzon("ignoreJohnzon");
-            model.setIgnoreJsonb("ignoreJsonb");
+            model.setJohnzonIgnore("ignoreJohnzon");
+            model.setJsonbIgnore("ignoreJsonb");
+            model.setJohnzonProperty("johnzon");
+            model.setJsonbProperty("jsonb");
             return model;
         }
     }
@@ -72,9 +76,13 @@ public class JsonbJaxrsProviderTest {
     public static class Model {
         private String value;
         @JohnzonIgnore
-        private String ignoreJohnzon;
+        private String johnzonIgnore;
         @JsonbTransient
-        private String ignoreJsonb;
+        private String jsonbIgnore;
+        @JohnzonProperty("johnzon")
+        private String johnzonProperty;
+        @JsonbProperty("jsonb")
+        private String jsonbProperty;
 
         public String getValue() {
             return value;
@@ -84,20 +92,36 @@ public class JsonbJaxrsProviderTest {
             this.value = value;
         }
 
-        public String getIgnoreJohnzon() {
-            return ignoreJohnzon;
+        public String getJohnzonIgnore() {
+            return johnzonIgnore;
         }
 
-        public void setIgnoreJohnzon(final String ignoreJohnzon) {
-            this.ignoreJohnzon = ignoreJohnzon;
+        public void setJohnzonIgnore(final String johnzonIgnore) {
+            this.johnzonIgnore = johnzonIgnore;
         }
 
-        public String getIgnoreJsonb() {
-            return ignoreJsonb;
+        public String getJsonbIgnore() {
+            return jsonbIgnore;
         }
 
-        public void setIgnoreJsonb(final String ignoreJsonb) {
-            this.ignoreJsonb = ignoreJsonb;
+        public void setJsonbIgnore(final String jsonbIgnore) {
+            this.jsonbIgnore = jsonbIgnore;
+        }
+
+        public String getJohnzonProperty() {
+            return johnzonProperty;
+        }
+
+        public void setJohnzonProperty(final String johnzonProperty) {
+            this.johnzonProperty = johnzonProperty;
+        }
+
+        public String getJsonbProperty() {
+            return jsonbProperty;
+        }
+
+        public void setJsonbProperty(final String jsonbProperty) {
+            this.jsonbProperty = jsonbProperty;
         }
     }
 }
