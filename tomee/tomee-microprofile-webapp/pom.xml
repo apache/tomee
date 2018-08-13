@@ -90,6 +90,7 @@
       <version>${microprofile.health.impl.version}</version>
     </dependency>
 
+    <!-- Metrics is not working with OWB 1.x. Apparently it requires OWB 2.x
     <dependency>
       <groupId>org.eclipse.microprofile.metrics</groupId>
       <artifactId>microprofile-metrics-api</artifactId>
@@ -101,6 +102,7 @@
       <artifactId>geronimo-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
     </dependency>
+    -->
   </dependencies>
 
   <build>

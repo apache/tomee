@@ -35,7 +35,7 @@
     <module>jwt</module>
     <module>fault-tolerance</module>
     <module>health</module>
-    <module>metrics</module>
+    <!--<module>metrics</module>-->
   </modules>
 
 </project>
