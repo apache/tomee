@@ -33,6 +33,9 @@
   <modules>
     <module>config</module>
     <module>jwt</module>
+    <module>fault-tolerance</module>
+    <module>health</module>
+    <module>metrics</module>
   </modules>
 
 </project>

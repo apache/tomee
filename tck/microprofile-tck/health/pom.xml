@@ -17,57 +17,68 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
-    <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
+    <artifactId>microprofile-tck</artifactId>
     <version>8.0.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>mp-jwt</artifactId>
-  <packaging>jar</packaging>
-  <name>OpenEJB :: Microprofile JWT</name>
+
+  <artifactId>microprofile-health-tck</artifactId>
+  <name>OpenEJB :: TCK :: MicroProfile Health TCK</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!-- Updated version to fix hanging text -->
+        <version>2.22.0</version>
+        <configuration>
+          <dependenciesToScan>
+            <dependency>org.eclipse.microprofile.health:microprofile-health-tck</dependency>
+          </dependenciesToScan>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.version}</version>
-      <scope>provided</scope>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-api</artifactId>
+      <version>${microprofile.health.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${version.javaee-api}</version>
-      <scope>provided</scope>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-tck</artifactId>
+      <version>${microprofile.health.version}</version>
+      <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-cxf-rs</artifactId>
+      <artifactId>apache-tomee</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <type>zip</type>
+      <classifier>microprofile</classifier>
+      <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-jsonb</artifactId>
-      <version>${johnzon.version}</version>
-      <scope>provided</scope>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-catalina</artifactId>
-      <version>${tomcat.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.bitbucket.b_c</groupId>
-      <artifactId>jose4j</artifactId>
-      <version>0.6.0</version>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>arquillian-tomee-remote</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>

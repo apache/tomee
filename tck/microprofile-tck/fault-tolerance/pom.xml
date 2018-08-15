@@ -26,17 +26,18 @@
     <version>8.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>microprofile-config-tck</artifactId>
-  <name>OpenEJB :: TCK :: MicroProfile Config TCK</name>
+  <artifactId>microprofile-fault-tolerance-tck</artifactId>
+  <name>OpenEJB :: TCK :: MicroProfile Fault Tolerance TCK</name>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <!-- Updated version to fix hanging text -->
+        <version>2.22.0</version>
         <configuration>
           <dependenciesToScan>
-            <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
+            <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
           </dependenciesToScan>
         </configuration>
       </plugin>
@@ -44,6 +45,20 @@
   </build>
 
   <dependencies>
+    <dependency>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-api</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-tck</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
@@ -54,28 +69,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-tck</artifactId>
-      <version>${microprofile.config.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -83,13 +78,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.arquillian.testng</groupId>
-      <artifactId>arquillian-testng-core</artifactId>
-      <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

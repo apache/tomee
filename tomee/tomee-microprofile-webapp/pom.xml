@@ -34,16 +34,6 @@
   <name>OpenEJB :: TomEE :: MicroProfile Webapp</name>
   <packaging>war</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <microprofile.config.api.version>1.2</microprofile.config.api.version>
-    <microprofile.config.impl.version>1.1</microprofile.config.impl.version>
-
-    <microprofile.jwt.api.version>1.0</microprofile.jwt.api.version>
-    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -55,7 +45,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.api.version}</version>
+      <version>${microprofile.config.version}</version>
     </dependency>
 
     <dependency>
@@ -67,7 +57,7 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${microprofile.jwt.api.version}</version>
+      <version>${microprofile.jwt.version}</version>
     </dependency>
 
     <dependency>
@@ -76,6 +66,41 @@
       <version>${microprofile.jwt.impl.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-api</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.safeguard</groupId>
+      <artifactId>safeguard-impl</artifactId>
+      <version>${microprofile.fault-tolerance.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-api</artifactId>
+      <version>${microprofile.health.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health</artifactId>
+      <version>${microprofile.health.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.metrics.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

@@ -26,18 +26,27 @@
     <version>8.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>microprofile-config-tck</artifactId>
-  <name>OpenEJB :: TCK :: MicroProfile Config TCK</name>
+  <artifactId>microprofile-metrics-tck</artifactId>
+  <name>OpenEJB :: TCK :: MicroProfile Metrics TCK</name>
 
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.0</version>
         <configuration>
+          <reuseForks>false</reuseForks>
           <dependenciesToScan>
-            <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
+            <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-api-tck</dependency>
+            <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-rest-tck</dependency>
           </dependenciesToScan>
+          <environmentVariables>
+            <MP_METRICS_TAGS>tier=integration</MP_METRICS_TAGS>
+          </environmentVariables>
+          <systemPropertyVariables>
+            <test.url>http://localhost:50290</test.url>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>
@@ -45,37 +54,51 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>apache-tomee</artifactId>
-      <version>${project.version}</version>
-      <type>zip</type>
-      <classifier>microprofile</classifier>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.metrics.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-api</artifactId>
-      <version>${microprofile.config.version}</version>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api-tck</artifactId>
+      <version>${microprofile.metrics.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-wlp-managed-8.5</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.microprofile.config</groupId>
-      <artifactId>microprofile-config-tck</artifactId>
-      <version>${microprofile.config.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.testng</groupId>
-      <artifactId>testng</artifactId>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-rest-tck</artifactId>
+      <version>${microprofile.metrics.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-all</artifactId>
+      <version>1.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>apache-tomee</artifactId>
+      <version>${project.version}</version>
+      <type>zip</type>
+      <classifier>microprofile</classifier>
       <scope>test</scope>
     </dependency>
 
@@ -87,8 +110,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.arquillian.testng</groupId>
-      <artifactId>arquillian-testng-core</artifactId>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
       <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
