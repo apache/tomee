@@ -56,7 +56,6 @@ public class MPJWTFilter implements Filter {
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         // nothing so far
-        System.out.println("MPJWTFilter.init");
     }
 
     @Override

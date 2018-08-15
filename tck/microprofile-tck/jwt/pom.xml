@@ -27,24 +27,31 @@
   <name>OpenEJB :: TCK :: MicroProfile JWT TCK</name>
 
   <dependencies>
-
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>mp-jwt</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>${slf4j.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>javaee-api</artifactId>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-catalina</artifactId>
+      <artifactId>mp-jwt</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-client</artifactId>
+      <version>${cxf.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-core</artifactId>
+      <version>${johnzon.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- distro -->
@@ -61,14 +68,15 @@
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${mp-jwt-tck.version}</version>
+      <version>${microprofile.jwt.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <!-- This is the actual MP-JWT TCK test classes -->
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>
       <artifactId>microprofile-jwt-auth-tck</artifactId>
-      <version>${mp-jwt-tck.version}</version>
+      <version>${microprofile.jwt.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -76,7 +84,6 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <version>6.9.9</version>
       <scope>test</scope>
     </dependency>
 
@@ -93,35 +100,6 @@
       <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-api-maven</artifactId>
-      <version>2.2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>2.2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.resolver</groupId>
-      <artifactId>shrinkwrap-resolver-spi</artifactId>
-      <version>2.2.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -159,12 +137,6 @@
             <!-- TCK does not deliver the xml file for the moment -->
             <suiteXmlFile>${project.build.directory}/test-classes/dev.xml</suiteXmlFile>
           </suiteXmlFiles>
-          <systemProperties>
-            <!--<property>-->
-              <!--<name>validation.provider</name>-->
-              <!--<value>${validation.provider}</value>-->
-            <!--</property>-->
-          </systemProperties>
           <parallel>methods</parallel>
           <threadCount>4</threadCount>
         </configuration>
