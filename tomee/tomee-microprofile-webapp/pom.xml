@@ -165,4 +165,11 @@
     </plugins>
   </build>
 
+  <repositories>
+    <repository>
+      <id>Geronimo OpenAPI Staging</id>
+      <url>https://repository.apache.org/service/local/repositories/orgapachegeronimo-1067/content/</url>
+    </repository>
+  </repositories>
+
 </project>
