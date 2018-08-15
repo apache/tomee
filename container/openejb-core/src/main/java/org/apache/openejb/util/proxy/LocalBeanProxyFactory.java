@@ -50,7 +50,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LocalBeanProxyFactory implements Opcodes {
 
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, QueryProxy.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LocalBeanProxyFactory.class);
 
     public static final InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
