@@ -14,14 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.tck.microprofile.metrics;
+package org.apache.tomee.microprofile.tck.metrics;
 
-import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
-import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
+import com.jayway.restassured.RestAssured;
+import org.apache.openejb.arquillian.common.TomEEContainer;
+import org.jboss.arquillian.container.spi.event.container.AfterDeploy;
+import org.jboss.arquillian.core.api.annotation.Observes;
 
-public class MicroProfileMetricsTCKProtocol extends ServletProtocol {
-    @Override
-    public DeploymentPackager getPackager() {
-        return new MicroProfileMetricsTCKDeploymentPackager();
+/**
+ * Metrics TCK expect the deployed test archives to be in the root context. In here, we just set the RestAssured path
+ * so the test archives are not required to be deployed in the / context root.
+ */
+public class MicroProfileMetricsTCKObserver {
+    public void AfterDeploy(@Observes final AfterDeploy afterDeploy) {
+        RestAssured.basePath = "microprofile-metrics";
     }
 }

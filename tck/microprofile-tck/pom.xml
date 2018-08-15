@@ -36,6 +36,8 @@
     <module>fault-tolerance</module>
     <module>health</module>
     <module>metrics</module>
+    <module>rest-client</module>
+    <module>openapi</module>
   </modules>
 
 </project>

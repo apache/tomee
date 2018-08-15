@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.tck.microprofile.config;
+package org.apache.tomee.microprofile.tck.openapi;
 
-import org.eclipse.microprofile.config.ConfigProvider;
+import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentPackager;
+import org.jboss.arquillian.protocol.servlet.v_2_5.ServletProtocol;
 
-public class ConfigurationBean {
-    public String getConfig() {
-        return ConfigProvider.getConfig().getValue("config.test", String.class);
+public class MicroProfileOpenAPITCKProtocol extends ServletProtocol {
+    @Override
+    public DeploymentPackager getPackager() {
+        return new MicroProfileOpenAPITCKDeploymentPackager();
     }
 }
