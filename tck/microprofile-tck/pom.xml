@@ -38,6 +38,7 @@
     <module>metrics</module>
     <module>rest-client</module>
     <module>openapi</module>
+    <module>opentracing</module>
   </modules>
 
 </project>
