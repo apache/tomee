@@ -52,8 +52,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public final class ValidatorBuilder {
@@ -78,6 +81,8 @@ public final class ValidatorBuilder {
             info.traversableResolverClass = config.getTraversableResolver();
             info.messageInterpolatorClass = config.getMessageInterpolator();
             info.parameterNameProviderClass = config.getParameterNameProvider();
+            info.valueExtractorClassNames = config.getValueExtractor();
+            info.clockProviderClassName = config.getClockProvider();
 
             final ExecutableValidationType executableValidation = config.getExecutableValidation();
             if (executableValidation != null) {
@@ -179,8 +184,9 @@ public final class ValidatorBuilder {
 
         final OpenEjbBootstrapConfig bootstrapConfig = new OpenEjbBootstrapConfig(
             providerClassName, info.constraintFactoryClass, info.messageInterpolatorClass, info.traversableResolverClass,
-            info.parameterNameProviderClass, new HashSet<>(info.constraintMappings), info.executableValidationEnabled,
-            types, props, info.clockProviderClassName, info.valueExtractorClassNames);
+            info.parameterNameProviderClass, new LinkedHashSet<>(info.constraintMappings), info.executableValidationEnabled,
+            types, props, info.clockProviderClassName,
+            info.valueExtractorClassNames == null ? null : new LinkedHashSet<>(info.valueExtractorClassNames));
         final OpenEjbConfig config = new OpenEjbConfig(bootstrapConfig, target);
 
         target.ignoreXmlConfiguration();
@@ -191,10 +197,10 @@ public final class ValidatorBuilder {
                 @SuppressWarnings("unchecked") final
                 Class<MessageInterpolator> clazz = (Class<MessageInterpolator>) classLoader.loadClass(messageInterpolatorClass);
                 target.messageInterpolator(newInstance(config, clazz));
+                logger.info("Using " + messageInterpolatorClass + " as message interpolator.");
             } catch (final Exception e) {
                 logger.warning("Unable to set " + messageInterpolatorClass + " as message interpolator.", e);
             }
-            logger.info("Using " + messageInterpolatorClass + " as message interpolator.");
         }
         final String traversableResolverClass = info.traversableResolverClass;
         if (traversableResolverClass != null) {
@@ -202,10 +208,10 @@ public final class ValidatorBuilder {
                 @SuppressWarnings("unchecked") final
                 Class<TraversableResolver> clazz = (Class<TraversableResolver>) classLoader.loadClass(traversableResolverClass);
                 target.traversableResolver(newInstance(config, clazz));
+                logger.info("Using " + traversableResolverClass + " as traversable resolver.");
             } catch (final Exception e) {
                 logger.warning("Unable to set " + traversableResolverClass + " as traversable resolver.", e);
             }
-            logger.info("Using " + traversableResolverClass + " as traversable resolver.");
         }
         final String constraintFactoryClass = info.constraintFactoryClass;
         if (constraintFactoryClass != null) {
@@ -233,10 +239,37 @@ public final class ValidatorBuilder {
             try {
                 final Class<ParameterNameProvider> clazz = (Class<ParameterNameProvider>) classLoader.loadClass(info.parameterNameProviderClass);
                 target.parameterNameProvider(newInstance(config, clazz));
+                logger.info("Using " + info.parameterNameProviderClass + " as parameter name provider.");
             } catch (final Exception e) {
                 logger.warning("Unable to set " + info.parameterNameProviderClass + " as parameter name provider.", e);
             }
-            logger.info("Using " + info.parameterNameProviderClass + " as parameter name provider.");
+        }
+        if (info.valueExtractorClassNames != null) {
+            try {
+                info.valueExtractorClassNames.stream()
+                     .map(it -> {
+                         try {
+                             return (ValueExtractor<?>) newInstance(config, classLoader.loadClass(it));
+                         } catch (final Exception e) {
+                             logger.warning("Unable to load " + it, e);
+                             return null;
+                         }
+                     })
+                     .filter(Objects::nonNull)
+                     .forEach(target::addValueExtractor);
+                logger.info("Using " + info.valueExtractorClassNames + " value extractors.");
+            } catch (final Exception e) {
+                logger.warning("Unable to set " + info.valueExtractorClassNames + " as parameter name provider.", e);
+            }
+        }
+        if (info.clockProviderClassName != null) {
+            try {
+                final Class<ClockProvider> clazz = (Class<ClockProvider>) classLoader.loadClass(info.clockProviderClassName);
+                target.clockProvider(newInstance(config, clazz));
+                logger.info("Using " + info.clockProviderClassName + " as clock provider.");
+            } catch (final Exception e) {
+                logger.warning("Unable to set " + info.clockProviderClassName + " as clock provider.", e);
+            }
         }
 
         return config;

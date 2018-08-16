@@ -17,6 +17,8 @@
 
 package org.apache.openejb.config.sys;
 
+import static java.util.Arrays.asList;
+
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.jee.JAXBContextFactory;
@@ -36,8 +38,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -310,30 +311,31 @@ public abstract class JaxbOpenejb {
         return jaxbContext;
     }
 
-    public static <T> T unmarshal(final Class<T> type, final InputStream in, final boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
+    public static <T> T unmarshal(final Class<T> type, final InputStream in, final boolean filter,
+                                  final String expectedNamespace, final String... aliasNamespaces)
+            throws ParserConfigurationException, SAXException, JAXBException {
         final InputSource inputSource = new InputSource(in);
 
         final SAXParser parser = Saxs.namespaceAwareFactory().newSAXParser();
 
         final JAXBContext ctx = getContext(type);
         final Unmarshaller unmarshaller = ctx.createUnmarshaller();
-        unmarshaller.setEventHandler(new ValidationEventHandler() {
-            public boolean handleEvent(final ValidationEvent validationEvent) {
-                System.out.println(validationEvent);
-                return false;
-            }
-        });
+        unmarshaller.setEventHandler(validationEvent -> false);
 
         final SAXSource source;
         if (filter) {
             final NamespaceFilter xmlFilter = new NamespaceFilter(parser.getXMLReader());
             xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
             source = new SAXSource(xmlFilter, inputSource);
+        } else if (expectedNamespace != null) {
+            final WhitelistFilter xmlFilter = new WhitelistFilter(parser.getXMLReader(), expectedNamespace, aliasNamespaces);
+            xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+            source = new SAXSource(xmlFilter, inputSource);
         } else {
             source = new SAXSource(inputSource);
         }
 
-        currentPublicId.set(new TreeSet<String>());
+        currentPublicId.set(new TreeSet<>());
         try {
             return unmarshaller.unmarshal(source, type).getValue();
         } finally {
@@ -341,9 +343,38 @@ public abstract class JaxbOpenejb {
         }
     }
 
+    public static <T> T unmarshal(final Class<T> type, final InputStream in, final boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
+        return unmarshal(type, in, filter, null);
+    }
+
     @SuppressWarnings({"unchecked"})
     public static <T> T unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
         return unmarshal(type, in, true);
+    }
+
+    public static class WhitelistFilter extends XMLFilterImpl {
+
+        private final Set<String> aliases;
+        private final String forcedNamespace;
+
+        public WhitelistFilter(final XMLReader xmlReader, final String forcedNamespace, final String[] aliases) {
+            super(xmlReader);
+            this.forcedNamespace = forcedNamespace;
+            this.aliases = new HashSet<>(asList(aliases));
+        }
+
+        public InputSource resolveEntity(final String publicId, final String systemId) throws SAXException, IOException {
+            final Set<String> publicIds = currentPublicId.get();
+            if (publicIds != null) {
+                publicIds.add(publicId);
+            }
+            return super.resolveEntity(publicId, systemId);
+        }
+
+        @Override
+        public void startElement(final String inputUri, final String localName, final String qname, final Attributes atts) throws SAXException {
+            super.startElement(aliases.contains(inputUri) ? forcedNamespace : inputUri, localName, qname, atts);
+        }
     }
 
     public static class NamespaceFilter extends XMLFilterImpl {
