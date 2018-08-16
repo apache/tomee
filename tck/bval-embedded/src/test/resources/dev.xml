@@ -19,8 +19,7 @@
 <suite name="BVAL-TCK" verbose="1">
     <test name="BVAL-TCK">
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.integration.ee.cdi.ConstraintValidatorInjectionTest" />
-        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.factory.ConstraintValidatorInjectionTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.integration.ee.JndiRetrievalTest" />
       </classes>
     </test>
 </suite>

@@ -19,8 +19,11 @@
 <suite name="BVal-TCK" verbose="1">
     <test name="BVal-TCK">
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.integration.ee.cdi.ConstraintValidatorInjectionTest" />
-        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.factory.ConstraintValidatorInjectionTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.valueextraction.declaration.ValueExtractorsPrecedenceTest" />
+        <!--
+        <class name="org.hibernate.beanvalidation.tck.tests.integration.cdi.managedobjects.ManagedValueExtractorsTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.valueextraction.declaration.MultipleValueExtractorsInValidationXmlForSameTypeAndTypeArgumentTest" />
+        -->
       </classes>
     </test>
 </suite>
