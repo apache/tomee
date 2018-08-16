@@ -20,7 +20,6 @@ package org.apache.openejb.assembler.classic;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 public class ValidationInfo extends InfoObject {
     public String providerClassName;
