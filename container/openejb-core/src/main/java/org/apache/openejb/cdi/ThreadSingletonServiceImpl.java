@@ -25,7 +25,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.util.AppFinder;
-import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
