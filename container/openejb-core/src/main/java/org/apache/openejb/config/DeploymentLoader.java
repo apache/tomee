@@ -1108,7 +1108,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
                             urlSet = URLs.cullSystemJars(urlSet);
-                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ".*"));
+                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ".*(geronimo|mp-jwt|failsafe).*"));
                             final PatternFilter containerExcludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_EXCLUDES, ""));
                             urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, containerIncludes, containerExcludes);
                             containerUrls = urlSet.getUrls();
