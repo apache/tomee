@@ -788,6 +788,13 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
+
+                systemPropertiesWriter.write("#\n");
+                systemPropertiesWriter.write("# Which paths / libraries should be scanned?\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container = true\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container.includes = .*(geronimo|mp-jwt|failsafe).*\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container.excludes = \n");
+
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory
             } finally {
