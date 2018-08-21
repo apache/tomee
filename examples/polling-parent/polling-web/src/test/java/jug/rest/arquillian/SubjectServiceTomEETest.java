@@ -31,6 +31,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,7 @@ public class SubjectServiceTomEETest {
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/env-entries.properties"), "env-entries.properties")
                 .addAsWebInfResource(new ClassLoaderAsset("META-INF/resources.xml"), "resources.xml")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsWebInfResource(new StringAsset("polling-domain"), "exclusions.list")
                 .addPackage(PollingRouter.class.getPackage()) // core
                 .addPackage(SubjectDao.class.getPackage()) // core
                 .addPackage(SubjectService.class.getPackage()) // front
