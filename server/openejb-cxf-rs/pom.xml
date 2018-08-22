@@ -118,14 +118,16 @@
       <artifactId>johnzon-jaxrs</artifactId>
       <version>${johnzon.version}</version>
     </dependency>
-    <!-- java 8 only, we can add it if we instantiate it after having checked java
-    NOTE: needs jsonb-api too (available in jonzon groupId)
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-jsonb_1.0_spec</artifactId>
+      <version>${jsonb.api.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <version>${johnzon.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
