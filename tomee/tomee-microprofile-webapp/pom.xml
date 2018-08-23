@@ -78,6 +78,7 @@
       <version>${microprofile.fault-tolerance.impl.version}</version>
     </dependency>
 
+    <!-- Health has a beans.xml with CDI 2.0
     <dependency>
       <groupId>org.eclipse.microprofile.health</groupId>
       <artifactId>microprofile-health-api</artifactId>
@@ -89,6 +90,7 @@
       <artifactId>geronimo-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
     </dependency>
+    -->
 
     <!-- Metrics is not working with OWB 1.x. Apparently it requires OWB 2.x
     <dependency>
