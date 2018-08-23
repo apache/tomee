@@ -28,7 +28,7 @@
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.0</tomee.version>
+    <tomee.version>7.1.0-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
