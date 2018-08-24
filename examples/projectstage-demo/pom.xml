@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>projectstage-demo</artifactId>
-  <version>7.1.0</version>
+  <version>7.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: DeltaSpike ProjectStage</name>
 
   <properties>
@@ -59,13 +59,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -108,7 +108,7 @@
 TODO: remove the skipTests flag. I needed to do it because it was throwing this exception.
 Test set: org.superbiz.projectstage.TestingProjectStageTest
 Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 3.194 sec <<< FAILURE!
-checkManagerValue(org.superbiz.projectstage.TestingProjectStageTest) Time elapsed: 0.131 sec <<< ERROR!
+checkManagerValue(org.superbiz.projectstage.TestingProjectStageTest) Time elapsed: 0.131 sec  <<< ERROR!
 java.lang.ClassCastException: $Proxy52 cannot be cast to org.junit.runner.RunWith
           -->
         </configuration>

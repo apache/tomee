@@ -13,7 +13,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-application-scope</artifactId>
   <name>OpenEJB :: Examples :: CDI Application Scope</name>
-  <version>7.1.0</version>
+  <version>7.1.0-SNAPSHOT</version>
 
   <build>
     <defaultGoal>install</defaultGoal>
@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
