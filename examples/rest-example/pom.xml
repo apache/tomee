@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example</artifactId>
   <packaging>war</packaging>
-  <version>7.1.0</version>
+  <version>7.1.0-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: REST Example</name>
 
   <properties>
@@ -76,7 +76,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.0</version>
+        <version>7.1.0-SNAPSHOT</version>
         <configuration>
           <simpleLog>true</simpleLog>
           <tomeeVersion>7.1.0-SNAPSHOT</tomeeVersion>
@@ -86,7 +86,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-embedded-maven-plugin</artifactId>
-        <version>7.1.0</version>
+        <version>7.1.0-SNAPSHOT</version>
       </plugin>
       <!--
             <plugin>
@@ -135,25 +135,25 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-jaxrs</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.1.0</version>
+      <version>7.1.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
