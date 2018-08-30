@@ -2835,6 +2835,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (Container.class.isInstance(service) && LocalMBeanServer.isJMXActive()) {
             final ObjectName objectName = ObjectNameBuilder.uniqueName("containers", serviceInfo.id, service);
             try {
+
+                // TODO: is there anything further we want to include here?
+                // TODO: live state for MDB pool
                 LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);
                 containerObjectNames.add(objectName);
             } catch (final Exception | NoClassDefFoundError e) {
@@ -3248,6 +3251,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             // create the connection manager
             final ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
+            // TODO: wrap GenericConnectionManager with something to provide stats via JMX
+
+
             if (connectionManager == null) {
                 throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
             }
