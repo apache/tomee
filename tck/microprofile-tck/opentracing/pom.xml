@@ -36,7 +36,6 @@
         <!-- Updated version to fix hanging text -->
         <version>2.22.0</version>
         <configuration>
-          <forkCount>0</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.opentracing:microprofile-opentracing-tck</dependency>
           </dependenciesToScan>

@@ -33,7 +33,7 @@
   <name>OpenEJB :: Server :: CXF</name>
 
   <properties>
-    <wss4j.version>2.2.0</wss4j.version>
+    <wss4j.version>2.2.2</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -76,6 +76,10 @@
         <exclusion>
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
