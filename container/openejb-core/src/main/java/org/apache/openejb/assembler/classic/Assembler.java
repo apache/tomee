@@ -3326,6 +3326,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (serviceInfo.unsetProperties == null || isTemplatizedResource(serviceInfo)) {
                 logUnusedProperties(serviceRecipe, serviceInfo);
             } // else wait post construct
+
+            // TODO: create something to expose the properties of the object readonly through JMX
         }
 
         final ResourceCreated event = new ResourceCreated(service, serviceInfo.id);
