@@ -54,6 +54,22 @@ Copyright 2007-2010 Agimatec GmbH. All rights reserved.
 
 
 =====================================
+Apache Tomcat NOTICE
+
+The original XML Schemas for Java EE Deployment Descriptors:
+ - javaee_5.xsd
+ - javaee_web_services_1_2.xsd
+ - javaee_web_services_client_1_2.xsd
+ - javaee_6.xsd
+ - javaee_web_services_1_3.xsd
+ - javaee_web_services_client_1_3.xsd
+ - web-app_3_0.xsd
+ - web-common_3_0.xsd
+ - web-fragment_3_0.xsd
+may be obtained from http://java.sun.com/xml/ns/javaee/
+
+
+=====================================
 Apache MyFaces NOTICE
 
 This software also includes code from Facelets (https://facelets.dev.java.net/)
@@ -76,14 +92,26 @@ javascript core, which is licensed under a modified BSD license or the Academic 
 This software also includes code from j4fry (http://www.j4fry.org/),
 which is licensed under ASL 2.0.
 
-=====================================
-Apache ActiveMQ NOTICE
-
-This product includes software developed by the Protocol Buffers
-project (http://code.google.com/apis/protocolbuffers).
-
-
-=====================================
+=========================================================================
+  - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
+    License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+FastInfoset (https://fi.java.net/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+Istack Commons Runtime (https://istack-commons.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Jaxb Core (https://jaxb.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Quartz (http://quartz-scheduler.org/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+el-api - Unified Expression Language is dual licensed under 2 OSI approved licenses (https://uel.java.net/license.html)
+    COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
+    GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
+=========================================================================
 Apache CXF NOTICE
 
 Java classes (source and binary) under org.apache.cxf.jaxws.javaee
@@ -105,26 +133,6 @@ This Product also includes software developed by David Heinemeier Hansson.
 
 This product includes software Copyright University of Southampton IT Innovation Centre, 2009
 (http://www.it-innovation.soton.ac.uk).
-
-=========================================================================
-  - JAnsi (http://http://jansi.fusesource.org/) org.fusesource.jansi:jansi:jar:1.8
-    License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
-=========================================================================
-FastInfoset (https://fi.java.net/)
-License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
-=========================================================================
-Istack Commons Runtime (https://istack-commons.java.net/)
-License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
-=========================================================================
-Jaxb Core (https://jaxb.java.net/)
-License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
-=========================================================================
-Quartz (http://quartz-scheduler.org/)
-License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
-=========================================================================
-el-api - Unified Expression Language is dual licensed under 2 OSI approved licenses (https://uel.java.net/license.html)
-    COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
-    GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
 =========================================================================
 Apache XBean :: ASM shaded (repackaged)
 Copyright 2005-2013 The Apache Software Foundation
@@ -138,3 +146,18 @@ Joda.org (http://www.joda.org/).
 This product includes software developed and copyrighted by the The OWASP
    Foundation (https://www.owasp.org)
 =========================================================================
+jose4j NOTICE
+
+jose4j
+Copyright 2012-2015 Brian Campbell
+
+EcdsaUsingShaAlgorithm contains code for converting the concatenated
+R & S values of the signature to and from DER, which was originally
+derived from the Apache Santuario XML Security library's SignatureECDSA
+implementation. http://santuario.apache.org/
+
+The Base64 implementation in this software was derived from the
+Apache Commons Codec project. http://commons.apache.org/proper/commons-codec/
+
+JSON processing in this software was derived from the JSON.simple toolkit.
+https://code.google.com/p/json-simple/
