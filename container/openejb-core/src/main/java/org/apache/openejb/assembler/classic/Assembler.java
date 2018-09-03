@@ -19,6 +19,7 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
+import org.apache.geronimo.connector.outbound.GenericConnectionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.HintsContextHandler;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
@@ -107,9 +108,7 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.DynamicMBeanWrapper;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.*;
 import org.apache.openejb.monitoring.remote.RemoteResourceMonitor;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -3250,9 +3249,40 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.getChildLogger("service").info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
 
             // create the connection manager
-            final ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
-            // TODO: wrap GenericConnectionManager with something to provide stats via JMX
+            final GenericConnectionManager connectionManager = (GenericConnectionManager) connectionManagerRecipe.create();
 
+
+            String txSupport = "xa";
+            try {
+                txSupport = (String) connectionManagerRecipe.getProperty("transactionSupport");
+            } catch (Exception e) {
+                // ignore
+            }
+
+            if (txSupport == null || txSupport.trim().length() == 0) {
+                txSupport = "xa";
+            }
+
+            final ConnectionFactoryMonitor cfm = new ConnectionFactoryMonitor(serviceInfo.id, connectionManager, txSupport);
+
+            final MBeanServer server = LocalMBeanServer.get();
+
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            jmxName.set("J2EEServer", "openejb");
+            jmxName.set("J2EEApplication", null);
+            jmxName.set("j2eeType", "");
+            jmxName.set("name",serviceInfo.id);
+
+            // register the invocation stats interceptor
+            try {
+                final ObjectName objectName = jmxName.set("j2eeType", "ConnectionFactory").build();
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
+                server.registerMBean(new ManagedMBean(cfm), objectName);
+            } catch (final Exception e) {
+                logger.error("Unable to register MBean ", e);
+            }
 
             if (connectionManager == null) {
                 throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
