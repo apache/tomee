@@ -2164,6 +2164,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
             }
+
+            // remove associated JMX object
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            jmxName.set("J2EEServer", "openejb");
+            jmxName.set("J2EEApplication", null);
+            jmxName.set("j2eeType", "");
+            jmxName.set("name",name);
+
+            final MBeanServer server = LocalMBeanServer.get();
+            try {
+                final ObjectName objectName = jmxName.set("j2eeType", "ConnectionFactory").build();
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
+            } catch (final Exception e) {
+                logger.error("Unable to unregister MBean ", e);
+            }
+
         } else if (DestroyableResource.class.isInstance(object)) {
             try {
                 DestroyableResource.class.cast(object).destroyResource();
@@ -2834,9 +2852,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         if (Container.class.isInstance(service) && LocalMBeanServer.isJMXActive()) {
             final ObjectName objectName = ObjectNameBuilder.uniqueName("containers", serviceInfo.id, service);
             try {
-
-                // TODO: is there anything further we want to include here?
-                // TODO: live state for MDB pool
                 LocalMBeanServer.get().registerMBean(new DynamicMBeanWrapper(new JMXContainer(serviceInfo, (Container) service)), objectName);
                 containerObjectNames.add(objectName);
             } catch (final Exception | NoClassDefFoundError e) {
