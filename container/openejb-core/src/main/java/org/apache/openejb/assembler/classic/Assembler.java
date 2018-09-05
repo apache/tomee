@@ -178,11 +178,7 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.DeploymentException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
+import javax.management.*;
 import javax.naming.Binding;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -3238,6 +3234,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             unset.remove("threadPoolSize");
             logUnusedProperties(unset, serviceInfo);
 
+            registerAsMBean(serviceInfo.id, "ResourceAdapter", resourceAdapter);
             service = new ResourceAdapterReference(resourceAdapter, threadPool, OPENEJB_RESOURCE_JNDI_PREFIX + serviceInfo.id);
         } else if (service instanceof ManagedConnectionFactory) {
             final ManagedConnectionFactory managedConnectionFactory = (ManagedConnectionFactory) service;
@@ -3279,25 +3276,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
 
             final ConnectionFactoryMonitor cfm = new ConnectionFactoryMonitor(serviceInfo.id, connectionManager, txSupport);
-
-            final MBeanServer server = LocalMBeanServer.get();
-
-            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
-            jmxName.set("J2EEServer", "openejb");
-            jmxName.set("J2EEApplication", null);
-            jmxName.set("j2eeType", "");
-            jmxName.set("name",serviceInfo.id);
-
-            // register the invocation stats interceptor
-            try {
-                final ObjectName objectName = jmxName.set("j2eeType", "ConnectionFactory").build();
-                if (server.isRegistered(objectName)) {
-                    server.unregisterMBean(objectName);
-                }
-                server.registerMBean(new ManagedMBean(cfm), objectName);
-            } catch (final Exception e) {
-                logger.error("Unable to register MBean ", e);
-            }
+            registerAsMBean(serviceInfo.id, "ConnectionFactory", new ManagedMBean(cfm));
 
             if (connectionManager == null) {
                 throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
@@ -3372,12 +3351,37 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 logUnusedProperties(serviceRecipe, serviceInfo);
             } // else wait post construct
 
-            // TODO: create something to expose the properties of the object readonly through JMX
+            registerAsMBean(serviceInfo.id, "Resource", service);
         }
 
         final ResourceCreated event = new ResourceCreated(service, serviceInfo.id);
         SystemInstance.get().fireEvent(event);
         return event.getReplacement() == null ? service : event.getReplacement();
+    }
+
+    private void registerAsMBean(final String name, final String type, Object resource) {
+        final MBeanServer server = LocalMBeanServer.get();
+
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", name);
+
+        try {
+            final ObjectName objectName = jmxName.set("j2eeType", type).build();
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+
+            if (DynamicMBean.class.isInstance(resource)) {
+                server.registerMBean(resource, objectName);
+            } else {
+                server.registerMBean(new MBeanPojoWrapper(name, resource), objectName);
+            }
+        } catch (final Exception e) {
+            logger.error("Unable to register MBean ", e);
+        }
     }
 
     private void bindResource(final String id, final Object service, final boolean canReplace) throws OpenEJBException {

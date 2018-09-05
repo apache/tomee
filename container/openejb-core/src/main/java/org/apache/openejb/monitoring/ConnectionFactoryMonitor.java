@@ -86,8 +86,6 @@ public class ConnectionFactoryMonitor {
             return PartitionedPool.class.cast(pooling).isMatchAll();
         } else if (SinglePool.class.isInstance(pooling)) {
             return SinglePool.class.cast(pooling).isMatchAll();
-        } else if (NoPool.class.isInstance(pooling)) {
-            return false;
         } else {
             return false;
         }
