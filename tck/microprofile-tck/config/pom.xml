@@ -38,10 +38,6 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
           </dependenciesToScan>
-          <!-- TODO - This requires a fix in geronimo-config-impl to use the Thread ClassLoader in ClassConverter. -->
-          <excludes>
-            <exclude>org.eclipse.microprofile.config.tck.ClassConverterTest</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
