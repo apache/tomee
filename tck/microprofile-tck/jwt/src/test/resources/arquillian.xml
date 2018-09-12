@@ -16,24 +16,22 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<arquillian
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="
-      http://jboss.org/schema/arquillian
-      http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
-
-  <container qualifier="tomee" default="true">
-    <configuration>
-      <property name="catalina_opts">-Xmx512m -XX:MaxPermSize=512m</property>
-      <property name="httpPort">-1</property>
-      <property name="stopPort">-1</property>
-      <property name="ajpPort">-1</property>
-      <property name="classifier">microprofile</property>
-      <property name="debug">false</property>
-      <property name="dir">target/tomee-tck</property>
-      <property name="appWorkingDir">target/tck-workdir</property>
-      <property name="simpleLog">true</property>
-      <property name="properties"></property>
-    </configuration>
-  </container>
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+              http://jboss.org/schema/arquillian
+              http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+<container qualifier="tomee-remote" default="true">
+  <configuration>
+    <property name="debug">false</property>
+    <property name="httpPort">-1</property>
+    <property name="ajpPort">-1</property>
+    <property name="stopPort">-1</property>
+    <property name="classifier">microprofile</property>
+    <property name="conf">src/test/conf</property>
+    <property name="dir">target/tomee</property>
+    <property name="appWorkingDir">target/workdir</property>
+    <property name="cleanOnStartUp">true</property>
+  </configuration>
+</container>
 </arquillian>
