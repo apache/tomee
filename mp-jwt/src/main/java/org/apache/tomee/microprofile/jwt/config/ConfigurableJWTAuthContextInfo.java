@@ -17,11 +17,15 @@
 package org.apache.tomee.microprofile.jwt.config;
 
 import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.jwt.config.Names;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
@@ -29,6 +33,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.stream.Stream;
+
+import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
+import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
+import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
 @RequestScoped
 public class ConfigurableJWTAuthContextInfo {
@@ -36,16 +45,79 @@ public class ConfigurableJWTAuthContextInfo {
     private Config config;
 
     public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
-        final Optional<String> publicKey = config.getOptionalValue(Names.VERIFIER_PUBLIC_KEY, String.class);
-        final Optional<String> issuer = config.getOptionalValue(Names.ISSUER, String.class);
+        final Optional<String> publicKey = config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class);
+        final Optional<String> publicKeyLocation = config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class);
+        final Optional<String> issuer = config.getOptionalValue(ISSUER, String.class);
 
         if (publicKey.isPresent()) {
-            final Optional<RSAPublicKey> rsaPublicKey = parsePCKS8(publicKey.get());
+            final Optional<RSAPublicKey> rsaPublicKey = readPublicKey(publicKey.get());
             if (rsaPublicKey.isPresent()) {
                 return Optional.of(new JWTAuthContextInfo(rsaPublicKey.get(), issuer.orElse("")));
             }
         }
 
+        if (publicKeyLocation.isPresent()) {
+            final Optional<RSAPublicKey> rsaPublicKey = readPublicKey(readPublicKeyFromLocation(publicKeyLocation.get()));
+            if (rsaPublicKey.isPresent()) {
+                return Optional.of(new JWTAuthContextInfo(rsaPublicKey.get(), issuer.orElse("")));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<RSAPublicKey> readPublicKey(final String publicKey) {
+        return parsePCKS8(publicKey);
+    }
+
+    private String readPublicKeyFromLocation(final String publicKeyLocation) {
+        final Stream<Optional<String>> possiblePublicKeysLocations =
+                Stream.of(readPublicKeyFromClasspath(publicKeyLocation),
+                          readPublicKeyFromFile(publicKeyLocation),
+                          readPublicKeyFromHttp(publicKeyLocation),
+                          readPublicKeyFromUrl(publicKeyLocation));
+
+        return possiblePublicKeysLocations
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key from Location: " +
+                                                           publicKeyLocation));
+    }
+
+    private Optional<String> readPublicKeyFromClasspath(final String publicKeyLocation) {
+        try {
+            final InputStream is =
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream(publicKeyLocation);
+            if (is == null) {
+                return Optional.empty();
+            }
+
+            final StringWriter sw = new StringWriter();
+            try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+                String line = br.readLine();
+                while (line != null) {
+                    sw.write(line);
+                    sw.write('\n');
+                    line = br.readLine();
+                }
+            }
+            return Optional.of(sw.toString());
+        } catch (final IOException e) {
+            throw new DeploymentException(
+                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+        }
+    }
+
+    private Optional<String> readPublicKeyFromFile(final String publicKeyLocation) {
+        return Optional.empty();
+    }
+
+    private Optional<String> readPublicKeyFromHttp(final String publicKeyLocation) {
+        return Optional.empty();
+    }
+
+    private Optional<String> readPublicKeyFromUrl(final String publicKeyLocation) {
         return Optional.empty();
     }
 

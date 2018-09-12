@@ -3,6 +3,7 @@ package org.apache.tomee.microprofile.jwt;
 import com.nimbusds.jose.JWSSigner;
 import org.apache.openejb.loader.JarLocation;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class AppDeploymentExtension implements LoadableExtension {
     @Override
@@ -81,9 +83,12 @@ public class AppDeploymentExtension implements LoadableExtension {
 
             // Spec says that vendor specific ways to load the keys take precedence, so we need to remove it in test
             // cases that use the Config approach.
-            if (testClass.getJavaClass().equals(PublicKeyAsPEMTest.class)) {
-                war.deleteClass(JWTAuthContextInfoProvider.class);
-            }
+            Stream.of(
+                    PublicKeyAsPEMTest.class,
+                    PublicKeyAsPEMLocationTest.class)
+                  .filter(c -> c.equals(testClass.getJavaClass()))
+                  .findAny()
+                  .ifPresent(c -> war.deleteClass(JWTAuthContextInfoProvider.class));
 
             log.info("Augmented war: \n"+war.toString(true));
         }
