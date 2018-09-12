@@ -62,7 +62,7 @@ public class ResourcesJMXTest extends TestCase {
 
         final ResourceInfo testResource = new ResourceInfo();
         testResource.id = "testResource";
-        testResource.className = FakeResouce.class.getName();
+        testResource.className = FakeResource.class.getName();
 
         final Properties p = new Properties();
         p.put("host", "localhost");
@@ -151,7 +151,7 @@ public class ResourcesJMXTest extends TestCase {
         }
     }
 
-    public static class FakeResouce {
+    public static class FakeResource {
         private String host;
         private int port;
         private String parameter;
