@@ -302,7 +302,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    private void addAppProvidersIfNeeded(AppInfo appInfo, WebAppInfo webApp, ClassLoader classLoader, Collection<Object> additionalProviders) {
+    private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
         if (useDiscoveredProviders(appInfo)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);

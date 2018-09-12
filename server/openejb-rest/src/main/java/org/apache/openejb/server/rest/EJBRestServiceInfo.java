@@ -22,7 +22,7 @@ public class EJBRestServiceInfo {
     public String path;
     public BeanContext context;
 
-    public EJBRestServiceInfo(String path, BeanContext context) {
+    public EJBRestServiceInfo(final String path, final BeanContext context) {
         if (context == null) {
             throw new OpenEJBRestRuntimeException("can't find context");
         }

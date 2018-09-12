@@ -34,6 +34,7 @@ public class RsServlet extends HttpServlet {
     private HttpListener listener;
     private ServletConfig servletConfig;
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         servletConfig = config;
         String listenerId = config.getInitParameter(HttpListener.class.getName());
@@ -42,6 +43,7 @@ public class RsServlet extends HttpServlet {
         }
     }
 
+    @Override
     public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         if (listener == null) {
             throw new ServletException("RESTServiceContainer has not been set");
