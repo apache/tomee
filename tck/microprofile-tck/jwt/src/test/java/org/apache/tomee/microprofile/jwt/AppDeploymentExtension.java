@@ -3,6 +3,7 @@ package org.apache.tomee.microprofile.jwt;
 import com.nimbusds.jose.JWSSigner;
 import org.apache.openejb.loader.JarLocation;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
+import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
@@ -85,7 +86,8 @@ public class AppDeploymentExtension implements LoadableExtension {
             // cases that use the Config approach.
             Stream.of(
                     PublicKeyAsPEMTest.class,
-                    PublicKeyAsPEMLocationTest.class)
+                    PublicKeyAsPEMLocationTest.class,
+                    IssValidationTest.class)
                   .filter(c -> c.equals(testClass.getJavaClass()))
                   .findAny()
                   .ifPresent(c -> war.deleteClass(JWTAuthContextInfoProvider.class));
