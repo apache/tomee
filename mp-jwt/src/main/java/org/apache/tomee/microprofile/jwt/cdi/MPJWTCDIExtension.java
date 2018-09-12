@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.jwt.cdi;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
+import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.jaxrs.MPJWPProviderRegistration;
 import org.eclipse.microprofile.jwt.Claim;
 
@@ -96,6 +97,7 @@ public class MPJWTCDIExtension implements Extension {
     }
 
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(ConfigurableJWTAuthContextInfo.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));

@@ -3,6 +3,7 @@ package org.apache.tomee.microprofile.jwt;
 import com.nimbusds.jose.JWSSigner;
 import org.apache.openejb.loader.JarLocation;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.container.test.impl.client.deployment.AnnotationDeploymentScenarioGenerator;
@@ -11,14 +12,15 @@ import org.jboss.arquillian.container.test.spi.client.deployment.DeploymentScena
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class AppDeploymentExtension implements LoadableExtension {
@@ -70,6 +72,18 @@ public class AppDeploymentExtension implements LoadableExtension {
             }
             final WebArchive war = WebArchive.class.cast(appArchive);
             war.addClass(JWTAuthContextInfoProvider.class);
+
+            // MP Config in wrong place - See https://github.com/eclipse/microprofile/issues/46.
+            final Map<ArchivePath, Node> content =
+                    war.getContent(
+                            object -> object.get().matches(".*META-INF/.*"));
+            content.forEach((archivePath, node) -> war.addAsResource(node.getAsset(), node.getPath()));
+
+            // Spec says that vendor specific ways to load the keys take precedence, so we need to remove it in test
+            // cases that use the Config approach.
+            if (testClass.getJavaClass().equals(PublicKeyAsPEMTest.class)) {
+                war.deleteClass(JWTAuthContextInfoProvider.class);
+            }
 
             log.info("Augmented war: \n"+war.toString(true));
         }

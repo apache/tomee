@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -41,6 +42,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -49,10 +51,6 @@ import java.util.stream.Collectors;
 // async is supported because we only need to do work on the way in
 @WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class MPJWTFilter implements Filter {
-
-    @Inject
-    private Instance<JWTAuthContextInfo> authContextInfo;
-
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         // nothing so far
@@ -60,7 +58,8 @@ public class MPJWTFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        if (authContextInfo.isUnsatisfied()) {
+        final Optional<JWTAuthContextInfo> authContextInfo = getAuthContextInfo();
+        if (!authContextInfo.isPresent()) {
             chain.doFilter(request,response);
             return;
         }
@@ -89,6 +88,19 @@ public class MPJWTFilter implements Filter {
     @Override
     public void destroy() {
         // nothing to do
+    }
+
+    @Inject
+    private Instance<JWTAuthContextInfo> authContextInfo;
+    @Inject
+    private ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo;
+
+    private Optional<JWTAuthContextInfo> getAuthContextInfo() {
+        if (!authContextInfo.isUnsatisfied()) {
+            return Optional.of(authContextInfo.get());
+        }
+
+        return configurableJWTAuthContextInfo.getJWTAuthContextInfo();
     }
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
