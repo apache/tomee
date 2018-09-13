@@ -14,7 +14,7 @@
  *     See the License for the specific language governing permissions and
  *     limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt;
+package org.apache.tomee.microprofile.tck.jwt;
 
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.DefaultJWTCallerPrincipalFactory;
