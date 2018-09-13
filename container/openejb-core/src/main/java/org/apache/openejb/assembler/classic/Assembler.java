@@ -19,7 +19,6 @@ package org.apache.openejb.assembler.classic;
 
 import org.apache.geronimo.connector.GeronimoBootstrapContext;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
-import org.apache.geronimo.connector.outbound.GenericConnectionManager;
 import org.apache.geronimo.connector.work.GeronimoWorkManager;
 import org.apache.geronimo.connector.work.HintsContextHandler;
 import org.apache.geronimo.connector.work.TransactionContextHandler;
@@ -108,7 +107,12 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.ProvisioningUtil;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.*;
+import org.apache.openejb.monitoring.ConnectionFactoryMonitor;
+import org.apache.openejb.monitoring.DynamicMBeanWrapper;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.MBeanPojoWrapper;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.monitoring.remote.RemoteResourceMonitor;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.persistence.JtaEntityManagerRegistry;
@@ -3278,7 +3282,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             logger.getChildLogger("service").info("createResource.createConnectionManager", serviceInfo.id, service.getClass().getName());
 
             // create the connection manager
-            final GenericConnectionManager connectionManager = (GenericConnectionManager) connectionManagerRecipe.create();
+            final ConnectionManager connectionManager = (ConnectionManager) connectionManagerRecipe.create();
 
 
             String txSupport = "xa";
@@ -3291,9 +3295,6 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             if (txSupport == null || txSupport.trim().length() == 0) {
                 txSupport = "xa";
             }
-
-            final ConnectionFactoryMonitor cfm = new ConnectionFactoryMonitor(serviceInfo.id, connectionManager, txSupport);
-            registerAsMBean(serviceInfo.id, "ConnectionFactory", new ManagedMBean(cfm));
 
             if (connectionManager == null) {
                 throw new OpenEJBRuntimeException(messages.format("assembler.invalidConnectionManager", serviceInfo.id));
