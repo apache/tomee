@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
@@ -33,12 +34,14 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
+// TODO - This cannot be a CDI Bean, because the keys needs to be validated at deployment time.
 @RequestScoped
 public class ConfigurableJWTAuthContextInfo {
     @Inject
@@ -71,13 +74,14 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private String readPublicKeyFromLocation(final String publicKeyLocation) {
-        final Stream<Optional<String>> possiblePublicKeysLocations =
-                Stream.of(readPublicKeyFromClasspath(publicKeyLocation),
-                          readPublicKeyFromFile(publicKeyLocation),
-                          readPublicKeyFromHttp(publicKeyLocation),
-                          readPublicKeyFromUrl(publicKeyLocation));
+        final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
+                Stream.of(() -> readPublicKeyFromClasspath(publicKeyLocation),
+                          () -> readPublicKeyFromFile(publicKeyLocation),
+                          () -> readPublicKeyFromHttp(publicKeyLocation),
+                          () -> readPublicKeyFromUrl(publicKeyLocation));
 
         return possiblePublicKeysLocations
+                .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
@@ -93,16 +97,16 @@ public class ConfigurableJWTAuthContextInfo {
                 return Optional.empty();
             }
 
-            final StringWriter sw = new StringWriter();
+            final StringWriter content = new StringWriter();
             try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
                 String line = br.readLine();
                 while (line != null) {
-                    sw.write(line);
-                    sw.write('\n');
+                    content.write(line);
+                    content.write('\n');
                     line = br.readLine();
                 }
             }
-            return Optional.of(sw.toString());
+            return Optional.of(content.toString());
         } catch (final IOException e) {
             throw new DeploymentException(
                     "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
@@ -114,7 +118,27 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private Optional<String> readPublicKeyFromHttp(final String publicKeyLocation) {
-        return Optional.empty();
+        if (!publicKeyLocation.startsWith("http")) {
+            return Optional.empty();
+        }
+
+        try {
+            final URL locationURL = new URL(publicKeyLocation);
+
+            final StringWriter content = new StringWriter();
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(locationURL.openStream()))) {
+                String line = reader.readLine();
+                while (line != null) {
+                    content.write(line);
+                    content.write('\n');
+                    line = reader.readLine();
+                }
+            }
+            return Optional.of(content.toString());
+        } catch (final IOException e) {
+            throw new DeploymentException(
+                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+        }
     }
 
     private Optional<String> readPublicKeyFromUrl(final String publicKeyLocation) {
