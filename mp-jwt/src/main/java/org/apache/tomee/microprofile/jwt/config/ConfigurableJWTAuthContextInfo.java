@@ -16,11 +16,13 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.server.cxf.rs.event.ServerCreated;
 import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.spi.DeploymentException;
-import javax.inject.Inject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,45 +37,64 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
-// TODO - This cannot be a CDI Bean, because the keys needs to be validated at deployment time.
-@RequestScoped
 public class ConfigurableJWTAuthContextInfo {
-    @Inject
+    private static final Logger log = Logger.getLogger(ConfigurableJWTAuthContextInfo.class.getName());
+
     private Config config;
+    private JWTAuthContextInfo jwtAuthContextInfo;
 
-    public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
-        final Optional<String> publicKey = config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class);
-        final Optional<String> publicKeyLocation = config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class);
-        final Optional<String> issuer = config.getOptionalValue(ISSUER, String.class);
+    public ConfigurableJWTAuthContextInfo() {
+        config = ConfigProvider.getConfig();
 
-        if (publicKey.isPresent()) {
-            final Optional<RSAPublicKey> rsaPublicKey = readPublicKey(publicKey.get());
-            if (rsaPublicKey.isPresent()) {
-                return Optional.of(new JWTAuthContextInfo(rsaPublicKey.get(), issuer.orElse("")));
-            }
-        }
-
-        if (publicKeyLocation.isPresent()) {
-            final Optional<RSAPublicKey> rsaPublicKey = readPublicKey(readPublicKeyFromLocation(publicKeyLocation.get()));
-            if (rsaPublicKey.isPresent()) {
-                return Optional.of(new JWTAuthContextInfo(rsaPublicKey.get(), issuer.orElse("")));
-            }
-        }
-
-        return Optional.empty();
+        SystemInstance.get().setComponent(ConfigurableJWTAuthContextInfo.class, this);
     }
 
-    private Optional<RSAPublicKey> readPublicKey(final String publicKey) {
+    public void initMPJWTConfig(@Observes final ServerCreated serverCreated) {
+        this.jwtAuthContextInfo = createJWTAuthContextInfo();
+    }
+
+    public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
+        return Optional.ofNullable(jwtAuthContextInfo);
+    }
+
+    private Optional<String> getVerifierPublicKey() {
+        return config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class);
+    }
+
+    private Optional<String> getPublicKeyLocation() {
+        return config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class);
+    }
+
+    private Optional<String> getIssuer() {
+        return config.getOptionalValue(ISSUER, String.class);
+    }
+
+    private JWTAuthContextInfo createJWTAuthContextInfo() {
+        final Stream<Supplier<Optional<RSAPublicKey>>> possiblePublicKeys =
+                Stream.of(() -> getVerifierPublicKey().map(this::readPublicKey),
+                          () -> getPublicKeyLocation().map(this::readPublicKeyFromLocation));
+
+        return possiblePublicKeys
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .map(key -> new JWTAuthContextInfo(key, getIssuer().orElse(null)))
+                .orElse(null);
+    }
+
+    private RSAPublicKey readPublicKey(final String publicKey) {
         return parsePCKS8(publicKey);
     }
 
-    private String readPublicKeyFromLocation(final String publicKeyLocation) {
+    private RSAPublicKey readPublicKeyFromLocation(final String publicKeyLocation) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
                 Stream.of(() -> readPublicKeyFromClasspath(publicKeyLocation),
                           () -> readPublicKeyFromFile(publicKeyLocation),
@@ -85,6 +106,7 @@ public class ConfigurableJWTAuthContextInfo {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
+                .map(this::readPublicKey)
                 .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key from Location: " +
                                                            publicKeyLocation));
     }
@@ -145,14 +167,14 @@ public class ConfigurableJWTAuthContextInfo {
         return Optional.empty();
     }
 
-    private Optional<RSAPublicKey> parsePCKS8(final String publicKey) {
+    private RSAPublicKey parsePCKS8(final String publicKey) {
         isPrivatePCKS8(publicKey);
         try {
             final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
             final KeyFactory kf = KeyFactory.getInstance("RSA");
-            return Optional.of((RSAPublicKey) kf.generatePublic(spec));
+            return (RSAPublicKey) kf.generatePublic(spec);
         } catch (final NoSuchAlgorithmException | InvalidKeySpecException e) {
-            return Optional.empty();
+            throw new DeploymentException("Could not read MicroProfile Public Key: " + publicKey, e);
         }
     }
 
