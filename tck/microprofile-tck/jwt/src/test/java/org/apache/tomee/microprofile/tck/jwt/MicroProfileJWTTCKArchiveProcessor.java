@@ -16,11 +16,14 @@
  */
 package org.apache.tomee.microprofile.tck.jwt;
 
+import com.nimbusds.jose.JWSSigner;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
 import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
+import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.deployment.TargetDescription;
@@ -31,6 +34,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -51,6 +55,11 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
         }
         final WebArchive war = WebArchive.class.cast(applicationArchive);
 
+        // Add Required Libraries
+        war.addAsLibrary(JarLocation.jarLocation(TokenUtils.class))
+           .addAsLibrary(JarLocation.jarLocation(JWSSigner.class))
+           .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+
         // Provide keys required for tests (vendor specific way)
         war.addClass(JWTAuthContextInfoProvider.class);
 
@@ -59,10 +68,15 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
         Stream.of(
                 PublicKeyAsPEMTest.class,
                 PublicKeyAsPEMLocationTest.class,
+                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class,
                 IssValidationTest.class)
               .filter(c -> c.equals(testClass.getJavaClass()))
               .findAny()
               .ifPresent(c -> war.deleteClass(JWTAuthContextInfoProvider.class));
+
+        // MP Config in wrong place - See https://github.com/eclipse/microprofile/issues/46.
+        final Map<ArchivePath, Node> content = war.getContent(object -> object.get().matches(".*META-INF/.*"));
+        content.forEach((archivePath, node) -> war.addAsResource(node.getAsset(), node.getPath()));
 
         // Rewrite the correct server port in configuration
         final Container container = containerRegistry.get().getContainer(TargetDescription.DEFAULT);
@@ -78,7 +92,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 try {
                     final Properties properties = new Properties();
                     properties.load(node.getAsset().openStream());
-                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort));
+                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort + "/" + war.getName().replaceAll("\\.war", "")));
                     final StringWriter stringWriter = new StringWriter();
                     properties.store(stringWriter, null);
                     war.delete(archivePath);
@@ -88,5 +102,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 }
             });
         }
+
+        System.out.println(war.toString(true));
     }
 }

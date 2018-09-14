@@ -24,7 +24,7 @@
 <container qualifier="tomee-remote" default="true">
   <configuration>
     <property name="debug">false</property>
-    <property name="httpPort">8080</property>
+    <property name="httpPort">-1</property>
     <property name="ajpPort">-1</property>
     <property name="stopPort">-1</property>
     <property name="classifier">microprofile</property>
