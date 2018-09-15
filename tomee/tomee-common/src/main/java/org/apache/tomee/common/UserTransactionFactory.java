@@ -29,6 +29,7 @@ import javax.transaction.UserTransaction;
 import java.util.Hashtable;
 
 public class UserTransactionFactory implements ObjectFactory {
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // get the transaction manager
         final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
