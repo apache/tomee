@@ -26,12 +26,13 @@ import java.util.TreeSet;
 public class ContextValue extends LinkRef {
     public static final String MODULES_PREFIX = "openejb/modules/";
 
-    private final Collection<String> links = new TreeSet<String>();
+    private final Collection<String> links = new TreeSet<>();
 
     public ContextValue(final String linkName) {
         super(linkName);
     }
 
+    @Override
     public synchronized String getLinkName() throws NamingException {
         if (links.size() == 1) {
             return "java:" + links.iterator().next();
