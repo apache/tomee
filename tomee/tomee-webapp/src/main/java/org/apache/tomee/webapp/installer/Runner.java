@@ -78,7 +78,7 @@ public class Runner {
         if (paths.verify() && install) {
             installer.installAll();
         }
-        installerResults = new ArrayList<Map<String, String>>();
+        installerResults = new ArrayList<>();
         installerResults.add(Common.build("catalinaHomeDir", String.valueOf(catalinaHome)));
         installerResults.add(Common.build("catalinaBaseDir", String.valueOf(catalinaBase)));
         installerResults.add(Common.build("serverXmlFile", String.valueOf(serverXmlFile)));
