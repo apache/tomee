@@ -32,6 +32,7 @@ public class AsyncConsoleHandler extends AsyncFileHandler {
         setFormatter(new SingleLineFormatter()); // console -> dev. File uses plain old format
     }};
 
+    @Override
     protected void publishInternal(final LogRecord record) {
         delegate.publish(record);
     }
