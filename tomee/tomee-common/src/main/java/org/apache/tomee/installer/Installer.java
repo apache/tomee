@@ -780,6 +780,8 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
+                systemPropertiesWriter.write("# Replace the Jonhzon JSON Providers with the following classes [comma seperated, no spaces]\n");
+                systemPropertiesWriter.write("# openejb.jaxrs.jsonProviders =\n");
 
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
