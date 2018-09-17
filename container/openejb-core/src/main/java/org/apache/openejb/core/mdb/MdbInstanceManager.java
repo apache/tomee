@@ -28,6 +28,7 @@ import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
+import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.monitoring.*;
 import org.apache.openejb.spi.SecurityService;
@@ -41,6 +42,7 @@ import org.apache.xbean.recipe.ObjectRecipe;
 import org.apache.xbean.recipe.Option;
 
 import javax.ejb.ConcurrentAccessTimeoutException;
+import javax.ejb.EJBContext;
 import javax.ejb.SessionBean;
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -59,6 +61,8 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
@@ -199,6 +203,16 @@ public class MdbInstanceManager {
                 data.flush();
             }
         });
+
+        try {
+            final Context context = beanContext.getJndiEnc();
+            context.bind("comp/EJBContext", mdbContext);
+            context.bind("comp/TimerService", new TimerServiceWrapper());
+        } catch (final NamingException e) {
+            throw new OpenEJBException("Failed to bind EJBContext/TimerService", e);
+        }
+
+        beanContext.set(EJBContext.class, mdbContext);
         data.setBaseContext(mdbContext);
         beanContext.setContainerData(data);
 
