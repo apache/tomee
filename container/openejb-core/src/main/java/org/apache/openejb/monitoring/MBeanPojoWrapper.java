@@ -36,7 +36,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
     private final Object delegate;
     private final String name;
     private MBeanInfo info;
-    private final Map<String, PropertyDescriptor> attributeMap = new HashMap<>();
+    private final Map<String, PropertyDescriptor> attributeMap = new HashMap<String, PropertyDescriptor>();
 
     private static final Set<Class<?>> SUPPORTED_PROPERTY_TYPES = new HashSet<Class<?>>() {
         {
@@ -70,7 +70,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
     }
 
     private void scan(Class clazz) {
-        final List<MBeanAttributeInfo> mBeanAttributeInfoList = new ArrayList<>();
+        final List<MBeanAttributeInfo> mBeanAttributeInfoList = new ArrayList<MBeanAttributeInfo>();
 
         try {
             final BeanInfo beanInfo = Introspector.getBeanInfo(clazz);

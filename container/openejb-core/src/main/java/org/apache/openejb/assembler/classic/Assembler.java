@@ -1831,6 +1831,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable t) {
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
+
+            removeResourceMBean(name, "ResourceAdapter");
         } else if (ResourceAdapter.class.isInstance(object)) {
             final ResourceAdapter resourceAdapter = ResourceAdapter.class.cast(object);
             try {
@@ -1844,6 +1846,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Throwable t) {
                 logger.fatal("ResourceAdapter Shutdown Failed: " + name, t);
             }
+
+            removeResourceMBean(name, "ResourceAdapter");
         } else if (DataSourceFactory.knows(object)) {
 
             int timeout;
@@ -1900,18 +1904,43 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             } catch (final Exception e) {
                 logger.debug("Not processing resource on destroy: " + className, e);
             }
+
+            removeResourceMBean(name, "ConnectionFactory");
         } else if (DestroyableResource.class.isInstance(object)) {
             try {
                 DestroyableResource.class.cast(object).destroyResource();
             } catch (final RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
-        } else if (logger.isDebugEnabled() && !DataSource.class.isInstance(object)) {
-            logger.debug("Not processing resource on destroy: " + className);
+
+            removeResourceMBean(name, "Resource");
+        } else if (!DataSource.class.isInstance(object)) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Not processing resource on destroy: " + className);
+            }
+
+            removeResourceMBean(name, "Resource");
         }
 
         callPreDestroy(name, object);
         removeResourceInfo(name);
+    }
+
+    private void removeResourceMBean(String name, String type) {
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("j2eeType", "");
+        jmxName.set("name",name);
+        final MBeanServer server = LocalMBeanServer.get();
+        try {
+            final ObjectName objectName = jmxName.set("j2eeType", type).build();
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+        } catch (final Exception e) {
+            logger.error("Unable to unregister MBean ", e);
+        }
     }
     
     private void callPreDestroy(final String name, final Object object) {
