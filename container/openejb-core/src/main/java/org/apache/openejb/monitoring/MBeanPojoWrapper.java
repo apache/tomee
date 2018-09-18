@@ -69,7 +69,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
         scan(delegate.getClass());
     }
 
-    private void scan(Class clazz) {
+    private void scan(final Class clazz) {
         final List<MBeanAttributeInfo> mBeanAttributeInfoList = new ArrayList<MBeanAttributeInfo>();
 
         try {
@@ -79,7 +79,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
 
             for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                 final String propertyName = propertyDescriptor.getName();
-                Class<?> propertyType = propertyDescriptor.getPropertyType();
+                final Class<?> propertyType = propertyDescriptor.getPropertyType();
 
                 if (! isSupported(propertyType)) {
                     continue;
@@ -105,7 +105,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
                 new MBeanNotificationInfo[0]);
     }
 
-    private static boolean isSupported(Class<?> type) {
+    private static boolean isSupported(final Class<?> type) {
         return SUPPORTED_PROPERTY_TYPES.contains(type);
     }
 

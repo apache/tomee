@@ -154,7 +154,7 @@ public class ConnectionFactoryMonitor {
 
         private final String name;
 
-        PartitionStrategy(String name) {
+        PartitionStrategy(final String name) {
             this.name = name;
         }
 

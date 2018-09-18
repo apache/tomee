@@ -1926,7 +1926,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         removeResourceInfo(name);
     }
 
-    private void removeResourceMBean(String name, String type) {
+    private void removeResourceMBean(final String name, final String type) {
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
         jmxName.set("J2EEServer", "openejb");
         jmxName.set("J2EEApplication", null);
@@ -3088,7 +3088,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         return service;
     }
 
-    private void registerAsMBean(final String name, final String type, Object resource) {
+    private void registerAsMBean(final String name, final String type, final Object resource) {
         final MBeanServer server = LocalMBeanServer.get();
 
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
