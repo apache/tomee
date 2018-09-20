@@ -68,7 +68,22 @@ public class MPJWTFilter implements Filter {
         final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
-        chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get()), response);
+        try {
+            chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get()), response);
+
+        } catch (final Exception e) {
+            // this is an alternative to the @Provider bellow which requires registration on the fly
+            // or users to add it into their webapp for scanning or into the Application itself
+            if (MPJWTException.class.isInstance(e)) {
+                final MPJWTException jwtException = MPJWTException.class.cast(e);
+                HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
+            } else if (MPJWTException.class.isInstance(e.getCause())) {
+                final MPJWTException jwtException = MPJWTException.class.cast(e.getCause());
+                HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
