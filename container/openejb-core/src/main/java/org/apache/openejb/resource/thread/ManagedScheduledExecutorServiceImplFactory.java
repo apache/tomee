@@ -19,6 +19,7 @@ package org.apache.openejb.resource.thread;
 import org.apache.openejb.threads.impl.ManagedScheduledExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.threads.reject.CURejectHandler;
+import org.apache.openejb.util.Duration;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
@@ -28,6 +29,8 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class ManagedScheduledExecutorServiceImplFactory {
     private int core = 5;
+    private int max = 25;
+    private Duration keepAlive = new Duration("5 second");
     private String threadFactory = ManagedThreadFactoryImpl.class.getName();
 
     public ManagedScheduledExecutorServiceImpl create() {
@@ -43,14 +46,25 @@ public class ManagedScheduledExecutorServiceImplFactory {
             managedThreadFactory = new ManagedThreadFactoryImpl();
         }
 
-        return new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);
+        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);
+        scheduledThreadPoolExecutor.setMaximumPoolSize(max);
+        scheduledThreadPoolExecutor.setKeepAliveTime(keepAlive.getTime(), keepAlive.getUnit());
+        return scheduledThreadPoolExecutor;
     }
 
     public void setCore(final int core) {
-        this.core = core;
-    }
+      this.core = core;
+  }
 
-    public void setThreadFactory(final String threadFactory) {
-        this.threadFactory = threadFactory;
-    }
+  public void setMax(final int max) {
+      this.max = max;
+  }
+
+  public void setKeepAlive(final Duration keepAlive) {
+      this.keepAlive = keepAlive;
+  }
+
+  public void setThreadFactory(final String threadFactory) {
+      this.threadFactory = threadFactory;
+  }
 }
