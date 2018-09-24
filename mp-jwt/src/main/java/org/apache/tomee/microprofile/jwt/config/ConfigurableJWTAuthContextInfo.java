@@ -118,17 +118,7 @@ public class ConfigurableJWTAuthContextInfo {
             if (is == null) {
                 return Optional.empty();
             }
-
-            final StringWriter content = new StringWriter();
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
-                String line = reader.readLine();
-                while (line != null) {
-                    content.write(line);
-                    content.write('\n');
-                    line = reader.readLine();
-                }
-            }
-            return Optional.of(content.toString());
+            return Optional.of(readPublicKeyFromInputStream(is));
         } catch (final IOException e) {
             throw new DeploymentException(
                     "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
@@ -150,17 +140,7 @@ public class ConfigurableJWTAuthContextInfo {
                         publicKeyLocation +
                         ". File does not exist or it is a directory.");
             }
-
-            final StringWriter content = new StringWriter();
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(locationURL.openStream()))) {
-                String line = reader.readLine();
-                while (line != null) {
-                    content.write(line);
-                    content.write('\n');
-                    line = reader.readLine();
-                }
-            }
-            return Optional.of(content.toString());
+            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException | URISyntaxException e) {
             throw new DeploymentException(
                     "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
@@ -174,17 +154,7 @@ public class ConfigurableJWTAuthContextInfo {
 
         try {
             final URL locationURL = new URL(publicKeyLocation);
-
-            final StringWriter content = new StringWriter();
-            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(locationURL.openStream()))) {
-                String line = reader.readLine();
-                while (line != null) {
-                    content.write(line);
-                    content.write('\n');
-                    line = reader.readLine();
-                }
-            }
-            return Optional.of(content.toString());
+            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
                     "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
@@ -193,6 +163,19 @@ public class ConfigurableJWTAuthContextInfo {
 
     private Optional<String> readPublicKeyFromUrl(final String publicKeyLocation) {
         return Optional.empty();
+    }
+
+    private String readPublicKeyFromInputStream(final InputStream publicKey) throws IOException {
+        final StringWriter content = new StringWriter();
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(publicKey))) {
+            String line = reader.readLine();
+            while (line != null) {
+                content.write(line);
+                content.write('\n');
+                line = reader.readLine();
+            }
+        }
+        return content.toString();
     }
 
     private RSAPublicKey parsePCKS8(final String publicKey) {
