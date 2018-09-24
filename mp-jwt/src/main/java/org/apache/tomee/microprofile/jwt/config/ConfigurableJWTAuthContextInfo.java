@@ -16,13 +16,14 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.Observes;
-import org.apache.openejb.server.cxf.rs.event.ServerCreated;
 import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,19 +45,16 @@ import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
+@ApplicationScoped
 public class ConfigurableJWTAuthContextInfo {
     private static final Logger log = Logger.getLogger(ConfigurableJWTAuthContextInfo.class.getName());
 
+    @Inject
     private Config config;
+
     private JWTAuthContextInfo jwtAuthContextInfo;
 
-    public ConfigurableJWTAuthContextInfo() {
-        config = ConfigProvider.getConfig();
-
-        SystemInstance.get().setComponent(ConfigurableJWTAuthContextInfo.class, this);
-    }
-
-    public void initMPJWTConfig(@Observes final ServerCreated serverCreated) {
+    public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         this.jwtAuthContextInfo = createJWTAuthContextInfo();
     }
 

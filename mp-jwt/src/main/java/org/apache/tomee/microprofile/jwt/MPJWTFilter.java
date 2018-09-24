@@ -93,13 +93,15 @@ public class MPJWTFilter implements Filter {
 
     @Inject
     private Instance<JWTAuthContextInfo> authContextInfo;
+    @Inject
+    private ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo;
 
     private Optional<JWTAuthContextInfo> getAuthContextInfo() {
         if (!authContextInfo.isUnsatisfied()) {
             return Optional.of(authContextInfo.get());
         }
 
-        return SystemInstance.get().getComponent(ConfigurableJWTAuthContextInfo.class).getJWTAuthContextInfo();
+        return configurableJWTAuthContextInfo.getJWTAuthContextInfo();
     }
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
