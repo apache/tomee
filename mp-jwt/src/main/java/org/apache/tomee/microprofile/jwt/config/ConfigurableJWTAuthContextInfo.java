@@ -25,10 +25,12 @@ import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
@@ -118,12 +120,12 @@ public class ConfigurableJWTAuthContextInfo {
             }
 
             final StringWriter content = new StringWriter();
-            try (final BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-                String line = br.readLine();
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                String line = reader.readLine();
                 while (line != null) {
                     content.write(line);
                     content.write('\n');
-                    line = br.readLine();
+                    line = reader.readLine();
                 }
             }
             return Optional.of(content.toString());
@@ -134,7 +136,35 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private Optional<String> readPublicKeyFromFile(final String publicKeyLocation) {
-        return Optional.empty();
+        if (!publicKeyLocation.startsWith("file")) {
+            return Optional.empty();
+        }
+
+        try {
+            final URL locationURL = new URL(publicKeyLocation);
+
+            final File publicKeyFile = new File(locationURL.toURI());
+            if (!publicKeyFile.exists() || publicKeyFile.isDirectory()) {
+                throw new DeploymentException(
+                        "Could not read MicroProfile Public Key from Location: " +
+                        publicKeyLocation +
+                        ". File does not exist or it is a directory.");
+            }
+
+            final StringWriter content = new StringWriter();
+            try (final BufferedReader reader = new BufferedReader(new InputStreamReader(locationURL.openStream()))) {
+                String line = reader.readLine();
+                while (line != null) {
+                    content.write(line);
+                    content.write('\n');
+                    line = reader.readLine();
+                }
+            }
+            return Optional.of(content.toString());
+        } catch (final IOException | URISyntaxException e) {
+            throw new DeploymentException(
+                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+        }
     }
 
     private Optional<String> readPublicKeyFromHttp(final String publicKeyLocation) {
