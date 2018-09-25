@@ -18,6 +18,7 @@ package org.apache.tomee.microprofile.jwt.config;
 
 import org.eclipse.microprofile.config.Config;
 import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.lang.JoseException;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -26,11 +27,12 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
 import javax.servlet.ServletContext;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,19 +46,24 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
+import static org.jose4j.jwk.JsonWebKeySet.JWK_SET_MEMBER_NAME;
 
 @ApplicationScoped
 public class ConfigurableJWTAuthContextInfo {
     private static final Logger log = Logger.getLogger(ConfigurableJWTAuthContextInfo.class.getName());
+    private static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
 
     @Inject
     private Config config;
@@ -219,28 +226,54 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.empty();
         }
 
+        validateJwk(jwk);
+
+        try {
+            return Optional.of((RSAPublicKey) JsonWebKey.Factory.newJwk(publicKey).getKey());
+        } catch (final JoseException e) {
+            throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
+        }
+    }
+
+    private Optional<List<RSAPublicKey>> parseJwks(final String publicKey) {
+        final JsonObject jwks;
+        try {
+            jwks = Json.createReader(new StringReader(publicKey)).readObject();
+        } catch (final JsonParsingException e) {
+            return Optional.empty();
+        }
+
+        try {
+            final JsonArray keys = jwks.getJsonArray(JWK_SET_MEMBER_NAME);
+            for (final JsonValue key : keys) {
+                validateJwk(key.asJsonObject());
+            }
+        } catch (final Exception e) {
+            throw new DeploymentException("MicroProfile Public Key JWKS invalid format.");
+        }
+
+        try {
+            final JsonWebKeySet keySet = new JsonWebKeySet(publicKey);
+            final List<RSAPublicKey> keys =
+                    keySet.getJsonWebKeys()
+                          .stream()
+                          .map(JsonWebKey::getKey)
+                          .map(key -> (RSAPublicKey) key)
+                          .collect(Collectors.toList());
+            return Optional.of(keys);
+        } catch (final JoseException e) {
+            throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
+        }
+    }
+
+    private void validateJwk(final JsonObject jwk) {
         final String keyType = jwk.getString("kty");
         if (keyType == null) {
             throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
         }
 
-        if ("RSA".equals(keyType)) {
-            try {
-                return Optional.of((RSAPublicKey) JsonWebKey.Factory.newJwk(publicKey).getKey());
-            } catch (final JoseException e) {
-                throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
-            }
-        }
-
-        throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
-    }
-
-    private Optional<JsonObject> readEncodedJwk(final String publicKey) {
-        try {
-            return Optional.of(
-                    Json.createReader(new ByteArrayInputStream(Base64.getDecoder().decode(publicKey))).readObject());
-        } catch (final JsonParsingException e) {
-            return Optional.empty();
+        if (!JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
+            throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
         }
     }
 
