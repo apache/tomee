@@ -28,6 +28,7 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.consumer.JwtContext;
+import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 
 /**
  * A default implementation of the abstract JWTCallerPrincipalFactory that uses the Keycloak token parsing classes.
@@ -50,16 +51,20 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
                     .setExpectedIssuer(authContextInfo.getIssuedBy())
-                    .setVerificationKey(authContextInfo.getSignerKey(""))
                     .setJwsAlgorithmConstraints(
                             new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                     AlgorithmIdentifiers.RSA_USING_SHA256));
 
             if (authContextInfo.getExpGracePeriodSecs() > 0) {
                 builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
-
             } else {
                 builder.setEvaluationTime(NumericDate.fromSeconds(0));
+            }
+
+            if (authContextInfo.isSingleKey()) {
+                builder.setVerificationKey(authContextInfo.getSignerKey());
+            } else {
+                builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getSignerKeys()));
             }
 
             final JwtConsumer jwtConsumer = builder.build();

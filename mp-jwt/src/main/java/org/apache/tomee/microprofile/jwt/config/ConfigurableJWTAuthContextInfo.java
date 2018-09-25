@@ -44,13 +44,14 @@ import java.net.URL;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -93,7 +94,7 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private JWTAuthContextInfo createJWTAuthContextInfo() {
-        final Stream<Supplier<Optional<List<Key>>>> possiblePublicKeys =
+        final Stream<Supplier<Optional<Map<String, Key>>>> possiblePublicKeys =
                 Stream.of(() -> getVerifierPublicKey().map(this::readPublicKeys),
                           () -> getPublicKeyLocation().map(this::readPublicKeysFromLocation));
 
@@ -106,11 +107,13 @@ public class ConfigurableJWTAuthContextInfo {
                 .orElse(null);
     }
 
-    private List<Key> readPublicKeys(final String publicKey) {
-        final Stream<Supplier<List<Key>>> possiblePublicKeysParses =
+    private Map<String, Key> readPublicKeys(final String publicKey) {
+        final Stream<Supplier<Map<String, Key>>> possiblePublicKeysParses =
                 Stream.of(() -> parsePCKS8(publicKey),
                           () -> parseJwk(publicKey),
-                          () -> parseJwk(new String(Base64.getDecoder().decode(publicKey))));
+                          () -> parseJwkDecoded(publicKey),
+                          () -> parseJwks(publicKey),
+                          () -> parseJwksDecoded(publicKey));
 
         return possiblePublicKeysParses
                 .map(Supplier::get)
@@ -119,7 +122,7 @@ public class ConfigurableJWTAuthContextInfo {
                 .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key: " + publicKey));
     }
 
-    private List<Key> readPublicKeysFromLocation(final String publicKeyLocation) {
+    private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
                 Stream.of(() -> readPublicKeysFromClasspath(publicKeyLocation),
                           () -> readPublicKeysFromFile(publicKeyLocation),
@@ -209,39 +212,55 @@ public class ConfigurableJWTAuthContextInfo {
         return content.toString();
     }
 
-    private List<Key> parsePCKS8(final String publicKey) {
+    private Map<String, Key> parsePCKS8(final String publicKey) {
         try {
             final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
             final KeyFactory kf = KeyFactory.getInstance("RSA");
-            return Collections.singletonList(kf.generatePublic(spec));
+            return Collections.singletonMap(null, kf.generatePublic(spec));
         } catch (final NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
     }
 
-    private List<Key> parseJwk(final String publicKey) {
+    private Map<String, Key> parseJwk(final String publicKey) {
         final JsonObject jwk;
         try {
             jwk = Json.createReader(new StringReader(publicKey)).readObject();
         } catch (final JsonParsingException e) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
+        }
+
+        if (jwk.containsKey(JWK_SET_MEMBER_NAME)) {
+            return Collections.emptyMap();
         }
 
         validateJwk(jwk);
 
         try {
-            return Collections.singletonList(JsonWebKey.Factory.newJwk(publicKey).getKey());
+            final JsonWebKey key = JsonWebKey.Factory.newJwk(publicKey);
+            return Collections.singletonMap(key.getKeyId(), key.getKey());
         } catch (final JoseException e) {
             throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
         }
     }
 
-    private List<Key> parseJwks(final String publicKey) {
+    private Map<String, Key> parseJwkDecoded(final String publicKey) {
+        final String publicKeyDecoded;
+        try {
+            publicKeyDecoded = new String(Base64.getDecoder().decode(publicKey));
+        } catch (final Exception e) {
+            return Collections.emptyMap();
+        }
+
+        return parseJwk(publicKeyDecoded);
+    }
+
+    private Map<String, Key> parseJwks(final String publicKey) {
         final JsonObject jwks;
         try {
             jwks = Json.createReader(new StringReader(publicKey)).readObject();
         } catch (final JsonParsingException e) {
-            return Collections.emptyList();
+            return Collections.emptyMap();
         }
 
         try {
@@ -255,20 +274,29 @@ public class ConfigurableJWTAuthContextInfo {
 
         try {
             final JsonWebKeySet keySet = new JsonWebKeySet(publicKey);
-            final List<RSAPublicKey> keys =
+            final Map<String, Key> keys =
                     keySet.getJsonWebKeys()
                           .stream()
-                          .map(JsonWebKey::getKey)
-                          .map(key -> (RSAPublicKey) key)
-                          .collect(Collectors.toList());
-            return Collections.unmodifiableList(keys);
+                          .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
+            return Collections.unmodifiableMap(keys);
         } catch (final JoseException e) {
             throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
         }
     }
 
+    private Map<String, Key> parseJwksDecoded(final String publicKey) {
+        final String publicKeyDecoded;
+        try {
+            publicKeyDecoded = new String(Base64.getDecoder().decode(publicKey));
+        } catch (final Exception e) {
+            return Collections.emptyMap();
+        }
+
+        return parseJwks(publicKey);
+    }
+
     private void validateJwk(final JsonObject jwk) {
-        final String keyType = jwk.getString("kty");
+        final String keyType = jwk.getString("kty", null);
         if (keyType == null) {
             throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
         }

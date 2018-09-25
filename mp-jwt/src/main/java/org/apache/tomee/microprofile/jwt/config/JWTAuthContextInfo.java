@@ -16,25 +16,37 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.lang.JoseException;
+
 import java.security.Key;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthContextInfo {
-    private List<Key> signerKeys;
+    public static final String DEFAULT_KEY = "DEFAULT";
+
+    private Map<String, Key> signerKeys;
     private String issuedBy;
     private int expGracePeriodSecs = 60;
 
     private JWTAuthContextInfo(final Key signerKey, final String issuedBy) {
-        this.signerKeys = Collections.singletonList(signerKey);
+        this.signerKeys = Collections.singletonMap(DEFAULT_KEY, signerKey);
         this.issuedBy = issuedBy;
     }
 
-    private JWTAuthContextInfo(final List<Key> signerKeys, final String issuedBy) {
-        this.signerKeys = Collections.unmodifiableList(signerKeys);
+    private JWTAuthContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
+        if (signerKeys.size() == 1) {
+            final Key singleKey = signerKeys.values().iterator().next();
+            this.signerKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
+        } else {
+            this.signerKeys = Collections.unmodifiableMap(signerKeys);
+        }
         this.issuedBy = issuedBy;
     }
 
@@ -42,16 +54,29 @@ public class JWTAuthContextInfo {
         return new JWTAuthContextInfo(signerKey, issuedBy);
     }
 
-    public static JWTAuthContextInfo authContextInfo(final List<Key> signerKeys, final String issuedBy) {
+    public static JWTAuthContextInfo authContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
         return new JWTAuthContextInfo(signerKeys, issuedBy);
     }
 
-    public List<Key> getSignerKeys() {
-        return signerKeys;
+    public boolean isSingleKey() {
+        return signerKeys.size() == 1;
     }
 
-    public Key getSignerKey(final String kid) {
-        return signerKeys.get(0);
+    public Key getSignerKey() {
+        return signerKeys.get("DEFAULT");
+    }
+
+    public List<JsonWebKey> getSignerKeys() {
+        return signerKeys.entrySet().stream().map(key -> {
+            try {
+                final JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(key.getValue());
+                jsonWebKey.setKeyId(key.getKey());
+                return jsonWebKey;
+            } catch (final JoseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).collect(Collectors.toList());
     }
 
     public String getIssuedBy() {
