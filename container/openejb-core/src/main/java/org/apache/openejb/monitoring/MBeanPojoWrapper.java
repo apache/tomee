@@ -99,7 +99,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
         // default constructor is mandatory
         info = new MBeanInfo(name,
                 "Auto-created by OpenEJB",
-                mBeanAttributeInfoList.toArray(new MBeanAttributeInfo[attributeMap.size()]),
+                mBeanAttributeInfoList.toArray(new MBeanAttributeInfo[mBeanAttributeInfoList.size()]),
                 null, // default constructor is mandatory
                 new MBeanOperationInfo[0],
                 new MBeanNotificationInfo[0]);
