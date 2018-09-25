@@ -77,6 +77,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 PublicKeyAsJWKTest.class,
                 PublicKeyAsBase64JWKTest.class,
                 PublicKeyAsJWKLocationTest.class,
+                PublicKeyAsJWKLocationURLTest.class,
                 IssValidationTest.class,
                 org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class)
               .filter(c -> c.equals(testClass.getJavaClass()))
