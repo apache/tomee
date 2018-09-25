@@ -179,7 +179,13 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private Optional<String> readPublicKeyFromUrl(final String publicKeyLocation) {
-        return Optional.empty();
+        try {
+            final URL locationURL = new URL(publicKeyLocation);
+            return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
+        } catch (final IOException e) {
+            throw new DeploymentException(
+                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+        }
     }
 
     private String readPublicKeyFromInputStream(final InputStream publicKey) throws IOException {
@@ -200,7 +206,7 @@ public class ConfigurableJWTAuthContextInfo {
             final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
             final KeyFactory kf = KeyFactory.getInstance("RSA");
             return Optional.of((RSAPublicKey) kf.generatePublic(spec));
-        } catch (final NoSuchAlgorithmException | InvalidKeySpecException e) {
+        } catch (final NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
             return Optional.empty();
         }
     }
