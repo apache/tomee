@@ -24,6 +24,8 @@ import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsBase64JWKTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsFileLocationURLTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationURLTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
@@ -72,6 +74,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 PublicKeyAsPEMTest.class,
                 PublicKeyAsPEMLocationTest.class,
                 PublicKeyAsFileLocationURLTest.class,
+                PublicKeyAsJWKTest.class,
                 PublicKeyAsBase64JWKTest.class,
                 PublicKeyAsJWKLocationTest.class,
                 IssValidationTest.class,
