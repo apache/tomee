@@ -47,6 +47,9 @@ public class ManagedScheduledExecutorServiceImplFactory {
         }
 
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(core, managedThreadFactory, CURejectHandler.INSTANCE);
+        if (max < core) {
+            max = core;
+        }
         scheduledThreadPoolExecutor.setMaximumPoolSize(max);
         scheduledThreadPoolExecutor.setKeepAliveTime(keepAlive.getTime(), keepAlive.getUnit());
         return scheduledThreadPoolExecutor;
