@@ -38,9 +38,17 @@ import org.apache.geronimo.connector.outbound.connectionmanagerconfig.XATransact
 import org.apache.geronimo.transaction.manager.NamedXAResourceFactory;
 import org.apache.geronimo.transaction.manager.RecoverableTransactionManager;
 import org.apache.openejb.OpenEJBRuntimeException;
+import org.apache.openejb.monitoring.ConnectionFactoryMonitor;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
 import org.apache.openejb.util.Duration;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.reflection.Reflections;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -64,6 +72,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 
 public class GeronimoConnectionManagerFactory {
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, GeronimoConnectionManagerFactory.class);
     private String name;
     private ClassLoader classLoader;
 
@@ -258,6 +267,27 @@ public class GeronimoConnectionManagerFactory {
             mgr = new GenericConnectionManager(txSupport, poolingSupport,
                     null, new AutoConnectionTracker(), tm,
                     mcf, name, classLoader);
+        }
+
+
+        final ConnectionFactoryMonitor cfm = new ConnectionFactoryMonitor(name, mgr, transactionSupport);
+        final MBeanServer server = LocalMBeanServer.get();
+
+        final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+        jmxName.set("J2EEServer", "openejb");
+        jmxName.set("J2EEApplication", null);
+        jmxName.set("j2eeType", "");
+        jmxName.set("name", name);
+
+        try {
+            final ObjectName objectName = jmxName.set("j2eeType", "ConnectionFactory").build();
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+
+            server.registerMBean(new ManagedMBean(cfm), objectName);
+        } catch (final Exception e) {
+            logger.error("Unable to register MBean ", e);
         }
 
         return mgr;
