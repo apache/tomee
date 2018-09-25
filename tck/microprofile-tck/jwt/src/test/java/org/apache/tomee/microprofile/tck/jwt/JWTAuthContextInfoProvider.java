@@ -33,11 +33,6 @@ public class JWTAuthContextInfoProvider {
 
     @Produces
     Optional<JWTAuthContextInfo> getOptionalContextInfo() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        JWTAuthContextInfo contextInfo = new JWTAuthContextInfo();
-
-        // todo use MP Config to load the configuration
-        contextInfo.setIssuedBy("https://server.example.com");
-
         final String pemEncoded = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlivFI8qB4D0y2jy0CfEq" +
                 "Fyy46R0o7S8TKpsx5xbHKoU1VWg6QkQm+ntyIv1p4kE1sPEQO73+HY8+Bzs75XwR" +
                 "TYL1BmR1w8J5hmjVWjc6R2BTBGAYRPFRhor3kpM6ni2SPmNNhurEAHw7TaqszP5e" +
@@ -51,9 +46,7 @@ public class JWTAuthContextInfoProvider {
         final KeyFactory kf = KeyFactory.getInstance("RSA");
         final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
 
-        contextInfo.setSignerKey(pk);
-
-        return Optional.of(contextInfo);
+        return Optional.of(JWTAuthContextInfo.authContextInfo(pk, "https://server.example.com"));
     }
 
     @Produces

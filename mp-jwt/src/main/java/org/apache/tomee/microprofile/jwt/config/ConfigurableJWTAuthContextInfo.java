@@ -41,6 +41,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
@@ -48,6 +49,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -91,51 +93,50 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private JWTAuthContextInfo createJWTAuthContextInfo() {
-        final Stream<Supplier<Optional<RSAPublicKey>>> possiblePublicKeys =
-                Stream.of(() -> getVerifierPublicKey().map(this::readPublicKey),
-                          () -> getPublicKeyLocation().map(this::readPublicKeyFromLocation));
+        final Stream<Supplier<Optional<List<Key>>>> possiblePublicKeys =
+                Stream.of(() -> getVerifierPublicKey().map(this::readPublicKeys),
+                          () -> getPublicKeyLocation().map(this::readPublicKeysFromLocation));
 
         return possiblePublicKeys
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .map(key -> new JWTAuthContextInfo(key, getIssuer().orElse(null)))
+                .map(keys -> JWTAuthContextInfo.authContextInfo(keys, getIssuer().orElse(null)))
                 .orElse(null);
     }
 
-    private RSAPublicKey readPublicKey(final String publicKey) {
-        final Stream<Supplier<Optional<RSAPublicKey>>> possiblePublicKeysParses =
+    private List<Key> readPublicKeys(final String publicKey) {
+        final Stream<Supplier<List<Key>>> possiblePublicKeysParses =
                 Stream.of(() -> parsePCKS8(publicKey),
                           () -> parseJwk(publicKey),
                           () -> parseJwk(new String(Base64.getDecoder().decode(publicKey))));
 
         return possiblePublicKeysParses
                 .map(Supplier::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(keys -> !keys.isEmpty())
                 .findFirst()
                 .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key: " + publicKey));
     }
 
-    private RSAPublicKey readPublicKeyFromLocation(final String publicKeyLocation) {
+    private List<Key> readPublicKeysFromLocation(final String publicKeyLocation) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
-                Stream.of(() -> readPublicKeyFromClasspath(publicKeyLocation),
-                          () -> readPublicKeyFromFile(publicKeyLocation),
-                          () -> readPublicKeyFromHttp(publicKeyLocation),
-                          () -> readPublicKeyFromUrl(publicKeyLocation));
+                Stream.of(() -> readPublicKeysFromClasspath(publicKeyLocation),
+                          () -> readPublicKeysFromFile(publicKeyLocation),
+                          () -> readPublicKeysFromHttp(publicKeyLocation),
+                          () -> readPublicKeysFromUrl(publicKeyLocation));
 
         return possiblePublicKeysLocations
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .map(this::readPublicKey)
+                .map(this::readPublicKeys)
                 .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key from Location: " +
                                                            publicKeyLocation));
     }
 
-    private Optional<String> readPublicKeyFromClasspath(final String publicKeyLocation) {
+    private Optional<String> readPublicKeysFromClasspath(final String publicKeyLocation) {
         try {
             final InputStream is =
                     Thread.currentThread().getContextClassLoader().getResourceAsStream(publicKeyLocation);
@@ -149,7 +150,7 @@ public class ConfigurableJWTAuthContextInfo {
         }
     }
 
-    private Optional<String> readPublicKeyFromFile(final String publicKeyLocation) {
+    private Optional<String> readPublicKeysFromFile(final String publicKeyLocation) {
         if (!publicKeyLocation.startsWith("file")) {
             return Optional.empty();
         }
@@ -171,7 +172,7 @@ public class ConfigurableJWTAuthContextInfo {
         }
     }
 
-    private Optional<String> readPublicKeyFromHttp(final String publicKeyLocation) {
+    private Optional<String> readPublicKeysFromHttp(final String publicKeyLocation) {
         if (!publicKeyLocation.startsWith("http")) {
             return Optional.empty();
         }
@@ -185,7 +186,7 @@ public class ConfigurableJWTAuthContextInfo {
         }
     }
 
-    private Optional<String> readPublicKeyFromUrl(final String publicKeyLocation) {
+    private Optional<String> readPublicKeysFromUrl(final String publicKeyLocation) {
         try {
             final URL locationURL = new URL(publicKeyLocation);
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
@@ -208,39 +209,39 @@ public class ConfigurableJWTAuthContextInfo {
         return content.toString();
     }
 
-    private Optional<RSAPublicKey> parsePCKS8(final String publicKey) {
+    private List<Key> parsePCKS8(final String publicKey) {
         try {
             final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
             final KeyFactory kf = KeyFactory.getInstance("RSA");
-            return Optional.of((RSAPublicKey) kf.generatePublic(spec));
+            return Collections.singletonList(kf.generatePublic(spec));
         } catch (final NoSuchAlgorithmException | InvalidKeySpecException | IllegalArgumentException e) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
     }
 
-    private Optional<RSAPublicKey> parseJwk(final String publicKey) {
+    private List<Key> parseJwk(final String publicKey) {
         final JsonObject jwk;
         try {
             jwk = Json.createReader(new StringReader(publicKey)).readObject();
         } catch (final JsonParsingException e) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         validateJwk(jwk);
 
         try {
-            return Optional.of((RSAPublicKey) JsonWebKey.Factory.newJwk(publicKey).getKey());
+            return Collections.singletonList(JsonWebKey.Factory.newJwk(publicKey).getKey());
         } catch (final JoseException e) {
             throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
         }
     }
 
-    private Optional<List<RSAPublicKey>> parseJwks(final String publicKey) {
+    private List<Key> parseJwks(final String publicKey) {
         final JsonObject jwks;
         try {
             jwks = Json.createReader(new StringReader(publicKey)).readObject();
         } catch (final JsonParsingException e) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         try {
@@ -260,7 +261,7 @@ public class ConfigurableJWTAuthContextInfo {
                           .map(JsonWebKey::getKey)
                           .map(key -> (RSAPublicKey) key)
                           .collect(Collectors.toList());
-            return Optional.of(keys);
+            return Collections.unmodifiableList(keys);
         } catch (final JoseException e) {
             throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
         }

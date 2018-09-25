@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;

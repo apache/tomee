@@ -50,7 +50,7 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
                     .setExpectedIssuer(authContextInfo.getIssuedBy())
-                    .setVerificationKey(authContextInfo.getSignerKey())
+                    .setVerificationKey(authContextInfo.getSignerKey(""))
                     .setJwsAlgorithmConstraints(
                             new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                     AlgorithmIdentifiers.RSA_USING_SHA256));
