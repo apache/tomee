@@ -101,7 +101,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
         }
     }
 
-    public Long getQueueSize() {
+    public Integer getQueueSize() {
         if (delegate instanceof ThreadPoolExecutor) {
             return ((ThreadPoolExecutor) delegate).getQueue().size();
         } else {
