@@ -21,6 +21,7 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
 import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
+import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsBase64JWKTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsFileLocationURLTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
 import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
@@ -70,6 +71,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 PublicKeyAsPEMTest.class,
                 PublicKeyAsPEMLocationTest.class,
                 PublicKeyAsFileLocationURLTest.class,
+                PublicKeyAsBase64JWKTest.class,
                 IssValidationTest.class,
                 org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class)
               .filter(c -> c.equals(testClass.getJavaClass()))

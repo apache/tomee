@@ -17,18 +17,25 @@
 package org.apache.tomee.microprofile.jwt.config;
 
 import org.eclipse.microprofile.config.Config;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.lang.JoseException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.stream.JsonParsingException;
 import javax.servlet.ServletContext;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -91,7 +98,17 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private RSAPublicKey readPublicKey(final String publicKey) {
-        return parsePCKS8(publicKey);
+        final Stream<Supplier<Optional<RSAPublicKey>>> possiblePublicKeysParses =
+                Stream.of(() -> parsePCKS8(publicKey),
+                          () -> parseJwk(publicKey),
+                          () -> parseJwk(new String(Base64.getDecoder().decode(publicKey))));
+
+        return possiblePublicKeysParses
+                .map(Supplier::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .findFirst()
+                .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key: " + publicKey));
     }
 
     private RSAPublicKey readPublicKeyFromLocation(final String publicKeyLocation) {
@@ -178,24 +195,54 @@ public class ConfigurableJWTAuthContextInfo {
         return content.toString();
     }
 
-    private RSAPublicKey parsePCKS8(final String publicKey) {
-        isPrivatePCKS8(publicKey);
+    private Optional<RSAPublicKey> parsePCKS8(final String publicKey) {
         try {
             final X509EncodedKeySpec spec = new X509EncodedKeySpec(normalizeAndDecodePCKS8(publicKey));
             final KeyFactory kf = KeyFactory.getInstance("RSA");
-            return (RSAPublicKey) kf.generatePublic(spec);
+            return Optional.of((RSAPublicKey) kf.generatePublic(spec));
         } catch (final NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new DeploymentException("Could not read MicroProfile Public Key: " + publicKey, e);
+            return Optional.empty();
         }
     }
 
-    private void isPrivatePCKS8(final String publicKey) {
-        if (publicKey.contains("PRIVATE KEY")) {
-            throw new DeploymentException("MicroProfile JWT Public Key is Private.");
+    private Optional<RSAPublicKey> parseJwk(final String publicKey) {
+        final JsonObject jwk;
+        try {
+            jwk = Json.createReader(new StringReader(publicKey)).readObject();
+        } catch (final JsonParsingException e) {
+            return Optional.empty();
+        }
+
+        final String keyType = jwk.getString("kty");
+        if (keyType == null) {
+            throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
+        }
+
+        if ("RSA".equals(keyType)) {
+            try {
+                return Optional.of((RSAPublicKey) JsonWebKey.Factory.newJwk(publicKey).getKey());
+            } catch (final JoseException e) {
+                throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
+            }
+        }
+
+        throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
+    }
+
+    private Optional<JsonObject> readEncodedJwk(final String publicKey) {
+        try {
+            return Optional.of(
+                    Json.createReader(new ByteArrayInputStream(Base64.getDecoder().decode(publicKey))).readObject());
+        } catch (final JsonParsingException e) {
+            return Optional.empty();
         }
     }
 
     private byte[] normalizeAndDecodePCKS8(final String publicKey) {
+        if (publicKey.contains("PRIVATE KEY")) {
+            throw new DeploymentException("MicroProfile Public Key is Private.");
+        }
+
         final String normalizedKey =
                 publicKey.replaceAll("-----BEGIN (.*)-----", "")
                          .replaceAll("-----END (.*)----", "")
