@@ -47,6 +47,12 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
+    
+    private final boolean useConnectionProxies;
+
+    public AutoConnectionTracker(boolean useConnectionProxies) {
+        this.useConnectionProxies = useConnectionProxies;
+    }
 
     public Set<ManagedConnectionInfo> connections() {
         return references.keySet();
@@ -99,6 +105,11 @@ public class AutoConnectionTracker implements ConnectionTracker {
     }
 
     private void proxyConnection(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo) throws ResourceException {
+        // no-op if we have opted to not use proxies
+        if (! useConnectionProxies) {
+            return;
+        }
+
         // if this connection already has a proxy no need to create another
         if (connectionInfo.getConnectionProxy() != null) {
             return;
