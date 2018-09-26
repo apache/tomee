@@ -21,11 +21,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-TT.9</version>
+    <version>4.7.6-TT.10</version>
   </parent>
 
   <groupId>org.apache.openejb.maven</groupId>
-  <version>1.7.6-TT.9</version>
+  <version>1.7.6-TT.10</version>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Maven Plugins</name>
@@ -98,7 +98,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.5.2</version>
         <executions>
           <execution>
             <id>mojo-descriptor</id>
@@ -111,6 +111,7 @@
         <configuration>
           <goalPrefix>${maven-plugin.prefix}</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <mojoDependencies/>
         </configuration>
       </plugin>
     </plugins>

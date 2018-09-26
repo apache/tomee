@@ -1,6 +1,13 @@
-= TomEE EAP 1.7.6-TT.8
+= TomEE EAP 1.7.6-TT.10
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.10
+
+* Update to ActiveMQ 5.15.6 to mitigate CVE-2018-11775
+* TOMEE-2230 Expose details of Connection Factories and Resource Adapters via JMX
+* TOMEE-2245 Null attributes in MBeanPojoWrapper
+* TOMEE-2237 MessageDrivenContext not injected into MDBs when using new pooling
 
 === Changes in TomEE EAP 1.7.6-TT.8
 
