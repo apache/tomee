@@ -31,7 +31,6 @@ import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
 import javax.transaction.Status;
-import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -42,6 +41,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -49,6 +50,8 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
+    private static final String REGISTRY_KEY = AutoConnectionTracker.class.getName() + "_ConnectionProxies";
+
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.resource");
 
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
@@ -58,13 +61,12 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * This holds a reference to proxies that are created within a transaction until the transaction has finished so that resources
      * associated with the transaction are not actively destroyed.
      */
-    private final Set<Object> txProxies = Collections.newSetFromMap(new ConcurrentHashMap<Object,Boolean>());
-
-
     private final boolean useConnectionProxies;
+    private final TransactionSynchronizationRegistry registry;
 
     public AutoConnectionTracker(boolean useConnectionProxies) {
         this.useConnectionProxies = useConnectionProxies;
+        registry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
     }
 
     public Set<ManagedConnectionInfo> connections() {
@@ -99,23 +101,17 @@ public class AutoConnectionTracker implements ConnectionTracker {
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (!reassociate) {
             proxyConnection(interceptor, connectionInfo);
-            final Object connectionProxy = connectionInfo.getConnectionProxy();
 
-            if (isTxActive()) {
-                txProxies.add(connectionProxy);
+            if (useConnectionProxies && isTxActive()) {
 
-                final TransactionSynchronizationRegistry sr = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
-                if (null != sr) {
-                    sr.registerInterposedSynchronization(new Synchronization() {
-                        @Override
-                        public void beforeCompletion() {
-                        }
+                if (null != registry) {
+                    List<Object> txProxies = (List<Object>) registry.getResource(REGISTRY_KEY);
+                    if (txProxies == null) {
+                        txProxies = new ArrayList<Object>();
+                        registry.putResource(REGISTRY_KEY, txProxies);
+                    }
 
-                        @Override
-                        public void afterCompletion(final int s) {
-                            txProxies.remove(connectionProxy);
-                        }
-                    });
+                    txProxies.add(connectionInfo.getConnectionProxy());
                 } else {
                     logger.warning("TransactionSynchronizationRegistry has not been initialized");
                 }
@@ -272,6 +268,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private static class ProxyPhantomReference extends PhantomReference<ConnectionInvocationHandler> {
         private final ConnectionTrackingInterceptor interceptor;
         private final ManagedConnectionInfo managedConnectionInfo;
+        private
 
         @SuppressWarnings({"unchecked"})
         public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
