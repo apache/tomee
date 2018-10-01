@@ -46,7 +46,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setGroupId("org.apache.tomee");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("7.1.0-SNAPSHOT");
+        configuration.setVersion("7.1.1-SNAPSHOT");
         configuration.setHttpPort(-1);
 
         final RemoteTomEEContainer container = new RemoteTomEEContainer();
