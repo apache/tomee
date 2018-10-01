@@ -23,19 +23,25 @@ import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
 import org.apache.openejb.dyni.DynamicSubclass;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,11 +49,18 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.resource");
+
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
-    
+     * This holds a reference to proxies that are created within a transaction until the transaction has finished so that resources
+     * associated with the transaction are not actively destroyed.
+     */
+    private final Set<Object> txProxies = Collections.newSetFromMap(new ConcurrentHashMap<Object,Boolean>());
+
+
     private final boolean useConnectionProxies;
 
     public AutoConnectionTracker(boolean useConnectionProxies) {
@@ -86,6 +99,50 @@ public class AutoConnectionTracker implements ConnectionTracker {
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (!reassociate) {
             proxyConnection(interceptor, connectionInfo);
+            final Object connectionProxy = connectionInfo.getConnectionProxy();
+
+            if (isTxActive()) {
+                txProxies.add(connectionProxy);
+
+                final TransactionSynchronizationRegistry sr = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+                if (null != sr) {
+                    sr.registerInterposedSynchronization(new Synchronization() {
+                        @Override
+                        public void beforeCompletion() {
+                        }
+
+                        @Override
+                        public void afterCompletion(final int s) {
+                            txProxies.remove(connectionProxy);
+                        }
+                    });
+                } else {
+                    logger.warning("TransactionSynchronizationRegistry has not been initialized");
+                }
+
+            }
+
+        }
+    }
+
+    private boolean isTxActive() {
+        final TransactionManager txManager = SystemInstance.get().getComponent(TransactionManager.class);
+        if (txManager == null) {
+            logger.error("Transaction manager is not available");
+            return false;
+        }
+
+        try {
+            final Transaction transaction = txManager.getTransaction();
+            if (transaction == null) {
+                return false;
+            }
+
+            final int status = transaction.getStatus();
+            return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
+        } catch (SystemException e) {
+            logger.error("Error getting current transaction", e);
+            return false;
         }
     }
 
