@@ -17,6 +17,9 @@
 
 package org.apache.openejb.util.proxy;
 
+
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Debug;
 import org.apache.xbean.asm6.ClassWriter;
 import org.apache.xbean.asm6.Label;
@@ -46,6 +49,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LocalBeanProxyFactory implements Opcodes {
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LocalBeanProxyFactory.class);
 
     public static final InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
@@ -700,7 +705,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // sun.misc.Unsafe
         private static final Object unsafe;
-        private static final Method defineClass;
+        private static final Method unsafeDefineClass;
         private static final Method allocateInstance;
         private static final Method putObject;
         private static final Method objectFieldOffset;
@@ -774,7 +779,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                     }
                 }
             });
-            defineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            unsafeDefineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
                 @Override
                 public Method run() {
                     try {
@@ -782,7 +787,8 @@ public class LocalBeanProxyFactory implements Opcodes {
                         mtd.setAccessible(true);
                         return mtd;
                     } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe.defineClass", e);
+                        LOGGER.debug("Unsafe's defineClass not available, will use classloader's defineClass");
+                        return null;
                     }
                 }
             });
@@ -816,8 +822,31 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // it is super important to pass a classloader as first parameter otherwise if API class is in a "permanent" classloader then it will leak
         public static Class defineClass(final ClassLoader loader, final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
-            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
+            if (unsafeDefineClass != null) {
+                return (Class<?>) unsafeDefineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
+            } else {
+                return (Class) getClassLoaderDefineClassMethod(loader).invoke(loader, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getProtectionDomain());
+            }
         }
+
+        private static Method getClassLoaderDefineClassMethod(ClassLoader classLoader) {
+            Class<?> clazz = classLoader.getClass();
+            Method defineClassMethod = null;
+            do {
+                try {
+                    defineClassMethod = clazz.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
+                } catch (NoSuchMethodException e) {
+                    // do nothing, we need to search the superclass
+                }
+                clazz = clazz.getSuperclass();
+            } while (defineClassMethod == null && clazz != Object.class);
+
+            if (defineClassMethod != null && !defineClassMethod.isAccessible()) {
+                defineClassMethod.setAccessible(true);
+            }
+            return defineClassMethod;
+        }
+
     }
 
     @Target(ElementType.TYPE)

@@ -17,7 +17,6 @@
 package org.apache.openejb.core.mdb;
 
 import org.apache.activemq.ActiveMQXAConnectionFactory;
-import org.apache.openejb.activemq.AMQXASupportTest;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
@@ -30,6 +29,7 @@ import org.junit.runner.RunWith;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.MessageDrivenContext;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -81,7 +81,7 @@ public class MdbPoolContainerTest {
 
     @Module
     public MessageDrivenBean jar() {
-        return new MessageDrivenBean(AMQXASupportTest.Listener.class);
+        return new MessageDrivenBean(Listener.class);
     }
 
     @Resource(name = "target")
@@ -95,7 +95,7 @@ public class MdbPoolContainerTest {
 
     @Before
     public void resetLatch() {
-        AMQXASupportTest.Listener.reset();
+        Listener.reset();
     }
 
     @Test
@@ -108,7 +108,7 @@ public class MdbPoolContainerTest {
             final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             final MessageProducer producer = session.createProducer(destination);
             producer.send(session.createTextMessage(TEXT));
-            assertTrue(AMQXASupportTest.Listener.sync());
+            assertTrue(Listener.sync());
         } finally {
             connection.close();
         }
@@ -119,6 +119,10 @@ public class MdbPoolContainerTest {
             @ActivationConfigProperty(propertyName = "destination", propertyValue = "target")
     })
     public static class Listener implements MessageListener {
+
+        @Resource
+        private MessageDrivenContext ctx;
+
         public static CountDownLatch latch;
         public static boolean ok = false;
 
@@ -133,6 +137,8 @@ public class MdbPoolContainerTest {
             } finally {
                 latch.countDown();
             }
+
+            assertNotNull(ctx);
         }
 
         public static void reset() {
