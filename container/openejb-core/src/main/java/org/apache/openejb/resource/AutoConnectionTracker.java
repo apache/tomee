@@ -42,7 +42,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -50,8 +49,6 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
-    private static final String REGISTRY_KEY = AutoConnectionTracker.class.getName() + "_ConnectionProxies";
-
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.resource");
 
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
@@ -94,6 +91,23 @@ public class AutoConnectionTracker implements ConnectionTracker {
         logger.warning("Destroyed abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
     }
 
+    private void destroyConnection(final ManagedConnectionInfo managedConnectionInfo, final ConnectionTrackingInterceptor interceptor) {
+        final ConnectionInfo released = new ConnectionInfo(managedConnectionInfo);
+        interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+
+        logger.warning("Transaction complete, but connection still has handles associated. Destroying connection: " + managedConnectionInfo);
+
+        if (logger.isDebugEnabled()) {
+            final StringBuilder sb = new StringBuilder();
+            final Collection<ConnectionInfo> connectionInfos = managedConnectionInfo.getConnectionInfos();
+            for (final ConnectionInfo connectionInfo : connectionInfos) {
+                sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
+            }
+
+            logger.debug("Abandoned connection information: " + sb.toString());
+        }
+    }
+
     /**
      * Proxies new connection handles so we can detect when they have been garbage collected.
      *
@@ -109,45 +123,29 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
 
                 if (null != registry) {
-                    ConcurrentMap<ManagedConnectionInfo, Object> txConnectionResources =
-                            (ConcurrentMap<ManagedConnectionInfo, Object>) registry.getResource(REGISTRY_KEY);
+                    final ManagedConnectionInfo managedConnectionInfo = connectionInfo.getManagedConnectionInfo();
 
-                    if (txConnectionResources == null) {
-                        txConnectionResources = new ConcurrentHashMap<ManagedConnectionInfo, Object>();
-                        registry.putResource(REGISTRY_KEY, txConnectionResources);
-                    }
-
-                    // hold a reference until the transaction is done, this stops it being aggressively destroyed mid-transaction
-                    txConnectionResources.put(connectionInfo.getManagedConnectionInfo(), connectionInfo.getConnectionProxy());
+                    // hold a reference until the tx is complete
+                    final Object proxy = connectionInfo.getConnectionProxy();
 
                     registry.registerInterposedSynchronization(new Synchronization() {
 
-                        private final ConcurrentMap<ManagedConnectionInfo, Object> mciList = new ConcurrentHashMap<ManagedConnectionInfo, Object>();
+                        private Object proxyReference = proxy;
 
                         @Override
                         public void beforeCompletion() {
-                            this.mciList.clear();
-
-                            ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> txConnectionResources =
-                                    (ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference>) registry.getResource(REGISTRY_KEY);
-
-                            if (txConnectionResources == null) {
-                                return;
-                            }
-
-                            mciList.putAll(txConnectionResources);
-                            txConnectionResources.clear();
                         }
 
                         @Override
                         public void afterCompletion(int status) {
-                            for (ManagedConnectionInfo mci : mciList.keySet()) {
-                                final ProxyPhantomReference reference = references.remove(mci);
-                                if (reference != null) {
-                                    destroyConnection(reference);
-                                }
+                            final ProxyPhantomReference reference = references.remove(managedConnectionInfo);
+                            if (reference != null) {
+                                destroyConnection(reference);
+                                return;
+                            }
 
-                                mciList.remove(mci);
+                            if (managedConnectionInfo.hasConnectionHandles()) {
+                                destroyConnection(managedConnectionInfo, interceptor);
                             }
                         }
                     });
@@ -190,13 +188,6 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param action         ignored
      */
     public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
-        ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> txConnectionResources =
-                (ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference>) registry.getResource(REGISTRY_KEY);
-
-        if (txConnectionResources != null) {
-            txConnectionResources.remove(connectionInfo.getManagedConnectionInfo());
-        }
-
         final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
         if (phantomReference != null) {
             phantomReference.clear();
