@@ -1,3 +1,17 @@
+= TomEE EAP 7.0.6-TT.3
+
+This release has the following changes:
+
+* https://issues.apache.org/jira/browse/TOMEE-2222
+* jdk 11 compatibility 
+* JMX Patch to 7.0.5
+* https://issues.apache.org/jira/browse/TOMEE-2242 
+* https://issues.apache.org/jira/browse/TOMEE-2237
+* https://issues.apache.org/jira/browse/TOMEE-2245
+* Update ActiveMQ to 5.15.6 for CVE-2018-11775 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-11775
+* Merge branch 'tomee-7.0.x' into cve-2018-11775-70x
+* Update ActiveMQ to 5.15.6 for CVE-2018-11775 https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-11775
+
 = TomEE EAP 7.0.6-TT.2
 
 === Changes in TomEE EAP 7.0.6-TT.2
