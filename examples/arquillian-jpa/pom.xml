@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>arquillian-jpa</artifactId>
   <name>OpenEJB :: Examples :: Arquillian Persistence Extension Sample</name>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
 
   <properties>
     <arquillian.version>1.1.10.Final</arquillian.version>
