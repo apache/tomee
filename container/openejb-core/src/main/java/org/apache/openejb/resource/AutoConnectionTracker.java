@@ -31,6 +31,7 @@ import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
 import javax.transaction.Status;
+import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -41,8 +42,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -58,9 +58,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
-     * This holds a reference to proxies that are created within a transaction until the transaction has finished so that resources
-     * associated with the transaction are not actively destroyed.
-     */
+
     private final boolean useConnectionProxies;
     private final TransactionSynchronizationRegistry registry;
 
@@ -85,10 +83,15 @@ public class AutoConnectionTracker implements ConnectionTracker {
             reference.clear();
             references.remove(reference.managedConnectionInfo);
 
-            final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
-            reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+            destroyConnection(reference);
             reference = (ProxyPhantomReference) referenceQueue.poll();
         }
+    }
+
+    private void destroyConnection(final ProxyPhantomReference reference) {
+        final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
+        reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+        logger.warning("Destroyed abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
     }
 
     /**
@@ -104,14 +107,50 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
             if (useConnectionProxies && isTxActive()) {
 
+
                 if (null != registry) {
-                    List<Object> txProxies = (List<Object>) registry.getResource(REGISTRY_KEY);
-                    if (txProxies == null) {
-                        txProxies = new ArrayList<Object>();
-                        registry.putResource(REGISTRY_KEY, txProxies);
+                    ConcurrentMap<ManagedConnectionInfo, Object> txConnectionResources =
+                            (ConcurrentMap<ManagedConnectionInfo, Object>) registry.getResource(REGISTRY_KEY);
+
+                    if (txConnectionResources == null) {
+                        txConnectionResources = new ConcurrentHashMap<ManagedConnectionInfo, Object>();
+                        registry.putResource(REGISTRY_KEY, txConnectionResources);
                     }
 
-                    txProxies.add(connectionInfo.getConnectionProxy());
+                    // hold a reference until the transaction is done, this stops it being aggressively destroyed mid-transaction
+                    txConnectionResources.put(connectionInfo.getManagedConnectionInfo(), connectionInfo.getConnectionProxy());
+
+                    registry.registerInterposedSynchronization(new Synchronization() {
+
+                        private final ConcurrentMap<ManagedConnectionInfo, Object> mciList = new ConcurrentHashMap<ManagedConnectionInfo, Object>();
+
+                        @Override
+                        public void beforeCompletion() {
+                            this.mciList.clear();
+
+                            ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> txConnectionResources =
+                                    (ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference>) registry.getResource(REGISTRY_KEY);
+
+                            if (txConnectionResources == null) {
+                                return;
+                            }
+
+                            mciList.putAll(txConnectionResources);
+                            txConnectionResources.clear();
+                        }
+
+                        @Override
+                        public void afterCompletion(int status) {
+                            for (ManagedConnectionInfo mci : mciList.keySet()) {
+                                final ProxyPhantomReference reference = references.remove(mci);
+                                if (reference != null) {
+                                    destroyConnection(reference);
+                                }
+
+                                mciList.remove(mci);
+                            }
+                        }
+                    });
                 } else {
                     logger.warning("TransactionSynchronizationRegistry has not been initialized");
                 }
@@ -151,6 +190,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param action         ignored
      */
     public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
+        ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> txConnectionResources =
+                (ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference>) registry.getResource(REGISTRY_KEY);
+
+        if (txConnectionResources != null) {
+            txConnectionResources.remove(connectionInfo.getManagedConnectionInfo());
+        }
+
         final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
         if (phantomReference != null) {
             phantomReference.clear();
@@ -229,6 +275,25 @@ public class AutoConnectionTracker implements ConnectionTracker {
         return found;
     }
 
+    public static String stackTraceToString(final StackTraceElement[] stackTrace) {
+        if (stackTrace == null) {
+            return "";
+        }
+
+        final StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < stackTrace.length; i++) {
+            final StackTraceElement element = stackTrace[i];
+            if (i > 0) {
+                sb.append(", ");
+            }
+
+            sb.append(element.toString());
+        }
+
+        return sb.toString();
+    }
+
     public static class ConnectionInvocationHandler implements InvocationHandler {
         private final Object handle;
 
@@ -268,7 +333,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private static class ProxyPhantomReference extends PhantomReference<ConnectionInvocationHandler> {
         private final ConnectionTrackingInterceptor interceptor;
         private final ManagedConnectionInfo managedConnectionInfo;
-        private
+        private StackTraceElement[] stackTrace;
 
         @SuppressWarnings({"unchecked"})
         public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
@@ -278,6 +343,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             super(handler, referenceQueue);
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;
+            this.stackTrace = Thread.currentThread().getStackTrace();
         }
     }
 }
