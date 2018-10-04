@@ -98,7 +98,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.5.2</version>
         <executions>
           <execution>
             <id>mojo-descriptor</id>
@@ -111,6 +111,7 @@
         <configuration>
           <goalPrefix>${maven-plugin.prefix}</goalPrefix>
           <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <mojoDependencies/>
         </configuration>
       </plugin>
     </plugins>
