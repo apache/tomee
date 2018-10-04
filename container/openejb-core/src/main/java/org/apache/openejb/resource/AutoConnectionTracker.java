@@ -49,7 +49,7 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
-    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.resource");
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, "org.apache.openejb.resource");
 
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
@@ -92,9 +92,6 @@ public class AutoConnectionTracker implements ConnectionTracker {
     }
 
     private void destroyConnection(final ManagedConnectionInfo managedConnectionInfo, final ConnectionTrackingInterceptor interceptor) {
-        final ConnectionInfo released = new ConnectionInfo(managedConnectionInfo);
-        interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
-
         logger.warning("Transaction complete, but connection still has handles associated. Destroying connection: " + managedConnectionInfo);
 
         if (logger.isDebugEnabled()) {
@@ -106,6 +103,9 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
             logger.debug("Abandoned connection information: " + sb.toString());
         }
+
+        final ConnectionInfo released = new ConnectionInfo(managedConnectionInfo);
+        interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
     }
 
     /**
