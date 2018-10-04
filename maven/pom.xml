@@ -112,7 +112,8 @@
         </executions>
         <configuration>
           <goalPrefix>${maven-plugin.prefix}</goalPrefix>
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+	  <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          <mojoDependencies/>
         </configuration>
       </plugin>
     </plugins>
