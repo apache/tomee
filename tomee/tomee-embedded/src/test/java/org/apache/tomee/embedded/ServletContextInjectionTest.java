@@ -89,8 +89,9 @@ public class ServletContextInjectionTest {
 
     @Test
     public void testWebApp() {
+        Container container = null;
         try {
-            final Container container = new Container(
+            container = new Container(
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
                             .property("openejb.container.additional.exclude", "org.apache.tomee.embedded.")
@@ -100,6 +101,9 @@ public class ServletContextInjectionTest {
             assertEquals("ok", IO.slurp(
                     new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/api/path")));
         } catch (final Exception e) {
+            if (container != null) {
+                container.close();
+            }
             Assert.fail();
         }
     }
@@ -125,8 +129,9 @@ public class ServletContextInjectionTest {
         contents.put("webapp.war", webapp);
         final File file = jarArchive(ear, contents);
 
+        Container container = null;
         try {
-            final Container container = new Container(
+            container = new Container(
                     new Configuration()
                             .http(NetworkUtil.getNextAvailablePort())
                             .property("openejb.container.additional.exclude", "org.apache.tomee.embedded.")
@@ -139,8 +144,11 @@ public class ServletContextInjectionTest {
             assertEquals("ok", IO.slurp(
                     new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/webapp/path")));
         } catch (final Exception e) {
-            e.printStackTrace();
             Assert.fail();
+        } finally {
+            if (container != null) {
+                container.close();
+            }
         }
     }
 
