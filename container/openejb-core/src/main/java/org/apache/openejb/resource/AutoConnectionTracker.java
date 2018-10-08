@@ -88,26 +88,26 @@ public class AutoConnectionTracker implements ConnectionTracker {
     }
 
     private void destroyConnection(final ProxyPhantomReference reference) {
-        final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
-        reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
-        logger.warning("Destroyed abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
+//        final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
+//        reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+        logger.warning("Detected abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
     }
 
     private void destroyConnection(final ManagedConnectionInfo managedConnectionInfo, final ConnectionTrackingInterceptor interceptor) {
-        logger.warning("Transaction complete, but connection still has handles associated. Destroying connection: " + managedConnectionInfo);
+        logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfo);
 
-        if (logger.isDebugEnabled()) {
+//        if (logger.isDebugEnabled()) {
             final StringBuilder sb = new StringBuilder();
             final Collection<ConnectionInfo> connectionInfos = managedConnectionInfo.getConnectionInfos();
             for (final ConnectionInfo connectionInfo : connectionInfos) {
                 sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
             }
 
-            logger.debug("Abandoned connection information: " + sb.toString());
-        }
+            logger.warning("Abandoned connection information: " + sb.toString());
+//        }
 
-        final ConnectionInfo released = new ConnectionInfo(managedConnectionInfo);
-        interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+//        final ConnectionInfo released = new ConnectionInfo(managedConnectionInfo);
+//        interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
     }
 
     /**
@@ -140,14 +140,20 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
                         @Override
                         public void afterCompletion(int status) {
-                            final ProxyPhantomReference reference = references.remove(managedConnectionInfo);
-                            if (reference != null) {
-                                destroyConnection(reference);
-                                return;
-                            }
+//                            final ProxyPhantomReference reference = references.remove(managedConnectionInfo);
+//                            if (reference != null) {
+//                                destroyConnection(reference);
+//                                return;
+//                            }
 
                             if (managedConnectionInfo.hasConnectionHandles()) {
                                 destroyConnection(managedConnectionInfo, interceptor);
+                            }
+
+                            if (proxyReference != null) {
+                                logger.warning("Connection proxy reference " + proxyReference + " now  going out of scope");
+                            } else {
+                                logger.warning("Connection proxy reference is null");
                             }
                         }
                     });
