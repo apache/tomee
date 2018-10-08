@@ -1,4 +1,10 @@
-= TomEE EAP 7.0.6-TT.3
+= TomEE EAP 7.0.6-TT.4
+
+=== Changes in TomEE EAP 7.0.6-TT.4
+
+* TOMEE-2255 Upgrade to Tomcat 8.5.34 to mitigate CVE-2018-11784
+
+=== Changes in TomEE EAP 7.0.6-TT.3
 
 This release has the following changes:
 
