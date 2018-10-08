@@ -1,6 +1,10 @@
-= TomEE EAP 1.7.6-TT.10
+= TomEE EAP 1.7.6-TT.11
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.11
+
+* TOMEE-2256 Update to Tomcat 7.0.91 to mitigate CVE-2018-11784
 
 === Changes in TomEE EAP 1.7.6-TT.10
 
