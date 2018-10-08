@@ -46,8 +46,15 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXE
     }
 
     @Override
-    public Class getExternalTransactionControllerClass() {
+    public Class<?> getExternalTransactionControllerClass() {
         return OpenEJBJTATransactionController.class;
+    }
+    
+    @Override
+    public void prepareServerSpecificServicesMBean() {
+        if (isRuntimeServicesEnabledDefault() && getDatabaseSession() != null && shouldRegisterRuntimeBean) {
+            this.setRuntimeServicesMBean(new MBeanOpenEJBRuntimeServices(getDatabaseSession()));
+        }
     }
 
     public static class OpenEJBJTATransactionController extends JTATransactionController {
@@ -65,11 +72,4 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXE
             transaction.registerInterposedSynchronization(synchronization);
         }
     }
-
-        @Override
-        public void prepareServerSpecificServicesMBean() {
-            if (isRuntimeServicesEnabledDefault() && getDatabaseSession() != null && shouldRegisterRuntimeBean) {
-                 this.setRuntimeServicesMBean(new MBeanOpenEJBRuntimeServices(getDatabaseSession()));
-            }
-        }
 }
