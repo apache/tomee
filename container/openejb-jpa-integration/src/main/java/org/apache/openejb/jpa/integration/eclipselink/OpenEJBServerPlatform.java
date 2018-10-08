@@ -68,7 +68,7 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXE
 
         @Override
         public void prepareServerSpecificServicesMBean() {
-            if (getDatabaseSession() != null && shouldRegisterRuntimeBean) {
+            if (isRuntimeServicesEnabledDefault() && getDatabaseSession() != null && shouldRegisterRuntimeBean) {
                  this.setRuntimeServicesMBean(new MBeanOpenEJBRuntimeServices(getDatabaseSession()));
             }
         }
