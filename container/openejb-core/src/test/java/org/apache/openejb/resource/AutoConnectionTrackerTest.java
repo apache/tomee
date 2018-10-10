@@ -18,6 +18,8 @@
 package org.apache.openejb.resource;
 
 import junit.framework.TestCase;
+import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
+import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.GenericConnectionManager;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.PoolingSupport;
 import org.apache.openejb.assembler.classic.Assembler;
@@ -30,6 +32,7 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
@@ -61,6 +64,7 @@ import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 import java.io.PrintWriter;
 import java.lang.SecurityException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -186,18 +190,35 @@ public class AutoConnectionTrackerTest extends TestCase {
         {
             logCapture.clear();
             bean.leakyTxMethod();
-
             System.gc();
-            cf.getConnection().close();
+
+            final AutoConnectionTracker tracker = getAutoConnectionTracker((FakeConnectionFactoryImpl) cf);
+            tracker.setEnvironment(null, null);
             assertEquals(1, logCapture.find("Transaction complete, but connection still has handles associated").size());
+            assertEquals(1, logCapture.find("Detected abandoned connection").size());
         }
         {
             logCapture.clear();
             bean.leakyNonTxMethod();
             System.gc();
-            cf.getConnection().close();
+
+            final AutoConnectionTracker tracker = getAutoConnectionTracker((FakeConnectionFactoryImpl) cf);
+            tracker.setEnvironment(null, null);
             assertEquals(1, logCapture.find("Detected abandoned connection").size());
         }
+    }
+
+    private AutoConnectionTracker getAutoConnectionTracker(final FakeConnectionFactoryImpl cf) throws Exception {
+        final Field field = AbstractConnectionManager.class.getDeclaredField("interceptors");
+        field.setAccessible(true);
+        final Object o = field.get(cf.connectionManager);
+        final Field stackField = o.getClass().getDeclaredField("stack");
+        stackField.setAccessible(true);
+        final ConnectionTrackingInterceptor cti = (ConnectionTrackingInterceptor) stackField.get(o);
+        final Field connectionTrackerField = ConnectionTrackingInterceptor.class.getDeclaredField("connectionTracker");
+        connectionTrackerField.setAccessible(true);
+        AutoConnectionTracker tracker = (AutoConnectionTracker) connectionTrackerField.get(cti);
+        return tracker;
     }
 
     private int getConnectionCount(FakeConnectionFactoryImpl cf) {
