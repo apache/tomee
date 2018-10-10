@@ -60,7 +60,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
     private final boolean cleanupLeakedConnections;
 
-    public AutoConnectionTracker(boolean cleanupLeakedConnections) {
+    public AutoConnectionTracker(final boolean cleanupLeakedConnections) {
         this.cleanupLeakedConnections = cleanupLeakedConnections;
         registry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         txMgr = SystemInstance.get().getComponent(TransactionManager.class);

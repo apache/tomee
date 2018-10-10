@@ -233,7 +233,7 @@ public class GeronimoConnectionManagerFactory {
         return cleanupLeakedConnections;
     }
 
-    public void setCleanupLeakedConnections(boolean cleanupLeakedConnections) {
+    public void setCleanupLeakedConnections(final boolean cleanupLeakedConnections) {
         this.cleanupLeakedConnections = cleanupLeakedConnections;
     }
 
