@@ -82,6 +82,7 @@ public class AutoConnectionTrackerTest extends TestCase {
     public static final int NUM_THREADS = 4;
 
     public void test() throws Exception {
+        System.setProperty("openejb.log.async", "false");
         final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, AutoConnectionTrackerTest.class);
         logger.info("Starting test");
         final java.util.logging.Logger julLogger = LogManager.getLogManager().getLogger(LogCategory.OPENEJB_CONNECTOR.getName());
@@ -140,7 +141,7 @@ public class AutoConnectionTrackerTest extends TestCase {
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final FakeConnectionFactory cf = (FakeConnectionFactory) containerSystem.getJNDIContext().lookup("openejb:Resource/FakeConnectionFactory");
-        final FakeRemote bean = (FakeRemote) containerSystem.getJNDIContext().lookup("TestBean");
+        final FakeRemote bean = (FakeRemote) containerSystem.getJNDIContext().lookup("java:global/FakeEjbJar/FakeEjbJar/TestBean!org.apache.openejb.resource.AutoConnectionTrackerTest$FakeRemote");
 
 
         {
@@ -526,9 +527,10 @@ public class AutoConnectionTrackerTest extends TestCase {
         }
 
         public List<LogRecord> find(final String message) {
+            final List<LogRecord> allRecords = new ArrayList<LogRecord>(recordList);
             final List<LogRecord> matchingRecords = new ArrayList<LogRecord>();
 
-            for (final LogRecord record : recordList) {
+            for (final LogRecord record : allRecords) {
                 if (record.getMessage().contains(message)) {
                     matchingRecords.add(record);
                 }
