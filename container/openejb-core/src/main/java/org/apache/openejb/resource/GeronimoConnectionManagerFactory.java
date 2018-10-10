@@ -93,7 +93,7 @@ public class GeronimoConnectionManagerFactory {
     private int connectionMaxIdleMinutes = 15;
     private ManagedConnectionFactory mcf;
     private int validationIntervalMs = -1;
-    private boolean proxyConnections = true;
+    private boolean cleanupLeakedConnections = true;
 
     public boolean isAssumeOneMatch() {
         return assumeOneMatch;
@@ -230,12 +230,12 @@ public class GeronimoConnectionManagerFactory {
         validationIntervalMs = (int) validationInterval.getUnit().toMillis(validationInterval.getTime());
     }
 
-    public boolean isProxyConnections() {
-        return proxyConnections;
+    public boolean isCleanupLeakedConnections() {
+        return cleanupLeakedConnections;
     }
 
-    public void setProxyConnections(boolean proxyConnections) {
-        this.proxyConnections = proxyConnections;
+    public void setCleanupLeakedConnections(boolean cleanupLeakedConnections) {
+        this.cleanupLeakedConnections = cleanupLeakedConnections;
     }
 
     public GenericConnectionManager create() {
@@ -270,11 +270,11 @@ public class GeronimoConnectionManagerFactory {
                 name = getClass().getSimpleName();
             }
             mgr = new ValidatingGenericConnectionManager(txSupport, poolingSupport,
-                    null, new AutoConnectionTracker(proxyConnections), tm,
+                    null, new AutoConnectionTracker(cleanupLeakedConnections), tm,
                     mcf, name, classLoader, validationIntervalMs);
         } else {
             mgr = new GenericConnectionManager(txSupport, poolingSupport,
-                    null, new AutoConnectionTracker(proxyConnections), tm,
+                    null, new AutoConnectionTracker(cleanupLeakedConnections), tm,
                     mcf, name, classLoader);
         }
 
