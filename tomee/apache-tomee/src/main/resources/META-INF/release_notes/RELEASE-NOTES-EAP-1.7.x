@@ -5,10 +5,11 @@
 === Changes in TomEE EAP 1.7.6-TT.11
 
 * TOMEE-2256 Update to Tomcat 7.0.91 to mitigate CVE-2018-11784
+* TOMEE-2257 improve connection proxy handling, and warning when connections are abandoned
 
 === Changes in TomEE EAP 1.7.6-TT.10
 
-* Update to ActiveMQ 5.15.6 to mitigate CVE-2018-11775
+* Update to ActiveMQ 5.14.6-TT.1 to mitigate CVE-2018-11775
 * TOMEE-2230 Expose details of Connection Factories and Resource Adapters via JMX
 * TOMEE-2245 Null attributes in MBeanPojoWrapper
 * TOMEE-2237 MessageDrivenContext not injected into MDBs when using new pooling
