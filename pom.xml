@@ -100,7 +100,7 @@
     <surefire.version>2.21.0</surefire.version>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-SNAPSHOT</version.javaee-api>
+    <version.javaee-api>8.0</version.javaee-api>
 
     <openjpa.version>3.0.0</openjpa.version>
     <openwebbeans.version>2.0.7</openwebbeans.version>
