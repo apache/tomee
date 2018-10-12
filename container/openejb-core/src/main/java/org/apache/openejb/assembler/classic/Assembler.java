@@ -218,6 +218,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -383,7 +384,18 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             loader.loadClass("org.apache.bval.cdi.BValExtension$AnnotatedTypeFilter"))
                         .invoke(null, filter);
             } catch (final Throwable th) {
-                // ignore, bval not compatible or not present
+                // Quick hack to fix TOMEE-2258. Needs to be addressed properly. Fallback to TCCL.
+                try {
+                    final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                    final Object filter = loader.loadClass("org.apache.openejb.bval.BValCdiFilter").newInstance();
+                    loader.loadClass("org.apache.bval.cdi.BValExtension")
+                          .getMethod(
+                                  "setAnnotatedTypeFilter",
+                                  loader.loadClass("org.apache.bval.cdi.BValExtension$AnnotatedTypeFilter"))
+                          .invoke(null, filter);
+                } catch (Throwable e) {
+                    // ignore, bval not compatible or not present
+                }
             }
         }
     }
