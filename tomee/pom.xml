@@ -115,7 +115,7 @@
               <artifactId>openjpa</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.bval</groupId>
+              <groupId>org.apache.tomee.patch</groupId>
               <artifactId>bval-jsr</artifactId>
             </exclusion>
             <exclusion>

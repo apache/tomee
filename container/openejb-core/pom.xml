@@ -690,7 +690,7 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.apache.bval</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>bval-jsr</artifactId>
     </dependency>
 
