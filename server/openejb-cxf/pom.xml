@@ -81,6 +81,10 @@
           <groupId>org.codehaus.woodstox</groupId>
           <artifactId>woodstox-core-asl</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- Override the bcprov from the previous artifact -->
