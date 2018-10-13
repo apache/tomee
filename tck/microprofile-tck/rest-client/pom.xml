@@ -33,19 +33,27 @@
     <plugins>
 
       <plugin>
-        <groupId>uk.co.deliverymind</groupId>
+        <groupId>uk.co.automatictester</groupId>
         <artifactId>wiremock-maven-plugin</artifactId>
-        <version>2.7.0</version>
+        <version>3.0.0</version>
+        <configuration>
+          <dir>target/classes</dir>
+          <params>&#45;&#45;port=8765 &#45;&#45;verbose</params>
+        </configuration>
         <executions>
           <execution>
+            <id>start-wiremock</id>
             <phase>generate-test-sources</phase>
             <goals>
               <goal>run</goal>
             </goals>
-            <configuration>
-              <dir>target/classes</dir>
-              <params>&#45;&#45;port=8765 &#45;&#45;verbose</params>
-            </configuration>
+          </execution>
+          <execution>
+            <id>stop-wiremock</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>stop</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
