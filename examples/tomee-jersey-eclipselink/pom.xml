@@ -118,6 +118,11 @@
       <name>EclipseLink Repository</name>
       <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
     </repository>
+    <repository>
+      <id>javaee-staging</id>
+      <name>JavaEE 8 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1124</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>

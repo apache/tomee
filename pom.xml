@@ -747,6 +747,16 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>javaee-staging</id>
+      <name>JavaEE 8 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1124</url>
+    </repository>
+    <repository>
+      <id>bval2-staging</id>
+      <name>BVal 2 TomEE Patched Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1125</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -759,6 +769,16 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>javaee-staging</id>
+      <name>JavaEE 8 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1124</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>bval2-staging</id>
+      <name>BVal 2 TomEE Patched Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1125</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>

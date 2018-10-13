@@ -108,6 +108,11 @@
       <url>http://repository.primefaces.org/</url>
       <layout>default</layout>
     </repository>
+    <repository>
+      <id>javaee-staging</id>
+      <name>JavaEE 8 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1124</url>
+    </repository>
   </repositories>
 
   <dependencies>
