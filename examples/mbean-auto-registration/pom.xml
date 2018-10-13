@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>mbean-auto-registration</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.0-M1</version>
+  <version>8.0.0-M2-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.0-M1</tomee.version>
+    <tomee.version>8.0.0-M2-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
