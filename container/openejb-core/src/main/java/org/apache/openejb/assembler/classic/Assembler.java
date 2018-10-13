@@ -388,18 +388,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                             loader.loadClass("org.apache.bval.cdi.BValExtension$AnnotatedTypeFilter"))
                         .invoke(null, filter);
             } catch (final Throwable th) {
-                // Quick hack to fix TOMEE-2258. Needs to be addressed properly. Fallback to TCCL.
-                try {
-                    final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-                    final Object filter = loader.loadClass("org.apache.openejb.bval.BValCdiFilter").newInstance();
-                    loader.loadClass("org.apache.bval.cdi.BValExtension")
-                          .getMethod(
-                                  "setAnnotatedTypeFilter",
-                                  loader.loadClass("org.apache.bval.cdi.BValExtension$AnnotatedTypeFilter"))
-                          .invoke(null, filter);
-                } catch (Throwable e) {
-                    // ignore, bval not compatible or not present
-                }
+                logger.warning("Can't setup BVal filtering, this can impact negatively performances: " + th.getMessage());
             }
         }
     }

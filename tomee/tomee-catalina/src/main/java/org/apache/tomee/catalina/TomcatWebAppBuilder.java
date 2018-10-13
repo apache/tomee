@@ -285,6 +285,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         //Getting host config listeners
         hosts = new Hosts();
         SystemInstance.get().setComponent(Hosts.class, hosts);
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = service.getContainer();
@@ -298,6 +299,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
 
                 parentClassLoader = engine.getParentClassLoader();
+                if (parentClassLoader == ClassLoader.getSystemClassLoader() && parentClassLoader != tccl) {
+                    parentClassLoader = tccl;
+                    engine.setParentClassLoader(tccl);
+                } // else assume tomcat was setup to force a classloader and then respect it
 
                 manageCluster(engine.getCluster());
                 hosts.setDefault(engine.getDefaultHost());
