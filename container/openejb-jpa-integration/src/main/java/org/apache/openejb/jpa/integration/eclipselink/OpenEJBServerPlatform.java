@@ -17,6 +17,7 @@
 package org.apache.openejb.jpa.integration.eclipselink;
 
 import org.apache.geronimo.transaction.manager.TransactionImpl;
+import org.eclipse.persistence.platform.server.JMXEnabledPlatform;
 import org.eclipse.persistence.platform.server.JMXServerPlatformBase;
 import org.eclipse.persistence.sessions.DatabaseSession;
 import org.eclipse.persistence.transaction.AbstractSynchronizationListener;
@@ -26,13 +27,14 @@ import javax.management.MBeanServer;
 import javax.transaction.Synchronization;
 import javax.transaction.TransactionManager;
 
-public class OpenEJBServerPlatform extends JMXServerPlatformBase {
+public class OpenEJBServerPlatform extends JMXServerPlatformBase implements JMXEnabledPlatform {
     public OpenEJBServerPlatform(final DatabaseSession newDatabaseSession) {
         super(newDatabaseSession);
         try {
             mBeanServer = MBeanServer.class.cast(
                 OpenEJBServerPlatform.class.getClassLoader().loadClass("org.apache.openejb.monitoring.LocalMBeanServer")
                     .getMethod("get").invoke(null));
+            this.prepareServerSpecificServicesMBean();
         } catch (final Exception e) {
             // no-op
         }
@@ -44,8 +46,15 @@ public class OpenEJBServerPlatform extends JMXServerPlatformBase {
     }
 
     @Override
-    public Class getExternalTransactionControllerClass() {
+    public Class<?> getExternalTransactionControllerClass() {
         return OpenEJBJTATransactionController.class;
+    }
+    
+    @Override
+    public void prepareServerSpecificServicesMBean() {
+        if (isRuntimeServicesEnabledDefault() && getDatabaseSession() != null && shouldRegisterRuntimeBean) {
+            this.setRuntimeServicesMBean(new MBeanOpenEJBRuntimeServices(getDatabaseSession()));
+        }
     }
 
     public static class OpenEJBJTATransactionController extends JTATransactionController {
