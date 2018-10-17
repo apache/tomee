@@ -119,7 +119,7 @@ BROKEN, see TOMEE-2140
     <module>rest-applicationcomposer</module>
     <module>rest-cdi</module>
     <module>rest-jaas</module>
-    <module>rest-mp-jwt</module>
+    <!--<module>rest-mp-jwt</module>-->
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
