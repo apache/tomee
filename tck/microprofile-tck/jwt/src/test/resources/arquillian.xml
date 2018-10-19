@@ -32,6 +32,9 @@
     <property name="dir">target/tomee</property>
     <property name="appWorkingDir">target/workdir</property>
     <property name="cleanOnStartUp">true</property>
+    <property name="properties">
+      org.apache.webbeans.component.PrincipalBean.proxy=false
+    </property>
   </configuration>
 </container>
 </arquillian>

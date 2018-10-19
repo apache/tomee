@@ -101,7 +101,7 @@ public class MPJWTCDIExtension implements Extension {
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTProducer.class));
+//        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTProducer.class));
     }
 
     static {

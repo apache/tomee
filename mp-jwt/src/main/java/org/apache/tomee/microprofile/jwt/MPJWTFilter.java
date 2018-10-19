@@ -16,6 +16,10 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.tomee.catalina.OpenEJBSecurityListener;
+import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
@@ -68,7 +72,26 @@ public class MPJWTFilter implements Filter {
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         try {
-            chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get()), response);
+
+
+            final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
+            final MPJWTServletRequestWrapper wrappedRequest = new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get());
+
+            Object state = null;
+
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (TomcatSecurityService.class.isInstance(securityService)) {
+                final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), wrappedRequest.getUserPrincipal(), req.getWrapper().getRunAs());
+            }
+
+            chain.doFilter(wrappedRequest, response);
+
+            if (TomcatSecurityService.class.isInstance(securityService)) {
+                final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                tomcatSecurityService.exitWebApp(state);
+            }
+
 
         } catch (final Exception e) {
             // this is an alternative to the @Provider bellow which requires registration on the fly
@@ -134,6 +157,9 @@ public class MPJWTFilter implements Filter {
                 } catch (final ParseException e) {
                     throw new InvalidTokenException(token, e);
                 }
+
+                // TODO - do the login here, save the state to the request so we can recover it later.
+                // TODO Also check if it is an async request and add a listener to close off the state
 
                 return jsonWebToken;
 
