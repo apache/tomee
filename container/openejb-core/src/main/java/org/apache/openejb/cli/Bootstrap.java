@@ -17,7 +17,7 @@
 
 package org.apache.openejb.cli;
 
-import org.apache.openejb.loader.ClassPath;
+import org.apache.openejb.loader.BasicURLClassPath;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemClassPath;
 import org.apache.openejb.util.JavaSecurityManagers;
@@ -28,7 +28,10 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.StringTokenizer;
+
+import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 /**
  * @version $Rev$ $Date$
@@ -87,13 +90,14 @@ public class Bootstrap {
         JavaSecurityManagers.setSystemProperty(prop, val);
     }
 
-    private static ClassLoader setupClasspath() {
+    private static URLClassLoader setupClasspath() {
         final String base = JavaSecurityManagers.getSystemProperty(OPENEJB_BASE_PROPERTY_NAME, "");
         final String home = JavaSecurityManagers.getSystemProperty("catalina.home", JavaSecurityManagers.getSystemProperty(OPENEJB_HOME_PROPERTY_NAME, base));
         try {
             final File lib = new File(home + File.separator + "lib");
-            final ClassPath systemCP = new SystemClassPath();
-            systemCP.getClassLoader();
+            final BasicURLClassPath.CustomizableURLClassLoader dynamicURLClassLoader =
+                    new BasicURLClassPath.CustomizableURLClassLoader(ClassLoader.getSystemClassLoader());
+
             File config = new File(base, "conf/catalina.properties");
             if (!config.isFile()) {
                 config = new File(home, "conf/catalina.properties");
@@ -116,25 +120,25 @@ public class Bootstrap {
                     if (repository.endsWith("*.jar")) {
                         final File dir = new File(repository.substring(0, repository.length() - "*.jar".length()));
                         if (dir.isDirectory()) {
-                            systemCP.addJarsToPath(dir);
+                            dynamicURLClassLoader.add(dir.toURI().toURL());
                         }
                     } else if (repository.endsWith(".jar")) {
                         final File file = new File(repository);
                         if (file.isFile()) {
-                            systemCP.addJarToPath(file.toURI().toURL());
+                            dynamicURLClassLoader.add(file.toURI().toURL());
                         }
                     } else {
                         final File dir = new File(repository);
                         if (dir.isDirectory()) {
-                            systemCP.addJarToPath(dir.toURI().toURL());
+                            dynamicURLClassLoader.add(dir.toURI().toURL());
                         }
                     }
                 }
             } else {
-                systemCP.addJarsToPath(lib);
-                systemCP.addJarToPath(lib.toURI().toURL());
+                dynamicURLClassLoader.add(lib.toURI().toURL());
             }
-            return systemCP.getClassLoader();
+
+            return dynamicURLClassLoader;
         } catch (final Exception e) {
             System.err.println("Error setting up the classpath: " + e.getClass() + ": " + e.getMessage());
             e.printStackTrace();
@@ -146,17 +150,18 @@ public class Bootstrap {
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
      */
     public static void main(final String[] args) throws Exception {
-        setupHome(args);
-        final ClassLoader loader = setupClasspath();
-        if (loader != null) {
-            Thread.currentThread().setContextClassLoader(loader);
-            if (loader != ClassLoader.getSystemClassLoader()) {
-                System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
-            }
-        }
+        try (final URLClassLoader loader = setupClasspath()) {
+            setupHome(args);
 
-        final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
-        try {
+            if (loader != null) {
+                Thread.currentThread().setContextClassLoader(loader);
+                if (loader != ClassLoader.getSystemClassLoader()) {
+                    System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
+                }
+            }
+
+            final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
+
             final Object main = clazz.getConstructor().newInstance();
             main.getClass().getMethod("main", String[].class).invoke(main, new Object[]{args});
         } catch (final InvocationTargetException e) {
@@ -173,5 +178,4 @@ public class Bootstrap {
             throw new IllegalStateException(cause);
         }
     }
-
 }
