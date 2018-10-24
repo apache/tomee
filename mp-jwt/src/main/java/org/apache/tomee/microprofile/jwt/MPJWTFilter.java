@@ -55,10 +55,15 @@ import java.util.stream.Collectors;
 // async is supported because we only need to do work on the way in
 @WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class MPJWTFilter implements Filter {
+
+    private TomcatSecurityService tomcatSecurityService = null;
+
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // nothing so far
     }
+
+
+
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
@@ -74,16 +79,11 @@ public class MPJWTFilter implements Filter {
         try {
 
 
-            final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
+
             final MPJWTServletRequestWrapper wrappedRequest = new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get());
 
             Object state = null;
 
-            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-            if (TomcatSecurityService.class.isInstance(securityService)) {
-                final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
-                state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), wrappedRequest.getUserPrincipal(), req.getWrapper().getRunAs());
-            }
 
             chain.doFilter(wrappedRequest, response);
 
@@ -135,6 +135,8 @@ public class MPJWTFilter implements Filter {
             @Override
             public JsonWebToken apply(final HttpServletRequest request) {
 
+
+
                 // not sure it's worth having synchronization inside a single request
                 // worth case, we would parse and validate the token twice
                 if (jsonWebToken != null) {
@@ -159,6 +161,20 @@ public class MPJWTFilter implements Filter {
                 }
 
                 // TODO - do the login here, save the state to the request so we can recover it later.
+
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                if (TomcatSecurityService.class.isInstance(securityService)) {
+                    TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                    final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
+                    Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
+
+                    request.setAttribute();
+                }
+
+
+
+
+
                 // TODO Also check if it is an async request and add a listener to close off the state
 
                 return jsonWebToken;
