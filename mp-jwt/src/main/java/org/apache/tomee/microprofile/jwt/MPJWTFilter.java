@@ -53,17 +53,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // async is supported because we only need to do work on the way in
-@WebFilter(asyncSupported = true, urlPatterns = "/*")
+//@WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class MPJWTFilter implements Filter {
-
-    private TomcatSecurityService tomcatSecurityService = null;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
     }
-
-
-
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
@@ -77,22 +72,15 @@ public class MPJWTFilter implements Filter {
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         try {
-
-
-
             final MPJWTServletRequestWrapper wrappedRequest = new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get());
-
-            Object state = null;
-
-
             chain.doFilter(wrappedRequest, response);
 
-            if (TomcatSecurityService.class.isInstance(securityService)) {
+            Object state = request.getAttribute("MP_JWT_PRE_LOGIN_STATE");
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (TomcatSecurityService.class.isInstance(securityService) && state != null) {
                 final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
                 tomcatSecurityService.exitWebApp(state);
             }
-
-
         } catch (final Exception e) {
             // this is an alternative to the @Provider bellow which requires registration on the fly
             // or users to add it into their webapp for scanning or into the Application itself
@@ -135,8 +123,6 @@ public class MPJWTFilter implements Filter {
             @Override
             public JsonWebToken apply(final HttpServletRequest request) {
 
-
-
                 // not sure it's worth having synchronization inside a single request
                 // worth case, we would parse and validate the token twice
                 if (jsonWebToken != null) {
@@ -168,12 +154,8 @@ public class MPJWTFilter implements Filter {
                     final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
                     Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
 
-                    request.setAttribute();
+                    request.setAttribute("MP_JWT_PRE_LOGIN_STATE", state);
                 }
-
-
-
-
 
                 // TODO Also check if it is an async request and add a listener to close off the state
 
