@@ -29,8 +29,7 @@
 
   <properties>
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
-    <tck.version>2.0.3.Final</tck.version>
-    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+    <suiteFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteFile>
   </properties>
 
   <dependencies>
@@ -84,7 +83,7 @@
     <dependency>
       <groupId>org.hibernate.beanvalidation.tck</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
-      <version>${tck.version}</version>
+      <version>${bval-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -165,11 +164,12 @@
           </execution>
         </executions>
         <configuration>
+          <trimStackTrace>false</trimStackTrace>
           <systemPropertyVariables>
-            <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+            <validation.provider>${validation.provider}</validation.provider>
           </systemPropertyVariables>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${suiteFile}</suiteXmlFile>
           </suiteXmlFiles>
           <parallel>classes</parallel>
           <threadCount>1</threadCount>

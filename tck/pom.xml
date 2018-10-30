@@ -29,17 +29,18 @@
 
   <properties>
     <cdi.tck.20.version>2.0.3.Final</cdi.tck.20.version>
+
+    <bval-tck.version>2.0.4.Final</bval-tck.version>
+    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 
   <modules>
     <module>tck-common</module>
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
+    <module>bval-embedded</module>
     <module>bval-tomee</module>
     <module>microprofile-tck</module>
-
-    <!-- TODO: either really use this module or delete it -->
-    <module>bval-embedded</module>
   </modules>
 
   <repositories>
