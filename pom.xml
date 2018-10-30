@@ -379,6 +379,11 @@
           <artifactId>dependency-check-maven</artifactId>
           <version>4.0.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.netbeans.tools</groupId>
+          <artifactId>sigtest-maven-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
