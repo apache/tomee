@@ -38,6 +38,14 @@
     <tomee.build.name>${project.groupId}.tomee.microprofile.webapp</tomee.build.name>
   </properties>
   <dependencies>
+
+    <!--<dependency>-->
+      <!--<groupId>${project.groupId}</groupId>-->
+      <!--<artifactId>javaee-api</artifactId>-->
+      <!--<scope>compile</scope>-->
+      <!--<classifier>tomcat</classifier>-->
+    <!--</dependency>-->
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-webapp</artifactId>
