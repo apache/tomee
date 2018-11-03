@@ -25,6 +25,8 @@ import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
@@ -107,7 +109,7 @@ public class MPJWTCDIExtension implements Extension {
                 .beanClass(JsonWebToken.class)
                 .types(JsonWebToken.class, Object.class)
                 .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-                .scope(ApplicationScoped.class)
+                .scope(Dependent.class)
                 .createWith(ctx -> {
                     final Principal principal = getContextualReference(Principal.class, bm);
                     if (JsonWebToken.class.isInstance(principal)) {
