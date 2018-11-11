@@ -29,6 +29,7 @@ import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ManagedExecutorServiceImpl extends AbstractExecutorService implements ManagedExecutorService, DestroyableResource {
@@ -59,8 +60,64 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
     public boolean isTerminated() {
         return delegate.isTerminated();
     }
+    
+    public Integer getCorePoolSize() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getCorePoolSize();
+        } else {
+            return null;
+        }
+    }
+    
+    public Integer getMaximumPoolSize() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getMaximumPoolSize();
+        } else {
+            return null;
+        }
+    }
 
-    @Override
+    public Integer getPoolSize() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getPoolSize();
+        } else {
+            return null;
+        }
+    }
+
+    public Integer getActiveCount() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getActiveCount();
+        } else {
+            return null;
+        }
+    }
+
+    public Integer getLargestPoolSize() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getLargestPoolSize();
+        } else {
+            return null;
+        }
+    }
+
+    public Integer getQueueSize() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getQueue().size();
+        } else {
+            return null;
+        }
+    }
+
+    public Long getCompletedTaskCount() {
+        if (delegate instanceof ThreadPoolExecutor) {
+            return ((ThreadPoolExecutor) delegate).getCompletedTaskCount();
+        } else {
+            return null;
+        }
+    }
+
+        @Override
     public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
         return delegate.awaitTermination(timeout, unit);
     }
