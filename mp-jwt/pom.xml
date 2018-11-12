@@ -29,6 +29,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${microprofile.jwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>${version.javaee-api}</version>
@@ -47,15 +53,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.bitbucket.b_c</groupId>
-      <artifactId>jose4j</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <version>${johnzon.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -64,12 +65,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${mp-jwt.version}</version>
-      <scope>provided</scope>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>0.6.0</version>
     </dependency>
   </dependencies>
-
-
 </project>

@@ -20,6 +20,7 @@ import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.security.auth.Subject;
 import javax.servlet.Filter;
@@ -50,22 +51,25 @@ import java.util.stream.Collectors;
 public class MPJWTFilter implements Filter {
 
     @Inject
-    private JWTAuthContextInfo authContextInfo;
+    private Instance<JWTAuthContextInfo> authContextInfo;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
         // nothing so far
-
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+        if (authContextInfo.isUnsatisfied()) {
+            chain.doFilter(request,response);
+            return;
+        }
 
         final HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         try {
-            chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo), response);
+            chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get()), response);
 
         } catch (final Exception e) {
             // this is an alternative to the @Provider bellow which requires registration on the fly
@@ -73,15 +77,13 @@ public class MPJWTFilter implements Filter {
             if (MPJWTException.class.isInstance(e)) {
                 final MPJWTException jwtException = MPJWTException.class.cast(e);
                 HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
-            }
-
-            if (MPJWTException.class.isInstance(e.getCause())) {
+            } else if (MPJWTException.class.isInstance(e.getCause())) {
                 final MPJWTException jwtException = MPJWTException.class.cast(e.getCause());
                 HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
+            } else {
+                throw e;
             }
-
         }
-
     }
 
     @Override

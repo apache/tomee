@@ -780,6 +780,8 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
+                systemPropertiesWriter.write("# Replace the Jonhzon JSON Providers with the following classes [comma seperated, no spaces]\n");
+                systemPropertiesWriter.write("# openejb.jaxrs.jsonProviders =\n");
 
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
@@ -788,6 +790,13 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
+
+                systemPropertiesWriter.write("#\n");
+                systemPropertiesWriter.write("# Which paths / libraries should be scanned?\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container = true\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container.includes = .*(geronimo|mp-jwt|failsafe).*\n");
+                systemPropertiesWriter.write("openejb.scan.webapp.container.excludes = \n");
+
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory
             } finally {

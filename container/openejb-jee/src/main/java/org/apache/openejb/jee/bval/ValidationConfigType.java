@@ -27,42 +27,46 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 
 /**
- * <p>Java class for validation-configType complex type.
- * 
- * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p>Classe Java pour validation-configType complex type.
+ *
+ * <p>Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
+ *
  * <pre>
- * &lt;complexType name="validation-configType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="default-provider" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="message-interpolator" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="traversable-resolver" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="constraint-validator-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parameter-name-provider" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="executable-validation" type="{http://jboss.org/xml/ns/javax/validation/configuration}executable-validationType" minOccurs="0"/>
- *         &lt;element name="constraint-mapping" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="property" type="{http://jboss.org/xml/ns/javax/validation/configuration}propertyType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="version" type="{http://jboss.org/xml/ns/javax/validation/configuration}versionType" fixed="1.1" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="validation-configType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="default-provider" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="message-interpolator" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="traversable-resolver" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="constraint-validator-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="parameter-name-provider" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="clock-provider" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="value-extractor" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="executable-validation" type="{http://xmlns.jcp.org/xml/ns/validation/configuration}executable-validationType" minOccurs="0"/&gt;
+ *         &lt;element name="constraint-mapping" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="property" type="{http://xmlns.jcp.org/xml/ns/validation/configuration}propertyType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="version" type="{http://xmlns.jcp.org/xml/ns/validation/configuration}versionType" fixed="2.0" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "validation-configType", namespace = "http://jboss.org/xml/ns/javax/validation/configuration", propOrder = {
-    "defaultProvider",
-    "messageInterpolator",
-    "traversableResolver",
-    "constraintValidatorFactory",
-    "parameterNameProvider",
-    "executableValidation",
-    "constraintMapping",
-    "property"
+@XmlType(name = "validation-configType", namespace = "http://xmlns.jcp.org/xml/ns/validation/configuration", propOrder = {
+        "defaultProvider",
+        "messageInterpolator",
+        "traversableResolver",
+        "constraintValidatorFactory",
+        "parameterNameProvider",
+        "clockProvider",
+        "valueExtractor",
+        "executableValidation",
+        "constraintMapping",
+        "property"
 })
 public class ValidationConfigType {
 
@@ -81,6 +85,12 @@ public class ValidationConfigType {
     @XmlElement(name = "parameter-name-provider")
     @XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
     protected String parameterNameProvider;
+    @XmlElement(name = "clock-provider")
+    @XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+    protected String clockProvider;
+    @XmlElement(name = "value-extractor")
+    @XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
+    protected List<String> valueExtractor;
     @XmlElement(name = "executable-validation")
     protected ExecutableValidationType executableValidation;
     @XmlElement(name = "constraint-mapping")
@@ -91,147 +101,198 @@ public class ValidationConfigType {
     @XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.CollapsedStringAdapter.class)
     protected String version;
 
-    //X TODO add new fields from beanvalidation 2.0: clockProviderClassName and valueExtractorClassNames
-
     /**
-     * Gets the value of the defaultProvider property.
-     * 
+     * Obtient la valeur de la propriété defaultProvider.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getDefaultProvider() {
         return defaultProvider;
     }
 
     /**
-     * Sets the value of the defaultProvider property.
-     * 
+     * Définit la valeur de la propriété defaultProvider.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setDefaultProvider(String value) {
         this.defaultProvider = value;
     }
 
     /**
-     * Gets the value of the messageInterpolator property.
-     * 
+     * Obtient la valeur de la propriété messageInterpolator.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getMessageInterpolator() {
         return messageInterpolator;
     }
 
     /**
-     * Sets the value of the messageInterpolator property.
-     * 
+     * Définit la valeur de la propriété messageInterpolator.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setMessageInterpolator(String value) {
         this.messageInterpolator = value;
     }
 
     /**
-     * Gets the value of the traversableResolver property.
-     * 
+     * Obtient la valeur de la propriété traversableResolver.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getTraversableResolver() {
         return traversableResolver;
     }
 
     /**
-     * Sets the value of the traversableResolver property.
-     * 
+     * Définit la valeur de la propriété traversableResolver.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setTraversableResolver(String value) {
         this.traversableResolver = value;
     }
 
     /**
-     * Gets the value of the constraintValidatorFactory property.
-     * 
+     * Obtient la valeur de la propriété constraintValidatorFactory.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getConstraintValidatorFactory() {
         return constraintValidatorFactory;
     }
 
     /**
-     * Sets the value of the constraintValidatorFactory property.
-     * 
+     * Définit la valeur de la propriété constraintValidatorFactory.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setConstraintValidatorFactory(String value) {
         this.constraintValidatorFactory = value;
     }
 
     /**
-     * Gets the value of the parameterNameProvider property.
-     * 
+     * Obtient la valeur de la propriété parameterNameProvider.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getParameterNameProvider() {
         return parameterNameProvider;
     }
 
     /**
-     * Sets the value of the parameterNameProvider property.
-     * 
+     * Définit la valeur de la propriété parameterNameProvider.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setParameterNameProvider(String value) {
         this.parameterNameProvider = value;
     }
 
     /**
-     * Gets the value of the executableValidation property.
-     * 
+     * Obtient la valeur de la propriété clockProvider.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getClockProvider() {
+        return clockProvider;
+    }
+
+    /**
+     * Définit la valeur de la propriété clockProvider.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setClockProvider(String value) {
+        this.clockProvider = value;
+    }
+
+    /**
+     * Gets the value of the valueExtractor property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the valueExtractor property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getValueExtractor().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     *
+     *
+     */
+    public List<String> getValueExtractor() {
+        if (valueExtractor == null) {
+            valueExtractor = new ArrayList<String>();
+        }
+        return this.valueExtractor;
+    }
+
+    /**
+     * Obtient la valeur de la propriété executableValidation.
+     *
      * @return
      *     possible object is
      *     {@link ExecutableValidationType }
-     *     
+     *
      */
     public ExecutableValidationType getExecutableValidation() {
         return executableValidation;
     }
 
     /**
-     * Sets the value of the executableValidation property.
-     * 
+     * Définit la valeur de la propriété executableValidation.
+     *
      * @param value
      *     allowed object is
      *     {@link ExecutableValidationType }
-     *     
+     *
      */
     public void setExecutableValidation(ExecutableValidationType value) {
         this.executableValidation = value;
@@ -239,25 +300,25 @@ public class ValidationConfigType {
 
     /**
      * Gets the value of the constraintMapping property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the constraintMapping property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConstraintMapping().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
-     * 
+     *
+     *
      */
     public List<String> getConstraintMapping() {
         if (constraintMapping == null) {
@@ -268,25 +329,25 @@ public class ValidationConfigType {
 
     /**
      * Gets the value of the property property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PropertyType }
-     * 
-     * 
+     *
+     *
      */
     public List<PropertyType> getProperty() {
         if (property == null) {
@@ -296,28 +357,28 @@ public class ValidationConfigType {
     }
 
     /**
-     * Gets the value of the version property.
-     * 
+     * Obtient la valeur de la propriété version.
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getVersion() {
         if (version == null) {
-            return "1.1";
+            return "2.0";
         } else {
             return version;
         }
     }
 
     /**
-     * Sets the value of the version property.
-     * 
+     * Définit la valeur de la propriété version.
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setVersion(String value) {
         this.version = value;

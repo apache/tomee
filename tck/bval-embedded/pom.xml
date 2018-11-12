@@ -27,11 +27,6 @@
   <artifactId>bval-embedded</artifactId>
   <name>OpenEJB :: TCK :: Bean Validation Embedded</name>
 
-  <properties>
-    <tck.version>2.0.3.Final</tck.version>
-    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -83,7 +78,7 @@
     <dependency>
       <groupId>org.hibernate.beanvalidation.tck</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
-      <version>${tck.version}</version>
+      <version>${bval-tck.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.testng</groupId>

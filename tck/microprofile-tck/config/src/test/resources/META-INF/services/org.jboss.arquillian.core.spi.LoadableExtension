@@ -1,1 +1,1 @@
-org.apache.openejb.tck.microprofile.config.MicroProfileConfigTCKExtension
+org.apache.tomee.microprofile.tck.config.MicroProfileConfigTCKExtension

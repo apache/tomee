@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example</artifactId>
   <packaging>war</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
   <name>OpenEJB :: Web Examples :: REST Example</name>
 
   <properties>
@@ -119,7 +119,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
             <artifactId>javaee-api</artifactId>
-       <version>8.0-SNAPSHOT</version>
+       <version>8.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

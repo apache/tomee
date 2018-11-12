@@ -285,6 +285,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
         //Getting host config listeners
         hosts = new Hosts();
         SystemInstance.get().setComponent(Hosts.class, hosts);
+        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         for (final Service service : standardServer.findServices()) {
             if (service.getContainer() instanceof Engine) {
                 final Engine engine = service.getContainer();
@@ -298,6 +299,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
 
                 parentClassLoader = engine.getParentClassLoader();
+                if (parentClassLoader == ClassLoader.getSystemClassLoader() && parentClassLoader != tccl) {
+                    parentClassLoader = tccl;
+                    engine.setParentClassLoader(tccl);
+                } // else assume tomcat was setup to force a classloader and then respect it
 
                 manageCluster(engine.getCluster());
                 hosts.setDefault(engine.getDefaultHost());
@@ -1767,8 +1772,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
             // required for Pojo Web Services because when Assembler creates the application
             // the CoreContainerSystem does not contain the WebContext
             // see also the start method getContainerSystem().addWebDeployment(webContext);
-            for (final WebAppInfo webApp : contextInfo.appInfo.webApps) {
-                SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webApp));
+            try {
+                servletContextHandler.getContexts().put(classLoader, standardContext.getServletContext());
+
+                for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
+                    final String wId = getId(webAppInfo.host, webAppInfo.contextRoot, contextInfo.version);
+                    if (id.equals(wId)) {
+                        SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webAppInfo));
+                        break;
+                    }
+                }
+            } finally {
+                servletContextHandler.getContexts().remove(classLoader);
             }
 
             thread.setContextClassLoader(originalLoader);
