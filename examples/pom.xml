@@ -99,7 +99,7 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mtom</module>
-    <module>multi-jpa-provider-testing</module>
+    <!--<module>multi-jpa-provider-testing</module>-->
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
     <module>myfaces-codi-demo</module>
@@ -115,7 +115,7 @@
     <module>rest-applicationcomposer</module>
     <module>rest-cdi</module>
     <module>rest-jaas</module>
-    <module>rest-on-ejb</module>
+    <!--<module>rest-on-ejb</module>-->
     <module>rest-example</module>
     <module>rest-example-with-application</module>
     <module>rest-xml-json</module>
@@ -126,8 +126,8 @@
     <module>schedule-methods</module>
     <module>server-events</module>
     <module>simple-cdi-interceptor</module>
-    <module>simple-ear</module>
-    <module>simple-cmp2</module>
+    <!--<module>simple-ear</module>-->
+    <!--<module>simple-cmp2</module>-->
     <module>simple-mdb-and-cdi</module>
     <module>simple-mdb</module>
     <module>simple-mdb-with-descriptor</module>
