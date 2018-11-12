@@ -195,8 +195,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm6;version="[3.1,5)",
-      org.apache.xbean.asm6.commons;version="[3.1,5)",
+      org.apache.xbean.asm7;version="[3.1,5)",
+      org.apache.xbean.asm7.commons;version="[3.1,5)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",
@@ -399,7 +399,7 @@
             </manifest>
             <manifestEntries>
               <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
-                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm6-shaded-${xbeanVersion}.jar
+                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm7-shaded-${xbeanVersion}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory
@@ -558,7 +558,7 @@
     <!-- End: JavaMail -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm6-shaded</artifactId>
+      <artifactId>xbean-asm7-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
