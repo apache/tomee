@@ -223,9 +223,16 @@ public class CxfRSService extends RESTService {
             bus.setProperty("skip.default.json.provider.registration", "true"); // client jaxrs, we want johnzon not jettison
 
             final Collection<Object> defaults = new ArrayList<>();
-            for (final String provider : asList(
-                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider",
-                    "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider")) {
+            List<String> jsonProviders;
+            String userConfiguredJsonProviders = SystemInstance.get().getProperty("openejb.jaxrs.jsonProviders");
+            if (userConfiguredJsonProviders == null) {
+                jsonProviders = asList(
+                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider",
+                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider");
+            } else {
+                jsonProviders = asList(userConfiguredJsonProviders.split(","));
+            }
+            for (final String provider : jsonProviders) {
                 if (!isActive(provider)) {
                     continue;
                 }

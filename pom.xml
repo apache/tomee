@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.6-TT.4</version>
+  <version>7.0.6-TT.5</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -93,7 +93,7 @@
 
   <properties>
 
-    <tomee.version>7.0.6-TT.4</tomee.version>
+    <tomee.version>7.0.6-TT.5</tomee.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
 
@@ -101,9 +101,9 @@
     <version.javaee-api>7.0-1</version.javaee-api>
 
     <openjpa.version>2.4.3</openjpa.version>
-    <org.apache.openwebbeans.version>1.7.5</org.apache.openwebbeans.version>
+    <org.apache.openwebbeans.version>1.7.5-TT.1</org.apache.openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.0.1</johnzon.version>
+    <johnzon.version>1.0.1-TT.1</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -133,7 +133,7 @@
 
     <tomcat.version>8.5.34</tomcat.version>
 
-    <cxf.version>3.1.16</cxf.version>
+    <cxf.version>3.1.17</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.arquillian>1.1.13.Final</version.arquillian>
