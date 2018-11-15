@@ -44,11 +44,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>
+          <archive combine.children="append">
             <manifest>
               <Main-Class>org.apache.tomee.embedded.Main</Main-Class>
               <addClasspath>true</addClasspath>
             </manifest>
+            <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>

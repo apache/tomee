@@ -32,8 +32,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>
+          <archive combine.children="append">
             <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
               <Premain-Class>org.apache.openejb.javaagent.Agent</Premain-Class>
               <Agent-Class>org.apache.openejb.javaagent.Agent</Agent-Class>
               <Can-Redefine-Classes>true</Can-Redefine-Classes>

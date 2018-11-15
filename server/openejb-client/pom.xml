@@ -80,10 +80,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>
+          <archive combine.children="append">
             <manifest>
               <mainClass>org.apache.openejb.client.Main</mainClass>
             </manifest>
+            <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>

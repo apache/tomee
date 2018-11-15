@@ -140,6 +140,11 @@
             <include>**/RemoteTomEEEJBContainer*.class</include>
             <include>**/META-INF/services/javax.ejb.spi.EJBContainerProvider</include>
           </includes>
+          <archive combine.children="append">
+            <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
         </configuration>
       </plugin>
       <plugin>
