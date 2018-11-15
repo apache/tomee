@@ -29,6 +29,9 @@
   <artifactId>tomee-util</artifactId>
   <name>OpenEJB :: TomEE :: Util</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.util</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

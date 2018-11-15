@@ -29,6 +29,9 @@
   <name>OpenEJB :: Utils :: Core EclipseLink</name>
   <packaging>jar</packaging>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.util.eclipselink</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

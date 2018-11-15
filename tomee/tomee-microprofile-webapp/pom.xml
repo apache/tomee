@@ -34,6 +34,9 @@
   <name>OpenEJB :: TomEE :: MicroProfile Webapp</name>
   <packaging>war</packaging>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.microprofile.webapp</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -33,6 +33,7 @@
   <name>OpenEJB :: TomEE :: Apache TomEE</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.tomee.tomee</tomee.build.name>
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
     <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>

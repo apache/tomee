@@ -32,6 +32,7 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Webapp</name>
   <properties>
+    <tomee.build.name>${project.groupId}.tomee.webapp</tomee.build.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>

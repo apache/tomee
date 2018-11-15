@@ -30,6 +30,9 @@
   <artifactId>tomee-jaxrs</artifactId>
   <name>OpenEJB :: TomEE :: RS Web Services</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.jaxrs</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

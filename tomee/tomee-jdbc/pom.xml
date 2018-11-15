@@ -29,6 +29,9 @@
   <artifactId>tomee-jdbc</artifactId>
   <name>OpenEJB :: TomEE :: JDBC</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.jdbc</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

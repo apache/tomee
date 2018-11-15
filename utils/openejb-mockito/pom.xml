@@ -29,6 +29,9 @@
   <artifactId>openejb-mockito</artifactId>
   <name>OpenEJB :: Utils :: Mockito</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.util.mockito</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

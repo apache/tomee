@@ -31,6 +31,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: TomEE :: Common</name>
   <description>This module contains the classes that will be added to the common class loader</description>
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.common</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

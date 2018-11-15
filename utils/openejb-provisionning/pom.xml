@@ -29,6 +29,9 @@
   <artifactId>openejb-provisionning</artifactId>
   <name>OpenEJB :: Utils :: Provisionning</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.util.provisionning</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>

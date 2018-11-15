@@ -30,6 +30,9 @@
   <artifactId>tomee-myfaces</artifactId>
   <name>OpenEJB :: TomEE :: MyFaces</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.myfaces</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

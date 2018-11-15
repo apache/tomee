@@ -33,6 +33,10 @@
   <name>OpenEJB :: TomEE :: Catalina</name>
   <description>This module contains the classes that will be added to the catalina class loader</description>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.catalina</tomee.build.name>
+  </properties>
+
   <reporting>
     <plugins>
       <plugin>
