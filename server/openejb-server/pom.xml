@@ -31,9 +31,6 @@
   <artifactId>openejb-server</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Core</name>
-  <properties>
-    <tomee.build.name>${project.groupId}.server.core</tomee.build.name>
-  </properties>
   <build>
     <resources>
       <resource>
@@ -120,6 +117,7 @@
   </dependencies>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.core</tomee.build.name>
     <openejb.osgi.import.pkg>
       javassist.util;resolution:=optional;version="[3.9,4)",
       javassist.util.proxy;resolution:=optional;version="[3.9,4)",

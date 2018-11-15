@@ -28,9 +28,6 @@
   <artifactId>tomee-juli</artifactId>
   <name>OpenEJB :: TomEE :: Juli</name>
 
-  <properties>
-    <tomee.build.name>${project.groupId}.tomee.juli</tomee.build.name>
-  </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
@@ -74,6 +71,7 @@
   </dependencies>
 
   <properties>
+    <tomee.build.name>${project.groupId}.tomee.juli</tomee.build.name>
     <jmh.version>1.18</jmh.version>
   </properties>
 
