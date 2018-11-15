@@ -32,6 +32,7 @@
   <name>OpenEJB :: Server :: Axis</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.axis</tomee.build.name>
     <openejb.osgi.import.pkg>
       !org.apache.openejb.server.httpd,
       !org.apache.openejb.server.webservices,

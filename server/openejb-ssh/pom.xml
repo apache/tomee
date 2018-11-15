@@ -30,6 +30,9 @@
   <artifactId>openejb-ssh</artifactId>
   <name>OpenEJB :: Server :: SSH</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.ssh</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -27,11 +27,11 @@
   <artifactId>openejb-cxf-rs</artifactId>
   <name>OpenEJB :: Server :: CXF RS</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.cxf.rs</tomee.build.name>
+  </properties>
+
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>

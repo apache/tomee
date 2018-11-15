@@ -30,6 +30,9 @@
   <artifactId>openejb-multicast</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Multicast Discovery</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.multicast</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

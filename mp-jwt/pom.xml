@@ -27,6 +27,10 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Microprofile JWT</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.microprofile.jwt</tomee.build.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.microprofile.jwt</groupId>

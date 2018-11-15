@@ -35,6 +35,7 @@
   <name>OpenEJB :: Server :: Client</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.client</tomee.build.name>
     <openejb.osgi.import.pkg>
       javax.ejb,
       javax.jws,

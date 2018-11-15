@@ -35,6 +35,7 @@
   <name>OpenEJB :: Server :: Http</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.http</tomee.build.name>
     <openejb.osgi.import.pkg>
       org.mortbay*;resolution:=optional,
       *

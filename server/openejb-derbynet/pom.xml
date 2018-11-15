@@ -31,6 +31,9 @@
   <artifactId>openejb-derbynet</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Derby Network Service</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.derbynet</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

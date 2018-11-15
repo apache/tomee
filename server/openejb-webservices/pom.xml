@@ -30,6 +30,9 @@
   <artifactId>openejb-webservices</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Webservices</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
       <groupId>javax.xml.soap</groupId>

@@ -24,10 +24,13 @@
     <groupId>org.apache.tomee</groupId>
     <version>8.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>arquillian-tomee-webapp-remote</artifactId>
-  <packaging>jar</packaging>
 
+  <artifactId>arquillian-tomee-webapp-remote</artifactId>
   <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.tomee.webapp.remote</tomee.build.name>
+  </properties>
 
   <dependencies>
     <dependency>

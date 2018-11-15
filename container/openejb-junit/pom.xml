@@ -42,6 +42,7 @@
     </dependency>
   </dependencies>
   <properties>
+    <tomee.build.name>${project.groupId}.container.junit</tomee.build.name>
     <netbeans.hint.license>openejb</netbeans.hint.license>
   </properties>
 </project>

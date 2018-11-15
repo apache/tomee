@@ -34,6 +34,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: EJBd</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.ejbd</tomee.build.name>
+  </properties>
   <build>
     <plugins>
       <plugin>

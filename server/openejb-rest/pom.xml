@@ -28,6 +28,9 @@
   <artifactId>openejb-rest</artifactId>
   <name>OpenEJB :: Server :: REST</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.rest</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

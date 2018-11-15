@@ -33,6 +33,7 @@
   <name>OpenEJB :: Server :: CXF</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
     <wss4j.version>2.2.2</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,

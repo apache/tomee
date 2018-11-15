@@ -33,6 +33,7 @@
 
   <properties>
     <tck.version>1.0.0.Alpha1</tck.version>
+    <tomee.build.name>${project.groupId}.arquillian.tck</tomee.build.name>
   </properties>
 
   <dependencies>

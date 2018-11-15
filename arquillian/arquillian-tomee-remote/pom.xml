@@ -29,6 +29,10 @@
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Remote</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.tomee.remote</tomee.build.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

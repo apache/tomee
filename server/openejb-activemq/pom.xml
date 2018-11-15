@@ -27,6 +27,11 @@
   <artifactId>openejb-activemq</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: ActiveMQ</name>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.server.activemq</tomee.build.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

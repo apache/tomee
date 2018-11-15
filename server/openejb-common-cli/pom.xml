@@ -29,6 +29,10 @@
   <artifactId>openejb-common-cli</artifactId>
   <name>OpenEJB :: Server :: Common CLI</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.common.cli</tomee.build.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

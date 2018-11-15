@@ -31,6 +31,9 @@
   <artifactId>openejb-hsql</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Hsql</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.hsql</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -31,6 +31,7 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: Container :: Loader</name>
   <properties>
+    <tomee.build.name>${project.groupId}.container.loader</tomee.build.name>
     <openejb.osgi.import.pkg/>
   </properties>
   <dependencies>

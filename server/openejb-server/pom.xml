@@ -31,6 +31,9 @@
   <artifactId>openejb-server</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Core</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.core</tomee.build.name>
+  </properties>
   <build>
     <resources>
       <resource>

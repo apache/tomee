@@ -32,6 +32,7 @@
   <name>OpenEJB :: Container :: Java EE Accessors</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.container.jee.accessors</tomee.build.name>
     <openejb.osgi.import.pkg>
       org.apache.geronimo.specs.jpa;resolution:=optional,
       org.apache.geronimo.specs.activation;resolution:=optional,

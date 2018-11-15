@@ -31,6 +31,9 @@ limitations under the License.
   <artifactId>openejb-hessian</artifactId>
   <name>OpenEJB :: Server :: Hessian</name>
 
+    <properties>
+        <tomee.build.name>${project.groupId}.server.hessian</tomee.build.name>
+    </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

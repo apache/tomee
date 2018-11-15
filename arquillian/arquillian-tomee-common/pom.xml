@@ -29,6 +29,10 @@
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: TomEE Common</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.tomee.common</tomee.build.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
