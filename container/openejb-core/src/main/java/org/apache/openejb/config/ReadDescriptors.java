@@ -548,7 +548,8 @@ public class ReadDescriptors implements DynamicDeployer {
         return current;
     }
 
-    private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
+    // package scoped for testing
+    void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
         final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data != null && !(data instanceof EntityMappings)) {
             if (data instanceof URL) {
