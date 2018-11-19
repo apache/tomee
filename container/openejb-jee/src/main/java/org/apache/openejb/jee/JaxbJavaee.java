@@ -315,11 +315,7 @@ public class JaxbJavaee {
             if (uri != null && (uri.startsWith("http://jboss.org") || uri.startsWith("urn:java:"))) { // ignore it to be able to read beans.xml with weld config for instances
                 ignore = true;
             } else {
-                if ("entity-mappings".equals(localName) && "entity-mappings".equals(localName)) {
-                    super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
-                } else {
-                    super.startElement("http://java.sun.com/xml/ns/persistence/orm", localName, qname, atts);
-                }
+                super.startElement("http://java.sun.com/xml/ns/javaee", localName, qname, atts);
             }
         }
 
