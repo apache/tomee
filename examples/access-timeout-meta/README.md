@@ -3,7 +3,7 @@ Title: @AccessTimeout the Meta-Annotation Way
 Any annotation that takes parameters can benefit from meta-annotations.  Here we see how `@AccessTimeout` can be far more understandable and manageable through meta-annotations.
 We'll use the [access-timeout](../access-timeout/README.html) example as our use-case.
 
-The value of the parameters supplied to `@AccessTimeout` have a dramatic affect on how what that annotation actually does.  Moreover, `@AccessTimeout` has one of those designs
+The value of the parameters supplied to `@AccessTimeout` have a dramatic affect on what that annotation actually does.  Moreover, `@AccessTimeout` has one of those designs
 where `-1` and `0` have signifcantly different meanings.  One means "wait forever", the other means "never wait".  Only a lucky few can remember which is which on a daily basis.
 For the rest of us it is a constant source of bugs.
 
@@ -114,7 +114,7 @@ The simplest approach is to name your meta-annotations after the **configuration
 to clearly reflect the contents of each meta-annotation (`@AccessTimeout(-1)` and `@AccessTimeout(0)` respectively).
 
 The **cons** of this approach is that should you want to change the configuration of the application by only changing the meta-annotations -- this is one of the potential benefits
-of meta-annotations.  Certainly, the `@AwaitNever` meta-annotation can have no other value than `0` if it is to live up to its name.
+of meta-annotations -- but this may change the meaning of the annotation.  Certainly, the `@AwaitNever` meta-annotation can have no other value than `0` if it is to live up to its name.
 
 ## Operation names <small>describing the code</small>
 
@@ -122,7 +122,7 @@ The alternate approach is to name your meta-annotations after the **operations**
 `@OrderCheckTimeout` or `@TwitterUpdateTimeout`.  These names are configuration-change-proof.  They would not change if the configuration changes and in fact they can facilitate
 finder-grained control over the configuration of an application.
 
-The **cons** are of course it is requires far more deliberation and consideration, not to mention more annotations.  Your skills as an architect, designer and ability to think as
+The **cons** of this approach is that requires far more deliberation and consideration, not to mention more annotations.  Your skills as an architect, designer and ability to think as
 a administrator will be challenged.  You must be good at wearing your dev-opts hat.
 
 ## Pragmatism  <small>best of both worlds</small>
