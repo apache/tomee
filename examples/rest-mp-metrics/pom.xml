@@ -12,6 +12,7 @@
     <artifactId>rest-mp-metrics</artifactId>
     <packaging>war</packaging>
 
+
     <dependencies>
         <dependency>
             <groupId>org.apache.tomee</groupId>
@@ -24,6 +25,32 @@
             <artifactId>microprofile-metrics-api</artifactId>
             <version>1.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>openejb-cxf-rs</artifactId>
+            <version>${tomee.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <version>1.0.3.Final</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>arquillian-tomee-remote</artifactId>
+            <version>${tomee.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>apache-tomee</artifactId>
+            <version>${tomee.version}</version>
+            <type>zip</type>
+            <classifier>microprofile</classifier>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
