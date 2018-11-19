@@ -39,13 +39,13 @@ The `@AccessTimeout` is simply a convenience wrapper around the `long` and `Time
 
 ## Usage
 
-A method or class can be annotated with @AccessTimeout to specify the maximum time a call might wait for access to the bean wait should a wait condition occur.
+A method or class can be annotated with @AccessTimeout to specify the maximum time a call might wait for access to the bean should a wait condition occur.
 
 The semantics of the value element are as follows:
 
  - A `value` > 0 indicates a timeout value in the units specified by the `unit` element.
  - A `value` of 0 means concurrent access is not permitted.
- - A `value` of -1 indicates that the client request will block indefinitely until forward progress it can proceed.
+ - A `value` of -1 indicates that the client request will block indefinitely until forward progress can proceed.
 
 Just as simple as that !
 
