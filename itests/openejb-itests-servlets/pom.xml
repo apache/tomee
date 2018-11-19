@@ -30,6 +30,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests :: Servlets</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.servlets</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

@@ -33,6 +33,9 @@
   <packaging>war</packaging>
   <name>OpenEJB :: iTests :: Web</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.web</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

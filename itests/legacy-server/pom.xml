@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests :: Legacy Server</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.legacy.server</tomee.build.name>
+  </properties>
   <build>
     <plugins>
       <plugin>
