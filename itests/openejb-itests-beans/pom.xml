@@ -30,6 +30,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests :: Beans</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.beans</tomee.build.name>
+  </properties>
   <build>
     <plugins>
       <plugin>
