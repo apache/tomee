@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.spi.SecurityService;
 import org.eclipse.microprofile.auth.LoginConfig;
 
 import javax.servlet.FilterRegistration;
@@ -53,11 +51,6 @@ public class MPJWTInitializer implements ServletContainerInitializer {
                 // do we really want Application?
                 // See https://github.com/eclipse/microprofile-jwt-auth/issues/70 to clarify this point
             }
-
-            final WebBeansContext webBeansContext = WebBeansContext.currentInstance();
-            final SecurityService securityService = webBeansContext.getSecurityService();
-
-            webBeansContext.registerService(SecurityService.class, new JWTWrappedSecurityService(securityService));
 
             final FilterRegistration.Dynamic mpJwtFilter = ctx.addFilter("mp-jwt-filter", MPJWTFilter.class);
             mpJwtFilter.setAsyncSupported(true);
