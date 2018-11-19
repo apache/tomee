@@ -23,11 +23,15 @@ import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
 import org.apache.safeguard.api.ExecutionManager;
 import org.apache.safeguard.impl.cdi.FailsafeExecutionManagerProvider;
+import org.apache.safeguard.impl.cdi.SafeguardInterceptor;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(ApplicationComposer.class)
@@ -36,10 +40,15 @@ public class FailsafeContainerExecutionManagerProviderTest {
     @Inject
     private FailsafeExecutionManagerProvider manager;
 
+    @Inject
+    private MyClass myClass;
+
     @Module
     @Classes(value = {FailsafeContainerExecutionManagerProvider.class,
             FailsafeExecutionManagerProvider.class,
-            ExecutionManager.class},
+            ExecutionManager.class,
+            SafeguardInterceptor.class,
+            MyClass.class},
             cdi = true)
     public WebApp app() {
         return new WebApp();
@@ -47,10 +56,21 @@ public class FailsafeContainerExecutionManagerProviderTest {
 
     @Test
     public void testManagerInjection() throws Exception {
-        manager.createExecutionManager();
-        assertTrue("We must override the original FailsafeExecutionManagerProvider",
+
+        assertEquals("called", myClass.validateInjectedClass());
+
+        assertTrue("We must override the original FailsafeExecutionManagerProvider, was:" + manager.getClass(),
                 manager instanceof FailsafeContainerExecutionManagerProvider);
     }
 
+
+    @Singleton
+    public static class MyClass {
+
+        @CircuitBreaker
+        public String validateInjectedClass() {
+            return "called";
+        }
+    }
 
 }

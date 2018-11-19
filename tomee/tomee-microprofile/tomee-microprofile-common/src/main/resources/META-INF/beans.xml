@@ -16,4 +16,7 @@
     limitations under the License.
 -->
 <beans>
+    <alternatives>
+        <class>org.apache.tomee.microprofile.faulttolerance.FailsafeContainerExecutionManagerProvider</class>
+    </alternatives>
 </beans>

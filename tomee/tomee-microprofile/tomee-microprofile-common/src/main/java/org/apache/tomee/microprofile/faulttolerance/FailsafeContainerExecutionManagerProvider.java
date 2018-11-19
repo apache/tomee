@@ -33,20 +33,22 @@ import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Specializes;
+import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.Produces;
 
 @Alternative
+@Specializes
 @Priority(Interceptor.Priority.APPLICATION+10)
 @ApplicationScoped
-public class FailsafeContainerExecutionManagerProvider extends FailsafeExecutionManagerProvider {
+public class FailsafeContainerExecutionManagerProvider extends FailsafeExecutionManagerProvider implements Extension {
 
     @Resource(name = "DefaultManagedScheduledExecutorService")
     ManagedScheduledExecutorService executor;
 
+    @Override
     @Produces
     @ApplicationScoped
-    @Override
     public ExecutionManager createExecutionManager() {
 
         final MicroprofileAnnotationMapper mapper = MicroprofileAnnotationMapper.getInstance();
