@@ -1,6 +1,6 @@
 # Introduction
 
-CDI is a revolution for Java EE world. This specification is the best one to avoid coupling between classes.
+CDI is a revolution for the Java EE world. This specification is the best one to avoid coupling between classes.
 
 This example simply aims to override bindings at runtime to simplify mocking work.
 
@@ -10,36 +10,36 @@ It uses two kind of mocks:
 
 The mock answer from CDI is called *alternative*.
 
-Annotating `@Alternative` a class will mean it will replace any implementation if there is no other implementation
+Annotating `@Alternative` a class will mean it will used as the implementation if there is no other implementation
 or if it is forced (through `META-INF/beans.xml`).
 
 # Code explanation
 ## main code
 
-We use an EJB `Jouney` to modelize a journey where the vehicle and the society can change. Here an EJB is used simply
+We use an EJB `Jouney` to modelize a journey where the vehicle and the society can change. Here an EJB is used
 because it simplifies the test. A jouney wraps the vehicle and society information.
 
-We define then two interfaces to inject it in the `Journey` EJB: `Vehicle` and `Society`.
+We define two interfaces to inject into the `Journey` EJB: `Vehicle` and `Society`.
 
 Finally we add an implementation for `Scociety` interface: `LowCostCompanie`.
 
-If we don't go further `Journey` object will not be able to be created because no `Vehicle` implementation is available.
+If we stop here, the `Journey` object will not be able to be created because there is no `Vehicle` implementation is available.
 
-Note: if we suppose we have a `Vehicle` implementation, the injected Society should be `LowCostCompanie`.
+Note: if we do have a `Vehicle` implementation, the injected Society should be `LowCostCompanie`.
 
 ## test code
 
 The goal here is to test our `Journey` EJB. So we have to provide a `Vehicle` implementation: `SuperCar`.
 
-We want to force the `Society` implementation (for any reason) by our test implementation: `AirOpenEJB`.
+We want to force the `Society` interface to be the `AirOpenEJB` implementation for our test.
 
 One solution could simply be to add `@Alternative` annotation on `AirOpenEJB` and activate it through
 the `META-INF/beans.xml` file.
 
 Here we want to write more explicit code. So we want to replace the `@Alternative` annotation by `@Mock` one.
 
-So we simply define an `@Mock` annotation for classes, resolvable at runtime which is a stereotype (`@Stereotype`)
-which replace `@Alternative`.
+So we define an `@Mock` annotation for classes, resolvable at runtime as a stereotype (`@Stereotype`)
+that replaces `@Alternative`.
 
 Here is the annotation:
 
@@ -51,8 +51,8 @@ Here is the annotation:
 
 Note: you can add more CDI annotations after `@Alternative` and it will get the behavior expected (the scope for instance).
 
-So now we have our `@Mock` annotation which is a stereotype able to replace `@Alternative` annotation
-we simply add this annotation to our mocks.
+So now we have our `@Mock` annotation which is a stereotype able to replace the `@Alternative` annotation when it 
+added to our mocks.
 
 If you run it now you'll have this exception:
 
@@ -81,7 +81,7 @@ which simply means two implementations are available for the same injection poin
 With CDI it is really easy to define annotations with a strong meaning. You can define business annotations
 or simply technical annotations to simplify your code (as we did with the mock annotation).
 
-Note: if for instance you used qualifiers to inject societies you could have put all these qualifiers on
+Note: if you used qualifiers to inject `Scociety` objects you could have put all these qualifiers on
 the mock class or defined a `@SocietyMock` annotation to be able to inject the same implementation for
 all qualifiers in your tests.
 
