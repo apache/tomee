@@ -26,7 +26,11 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.StringReader;
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -52,7 +56,7 @@ public class WeatherServiceTest {
                 .get(String.class);
         assertEquals("Hi, today is a sunny day!", message);
 
-        String metricPath = "/metrics/application/weather_day_status";
+        final String metricPath = "/metrics/application/weather_day_status";
         assertPrometheusFormat(metricPath);
         assertJsonFormat(metricPath);
     }
@@ -71,5 +75,44 @@ public class WeatherServiceTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
         assertEquals("{\"weather_day_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
+    }
+
+    @Test
+    public void testCountedMetricMetadata() {
+        final Response response = WebClient.create(base.toExternalForm())
+                .path("/metrics/application/weather_day_status")
+                .accept(MediaType.APPLICATION_JSON)
+                .options();
+        final String metaData = response.readEntity(String.class);
+        JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
+
+        final String expected = "{\n" +
+                "  \"weather_day_status\": {\n" +
+                "    \"unit\": \"none\",\n" +
+                "    \"displayName\": \"Weather Day Status\",\n" +
+                "    \"name\": \"weather_day_status\",\n" +
+                "    \"typeRaw\": \"COUNTER\",\n" +
+                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
+                "    \"type\": \"counter\",\n" +
+                "    \"value\": {\n" +
+                "      \"unit\": \"none\",\n" +
+                "      \"displayName\": \"Weather Day Status\",\n" +
+                "      \"name\": \"weather_day_status\",\n" +
+                "      \"tagsAsString\": \"\",\n" +
+                "      \"typeRaw\": \"COUNTER\",\n" +
+                "      \"description\": \"This metric shows the weather status of the day.\",\n" +
+                "      \"type\": \"counter\",\n" +
+                "      \"reusable\": false,\n" +
+                "      \"tags\": {\n" +
+                "        \n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"reusable\": false,\n" +
+                "    \"tags\": \"\"\n" +
+                "  }\n" +
+                "}";
+
+        JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
+        assertEquals(expectedJson, metadataJson);
     }
 }
