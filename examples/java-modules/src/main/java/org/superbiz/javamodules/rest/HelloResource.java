@@ -14,17 +14,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.rest.application;
+package org.superbiz.javamodules.rest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import java.util.Date;
 
-@Path("/pojo")
-public class SimpleRESTPojo {
+@Path("/hello")
+public class HelloResource {
 
     @GET
-    public String pojo() {
-        return "pojo ok @ " + new Date().toString();
+    public String sayHello() {
+        return "Hello World";
     }
 }
