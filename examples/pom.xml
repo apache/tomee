@@ -171,7 +171,7 @@ BROKEN, see TOMEE-2140
     <module>moviefun</module>
     <module>moviefun-rest</module>
     <module>resources-jmx-example</module>
-      <module>rest-mp-metrics</module>
+    <module>mp-metrics-counted</module>
   </modules>
 
   <dependencies>
