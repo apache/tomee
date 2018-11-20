@@ -15,7 +15,7 @@ exactly what scopes are for.
 
 # Example
 
-In this example we have an `@Stateless` bean `Course` with an `@Inject` reference to an
+In this example, we have an `@Stateless` bean `Course` with an `@Inject` reference to an
 object of type `Faculty`.  When `Course` is created, the container will also create an
 instance of `Faculty`.  The `@PostConstruct` will be called on the `Faculty`,
 then the `Faculty` instance will be injected into the `Course` bean.  Finally, the
@@ -26,7 +26,7 @@ The `CourseTest` test case drives this creation process by having `Course` injec
 into it in its `@Setup` method.  By the time our `@Test` method is invoked,
 all the real work should be done and we should be ready to go.  In the test case we do
 some basic asserts to ensure everything was constructed, all `@PostConstruct` methods
-called and everyting injected.
+called and everything injected.
 
 ## Faculty <small>a basic injectable pojo</small>
 
