@@ -28,7 +28,10 @@ To use this feature you need to annotate the JAX-RS resource method with @Counte
     public class WeatherService {
 
         @Path("/day/status")
-        @Counted(monotonic = true, name = "weather_day_status", absolute = true)
+        @Counted(monotonic = true, name = "weather_day_status", absolute = true,
+                displayName = "Weather Day Status",
+                description = "This metric shows the weather status of the day.",
+                tags = {"weather=day"})
         @GET
         @Produces(MediaType.TEXT_PLAIN)
         public String dayStatus() {
@@ -68,7 +71,7 @@ Check the counter metric doing a _GET_ request:
 ##### Response:
      
     # TYPE application:weather_day_status counter
-    application:weather_day_status 1.0
+    application:weather_day_status{weather="day"} 0.0
     
   
 ##### JSON Format:
@@ -106,15 +109,17 @@ Check the metric metadata doing a _OPTIONS_ request:
                 "unit": "none",
                 "displayName": "Weather Day Status",
                 "name": "weather_day_status",
-                "tagsAsString": "",
+                "tagsAsString": "weather=\"day\"",
                 "typeRaw": "COUNTER",
                 "description": "This metric shows the weather status of the day.",
                 "type": "counter",
                 "reusable": false,
-                "tags": {}
+                "tags": {
+                    "weather": "day"
+                }
             },
             "reusable": false,
-            "tags": ""
+            "tags": "weather=day"
         }
     }
 

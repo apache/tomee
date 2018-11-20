@@ -66,7 +66,7 @@ public class WeatherServiceTest {
                 .path(metricPath)
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
-        assertEquals("# TYPE application:weather_day_status counter\napplication:weather_day_status 1.0\n", metric);
+        assertEquals("# TYPE application:weather_day_status counter\napplication:weather_day_status{weather=\"day\"} 1.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {
@@ -87,29 +87,29 @@ public class WeatherServiceTest {
         JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
 
         final String expected = "{\n" +
-                "  \"weather_day_status\": {\n" +
-                "    \"unit\": \"none\",\n" +
-                "    \"displayName\": \"Weather Day Status\",\n" +
-                "    \"name\": \"weather_day_status\",\n" +
-                "    \"typeRaw\": \"COUNTER\",\n" +
-                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"type\": \"counter\",\n" +
-                "    \"value\": {\n" +
-                "      \"unit\": \"none\",\n" +
-                "      \"displayName\": \"Weather Day Status\",\n" +
-                "      \"name\": \"weather_day_status\",\n" +
-                "      \"tagsAsString\": \"\",\n" +
-                "      \"typeRaw\": \"COUNTER\",\n" +
-                "      \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "      \"type\": \"counter\",\n" +
-                "      \"reusable\": false,\n" +
-                "      \"tags\": {\n" +
-                "        \n" +
-                "      }\n" +
-                "    },\n" +
-                "    \"reusable\": false,\n" +
-                "    \"tags\": \"\"\n" +
-                "  }\n" +
+                "    \"weather_day_status\": {\n" +
+                "        \"unit\": \"none\",\n" +
+                "        \"displayName\": \"Weather Day Status\",\n" +
+                "        \"name\": \"weather_day_status\",\n" +
+                "        \"typeRaw\": \"COUNTER\",\n" +
+                "        \"description\": \"This metric shows the weather status of the day.\",\n" +
+                "        \"type\": \"counter\",\n" +
+                "        \"value\": {\n" +
+                "            \"unit\": \"none\",\n" +
+                "            \"displayName\": \"Weather Day Status\",\n" +
+                "            \"name\": \"weather_day_status\",\n" +
+                "            \"tagsAsString\": \"weather=\\\"day\\\"\",\n" +
+                "            \"typeRaw\": \"COUNTER\",\n" +
+                "            \"description\": \"This metric shows the weather status of the day.\",\n" +
+                "            \"type\": \"counter\",\n" +
+                "            \"reusable\": false,\n" +
+                "            \"tags\": {\n" +
+                "                \"weather\": \"day\"\n" +
+                "            }\n" +
+                "        },\n" +
+                "        \"reusable\": false,\n" +
+                "        \"tags\": \"weather=day\"\n" +
+                "    }\n" +
                 "}";
 
         JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
