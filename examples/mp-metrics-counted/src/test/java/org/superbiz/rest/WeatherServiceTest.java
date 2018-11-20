@@ -45,32 +45,31 @@ public class WeatherServiceTest {
     @ArquillianResource
     private URL base;
 
-
     @Test
-    public void testCountedPrometheus() {
+    public void testCountedMetric() {
         final String message = WebClient.create(base.toExternalForm())
                 .path("/weather/day/status")
                 .get(String.class);
         assertEquals("Hi, today is a sunny day!", message);
 
+        String metricPath = "/metrics/application/weather_day_status";
+        assertPrometheusFormat(metricPath);
+        assertJsonFormat(metricPath);
+    }
+
+    private void assertPrometheusFormat(final String metricPath) {
         final String metric = WebClient.create(base.toExternalForm())
-                .path("/metrics/application/weather_day_status")
+                .path(metricPath)
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
         assertEquals("# TYPE application:weather_day_status counter\napplication:weather_day_status 1.0\n", metric);
     }
 
-    @Test
-    public void testCountedJson() {
-        final String message = WebClient.create(base.toExternalForm())
-                .path("/weather/week/status")
-                .get(String.class);
-        assertEquals("Hi, week will be mostly sunny!", message);
-
+    private void assertJsonFormat(final String metricPath) {
         final String metric = WebClient.create(base.toExternalForm())
-                .path("/metrics/application/weather_week_status")
+                .path(metricPath)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        assertEquals("{\"weather_week_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
+        assertEquals("{\"weather_day_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
     }
 }
