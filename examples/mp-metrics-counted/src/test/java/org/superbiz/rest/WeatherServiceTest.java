@@ -45,6 +45,7 @@ public class WeatherServiceTest {
     @ArquillianResource
     private URL base;
 
+
     @Test
     public void testCountedPrometheus() {
         final String message = WebClient.create(base.toExternalForm())

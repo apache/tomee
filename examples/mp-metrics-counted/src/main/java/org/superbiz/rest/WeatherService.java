@@ -16,7 +16,9 @@ import javax.ws.rs.core.MediaType;
 public class WeatherService {
 
     @Path("/day/status")
-    @Counted(monotonic = true, name = "weather_day_status", absolute = true)
+    @Counted(monotonic = true, name = "weather_day_status", absolute = true,
+            displayName = "Weather Day Status",
+            description = "This metric shows the weather status of the day.")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String dayStatus() {
