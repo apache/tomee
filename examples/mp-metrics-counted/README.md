@@ -16,7 +16,7 @@ Within the application there is an enpoint that will give you weather status for
     Hi, today is a sunny day!
     
 
-### Counted feature
+#### Counted Feature
 Microprofile metrics has a feature that can be used to count requests to a service.
 
 To use this feature you need to annotate the JAX-RS resource method with @Counted.
@@ -57,6 +57,7 @@ Optional. Array of Strings in the <key>=<value> format to supply special tags to
 **boolean reusable**
 Denotes if a metric with a certain name can be registered in more than one place. Does not apply to gauges.
 
+#### Metric data
 
 Check the counter metric doing a _GET_ request:
 
@@ -117,5 +118,5 @@ Check the metric metadata doing a _OPTIONS_ request:
         }
     }
 
-
+You can also try it out using the WeatherServiceTest.java available in the project.
 
