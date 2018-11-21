@@ -1,0 +1,57 @@
+Apache OpenEJB
+Copyright 1999-2014 The Apache OpenEJB development community
+
+This product includes/uses software, HSQLDB (http://hsqldb.org/)
+
+This product includes/uses software, WSDL4J (http://sf.net/projects/wsdl4j)
+
+This product includes/uses software, Serp (http://serp.sourceforge.net)
+
+This product includes/uses software, Swizzle :: Stream (http://swizzle.codehaus.org)
+
+This product includes/uses software, Backport of JSR 166 (http://www.mathcs.emory.edu/dcl/util/backport-util-concurrent/),
+developed by Dawid Kurzyniec  (http://www.mathcs.emory.edu/~dawidk/)
+
+This product includes/uses software, Sun JAXB Reference Implementation Runtime,
+developed by Sun Microsystems  (http://www.sun.com/)
+
+This product includes/uses software, Java Architecture for XML Binding (JAXB) API,
+developed by Sun Microsystems  (http://www.sun.com/)
+
+This product includes/uses software, ASM Tree (http://asm.objectweb.org/asm-tree),
+developed by ObjectWeb  (http://www.objectweb.org/)
+
+This product includes/uses software, ASM Core (http://asm.objectweb.org/asm),
+developed by ObjectWeb  (http://www.objectweb.org/)
+
+This product includes/uses software, ASM Commons (http://asm.objectweb.org/asm-commons),
+developed by ObjectWeb  (http://www.objectweb.org/)
+=========================================================================
+FastInfoset (https://fi.java.net/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+Istack Commons Runtime (https://istack-commons.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Jaxb Core (https://jaxb.java.net/)
+License: CDDL v1.1 and GPL v2 (https://glassfish.java.net/public/CDDL+GPL_1_1.html)
+=========================================================================
+Quartz (http://quartz-scheduler.org/)
+License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0.txt)
+=========================================================================
+el-api - Unified Expression Language is dual licensed under 2 OSI approved licenses (https://uel.java.net/license.html)
+    COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL - Version 1.1)
+    GNU General Public License (GPL - Version 2, June 1991) with the Classpath Exception
+=========================================================================
+Apache XBean :: ASM shaded (repackaged)
+Copyright 2005-2013 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+=========================================================================
+This product includes software developed by
+Joda.org (http://www.joda.org/).
+=========================================================================
+This product includes software developed and copyrighted by the The OWASP
+   Foundation (https://www.owasp.org)
+=========================================================================
