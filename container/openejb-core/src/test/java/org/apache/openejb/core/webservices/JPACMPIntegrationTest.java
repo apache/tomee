@@ -68,12 +68,12 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
-public class JPACMDIntegrationTest {
+public class JPACMPIntegrationTest {
 
     @javax.persistence.PersistenceUnit
     private EntityManagerFactory emf;
 
-    @Resource(lookup = "comp/env/org.apache.openejb.core.webservices.JPACMDIntegrationTest/users")
+    @Resource(lookup = "comp/env/org.apache.openejb.core.webservices.JPACMPIntegrationTest/users")
     private Users users;
 
     @Module
