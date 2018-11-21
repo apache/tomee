@@ -37,8 +37,7 @@ import javax.enterprise.inject.spi.Extension;
 import javax.interceptor.Interceptor;
 import javax.ws.rs.Produces;
 
-@Alternative
-@Specializes
+
 @Priority(Interceptor.Priority.APPLICATION+10)
 @ApplicationScoped
 public class FailsafeContainerExecutionManagerProvider extends FailsafeExecutionManagerProvider implements Extension {
@@ -48,6 +47,7 @@ public class FailsafeContainerExecutionManagerProvider extends FailsafeExecution
 
     @Override
     @Produces
+    @Specializes
     @ApplicationScoped
     public ExecutionManager createExecutionManager() {
 
