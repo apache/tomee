@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>tomee-microprofile-common</module>
+        <module>mp-common</module>
         <module>tomee-microprofile-webapp</module>
     </modules>
 

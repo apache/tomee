@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tomee-microprofile-common</artifactId>
+    <artifactId>mp-common</artifactId>
     <name>OpenEJB :: TomEE :: MicroProfile Common</name>
 
     <dependencies>

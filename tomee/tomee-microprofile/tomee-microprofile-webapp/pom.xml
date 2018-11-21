@@ -41,7 +41,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-microprofile-common</artifactId>
+      <artifactId>mp-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
