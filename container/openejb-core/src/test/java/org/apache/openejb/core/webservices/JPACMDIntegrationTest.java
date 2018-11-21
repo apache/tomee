@@ -28,8 +28,10 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.CreateException;
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.EntityContext;
+import javax.ejb.FinderException;
 import javax.ejb.LocalHome;
 import javax.ejb.RemoteHome;
 import javax.ejb.RemoveException;
@@ -42,6 +44,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -53,6 +56,8 @@ public class JPACMDIntegrationTest {
     @javax.persistence.PersistenceUnit
     private EntityManagerFactory emf;
 
+    @Resource(lookup = "comp/env/org.apache.openejb.core.webservices.JPACMDIntegrationTest/users")
+    private Users users;
 
     @Module
     public Persistence persistence() throws Exception {
@@ -126,7 +131,7 @@ public class JPACMDIntegrationTest {
 
 
     @Test
-    public void shouldCreateEntityMapper() {
+    public void shouldCreateEntityMapper() throws CreateException {
         EntityManager entityManager = emf.createEntityManager();
 
         User user = new User();
@@ -135,6 +140,9 @@ public class JPACMDIntegrationTest {
         entityManager.merge(user);
 
         User user1 = entityManager.find(User.class, "id");
+
+        users.create("id2", "names");
+
         Assert.assertNotNull(user1);
         System.out.println(user1);
 
@@ -303,7 +311,7 @@ public class JPACMDIntegrationTest {
     }
 
     public interface MySessionRemoteHome extends javax.ejb.EJBHome {
-         MySessionRemoteObject createObject()
+        MySessionRemoteObject createObject()
                 throws javax.ejb.CreateException, java.rmi.RemoteException;
     }
 
@@ -312,7 +320,7 @@ public class JPACMDIntegrationTest {
     }
 
     public interface MySessionLocalHome extends javax.ejb.EJBLocalHome {
-         MySessionLocalObject createObject()
+        MySessionLocalObject createObject()
                 throws javax.ejb.CreateException;
     }
 
@@ -320,6 +328,12 @@ public class JPACMDIntegrationTest {
         public void doit();
     }
 
+
+    interface Users extends javax.ejb.EJBLocalHome {
+
+        User create(String id, String name) throws CreateException;
+
+    }
 
 
 }
