@@ -60,6 +60,9 @@ Optional. Array of Strings in the <key>=<value> format to supply special tags to
 **boolean reusable**
 Denotes if a metric with a certain name can be registered in more than one place. Does not apply to gauges.
 
+**boolean monotonic**
+If false (default), the counter is incremented before the annotated method is invoked and decremented after the annotated method returns, counting current invocations of the annotated method.
+
 #### Metric data
 
 Check the counter metric doing a _GET_ request:
