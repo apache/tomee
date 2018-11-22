@@ -66,7 +66,7 @@ public class ObjectNameBuilder {
 
             return new ObjectName(sb.toString());
         } catch (final MalformedObjectNameException e) {
-            throw new IllegalStateException("Failed to build valid name for: " + sb.toString(), e);
+            throw new IllegalStateException("Failed to build valid name for: " + sb, e);
         }
     }
 
