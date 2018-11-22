@@ -63,7 +63,6 @@ public class FailsafeContainerExecutionManagerProviderTest {
                 manager instanceof FailsafeContainerExecutionManagerProvider);
     }
 
-
     @Singleton
     public static class MyClass {
 
