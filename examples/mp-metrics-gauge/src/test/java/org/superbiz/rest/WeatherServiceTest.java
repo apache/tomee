@@ -74,8 +74,7 @@ public class WeatherServiceTest {
                 .path(metricPath)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        //TODO:FIX Bug
-        assertEquals("{\"weather_day_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
+        assertEquals("{\"weather_day_temperature\":30}", metric);
     }
 
     @Test
