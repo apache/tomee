@@ -41,7 +41,7 @@ import javax.interceptor.Interceptor;
 @ApplicationScoped
 public class FailsafeContainerExecutionManagerProvider extends FailsafeExecutionManagerProvider {
 
-    @Resource(name = "DefaultManagedScheduledExecutorService")
+    @Resource
     ManagedScheduledExecutorService executor;
 
     @Override
