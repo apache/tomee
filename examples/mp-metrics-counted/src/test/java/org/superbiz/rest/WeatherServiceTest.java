@@ -74,7 +74,7 @@ public class WeatherServiceTest {
                 .path(metricPath)
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        assertEquals("{\"weather_day_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
+        assertEquals("{\"weather_day_status\":{\"count\":1}}", metric);
     }
 
     @Test
@@ -88,27 +88,14 @@ public class WeatherServiceTest {
 
         final String expected = "{\n" +
                 "  \"weather_day_status\": {\n" +
-                "    \"unit\": \"none\",\n" +
+                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
                 "    \"displayName\": \"Weather Day Status\",\n" +
                 "    \"name\": \"weather_day_status\",\n" +
-                "    \"typeRaw\": \"COUNTER\",\n" +
-                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"type\": \"counter\",\n" +
-                "    \"value\": {\n" +
-                "      \"unit\": \"none\",\n" +
-                "      \"displayName\": \"Weather Day Status\",\n" +
-                "      \"name\": \"weather_day_status\",\n" +
-                "      \"tagsAsString\": \"\",\n" +
-                "      \"typeRaw\": \"COUNTER\",\n" +
-                "      \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "      \"type\": \"counter\",\n" +
-                "      \"reusable\": false,\n" +
-                "      \"tags\": {\n" +
-                "        \n" +
-                "      }\n" +
-                "    },\n" +
                 "    \"reusable\": false,\n" +
-                "    \"tags\": \"\"\n" +
+                "    \"tags\": \"\",\n" +
+                "    \"type\": \"counter\",\n" +
+                "    \"typeRaw\": \"COUNTER\",\n" +
+                "    \"unit\": \"none\"\n" +
                 "  }\n" +
                 "}";
 
