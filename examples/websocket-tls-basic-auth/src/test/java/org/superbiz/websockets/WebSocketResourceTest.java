@@ -1,4 +1,4 @@
-package api;
+package org.superbiz.websockets;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -55,7 +55,7 @@ public class WebSocketResourceTest {
     @ArquillianResource()
     private URL url;
 
-    @Deployment(name = "cve", testable = false)
+    @Deployment(testable = false)
     public static final WebArchive app() {
         return ShrinkWrap.create(WebArchive.class, "example.war")
                 .addClasses(WebSocketResource.class)
