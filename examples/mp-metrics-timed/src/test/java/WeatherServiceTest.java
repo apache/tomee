@@ -162,7 +162,7 @@ public class WeatherServiceTest {
                 .forEach(text ->
                         assertTrue(
                                 "Expected: " + text + " to be present in " + metric,
-                                expectedJson.getJsonObject("weather_day_status").get("count") != null));
+                                expectedJson.getJsonObject("weather_day_status").get(text) != null));
     }
 
     @Test
