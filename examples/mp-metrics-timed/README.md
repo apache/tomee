@@ -5,7 +5,7 @@ This is an example on how to use MicroProfile metrics in TomEE.
 
     mvn clean install tomee:run 
 
-Within the application there is an endpoint that will give you weather status for the day and week.
+Within the application there is an endpoint that will give you weather status for the day.
 
 ##### For the day status call:
 
@@ -17,7 +17,7 @@ Within the application there is an endpoint that will give you weather status fo
     
 
 #### Timed Feature
-MicroProfile metrics has a feature that tracks the time of an event.
+MicroProfile Metrics has a feature that tracks the time of an event.
 
 To use this feature you need to annotate the JAX-RS resource method with @Timed.
 
@@ -59,7 +59,7 @@ Unit of the metric. Default for @Timed is nanoseconds.
 
 #### Metric data
 
-Check the counter metric doing a _GET_ request:
+Check the timed metric doing a _GET_ request:
 
 ##### Prometheus format:
 
