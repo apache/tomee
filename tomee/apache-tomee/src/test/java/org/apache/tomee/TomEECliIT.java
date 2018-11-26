@@ -16,6 +16,7 @@
  */
 package org.apache.tomee;
 
+import org.apache.openejb.cli.Bootstrap;
 import org.apache.openejb.loader.IO;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
@@ -28,6 +29,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -268,5 +270,12 @@ public class TomEECliIT {
 
         final String result = IO.slurp(start.getInputStream());
         assertTrue(result.contains("TESTING CLASSLOADER!!"));
+    }
+
+    @Test
+    public void testIfClassloaderNotChange() throws Exception {
+        final ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        new Bootstrap().main(new String[]{"cipher"});
+        assertEquals(originalClassLoader, Thread.currentThread().getContextClassLoader());
     }
 }
