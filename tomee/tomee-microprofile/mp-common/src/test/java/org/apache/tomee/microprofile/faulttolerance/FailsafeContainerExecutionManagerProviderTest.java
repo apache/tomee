@@ -41,14 +41,14 @@ public class FailsafeContainerExecutionManagerProviderTest {
     private FailsafeExecutionManagerProvider manager;
 
     @Inject
-    private MyClass myClass;
+    private FTClass ftClass;
 
     @Module
     @Classes(value = {FailsafeContainerExecutionManagerProvider.class,
             FailsafeExecutionManagerProvider.class,
             ExecutionManager.class,
             SafeguardInterceptor.class,
-            MyClass.class},
+            FTClass.class},
             cdi = true)
     public WebApp app() {
         return new WebApp();
@@ -57,14 +57,14 @@ public class FailsafeContainerExecutionManagerProviderTest {
     @Test
     public void testManagerInjection() throws Exception {
 
-        assertEquals("called", myClass.validateInjectedClass());
+        assertEquals("called", ftClass.validateInjectedClass());
 
         assertTrue("We must override the original FailsafeExecutionManagerProvider, was:" + manager.getClass(),
                 manager instanceof FailsafeContainerExecutionManagerProvider);
     }
 
     @Singleton
-    public static class MyClass {
+    public static class FTClass {
 
         @CircuitBreaker
         public String validateInjectedClass() {
