@@ -1170,7 +1170,7 @@ public class SunConversion implements DynamicDeployer {
         final List bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
 
         boolean inWitespace = false;
-        String currentSymbol = "";
+        StringBuilder currentSymbol = new StringBuilder();
         for (int i = 0; i < bits.size(); i++) {
             final TokenType tokenType;
             final String bit = (String) bits.get(i);
@@ -1190,7 +1190,7 @@ public class SunConversion implements DynamicDeployer {
                 case '<':
                 case '!':
                     // symbols are blindly coalesced so you can end up with nonsence like +-=+
-                    currentSymbol += bit.charAt(0);
+                    currentSymbol.append(bit.charAt(0));
                     tokenType = TokenType.SYMBOL;
                     break;
                 default:
@@ -1201,8 +1201,8 @@ public class SunConversion implements DynamicDeployer {
                 inWitespace = false;
             }
             if (tokenType != TokenType.SYMBOL && currentSymbol.length() > 0) {
-                tokens.add(currentSymbol);
-                currentSymbol = "";
+                tokens.add(currentSymbol.toString());
+                currentSymbol = new StringBuilder();
             }
             if (tokenType == TokenType.NORMAL) {
                 tokens.add(bit);
@@ -1210,8 +1210,8 @@ public class SunConversion implements DynamicDeployer {
         }
         // add saved symobl if we have one
         if (currentSymbol.length() > 0) {
-            tokens.add(currentSymbol);
-            currentSymbol = "";
+            tokens.add(currentSymbol.toString());
+            currentSymbol = new StringBuilder();
         }
         // strip off leading space
         if (tokens.getFirst().equals(" ")) {
