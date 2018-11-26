@@ -15,22 +15,27 @@
  * limitations under the License.
  */
 
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -49,11 +54,25 @@ public class WeatherServiceTest {
     @ArquillianResource
     private URL base;
 
+    private Client client;
+
+    @Before
+    public void before(){
+        this.client = ClientBuilder.newClient();
+    }
+
+    @After
+    public void after(){
+        this.client.close();
+    }
+
     @Test
     public void testTimedMetric() {
-        WebClient.create(base.toExternalForm())
+        WebTarget webTarget = client.target(base.toExternalForm());
+
+        webTarget
                 .path("/weather/day/status")
-                .get(String.class);
+                .request().buildGet().invoke();
 
         final String metricPath = "/metrics/application/weather_day_status";
         assertPrometheusFormat(metricPath);
@@ -61,74 +80,97 @@ public class WeatherServiceTest {
     }
 
     private void assertPrometheusFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
-                .path(metricPath)
-                .accept(MediaType.TEXT_PLAIN)
-                .get(String.class);
+        WebTarget webTarget = client.target(base.toExternalForm());
 
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds summary timer"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds_count timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds_count 1.0"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_rate_per_second timer"));
-        assertTrue(metric.contains("application:weather_day_status_rate_per_second"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_one_min_rate_per_second timer"));
-        assertTrue(metric.contains("application:weather_day_status_one_min_rate_per_second"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_five_min_rate_per_second timer"));
-        assertTrue(metric.contains("application:weather_day_status_five_min_rate_per_second"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_fifteen_min_rate_per_second time"));
-        assertTrue(metric.contains("application:weather_day_status_fifteen_min_rate_per_second"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_min_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_min_seconds"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_max_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_max_seconds"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_mean_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_mean_seconds"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_stddev_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_stddev_seconds"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.5\"}"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.75\"}"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.95\"}"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.98\"}"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.99\"}"));
-        assertTrue(metric.contains("# TYPE application:weather_day_status_seconds timer"));
-        assertTrue(metric.contains("application:weather_day_status_seconds{quantile=\"0.999\"}"));
+        String metric = webTarget
+                .path(metricPath)
+                .request()
+                .accept(MediaType.TEXT_PLAIN)
+                .buildGet()
+                .invoke()
+                .readEntity(String.class);
+
+        String [] expected = {
+                "# TYPE application:weather_day_status_seconds summary timer",
+                "# TYPE application:weather_day_status_seconds_count timer",
+                "application:weather_day_status_seconds_count 1.0",
+                "# TYPE application:weather_day_status_rate_per_second timer",
+                "application:weather_day_status_rate_per_second",
+                "# TYPE application:weather_day_status_one_min_rate_per_second timer",
+                "# TYPE application:weather_day_status_five_min_rate_per_second timer",
+                "application:weather_day_status_five_min_rate_per_second",
+                "# TYPE application:weather_day_status_fifteen_min_rate_per_second time",
+                "application:weather_day_status_fifteen_min_rate_per_second",
+                "# TYPE application:weather_day_status_min_seconds timer",
+                "application:weather_day_status_min_seconds",
+                "# TYPE application:weather_day_status_max_seconds timer",
+                "application:weather_day_status_max_seconds",
+                "# TYPE application:weather_day_status_mean_seconds timer",
+                "application:weather_day_status_mean_seconds",
+                "# TYPE application:weather_day_status_stddev_seconds timer",
+                "application:weather_day_status_stddev_seconds",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.5\"}",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.75\"}",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.95\"}",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.98\"}",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.99\"}",
+                "# TYPE application:weather_day_status_seconds timer",
+                "application:weather_day_status_seconds{quantile=\"0.999\"}"
+        };
+
+        Stream.of(expected)
+                .forEach(text -> assertTrue("Expected: " + text + " to be present in " + metric, metric.contains(text)));
     }
 
     private void assertJsonFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = client.target(base.toExternalForm());
+
+        String metric = webTarget
                 .path(metricPath)
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .get(String.class);
+                .buildGet()
+                .invoke()
+                .readEntity(String.class);
 
-        assertTrue(metric.contains("count"));
-        assertTrue(metric.contains("meanRate"));
-        assertTrue(metric.contains("fifteenMinRate"));
-        assertTrue(metric.contains("fiveMinRate"));
-        assertTrue(metric.contains("oneMinRate"));
-        assertTrue(metric.contains("min"));
-        assertTrue(metric.contains("max"));
-        assertTrue(metric.contains("mean"));
-        assertTrue(metric.contains("stddev"));
-        assertTrue(metric.contains("p50"));
-        assertTrue(metric.contains("p75"));
-        assertTrue(metric.contains("p95"));
-        assertTrue(metric.contains("p98"));
-        assertTrue(metric.contains("p99"));
-        assertTrue(metric.contains("p999"));
+        String [] expected = {
+                "count",
+                "meanRate",
+                "fifteenMinRate",
+                "fiveMinRate",
+                "oneMinRate",
+                "min",
+                "max",
+                "mean",
+                "stddev",
+                "p50",
+                "p75",
+                "p95",
+                "p98",
+                "p99",
+                "p999"
+        };
 
+        Stream.of(expected)
+                .forEach(text -> assertTrue("Expected: " + text + " to be present in " + metric, metric.contains(text)));
     }
 
     @Test
     public void testTimedMetricMetadata() {
-        final Response response = WebClient.create(base.toExternalForm())
-                .path("/metrics/application/weather_day_status")
+
+        WebTarget webTarget = client.target(base.toExternalForm());
+
+        Response response = webTarget.path("/metrics/application/weather_day_status")
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
-                .options();
+                .build("OPTIONS")
+                .invoke();
+
         final String metaData = response.readEntity(String.class);
         JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
 
