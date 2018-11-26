@@ -57,12 +57,12 @@ public class WeatherServiceTest {
     private Client client;
 
     @Before
-    public void before(){
+    public void before() {
         this.client = ClientBuilder.newClient();
     }
 
     @After
-    public void after(){
+    public void after() {
         this.client.close();
     }
 
@@ -90,7 +90,7 @@ public class WeatherServiceTest {
                 .invoke()
                 .readEntity(String.class);
 
-        String [] expected = {
+        String[] expected = {
                 "# TYPE application:weather_day_status_seconds summary timer",
                 "# TYPE application:weather_day_status_seconds_count timer",
                 "application:weather_day_status_seconds_count 1.0",
@@ -138,7 +138,9 @@ public class WeatherServiceTest {
                 .invoke()
                 .readEntity(String.class);
 
-        String [] expected = {
+        JsonObject expectedJson = Json.createReader(new StringReader(metric)).readObject();
+
+        String[] expected = {
                 "count",
                 "meanRate",
                 "fifteenMinRate",
@@ -157,7 +159,10 @@ public class WeatherServiceTest {
         };
 
         Stream.of(expected)
-                .forEach(text -> assertTrue("Expected: " + text + " to be present in " + metric, metric.contains(text)));
+                .forEach(text ->
+                        assertTrue(
+                                "Expected: " + text + " to be present in " + metric,
+                                expectedJson.getJsonObject("weather_day_status").get("count") != null));
     }
 
     @Test
