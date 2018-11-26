@@ -1,0 +1,38 @@
+# Maven Information
+
+This page is intended to provide an insight into basic [Maven](http://maven.apache.org/) usage for users that are not all that familiar with [Maven](http://maven.apache.org/) projects.
+It is by no means a tutorial and is designed to be more of a *quickstart* to get you up and running.
+
+You can find a really good [Maven](http://maven.apache.org/) tutorial here: [http://books.sonatype.com/mvnex-book/reference/public-book.html](http://books.sonatype.com/mvnex-book/reference/public-book.html)
+
+It is assumed that:
+
+ - You have downloaded and installed [Maven](http://maven.apache.org/) and that you can run **mvn --version** from any command prompt (or console).
+ - You have downloaded and installed [Subversion](http://subversion.apache.org/) and that you can run **svn --version** from any command prompt or console.
+
+It is also assumed you have downloaded one of the following:
+
+ - One of the example projects from [http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples]()
+ - The entire project source from [http://svn.apache.org/repos/asf/tomee/tomee/trunk](http://svn.apache.org/repos/asf/tomee/tomee/trunk)
+ 
+Use [Subversion](http://subversion.apache.org/) to checkout the example sources from a console like so:
+ 
+	svn co http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/[example]
+		
+Or that you may of course also be using your own project pom.xml
+
+If you want to use the latest snapshot locate the *<repositories>* section in your pom.xml and ensure the following repository exists:
+	
+	<repositories>
+	  <repository>
+	    <id>apache-m2-snapshot</id>
+	    <name>Apache M2 Snapshot Repository</name>
+	    <url>http://repository.apache.org/snapshots/</url>
+	    <releases>
+	  	  <enabled>false</enabled>
+	    </releases>
+	    <snapshots>
+	  	  <enabled>true</enabled>
+	    </snapshots>
+	  </repository>
+	</repositories>

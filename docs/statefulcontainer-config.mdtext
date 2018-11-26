@@ -1,0 +1,157 @@
+Title: StatefulContainer Configuration
+
+
+A StatefulContainer can be declared via xml in the `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file using a declaration like the following.  All properties in the element body are optional.
+
+    <Container id="myStatefulContainer" type="STATEFUL">
+        accessTimeout = 30 seconds
+        bulkPassivate = 100
+        cache = org.apache.openejb.core.stateful.SimpleCache
+        capacity = 1000
+        frequency = 60
+        passivator = org.apache.openejb.core.stateful.SimplePassivater
+        timeOut = 20
+    </Container>
+
+Alternatively, a StatefulContainer can be declared via properties in the `<tomee-home>/conf/system.properties` file or via Java VirtualMachine `-D` properties.  The properties can also be used when embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
+
+    myStatefulContainer = new://Container?type=STATEFUL
+    myStatefulContainer.accessTimeout = 30 seconds
+    myStatefulContainer.bulkPassivate = 100
+    myStatefulContainer.cache = org.apache.openejb.core.stateful.SimpleCache
+    myStatefulContainer.capacity = 1000
+    myStatefulContainer.frequency = 60
+    myStatefulContainer.passivator = org.apache.openejb.core.stateful.SimplePassivater
+    myStatefulContainer.timeOut = 20
+
+Properties and xml can be mixed.  Properties will override the xml allowing for easy configuration change without the need for ${} style variable substitution.  Properties are not case sensitive.  If a property is specified that is not supported by the declared StatefulContainer a warning will be logged.  If a StatefulContainer is needed by the application and one is not declared, TomEE will create one dynamically using default settings.  Multiple StatefulContainer declarations are allowed.
+# Supported Properties
+<table>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+  <td><a href="#accessTimeout">accessTimeout</a></td>
+  <td><a href="configuring-durations.html">time</a></td>
+  <td>30&nbsp;seconds</td>
+  <td>
+Specifies the maximum time an invocation could wait for the
+`@Stateful` bean instance to become available before giving up.
+</td>
+</tr>
+<tr>
+  <td>bulkPassivate</td>
+  <td>int</td>
+  <td>100</td>
+  <td>
+Property name that specifies the number of instances
+to passivate at one time when doing bulk passivation.
+</td>
+</tr>
+<tr>
+  <td>cache</td>
+  <td>String</td>
+  <td>org.apache.openejb.core.stateful.SimpleCache</td>
+  <td>
+The cache is responsible for managing stateful bean
+instances.  The cache can page instances to disk as memory
+is filled and can destroy abandoned instances.  A different
+cache implementation can be used by setting this property
+to the fully qualified class name of the Cache implementation.
+</td>
+</tr>
+<tr>
+  <td>capacity</td>
+  <td>int</td>
+  <td>1000</td>
+  <td>
+Specifies the size of the bean pools for this
+stateful SessionBean container.
+</td>
+</tr>
+<tr>
+  <td>frequency</td>
+  <td>int</td>
+  <td>60</td>
+  <td>
+Specifies the frequency (in seconds) at which the bean cache is checked for 
+idle beans.
+</td>
+</tr>
+<tr>
+  <td><a href="#passivator">passivator</a></td>
+  <td>String</td>
+  <td>org.apache.openejb.core.stateful.SimplePassivater</td>
+  <td>
+The passivator is responsible for writing beans to disk
+at passivation time. Different passivators can be used
+by setting this property to the fully qualified class name
+of the `PassivationStrategy` implementation. The passivator
+is not responsible for invoking any callbacks or other
+processing, its only responsibly is to write the bean state
+to disk.
+</td>
+</tr>
+<tr>
+  <td><a href="#timeOut">timeOut</a></td>
+  <td><a href="configuring-durations.html">time</a></td>
+  <td>20</td>
+  <td>
+Specifies the time a bean can be idle before it is removed by the container.
+</td>
+</tr>
+</table>
+
+
+
+<a name="accessTimeout"></a>
+## accessTimeout
+
+Specifies the maximum time an invocation could wait for the
+`@Stateful` bean instance to become available before giving up.
+
+After the timeout is reached a `javax.ejb.ConcurrentAccessTimeoutException`
+will be thrown.
+
+Usable time units: nanoseconds, microsecons, milliseconds,
+seconds, minutes, hours, days.  Or any combination such as
+"1 hour and 27 minutes and 10 seconds"
+
+Any usage of the `javax.ejb.AccessTimeout` annotation will
+override this setting for the bean or method where the
+annotation is used.
+
+
+<a name="passivator"></a>
+## passivator
+
+The passivator is responsible for writing beans to disk
+at passivation time. Different passivators can be used
+by setting this property to the fully qualified class name
+of the `PassivationStrategy` implementation. The passivator
+is not responsible for invoking any callbacks or other
+processing, its only responsibly is to write the bean state
+to disk.
+
+Known implementations:
+
+- org.apache.openejb.core.stateful.RAFPassivater
+- org.apache.openejb.core.stateful.SimplePassivater
+
+
+<a name="timeOut"></a>
+## timeOut
+
+Specifies the time a bean can be idle before it is removed by the container.
+
+This value is measured in minutes. A value of 5 would
+result in a time-out of 5 minutes between invocations.
+A value of -1 would mean no timeout.
+A value of 0 would mean a bean can be immediately removed by the container.
+
+Any usage of the `javax.ejb.StatefulTimeout` annotation will
+override this setting for the bean where the annotation is used.
+
