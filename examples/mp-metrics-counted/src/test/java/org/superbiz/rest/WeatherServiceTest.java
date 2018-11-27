@@ -36,7 +36,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.stream.Stream;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
@@ -123,6 +125,13 @@ public class WeatherServiceTest {
                 "}";
 
         JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
-        assertEquals(expectedJson, metadataJson);
+        assertEquals(expectedJson.keySet().size(), metadataJson.keySet().size());
+
+        String[] expectedKeys = new String[]{"description", "displayName", "name", "reusable", "tags", "type", "typeRaw", "unit"};
+        Stream.of(expectedKeys).forEach((text) -> {
+          assertTrue("Expected: " + text
+                  + " to be present in " + expected,
+                  expectedJson.getJsonObject("weather_day_status").get(text) != null);
+        });
     }
 }
