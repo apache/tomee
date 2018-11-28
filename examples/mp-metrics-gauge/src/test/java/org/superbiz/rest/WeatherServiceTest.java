@@ -15,19 +15,22 @@ package org.superbiz.rest; /**
  * limitations under the License.
  */
 
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.superbiz.rest.WeatherService;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
@@ -49,10 +52,24 @@ public class WeatherServiceTest {
     @ArquillianResource
     private URL base;
 
+    private Client client;
+
+    @Before
+    public void before() {
+        this.client = ClientBuilder.newClient();
+    }
+
+    @After
+    public void after() {
+        this.client.close();
+    }
+
     @Test
     public void testGaugeMetric() {
-        final Integer temperature = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final Integer temperature = webTarget
                 .path("/weather/day/temperature")
+                .request()
                 .get(Integer.class);
         assertEquals(Integer.valueOf(30), temperature);
 
@@ -62,16 +79,20 @@ public class WeatherServiceTest {
     }
 
     private void assertPrometheusFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final String metric = webTarget
                 .path(metricPath)
+                .request()
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
         assertEquals("# TYPE application:weather_day_temperature_celsius gauge\napplication:weather_day_temperature_celsius{weather=\"temperature\"} 30.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final String metric = webTarget
                 .path(metricPath)
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
         assertEquals("{\"weather_day_temperature\":30}", metric);
@@ -79,8 +100,10 @@ public class WeatherServiceTest {
 
     @Test
     public void testGaugeMetricMetadata() {
-        final Response response = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final Response response = webTarget
                 .path("/metrics/application/weather_day_temperature")
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .options();
         final String metaData = response.readEntity(String.class);
