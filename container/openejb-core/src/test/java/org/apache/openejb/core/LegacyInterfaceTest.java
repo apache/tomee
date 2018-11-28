@@ -253,35 +253,8 @@ public class LegacyInterfaceTest extends TestCase {
             throw new Exception("Failed to create test directory: " + f);
         }
 
-        final EntityMappings entityMappings = new EntityMappings();
-
-        final Entity entity = new Entity();
-        entity.setClazz("openejb.org.apache.openejb.core.MyCmpBean");
-        entity.setName("MyCmpBean");
-        entity.setDescription("MyCmpBean");
-        entity.setAttributes(new Attributes());
-
-        final NamedQuery namedQuery = new NamedQuery();
-        namedQuery.setQuery("SELECT OBJECT(DL) FROM License DL");
-        entity.getNamedQuery().add(namedQuery);
-
-        final Id id = new Id();
-        id.setName("id");
-        entity.getAttributes().getId().add(id);
-
-        final Basic basic = new Basic();
-        basic.setName("name");
-        final Column column = new Column();
-        column.setName("wNAME");
-        column.setLength(300);
-        basic.setColumn(column);
-        entity.getAttributes().getBasic().add(basic);
-
-        entityMappings.getEntity().add(entity);
-
         final AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
         final EjbModule ejbModule = new EjbModule(ejbJar);
-
 
         Persistence persistence = new Persistence();
         PersistenceUnit pu = persistence.addPersistenceUnit("cmp");
@@ -289,7 +262,7 @@ public class LegacyInterfaceTest extends TestCase {
         pu.setJtaDataSource("fake");
         pu.setNonJtaDataSource("fake");
         pu.getMappingFile().add("test-orm.xml");
-        pu.addClass("openejb.org.apache.openejb.core.MyCmpBean");
+        pu.getClazz().add("openejb.org.apache.openejb.core.MyCmpBean");
         module.addPersistenceModule(new PersistenceModule("pu", persistence));
 
         module.getEjbModules().add(ejbModule);
@@ -297,12 +270,15 @@ public class LegacyInterfaceTest extends TestCase {
         assertNull(module.getCmpMappings());
         assembler.createApplication(config.configureApplication(module));
         assertNotNull(module.getCmpMappings());
+
+        // no mapping should be automatically generated
+        assertTrue(module.getCmpMappings().getEntityMap().isEmpty());
+
+        // pu should not be modified, no duplicate classes
         assertEquals(1, pu.getClazz().size());
         assertEquals("openejb.org.apache.openejb.core.MyCmpBean", pu.getClazz().get(0));
-        final List<Basic> basicList = module.getCmpMappings().getEntityMap().get("openejb.org.apache.openejb.core.MyCmpBean").getAttributes().getBasic();
-        assertEquals(1, basicList.size());
-        assertEquals(300, basicList.get(0).getColumn().getLength().intValue());
-        assertEquals("wNAME", basicList.get(0).getColumn().getName());
+        assertEquals(1, pu.getMappingFile().size());
+        assertEquals("test-orm.xml", pu.getMappingFile().get(0));
     }
 
     @LocalHome(MyLocalHome.class)
