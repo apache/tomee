@@ -134,7 +134,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         // check for an existing "cmp" persistence unit, and look at existing mappings
         final PersistenceUnit cmpPersistenceUnit = findCmpPersistenceUnit(appModule);
         if (cmpPersistenceUnit != null) {
-            if (cmpPersistenceUnit.getMappingFile() != null || cmpPersistenceUnit.getMappingFile().size() > 0) {
+            if (cmpPersistenceUnit.getMappingFile() != null && cmpPersistenceUnit.getMappingFile().size() > 0) {
                 for (final String mappingFile : cmpPersistenceUnit.getMappingFile()) {
                     final EntityMappings entityMappings = readEntityMappings(mappingFile);
                     if (entityMappings != null) {
