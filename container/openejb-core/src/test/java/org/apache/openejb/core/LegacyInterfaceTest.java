@@ -35,7 +35,20 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.TransAttribute;
+<<<<<<< HEAD
 import org.apache.openejb.jee.jpa.*;
+=======
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.Column;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.NamedQuery;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
+>>>>>>> c8a734467d... TOMEE-2295 use single class imports
 import org.junit.AfterClass;
 
 import javax.ejb.CreateException;
