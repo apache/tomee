@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.superbiz</groupId>
-    <artifactId>executor</artifactId>
+    <artifactId>concurrency-utils</artifactId>
     <version>8.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>OpenEJB :: Examples :: Executor for concurrency utilities</name>
+    <name>OpenEJB :: Examples :: Concurrency utilities example</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
