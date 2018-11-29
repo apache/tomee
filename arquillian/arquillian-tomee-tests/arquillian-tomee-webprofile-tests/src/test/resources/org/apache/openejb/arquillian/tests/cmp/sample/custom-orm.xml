@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+    <entity class="openejb.org.apache.openejb.arquillian.tests.cmp.sample.MovieBean" name="MovieBean">
+        <description>#MovieBean</description>
+        <table/>
+        <named-query name="MovieBean.findByDirector(java.lang.String)">
+            <query>SELECT m FROM MovieBean m WHERE m.director = ?1</query>
+        </named-query>
+        <named-query name="MovieBean.findAll">
+            <query>SELECT m FROM MovieBean as m</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="director"/>
+            <basic name="year"/>
+            <basic name="title">
+                <column name="movie_title" length="250" />
+            </basic>
+        </attributes>
+    </entity>
+</entity-mappings>
