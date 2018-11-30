@@ -1,0 +1,13 @@
+Title: WebLogic Lookup
+
+How to lookup WebLogic Objects from within a TomEE context:
+
+	Hashtable<String, String> props = new Hashtable<String, String>();
+	props.put(javax.naming.Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
+	props.put(javax.naming.Context.URL_PKG_PREFIXES, "weblogic.jndi.factories"); 
+	props.put("java.naming.provider.url", "t3://your.host.name:7023");
+	Context ctx = new InitialContext(props);
+
+	IService s = (IService) ctx.lookup("java:global.com.test.ServiceImpl!com.test.IService");
+	
+Obviously you will need to change the actual lookup to your specific object, but you get the idea.	

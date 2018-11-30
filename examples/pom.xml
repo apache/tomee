@@ -173,6 +173,7 @@ BROKEN, see TOMEE-2140
     <module>resources-jmx-example</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-timed</module>
+    <module>websocket-tls-basic-auth</module>
   </modules>
 
   <dependencies>

@@ -1,0 +1,147 @@
+Title: Lookup of other EJBs Example
+<a name="LookupofotherEJBsExample-Overview"></a>
+# Overview
+
+This example shows how to configure JNDI to lookup other EJBs using either
+the *@EJB* annotation or the *ejb-jar.xml* deployment descriptor.
+
+There are a couple interesting aspects in this example intended to flush
+out some of the more confusing, and perhaps frustrating, aspects of
+referring to EJBs.
+
+ - beans themselves do not have JNDI names (this was only recently added in
+Java EE 6)
+
+This is the most frustrating and hard to accept.  Java EE 5 does not have a
+global namespace and therefore there is no *singular* name for your EJB. 
+It does not matter what you do to your EJB, there is no standard way to
+"give" the bean a name that can be used by the application globally.
+
+ - each EJB owns its own private *java:comp/env* namespace
+(*java:comp/env* is not global and cannot be treated that way)
+ - names do not magically appear in *java:comp/env*, they must be
+explicitly added.
+ - to get a reference to bean *B* in the *java:comp/env* namespace of
+bean *A*, bean *A* must declare a reference to bean *B*.
+
+You read this right.  If you have 10 EJBs and all of them want to refer to
+bean *B*, then you must declare bean *B* as a reference 10 times (once
+for each of the 10 beans).  There is no standard way in Java EE 5 to do
+this just once for all beans.  In Java EE 6 there is a "*java:global*"
+namespace, a "*java:app*" namespace, and a "*java:module*" namespace
+where names can be defined with the desired scope.  Java EE 5 has only
+*java:comp*.
+
+There are two things which make this even more confusing:
+
+ - Servlets have always defined *java:comp/env* differently.	In a
+webapp, the *java:comp/env* namespace is shared by all servlets.  This is
+essentially equivalent to the *java:module* namespace in Java EE 6. 
+Understand there is a conflict in definition here and that for EJBs,
+*java:comp* is scoped at the component (the EJB itself) not the module as
+with webapps.
+ - All vendors have some proprietary concept of global JNDI.  So you may be
+able to lookup "*java:/MyBean*" or "*MyBeanLocal*", but these are
+vendor-specific and non-portable.
+
+As well this example shows some other interesting aspects of referring to
+EJBs:
+
+ - Two beans may use the same business interfaces, the interface alone does
+not necessarily identify the exact bean
+ - circular references are possible
+
+To illustrate all of this, we have two simple @Stateless beans, *RedBean*
+and *BlueBean*.  Both implement the same business local interface,
+*Friend*.  Both *RedBean* and *BlueBean* define
+*java:comp/env/myFriend* differently which is allowed as *java:comp* is
+a namespace that is private to each bean and not visible to other beans --
+so the names do not have to match. 
+
+
+<a name="LookupofotherEJBsExample-TheCode"></a>
+# The Code
+
+Here we show the code for *RedBean* and *BlueBean* and their shared
+business local interface *Friend*.
+{snippet:id=code|url=openejb3/examples/lookup-of-ejbs/src/main/java/org/superbiz/ejblookup/RedBean.java|lang=java}
+{snippet:id=code|url=openejb3/examples/lookup-of-ejbs/src/main/java/org/superbiz/ejblookup/BlueBean.java|lang=java}
+{snippet:id=code|url=openejb3/examples/lookup-of-ejbs/src/main/java/org/superbiz/ejblookup/Friend.java|lang=java}
+
+The key items in the above are the following:
+ - *@EJB* has been used at the *class level* to declare *myFriend* in
+the *java:comp/env* namespace of each EJB
+ - because both beans share the *same interface*, *Friend*, we need to
+add **beanName** to the *@EJB* usage to specify the exact EJB we want
+ - for *BlueBean* the *java:comp/env/myFriend* name has been configured
+to point to *RedBean*
+ - for *RedBean* the *java:comp/env/myFriend* name has been configured
+to point to *BlueBean*
+
+<a name="LookupofotherEJBsExample-Alternativetoannotations"></a>
+## Alternative to annotations
+
+If there is a desire to not use annotations, the above annotation usage is
+equivalent to the following ejb-jar.xml
+{snippet:url=openejb3/examples/lookup-of-ejbs-with-descriptor/src/main/resources/META-INF/ejb-jar.xml|lang=xml}
+
+<a name="LookupofotherEJBsExample-Writingaunittestfortheexample"></a>
+# Writing a unit test for the example
+
+Writing an unit test for this example is quite simple. We need just to
+write a setup method to create and initialize the InitialContext, and then
+write our test methods
+
+{snippet:id=code|url=openejb3/examples/lookup-of-ejbs/src/test/java/org/superbiz/ejblookup/EjbDependencyTest.java|lang=java}
+
+<a name="LookupofotherEJBsExample-Running"></a>
+#  Running
+
+Running the example is fairly simple.  In the "lookup-of-ejbs" directory of
+the [examples zip](openejb:download.html)
+, just run:
+
+> $ mvn clean install
+
+Which should create output like the following.
+
+
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.ejblookup.EjbDependencyTest
+    Apache OpenEJB 3.1.5-SNAPSHOT	 build: 20101129-09:51
+    http://tomee.apache.org/
+    INFO - openejb.home =
+/Users/dblevins/work/openejb-3.1.x/examples/lookup-of-ejbs
+    INFO - openejb.base =
+/Users/dblevins/work/openejb-3.1.x/examples/lookup-of-ejbs
+    INFO - Configuring Service(id=Default Security Service,
+type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager,
+type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Found EjbModule in classpath:
+/Users/dblevins/work/openejb-3.1.x/examples/lookup-of-ejbs/target/classes
+    INFO - Beginning load:
+/Users/dblevins/work/openejb-3.1.x/examples/lookup-of-ejbs/target/classes
+    INFO - Configuring enterprise application: classpath.ear
+    INFO - Configuring Service(id=Default Stateless Container, type=Container,
+provider-id=Default Stateless Container)
+    INFO - Auto-creating a container for bean BlueBean:
+Container(type=STATELESS, id=Default Stateless Container)
+    INFO - Enterprise application "classpath.ear" loaded.
+    INFO - Assembling app: classpath.ear
+    INFO - Jndi(name=BlueBeanLocal) --> Ejb(deployment-id=BlueBean)
+    INFO - Jndi(name=RedBeanLocal) --> Ejb(deployment-id=RedBean)
+    INFO - Created Ejb(deployment-id=RedBean, ejb-name=RedBean,
+container=Default Stateless Container)
+    INFO - Created Ejb(deployment-id=BlueBean, ejb-name=BlueBean,
+container=Default Stateless Container)
+    INFO - Deployed Application(path=classpath.ear)
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.244 sec
+    
+    Results :
+    
+    Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+
+

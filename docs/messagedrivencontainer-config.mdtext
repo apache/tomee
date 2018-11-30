@@ -1,0 +1,65 @@
+Title: MessageDrivenContainer Configuration
+
+
+A MessageDrivenContainer can be declared via xml in the `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file using a declaration like the following.  All properties in the element body are optional.
+
+    <Container id="myMessageDrivenContainer" type="MESSAGE">
+        activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
+        instanceLimit = 10
+        messageListenerInterface = javax.jms.MessageListener
+        resourceAdapter = Default JMS Resource Adapter
+    </Container>
+
+Alternatively, a MessageDrivenContainer can be declared via properties in the `<tomee-home>/conf/system.properties` file or via Java VirtualMachine `-D` properties.  The properties can also be used when embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
+
+    myMessageDrivenContainer = new://Container?type=MESSAGE
+    myMessageDrivenContainer.activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
+    myMessageDrivenContainer.instanceLimit = 10
+    myMessageDrivenContainer.messageListenerInterface = javax.jms.MessageListener
+    myMessageDrivenContainer.resourceAdapter = Default JMS Resource Adapter
+
+Properties and xml can be mixed.  Properties will override the xml allowing for easy configuration change without the need for ${} style variable substitution.  Properties are not case sensitive.  If a property is specified that is not supported by the declared MessageDrivenContainer a warning will be logged.  If a MessageDrivenContainer is needed by the application and one is not declared, TomEE will create one dynamically using default settings.  Multiple MessageDrivenContainer declarations are allowed.
+# Supported Properties
+<table>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+<tr>
+  <td>activationSpecClass</td>
+  <td>String</td>
+  <td>org.apache.activemq.ra.ActiveMQActivationSpec</td>
+  <td>
+Specifies the activation spec class
+</td>
+</tr>
+<tr>
+  <td>instanceLimit</td>
+  <td>int</td>
+  <td>10</td>
+  <td>
+Specifies the maximum number of bean instances that are
+allowed to exist for each MDB deployment.
+</td>
+</tr>
+<tr>
+  <td>messageListenerInterface</td>
+  <td>String</td>
+  <td>javax.jms.MessageListener</td>
+  <td>
+Specifies the message listener interface handled by this container
+</td>
+</tr>
+<tr>
+  <td>resourceAdapter</td>
+  <td>String</td>
+  <td>Default&nbsp;JMS&nbsp;Resource&nbsp;Adapter</td>
+  <td>
+The resource adapter delivers messages to the container
+</td>
+</tr>
+</table>
+
+

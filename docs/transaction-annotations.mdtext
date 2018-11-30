@@ -1,0 +1,217 @@
+Title: Transaction Annotations
+
+_Also see [Testing Transactions](testing-transactions-example.html)
+ for an example of how to use and test EJB transaction attributes_
+
+The *javax.ejb.TransactionAttribute* annotation (@TransactionAttribute) can
+be applied to a bean class or it's methods.
+
+Usage of the @TransactionAttribute requires you to specify one of six
+different transaction attribute types defined via the
+javax.ejb.TransactionAttributeType enum.
+
+ - TransactionAttributeType.*MANDATORY*
+ - TransactionAttributeType.*REQUIRED*
+ - TransactionAttributeType.*REQUIRES_NEW*
+ - TransactionAttributeType.*SUPPORTS*
+ - TransactionAttributeType.*NOT_SUPPORTED*
+ - TransactionAttributeType.*NEVER*
+
+Per EJB 3.0 the default transaction attribute for all EJB 3.0 applications
+is *REQUIRED*.	The default transaction attribute for EJB 2.1, 2.0 and 1.1
+applications is vendor specific.  In OpenEJB EJB 2.1, 2.0 and 1.1
+applications also use *REQUIRED* as the default.
+
+<a name="TransactionAnnotations-AttributeTypessummary"></a>
+##  Attribute Types summary
+
+A simplistic way to visualize the transaction attributes is as follows.
+
+<table>
+<tr><td> </th><th> Failing </th><th> Correcting </th><th> No Change </th></tr>
+<tr><th> Transacted </td><td> MANDATORY </td><td> REQUIRED, REQUIRES_NEW </td><td> SUPPORTS </td></tr>
+<tr><th> Not Transacted </td><td> NEVER </td><td> NOT_SUPPORTED </td><td> SUPPORTS </td></tr>
+</table>
+
+The "*Transacted*" and "*Not Transacted*" categories represent the
+container guarantee, i.e. if the bean method will or will not be invoked in
+a transaction.	The "*Failing*", "*Correcting*", and "*No Change*"
+categories represent the action take by the container to achieve that
+guarantee.
+
+For example, *Never* and *Mandatory* are categorized as "*Failing*" and
+will cause the container to throw an exception to the caller if there is
+(Tx Never) or is not (Tx Mandatory) a transaction in progress when the
+method is called.  The attributes *Required*, *RequiresNew*, and
+*NotSupported* are categorized as "*Correcting*" as they will cause the
+container to adjust the transactional state automatically as needed to
+match the desired state, rather than blocking the invocation by throwing an
+exception.
+
+<a name="TransactionAnnotations-DetaileddescriptionofeachAttribute"></a>
+### Detailed description of each Attribute
+
+<a name="TransactionAnnotations-MANDATORY"></a>
+#### MANDATORY
+
+A _MANDATORY_ method is guaranteed to always be executed in a transaction. 
+However, it's the caller's job to take care of suppling the transaction. 
+If the caller attempts to invoke the method *outside* of a transaction,
+then the container will block the call and throw them an *exception*.
+
+<a name="TransactionAnnotations-REQUIRED"></a>
+#### REQUIRED
+
+A _REQUIRED_ method is guaranteed to always be executed in a transaction. 
+If the caller attempts to invoke the method *outside* of a transaction, the
+container will *start* a transaction, execute the method, then *commit* the
+transaction.
+
+<a name="TransactionAnnotations-REQUIRES_NEW"></a>
+#### REQUIRES_NEW
+
+A _REQUIRES_NEW_ method is guaranteed to always be executed in a
+transaction.  If the caller attempts to invoke the method *inside or
+outside* of a transaction, the container will still *start* a transaction,
+execute the method, then *commit* the transaction.  Any transaction the
+caller may have in progress will be *suspended* before the method execution
+then *resumed* afterward.
+
+<a name="TransactionAnnotations-NEVER"></a>
+#### NEVER
+
+A _NEVER_ method is guaranteed to never be executed in a transaction. 
+However, it's the caller's job to ensure there is no transaction.  If the
+caller attempts to invoke the method *inside* of a transaction, then the
+container will block the call and throw them an *exception*.
+
+<a name="TransactionAnnotations-NOT_SUPPORTED"></a>
+#### NOT_SUPPORTED
+
+A _NOT_SUPPORTED_ method is guaranteed to never be executed in a
+transaction.  If the caller attempts to invoke the method *inside* of a
+transaction, the container will *suspend* the caller's transaction, execute
+the method, then *resume* the caller's transaction.
+
+<a name="TransactionAnnotations-SUPPORTS"></a>
+#### SUPPORTS
+
+A _SUPPORTS_ method is guaranteed to adopt the exact transactional state of
+the caller.  These methods can be invoked by caller's *inside or outside*
+of a transaction.  The container will do nothing to change that state.
+
+
+<a name="TransactionAnnotations-OnMethods"></a>
+## On Methods
+
+
+    @Stateless
+    public static class MyBean implements MyBusinessInterface {
+    
+        @TransactionAttribute(TransactionAttributeType.MANDATORY)
+        public String codeRed(String s) {
+    	return s;
+        }
+    
+        public String codeBlue(String s) {
+    	return s;
+        }
+    }
+
+
+- _codeRed_ will be invoked with the attribute of _MANDATORY_
+- _codeBlue_ will be invoked with the default attribute of _REQUIRED_
+
+<a name="TransactionAnnotations-OnClasses"></a>
+## On Classes
+
+
+    @Stateless
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
+    public static class MyBean implements MyBusinessInterface {
+    
+        public String codeRed(String s) {
+    	return s;
+        }
+    
+        public String codeBlue(String s) {
+    	return s;
+        }
+    }
+
+
+- _codeRed_ and _codeBlue_ will be invoked with the attribute of
+_MANDATORY_
+
+<a name="TransactionAnnotations-Mixedonclassesandmethods"></a>
+## Mixed on classes and methods
+
+
+    @Stateless
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
+    public static class MyBean implements MyBusinessInterface {
+    
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public String codeRed(String s) {
+    	return s;
+        }
+    
+        public String codeBlue(String s) {
+    	return s;
+        }
+    
+        @TransactionAttribute(TransactionAttributeType.REQUIRED)
+        public String codeGreen(String s) {
+    	return s;
+        }
+    }
+
+
+- _codeRed_ will be invoked with the attribute of _NEVER_
+- _codeBlue_ will be invoked with the attribute of _SUPPORTS_
+- _codeGreen_ will be invoked with the attribute of _REQUIRED_
+
+<a name="TransactionAnnotations-IllegalUsage"></a>
+#  Illegal Usage
+
+Generally, transaction annotationss cannot be made on AroundInvoke methods
+and most callbacks.
+
+The following usages of @TransactionAttribute have no effect.
+
+
+    @Stateful
+    public class MyStatefulBean implements	MyBusinessInterface  {
+    
+        @PostConstruct
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public void constructed(){
+    
+        }
+    
+        @PreDestroy
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public void destroy(){
+    
+        }
+    
+        @AroundInvoke
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public Object invoke(InvocationContext invocationContext) throws Exception {
+    	return invocationContext.proceed();
+        }
+    
+        @PostActivate
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public void activated(){
+    
+        }
+    
+        @PrePassivate
+        @TransactionAttribute(TransactionAttributeType.NEVER)
+        public void passivate(){
+    
+        }
+    }
+
+

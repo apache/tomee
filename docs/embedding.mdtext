@@ -1,0 +1,26 @@
+Title: Embedding
+The basic process for embedding OpenEJB:
+
+1. Add the OpenEJB libraries to your classpath
+1. Ensure your EJB modules are discoverable
+1. Use the LocalInitialContextFactory to boot OpenEJB
+
+
+<a name="Embedding-Importantdocs"></a>
+## Important docs
+
+- [Application discovery via the classpath](application-discovery-via-the-classpath.html)
+- [Embedded Configuration](embedded-configuration.html)
+- [Configuring DataSources in Tests](configuring-datasources-in-tests.html)
+- [Configuring PersistenceUnits in Tests](configuring-persistenceunits-in-tests.html)
+- [Configuring Containers in Tests](configuring-containers-in-tests.html)
+- [Configuring Logging in Tests](configuring-logging-in-tests.html)
+- [Alternate Descriptors](alternate-descriptors.html)
+- [Unit Testing Transactions](unit-testing-transactions.html)
+- [TestCase with TestBean inner-class](testcase-with-testbean-inner-class.html)
+- [TestCase Injection (@LocalClient)](local-client-injection.html)
+
+<a name="Embedding-Examples"></a>
+## Examples
+
+{include:Examples Table}

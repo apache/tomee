@@ -1,0 +1,42 @@
+Title: Collapsed EAR
+<a name="CollapsedEAR-Onearchive"></a>
+# One archive
+
+The basic idea of this approach is that your Servlets and EJBs are together
+in your WAR file as one app.
+
+* No classloader boundries between Servlets and EJBs
+* EJBs and Servlets can share all third-party libraries (like Spring\!) - no EAR required.
+* Can put the web.xml and ejb-jar.xml in the same archive (the WAR file).
+* EJBs can see Servlet classes and vice versa.
+
+<a name="CollapsedEAR-NotquiteJ2EE(itistrulyJava EE6)"></a>
+# Not quite J2EE (it is truly Java EE6)
+
+This is very different than J2EE or Java EE 5 as there aren't several
+levels of separation and classloader hierarchy.  This is going to take some
+getting used to and it should be understood that this style of packaging
+isn't J2EE compliant. Who would care tough as it is a feature of Java EE 6
+we would've been waiting for so long.
+
+ J2EE classloading rules:
+
+* You cannot ever have EJBs and servlets in the same classloader.
+* Three classloader minimum; a classloader for the ear, one for each ejb-jar, and one for each WAR file.
+* Servlets can see EJBs, but EJBs cannot see servlets.
+
+ To pull that off, J2EE has to kill you on packaging:
+* You cannot have EJB classes and Servlet classes in the same archive.
+* You need at least three archives to combine servlets and ejbs; 1 EAR containing 1 EJB jar and 1 servlet WAR.
+* Shared libraries must go in the EAR and be included in a specially formatted 'Class-Path' entry in the EAR's MANIFEST file.
+
+ Critically speaking, forcing more than one classloader on an application
+is where J2EE "jumps the shark" for a large majority of people's needs.
+
+<a name="CollapsedEAR-ExamplewithTomcat"></a>
+# Example with Tomcat
+
+If you want to try to work with Servlets/JSP and OpenEJB using Tomcat, see
+the [setup page](openejbx30:tomcat.html)
+ and the "/webapps/ejb-examples" section of the [openejb-examples.zip](downloads.html)
+ available on the [download page](http://tomee.apache.org/downloads.html).
