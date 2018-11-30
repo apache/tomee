@@ -2,7 +2,7 @@ Title: Reload Persistence Unit Properties
 
 This example aims to simulate a benchmark campaign on JPA.
 
-First you'll run your application then you'll realize you could need L2 cache to respect your SLA.
+First you'll run your application then you'll realize you need an L2 cache to conform to your Service Level Agreement (SLA).
 
 So you change your persistence.xml configuration, then restart your application,
 you wait a bit because you are using OpenEJB ;)...but you wait...
@@ -12,9 +12,9 @@ your configuration file to keep the modification.
 
 To do it we can simply use JMX.
 
-OpenEJB automatically register one MBeans by entitymanager (persistence unit).
+OpenEJB automatically registers one MBean by entitymanager (persistence unit).
 
-It allows you mainly to change your persistence unit properties even if more is possible.
+It allows you to change your persistence unit properties even if more is possible.
 
 ## The test itself
 
