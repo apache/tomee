@@ -16,23 +16,29 @@
  */
 package org.superbiz.rest;
 
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.stream.Stream;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
@@ -49,11 +55,25 @@ public class WeatherServiceTest {
     @ArquillianResource
     private URL base;
 
+    private Client client;
+
+    @Before
+    public void before() {
+        this.client = ClientBuilder.newClient();
+    }
+
+    @After
+    public void after() {
+        this.client.close();
+    }
+
     @Test
     public void testCountedMetric() {
-        final String message = WebClient.create(base.toExternalForm())
-                .path("/weather/day/status")
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final String message =  webTarget.path("/weather/day/status")
+                .request()
                 .get(String.class);
+
         assertEquals("Hi, today is a sunny day!", message);
 
         final String metricPath = "/metrics/application/weather_day_status";
@@ -62,25 +82,30 @@ public class WeatherServiceTest {
     }
 
     private void assertPrometheusFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
-                .path(metricPath)
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final String metric =  webTarget.path(metricPath)
+                .request()
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
         assertEquals("# TYPE application:weather_day_status counter\napplication:weather_day_status 1.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {
-        final String metric = WebClient.create(base.toExternalForm())
-                .path(metricPath)
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+
+        final String metric = webTarget.path(metricPath)
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        assertEquals("{\"weather_day_status\":{\"delegate\":{},\"unit\":\"none\",\"count\":1}}", metric);
+        assertEquals("{\"weather_day_status\":{\"count\":1}}", metric);
     }
 
     @Test
     public void testCountedMetricMetadata() {
-        final Response response = WebClient.create(base.toExternalForm())
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        final Response response = webTarget
                 .path("/metrics/application/weather_day_status")
+                .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .options();
         final String metaData = response.readEntity(String.class);
@@ -88,31 +113,25 @@ public class WeatherServiceTest {
 
         final String expected = "{\n" +
                 "  \"weather_day_status\": {\n" +
-                "    \"unit\": \"none\",\n" +
+                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
                 "    \"displayName\": \"Weather Day Status\",\n" +
                 "    \"name\": \"weather_day_status\",\n" +
-                "    \"typeRaw\": \"COUNTER\",\n" +
-                "    \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "    \"type\": \"counter\",\n" +
-                "    \"value\": {\n" +
-                "      \"unit\": \"none\",\n" +
-                "      \"displayName\": \"Weather Day Status\",\n" +
-                "      \"name\": \"weather_day_status\",\n" +
-                "      \"tagsAsString\": \"\",\n" +
-                "      \"typeRaw\": \"COUNTER\",\n" +
-                "      \"description\": \"This metric shows the weather status of the day.\",\n" +
-                "      \"type\": \"counter\",\n" +
-                "      \"reusable\": false,\n" +
-                "      \"tags\": {\n" +
-                "        \n" +
-                "      }\n" +
-                "    },\n" +
                 "    \"reusable\": false,\n" +
-                "    \"tags\": \"\"\n" +
+                "    \"tags\": \"\",\n" +
+                "    \"type\": \"counter\",\n" +
+                "    \"typeRaw\": \"COUNTER\",\n" +
+                "    \"unit\": \"none\"\n" +
                 "  }\n" +
                 "}";
 
         JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
-        assertEquals(expectedJson, metadataJson);
+        assertEquals(expectedJson.keySet().size(), metadataJson.keySet().size());
+
+        String[] expectedKeys = new String[]{"description", "displayName", "name", "reusable", "tags", "type", "typeRaw", "unit"};
+        Stream.of(expectedKeys).forEach((text) -> {
+          assertTrue("Expected: " + text
+                  + " to be present in " + expected,
+                  expectedJson.getJsonObject("weather_day_status").get(text) != null);
+        });
     }
 }

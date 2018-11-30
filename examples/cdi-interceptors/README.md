@@ -82,24 +82,21 @@ Lets quickly put up a `beans.xml` file like the following in `src/main/resources
     </beans>
 
 
-By default, a bean archive has no enabled interceptors bound via interceptor
-bindings. An interceptor must be explicitly enabled by listing its class
+By default, a bean archive has no enabled interceptors; an interceptor must be explicitly enabled by listing its class
 in the `beans.xml`.
 
-Those lines in `beans.xml` not only "enable" the interceptors, but also define the "order of execution" of the interceptors.
-
-The order in with a method is annotated has no real significance.
+The order of the interceptor annotations has no real significance.
 Eg:
 
     @TimeRestrict
     @Log
     void cMethod(){}
 
-Here the `BookForAShowLoggingInterceptor` would be applied first and then `TimeBasedRestrictingInterceptor`
+It is the `interceptor` elements in `beans.xml` that not only "enable" the interceptors, but also define the "order of execution" of the interceptors. In this case the `BookForAShowLoggingInterceptor` would be applied first and then `TimeBasedRestrictingInterceptor`
 
-So now you know that the order is only determined by the order of definition in `beans.xml`. Interceptors which occur earlier in the list are called first.
+So now you know that the order is only determined by the order within the `interceptors` element within the `beans.xml`. The rule is simple, interceptors which occur earlier in the list are called first.
 
-Also note that a method can be marked for interception by multiple interceptors by applying multiple annotations as above.
+Also note that a method can be marked for interception using multiple interceptors by applying multiple annotations as above.
 
 This brings us to another question. In the above case there were two interceptors applied together. What if I would require about 4 such interceptors that would go along.... Having to annotate so much makes the code a little clumsy?
 

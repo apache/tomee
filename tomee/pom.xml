@@ -47,7 +47,7 @@
     <module>tomee-plume-webapp</module>
     <module>tomee-webservices</module>
     <module>tomee-embedded</module>
-    <module>tomee-microprofile-webapp</module>
+    <module>tomee-microprofile</module>
     <module>apache-tomee</module>
     <module>tomee-util</module>
     <module>tomee-juli</module>
