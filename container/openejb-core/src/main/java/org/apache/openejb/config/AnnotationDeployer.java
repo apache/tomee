@@ -2939,12 +2939,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         if (interfaces.size() != 1) {
-                            String msg = "When annotating a bean class as @MessageDriven without declaring messageListenerInterface, the bean must implement exactly one interface, no more and no less. beanClass=" + clazz.getName() + " interfaces=";
+                            StringBuilder msg = new StringBuilder("When annotating a bean class as @MessageDriven without" +
+                                    " declaring messageListenerInterface, the bean must implement exactly one interface, no more and" +
+                                    " no less. beanClass=" + clazz.getName() + " interfaces=");
                             for (final Class<?> intf : interfaces) {
-                                msg += intf.getName() + ", ";
+                                msg.append(intf.getName()).append(", ");
                             }
                             // TODO: Make this a validation failure, not an exception
-                            throw new IllegalStateException(msg);
+                            throw new IllegalStateException(msg.toString());
                         }
                         mdb.setMessagingType(interfaces.get(0).getName());
                     }

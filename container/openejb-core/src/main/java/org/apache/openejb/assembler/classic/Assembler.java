@@ -786,12 +786,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<String> used = getDuplicates(appInfo);
 
             if (used.size() > 0) {
-                String message = logger.error("createApplication.appFailedDuplicateIds", appInfo.path);
+                StringBuilder message = new StringBuilder(logger.error("createApplication.appFailedDuplicateIds"
+                        , appInfo.path));
                 for (final String id : used) {
                     logger.error("createApplication.deploymentIdInUse", id);
-                    message += "\n    " + id;
+                    message.append("\n    ").append(id);
                 }
-                throw new DuplicateDeploymentIdException(message);
+                throw new DuplicateDeploymentIdException(message.toString());
             }
 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();

@@ -49,7 +49,7 @@ public class InstallerServlet extends HttpServlet {
         if (!list.isEmpty()) {
             sb.deleteCharAt(sb.length() - 1);
         }
-        return "[" + sb.toString() + "]";
+        return "[" + sb + "]";
     }
 
     @Override

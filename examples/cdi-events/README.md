@@ -26,7 +26,7 @@ The test itself (`EventTest`) simply verifies the dates were received.
 
 # Conclusion
 
-CDI let's implement very easily plugins through this event mecanism.
+CDI let's you implement very easily plugins through this event mecanism.
 
 If you go further and look at CDI plugin API you'll realize it is simply the same kind
 of events. CDI events is really the basis of CDI.
