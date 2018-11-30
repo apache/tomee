@@ -35,8 +35,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class WeatherServiceTest {
@@ -95,7 +98,13 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        assertEquals("{\"weather_day_temperature\":30}", metric);
+
+        assertNotNull(metric);
+
+        JsonObject metricJson = Json.createReader(new StringReader(metric)).readObject();
+        JsonObject weatherDayTemperature = metricJson.getJsonObject("weather_day_temperature");
+        assertNotNull(weatherDayTemperature);
+        assertEquals(weatherDayTemperature.getInt("value"), 30);
     }
 
     @Test
@@ -106,23 +115,25 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .options();
+
         final String metaData = response.readEntity(String.class);
         JsonObject metadataJson = Json.createReader(new StringReader(metaData)).readObject();
 
-        final String expected = "{\n" +
-                "  \"weather_day_temperature\": {\n" +
-                "    \"description\": \"This metric shows the day temperature.\",\n" +
-                "    \"displayName\": \"Weather Day Temperature\",\n" +
-                "    \"name\": \"weather_day_temperature\",\n" +
-                "    \"reusable\": false,\n" +
-                "    \"tags\": \"weather=temperature\",\n" +
-                "    \"type\": \"gauge\",\n" +
-                "    \"typeRaw\": \"GAUGE\",\n" +
-                "    \"unit\": \"celsius\"\n" +
-                "  }\n" +
-                "}";
+        String[] expectedKeys = {
+                "description",
+                "displayName",
+                "name",
+                "reusable",
+                "tags",
+                "type",
+                "typeRaw",
+                "unit"
+        };
 
-        JsonObject expectedJson = Json.createReader(new StringReader(expected)).readObject();
-        assertEquals(expectedJson, metadataJson);
+        Stream.of(expectedKeys)
+                .forEach(text ->
+                        assertTrue(
+                                "Expected: " + text + " to be present in " + metaData,
+                                metadataJson.getJsonObject("weather_day_temperature").get(text) != null));
     }
 }
