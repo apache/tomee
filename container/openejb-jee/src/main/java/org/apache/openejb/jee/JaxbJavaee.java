@@ -5,14 +5,14 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.openejb.jee;
 
@@ -91,18 +91,7 @@ public class JaxbJavaee {
         return jaxbContext;
     }
 
-    /**
-     * Convert the namespaceURI in the input to the javaee URI, do not validate the xml, and read in a T.
-     *
-     * @param type Class of object to be read in
-     * @param in   input stream to read
-     * @param <T>  class of object to be returned
-     * @return a T read from the input stream
-     * @throws ParserConfigurationException is the SAX parser can not be configured
-     * @throws SAXException                 if there is an xml problem
-     * @throws JAXBException                if the xml cannot be marshalled into a T.
-     */
-    public static <T> Object unmarshalJavaee(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+    private static <T> Object unmarshalJavaee(final Class<T> type, final InputStream in, boolean filter) throws ParserConfigurationException, SAXException, JAXBException {
 
         final SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -122,11 +111,16 @@ public class JaxbJavaee {
             }
         });
 
-        final JavaeeNamespaceFilter xmlFilter = new JavaeeNamespaceFilter(parser.getXMLReader());
-        xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+        SAXSource source = null;
+        if (filter) {
+            final JavaeeNamespaceFilter xmlFilter = new JavaeeNamespaceFilter(parser.getXMLReader());
+            xmlFilter.setContentHandler(unmarshaller.getUnmarshallerHandler());
+            // unmarshall
+            source = new SAXSource(xmlFilter, new InputSource(in));
+        } else {
+            source = new SAXSource(new InputSource(in));
+        }
 
-        // unmarshall
-        final SAXSource source = new SAXSource(xmlFilter, new InputSource(in));
 
         currentPublicId.set(new TreeSet<String>());
         try {
@@ -135,6 +129,37 @@ public class JaxbJavaee {
         } finally {
             currentPublicId.set(null);
         }
+    }
+
+    /**
+     *
+     * It unmarshals, but not using the {@link JavaeeNamespaceFilter}
+     *
+     * @param type Class of object to be read in
+     * @param in   input stream to read
+     * @param <T>  class of object to be returned
+     * @return a T read from the input stream
+     * @throws ParserConfigurationException is the SAX parser can not be configured
+     * @throws SAXException                 if there is an xml problem
+     * @throws JAXBException                if the xml cannot be marshalled into a T.
+     */
+    public static <T> Object unmarshal(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        return unmarshalJavaee(type, in, false);
+    }
+
+    /**
+     * Convert the namespaceURI in the input to the javaee URI, do not validate the xml, and read in a T.
+     *
+     * @param type Class of object to be read in
+     * @param in   input stream to read
+     * @param <T>  class of object to be returned
+     * @return a T read from the input stream
+     * @throws ParserConfigurationException is the SAX parser can not be configured
+     * @throws SAXException                 if there is an xml problem
+     * @throws JAXBException                if the xml cannot be marshalled into a T.
+     */
+    public static <T> Object unmarshalJavaee(final Class<T> type, final InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+        return unmarshalJavaee(type, in, true);
     }
 
     /**
@@ -327,7 +352,7 @@ public class JaxbJavaee {
 
         protected String eeUri(final String uri) {
             // if ee 7 then switch back on ee 6 to not break compatibility - to rework surely when we'll be fully ee 7
-            return "http://xmlns.jcp.org/xml/ns/javaee".equals(uri) ? "http://java.sun.com/xml/ns/javaee": uri;
+            return "http://xmlns.jcp.org/xml/ns/javaee".equals(uri) ? "http://java.sun.com/xml/ns/javaee" : uri;
         }
 
         @Override
@@ -555,10 +580,10 @@ public class JaxbJavaee {
         schemaFactory.setResourceResolver(resourceResolver);
 
         final Schema schema = schemaFactory.newSchema(
-            new Source[]{
-                new StreamSource(xmlSchemaURL.openStream()),
-                new StreamSource(javaeeSchemaURL.openStream())
-            });
+                new Source[]{
+                        new StreamSource(xmlSchemaURL.openStream()),
+                        new StreamSource(javaeeSchemaURL.openStream())
+                });
 
         // validate
         schema.newValidator().validate(sourceForValidate);

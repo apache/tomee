@@ -33,6 +33,9 @@
   <packaging>jar</packaging>
   <name>OpenEJB :: iTests :: Client</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.itests.client</tomee.build.name>
+  </properties>
   <build>
     <resources>
       <resource>

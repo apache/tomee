@@ -75,13 +75,13 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
             parameters.add(param);
         } else if (execute) {
-            String str = sql;
-            if (str.contains("?")) {
+            StringBuilder str = new StringBuilder(sql);
+            if (str.toString().contains("?")) {
                 Collections.sort(parameters);
                 int lastBatch = 0;
                 for (int i = 0; i < parameters.size(); i++) {
                     final Parameter param = parameters.get(i);
-                    if (str.contains("?")) {
+                    if (str.toString().contains("?")) {
                         try {
                             String val;
                             if (ByteArrayInputStream.class.isInstance(param.value)) {
@@ -95,40 +95,40 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
                             } else {
                                 val = param.value.toString();
                             }
-                            str = str.replaceFirst("\\?", val);
+                            str = new StringBuilder(str.toString().replaceFirst("\\?", val));
                         } catch (final Exception e) {
                             if (param.value == null) {
-                                str = str.replaceFirst("\\?", "null");
+                                str = new StringBuilder(str.toString().replaceFirst("\\?", "null"));
                             } else {
-                                str = str.replaceFirst("\\?", param.value.getClass().getName());
+                                str = new StringBuilder(str.toString().replaceFirst("\\?", param.value.getClass().getName()));
                             }
                         }
                         lastBatch = param.batchIndex;
                     } else {
                         if (lastBatch != param.batchIndex) {
-                            str += ", (";
+                            str.append(", (");
                             lastBatch = param.batchIndex;
                         }
 
                         try {
-                            str += param.value.toString();
+                            str.append(param.value.toString());
                         } catch (final Exception e) {
                             if (param.value == null) {
-                                str += "null";
+                                str.append("null");
                             } else {
-                                str += param.value.getClass().getName();
+                                str.append(param.value.getClass().getName());
                             }
                         }
 
                         if (i == parameters.size() - 1 || parameters.get(i + 1).batchIndex != lastBatch) {
-                            str += ")";
+                            str.append(")");
                         } else {
-                            str += ",";
+                            str.append(",");
                         }
                     }
                 }
             }
-            LOGGER.info(result.format(str) + (packages != null ? " - stack:" + TimeWatcherExecutor.inlineStack(packages) : ""));
+            LOGGER.info(result.format(str.toString()) + (packages != null ? " - stack:" + TimeWatcherExecutor.inlineStack(packages) : ""));
         } else if ("clearParameters".equals(mtdName)) {
             parameters.clear();
             parameterIndex = 0;
