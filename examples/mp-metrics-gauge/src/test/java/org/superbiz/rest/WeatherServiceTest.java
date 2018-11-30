@@ -111,27 +111,14 @@ public class WeatherServiceTest {
 
         final String expected = "{\n" +
                 "  \"weather_day_temperature\": {\n" +
-                "    \"unit\": \"celsius\",\n" +
+                "    \"description\": \"This metric shows the day temperature.\",\n" +
                 "    \"displayName\": \"Weather Day Temperature\",\n" +
                 "    \"name\": \"weather_day_temperature\",\n" +
-                "    \"typeRaw\": \"GAUGE\",\n" +
-                "    \"description\": \"This metric shows the day temperature.\",\n" +
-                "    \"type\": \"gauge\",\n" +
-                "    \"value\": {\n" +
-                "      \"unit\": \"celsius\",\n" +
-                "      \"displayName\": \"Weather Day Temperature\",\n" +
-                "      \"name\": \"weather_day_temperature\",\n" +
-                "      \"tagsAsString\": \"weather=\\\"temperature\\\"\",\n" +
-                "      \"typeRaw\": \"GAUGE\",\n" +
-                "      \"description\": \"This metric shows the day temperature.\",\n" +
-                "      \"type\": \"gauge\",\n" +
-                "      \"reusable\": false,\n" +
-                "      \"tags\": {\n" +
-                "        \"weather\": \"temperature\"\n" +
-                "      }\n" +
-                "    },\n" +
                 "    \"reusable\": false,\n" +
-                "    \"tags\": \"weather=temperature\"\n" +
+                "    \"tags\": \"weather=temperature\",\n" +
+                "    \"type\": \"gauge\",\n" +
+                "    \"typeRaw\": \"GAUGE\",\n" +
+                "    \"unit\": \"celsius\"\n" +
                 "  }\n" +
                 "}";
 
