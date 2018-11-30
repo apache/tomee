@@ -19,7 +19,6 @@ package org.apache.openejb.server.rest;
 
 import org.apache.openejb.server.httpd.HttpListener;
 
-import java.util.List;
 
 public interface RsRegistry {
     AddressInfo createRsHttpListener(String appId, String webContext, HttpListener listener, ClassLoader classLoader, String path, String virtualHost, String auth, String realm);
