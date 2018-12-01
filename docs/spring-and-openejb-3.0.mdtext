@@ -1,3 +1,8 @@
+title=Spring and OpenEJB 3.0
+type=page
+status=published
+~~~~~~
+
 {note}OpenEJB 3.1 and later users should refer to the [Spring] page.{note}
 # Bootstrapping OpenEJB in Spring
 

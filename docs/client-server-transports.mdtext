@@ -2,7 +2,7 @@ Title: Client-Server Transports
 <a name="Client-ServerTransports-Client/Servertransports"></a>
 #  Client/Server transports
 
-<table>
+<table class="mdtable">
 <tr><th> jar </th><th> transport description </th></tr>
 <tr><td> openejb-ejbd-3.0.jar </td><td> provides the 'ejbd' protocol.	A binary protocol
 traveling over a socket </td></tr>

@@ -78,7 +78,7 @@ be *Application Client* archives.
 <a name="DeployTool-OPTIONS"></a>
 # OPTIONS
 
-<table>
+<table class="mdtable">
 <tr>
 <td>-d, --debug </td>
 <td>Increases the level of detail on validation errors and

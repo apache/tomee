@@ -27,7 +27,7 @@ over the structure of the JNDI layout can institute a design pattern just
 right for your client apps.  See the [Service Locator](service-locator.html)
  doc for clever ways to use the JNDI name formatting functionality in
 client code.
-<table>
+<table class="mdtable">
 <tr><td>variable</td><td>	 description</td></tr>
 <tr><td>moduleId</td><td>	 Typically the name of the ejb-jar file<br> or the <ejb-jar id=""> id value if specified</td></tr>
 <tr><td>ejbType</td><td>	 STATEFUL, STATELESS, BMP_ENTITY, CMP_ENTITY, or MESSAGE_DRIVEN</td></tr>

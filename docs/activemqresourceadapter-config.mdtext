@@ -19,8 +19,9 @@ Alternatively, a ActiveMQResourceAdapter can be declared via properties in the `
     myActiveMQResourceAdapter.startupTimeout = 10 seconds
 
 Properties and xml can be mixed.  Properties will override the xml allowing for easy configuration change without the need for ${} style variable substitution.  Properties are not case sensitive.  If a property is specified that is not supported by the declared ActiveMQResourceAdapter a warning will be logged.  If a ActiveMQResourceAdapter is needed by the application and one is not declared, TomEE will create one dynamically using default settings.  Multiple ActiveMQResourceAdapter declarations are allowed.
-# Supported Properties
-<table>
+
+## Supported Properties
+<table class="mdtable">
 <tr>
 <th>Property</th>
 <th>Type</th>

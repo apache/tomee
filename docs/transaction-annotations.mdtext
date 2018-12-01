@@ -27,7 +27,7 @@ applications also use *REQUIRED* as the default.
 
 A simplistic way to visualize the transaction attributes is as follows.
 
-<table>
+<table class="mdtable">
 <tr><td> </th><th> Failing </th><th> Correcting </th><th> No Change </th></tr>
 <tr><th> Transacted </td><td> MANDATORY </td><td> REQUIRED, REQUIRES_NEW </td><td> SUPPORTS </td></tr>
 <tr><th> Not Transacted </td><td> NEVER </td><td> NOT_SUPPORTED </td><td> SUPPORTS </td></tr>

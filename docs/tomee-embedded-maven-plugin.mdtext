@@ -31,7 +31,7 @@ It also allows to use a flat classpath deployment which is often use with micros
 <div class="section">
 <h3><a name="Optional_Parameters"></a>Optional Parameters</h3>
         
-<table class="bodyTable" border="0">
+<table class="mdtable">
           
 <tr class="a">
             

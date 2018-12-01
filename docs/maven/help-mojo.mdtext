@@ -21,7 +21,7 @@ Call <tt>mvn tomee:help -Ddetail=true
 <div class="section">
 <h3>Optional Parameters<a name="Optional_Parameters"></a></h3>
         
-<table class="bodyTable" border="0">
+<table class="mdtable">
           
 <tr class="a">
             

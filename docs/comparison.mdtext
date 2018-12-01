@@ -9,7 +9,7 @@ Effectively, TomEE is a superset of OpenEJB.  They share the same code and TomEE
 
 Note: this table is for TomEE 1.x, TomEE 7 comments are under it.
 
-<table>
+<table class="mdtable">
 <tr>
 <th></th>
 <th>Tomcat</th>

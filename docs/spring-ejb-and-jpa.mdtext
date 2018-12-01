@@ -11,7 +11,7 @@ objects in one application.  The premise of the example is a Cineplex that
 has a number of Theaters (viewing screens), each playing a number of
 Movies.  The basic object layout is as follows:
 
-<table>
+<table class="mdtable">
 <tr><th> Object </th><th> Type </th><th> Description </th></tr>
 <tr><td> [CineplexImpl](http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/CineplexImpl.java)
  </td><td> @Stateless </td><td> Shows the use of @Resource to have Spring beans injected.

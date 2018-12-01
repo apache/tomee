@@ -40,7 +40,7 @@ deployment of standard Java EE packages within a Spring context, including:
 
 The following beans are usable in any spring xml file.
 
-<table>
+<table class="mdtable">
 <tr><th> Class </th><th> Description </th></tr>
 <tr><td> org.apache.openejb.spring.ClassPathApplication </td><td> Scrapes the classpath
 for all EJB, RAR, and Persistence applications, deploys them, and imports

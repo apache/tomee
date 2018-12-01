@@ -2,7 +2,7 @@ Title: Java EE 7 Implementation Status
 
 This page shows the current implementation status for the Java EE 7 specification compabitility of Apache Tomme 7.0.0-M1. Currently, we are working on the certification for Java EE 7.
 
-<table>
+<table class="mdtable">
     <tr>
         <th></th>
         <th>Version</th>

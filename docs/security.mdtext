@@ -40,7 +40,7 @@ For examples and more information on JAAS configuration, see the [JAAS Reference
 ## PropertiesLoginModule
 
 Supported options:
-<table>
+<table class="mdtable">
 <tr><th>Option</th><th>Description</th><th>Required</th></tr>
 <tr><td>UsersFile</td><td>name of the properties file that contains the users and their
 passwords</td><td>*yes*</td></tr>
@@ -78,7 +78,7 @@ The *groupSelect* query must return a two-column list of user names and
 their groups (or "roles" in the EJB world).
 
 Supported options:
-<table>
+<table class="mdtable">
 <tr><th>Option</th><th>Description</th><th>Required</th></tr>
 <tr><td>dataSourceName</td><td>the name of a data source</td><td>*yes* (alternative 1)</td></tr>
 <tr><td>jdbcURL</td><td>a standard JDBC URL</td><td>*yes* (alternative 2)</td></tr>

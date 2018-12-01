@@ -16,7 +16,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -38,7 +38,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -65,7 +65,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -92,7 +92,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -127,7 +127,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -166,7 +166,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -208,7 +208,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -327,7 +327,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -362,7 +362,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -409,7 +409,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>
@@ -436,7 +436,7 @@ Title: Containers and Resources
 </div></div>
 <p>Supports the following properties</p>
 <div class="table-wrap">
-<table class="confluenceTable"><tbody>
+<table class="mdtable"> <tbody>
 <tr>
 <th > Property Name </th>
 <th > Description </th>

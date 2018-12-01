@@ -70,7 +70,7 @@ Properties and xml can be mixed.  Properties will override the xml allowing for 
 See the [Common DataSource Configurations](common-datasource-configurations.html) page for examples of configuring datasources for Derby, MySQL, Oracle and other common databases.
 
 # Supported Properties
-<table>
+<table class="mdtable">
 <tr>
 <th>Property</th>
 <th>Type</th>

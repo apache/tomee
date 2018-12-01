@@ -22,7 +22,7 @@ Simply add the following to the <plugins>, and optionally the <pluginManagement>
     </plugins>
 
 ###Plugin Goals
-<table border="0" class="bodyTable">
+<table class="mdtable">
 <tr class="a">
 <th>Goal</th>
 <th>Description</th></tr>

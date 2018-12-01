@@ -15,7 +15,7 @@ Important: being JavaEE certified means the server passed the Test Compatibility
 
 To make it more explicit here is a small table showing the targetted JavaEE version and the related certification state by version:
 
-<table>
+<table class="mdtable">
 <tr><td>TomEE Version</td><td>JavaEE Version</td><td>Certified</td></tr>
 <tr><td>1.x</td><td>6</td><td>Yes</td></tr>
 <tr><td>7.x</td><td>7</td><td>No</td></tr>

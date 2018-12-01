@@ -1,7 +1,7 @@
 Title: System Properties Listing
 
 # OpenEJB system properties
-<table>
+<table class="mdtable">
 <tr><td><b>Name</b></td><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>openejb.embedded.remotable</td><td> bool </td><td> activate or not the remote services when available </td></tr>
 <tr><td><service prefix>.bind, &lt;service prefix&gt;.port, &lt;service prefix&gt;.disabled, &lt;service prefix&gt;.threads</td><td> host or IP, port, bool</td><td> override the host. Available for ejbd and httpejbd services (used by jaxws and jaxrs), number of thread to maneg requests  </td><tr>
@@ -58,7 +58,7 @@ Note: all resources can be configured by properties, see http://tomee.apache.org
 
 
 # OpenEJB client
-<table>
+<table class="mdtable">
 <tr><td><b>Name</b></td><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>openejb.client.identityResolver </td><td> implementation of org.apache.openejb.client.IdentityResolver  </td><td> default org.apache.openejb.client.JaasIdentityResolver. The class to get the client identity.</td></tr>
 <tr><td>openejb.client.connection.pool.timeout or openejb.client.connectionpool.timeout </td><td> int (ms) </td><td> the timeout of the client</td></tr>
@@ -68,7 +68,7 @@ Note: all resources can be configured by properties, see http://tomee.apache.org
 </table>
 
 # TomEE specific system properties
-<table>
+<table class="mdtable">
 <tr><td><b>Name</b></td><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>openejb.crosscontext </td><td> bool </td><td> set the cross context property on tomcat context (can be done in the traditionnal way if the deployment is don through the webapp discovery and not the OpenEJB Deployer EJB)</td></tr>
 <tr><td>openejb.jsessionid-support </td><td> bool </td><td> remove URL from session tracking modes for this context (see javax.servlet.SessionTrackingMode)</td></tr>
@@ -82,7 +82,7 @@ Note: all resources can be configured by properties, see http://tomee.apache.org
 </table>
 
 # TomEE Arquillian adaptor
-<table>
+<table class="mdtable">
 <tr><td><b>Name</b></td><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>tomee.ejbcontainer.http.port </td><td> int </td><td> tomee port, -1 means random. When using a random port you can retreive it getting this property too.</td></tr>
 <tr><td>tomee.arquillian.http </td><td> int </td><td> http port used by the embedded arquillian adaptor</td></tr>

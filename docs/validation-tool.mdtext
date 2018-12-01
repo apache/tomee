@@ -79,7 +79,7 @@ More checks will be added in the future.
 # OPTIONS
 
 
-<table>
+<table class="mdtable">
 <tr><td>-v</td><td>Sets the output level to 1. This will output just the minumum details
 on each failure.</td></tr>
 <tr><td>-vv</td><td>Default. Sets the output level to 2. Outputs one line summaries of
