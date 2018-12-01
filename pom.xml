@@ -36,8 +36,8 @@
   <packaging>pom</packaging>
   <version>8.0.0-SNAPSHOT</version>
 
-  <name>Apache OpenEJB</name>
-  <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
+  <name>Apache TomEE</name>
+  <description>Apache TomEE is a lightweight, yet powerful, JavaEE Application server with feature rich tooling.</description>
   <url>http://tomee.apache.org</url>
   <inceptionYear>1999</inceptionYear>
 
