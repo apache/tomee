@@ -99,7 +99,7 @@ public final class ValidatorUtil {
                     for (final AppContext appContext : containerSystem.getAppContexts()) {
                         final ClassLoader appContextClassLoader = appContext.getClassLoader();
                         if (tccl.equals(appContextClassLoader) || appContextClassLoader.equals(tccl)) {
-                            final Collection<String> tested = new ArrayList<String>();
+                            final Collection<String> tested = new ArrayList<>();
                             for (final BeanContext bean : appContext.getBeanContexts()) {
                                 if (BeanContext.Comp.class.equals(bean.getBeanClass())) {
                                     final String uniqueId = bean.getModuleContext().getUniqueId();

@@ -42,8 +42,8 @@ public class ConvertDataSourceDefinitions extends BaseConvertDefinitions {
 
         final List<JndiConsumer> jndiConsumers = collectConsumers(appModule);
 
-        final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<String, DataSource>();
-        final KeyedCollection<String, DataSource> dataSourcesFromCompManagedBeans = new KeyedCollection<String, DataSource>();
+        final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<>();
+        final KeyedCollection<String, DataSource> dataSourcesFromCompManagedBeans = new KeyedCollection<>();
 
         for (final JndiConsumer consumer : jndiConsumers) {
             if (consumer == null) {

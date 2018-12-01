@@ -33,8 +33,8 @@ import java.util.Map;
  */
 public class ServiceJarXmlLoader implements ProviderLoader {
 
-    private final Map<ID, ServiceProvider> loaded = new LinkedHashMap<ID, ServiceProvider>();
-    private final List<String> namespaces = new LinkedList<String>();
+    private final Map<ID, ServiceProvider> loaded = new LinkedHashMap<>();
+    private final List<String> namespaces = new LinkedList<>();
 
     @Override
     public ServiceProvider load(final ID id) {
@@ -81,7 +81,7 @@ public class ServiceJarXmlLoader implements ProviderLoader {
             parse(namespace);
         }
 
-        final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+        final List<ServiceProvider> list = new ArrayList<>();
         for (final Map.Entry<ID, ServiceProvider> entry : loaded.entrySet()) {
             if (entry.getKey().getNamespace().equals(namespace)) {
                 list.add(entry.getValue());

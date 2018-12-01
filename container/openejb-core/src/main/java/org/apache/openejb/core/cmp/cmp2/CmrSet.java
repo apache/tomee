@@ -214,7 +214,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
             return null;
         }
 
-        final Set<Bean> entities = new HashSet<Bean>();
+        final Set<Bean> entities = new HashSet<>();
         for (final Object value : proxies) {
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalArgumentException("Object is not an instance of " + type.getName() +

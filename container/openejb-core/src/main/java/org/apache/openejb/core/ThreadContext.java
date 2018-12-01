@@ -112,7 +112,7 @@ public class ThreadContext {
 
     private final BeanContext beanContext;
     private final Object primaryKey;
-    private final Map<Class, Object> data = Collections.synchronizedMap(new HashMap<Class, Object>());
+    private final Map<Class, Object> data = Collections.synchronizedMap(new HashMap<>());
     private ClassLoader oldClassLoader;
     private Operation currentOperation;
     private Class invokedInterface;

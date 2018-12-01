@@ -44,7 +44,7 @@ public class TransactionRollbackCauseTest extends TestCase {
     private UserTransaction userTransaction;
 
     public void test() throws Exception {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put(EJBContainer.MODULES, new SingletonBean(Orange.class));
         EJBContainer.createEJBContainer(map).getContext().bind("inject", this);
 

@@ -286,7 +286,7 @@ public class AnnotationDeployerTest {
     public void testConfigProperties() throws Exception {
         final ClassFinder finder = new ClassFinder(TestAdminObject.class);
 
-        final List<ConfigProperty> configProperty = new ArrayList<ConfigProperty>();
+        final List<ConfigProperty> configProperty = new ArrayList<>();
 
         final Object object = new Object() {
             public List<ConfigProperty> getConfigProperty() {

@@ -97,7 +97,7 @@ public class DependentScopedTest extends TestCase {
 
     public static class ColorWheel implements ColorWheelLocal {
 
-        private final List<Color> colors = new ArrayList<Color>();
+        private final List<Color> colors = new ArrayList<>();
 
         @Inject
         public void set(final Red color) {

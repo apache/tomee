@@ -329,7 +329,7 @@ public class Logger {
 
             isLog4j = false;
 
-            final List<String> locations = new ArrayList<String>();
+            final List<String> locations = new ArrayList<>();
             {
                 final Properties configFile = log4j(loadLoggingProperties());
 

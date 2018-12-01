@@ -49,7 +49,7 @@ public class AppContextConfigDeployer implements DynamicDeployer {
         deploymentModule.add(appModule);
 
         // parse files once since it is application scoped (we don't want duplicates)
-        final Set<String> alreadyParsed = new HashSet<String>();
+        final Set<String> alreadyParsed = new HashSet<>();
 
         for (final DeploymentModule module : deploymentModule) {
             final Object o = module.getAltDDs().get(CONFIG_NAME);

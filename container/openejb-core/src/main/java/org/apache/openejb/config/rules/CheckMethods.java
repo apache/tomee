@@ -103,8 +103,8 @@ public class CheckMethods extends ValidationBase {
                 final Class[] params = interfaceMethods[i].getParameterTypes();
                 beanClass.getMethod(name, params);
             } catch (final NoSuchMethodException nsme) {
-                final List<Method> differentArgs = new ArrayList<Method>();
-                final List<Method> differentCase = new ArrayList<Method>();
+                final List<Method> differentArgs = new ArrayList<>();
+                final List<Method> differentCase = new ArrayList<>();
 
                 for (final Method method : beanClass.getMethods()) {
                     if (method.getName().equals(name)) {
@@ -154,8 +154,8 @@ public class CheckMethods extends ValidationBase {
                 final Class[] params = interfaceMethods[i].getParameterTypes();
                 beanClass.getMethod(name, params);
             } catch (final NoSuchMethodException nsme) {
-                final List<Method> differentArgs = new ArrayList<Method>();
-                final List<Method> differentCase = new ArrayList<Method>();
+                final List<Method> differentArgs = new ArrayList<>();
+                final List<Method> differentCase = new ArrayList<>();
 
                 for (final Method method : beanClass.getMethods()) {
                     if (method.getName().equals(name)) {

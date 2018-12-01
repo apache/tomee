@@ -80,7 +80,7 @@ public class SQLLoginModule implements LoginModule {
     private static final Logger log = Logger.getInstance(
         LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
-    private final EnumMap<Option, String> optionsMap = new EnumMap<Option, String>(Option.class);
+    private final EnumMap<Option, String> optionsMap = new EnumMap<>(Option.class);
     private String connectionURL;
     private Properties properties;
     private Driver driver;
@@ -95,8 +95,8 @@ public class SQLLoginModule implements LoginModule {
     private CallbackHandler handler;
     private String cbUsername;
     private String cbPassword;
-    private final Set<String> groups = new HashSet<String>();
-    private final Set<Principal> allPrincipals = new HashSet<Principal>();
+    private final Set<String> groups = new HashSet<>();
+    private final Set<Principal> allPrincipals = new HashSet<>();
 
     public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;

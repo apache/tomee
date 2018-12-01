@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ContainerUtils {
     public static List<ContainerInfo> getContainerInfos(final AppModule module, final ConfigurationFactory configFactory) throws OpenEJBException {
-        final List<ContainerInfo> containerInfos = new ArrayList<ContainerInfo>();
+        final List<ContainerInfo> containerInfos = new ArrayList<>();
         if (module.getContainers().isEmpty()) {
             return containerInfos;
         }

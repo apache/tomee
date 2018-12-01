@@ -215,7 +215,7 @@ public class ProviderManagerTest extends TestCase {
 
             @Override
             public List<ServiceProvider> load(final String namespace) {
-                final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+                final List<ServiceProvider> list = new ArrayList<>();
                 list.add(load(new ID(namespace, "color")));
                 list.add(load(new ID(namespace, "red")));
                 list.add(load(new ID(namespace, "orange")));
@@ -363,7 +363,7 @@ public class ProviderManagerTest extends TestCase {
 
             @Override
             public List<ServiceProvider> load(final String namespace) {
-                final List<ServiceProvider> list = new ArrayList<ServiceProvider>();
+                final List<ServiceProvider> list = new ArrayList<>();
                 list.add(load(new ID(namespace, "color")));
                 list.add(load(new ID(namespace, "red")));
                 list.add(load(new ID(namespace, "orange")));

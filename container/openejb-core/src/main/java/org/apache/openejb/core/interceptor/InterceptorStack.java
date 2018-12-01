@@ -48,7 +48,7 @@ public class InterceptorStack {
         this.targetMethod = targetMethod;
         this.operation = operation;
 
-        interceptors = new ArrayList<Interceptor>(interceptorDatas.size());
+        interceptors = new ArrayList<>(interceptorDatas.size());
 
         for (final InterceptorData interceptorData : interceptorDatas) {
             final Class interceptorClass = interceptorData.getInterceptorClass();

@@ -54,9 +54,9 @@ public class EjbResolver {
         GLOBAL, EAR, EJBJAR;
     }
 
-    private final Map<String, EnterpriseBeanInfo> deployments = new TreeMap<String, EnterpriseBeanInfo>();
-    private final LinkResolver<String> resolver = new LinkResolver<String>();
-    private final Map<Interfaces, List<Interfaces>> interfaces = new TreeMap<Interfaces, List<Interfaces>>();
+    private final Map<String, EnterpriseBeanInfo> deployments = new TreeMap<>();
+    private final LinkResolver<String> resolver = new LinkResolver<>();
+    private final Map<Interfaces, List<Interfaces>> interfaces = new TreeMap<>();
 
     private final EjbResolver parent;
 
@@ -127,7 +127,7 @@ public class EjbResolver {
     private void addInterfaces(final Interfaces interfaces) {
         List<Interfaces> similar = this.interfaces.get(interfaces);
         if (similar == null) {
-            similar = new ArrayList<Interfaces>();
+            similar = new ArrayList<>();
             this.interfaces.put(interfaces, similar);
         }
         similar.add(interfaces);

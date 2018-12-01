@@ -57,7 +57,7 @@ public class ConstructorInjectionBean<T> extends InjectionTargetBean<T> { // TOD
     public ConstructorInjectionBean(final WebBeansContext webBeansContext, final Class<T> returnType, final AnnotatedType<T> at, final Boolean passivationCapable) {
         super(webBeansContext, WebBeansType.DEPENDENT, at, BeanAttributesBuilder.forContext(webBeansContext).newBeanAttibutes(at).build(), returnType);
         try {
-            INJECTION_TARGET_FIELD.set(this, new ConstructorInjectionTarget<T>(getAnnotatedType(), getInjectionPoints(), getWebBeansContext()));
+            INJECTION_TARGET_FIELD.set(this, new ConstructorInjectionTarget<>(getAnnotatedType(), getInjectionPoints(), getWebBeansContext()));
         } catch (final Exception e) {
             throw new OpenEJBRuntimeException(e);
         }

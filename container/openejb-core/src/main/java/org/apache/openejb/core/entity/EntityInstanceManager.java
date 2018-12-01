@@ -61,7 +61,7 @@ public class EntityInstanceManager {
     public EntityInstanceManager(final EntityContainer container, final SecurityService securityService, final int poolSize) {
         this.securityService = securityService;
         this.poolsize = poolSize;
-        poolMap = new HashMap<Object, LinkedListStack>();// put size in later
+        poolMap = new HashMap<>();// put size in later
 
         final BeanContext[] beanContexts = container.getBeanContexts();
         for (final BeanContext beanContext : beanContexts) {

@@ -95,14 +95,14 @@ public class ManagedContainer implements RpcContainer {
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
      */
-    protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
+    protected final Map<Object, BeanContext> deploymentsById = new HashMap<>();
 
     protected final Cache<Object, Instance> cache;
-    private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
+    private final ConcurrentHashMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<>();
     private final SessionContext sessionContext;
 
     public ManagedContainer(final Object id, final SecurityService securityService) throws SystemException {
-        this.cache = new SimpleCache<Object, Instance>(null, new SimplePassivater(), 1000, 50, new Duration("1 hour"));
+        this.cache = new SimpleCache<>(null, new SimplePassivater(), 1000, 50, new Duration("1 hour"));
         this.containerID = id;
         this.securityService = securityService;
         cache.setListener(new StatefulCacheListener());
@@ -110,7 +110,7 @@ public class ManagedContainer implements RpcContainer {
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(final BeanContext beanContext) {
-        final Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
+        final Map<Method, MethodType> methods = new HashMap<>();
 
         try {
             methods.put(BeanContext.Removable.class.getDeclaredMethod("$$remove"), MethodType.REMOVE);
@@ -286,7 +286,7 @@ public class ManagedContainer implements RpcContainer {
 
         deploymentsById.put(beanContext.getDeploymentID(), beanContext);
         beanContext.setContainer(this);
-        final Data data = new Data(new Index<Method, MethodType>(methods));
+        final Data data = new Data(new Index<>(methods));
         beanContext.setContainerData(data);
 
         // Create stats interceptor
@@ -418,7 +418,7 @@ public class ManagedContainer implements RpcContainer {
                     createContext.set(Method.class, createOrInit);
 
                     // Initialize interceptor stack
-                    final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String, Object>());
+                    final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<>(), new HashMap<>());
 
                     // Invoke
                     if (args == null) {
@@ -780,7 +780,7 @@ public class ManagedContainer implements RpcContainer {
         final Index<EntityManagerFactory, BeanContext.EntityManagerConfiguration> factories = beanContext.getExtendedEntityManagerFactories();
         Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker> entityManagers = null;
         if (factories != null && factories.size() > 0) {
-            entityManagers = new Index<EntityManagerFactory, JtaEntityManagerRegistry.EntityManagerTracker>(new ArrayList<EntityManagerFactory>(factories.keySet()));
+            entityManagers = new Index<>(new ArrayList<>(factories.keySet()));
             for (final Map.Entry<EntityManagerFactory, BeanContext.EntityManagerConfiguration> entry : factories.entrySet()) {
                 final EntityManagerFactory entityManagerFactory = entry.getKey();
 
@@ -879,7 +879,7 @@ public class ManagedContainer implements RpcContainer {
      */
     private final class SessionSynchronizationCoordinator implements TransactionSynchronization {
 
-        private final Map<Object, Synchronization> registry = new HashMap<Object, Synchronization>();
+        private final Map<Object, Synchronization> registry = new HashMap<>();
         private final TransactionPolicy txPolicy;
 
         private SessionSynchronizationCoordinator(final TransactionPolicy txPolicy) {
@@ -1119,7 +1119,7 @@ public class ManagedContainer implements RpcContainer {
     private static final class Data {
 
         private final Index<Method, MethodType> methodIndex;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
 
         private Data(final Index<Method, MethodType> methodIndex) {
             this.methodIndex = methodIndex;
