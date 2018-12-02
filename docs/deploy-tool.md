@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=OpenEJB Standalone Server
 type=page
 status=published
 title=Deploy Tool

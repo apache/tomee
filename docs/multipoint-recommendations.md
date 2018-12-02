@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Discovery and Failover
 type=page
 status=published
 title=Multipoint Recommendations

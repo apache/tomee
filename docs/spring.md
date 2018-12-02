@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Spring
 type=page
 status=published
 title=Spring

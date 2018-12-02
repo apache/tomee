@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=IDE
 type=page
 status=published
 ~~~~~~

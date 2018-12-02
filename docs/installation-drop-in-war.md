@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Tips and Tricks
 type=page
 status=published
 title=Installing TomEE using the drop-in .war approach

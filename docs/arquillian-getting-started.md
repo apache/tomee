@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Arquillian
 type=page
 status=published
 title=Getting started with Arquillian and TomEE

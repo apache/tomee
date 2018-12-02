@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Configuration
 type=page
 status=published
 title=JMS Resources and MDB Container

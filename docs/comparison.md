@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=General Informations
 type=page
 status=published
 title=Comparison

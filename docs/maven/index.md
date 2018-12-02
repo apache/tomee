@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=TomEE Maven Plugin
 type=page
 status=published
 title=TomEE Maven Plugin
