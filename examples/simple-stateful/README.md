@@ -1,4 +1,8 @@
-Title: Simple Stateful
+index-group=Unrevised
+type=page
+status=published
+title=Simple Stateful
+~~~~~~
 
 This example demonstrates a simple deployment of a Stateful session bean.
 

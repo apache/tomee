@@ -1,4 +1,8 @@
-Title: @AccessTimeout the Meta-Annotation Way
+index-group=Unrevised
+type=page
+status=published
+title=@AccessTimeout the Meta-Annotation Way
+~~~~~~
 
 Any annotation that takes parameters can benefit from meta-annotations.  Here we see how `@AccessTimeout` can be far more understandable and manageable through meta-annotations.
 We'll use the [access-timeout](../access-timeout/README.html) example as our use-case.

@@ -1,4 +1,8 @@
-Title: Simple Singleton
+index-group=Unrevised
+type=page
+status=published
+title=Simple Singleton
+~~~~~~
 
 As the name implies a `javax.ejb.Singleton` is a session bean with a guarantee that there is at most one instance in the application.
 
@@ -341,4 +345,3 @@ Which should create output like the following.
     Results :
 
     Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-

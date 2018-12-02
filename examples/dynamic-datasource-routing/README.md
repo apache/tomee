@@ -1,4 +1,8 @@
-Title: Dynamic Datasource Routing
+index-group=Unrevised
+type=page
+status=published
+title=Dynamic Datasource Routing
+~~~~~~
 
 The TomEE dynamic datasource api aims to allow to use multiple data sources as one from an application point of view.
 
@@ -398,4 +402,3 @@ your databases you can use it and see how it is simple:
     Results :
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-

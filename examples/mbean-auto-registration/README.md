@@ -1,4 +1,8 @@
-Title: Mbean Auto Registration
+index-group=Unrevised
+type=page
+status=published
+title=Mbean Auto Registration
+~~~~~~
 
 This example shows how to automatically create and register mbeans using TomEE features.
 

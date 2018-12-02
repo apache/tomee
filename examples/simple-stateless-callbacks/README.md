@@ -1,4 +1,8 @@
-Title: Simple Stateless with callback methods
+index-group=Unrevised
+type=page
+status=published
+title=Simple Stateless with callback methods
+~~~~~~
 
 This example shows how to create a stateless session bean that uses the @PostConstruct, @PreDestroy and @AroundInvoke annotations.
 

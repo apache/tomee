@@ -1,4 +1,8 @@
-Title: Testing Security 3
+index-group=Unrevised
+type=page
+status=published
+title=Testing Security 3
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
@@ -341,4 +345,3 @@ Title: Testing Security 3
     Results :
 
     Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-

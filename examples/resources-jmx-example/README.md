@@ -1,4 +1,8 @@
-Title: Custom resources in an EAR archive
+index-group=Unrevised
+type=page
+status=published
+title=Custom resources in an EAR archive
+~~~~~~
 
 TomEE allows you to define your own resources within your application, and declare them in `META-INF/resources.xml`. This allows you do inject these resource into any managed component within your application.
 
@@ -728,7 +732,3 @@ Note the following lines showing the creation of the resource.
 	Apr 15, 2015 12:40:24 PM org.apache.openejb.config.ConfigurationFactory configureService
 	INFO: Configuring Service(id=jmx/Hello, type=Resource, provider-id=jmx/Hello)
 	
-
-
-
-

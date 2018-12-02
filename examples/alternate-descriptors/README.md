@@ -1,4 +1,8 @@
-Title: Alternate Descriptors
+index-group=Unrevised
+type=page
+status=published
+title=Alternate Descriptors
+~~~~~~
 
 See the [Alternate Descriptors](../../alternate-descriptors.html) page for the full details of how this feature works.
 
@@ -153,8 +157,3 @@ If you split your descriptors into separate directories, this support will not w
  - src/**test**/resources/META-INF/test.ejb-jar.xml
 
 This support is **not** aware of any Maven, Gradle, Ant, IntelliJ, NetBeans, Eclipse or other settings.
-
-
-
-
-

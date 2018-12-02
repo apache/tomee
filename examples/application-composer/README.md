@@ -1,4 +1,8 @@
-Title: Application Composer
+index-group=Unrevised
+type=page
+status=published
+title=Application Composer
+~~~~~~
 
 The `org.apache.openejb.junit.ApplicationComposer` is JUnit test runner modeled after the way we've done testing internally in OpenEJB for years (since about 2006).
 It involves no classpath scanning at all.  If you want something to be in the app, you must build it directly in your testcase.

@@ -1,4 +1,8 @@
-Title: JAX-WS @WebService example
+index-group=Unrevised
+type=page
+status=published
+title=JAX-WS @WebService example
+~~~~~~
 
 Creating Web Services with JAX-WS is quite easy.  Little has to be done aside from annotating a class with `@WebService`.  For
 the purposes of this example we will also annotate our component with `@Stateless` which takes some of the configuration out of
@@ -331,4 +335,3 @@ If we look at the jar built by maven, we'll see the application itself is quite 
 This single jar could be deployed any any compliant Java EE implementation.  In TomEE you'd simply place it in the `tomee.home/webapps/` directory.  No war file necessary.  If you did want to create a war, you'd simply place the jar in the `WEB-INF/lib/` directory of the war.
 
 The server already contains the right libraries to run the code, such as Apache CXF, so no need to include anything extra beyond your own application code.
-

@@ -1,4 +1,8 @@
-Title: Simple MDB with Descriptor
+index-group=Unrevised
+type=page
+status=published
+title=Simple MDB with Descriptor
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
