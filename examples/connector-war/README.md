@@ -1,4 +1,8 @@
-Title: Movies Complete
+index-group=Unrevised
+type=page
+status=published
+title=Movies Complete
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

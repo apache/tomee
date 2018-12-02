@@ -1,4 +1,8 @@
-Title: @ApplicationException annotation
+index-group=Unrevised
+type=page
+status=published
+title=@ApplicationException annotation
+~~~~~~
 
 # Declaring an @ApplicationException
 
@@ -94,4 +98,3 @@ As `BusinessException` has been annotated `@ApplicationException(rollback = true
     Results :
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-

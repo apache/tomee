@@ -1,4 +1,8 @@
-Title: Schedule Expression
+index-group=Unrevised
+type=page
+status=published
+title=Schedule Expression
+~~~~~~
 
 In this example we exercise the `TimerService`.
 

@@ -1,4 +1,8 @@
-Title: Simple MDB
+index-group=Unrevised
+type=page
+status=published
+title=Simple MDB
+~~~~~~
 
 Below is a fun app, a chat application that uses JMS. We create a message driven bean, by marking our class with `@MessageDriven`. A message driven bean has some similarities with a stateless session bean, in the part that it is pooled too.
 
