@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=EJB
 type=page
 status=published
 title=Schedule Expression

@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=CDI
 type=page
 status=published
 title=CDI @RequestScoped

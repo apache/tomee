@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Session Beans
 type=page
 status=published
 title=Simple Stateless with Descriptor

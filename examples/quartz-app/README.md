@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Java EE Connectors
 type=page
 status=published
 title=Quartz Resource Adapter usage

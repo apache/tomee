@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Misc
 type=page
 status=published
 title=JSF Application that uses managed-bean and ejb

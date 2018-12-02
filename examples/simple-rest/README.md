@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=REST
 type=page
 status=published
 title=Simple REST

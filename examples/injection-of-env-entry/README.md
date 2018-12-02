@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Environment Entries
 type=page
 status=published
 title=Using EnvEntries

@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Referencing EJBs
 type=page
 status=published
 title=Lookup Of Ejbs
