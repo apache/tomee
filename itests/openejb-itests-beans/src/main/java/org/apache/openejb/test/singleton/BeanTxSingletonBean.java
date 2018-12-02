@@ -156,7 +156,6 @@ public class BeanTxSingletonBean implements javax.ejb.SessionBean {
     //    
 
     /**
-     * @param name
      * @throws javax.ejb.CreateException
      */
     public void ejbCreate() throws javax.ejb.CreateException {
