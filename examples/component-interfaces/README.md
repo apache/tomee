@@ -1,4 +1,8 @@
-Title: Component Interfaces
+index-group=Unrevised
+type=page
+status=published
+title=Component Interfaces
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

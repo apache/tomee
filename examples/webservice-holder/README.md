@@ -1,4 +1,8 @@
-Title: @WebService OUT params via javax.xml.ws.Holder
+index-group=Unrevised
+type=page
+status=published
+title=@WebService OUT params via javax.xml.ws.Holder
+~~~~~~
 
 With SOAP it is possible to return multiple values in a single request.  This is impossible in Java as a method can only return one object.
 

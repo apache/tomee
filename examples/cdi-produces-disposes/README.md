@@ -1,4 +1,8 @@
-Title: CDI Produces Disposes
+index-group=Unrevised
+type=page
+status=published
+title=CDI Produces Disposes
+~~~~~~
 
 
 This example shows how the @Produces and @Disposes annotations work. A LogFactory creates an instance of the LogHandler

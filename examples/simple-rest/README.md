@@ -1,4 +1,8 @@
-Title: Simple REST
+index-group=Unrevised
+type=page
+status=published
+title=Simple REST
+~~~~~~
 
 Defining a REST service is pretty easy, simply ad @Path annotation to a class then define on methods
 the HTTP method to use (@GET, @POST, ...).
@@ -128,4 +132,3 @@ Which should create output like the following.
     Results :
 
     Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-

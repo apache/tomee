@@ -1,4 +1,8 @@
-Title: CDI @Inject
+index-group=Unrevised
+type=page
+status=published
+title=CDI @Inject
+~~~~~~
 
 To use `@Inject`, the first thing you need is a `META-INF/beans.xml` file in the module
 or jar.  This effectively turns on CDI and allows the `@Inject` references to work.

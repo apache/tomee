@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Sample #
 
 This sample implements a simple polling application.
