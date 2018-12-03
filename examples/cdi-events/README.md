@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # CDI events: loose coupling and extensibility
 
 CDI allows you to extend business code by the Notifier/Observer pattern.
