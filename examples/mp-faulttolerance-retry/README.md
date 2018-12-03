@@ -31,37 +31,13 @@ Check the [specification](http://download.eclipse.org/microprofile/microprofile-
 
 ##### Run the application
 
-    mvn clean install tomee:run 
-    
-##### and 4 endpoints will available
-
-    1 - http://localhost:8080/mp-faulttolerance-retry/weather/day/status
-    2 - http://localhost:8080/mp-faulttolerance-retry/weather/week/status 
-    3 - http://localhost:8080/mp-faulttolerance-retry/weather/weekend/status
-    4 - http://localhost:8080/mp-faulttolerance-retry/weather/year/status    
+    mvn clean install tomee:run   
     
 ##### Example 1
 
 The method statusOfDay will fail three times, each time, throwing a `WeatherGatewayTimeoutException` and as the
 @Retry annotation is configured to `retryOn` in case of failure, the FailSafe library will take the `maxRetry` value and
 retry the same operation until it reaches the number maximum of attempts, which is 3 (default value).  
-
-``` 
-@Path("/weather")
-@Produces(MediaType.TEXT_PLAIN)
-@RequestScoped
-public class WeatherService {
-    ...
-
-    @GET
-    @Path("/day/status")
-    public String dayStatus() {
-        return weatherService.statusOfDay();
-    }
-    ...
-}
-
-```
 
 ```
 @RequestScoped
@@ -85,9 +61,9 @@ Day status call
     
 Server log
 ```
-WARNING ...statusOfDay - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
-WARNING ...statusOfDay - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
-WARNING ...statusOfDay - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
 ```
 
 Response
@@ -122,10 +98,10 @@ Week status call
 Server log
 
 ```
-WARNING ...statusOfWeek - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
-WARNING ...statusOfWeek - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
-WARNING ...statusOfWeek - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
-SEVERE  ...statusOfWeek - Error AccuWeather Forecast Service is busy. Number of Attempts: (4) 
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
+SEVERE  - Error AccuWeather Forecast Service is busy. Number of Attempts: (4) 
 ```
 
 Response
@@ -151,7 +127,6 @@ Analysing the logged messages, is possible to see that all attempts took the pre
         }
         return "The Forecast for the Weekend is Scattered Showers.";
     }
-    
 }
 ```
 
@@ -162,11 +137,11 @@ Weekend status call
 Server log
 
 ```
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service.
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (500) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (500) millis
 ```
 
 ##### Example 4
@@ -195,9 +170,9 @@ Month status call
 Server log
 
 ```
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service.
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (417) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (90) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (417) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (90) millis
 ```
 
 ##### Example 5
@@ -221,8 +196,8 @@ Year status call
 Server log
 
 ```
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service.
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (666) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (266) millis
-WARNING ...logTimeoutMessage - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (66) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (666) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (266) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (66) millis
 ```
