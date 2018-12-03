@@ -16,30 +16,18 @@
  */
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
  */
-public interface Movie extends javax.ejb.EJBLocalObject {
+interface ActorLocalHome extends javax.ejb.EJBLocalHome {
 
-    java.lang.Integer getId();
+    Actor create(String firstName, String lastName) throws CreateException;
 
-    void setId(java.lang.Integer id);
+    Actor findByPrimaryKey(Integer primarykey) throws FinderException;
 
-    String getDirector();
-
-    void setDirector(String director);
-
-    String getTitle();
-
-    void setTitle(String title);
-
-    int getYear();
-
-    void setYear(int year);
-
-    void addActor(String firstName, String lastName);
-
-    Collection getActorVO();
+    Collection findAll() throws FinderException;
 }

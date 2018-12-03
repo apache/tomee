@@ -7,5 +7,11 @@
                 <uuid/>
             </key-generator>
         </entity>
+        <entity>
+            <ejb-name>ActorBean</ejb-name>
+            <key-generator xmlns="http://www.openejb.org/xml/ns/pkgen-2.1">
+                <uuid/>
+            </key-generator>
+        </entity>
     </enterprise-beans>
 </openejb-jar>
