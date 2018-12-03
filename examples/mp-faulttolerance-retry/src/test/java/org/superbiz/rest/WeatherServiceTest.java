@@ -74,6 +74,13 @@ public class WeatherServiceTest {
     }
 
     @Test
+    public void testStatusOfMonth() {
+        WebTarget webTarget = this.client.target(this.base.toExternalForm());
+        Response response = webTarget.path("/weather/month/status").request().get();
+        assertEquals("The Forecast for the Month is sunny most of the days", response.readEntity(String.class));
+    }
+
+    @Test
     public void testStatusOfYear() {
         WebTarget webTarget = this.client.target(this.base.toExternalForm());
         Response response = webTarget.path("/weather/year/status").request().get();

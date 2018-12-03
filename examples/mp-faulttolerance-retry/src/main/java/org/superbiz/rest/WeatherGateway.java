@@ -73,7 +73,7 @@ public class WeatherGateway {
         LOGGER.log(Level.SEVERE, String.format(FORECAST_BUSY_MESSAGE, counterStatusOfWeek.get()));
         throw new WeatherGatewayBusyServiceException();
     }
-    
+
     @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 0)
     public String statusOfWeekend() {
         if (counterStatusOfWeekend.addAndGet(1) <= 5) {
@@ -91,7 +91,7 @@ public class WeatherGateway {
             statusOfMonthInstant = Instant.now();
             throw new WeatherGatewayTimeoutException();
         }
-        return "The Forecast for the Weekend is Scattered Showers.";
+        return "The Forecast for the Month is sunny most of the days";
     }
 
     @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 500, maxDuration = 1000)
