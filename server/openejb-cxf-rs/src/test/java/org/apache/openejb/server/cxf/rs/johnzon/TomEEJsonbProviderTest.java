@@ -61,7 +61,7 @@ public class TomEEJsonbProviderTest {
 
         final Service configuredTomEEJsonbProvider = new Service("configuredTomEEJsonbProvider", null);
         configuredTomEEJsonbProvider.setClassName(TomEEJsonbProvider.class.getName());
-        configuredTomEEJsonbProvider.getProperties().put("dateFormat", "LLL-yyyy");
+        configuredTomEEJsonbProvider.getProperties().put("dateFormat", "MMM-yyyy");
         configuredTomEEJsonbProvider.getProperties().put("locale", Locale.GERMANY);
         configuredTomEEJsonbProvider.getProperties().put("accessMode", new FieldAccessMode(true,true));
 
