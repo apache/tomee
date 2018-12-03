@@ -29,10 +29,10 @@ import java.util.concurrent.*;
  */
 public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
-    private final List<DiscoveryAgent> agents = new CopyOnWriteArrayList<DiscoveryAgent>();
-    private final List<DiscoveryListener> listeners = new CopyOnWriteArrayList<DiscoveryListener>();
-    private final Map<String, URI> services = new ConcurrentHashMap<String, URI>();
-    private final Map<String, URI> registered = new ConcurrentHashMap<String, URI>();
+    private final List<DiscoveryAgent> agents = new CopyOnWriteArrayList<>();
+    private final List<DiscoveryListener> listeners = new CopyOnWriteArrayList<>();
+    private final Map<String, URI> services = new ConcurrentHashMap<>();
+    private final Map<String, URI> registered = new ConcurrentHashMap<>();
 
     @Managed
     private final Monitor monitor = new Monitor();
@@ -45,7 +45,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
     public DiscoveryRegistry(final DiscoveryAgent agent) {
 
-        executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), new ThreadFactory() {
+        executor = new ThreadPoolExecutor(1, 10, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadFactory() {
             @Override
             public Thread newThread(final Runnable runable) {
                 final Thread t = new Thread(runable, DiscoveryRegistry.class.getSimpleName());
@@ -90,7 +90,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
     }
 
     public Set<URI> getServices() {
-        return new HashSet<URI>(services.values());
+        return new HashSet<>(services.values());
     }
 
     @Override
@@ -211,7 +211,7 @@ public class DiscoveryRegistry implements DiscoveryListener, DiscoveryAgent {
 
         @Managed
         public String[] getAgents() {
-            final List<String> list = new ArrayList<String>();
+            final List<String> list = new ArrayList<>();
             for (final DiscoveryAgent agent : DiscoveryRegistry.this.agents) {
                 list.add(agent.getClass().getName());
             }

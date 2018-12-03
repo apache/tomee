@@ -36,7 +36,7 @@ public class FilteredServiceManager extends SimpleServiceManager {
     }
 
     private Collection<String> convertServices(final String[] services) {
-        final Set<String> realServices = new HashSet<String>();
+        final Set<String> realServices = new HashSet<>();
         final Collection<String> rsAliases = Arrays.asList("rest", "jaxrs", "jax-rs", "cxf-rs");
         final Collection<String> wsAliases = Arrays.asList("jaxws", "jax-ws", "cxf");
 
