@@ -66,9 +66,9 @@ public class ManagedServiceTest {
     /**
      * Request timeout. The result will take at least 100ms and we want it after 10ms.
      *
-     * @throws InterruptedException
-     * @throws ExecutionException
-     * @throws TimeoutException
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   we don't expect it
+     * @throws TimeoutException     Expected exception
      */
     @Test(expected = TimeoutException.class)
     public void managedInvocationTestWithTimeout() throws InterruptedException, ExecutionException, TimeoutException {
@@ -78,11 +78,11 @@ public class ManagedServiceTest {
 
     /**
      * The execution ended with an exception.
-     * Handle the exception apropriately.
+     * Handle the exception appropriately.
      *
-     * @throws InterruptedException
-     * @throws ExecutionException
-     * @throws TimeoutException
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   Expected exception
+     * @throws TimeoutException     we don't expect it
      */
     @Test
     public void managedInvocationTestWithException() {

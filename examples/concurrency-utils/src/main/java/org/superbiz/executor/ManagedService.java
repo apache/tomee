@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.RequestScoped;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import static java.util.Objects.nonNull;
@@ -40,8 +41,9 @@ public class ManagedService {
      * @return A {@link CompletableFuture} that will return immediately.
      */
     public CompletableFuture<Integer> asyncTask(final int value) {
+        System.out.println("Create asyncTask");
         return CompletableFuture
-                .supplyAsync(delayedTask(value, 100, null), executor) // Execute asynchronously.
+                .supplyAsync(longTask(value, 100, null), executor) // Execute asynchronously.
                 .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
     }
 
@@ -53,22 +55,23 @@ public class ManagedService {
      * @return A {@link CompletableFuture} that will return immediately.
      */
     public CompletableFuture<Integer> asyncTaskWithException(final int value) {
+        System.out.println("Create asyncTaskWithException");
         return CompletableFuture
-                .supplyAsync(delayedTask(value, 100, "Planned exception"), executor) // Execute asynchronously.
+                .supplyAsync(longTask(value, 100, "Planned exception"), executor) // Execute asynchronously.
                 .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
     }
 
     /**
      * Method to simulate an asynchronous task. Will add 1 to the value for each invocation.
      *
-     * @param value        The demo data.
-     * @param delayMs      How long the task will take to complete. In ms.
-     * @param errorMessage Message for the exception simulating an execution problem
-     * @return
+     * @param value          The demo data.
+     * @param taskDurationMs How long the task will take to complete. In ms.
+     * @param errorMessage   Message for the exception simulating an execution problem
+     * @return a {@link Supplier} function processing the new value
      */
-    private Supplier<Integer> delayedTask(final int value,
-                                          final int delayMs,
-                                          final String errorMessage) {
+    private Supplier<Integer> longTask(final int value,
+                                       final int taskDurationMs,
+                                       final String errorMessage) {
         return () -> {
             if (nonNull(errorMessage)) {
                 System.out.println("Exception will be thrown");
@@ -76,12 +79,12 @@ public class ManagedService {
             }
 
             try {
-                // simulate long processing task
-                Thread.sleep(delayMs);
+                // Simulate a long processing task using TimeUnit to sleep.
+                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
             } catch (InterruptedException e) {
                 throw new RuntimeException("Problem while waiting");
             }
-            System.out.println("delayedTask complete");
+            System.out.println("longTask complete");
             return value + 1;
         };
     }
