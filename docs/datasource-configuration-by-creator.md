@@ -1,4 +1,8 @@
-Title: DataSource Creator
+index-group=Datasource
+type=page
+status=published
+title=DataSource Creator
+~~~~~~
 
 TomEE uses  `creator` to create the connection pool factory. In other terms it means you can
 use any pool you want for DataSource in TomEE.
@@ -110,7 +114,7 @@ Note: details are at https://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html
 - Validator
 - ValidatorClassName
 
-## DBCP2 (TomEE 7.x)
+## DBCP2 (TomEE 7.x and 8.x)
 
 Note: details are at http://commons.apache.org/proper/commons-dbcp/configuration.html
 
