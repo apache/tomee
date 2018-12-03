@@ -77,8 +77,6 @@ public class MoviesBusinessBean implements SessionBean {
             movie.addActor(firstName, lastName);
         } catch (NamingException | FinderException e) {
             throw new MovieException(e);
-        } catch (Throwable t) {
-            t.printStackTrace();
         }
     }
 
