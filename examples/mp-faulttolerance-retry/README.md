@@ -6,23 +6,15 @@ Microprofile Fault Tolerance has a feature called Retry that can be used to reco
 
 The Retry policy allows to configure :
 
-**maxRetries**: the maximum retries 
-
-**delay**: delays between each retry
-
-**delayUnit**: the delay unit
-
-**maxDuration**: maximum duration to perform the retry for.
-
-**durationUnit**: duration unit
-
-**jitter:** the random vary of retry delays
-
-**jitterDelayUnit:** the jitter unit
-
-**retryOn:** specify the failures to retry on
-
-**abortOn:** specify the failures to abort on
+* **maxRetries**: the maximum retries 
+* **delay**: delays between each retry
+* **delayUnit**: the delay unit
+* **maxDuration**: maximum duration to perform the retry for.
+* **durationUnit**: duration unit
+* **jitter:** the random vary of retry delays
+* **jitterDelayUnit:** the jitter unit
+* **retryOn:** specify the failures to retry on
+* **abortOn:** specify the failures to abort on
 
 To use this feature you can annotate a class and/or a method with the @Retry annotation. 
 Check the [specification](http://download.eclipse.org/microprofile/microprofile-fault-tolerance-1.1/microprofile-fault-tolerance-spec.html) for more details.
