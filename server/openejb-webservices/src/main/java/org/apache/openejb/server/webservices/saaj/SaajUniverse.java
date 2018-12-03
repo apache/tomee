@@ -47,7 +47,7 @@ public class SaajUniverse {
     public static final Type AXIS1 = Type.AXIS1;
     public static final Type AXIS2 = Type.AXIS2;
 
-    private static final ThreadLocal<LinkedList<Type>> currentUniverse =
+    private static final ThreadLocal<LinkedList<Type>> CURRENTUNIVERSE =
         new ThreadLocal<LinkedList<Type>>() {
             @Override
             protected LinkedList<Type> initialValue() {
@@ -56,7 +56,7 @@ public class SaajUniverse {
         };
 
     public void set(Type newUniverse) {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENTUNIVERSE.get();
         universeList.add(newUniverse);
         if (logger.isDebugEnabled()) {
             logger.debug("Set universe: " + Thread.currentThread() + " " + newUniverse);
@@ -64,7 +64,7 @@ public class SaajUniverse {
     }
 
     public void unset() {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENTUNIVERSE.get();
         if (universeList != null && !universeList.isEmpty()) {
             universeList.removeLast();
             if (logger.isDebugEnabled()) {
@@ -74,7 +74,7 @@ public class SaajUniverse {
     }
 
     static Type getCurrentUniverse() {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENTUNIVERSE.get();
         if (universeList != null && !universeList.isEmpty()) {
             return universeList.getLast();
         }
