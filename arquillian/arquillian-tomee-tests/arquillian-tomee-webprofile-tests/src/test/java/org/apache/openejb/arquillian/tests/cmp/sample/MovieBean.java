@@ -16,7 +16,15 @@
  */
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.EntityBean;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class MovieBean implements EntityBean {
 
@@ -45,5 +53,38 @@ public abstract class MovieBean implements EntityBean {
     public abstract int getYear();
 
     public abstract void setYear(int year);
+
+    public abstract Collection getActors();
+
+    public abstract void setActors(Collection actors);
+
+    public void addActor(String firstName, String lastName) {
+        try {
+            final InitialContext context = new InitialContext();
+
+            final ActorLocalHome actorBean = (ActorLocalHome) context.lookup("java:comp/env/ejb/ActorBean");
+            final Actor actor = actorBean.create(firstName, lastName);
+
+            final Collection actors = this.getActors();
+            actors.add(actor);
+
+        } catch (NamingException | CreateException e) {
+            throw new EJBException(e);
+        }
+    }
+
+    public Collection getActorVO() {
+        List result = new ArrayList();
+
+        final Collection actors = this.getActors();
+        final Iterator iterator = actors.iterator();
+
+        while (iterator.hasNext()) {
+            Actor actor = (Actor) iterator.next();
+            result.add(ActorVO.from(actor));
+        }
+
+        return result;
+    }
 
 }

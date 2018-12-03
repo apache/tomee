@@ -17,6 +17,9 @@
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class MovieVO implements Serializable {
 
@@ -24,6 +27,7 @@ public class MovieVO implements Serializable {
     private String title;
     private String director;
     private int year;
+    private List actors = new ArrayList();
 
     public Integer getId() {
         return id;
@@ -57,12 +61,17 @@ public class MovieVO implements Serializable {
         this.year = year;
     }
 
+    public Collection getActors() {
+        return actors;
+    }
+
     public static MovieVO from (final Movie movie) {
         final MovieVO movieVO = new MovieVO();
         movieVO.setId(movie.getId());
         movieVO.setTitle(movie.getTitle());
         movieVO.setDirector(movie.getDirector());
         movieVO.setYear(movie.getYear());
+        movieVO.getActors().addAll(movie.getActorVO());
 
         return movieVO;
     }
@@ -74,6 +83,7 @@ public class MovieVO implements Serializable {
                 ", title='" + title + '\'' +
                 ", director='" + director + '\'' +
                 ", year=" + year +
+                ", actors=" + actors +
                 '}';
     }
 }
