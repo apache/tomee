@@ -24,7 +24,7 @@ import java.util.Map;
 public class Common {
 
     public static Map<String, String> build(final String key, final String value) {
-        final Map<String, String> result = new HashMap<String, String>();
+        final Map<String, String> result = new HashMap<>();
         result.put("key", key);
         result.put("value", value);
         return result;

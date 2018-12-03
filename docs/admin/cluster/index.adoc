@@ -1,10 +1,6 @@
-== Clustering and High Availability (HA)
-
-:jbake-date: 2016-03-16
 :jbake-type: page
 :jbake-status: published
-:jbake-tomeepdf:
-
+:jbake-title: Clustering and High Availability (HA)
 
 === Session clustering
 
@@ -54,6 +50,25 @@ Just need to enable that by setting disabled=false. All of the above settings ex
 The group setting can be changed to further group servers that may use the same multicast channel. As shown below the client also has a group setting which can be used to select an appropriate server from the multicast channel.
 
 IMPORTANT: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
+
+text
+
+NOTE: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
+
+text
+
+TIP: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
+
+text
+
+CAUTION: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
+
+text
+
+WARNING: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
+
+text
+
 
 ===== Multicast Client
 

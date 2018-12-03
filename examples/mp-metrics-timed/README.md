@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Microprofile Metrics
 This is an example on how to use MicroProfile metrics in TomEE.
 

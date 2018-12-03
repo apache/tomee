@@ -35,7 +35,7 @@ public class OpenEJBNamingResource extends NamingResourcesImpl {
     private static final String JAVA_PREFIX = "java:";
 
     private boolean isTomcatResource;
-    private final Collection<ResourceBase> tomcatResources = new ArrayList<ResourceBase>();
+    private final Collection<ResourceBase> tomcatResources = new ArrayList<>();
 
     public OpenEJBNamingResource() {
         // no-op

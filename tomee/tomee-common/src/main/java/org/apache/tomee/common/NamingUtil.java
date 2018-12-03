@@ -85,7 +85,7 @@ public class NamingUtil {
         if (currentContext != null) {
             Collection<String> ids = ID_BY_CONTEXT.get(currentContext);
             if (ids == null) {
-                ids = new ArrayList<String>();
+                ids = new ArrayList<>();
                 ID_BY_CONTEXT.put(currentContext, ids);
             }
             ids.add(token);

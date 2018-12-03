@@ -84,7 +84,7 @@ public class OpenEJBListener implements LifecycleListener {
                 }
             }
             if (webappDir != null) {
-                LOGGER.info("found the tomee webapp on " + webappDir.getPath());
+                LOGGER.log(Level.INFO, "found the tomee webapp on {0}", webappDir.getPath());
                 final Properties properties = new Properties();
                 properties.setProperty("tomee.war", webappDir.getAbsolutePath());
                 properties.setProperty("openejb.embedder.source", OpenEJBListener.class.getSimpleName());
@@ -182,7 +182,7 @@ public class OpenEJBListener implements LifecycleListener {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.WARNING, "OpenEJBListener.findOpenEjbWar: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "OpenEJBListener.findOpenEjbWar: {0}", e.getMessage());
         }
 
         return null;
@@ -264,7 +264,7 @@ public class OpenEJBListener implements LifecycleListener {
             return;
         }
 
-        LOGGER.info("Extracting openejb webapp from " + src.getAbsolutePath() + " to " + dest.getAbsolutePath());
+        LOGGER.log(Level.INFO, "Extracting openejb webapp from {0} to {1}", new Object[]{src.getAbsolutePath(), dest.getAbsolutePath()});
 
         if (!dest.mkdirs()) {
             throw new IOException("Failed to create: " + dest);
@@ -315,7 +315,7 @@ public class OpenEJBListener implements LifecycleListener {
                 final long lastModified = jarEntry.getTime();
                 if (lastModified != -1 && lastModified != 0 && file != null) {
                     if (!file.setLastModified(lastModified)) {
-                        LOGGER.log(Level.WARNING, "Failed to set last modified time on: " + file.getAbsolutePath());
+                        LOGGER.log(Level.WARNING, "Failed to set last modified time on: {0}", file.getAbsolutePath());
                     }
                 }
 

@@ -61,8 +61,8 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
     private static final String[] PREFIXES_TO_ADD;
 
     static {
-        final Collection<String> classes = new ArrayList<String>();
-        final Collection<String> prefixes = new ArrayList<String>();
+        final Collection<String> classes = new ArrayList<>();
+        final Collection<String> prefixes = new ArrayList<>();
         if (!SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_SKIP, false)) {
             final String additionalEnrichments = SystemInstance.get().getOptions().get(TOMEE_WEBAPP_CLASSLOADER_ENRICHMENT_CLASSES, "");
             if (additionalEnrichments != null && !additionalEnrichments.isEmpty()) {
@@ -86,7 +86,7 @@ public final class TomEEClassLoaderEnricher implements WebAppEnricher {
 
     @Override
     public URL[] enrichment(final ClassLoader appCl) {
-        final Collection<URL> urls = new HashSet<URL>();
+        final Collection<URL> urls = new HashSet<>();
 
         // from class
         final ClassLoader cl = TomEEClassLoaderEnricher.class.getClassLoader(); // reference classloader = standardclassloader

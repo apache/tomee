@@ -1,8 +1,6 @@
-== Java Naming and Directory Interface (JNDI)
-:jbake-date: 2016-10-14
+:jbake-title: Java Naming and Directory Interface (JNDI)
 :jbake-type: page
 :jbake-status: published
-:jbake-tomeepdf:
 
 TomEE has several JNDI client intended for multiple usages.
 

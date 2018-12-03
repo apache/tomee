@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # websocket-tls-basic-auth
 
 Websocket example project using SSL and basic authentication.

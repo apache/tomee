@@ -1,4 +1,8 @@
-Title: DataSourceRealm and TomEE DataSource
+index-group=Unrevised
+type=page
+status=published
+title=DataSourceRealm and TomEE DataSource
+~~~~~~
 
 ## Quick start
 
