@@ -96,7 +96,7 @@ public class JaxRpcServiceInfoBuilder {
     }
 
     private Set<QName> buildOperations(Binding binding, Class serviceEndpointInterface, boolean lightweight) throws OpenEJBException {
-        Set<QName> wrappedElementQNames = new HashSet<QName>();
+        Set<QName> wrappedElementQNames = new HashSet<>();
 
 
         for (Object op : binding.getBindingOperations()) {
