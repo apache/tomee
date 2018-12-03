@@ -54,7 +54,9 @@ public class MovieServlet extends HttpServlet {
 
             final MoviesBusinessLocal bean = home.create();
 
-            bean.addMovie("Bad Boys", "Michael Bay", 1995);
+            final int id = bean.addMovie("Bad Boys", "Michael Bay", 1995);
+            bean.addActor(id, "Will", "Smith");
+            bean.addActor(id, "Martin", "Lawrence");
 
             pw.println("Movie added successfully");
 

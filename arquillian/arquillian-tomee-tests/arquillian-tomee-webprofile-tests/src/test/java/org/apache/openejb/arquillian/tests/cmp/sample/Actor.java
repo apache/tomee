@@ -16,30 +16,20 @@
  */
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
-import java.util.Collection;
-
 /**
  * @version $Revision$ $Date$
  */
-public interface Movie extends javax.ejb.EJBLocalObject {
+public interface Actor extends javax.ejb.EJBLocalObject {
 
-    java.lang.Integer getId();
+    Integer getId();
 
-    void setId(java.lang.Integer id);
+    void setId(Integer id);
 
-    String getDirector();
+    String getFirstName();
 
-    void setDirector(String director);
+    void setFirstName(String director);
 
-    String getTitle();
+    String getLastName();
 
-    void setTitle(String title);
-
-    int getYear();
-
-    void setYear(int year);
-
-    void addActor(String firstName, String lastName);
-
-    Collection getActorVO();
+    void setLastName(String title);
 }

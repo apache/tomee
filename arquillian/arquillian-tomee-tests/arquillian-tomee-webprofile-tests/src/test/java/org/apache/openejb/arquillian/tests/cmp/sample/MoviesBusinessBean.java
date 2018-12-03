@@ -53,17 +53,32 @@ public class MoviesBusinessBean implements SessionBean {
     }
 
 
-    public void addMovie(final String title, final String director, int year) throws MovieException {
+    public int addMovie(final String title, final String director, int year) throws MovieException {
         try {
             final InitialContext context = new InitialContext();
             final MovieLocalHome home = (MovieLocalHome)
                     PortableRemoteObject.narrow(context.lookup("java:comp/env/ejb/MovieBean"), MovieLocalHome.class);
 
-
-            home.create(director, title, year);
+            final Movie movie = home.create(director, title, year);
+            return movie.getId();
 
         } catch (NamingException | CreateException e) {
             throw new MovieException(e);
+        }
+    }
+
+    public void addActor(final int movieId, final String firstName, final String lastName) throws MovieException {
+        try {
+            final InitialContext context = new InitialContext();
+            final MovieLocalHome home = (MovieLocalHome)
+                PortableRemoteObject.narrow(context.lookup("java:comp/env/ejb/MovieBean"), MovieLocalHome.class);
+
+            final Movie movie = home.findByPrimaryKey(movieId);
+            movie.addActor(firstName, lastName);
+        } catch (NamingException | FinderException e) {
+            throw new MovieException(e);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
