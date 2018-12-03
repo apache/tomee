@@ -30,6 +30,7 @@ public class IgnoredStandardContext extends StandardContext {
         // Tomcat has a stupid rule where a life cycle listener must set
         // configured true, or it will treat it as a failed deployment
         addLifecycleListener(new LifecycleListener() {
+            @Override
             public void lifecycleEvent(final LifecycleEvent event) {
                 final Context context = Context.class.cast(event.getLifecycle());
                 if (event.getType().equals(Lifecycle.START_EVENT)

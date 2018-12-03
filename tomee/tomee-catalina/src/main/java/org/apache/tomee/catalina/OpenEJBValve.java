@@ -35,6 +35,7 @@ public class OpenEJBValve extends ValveBase {
         securityService = getSecurityService();
     }
 
+    @Override
     public void invoke(final Request request, final Response response) throws IOException, ServletException {
         final OpenEJBSecurityListener listener = new OpenEJBSecurityListener(securityService, request);
 

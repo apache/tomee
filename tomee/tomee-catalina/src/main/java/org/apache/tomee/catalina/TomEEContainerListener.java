@@ -22,18 +22,18 @@ import org.apache.catalina.core.StandardContext;
 
 
 public class TomEEContainerListener implements ContainerListener {
-    private static final ThreadLocal<StandardContext> context = new ThreadLocal<StandardContext>();
+    private static final ThreadLocal<StandardContext> CONTEXT = new ThreadLocal<StandardContext>();
 
     @Override
     public void containerEvent(final ContainerEvent event) {
         if ("beforeContextInitialized".equals(event.getType())) {
-            context.set((StandardContext) event.getContainer());
+            CONTEXT.set((StandardContext) event.getContainer());
         } else if ("afterContextInitialized".equals(event.getType())) {
-            context.remove();
+            CONTEXT.remove();
         }
     }
 
     public static StandardContext get() {
-        return context.get();
+        return CONTEXT.get();
     }
 }

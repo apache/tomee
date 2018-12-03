@@ -65,6 +65,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         namingResources = standardServer.getGlobalNamingResources();
     }
 
+    @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         if (event.getLifecycle() != standardServer) {
             return;
@@ -104,6 +105,7 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
         running = false;
     }
 
+    @Override
     public void propertyChange(final PropertyChangeEvent event) {
         if (!running) {
             return;
