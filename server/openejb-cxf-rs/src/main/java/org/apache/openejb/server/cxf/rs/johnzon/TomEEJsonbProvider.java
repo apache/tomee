@@ -17,10 +17,13 @@
 package org.apache.openejb.server.cxf.rs.johnzon;
 
 import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
+import org.apache.johnzon.mapper.access.AccessMode;
 
+import javax.json.bind.JsonbConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.Provider;
+import java.util.Locale;
 
 @Provider
 // This will sort the Provider to be after CXF defaults. Check org.apache.cxf.jaxrs.provider.ProviderFactory.sortReaders()
@@ -30,4 +33,17 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
     }
+
+    public void setDateFormat(String dateFormat) {
+        config.setProperty(JsonbConfig.DATE_FORMAT, dateFormat);
+    }
+
+    public void setLocale(Locale locale) {
+        config.setProperty(JsonbConfig.LOCALE, locale);
+    }
+
+    public void setAccessMode(AccessMode accessMode) {
+        config.setProperty("johnzon.accessMode", accessMode);
+    }
+
 }
