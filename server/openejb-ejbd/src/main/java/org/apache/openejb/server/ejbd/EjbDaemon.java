@@ -54,7 +54,7 @@ import java.util.zip.GZIPInputStream;
 
 public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
 
-    static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
+    static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE, "org.apache.openejb.server.util.resources");
 
     private ClientObjectFactory clientObjectFactory;
     //    DeploymentIndex deploymentIndex;
@@ -194,7 +194,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
             // Read ServerMetaData
             final ServerMetaData serverMetaData = new ServerMetaData();
             serverMetaData.readExternal(ois);
-            ClientObjectFactory.serverMetaData.set(serverMetaData);
+            ClientObjectFactory.SERVER_META_DATA.set(serverMetaData);
 
             // Read request type
             requestTypeByte = ois.readByte();
@@ -256,7 +256,7 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                     response = processLogoutRequest(ois, clientProtocol);
                     break;
                 default:
-                    logger.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestType);
+                    LOGGER.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestType);
                     return;
             }
 
@@ -289,34 +289,34 @@ public class EjbDaemon implements org.apache.openejb.spi.ApplicationServer {
                         break;
                     default:
                         //Should never get here...
-                        logger.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown response type " + requestType);
+                        LOGGER.error("\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unknown response type " + requestType);
                 }
             }
 
         } catch (IllegalArgumentException iae) {
             final String msg = "\"" + clientProtocol.getSpec() + "\" FAIL \"Unknown request type " + requestTypeByte;
-            if (logger.isDebugEnabled()) {
-                logger.debug(msg, iae);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, iae);
             } else {
-                logger.warning(msg + " - Debug for StackTrace");
+                LOGGER.warning(msg + " - Debug for StackTrace");
             }
         } catch (SecurityException e) {
             final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Security error - " + e.getMessage() + "\"";
-            if (logger.isDebugEnabled()) {
-                logger.debug(msg, e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
             } else {
-                logger.warning(msg + " - Debug for StackTrace");
+                LOGGER.warning(msg + " - Debug for StackTrace");
             }
         } catch (Throwable e) {
             final String msg = "\"" + requestType + " " + clientProtocol.getSpec() + "\" FAIL \"Unexpected error - " + e.getMessage() + "\"";
-            if (logger.isDebugEnabled()) {
-                logger.debug(msg, e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(msg, e);
             } else {
-                logger.warning(msg + " - Debug for StackTrace");
+                LOGGER.warning(msg + " - Debug for StackTrace");
             }
         } finally {
             try {
-                ClientObjectFactory.serverMetaData.remove();
+                ClientObjectFactory.SERVER_META_DATA.remove();
             } finally {
                 if (null != oos) {
 
