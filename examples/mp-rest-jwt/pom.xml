@@ -21,10 +21,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
-  <artifactId>rest-mp-jwt</artifactId>
+  <artifactId>mp-rest-jwt</artifactId>
   <version>8.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>OpenEJB :: Examples :: REST MP-JWT</name>
+  <name>OpenEJB :: Examples :: MP REST JWT</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
