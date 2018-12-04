@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile.jwt.config;
 
 import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.lang.JoseException;
@@ -25,7 +26,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -48,13 +48,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,15 +63,13 @@ import static org.jose4j.jwk.JsonWebKeySet.JWK_SET_MEMBER_NAME;
 
 @ApplicationScoped
 public class ConfigurableJWTAuthContextInfo {
-    private static final Logger log = Logger.getLogger(ConfigurableJWTAuthContextInfo.class.getName());
     private static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
 
-    @Inject
     private Config config;
-
     private JWTAuthContextInfo jwtAuthContextInfo;
 
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
+        this.config = ConfigProvider.getConfig();
         this.jwtAuthContextInfo = createJWTAuthContextInfo();
     }
 
@@ -82,11 +78,11 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private Optional<String> getVerifierPublicKey() {
-        return config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class);
+        return config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class).map(s -> s.isEmpty() ? null : s);
     }
 
     private Optional<String> getPublicKeyLocation() {
-        return config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class);
+        return config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class).map(s -> s.isEmpty() ? null : s);
     }
 
     private Optional<String> getIssuer() {
@@ -94,6 +90,14 @@ public class ConfigurableJWTAuthContextInfo {
     }
 
     private JWTAuthContextInfo createJWTAuthContextInfo() {
+        if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
+            throw new DeploymentException("Both " +
+                                          VERIFIER_PUBLIC_KEY +
+                                          " and " +
+                                          VERIFIER_PUBLIC_KEY_LOCATION +
+                                          " are being supplied. You must use only one.");
+        }
+
         final Stream<Supplier<Optional<Map<String, Key>>>> possiblePublicKeys =
                 Stream.of(() -> getVerifierPublicKey().map(this::readPublicKeys),
                           () -> getPublicKeyLocation().map(this::readPublicKeysFromLocation));
@@ -292,7 +296,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Collections.emptyMap();
         }
 
-        return parseJwks(publicKey);
+        return parseJwks(publicKeyDecoded);
     }
 
     private void validateJwk(final JsonObject jwk) {
