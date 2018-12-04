@@ -40,6 +40,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class StandardContextCustomizer {
@@ -109,7 +110,7 @@ public class StandardContextCustomizer {
                             }
                         } else {
                             Logger.getLogger(StandardContextCustomizer.class.getName())
-                                    .warning("'" + web + "' is not a directory, ignoring");
+                                    .log(Level.WARNING, "''{0}'' is not a directory, ignoring", web);
                         }
                     }
                 }

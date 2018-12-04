@@ -41,7 +41,7 @@ public class Paths implements PathsInterface {
      * Used to store errors which represent verification failures
      * @see #verify()
      */
-    private final List<String> errors = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<>();
     /**
      * The directory represented by the catalina.home system property
      */

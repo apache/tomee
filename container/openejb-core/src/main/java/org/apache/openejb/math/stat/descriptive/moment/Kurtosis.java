@@ -31,7 +31,7 @@ import java.io.Serializable;
  * kurtosis = { [n(n+1) / (n -1)(n - 2)(n-3)] sum[(x_i - mean)^4] / std^4 } - [3(n-1)^2 / (n-2)(n-3)]
  * </p><p>
  * where n is the number of values, mean is the {@link Mean} and std is the
- * {@link org.apache.commons.math.stat.descriptive.moment.StandardDeviation}</p>
+ * {@link org.apache.commons.math3.stat.descriptive.moment.StandardDeviation}</p>
  * <p>
  * Note that this statistic is undefined for n < 4.  <code>Double.Nan</code>
  * is returned when there is not sufficient data to compute the statistic.</p>

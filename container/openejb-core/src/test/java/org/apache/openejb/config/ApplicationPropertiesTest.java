@@ -62,7 +62,7 @@ public class ApplicationPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/application.properties", "color=orange");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
@@ -94,13 +94,13 @@ public class ApplicationPropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> moduleFiles = new HashMap<String, String>();
+            final Map<String, String> moduleFiles = new HashMap<>();
             moduleFiles.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             moduleFiles.put("META-INF/application.properties", "color=white");
 
             final File module = Archives.jarArchive(moduleFiles, "fooModule", WidgetBean.class);
 
-            final Map<String, String> appFiles = new HashMap<String, String>();
+            final Map<String, String> appFiles = new HashMap<>();
             appFiles.put("META-INF/application.xml", "" +
                 "<application id=\"fooApp\">\n" +
                 "  <module>\n" +
@@ -134,7 +134,7 @@ public class ApplicationPropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("fooApp.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             final File module = Archives.fileArchive(map, WidgetBean.class);
 
@@ -160,7 +160,7 @@ public class ApplicationPropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("fooApp.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             map.put("META-INF/application.properties", "color=white");
 
@@ -189,7 +189,7 @@ public class ApplicationPropertiesTest extends TestCase {
             SystemInstance.get().getProperties().put("openejb.fooApp.color", "orange");
             SystemInstance.get().getProperties().put("fooApp.color", "green");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             final File module = Archives.fileArchive(map, WidgetBean.class);
 
@@ -216,7 +216,7 @@ public class ApplicationPropertiesTest extends TestCase {
             SystemInstance.get().getProperties().put("tomee.fooApp.color", "orange");
             SystemInstance.get().getProperties().put("fooApp.color", "green");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             final File module = Archives.fileArchive(map, WidgetBean.class);
 

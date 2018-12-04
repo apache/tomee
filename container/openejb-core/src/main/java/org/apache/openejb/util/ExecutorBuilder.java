@@ -136,16 +136,16 @@ public class ExecutorBuilder {
         public BlockingQueue<Runnable> create(final Options options, final String prefix, final int queueSize) {
             switch (this) {
                 case ARRAY: {
-                    return new ArrayBlockingQueue<Runnable>(queueSize > 0 ? queueSize : 1);
+                    return new ArrayBlockingQueue<>(queueSize > 0 ? queueSize : 1);
                 }
                 case LINKED: {
-                    return new LinkedBlockingQueue<Runnable>(queueSize > 0 ? queueSize : 1);
+                    return new LinkedBlockingQueue<>(queueSize > 0 ? queueSize : 1);
                 }
                 case PRIORITY: {
-                    return new PriorityBlockingQueue<Runnable>();
+                    return new PriorityBlockingQueue<>();
                 }
                 case SYNCHRONOUS: {
-                    return new SynchronousQueue<Runnable>(options.get(prefix + ".QueueFair", false));
+                    return new SynchronousQueue<>(options.get(prefix + ".QueueFair", false));
                 }
                 default: {
                     // The Options class will throw an error if the user supplies an unknown enum string

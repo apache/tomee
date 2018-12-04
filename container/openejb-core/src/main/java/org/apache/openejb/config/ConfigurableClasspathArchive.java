@@ -64,7 +64,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public static List<Archive> archive(final Module module, final Iterable<URL> urls, final boolean forceDescriptor) {
-        final List<Archive> archives = new ArrayList<Archive>();
+        final List<Archive> archives = new ArrayList<>();
         for (final URL location : urls) {
             try {
                 archives.add(archive(module, location, forceDescriptor));
@@ -117,7 +117,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     private static Filter filters(final Set<String> packageNames) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String packageName : packageNames) {
             filters.add(new PackageFilter(packageName));
         }

@@ -25,6 +25,6 @@ import java.util.List;
  */
 public class MethodAttributeInfo extends InfoObject {
 
-    public final List<MethodInfo> methods = new ArrayList<MethodInfo>();
+    public final List<MethodInfo> methods = new ArrayList<>();
 
 }

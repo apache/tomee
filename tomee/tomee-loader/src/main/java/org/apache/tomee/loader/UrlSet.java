@@ -52,7 +52,7 @@ public class UrlSet implements Iterable<URL> {
      * @param urls
      */
     public UrlSet(final Collection<URL> urls){
-        this.urls = new HashMap<String,URL>();
+        this.urls = new HashMap<>();
         for (final URL location : urls) {
             try {
 //                if (location.getProtocol().equals("file")) {
@@ -78,20 +78,20 @@ public class UrlSet implements Iterable<URL> {
     }
 
     public UrlSet include(final UrlSet urlSet){
-        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+        final Map<String, URL> urls = new HashMap<>(this.urls);
         urls.putAll(urlSet.urls);
         return new UrlSet(urls);
     }
 
 
     public UrlSet include(final URL url){
-        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+        final Map<String, URL> urls = new HashMap<>(this.urls);
         urls.put(url.toExternalForm(), url);
         return new UrlSet(urls);
     }
 
     public UrlSet exclude(final UrlSet urlSet) {
-        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+        final Map<String, URL> urls = new HashMap<>(this.urls);
         final Map<String, URL> parentUrls = urlSet.urls;
         for (final String url : parentUrls.keySet()) {
             urls.remove(url);
@@ -100,7 +100,7 @@ public class UrlSet implements Iterable<URL> {
     }
 
     public UrlSet exclude(final URL url) {
-        final Map<String, URL> urls = new HashMap<String, URL>(this.urls);
+        final Map<String, URL> urls = new HashMap<>(this.urls);
         urls.remove(url.toExternalForm());
         return new UrlSet(urls);
     }
@@ -161,7 +161,7 @@ public class UrlSet implements Iterable<URL> {
     }
 
     public UrlSet filter(final Filter filter) {
-        final Map<String, URL> urls = new HashMap<String, URL>();
+        final Map<String, URL> urls = new HashMap<>();
         for (final Map.Entry<String, URL> entry : this.urls.entrySet()) {
             final String url = entry.getKey();
             if (filter.accept(url)){
@@ -177,7 +177,7 @@ public class UrlSet implements Iterable<URL> {
 
     public UrlSet relative(final File file) throws MalformedURLException {
         final String urlPath = file.toURI().toURL().toExternalForm();
-        final Map<String, URL> urls = new HashMap<String, URL>();
+        final Map<String, URL> urls = new HashMap<>();
         for (final Map.Entry<String, URL> entry : this.urls.entrySet()) {
             final String url = entry.getKey();
             if (url.startsWith(urlPath) || url.startsWith("jar:"+urlPath)){
@@ -188,7 +188,7 @@ public class UrlSet implements Iterable<URL> {
     }
 
     public List<URL> getUrls() {
-        return new ArrayList<URL>(urls.values());
+        return new ArrayList<>(urls.values());
     }
 
     public int size() {
@@ -200,7 +200,7 @@ public class UrlSet implements Iterable<URL> {
     }
 
     private static List<URL> getUrls(final ClassLoader classLoader) throws IOException {
-        final List<URL> list = new ArrayList<URL>();
+        final List<URL> list = new ArrayList<>();
         final ArrayList<URL> urls = Collections.list(classLoader.getResources("META-INF"));
         for (URL url : urls) {
             String externalForm = url.toExternalForm();

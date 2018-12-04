@@ -31,14 +31,14 @@ public class ClientInfo extends CommonInfoObject {
     public String largeIcon;
     public String moduleId;
     public String mainClass;
-    public final List<String> localClients = new ArrayList<String>();
-    public final List<String> remoteClients = new ArrayList<String>();
+    public final List<String> localClients = new ArrayList<>();
+    public final List<String> remoteClients = new ArrayList<>();
 
     public String callbackHandler;
-    public final Set<String> watchedResources = new TreeSet<String>();
+    public final Set<String> watchedResources = new TreeSet<>();
 
     public final JndiEncInfo jndiEnc = new JndiEncInfo();
 
-    public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> postConstruct = new ArrayList<>();
+    public final List<CallbackInfo> preDestroy = new ArrayList<>();
 }

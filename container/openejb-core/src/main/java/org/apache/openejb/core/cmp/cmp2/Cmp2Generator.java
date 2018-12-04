@@ -48,11 +48,11 @@ public class Cmp2Generator implements Opcodes {
     private final String implClassName;
     private final String beanClassName;
     private final ClassWriter cw;
-    private final Map<String, CmpField> cmpFields = new LinkedHashMap<String, CmpField>();
-    private final Collection<CmrField> cmrFields = new ArrayList<CmrField>();
+    private final Map<String, CmpField> cmpFields = new LinkedHashMap<>();
+    private final Collection<CmrField> cmrFields = new ArrayList<>();
     private final CmpField pkField;
     private final Class primKeyClass;
-    private final List<Method> selectMethods = new ArrayList<Method>();
+    private final List<Method> selectMethods = new ArrayList<>();
     private final Class beanClass;
     private final PostCreateGenerator postCreateGenerator;
     private static final String DELETED = "openejb_deleted";
@@ -1066,7 +1066,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private static String[] getExceptionTypes(final Method method) {
-        final List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
+        final List<String> types = new ArrayList<>(method.getExceptionTypes().length);
         for (final Class<?> exceptionType : method.getExceptionTypes()) {
             types.add(Type.getInternalName(exceptionType));
         }

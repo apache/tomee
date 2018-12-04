@@ -60,7 +60,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
-        final Map<String, ResourceReferenceInfo> refs = new HashMap<String, ResourceReferenceInfo>();
+        final Map<String, ResourceReferenceInfo> refs = new HashMap<>();
         for (final ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
             refs.put(ref.referenceName.replaceAll(".*/", ""), ref);
         }
@@ -102,7 +102,7 @@ public class AutoConfigResourceRefsTest extends TestCase {
 
         final EnterpriseBeanInfo beanInfo = ejbJarInfo.enterpriseBeans.get(0);
 
-        final Map<String, ResourceReferenceInfo> refs = new HashMap<String, ResourceReferenceInfo>();
+        final Map<String, ResourceReferenceInfo> refs = new HashMap<>();
         for (final ResourceReferenceInfo ref : beanInfo.jndiEnc.resourceRefs) {
             refs.put(ref.referenceName.replaceAll(".*/", ""), ref);
         }

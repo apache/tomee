@@ -87,12 +87,12 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * Names if the entity-mapping.xml files relative to to the persistenceUnitRootUrl.
      */
-    private final List<String> mappingFileNames = new ArrayList<String>();
+    private final List<String> mappingFileNames = new ArrayList<>();
 
     /**
      * The jar file locations that make up this persistence unit.
      */
-    private final List<URL> jarFileUrls = new ArrayList<URL>();
+    private final List<URL> jarFileUrls = new ArrayList<>();
 
     /**
      * Location of the root of the persistent unit.  The directory in which
@@ -103,7 +103,7 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     /**
      * List of the managed entity classes.
      */
-    private final List<String> managedClassNames = new ArrayList<String>();
+    private final List<String> managedClassNames = new ArrayList<>();
 
     /**
      * Should class not listed in the persistence unit be managed by the EntityManager?

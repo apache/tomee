@@ -1,8 +1,12 @@
-Title: CDI @RequestScoped
+index-group=CDI
+type=page
+status=published
+title=CDI @RequestScoped
+~~~~~~
 
 This example show the use of `@RequestScoped` annotation for injected objects. An object
 which is defined as `@RequestScoped` is created once for every request and is shared by all the
-bean that inject it throughout a request.
+beans that inject it throughout a same request.
 
 # Example
 
@@ -147,4 +151,3 @@ each request.
     Results :
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-

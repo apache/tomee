@@ -56,7 +56,7 @@ import java.util.concurrent.ConcurrentMap;
 public class WebContext {
     private String id;
     private ClassLoader classLoader;
-    private final Collection<Injection> injections = new ArrayList<Injection>();
+    private final Collection<Injection> injections = new ArrayList<>();
     private Context jndiEnc;
     private final AppContext appContext;
     private Map<String, Object> bindings;
@@ -66,7 +66,7 @@ public class WebContext {
     private String host;
     private Context initialContext;
     private ServletContext servletContext;
-    private final Map<Class<?>, ConstructorInjectionBean<Object>> constructorInjectionBeanCache = new ConcurrentHashMap<Class<?>, ConstructorInjectionBean<Object>>();
+    private final Map<Class<?>, ConstructorInjectionBean<Object>> constructorInjectionBeanCache = new ConcurrentHashMap<>();
 
     public Context getInitialContext() {
         if (initialContext != null) {

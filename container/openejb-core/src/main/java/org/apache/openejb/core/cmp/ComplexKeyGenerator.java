@@ -32,7 +32,7 @@ public class ComplexKeyGenerator extends AbstractKeyGenerator {
 
     public ComplexKeyGenerator(final Class entityBeanClass, final Class pkClass) throws OpenEJBException {
         this.pkClass = pkClass;
-        final List<ComplexKeyGenerator.PkField> fields = new ArrayList<PkField>();
+        final List<ComplexKeyGenerator.PkField> fields = new ArrayList<>();
         for (final Field pkObjectField : pkClass.getFields()) {
             if (isValidPkField(pkObjectField)) {
                 final Field entityBeanField = getField(entityBeanClass, pkObjectField.getName());

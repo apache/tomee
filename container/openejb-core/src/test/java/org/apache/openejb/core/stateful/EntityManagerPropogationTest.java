@@ -151,8 +151,8 @@ public class EntityManagerPropogationTest extends TestCase {
 
         for (int l = 0; l < 10; l++) { // because Romain is not sure of the Random ;-)
             Node node = (Node) ctx.lookup("ExtendedLocalBean");
-            final List<Node> nodes = new ArrayList<Node>();
-            final List<EntityManager> delegates = new ArrayList<EntityManager>();
+            final List<Node> nodes = new ArrayList<>();
+            final List<EntityManager> delegates = new ArrayList<>();
 
             while (node.getChild() != null) {
                 nodes.add(node);

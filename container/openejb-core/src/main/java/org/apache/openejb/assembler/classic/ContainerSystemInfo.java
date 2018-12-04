@@ -22,10 +22,10 @@ import java.util.List;
 
 public class ContainerSystemInfo extends InfoObject {
 
-    public final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
+    public final List<ContainerInfo> containers = new ArrayList<>();
 
-    public final List<AppInfo> applications = new ArrayList<AppInfo>();
+    public final List<AppInfo> applications = new ArrayList<>();
 
-    public final List<String> autoDeploy = new ArrayList<String>();
+    public final List<String> autoDeploy = new ArrayList<>();
 
 }

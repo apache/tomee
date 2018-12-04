@@ -103,7 +103,6 @@ public class RiTestServer implements TestServer {
      * Starts and Ri Server with the configuration file from
      * the properties used to create this RiTestServer.
      *
-     * @param confFileName
      */
     public void start() {
 

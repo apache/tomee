@@ -63,8 +63,8 @@ public class DelegatePermissionCollection extends PermissionCollection {
 
     public static class FastPermissionCollection extends PermissionCollection {
         private static final int MAX_CACHE_SIZE = SystemInstance.get().getOptions().get("openejb.permission-collection.cache.size", 3000);
-        private final List<Permission> permissions = new ArrayList<Permission>();
-        private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<Permission, Boolean>();
+        private final List<Permission> permissions = new ArrayList<>();
+        private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<>();
 
         @Override
         public synchronized void add(final Permission permission) {

@@ -112,7 +112,7 @@ public class MdbInstanceManager {
 
     private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
-    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    protected final List<ObjectName> jmxNames = new ArrayList<>();
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;
     private final Object containerID;
@@ -142,7 +142,7 @@ public class MdbInstanceManager {
         final ThreadFactory threadFactory = new DaemonThreadFactory("InstanceManagerPool.worker.");
         this.executor = new ThreadPoolExecutor(
                 callbackThreads, callbackThreads * 2,
-                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
+                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>(qsize), threadFactory);
 
         this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -665,7 +665,7 @@ public class MdbInstanceManager {
         private final Pool<Instance> pool;
         private final Duration accessTimeout;
         private final Duration closeTimeout;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
         private BaseContext baseContext;
 
         public Data(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {

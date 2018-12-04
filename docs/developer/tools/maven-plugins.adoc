@@ -1,0 +1,12 @@
+= TomEE Maven Plugins
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+TomEE provides several maven plugins:
+
+- one for a link:maven/tomee.html[standalone TomEE]
+- one for link:maven/embedded.html[TomEE embedded]
+- one for link:maven/applicationcomposer.html[application composer] based applications
+- Note: there is one for `EJBContainer` but this one is easily replaced by one of the previous in general

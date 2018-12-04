@@ -1,0 +1,53 @@
+= TomEE Embedded Maven Plugin
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+TomEE Embedded Maven plugin has a single goal: `tomee-embedded:run`.
+
+=== Configuration
+
+[.table.table-bordered,options="header"]
+|===
+| Name | Default | Description
+| warFile | ${project.build.directory}/${project.build.finalName} | where is the binary
+| httpPort | 8080 | HTTP port
+| httpsPort | 8443 | HTTPS port
+| ajpPort | 8009 | AJP port
+| stopPort | 8005 | shutdown port
+| host | localhost | the server host
+| dir | ${project.build.directory}/apache-tomee-embedded | the work directory
+| keystoreFile | - | the keystore file for the HTTPS connector
+| keystorePass | - | the keystore password for the HTTPS connector
+| keystoreType | JKS | the keystore type for the HTTPS connector
+| clientAuth | - | should HTTPS use client authentication
+| keyAlias | - | the key to use for HTTPS
+| sslProtocol | - | the protocol to use for SSL/HTTPS
+| serverXml | - | a custom server.xml
+| ssl | false | is HTTPS active
+| withEjbRemote |false | is EJBd active
+| quickSession | true | is sessions using Random instead of SecureRandom to generate id (faster but less secure, good for dev purposes)
+| skipHttp | false | don't activate HTTP connector (allow to have only HTTPS for instance)
+| classpathAsWar | false | deploy the classpath instead of the binary/war
+| useProjectClasspath | true | in previous case use the project classpath and not plugin one
+| webResourceCached | true | should web resources be cached
+| modules | ${project.build.outputDirectory} | list of module to add to the classpath of the application
+| docBase | ${project.basedir}/src/main/webapp | where is the docBase in classpath deployment mode (where are web resources)
+| context | - | which context to use for the main artifact/deployment
+| containerProperties | - | map of container properties
+| mavenLog | true | should the plugin use maven logger instead of JUL
+| keepServerXmlAsThis | false | don't apply port/host configuration to the server.xml if provided
+| users | - | map of user/password
+| roles | - | map of role/users
+| forceJspDevelopment | true | ensure JSP are in development mode (updated)
+| applications | - | list of applications to deploy
+| applicationScopes | - | scope of the artifact to take into account for the classpath (ignore PROVIDED for instance)
+| skipCurrentProject | - | don't deploy current project but only configured applications
+| applicationCopyFolder | - | a folder containing applications
+| workDir | - | tomee embedded work dir
+| inlinedServerXml | - | server.xml content directly in the pom
+| inlinedTomEEXml | - | tomee.xml content directly in the pom
+| liveReload | - | livereload configuration if activated. This is an object containing these options: {watchedFolder: 'src/main/webapp', path: '/', port: 35729}
+| withLiveReload | false | activate livereload for web resources
+|===

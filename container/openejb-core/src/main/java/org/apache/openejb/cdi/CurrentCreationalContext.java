@@ -23,7 +23,7 @@ import javax.enterprise.context.spi.CreationalContext;
  * @version $Rev$ $Date$
  */
 public final class CurrentCreationalContext<T> {
-    private final ThreadLocal<CreationalContext<T>> creationalContext = new ThreadLocal<CreationalContext<T>>();
+    private final ThreadLocal<CreationalContext<T>> creationalContext = new ThreadLocal<>();
 
     public CreationalContext<T> get() {
         return creationalContext.get();

@@ -109,7 +109,7 @@ public class DynamicSubclass implements Opcodes {
 
     private static byte[] generateBytes(final Class<?> classToProxy, final boolean proxyNonAbstractMethods) throws ProxyGenerationException {
 
-        final Map<String, MethodVisitor> visitors = new HashMap<String, MethodVisitor>();
+        final Map<String, MethodVisitor> visitors = new HashMap<>();
 
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 

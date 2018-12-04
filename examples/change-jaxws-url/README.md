@@ -1,4 +1,8 @@
-Title: Change JAXWS URL
+index-group=Unrevised
+type=page
+status=published
+title=Change JAXWS URL
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
@@ -92,8 +96,3 @@ Then now our Rot13 webservice is deployed as expected to /tool/rot13 and we chec
              assertThat(wsdl, containsString("Rot13"));
          }
      }
-
-
-
-
-

@@ -161,7 +161,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private static Set<TargetModuleID> toTargetModuleIds(final Collection<AppInfo> deployedApps, final ModuleType allowedModuleType) {
-        final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(deployedApps.size());
+        final Set<TargetModuleID> targetModuleIds = new HashSet<>(deployedApps.size());
         for (final AppInfo deployedApp : deployedApps) {
             final TargetModuleID moduleId = toTargetModuleId(deployedApp, allowedModuleType);
             // moduleID will be null if the module was filtered
@@ -173,7 +173,7 @@ public class VmDeploymentManager implements DeploymentManager {
     }
 
     private static TargetModuleID toTargetModuleId(final AppInfo appInfo, final ModuleType allowedModuleType) {
-        final List<InfoObject> infos = new ArrayList<InfoObject>();
+        final List<InfoObject> infos = new ArrayList<>();
         infos.addAll(appInfo.clients);
         infos.addAll(appInfo.ejbJars);
         infos.addAll(appInfo.webApps);
@@ -403,7 +403,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         final Set<TargetModuleID> deployedModules = toTargetModuleIds(getDeployer().getDeployedApps(), null);
-        final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>(Arrays.asList(moduleIdList));
+        final Set<TargetModuleID> targetModuleIds = new HashSet<>(Arrays.asList(moduleIdList));
         targetModuleIds.retainAll(deployedModules);
 
         return new ProgressObjectImpl(CommandType.START, targetModuleIds);
@@ -425,7 +425,7 @@ public class VmDeploymentManager implements DeploymentManager {
         }
 
         UndeployException undeployException = null;
-        final Set<TargetModuleID> results = new TreeSet<TargetModuleID>();
+        final Set<TargetModuleID> results = new TreeSet<>();
         for (final TargetModuleID targetModuleId : moduleIdList) {
             try {
                 getDeployer().undeploy(targetModuleId.getModuleID());
@@ -580,7 +580,7 @@ public class VmDeploymentManager implements DeploymentManager {
         private final String moduleId;
         private final String webUrl;
         private TargetModuleID parentTargetModuleId;
-        private final Set<TargetModuleID> children = new TreeSet<TargetModuleID>();
+        private final Set<TargetModuleID> children = new TreeSet<>();
 
         public TargetModuleIDImpl(final Target target, final String moduleId) {
             this(target, moduleId, null);

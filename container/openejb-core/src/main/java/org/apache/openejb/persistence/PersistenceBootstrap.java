@@ -126,7 +126,7 @@ public class PersistenceBootstrap {
             debug("searching for persistence.xml files");
 
             // create persistence.xml names respecting altdd
-            final Collection<String> pXmlNames = new ArrayList<String>();
+            final Collection<String> pXmlNames = new ArrayList<>();
 
             // altdd logic duplicated to avoid classloading issue in tomee-webapp mode
             final String altDD = getAltDD();
@@ -139,7 +139,7 @@ public class PersistenceBootstrap {
                 pXmlNames.add("persistence.xml");
             }
 
-            final List<URL> urls = new LinkedList<URL>();
+            final List<URL> urls = new LinkedList<>();
             for (final String pXmlName : pXmlNames) { // find persistence.xml in the classloader and in WEB-INF
                 urls.addAll(Collections.list(classLoader.getResources("META-INF/" + pXmlName)));
                 if ("true".equals(args.getProperty("web-scan", "false"))) { // findUrls is slow for small tests and rarely needed
@@ -173,7 +173,7 @@ public class PersistenceBootstrap {
                 return;
             }
 
-            final Map<String, Unit> units = new HashMap<String, Unit>();
+            final Map<String, Unit> units = new HashMap<>();
 
             for (final URL url : urls) {
                 final String urlPath = url.toExternalForm();
@@ -407,7 +407,7 @@ public class PersistenceBootstrap {
 
     private static class Unit {
         private String provider;
-        private final Set<String> classes = new HashSet<String>();
+        private final Set<String> classes = new HashSet<>();
         private final String name;
 
         public Unit(final String name) {
