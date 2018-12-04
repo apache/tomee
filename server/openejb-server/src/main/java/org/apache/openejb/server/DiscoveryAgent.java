@@ -34,7 +34,7 @@ public interface DiscoveryAgent {
      * register a service
      *
      * @param serviceUri
-     * @throws java.io.IOException
+     * @throws IOException
      */
     void registerService(URI serviceUri) throws IOException;
 
@@ -42,7 +42,7 @@ public interface DiscoveryAgent {
      * register a service
      *
      * @param serviceUri
-     * @throws java.io.IOException
+     * @throws IOException
      */
     void unregisterService(URI serviceUri) throws IOException;
 
