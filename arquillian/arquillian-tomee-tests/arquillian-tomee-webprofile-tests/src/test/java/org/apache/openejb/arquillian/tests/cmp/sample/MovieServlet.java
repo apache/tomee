@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Iterator;
 
 public class MovieServlet extends HttpServlet {
 
@@ -54,23 +52,8 @@ public class MovieServlet extends HttpServlet {
 
             final MoviesBusinessLocal bean = home.create();
 
-            final int id = bean.addMovie("Bad Boys", "Michael Bay", 1995);
-            bean.addActor(id, "Will", "Smith");
-            bean.addActor(id, "Martin", "Lawrence");
-
-            pw.println("Movie added successfully");
-
-            final Collection allMovies = bean.findAll();
-
-            final Iterator iterator = allMovies.iterator();
-            while (iterator.hasNext()) {
-                final MovieVO movie = (MovieVO) iterator.next();
-                pw.println(movie.toString());
-
-                bean.delete(movie.getId());
-                pw.println("Movie removed successfully");
-            }
-
+            bean.addActor("Will", "Smith");
+            pw.println("Actor added successfully");
             bean.remove();
             pw.flush();
 

@@ -24,8 +24,8 @@ public abstract class ActorBean implements EntityBean {
     }
 
     public Integer ejbCreate(final String firstName, final String lastName) {
-        this.setFirstName(firstName);
-        this.setLastName(lastName);
+        this.setFirstname(firstName);
+        this.setLastname(lastName);
         return null;
     }
 
@@ -33,13 +33,13 @@ public abstract class ActorBean implements EntityBean {
 
     public abstract void setId(Integer id);
 
-    public abstract String getFirstName();
+    public abstract String getFirstname();
 
-    public abstract void setFirstName(String firstName);
+    public abstract void setFirstname(String firstname);
 
-    public abstract String getLastName();
+    public abstract String getLastname();
 
-    public abstract void setLastName(String lastName);
+    public abstract void setLastname(String lastname);
 
 
 }

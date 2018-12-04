@@ -30,4 +30,5 @@ interface ActorLocalHome extends javax.ejb.EJBLocalHome {
     Actor findByPrimaryKey(Integer primarykey) throws FinderException;
 
     Collection findAll() throws FinderException;
+
 }
