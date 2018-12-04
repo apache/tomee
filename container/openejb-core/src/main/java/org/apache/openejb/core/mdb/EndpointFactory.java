@@ -43,7 +43,7 @@ public class EndpointFactory implements MessageEndpointFactory {
     private final ClassLoader classLoader;
     private final Class[] interfaces;
     private final XAResourceWrapper xaResourceWrapper;
-    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    protected final List<ObjectName> jmxNames = new ArrayList<>();
     private final Class<?> proxy;
     private final boolean usePool;
 

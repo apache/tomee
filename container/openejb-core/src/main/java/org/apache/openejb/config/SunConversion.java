@@ -149,7 +149,7 @@ public class SunConversion implements DynamicDeployer {
                 }
 
                 // map resource-env-refs and message-destination-refs
-                final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
+                final Map<String, JndiReference> resEnvMap = new TreeMap<>();
                 resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
                 resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
@@ -200,7 +200,7 @@ public class SunConversion implements DynamicDeployer {
                     refName = normalize(refName);
                     final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
+                        final Map<String, PortComponentRef> ports = new TreeMap<>();
                         for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
@@ -390,7 +390,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
+        final Map<String, JndiReference> resEnvMap = new TreeMap<>();
         resEnvMap.putAll(applicationClient.getResourceEnvRefMap());
         resEnvMap.putAll(applicationClient.getMessageDestinationRefMap());
 
@@ -431,7 +431,7 @@ public class SunConversion implements DynamicDeployer {
             refName = normalize(refName);
             final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
+                final Map<String, PortComponentRef> ports = new TreeMap<>();
                 for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
@@ -487,7 +487,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map ejb-refs
-        final Map<String, JndiReference> refMap = new TreeMap<String, JndiReference>();
+        final Map<String, JndiReference> refMap = new TreeMap<>();
         refMap.putAll(webApp.getEjbRefMap());
         refMap.putAll(webApp.getEjbLocalRefMap());
 
@@ -507,7 +507,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         // map resource-env-refs and message-destination-refs
-        final Map<String, JndiReference> resEnvMap = new TreeMap<String, JndiReference>();
+        final Map<String, JndiReference> resEnvMap = new TreeMap<>();
         resEnvMap.putAll(webApp.getResourceRefMap());
         resEnvMap.putAll(webApp.getResourceEnvRefMap());
         resEnvMap.putAll(webApp.getMessageDestinationRefMap());
@@ -549,7 +549,7 @@ public class SunConversion implements DynamicDeployer {
             refName = normalize(refName);
             final ServiceRef serviceRef = serviceRefMap.get(refName);
             if (serviceRef != null) {
-                final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
+                final Map<String, PortComponentRef> ports = new TreeMap<>();
                 for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                     ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                 }
@@ -629,7 +629,7 @@ public class SunConversion implements DynamicDeployer {
     }
 
     public void convertModule(final EjbModule ejbModule, final EntityMappings entityMappings) {
-        final Map<String, EntityData> entities = new TreeMap<String, EntityData>();
+        final Map<String, EntityData> entities = new TreeMap<>();
         if (entityMappings != null) {
             for (final Entity entity : entityMappings.getEntity()) {
                 entities.put(entity.getDescription(), new EntityData(entity));
@@ -664,7 +664,7 @@ public class SunConversion implements DynamicDeployer {
             return;
         }
 
-        final Map<String, Map<String, WebserviceEndpoint>> endpointMap = new HashMap<String, Map<String, WebserviceEndpoint>>();
+        final Map<String, Map<String, WebserviceEndpoint>> endpointMap = new HashMap<>();
         for (final Ejb ejb : sunEjbJar.getEnterpriseBeans().getEjb()) {
             final EjbDeployment deployment = openejbJar.getDeploymentsByEjbName().get(ejb.getEjbName());
             if (deployment == null) {
@@ -748,7 +748,7 @@ public class SunConversion implements DynamicDeployer {
                     refName = normalize(refName);
                     final ServiceRef serviceRef = serviceRefMap.get(refName);
                     if (serviceRef != null) {
-                        final Map<String, PortComponentRef> ports = new TreeMap<String, PortComponentRef>();
+                        final Map<String, PortComponentRef> ports = new TreeMap<>();
                         for (final PortComponentRef portComponentRef : serviceRef.getPortComponentRef()) {
                             ports.put(portComponentRef.getServiceEndpointInterface(), portComponentRef);
                         }
@@ -850,7 +850,7 @@ public class SunConversion implements DynamicDeployer {
                 continue;
             }
 
-            final Collection<String> cmpFields = new ArrayList<String>(bean.getCmpField().size());
+            final Collection<String> cmpFields = new ArrayList<>(bean.getCmpField().size());
             for (final CmpField cmpField : bean.getCmpField()) {
                 cmpFields.add(cmpField.getFieldName());
             }
@@ -1091,7 +1091,7 @@ public class SunConversion implements DynamicDeployer {
         }
 
         final List bits = Collections.list(new StringTokenizer(queryParams, " \t\n\r\f,", false));
-        final List<List<String>> params = new ArrayList<List<String>>(bits.size() / 2);
+        final List<List<String>> params = new ArrayList<>(bits.size() / 2);
         for (int i = 0; i < bits.size(); i++) {
             final String type = resolveType((String) bits.get(i));
             final String param = (String) bits.get(++i);
@@ -1122,7 +1122,7 @@ public class SunConversion implements DynamicDeployer {
             return null;
         }
 
-        final Map<String, String> variableMap = new TreeMap<String, String>();
+        final Map<String, String> variableMap = new TreeMap<>();
         for (final String cmpField : cmpFields) {
             variableMap.put(cmpField, "o." + cmpField);
         }
@@ -1131,7 +1131,7 @@ public class SunConversion implements DynamicDeployer {
             variableMap.put(param.get(1), "?" + (i + 1));
         }
 
-        final Map<String, String> symbolMap = new TreeMap<String, String>();
+        final Map<String, String> symbolMap = new TreeMap<>();
         symbolMap.put("&&", "and");
         symbolMap.put("||", "or");
         symbolMap.put("!", "not");
@@ -1166,11 +1166,11 @@ public class SunConversion implements DynamicDeployer {
     }
 
     private List<String> tokenize(final String queryFilter) {
-        final LinkedList<String> tokens = new LinkedList<String>();
+        final LinkedList<String> tokens = new LinkedList<>();
         final List bits = Collections.list(new StringTokenizer(queryFilter, " \t\n\r\f()&|<>=!~+-/*", true));
 
         boolean inWitespace = false;
-        String currentSymbol = "";
+        StringBuilder currentSymbol = new StringBuilder();
         for (int i = 0; i < bits.size(); i++) {
             final TokenType tokenType;
             final String bit = (String) bits.get(i);
@@ -1190,7 +1190,7 @@ public class SunConversion implements DynamicDeployer {
                 case '<':
                 case '!':
                     // symbols are blindly coalesced so you can end up with nonsence like +-=+
-                    currentSymbol += bit.charAt(0);
+                    currentSymbol.append(bit.charAt(0));
                     tokenType = TokenType.SYMBOL;
                     break;
                 default:
@@ -1201,8 +1201,8 @@ public class SunConversion implements DynamicDeployer {
                 inWitespace = false;
             }
             if (tokenType != TokenType.SYMBOL && currentSymbol.length() > 0) {
-                tokens.add(currentSymbol);
-                currentSymbol = "";
+                tokens.add(currentSymbol.toString());
+                currentSymbol = new StringBuilder();
             }
             if (tokenType == TokenType.NORMAL) {
                 tokens.add(bit);
@@ -1210,8 +1210,8 @@ public class SunConversion implements DynamicDeployer {
         }
         // add saved symobl if we have one
         if (currentSymbol.length() > 0) {
-            tokens.add(currentSymbol);
-            currentSymbol = "";
+            tokens.add(currentSymbol.toString());
+            currentSymbol = new StringBuilder();
         }
         // strip off leading space
         if (tokens.getFirst().equals(" ")) {
@@ -1247,9 +1247,9 @@ public class SunConversion implements DynamicDeployer {
 
     private class EntityData {
         private final Entity entity;
-        private final Map<String, Id> ids = new TreeMap<String, Id>();
-        private final Map<String, Field> fields = new TreeMap<String, Field>();
-        private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
+        private final Map<String, Id> ids = new TreeMap<>();
+        private final Map<String, Field> fields = new TreeMap<>();
+        private final Map<String, RelationField> relations = new TreeMap<>();
 
         public EntityData(final Entity entity) {
             if (entity == null) {

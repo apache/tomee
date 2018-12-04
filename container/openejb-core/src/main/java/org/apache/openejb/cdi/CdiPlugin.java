@@ -108,13 +108,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             return;
         }
         if (!WebappWebBeansContext.class.isInstance(webBeansContext)) {
-            cacheProxies = new ConcurrentHashMap<Contextual<?>, Object>();
+            cacheProxies = new ConcurrentHashMap<>();
         } else { // share cache of proxies between the whole app otherwise hard to share an EJB between a webapp and the lib part of the app
             final WebBeansContext parent = WebappWebBeansContext.class.cast(webBeansContext).getParent();
             if (parent != null) {
                 cacheProxies = CdiPlugin.class.cast(parent.getPluginLoader().getEjbPlugin()).cacheProxies;
             } else {
-                cacheProxies = new ConcurrentHashMap<Contextual<?>, Object>();
+                cacheProxies = new ConcurrentHashMap<>();
             }
         }
     }
@@ -243,13 +243,13 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
             }
 
             // only stateful normally
-            final InstanceBean<Object> bean = new InstanceBean<Object>(cdiEjbBean);
+            final InstanceBean<Object> bean = new InstanceBean<>(cdiEjbBean);
             if (webBeansContext.getBeanManagerImpl().isNormalScope(scopeClass)) {
                 final BeanContext beanContext = cdiEjbBean.getBeanContext();
                 final Provider provider = webBeansContext.getNormalScopeProxyFactory().getInstanceProvider(beanContext.getClassLoader(), cdiEjbBean);
 
                 if (!beanContext.isLocalbean()) {
-                    final List<Class> interfaces = new ArrayList<Class>();
+                    final List<Class> interfaces = new ArrayList<>();
                     final InterfaceType type = beanContext.getInterfaceType(interfce);
                     if (type != null) {
                         interfaces.addAll(beanContext.getInterfaces(type));
@@ -322,7 +322,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
                 throw new DefinitionException("You can only specialize another EJB with at least the same API: " + clazz);
             }
         }
-        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<T>(bc, webBeansContext, annotatedType, attributes).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
+        final CdiEjbBean<T> bean = new OpenEJBBeanBuilder<>(bc, webBeansContext, annotatedType, attributes).createBean(clazz, !annotatedType.isAnnotationPresent(Vetoed.class));
 
         bc.set(CdiEjbBean.class, bean);
         bc.set(CurrentCreationalContext.class, new CurrentCreationalContext());
@@ -332,7 +332,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         final Set<ObserverMethod<?>> observerMethods;
         if (bean.isEnabled()) {
-            observerMethods = new ObserverMethodsBuilder<T>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
+            observerMethods = new ObserverMethodsBuilder<>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
         } else {
             observerMethods = new HashSet<>();
         }
@@ -463,7 +463,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
     @Override
     public <T> Bean<T> defineNewSessionBean(final Class<T> clazz) {
-        return new NewCdiEjbBean<T>(findBeanContext(webBeansContext, clazz).get(CdiEjbBean.class));
+        return new NewCdiEjbBean<>(findBeanContext(webBeansContext, clazz).get(CdiEjbBean.class));
     }
 
     private static Map<Class<?>, BeanContext> pluginBeans(final WebBeansContext ctx) {
@@ -672,7 +672,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         @Override
         public Producer<T> getProducer() {
-            return new EjbProducer<T>(this, bean);
+            return new EjbProducer<>(this, bean);
         }
 
         @Override

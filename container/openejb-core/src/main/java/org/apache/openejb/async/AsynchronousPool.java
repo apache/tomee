@@ -79,7 +79,7 @@ public class AsynchronousPool {
                 return null;
             }
 
-            return new FutureAdapter<Object>(future, asynchronousCancelled);
+            return new FutureAdapter<>(future, asynchronousCancelled);
         } catch (final RejectedExecutionException e) {
             throw new EJBException("fail to allocate internal resource to execute the target task", e);
         }

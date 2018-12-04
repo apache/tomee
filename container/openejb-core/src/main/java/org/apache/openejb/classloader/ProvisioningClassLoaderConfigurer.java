@@ -71,8 +71,8 @@ public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer 
     }
 
     public void setConfiguration(final String configFile) {
-        final Collection<URL> toAdd = new ArrayList<URL>();
-        final Collection<String> toExclude = new ArrayList<String>();
+        final Collection<URL> toAdd = new ArrayList<>();
+        final Collection<String> toExclude = new ArrayList<>();
 
         BufferedReader reader = null;
         try {

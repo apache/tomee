@@ -132,7 +132,7 @@ public class Openejb {
      */
     public List<JndiProvider> getJndiProvider() {
         if (jndiProvider == null) {
-            jndiProvider = new ArrayList<JndiProvider>();
+            jndiProvider = new ArrayList<>();
         }
         return this.jndiProvider;
     }

@@ -24,7 +24,7 @@ public class MethodScheduleInfo extends InfoObject {
 
     public String description;
 
-    public final List<ScheduleInfo> schedules = new ArrayList<ScheduleInfo>();
+    public final List<ScheduleInfo> schedules = new ArrayList<>();
 
     public NamedMethodInfo method;
 }

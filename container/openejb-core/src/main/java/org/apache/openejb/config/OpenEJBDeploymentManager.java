@@ -94,7 +94,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
 
         // target.* - known targets available on the server
         // target.*.description - known targets available on the server
-        final SortedMap<String, Target> targets = new TreeMap<String, Target>();
+        final SortedMap<String, Target> targets = new TreeMap<>();
         for (final Iterator<Map.Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext(); ) {
             final Map.Entry entry = iterator.next();
             final String key = (String) entry.getKey();
@@ -118,7 +118,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
 
         this.targets = Collections.unmodifiableSortedMap(targets);
 
-        targetPaths = new ArrayList<String>();
+        targetPaths = new ArrayList<>();
         for (final String targetName : targets.keySet()) {
             targetPaths.add(targetName + "/");
         }
@@ -329,7 +329,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
     }
 
     private Set<TargetModuleID> toTargetModuleIds(final Set<String> modules) {
-        final Set<TargetModuleID> targetModuleIds = new HashSet<TargetModuleID>();
+        final Set<TargetModuleID> targetModuleIds = new HashSet<>();
         for (final String module : modules) {
             String moduleId;
             final String webUrl;
@@ -366,7 +366,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
             return Collections.emptySet();
         }
 
-        final TreeSet<String> targetSet = new TreeSet<String>();
+        final TreeSet<String> targetSet = new TreeSet<>();
         for (final Target target : targets) {
             targetSet.add(target.getName());
         }
@@ -378,7 +378,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
             return Collections.emptySet();
         }
 
-        final TreeSet<String> moduleSet = new TreeSet<String>();
+        final TreeSet<String> moduleSet = new TreeSet<>();
         for (final TargetModuleID module : moduleIDList) {
             moduleSet.add(module.getTarget().getName() + "/" + module.getModuleID());
         }
@@ -458,7 +458,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         private final String moduleId;
         private final String webUrl;
         private TargetModuleID parentTargetModuleId;
-        private final Set<TargetModuleID> children = new TreeSet<TargetModuleID>();
+        private final Set<TargetModuleID> children = new TreeSet<>();
 
         public TargetModuleIDImpl(final Target target, final String moduleId) {
             this(target, moduleId, null);

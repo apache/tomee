@@ -38,7 +38,7 @@ public class DirectoryMonitor {
 
     private final Listener listener;
 
-    private final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
+    private final Map<String, FileInfo> files = new HashMap<>();
 
     private final Timer timer;
 
@@ -136,7 +136,7 @@ public class DirectoryMonitor {
 
         final File[] files = target.isDirectory() ? target.listFiles() : new File[]{target};
 
-        final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
+        final HashSet<String> missingFilesList = new HashSet<>(this.files.keySet());
 
         if (files != null) {
             for (final File file : files) {

@@ -77,7 +77,7 @@ import static org.apache.openejb.assembler.classic.EjbResolver.Scope.EJBJAR;
 public class JndiEncInfoBuilder {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP, JndiEncInfoBuilder.class);
     private final EjbResolver earResolver;
-    private final Map<String, EjbResolver> ejbJarResolvers = new HashMap<String, EjbResolver>();
+    private final Map<String, EjbResolver> ejbJarResolvers = new HashMap<>();
     private final AppInfo appInfo;
 
     public JndiEncInfoBuilder(final AppInfo appInfo) {
@@ -127,7 +127,7 @@ public class JndiEncInfoBuilder {
     private void buildEjbRefs(final JndiConsumer jndiConsumer, final URI moduleUri, final String moduleId, final String ejbName, final JndiEncInfo moduleJndiEnc, final JndiEncInfo compJndiEnc) throws OpenEJBException {
         final Collection<EjbRef> ejbRefs = jndiConsumer.getEjbRef();
         final Collection<EjbLocalRef> ejbLocalRefs = jndiConsumer.getEjbLocalRef();
-        final List<EjbReference> references = new ArrayList<EjbReference>(ejbRefs.size() + ejbLocalRefs.size());
+        final List<EjbReference> references = new ArrayList<>(ejbRefs.size() + ejbLocalRefs.size());
         references.addAll(ejbRefs);
         references.addAll(ejbLocalRefs);
 
@@ -414,7 +414,7 @@ public class JndiEncInfoBuilder {
     }
 
     private Collection<? extends InjectionInfo> buildInjectionInfos(final Injectable injectable) {
-        final List<InjectionInfo> infos = new ArrayList<InjectionInfo>();
+        final List<InjectionInfo> infos = new ArrayList<>();
         for (final InjectionTarget target : injectable.getInjectionTarget()) {
             final InjectionInfo info = new InjectionInfo();
             info.className = target.getInjectionTargetClass();

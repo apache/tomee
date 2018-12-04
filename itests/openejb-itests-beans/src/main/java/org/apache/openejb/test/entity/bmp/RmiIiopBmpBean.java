@@ -43,7 +43,6 @@ public class RmiIiopBmpBean implements javax.ejb.EntityBean {
     /**
      * Maps to RmiIiopBmpHome.findEmptyCollection
      *
-     * @param primaryKey
      * @return
      * @throws javax.ejb.FinderException
      * @see RmiIiopBmpHome#sum

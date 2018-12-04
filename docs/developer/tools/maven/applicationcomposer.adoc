@@ -1,0 +1,47 @@
+= Application Composer Maven Plugin
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+This plugin has two goal:
+
+- `applicationcomposer:run`: to start the application from mvn command line
+- `applicationcomposer:zip`: to package a zip with dependencies and start scripts
+
+IMPORTANT: the dependencies are retrieved with `MavenProject.getArtifacts()` which means you artifacts should be a `war`
+- maven doesn't populate it with a `jar` - and the compile phase - at least - should be passed to ensure it is populated.
+
+=== Run goal configuration
+
+[source]
+----
+mvn process-classes applicationcomposer:run -DskipTests
+----
+
+[.table.table-bordered,options="header"]
+|===
+| Name | Default | Description
+| args | - | a list of application arguments
+|application|-|application qualified name
+|binaries|${project.build.outputDirectory}|where is your module code (target/classes)
+|mavenLog|true|force to use maven logging in openejb
+|===
+
+=== Zip goal configuration
+
+[source]
+----
+mvn process-classes applicationcomposer:zip -DskipTests
+----
+
+[.table.table-bordered,options="header"]
+|===
+| Name | Default | Description
+|workDir|${project.build.directory}/${project.build.finalName}-applicationcomposer| where the container can "work" and create temp files
+|zip|${project.build.directory}/${project.build.finalName}-applicationcomposer.zip| where to create the zip
+|attach|true|attach the created artifact
+|classifier|-|artifact classifier if needed
+|application|-|application qualified name
+|binaries|${project.build.outputDirectory}|where is your module code (target/classes)
+|===

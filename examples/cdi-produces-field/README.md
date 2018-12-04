@@ -1,10 +1,25 @@
-Title: CDI field producer
+index-group=Unrevised
+type=page
+status=published
+title=CDI field producer
+~~~~~~
 
 This example shows the usage of the @Produces annotation. @Produces is a CDI mechanism which allows defining a source
  for injection. This example shows one of two ways of declaring a producer. Instead of a producer method (see CDI-produces-disposes example)
 a producer field can be used. A producer field can be used instead of a simple getter method. It could be used to
 inject resources, such as persistence contexts. One caveat to using producer fields over producer
  methods is that a @Disposes method cannot be used in conjunction with @Produces field.
+ 
+For the purposes of this example, the type is hard-coded to a specific value.
+A Logger implementation shall contain a list of LogHandlers. We shall have three implementations of the LogHandler interface.
+
+  * A DatabaseHandler
+  * A FileHandler
+  * A ConsoleHandler
+
+The DatabaseHandler would seemingly write the logs to a database. The FileHandler would write the same logs to a file.
+The ConsoleHandler would just print the logs to a console (Standard out). This example is just an illustration of how
+the concepts within CDI work and is not intended to provide a logging framework design/implementation.
 
 ## ConsoleHandler
 

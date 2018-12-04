@@ -38,7 +38,7 @@ public class PropertiesBuilder {
     }
 
     public Map<String, String> asMap() {
-        final Map<String, String> map = new HashMap<String, String>();
+        final Map<String, String> map = new HashMap<>();
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             map.put(String.class.cast(entry.getKey()), String.class.cast(entry.getValue()));
         }

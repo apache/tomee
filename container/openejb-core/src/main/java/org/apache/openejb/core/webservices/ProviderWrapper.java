@@ -488,7 +488,7 @@ public class ProviderWrapper extends Provider {
         public Enumeration<URL> getResources(final String name) throws IOException {
             Enumeration<URL> resources = super.getResources(name);
             if (PROVIDER_RESOURCE.equals(name)) {
-                final ArrayList<URL> list = new ArrayList<URL>();
+                final ArrayList<URL> list = new ArrayList<>();
                 list.add(PROVIDER_URL);
                 list.addAll(Collections.list(resources));
                 resources = Collections.enumeration(list);

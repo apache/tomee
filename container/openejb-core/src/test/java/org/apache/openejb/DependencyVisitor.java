@@ -65,9 +65,9 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class DependencyVisitor extends EmptyVisitor {
-    Set<String> packages = new HashSet<String>();
+    Set<String> packages = new HashSet<>();
 
-    Map<String, Map<String, Integer>> groups = new HashMap<String, Map<String, Integer>>();
+    Map<String, Map<String, Integer>> groups = new HashMap<>();
 
     Map<String, Integer> current;
 
@@ -90,12 +90,12 @@ public class DependencyVisitor extends EmptyVisitor {
         final String[] interfaces) {
 
         if (name.startsWith("org/apache/openejb/OpenEjbContainer")) {
-            current = new HashMap<String, Integer>();
+            current = new HashMap<>();
         } else {
             final String p = getGroupKey(name);
             current = groups.get(p);
             if (current == null) {
-                current = new HashMap<String, Integer>();
+                current = new HashMap<>();
                 groups.put(p, current);
             }
 

@@ -35,7 +35,7 @@ public class PortInfo extends InfoObject {
     public String wsdlFile;
 
     public String serviceLink;
-    public final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
+    public final List<HandlerChainInfo> handlerChains = new ArrayList<>();
     public boolean mtomEnabled;
     public String binding;
 

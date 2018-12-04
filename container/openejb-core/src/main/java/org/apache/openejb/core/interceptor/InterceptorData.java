@@ -53,21 +53,21 @@ public class InterceptorData {
     private final Class clazz;
     private final CdiInterceptorBean cdiInterceptorBean;
 
-    private final Set<Method> aroundInvoke = new LinkedHashSet<Method>();
+    private final Set<Method> aroundInvoke = new LinkedHashSet<>();
 
-    private final Set<Method> postConstruct = new LinkedHashSet<Method>();
-    private final Set<Method> preDestroy = new LinkedHashSet<Method>();
+    private final Set<Method> postConstruct = new LinkedHashSet<>();
+    private final Set<Method> preDestroy = new LinkedHashSet<>();
 
-    private final Set<Method> postActivate = new LinkedHashSet<Method>();
-    private final Set<Method> prePassivate = new LinkedHashSet<Method>();
+    private final Set<Method> postActivate = new LinkedHashSet<>();
+    private final Set<Method> prePassivate = new LinkedHashSet<>();
 
-    private final Set<Method> afterBegin = new LinkedHashSet<Method>();
-    private final Set<Method> beforeCompletion = new LinkedHashSet<Method>();
-    private final Set<Method> afterCompletion = new LinkedHashSet<Method>();
+    private final Set<Method> afterBegin = new LinkedHashSet<>();
+    private final Set<Method> beforeCompletion = new LinkedHashSet<>();
+    private final Set<Method> afterCompletion = new LinkedHashSet<>();
 
-    private final Set<Method> aroundTimeout = new LinkedHashSet<Method>();
+    private final Set<Method> aroundTimeout = new LinkedHashSet<>();
 
-    private final Map<Class<?>, Object> data = new HashMap<Class<?>, Object>();
+    private final Map<Class<?>, Object> data = new HashMap<>();
 
     public InterceptorData(final Class clazz) {
         this.clazz = clazz;

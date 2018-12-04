@@ -34,7 +34,7 @@ public class Filters {
     };
 
     public static Filter packages(final String... packages) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : packages) {
             filters.add(new PackageFilter(s));
         }
@@ -43,7 +43,7 @@ public class Filters {
     }
 
     public static Filter classes(final String... classes) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : classes) {
             filters.add(new ClassFilter(s));
         }
@@ -52,7 +52,7 @@ public class Filters {
     }
 
     public static Filter prefixes(final String... prefixes) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : prefixes) {
             filters.add(new PrefixFilter(s));
         }
@@ -61,7 +61,7 @@ public class Filters {
     }
 
     public static Filter tokens(final String... tokens) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : tokens) {
             filters.add(new ContainsFilter(s));
         }
@@ -70,7 +70,7 @@ public class Filters {
     }
 
     public static Filter suffixes(final String... suffixes) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : suffixes) {
             filters.add(new SuffixFilter(s));
         }
@@ -79,7 +79,7 @@ public class Filters {
     }
 
     public static Filter patterns(final String... patterns) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String s : patterns) {
             filters.add(new PatternFilter(s));
         }
@@ -93,7 +93,7 @@ public class Filters {
     }
 
     public static Filter optimize(final List<Filter>... filterss) {
-        final Set<Filter> unwrapped = new LinkedHashSet<Filter>();
+        final Set<Filter> unwrapped = new LinkedHashSet<>();
 
         for (final List<Filter> filters : filterss) {
             unwrap(filters, unwrapped);
@@ -109,7 +109,7 @@ public class Filters {
             }
         }
 
-        if (unwrapped.size() == 0) {
+        if (unwrapped.isEmpty()) {
             return NONE;
         }
         if (unwrapped.size() == 1) {

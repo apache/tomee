@@ -160,7 +160,7 @@ public class InvokeMethod extends Statement {
     private Map<Integer, List<String>> validateKeys() throws Exception {
         final Keys annotation = testMethod.getAnnotation(Keys.class);
         final Key[] keys = annotation.value();
-        final ArrayList<String> wrongKeys = new ArrayList<String>();
+        final ArrayList<String> wrongKeys = new ArrayList<>();
         for (final Key key : keys) {
             if (allKeys.contains("1." + key.value())) {
                 continue;
@@ -169,10 +169,10 @@ public class InvokeMethod extends Statement {
             }
         }
         if (wrongKeys.isEmpty()) {
-            final Map<Integer, List<String>> validKeys = new HashMap<Integer, List<String>>();
-            final ArrayList<String> failureKeys = new ArrayList<String>();
-            final ArrayList<String> warningKeys = new ArrayList<String>();
-            final ArrayList<String> errorKeys = new ArrayList<String>();
+            final Map<Integer, List<String>> validKeys = new HashMap<>();
+            final ArrayList<String> failureKeys = new ArrayList<>();
+            final ArrayList<String> warningKeys = new ArrayList<>();
+            final ArrayList<String> errorKeys = new ArrayList<>();
             for (final Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
                     switch (key.type()) {

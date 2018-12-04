@@ -1,0 +1,50 @@
+= TomEE Gradle Plugin
+:jbake-date: 2016-05-31
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+TomEE provides a gradle plugin for tomee-embedded "à la Jetty".
+
+[source,java]
+----
+buildscript {
+   repositories {
+       mavenCentral()
+   }
+
+   dependencies {
+       classpath 'org.apache.tomee.gradle:tomee-embedded:7.0.0'
+   }
+}
+
+apply plugin: 'org.apache.tomee.tomee-embedded'
+
+// ...
+----
+
+Then just start tomee with:
+
+[source]
+----
+gradle tomee-embedded -i
+----
+
+== Configuration
+
+All the configuration is optional.
+
+[source,java]
+----
+// plugin setup
+def tomeeEmbedded = extensions.getByName('tomee-embedded')
+tomeeEmbedded.tomeeVersion = 'other version'
+tomeeEmbedded.skipDefaultRepository  = true // don't use central to retrieve tomee
+
+// container dependencies
+def tomeeEmbeddedDeps = configurations.getByName('tomee-embedded')
+// add dependencies you need to this configuration
+----
+
+tomee-embedded task has several more advanced configuration like tomee properties, modules to deploy etc...
+Its configuration is pretty close to link:maven/embedded.html[Embedded Maven Plugin].

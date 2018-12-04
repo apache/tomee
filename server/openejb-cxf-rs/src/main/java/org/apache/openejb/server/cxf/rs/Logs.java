@@ -119,6 +119,9 @@ public class Logs {
         if (!address.endsWith("/") && !value.startsWith("/")) {
             return address + '/' + value;
         }
+        if (value.equals("/")) {
+            return address;
+        }
         return address + value;
     }
 

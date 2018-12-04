@@ -19,6 +19,7 @@ package org.apache.tomee.loader;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
@@ -81,7 +82,7 @@ public class TomEEListener implements LifecycleListener {
         try {
             delegateMethod.invoke(delegate, lifecycleEvent);
         } catch (final Exception e) {
-            LOGGER.severe("error invoking " + delegateMethod.getName() + " for " + lifecycleEvent);
+            LOGGER.log(Level.SEVERE, "error invoking {0} for {1}", new Object[]{delegateMethod.getName(), lifecycleEvent});
         }
     }
 }

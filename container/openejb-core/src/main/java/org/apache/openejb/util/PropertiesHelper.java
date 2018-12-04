@@ -42,7 +42,7 @@ public final class PropertiesHelper {
     }
 
     public static Map<String, Object> map(final Properties props) {
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         for (final Map.Entry<Object, Object> entry : props.entrySet()) {
             map.put((String) entry.getKey(), entry.getValue());
         }

@@ -1,4 +1,8 @@
-Title: Arquillian Persistence Extension
+index-group=Unrevised
+type=page
+status=published
+title=Arquillian Persistence Extension
+~~~~~~
 
 A sample showing how to use TomEE, Arquillian and its Persistence Extension.
 
@@ -164,5 +168,3 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     Results :
     
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-

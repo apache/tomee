@@ -38,7 +38,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     /**
      * Logger instance for tomcat
      */
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB.createChild("tomcat"), "org.apache.openejb.util.resources");
 
     /**
      * OpenEJB context name
@@ -65,13 +65,14 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             threadNameBindingsField.setAccessible(true);
             threadNameBindings = (Hashtable<Thread, Object>) threadNameBindingsField.get(null);
         } catch (final Exception e) {
-            logger.error("Expected ContextBinding to have the method getThreadName()");
+            LOGGER.error("Expected ContextBinding to have the method getThreadName()");
         }
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public void contextEntered(final ThreadContext oldContext, final ThreadContext newContext) {
         // save off the old context if possible
         try {
@@ -93,6 +94,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
         // unbind the new context
         ContextBindings.unbindThread(OPENEJB_CONTEXT, null);
@@ -103,7 +105,7 @@ public class TomcatThreadContextListener implements ThreadContextListener {
             try {
                 ContextBindings.bindThread(data.oldContextName, null);
             } catch (final NamingException e) {
-                logger.error("Exception in method contextExited", e);
+                LOGGER.error("Exception in method contextExited", e);
             }
         }
     }
@@ -131,11 +133,11 @@ public class TomcatThreadContextListener implements ThreadContextListener {
                 throw (NamingException) e.getCause();
             }
 
-            logger.error("Exception in method getThreadName", e);
+            LOGGER.error("Exception in method getThreadName", e);
             return null;
 
         } catch (final Exception e) {
-            logger.error("Exception in method getThreadName", e);
+            LOGGER.error("Exception in method getThreadName", e);
             return null;
         }
     }

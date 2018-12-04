@@ -79,7 +79,7 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
             return false;
         }
 
-        final Collection<String> strUrls = new ArrayList<String>();
+        final Collection<String> strUrls = new ArrayList<>();
         for (final URL url : urls) {
             strUrls.add(URLs.toFilePath(url));
         }

@@ -80,9 +80,9 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     }
 
     private final MBeanInfo info;
-    private final Map<String, Method> getters = new HashMap<String, Method>();
-    private final Map<String, Method> setters = new HashMap<String, Method>();
-    private final Map<String, Method> operations = new HashMap<String, Method>();
+    private final Map<String, Method> getters = new HashMap<>();
+    private final Map<String, Method> setters = new HashMap<>();
+    private final Map<String, Method> operations = new HashMap<>();
     private final Object instance;
     private final ClassLoader classloader;
 
@@ -106,9 +106,9 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
         final CacheInfo cache = CACHE.get(annotatedMBean);
         if (cache == null) {
             final String description;
-            final List<MBeanAttributeInfo> attributeInfos = new ArrayList<MBeanAttributeInfo>();
-            final List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
-            final List<MBeanNotificationInfo> notificationInfos = new ArrayList<MBeanNotificationInfo>();
+            final List<MBeanAttributeInfo> attributeInfos = new ArrayList<>();
+            final List<MBeanOperationInfo> operationInfos = new ArrayList<>();
+            final List<MBeanNotificationInfo> notificationInfos = new ArrayList<>();
 
             // class
             final Description classDescription = findAnnotation(annotatedMBean, Description.class);

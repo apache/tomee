@@ -116,7 +116,7 @@ public class IntrospectionSupport {
             throw new IllegalArgumentException("props was null.");
         }
 
-        final HashMap<String, Object> rc = new HashMap<String, Object>(props.size());
+        final HashMap<String, Object> rc = new HashMap<>(props.size());
 
         for (final Iterator iter = props.keySet().iterator(); iter.hasNext(); ) {
             String name = (String) iter.next();
@@ -235,7 +235,7 @@ public class IntrospectionSupport {
     }
 
     public static String toString(final Object target, final Class stopClass) {
-        final LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
+        final LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         addFields(target, target.getClass(), stopClass, map);
         final StringBuilder buffer = new StringBuilder(simpleName(target.getClass()));
         buffer.append(" {");

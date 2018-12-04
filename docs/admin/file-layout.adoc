@@ -1,0 +1,144 @@
+= Directory Structure
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+ifndef::backend-pdf[]
+
+[#filetree.col-md-4]
+[
+    {
+        label: 'apps',
+        description: 'A common but optional folder containing the applications (war, ear, jar). Note: this folder needs to be activated in tomee.xml for instance and is not there by default.',
+        children: [
+            {label:'module1.jar',description:'An ejbmodule'},
+            {label:'myapp',description:'An exploded war or ear'},
+            {label:'anotherapp.war',description:'A war'},
+            {label:'anotherapp',description:'By default TomEE will explode the war next to the .war file, this is customizable.'},
+            {label:'anotherapp2.ear',description:'An ear'},
+            {label:'anotherapp2',description:'By default TomEE will explode the ear next to the .ear file, this is customizable.'}
+        ]
+    },
+    {
+        label: 'bin',
+        description: 'The executable and boot related files',
+        children: [
+            {label:'bootstrap.jar',description:'The jar allowing Tomcat to start'},
+            {label:'catalina.bat',description:'The windows main Tomcat script'},
+            {label:'catalina.bat.original',description:'The original catalina.bat from Tomcat. TomEE customizes it.'},
+            {label:'catalina.sh',description:'The UNIx main Tomcat script'},
+            {label:'catalina.sh.original',description:'The original catalina.sh from Tomcat. TomEE customizes it.'},
+            {label:'catalina-tasks.xml',description:'Some Ant tasks Tomcat provides to work with JMX'},
+            {label:'commons-daemon.jar',description:'When setting up TomEE as a service you need this jar.'},
+            {label:'commons-daemon-native.tar.gz',description:'The native needed by commons-daemon'},
+            {label:'configtest.bat',description:'A windows script to validate the server.xml'},
+            {label:'configtest.sh',description:'A UNIx script to validate the server.xml'},
+            {label:'daemon.sh',description:'A script which can be used as init.d script'},
+            {label:'digest.bat',description:'A windows script to compute a digest'},
+            {label:'digest.sh',description:'A UNIx script to compute a digest'},
+            {label:'service.bat',description:'The windows service script'},
+            {label:'service.install.as.admin.bat',description:'Install TomEE as a service on windows'},
+            {label:'service.readme.txt',description:'The explanations on how to setup TomEE as a windows service'},
+            {label:'service.remove.as.admin.bat',description:'Uninstall TomEE service on windows'},
+            {label:'setclasspath.bat',description:'The script called by catalina.bat to initialize Tomcat classpath'},
+            {label:'setclasspath.sh',description:'The script called by catalina.bat to initialize TomEE classpath'},
+            {label:'setenv.sh',description:'A UNIx user script (optional) where you can specify some JVM options like CATALINA_OPTS environment variable'},
+            {label:'setenv.bat',description:'A windows user script (optional) where you can specify some JVM options like CATALINA_OPTS environment variable'},
+            {label:'shutdown.bat',description:'Stop the server on windows, it is commonly used with -force and a timeout as options'},
+            {label:'shutdown.sh',description:'Stop the server on UNIx, it is commonly used with -force and a timeout as options'},
+            {label:'startup.bat',description:'Start (and forget) TomEE on windows'},
+            {label:'startup.sh',description:'Start (and forget) TomEE on UNIx'},
+            {label:'tomcat-juli.jar',description:'The Tomcat Java Util Logging extensions which allow for instance to configure the logging per application'},
+            {label:'tomcat-native.tar.gz',description:'The Tomcat native used by some connectors'},
+            {label:'TomEE....exe',description:'TomEE windows executables when setup as a service for amd64 architectures'},
+            {label:'tomee.bat',description:'TomEE utility script for windows, allows to compute ciphers for instance'},
+            {label:'tomee.sh',description:'TomEE utility script for UNIx, allows to compute ciphers for instance'},
+            {label:'tool-wrapper.bat',description:'Windows script calling Tomcat Tool utility. It executes a command line with Tomcat classloader.'},
+            {label:'tool-wrapper.sh',description:'UNIx script calling Tomcat Tool utility. It executes a command line with Tomcat classloader.'},
+            {label:'version.bat',description:'Print Tomcat version (for windows)'},
+            {label:'version.sh',description:'Print Tomcat version (for UNIx)'}
+        ]
+    },
+    {
+        label: 'conf',
+        description: 'Folder containing the configuration of TomEE',
+        children: [
+            {label:'Catalina',description:'A folder where Tomcat can copy web application configuration (typically context.xml can be overriden from there)'},
+            {label:'catalina.policy',description:'The server security policy rules'},
+            {label:'catalina.properties',description:'The server boot configuration (classloader etc...)'},
+            {label:'conf.d',description:'A TomEE folder where services can pick configuration'},
+            {label:'context.xml',description:'The default context.xml configuration'},
+            {label:'logging.properties',description:'The logging configuration for the server and applications (overridable)'},
+            {label:'server.xml',description:'The server configuration (Host, Context, Valves, ...)'},
+            {label:'server.xml.original',description:'The original server.xml, TomEE updates it to add its lifecycle manager.'},
+            {label:'system.properties',description:'TomEE global configuration'},
+            {label:'tomcat-users.xml',description:'The default location where tomcat stores users.'},
+            {label:'tomcat-users.xml.original',description:'The Tomcat tomcat-users.xml (TomEE add comments)'},
+            {label:'tomcat-users.xsd',description:'The XSD for tomcat-users.xml'},
+            {label:'tomee.xml',description:'The TomEE configuration file, syntax is hybrid between XML and Properties and it is fully replaceable with system.properties but users generally prefer this file.'},
+            {label:'web.xml',description:'The default web.xml'}
+        ]
+    },
+    {
+        label: 'lib',
+        description: 'Folder containing TomEE binaries',
+        children: [
+            {label:'*.jar',description:'Tomcat + TomEE libraries'}
+        ]
+    },
+    {
+        label: 'logs',
+        description: 'Default location of log files',
+        children: [
+            {label:'catalina.$day.log',description:'By default container logs go there'},
+            {label:'xxx.2016-03-16.log',description:'By default application xxx logs go there (when using servlet API)'},
+            {label:'localhost.$day.log',description:'By default host related logs go there'},
+            {label:'localhost_access_log.$day.txt',description:'By default access logs (request the container processed) go there'}
+        ]
+    },
+    {
+        label: 'temp',
+        description: 'Java temporary directory is redirected by default to this folder',
+        children: [
+            {label:'OpenEJB-dejlzdbhjzbfrzeofrh',description:'A temporary file TomEE can create (suffix depends the startup) to check the instance'}
+        ]
+    },
+    {
+        label: 'webapps',
+        description: 'Folder containing the web applications',
+        children: [
+            {label:'myapp',description:'An exploded war'},
+            {label:'anotherapp.war',description:'A war'},
+            {label:'anotherapp',description:'By default TomEE will explode the war next to the .war file, this is customizable.'}
+        ]
+    },
+    {
+        label: 'work',
+        description: 'Folder where Tomcat and TomEE can work',
+        children: [
+            {
+                label:'Catalina',description:'By default Tomcat Engine is called Catalina. This folder matches engine name.',
+                children: [
+                    {
+                        label:'localhost',description:'A folder by host by engine to seggregate data of each ones',
+                        children: [
+                            {
+                                label:'myapp',description:'An application deployed on the previous level host',
+                                children: [
+                                    { label:'org.apache.jsp.index_jsp.java',description:'The generated JSP source (index.jsp there)' },
+                                    { label:'org.apache.jsp.index_jsp.class',description:'The compiled JSP binary' }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+[#filetreedetail.col-md-8.bs-callout.bs-callout-primary]
+Click on a tree node or open a folder to see the detail there.
+
+endif::[]

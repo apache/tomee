@@ -1,4 +1,8 @@
-Title: DataSourceRealm and TomEE DataSource
+index-group=Unrevised
+type=page
+status=published
+title=DataSourceRealm and TomEE DataSource
+~~~~~~
 
 ## Quick start
 
@@ -23,9 +27,9 @@ Then this datasource is referenced in server.xml:
         userRoleTable="user_roles"
         roleNameCol="role_name"/>
 
-To initialize the datasource (for the test) we used the TomEE hook which consists in providing
-a file import-<datasource name>.sql. It should be in the classpath of the datasource so here it is
-the TomEE classpath so we added it to lib (by default in the classloader). It simply contains the
+To initialize the datasource (for the test) we used the TomEE hook which provides 
+a file import-<datasource name>.sql. The file should be in the classpath of the datasource 
+so we added it to lib (by default in the classloader). It simply contains the
 table creations and the insertion of the "admin" "tomee" with the password "tomee".
 
 ## Test it

@@ -293,7 +293,7 @@ public final class ValidatorBuilder {
         it.inject(instance, context);
         it.postConstruct(instance);
 
-        config.releasables.add(new Releasable<T>(context, it, instance));
+        config.releasables.add(new Releasable<>(context, it, instance));
 
         return instance;
     }

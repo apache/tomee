@@ -50,7 +50,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     protected final TransactionManager transactionManager;
     private final TransactionSynchronizationRegistry synchronizationRegistry;
     private Map<Object, Object> resources;
-    private final List<TransactionSynchronization> synchronizations = new LinkedList<TransactionSynchronization>();
+    private final List<TransactionSynchronization> synchronizations = new LinkedList<>();
     private boolean rollbackOnly;
 
     public JtaTransactionPolicy(final TransactionType transactionType, final TransactionManager transactionManager) {
@@ -124,7 +124,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
         }
 
         if (resources == null) {
-            resources = new LinkedHashMap<Object, Object>();
+            resources = new LinkedHashMap<>();
         }
         resources.put(key, value);
     }
@@ -168,7 +168,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
     }
 
     protected void fireNonTransactionalCompletion() {
-        for (final TransactionSynchronization synchronization : new ArrayList<TransactionSynchronization>(synchronizations)) {
+        for (final TransactionSynchronization synchronization : new ArrayList<>(synchronizations)) {
             try {
                 synchronization.beforeCompletion();
             } catch (final Throwable e) {
@@ -176,7 +176,7 @@ public abstract class JtaTransactionPolicy implements TransactionPolicy {
             }
         }
         final TransactionSynchronization.Status status = isRollbackOnly() ? TransactionSynchronization.Status.ROLLEDBACK : TransactionSynchronization.Status.COMMITTED;
-        for (final TransactionSynchronization synchronization : new ArrayList<TransactionSynchronization>(synchronizations)) {
+        for (final TransactionSynchronization synchronization : new ArrayList<>(synchronizations)) {
             try {
                 synchronization.afterCompletion(status);
             } catch (final Exception e) {
