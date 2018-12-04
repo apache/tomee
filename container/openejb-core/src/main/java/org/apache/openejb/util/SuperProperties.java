@@ -72,17 +72,17 @@ public class SuperProperties extends Properties {
     /**
      * Actual property values.
      */
-    protected LinkedHashMap<Object, Object> properties = new LinkedHashMap<Object, Object>();
+    protected LinkedHashMap<Object, Object> properties = new LinkedHashMap<>();
 
     /**
      * Comments for individual the properties.
      */
-    protected LinkedHashMap<String, String> comments = new LinkedHashMap<String, String>();
+    protected LinkedHashMap<String, String> comments = new LinkedHashMap<>();
 
     /**
      * Attributes for the properties.
      */
-    protected LinkedHashMap<String, LinkedHashMap<String, String>> attributes = new LinkedHashMap<String, LinkedHashMap<String, String>>();
+    protected LinkedHashMap<String, LinkedHashMap<String, String>> attributes = new LinkedHashMap<>();
 
     /**
      * The default property values.
@@ -432,7 +432,7 @@ public class SuperProperties extends Properties {
         // never null, contains the comment for the property or nothing if no comment
         StringBuilder comment = new StringBuilder();
         // never null, contains attributes for a property
-        LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
+        LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
 
         int indent = 0;
         boolean globalIndentSet = false;
@@ -491,7 +491,7 @@ public class SuperProperties extends Properties {
                         }
                         // add attributes
                         this.attributes.put(normalize(key.toString()), attributes);
-                        attributes = new LinkedHashMap<String, String>();
+                        attributes = new LinkedHashMap<>();
                         // set line indent
                         if (!globalIndentSet) {
                             setIndent(indent);
@@ -781,7 +781,7 @@ public class SuperProperties extends Properties {
             return keys();
         }
 
-        final Hashtable<Object, Object> set = new Hashtable<Object, Object>(defaults.size() + size());
+        final Hashtable<Object, Object> set = new Hashtable<>(defaults.size() + size());
         Enumeration<?> keys = defaults.propertyNames();
         while (keys.hasMoreElements()) {
             set.put(keys.nextElement(), set);
@@ -969,7 +969,7 @@ public class SuperProperties extends Properties {
 
                         // read comment line by line
                         final StringBuilder comment = new StringBuilder();
-                        final LinkedHashMap<String, String> attributes = new LinkedHashMap<String, String>();
+                        final LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
 
                         int nextByte;
                         char nextChar;
@@ -1199,7 +1199,7 @@ public class SuperProperties extends Properties {
         if (key instanceof String) {
             final String name = (String) key;
             if (!attributes.containsKey(name)) {
-                attributes.put(name, new LinkedHashMap<String, String>());
+                attributes.put(name, new LinkedHashMap<>());
             }
         }
         return properties.put(key, value);

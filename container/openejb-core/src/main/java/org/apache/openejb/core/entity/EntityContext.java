@@ -51,7 +51,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a local interface");
         }
 
-        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<Class>(), di.getLocalInterface());
+        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di, threadContext.getPrimaryKey(), InterfaceType.EJB_LOCAL, new ArrayList<>(), di.getLocalInterface());
 
         try {
             final Class[] interfaces = new Class[]{di.getLocalInterface(), IntraVmProxy.class};
@@ -71,7 +71,7 @@ public class EntityContext extends BaseContext implements javax.ejb.EntityContex
             throw new IllegalStateException("EJB " + di.getDeploymentID() + " does not have a remote interface");
         }
 
-        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di.getContainer().getBeanContext(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<Class>(), di.getRemoteInterface());
+        final EjbObjectProxyHandler handler = new EntityEjbObjectHandler(di.getContainer().getBeanContext(di.getDeploymentID()), threadContext.getPrimaryKey(), InterfaceType.EJB_OBJECT, new ArrayList<>(), di.getRemoteInterface());
         try {
             final Class[] interfaces = new Class[]{di.getRemoteInterface(), IntraVmProxy.class};
             return (EJBObject) ProxyManager.newProxyInstance(interfaces, handler);

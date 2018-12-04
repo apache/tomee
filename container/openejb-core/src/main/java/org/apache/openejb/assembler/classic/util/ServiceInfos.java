@@ -86,7 +86,7 @@ public final class ServiceInfos {
             return null;
         }
 
-        final List<Object> instances = new ArrayList<Object>();
+        final List<Object> instances = new ArrayList<>();
         for (final String id : ids) {
             Object instance = resolve(serviceInfos, id);
             if (instance == null) {  // maybe id == classname

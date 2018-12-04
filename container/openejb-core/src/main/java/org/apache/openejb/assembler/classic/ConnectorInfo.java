@@ -30,12 +30,12 @@ public class ConnectorInfo extends CommonInfoObject {
     public String smallIcon;
     public String largeIcon;
     public String moduleId;
-    public final List<String> libs = new ArrayList<String>();
-    public final Set<String> watchedResources = new TreeSet<String>();
+    public final List<String> libs = new ArrayList<>();
+    public final Set<String> watchedResources = new TreeSet<>();
 
     public ResourceInfo resourceAdapter;
-    public List<ResourceInfo> outbound = new ArrayList<ResourceInfo>();
-    public List<MdbContainerInfo> inbound = new ArrayList<MdbContainerInfo>();
-    public List<ResourceInfo> adminObject = new ArrayList<ResourceInfo>();
-    public Set<String> mbeans = new TreeSet<String>();
+    public List<ResourceInfo> outbound = new ArrayList<>();
+    public List<MdbContainerInfo> inbound = new ArrayList<>();
+    public List<ResourceInfo> adminObject = new ArrayList<>();
+    public Set<String> mbeans = new TreeSet<>();
 }

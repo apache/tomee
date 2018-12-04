@@ -64,7 +64,7 @@ public class PersistenceContextAnnFactoryTest extends TestCase {
         assertEquals(annotation.unitName(), wrapper.unitName());
         assertEquals(annotation.type().toString(), wrapper.type());
 
-        final Map<String, String> properties = new HashMap<String, String>();
+        final Map<String, String> properties = new HashMap<>();
         for (final PersistenceProperty property : annotation.properties()) {
             properties.put(property.name(), property.value());
         }

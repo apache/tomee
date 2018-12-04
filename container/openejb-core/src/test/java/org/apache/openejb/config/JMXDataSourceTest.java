@@ -106,7 +106,7 @@ public class JMXDataSourceTest {
         final ObjectName on = new ObjectName("openejb.management:ObjectType=datasources,DataSource=JMXDataSourceTest");
         final MBeanInfo mBeanInfo = ManagementFactory.getPlatformMBeanServer().getMBeanInfo(on);
         assertNotNull(mBeanInfo);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         for (final MBeanAttributeInfo mBeanAttributeInfo : mBeanInfo.getAttributes()) {
             final String name = mBeanAttributeInfo.getName();
             final Object value = ManagementFactory.getPlatformMBeanServer().getAttribute(on, name);

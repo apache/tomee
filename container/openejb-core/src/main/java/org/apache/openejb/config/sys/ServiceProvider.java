@@ -265,7 +265,7 @@ public class ServiceProvider {
     @SuppressWarnings({"unchecked"})
     public List<String> getTypes() {
         if (types == null) {
-            types = new ArrayList<String>();
+            types = new ArrayList<>();
         }
         return (List<String>) types;
     }

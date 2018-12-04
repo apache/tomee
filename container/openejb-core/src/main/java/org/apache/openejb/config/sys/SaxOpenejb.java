@@ -170,7 +170,7 @@ class SaxOpenejb extends StackHandler {
 
         @Override
         protected List<String> getAttributes() {
-            final List<String> attributes = new ArrayList<String>(super.getAttributes());
+            final List<String> attributes = new ArrayList<>(super.getAttributes());
             attributes.add("ctype");
             return attributes;
         }

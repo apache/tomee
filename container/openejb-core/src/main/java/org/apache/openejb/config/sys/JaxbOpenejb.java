@@ -141,7 +141,7 @@ public abstract class JaxbOpenejb {
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-        final List<URL> sources = new ArrayList<URL>();
+        final List<URL> sources = new ArrayList<>();
 
         { // Find URLs in the classpath
             final String path1 = "META-INF/" + providerPath + "/service-jar.xml";

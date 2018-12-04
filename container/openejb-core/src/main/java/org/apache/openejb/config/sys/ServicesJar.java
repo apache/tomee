@@ -73,7 +73,7 @@ public class ServicesJar {
      */
     public List<ServiceProvider> getServiceProvider() {
         if (serviceProvider == null) {
-            serviceProvider = new ArrayList<ServiceProvider>();
+            serviceProvider = new ArrayList<>();
         }
         return this.serviceProvider;
     }

@@ -24,8 +24,8 @@ import java.util.List;
 public class HandlerChainData {
     private final QName serviceNamePattern;
     private final QName portNamePattern;
-    private final List<String> protocolBindings = new ArrayList<String>();
-    private final List<HandlerData> handlers = new ArrayList<HandlerData>();
+    private final List<String> protocolBindings = new ArrayList<>();
+    private final List<HandlerData> handlers = new ArrayList<>();
 
     public HandlerChainData(final QName serviceNamePattern, final QName portNamePattern, final List<String> protocolBindings, final List<HandlerData> handlers) {
         this.serviceNamePattern = serviceNamePattern;

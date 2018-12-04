@@ -40,7 +40,7 @@ import java.util.concurrent.Future;
 public class CheckAsynchronous extends ValidationBase {
 
     public void validate(final EjbModule module) {
-        final Set<String> applicationExceptions = new HashSet<String>();
+        final Set<String> applicationExceptions = new HashSet<>();
         for (final ApplicationException applicationException : module.getEjbJar().getAssemblyDescriptor().getApplicationException()) {
             applicationExceptions.add(applicationException.getExceptionClass());
         }

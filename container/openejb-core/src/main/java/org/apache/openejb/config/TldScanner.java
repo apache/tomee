@@ -101,7 +101,7 @@ public class TldScanner {
             return Collections.emptySet();
         }
 
-        final Set<URL> tldUrls = new HashSet<URL>();
+        final Set<URL> tldUrls = new HashSet<>();
 
         if (classLoader == null) {
             return tldUrls;
@@ -125,7 +125,7 @@ public class TldScanner {
                     Math.min(urls.size(), 2 * Runtime.getRuntime().availableProcessors() + 1),
                     new DaemonThreadFactory("OpenEJB-tld-server-scanning"));
 
-            final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
+            final Collection<Future<Set<URL>>> futures = new ArrayList<>(urls.size());
             for (URL url : urls) {
                 if (url.getProtocol().equals("jar")) {
                     try {
@@ -177,7 +177,7 @@ public class TldScanner {
     }
 
     static Set<URL> scanWarForTagLibs(final File war) {
-        final Set<URL> urls = new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
 
         final File webInfDir = new File(war, "WEB-INF");
         if (!webInfDir.isDirectory()) {
@@ -186,7 +186,7 @@ public class TldScanner {
 
 
         // skip the lib and classes dir in WEB-INF
-        final LinkedList<File> files = new LinkedList<File>();
+        final LinkedList<File> files = new LinkedList<>();
         final File[] list = webInfDir.listFiles();
         if (list != null) {
             for (final File file : list) {
@@ -233,7 +233,7 @@ public class TldScanner {
     }
 
     static Set<URL> scanForTagLibs(final File file) {
-        final Set<URL> tldLocations = new HashSet<URL>();
+        final Set<URL> tldLocations = new HashSet<>();
         try {
             final String location = file.toURI().toURL().toExternalForm();
 
@@ -252,7 +252,7 @@ public class TldScanner {
     }
 
     static Set<URL> scanJarForTagLibs(final File file) {
-        final Set<URL> urls = new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
 
         if (!file.isFile()) {
             return urls;
