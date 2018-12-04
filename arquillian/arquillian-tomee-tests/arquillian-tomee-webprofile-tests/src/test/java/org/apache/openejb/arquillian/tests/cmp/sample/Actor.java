@@ -25,11 +25,11 @@ public interface Actor extends javax.ejb.EJBLocalObject {
 
     void setId(Integer id);
 
-    String getFirstName();
+    String getFirstname();
 
-    void setFirstName(String director);
+    void setFirstname(String firstname);
 
-    String getLastName();
+    String getLastname();
 
-    void setLastName(String title);
+    void setLastname(String lastname);
 }

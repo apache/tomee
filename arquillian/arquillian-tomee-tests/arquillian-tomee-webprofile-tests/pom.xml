@@ -52,6 +52,54 @@
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.21.0</version>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>true</skip>
+              <parallel>none</parallel>
+              <threadCount>1</threadCount>
+              <reuseForks>true</reuseForks>
+              <trimStackTrace>false</trimStackTrace>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-tomee-embedded</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <skip>${maven.test.skip}</skip>
+              <!--<argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/8.0.0-SNAPSHOT/openejb-javaagent-8.0.0-SNAPSHOT.jar -agentpath:/Users/jgallimore/tmp/libtracknpe.so</argLine>-->
+              <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/8.0.0-SNAPSHOT/openejb-javaagent-8.0.0-SNAPSHOT.jar</argLine>
+              <systemPropertyVariables>
+                <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+                <arquillian.launch>tomee-embedded</arquillian.launch>
+                <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
+              </systemPropertyVariables>
+              <parallel>none</parallel>
+              <threadCount>1</threadCount>
+              <reuseForks>true</reuseForks>
+              <trimStackTrace>false</trimStackTrace>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <skip>true</skip>
+          <parallel>none</parallel>
+          <threadCount>1</threadCount>
+          <reuseForks>true</reuseForks>
+          <trimStackTrace>false</trimStackTrace>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-maven-plugin</artifactId>
         <version>${openjpa.version}</version>
