@@ -71,15 +71,14 @@ public class ConfigurableJWTAuthContextInfo {
     @Inject
     private Config config;
 
-    private Supplier<JWTAuthContextInfo> jwtAuthContextInfo;
+    private JWTAuthContextInfo jwtAuthContextInfo;
 
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
-        // load the key set once, lazily
-        this.jwtAuthContextInfo = new Lazy<>(() -> createJWTAuthContextInfo());
+        this.jwtAuthContextInfo = createJWTAuthContextInfo();
     }
 
     public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
-        return Optional.ofNullable(jwtAuthContextInfo.get());
+        return Optional.ofNullable(jwtAuthContextInfo);
     }
 
     private Optional<String> getVerifierPublicKey() {
