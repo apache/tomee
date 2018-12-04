@@ -83,7 +83,8 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 PublicKeyAsJWKSTest.class,
                 PublicKeyAsJWKSLocationTest.class,
                 IssValidationTest.class,
-                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class)
+                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class,
+                org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsJWKLocationURLTest.class)
               .filter(c -> c.equals(testClass.getJavaClass()))
               .findAny()
               .ifPresent(c -> war.deleteClass(JWTAuthContextInfoProvider.class));
@@ -106,7 +107,7 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 try {
                     final Properties properties = new Properties();
                     properties.load(node.getAsset().openStream());
-                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort + "/" + war.getName().replaceAll("\\.war", "")));
+                    properties.replaceAll((key, value) -> ((String) value).replaceAll("8080", httpPort + "/" + "KeyEndpoint.war".replaceAll("\\.war", "")));
                     final StringWriter stringWriter = new StringWriter();
                     properties.store(stringWriter, null);
                     war.delete(archivePath);
