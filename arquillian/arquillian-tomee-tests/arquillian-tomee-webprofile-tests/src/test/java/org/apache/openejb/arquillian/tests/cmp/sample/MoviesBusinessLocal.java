@@ -20,5 +20,5 @@ import java.rmi.RemoteException;
 
 public interface MoviesBusinessLocal extends javax.ejb.EJBLocalObject {
 
-    int addActor(final String firstName, final String lastName) throws RemoteException, MovieException;
+    int addActor(final String name) throws RemoteException, MovieException;
 }

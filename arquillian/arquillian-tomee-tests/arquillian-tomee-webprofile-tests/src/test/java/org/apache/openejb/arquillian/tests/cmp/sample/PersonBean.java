@@ -16,20 +16,49 @@
  */
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
-/**
- * @version $Revision$ $Date$
- */
-public interface Actor extends javax.ejb.EJBLocalObject {
+import javax.ejb.CreateException;
+import javax.ejb.EntityBean;
+import javax.ejb.EntityContext;
 
-    Integer getId();
+public abstract class PersonBean implements EntityBean {
 
-    void setId(Integer id);
+    public PersonBean() {
+    }
 
-    String getFirstname();
+    public Integer ejbCreate(final String name) {
+        this.setName(name);
+        return null;
+    }
 
-    void setFirstname(String firstname);
+    public abstract Integer getId();
 
-    String getLastname();
+    public abstract void setId(Integer id);
 
-    void setLastname(String lastname);
+    public abstract String getName();
+
+    public abstract void setName(String name);
+
+    public void ejbPostCreate(String name) throws CreateException {
+    }
+
+    public void setEntityContext(EntityContext ctx) {
+    }
+
+    public void unsetEntityContext() {
+    }
+
+    public void ejbRemove() {
+    }
+
+    public void ejbLoad() {
+    }
+
+    public void ejbStore() {
+    }
+
+    public void ejbPassivate() {
+    }
+
+    public void ejbActivate() {
+    }
 }

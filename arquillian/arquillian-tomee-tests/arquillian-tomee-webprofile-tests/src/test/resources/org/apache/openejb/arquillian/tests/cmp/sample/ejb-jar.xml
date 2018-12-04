@@ -33,31 +33,28 @@
       <session-type>Stateless</session-type>
       <transaction-type>Container</transaction-type>
       <ejb-local-ref>
-        <ejb-ref-name>ejb/ActorBean</ejb-ref-name>
+        <ejb-ref-name>ejb/PersonBean</ejb-ref-name>
         <ejb-ref-type>Entity</ejb-ref-type>
-        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.ActorLocalHome</local-home>
-        <local>org.apache.openejb.arquillian.tests.cmp.sample.Actor</local>
-        <ejb-link>ActorBean</ejb-link>
+        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.PersonLocalHome</local-home>
+        <local>org.apache.openejb.arquillian.tests.cmp.sample.Person</local>
+        <ejb-link>PersonBean</ejb-link>
       </ejb-local-ref>
     </session>
     <entity>
-      <ejb-name>ActorBean</ejb-name>
-      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.ActorLocalHome</local-home>
-      <local>org.apache.openejb.arquillian.tests.cmp.sample.Actor</local>
-      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.ActorBean</ejb-class>
+      <ejb-name>PersonBean</ejb-name>
+      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.PersonLocalHome</local-home>
+      <local>org.apache.openejb.arquillian.tests.cmp.sample.Person</local>
+      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.PersonBean</ejb-class>
       <persistence-type>Container</persistence-type>
       <prim-key-class>java.lang.Integer</prim-key-class>
       <reentrant>false</reentrant>
       <cmp-version>2.x</cmp-version>
-      <abstract-schema-name>ActorBean</abstract-schema-name>
+      <abstract-schema-name>PersonBean</abstract-schema-name>
       <cmp-field>
         <field-name>id</field-name>
       </cmp-field>
       <cmp-field>
-        <field-name>firstname</field-name>
-      </cmp-field>
-      <cmp-field>
-        <field-name>lastname</field-name>
+        <field-name>name</field-name>
       </cmp-field>
       <primkey-field>id</primkey-field>
       <query>
@@ -65,7 +62,7 @@
           <method-name>findAll</method-name>
           <method-params/>
         </query-method>
-        <ejb-ql>SELECT a FROM ActorBean as a</ejb-ql>
+        <ejb-ql>SELECT p FROM PersonBean as p</ejb-ql>
       </query>
     </entity>
   </enterprise-beans>
@@ -79,7 +76,7 @@
     </container-transaction>
     <container-transaction>
       <method>
-        <ejb-name>ActorBean</ejb-name>
+        <ejb-name>PersonBean</ejb-name>
         <method-name>*</method-name>
       </method>
       <trans-attribute>Supports</trans-attribute>

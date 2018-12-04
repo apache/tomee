@@ -45,16 +45,17 @@ public class MoviesBusinessBean implements SessionBean {
         this.ctx = ctx;
     }
 
-    public void addActor(final String firstName, final String lastName) throws MovieException {
+    public void addActor(final String name) throws MovieException {
         try {
             final InitialContext context = new InitialContext();
 
-            final ActorLocalHome actorLocalHome = (ActorLocalHome)
-                    PortableRemoteObject.narrow(context.lookup("java:comp/env/ejb/ActorBean"), ActorLocalHome.class);
+            final PersonLocalHome personLocalHome = (PersonLocalHome)
+                    PortableRemoteObject.narrow(context.lookup("java:comp/env/ejb/PersonBean"), PersonLocalHome.class);
 
-            final Actor actor = actorLocalHome.create(firstName, lastName);
+            final Person person = personLocalHome.create(name);
         } catch (NamingException | CreateException e) {
             throw new MovieException(e);
         }
     }
+
 }

@@ -23,11 +23,11 @@ import java.util.Collection;
 /**
  * @version $Revision$ $Date$
  */
-interface ActorLocalHome extends javax.ejb.EJBLocalHome {
+interface PersonLocalHome extends javax.ejb.EJBLocalHome {
 
-    Actor create(String firstName, String lastName) throws CreateException;
+    Person create(String name) throws CreateException;
 
-    Actor findByPrimaryKey(Integer primarykey) throws FinderException;
+    Person findByPrimaryKey(Integer primarykey) throws FinderException;
 
     Collection findAll() throws FinderException;
 
