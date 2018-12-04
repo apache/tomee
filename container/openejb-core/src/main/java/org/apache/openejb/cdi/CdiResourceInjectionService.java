@@ -48,7 +48,7 @@ public class CdiResourceInjectionService implements ResourceInjectionService {
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB.createChild("cdi"), CdiResourceInjectionService.class);
 
     private final CdiPlugin ejbPlugin;
-    private final List<BeanContext> compContexts = new ArrayList<BeanContext>();
+    private final List<BeanContext> compContexts = new ArrayList<>();
     private volatile AppContext appCtx;
     private volatile boolean ear;
 

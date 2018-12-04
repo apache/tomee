@@ -148,7 +148,7 @@ public class FailOverRouter extends AbstractRouter {
                 strategyRuntime = new Strategy() { // simply rotating the list each time
                     @Override
                     public Collection<DataSourceHolder> prepare(final Collection<DataSourceHolder> list) {
-                        final List<DataSourceHolder> ds = new ArrayList<DataSourceHolder>(list);
+                        final List<DataSourceHolder> ds = new ArrayList<>(list);
                         Collections.shuffle(ds);
                         return ds;
                     }

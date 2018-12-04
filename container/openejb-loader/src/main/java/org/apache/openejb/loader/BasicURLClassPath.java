@@ -142,12 +142,12 @@ public abstract class BasicURLClassPath implements ClassPath {
         return ucpField;
     }
 
-    protected static class CustomizableURLClassLoader extends URLClassLoader {
+    public static class CustomizableURLClassLoader extends URLClassLoader {
         static {
             ClassLoader.registerAsParallelCapable();
         }
 
-        protected CustomizableURLClassLoader(final ClassLoader parent) {
+        public CustomizableURLClassLoader(final ClassLoader parent) {
             super(new URL[0], parent);
         }
 

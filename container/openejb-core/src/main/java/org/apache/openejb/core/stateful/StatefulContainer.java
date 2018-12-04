@@ -105,11 +105,11 @@ public class StatefulContainer implements RpcContainer {
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
      */
-    protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
+    protected final Map<Object, BeanContext> deploymentsById = new HashMap<>();
 
     protected final Cache<Object, Instance> cache;
     protected final LockFactory lockFactory;
-    private final ConcurrentMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<Object, Instance>();
+    private final ConcurrentMap<Object, Instance> checkedOutInstances = new ConcurrentHashMap<>();
     private final SessionContext sessionContext;
     private final boolean preventExtendedEntityManagerSerialization;
 
@@ -132,7 +132,7 @@ public class StatefulContainer implements RpcContainer {
     }
 
     private Map<Method, MethodType> getLifecycleMethodsOfInterface(final BeanContext beanContext) {
-        final Map<Method, MethodType> methods = new HashMap<Method, MethodType>();
+        final Map<Method, MethodType> methods = new HashMap<>();
 
         try {
             methods.put(BeanContext.Removable.class.getDeclaredMethod("$$remove"), MethodType.REMOVE);
@@ -312,7 +312,7 @@ public class StatefulContainer implements RpcContainer {
 
         deploymentsById.put(beanContext.getDeploymentID(), beanContext);
         beanContext.setContainer(this);
-        final Data data = new Data(new Index<Method, MethodType>(methods));
+        final Data data = new Data(new Index<>(methods));
         beanContext.setContainerData(data);
 
         // Create stats interceptor
@@ -461,7 +461,7 @@ public class StatefulContainer implements RpcContainer {
                     createContext.set(Method.class, createOrInit);
 
                     // Initialize interceptor stack
-                    final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap<String, Object>());
+                    final InterceptorStack interceptorStack = new InterceptorStack(instance.bean, createOrInit, Operation.CREATE, new ArrayList<>(), new HashMap<>());
 
                     // Invoke
                     if (args == null) {
@@ -1051,7 +1051,7 @@ public class StatefulContainer implements RpcContainer {
      */
     private final class SessionSynchronizationCoordinator implements TransactionSynchronization {
 
-        private final Map<Object, Synchronization> registry = new HashMap<Object, Synchronization>();
+        private final Map<Object, Synchronization> registry = new HashMap<>();
         private final TransactionPolicy txPolicy;
 
         private SessionSynchronizationCoordinator(final TransactionPolicy txPolicy) {
@@ -1291,7 +1291,7 @@ public class StatefulContainer implements RpcContainer {
     private static final class Data {
 
         private final Index<Method, MethodType> methodIndex;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
 
         private Data(final Index<Method, MethodType> methodIndex) {
             this.methodIndex = methodIndex;

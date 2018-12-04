@@ -178,7 +178,7 @@ public class Pool<T> {
     private Executor createExecutor() {
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10,
                 60L, SECONDS,
-                new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+                new LinkedBlockingQueue<>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
 
         threadPoolExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override

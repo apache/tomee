@@ -46,7 +46,7 @@ public class EnvEntriesPropertiesDeployer implements DynamicDeployer {
     public static final String ENV_ENTRY_PROPERTIES = "env-entries.properties";
 
     private final String descriptorName;
-    private final Map<String, String> additionalEnvEntries = new HashMap<String, String>();
+    private final Map<String, String> additionalEnvEntries = new HashMap<>();
 
     public EnvEntriesPropertiesDeployer() {
         this(ENV_ENTRY_PROPERTIES);

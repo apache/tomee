@@ -26,7 +26,7 @@ import java.util.Map;
 public class MessageDrivenBeanInfo extends EnterpriseBeanInfo {
     public String mdbInterface;
     public String destinationId;
-    public final Map<String, String> activationProperties = new HashMap<String, String>();
+    public final Map<String, String> activationProperties = new HashMap<>();
 
     public MessageDrivenBeanInfo() {
         type = MESSAGE;

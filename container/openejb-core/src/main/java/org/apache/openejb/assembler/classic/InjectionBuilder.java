@@ -32,7 +32,7 @@ public class InjectionBuilder {
 
     // TODO: check we can really skip the loadClass exception (TCKs)
     public List<Injection> buildInjections(final JndiEncInfo jndiEnc) throws OpenEJBException {
-        final List<Injection> injections = new ArrayList<Injection>();
+        final List<Injection> injections = new ArrayList<>();
         for (final EnvEntryInfo info : jndiEnc.envEntries) {
             for (final InjectionInfo target : info.targets) {
                 final Injection injection = injection(info.referenceName, target.propertyName, target.className);

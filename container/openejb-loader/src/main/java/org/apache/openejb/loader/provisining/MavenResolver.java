@@ -281,7 +281,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
             parser.parse(metadata, handler);
             if (handler.timestamp != null && handler.buildNumber != null) {
                 return defaultVersion.substring(0, defaultVersion.length() - SNAPSHOT_SUFFIX.length())
-                        + "-" + handler.timestamp.toString() + "-" + handler.buildNumber.toString();
+                        + "-" + handler.timestamp + "-" + handler.buildNumber;
             }
         } catch (final Exception e) {
             // no-op: not parseable so ignoring

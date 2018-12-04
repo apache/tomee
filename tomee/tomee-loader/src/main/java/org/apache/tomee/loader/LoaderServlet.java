@@ -26,10 +26,10 @@ import java.util.Properties;
 
 /**
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
- * <p/>
+ * <p>
  * This class gets the location of this webapp and assumes that it is
  * the tomee.war file then calls the embedder.
- * <p/>
+ * </p>
  * This method of bootstrapping is mutually exclusive to the {@link OpenEJBListener} approach
  */
 @Deprecated // use tomee-overlay-runner or another way to ensure you work deterministically

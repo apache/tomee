@@ -66,7 +66,7 @@ public class EarModuleNamesTest {
 
         final File ear = new File(appsDir, "testDefaultIdEjbJar.ear");
 
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
         contents.put("testDefaultIdEjbJar.jar", Archives.jarArchive(Orange.class));
         Archives.jarArchive(ear, contents);
 
@@ -84,7 +84,7 @@ public class EarModuleNamesTest {
 
         final File ear = new File(appsDir, "testDefaultIdWebapp.ear");
 
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
         contents.put("testDefaultIdWebapp.war", Archives.jarArchive(Orange.class));
         Archives.jarArchive(ear, contents);
 
@@ -101,9 +101,9 @@ public class EarModuleNamesTest {
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final File ear = new File(appsDir, "testModuleNameEjbJar.ear");
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("META-INF/ejb-jar.xml", "<ejb-jar><module-name>orange</module-name></ejb-jar>");
         final File ejbJar = Archives.jarArchive(metaInf, "orange", Orange.class);
         contents.put("green.jar", ejbJar);
@@ -123,9 +123,9 @@ public class EarModuleNamesTest {
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final File ear = new File(appsDir, "testModuleNameAppClient.ear");
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("META-INF/application-client.xml", "<application-client><module-name>testModuleNameAppClient</module-name></application-client>");
         final File ejbJar = Archives.jarArchive(metaInf, "testModuleNameAppClient", Orange.class);
         contents.put("green.jar", ejbJar);
@@ -144,9 +144,9 @@ public class EarModuleNamesTest {
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final File ear = new File(appsDir, "testModuleNameWebapp.ear");
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("WEB-INF/web.xml", "<webapp><module-name>testModuleNameWebapp</module-name></webapp>");
         final File ejbJar = Archives.jarArchive(metaInf, "testModuleNameWebapp", Orange.class);
         contents.put("green.war", ejbJar);
@@ -167,11 +167,11 @@ public class EarModuleNamesTest {
 
         final File ear = new File(appsDir, "testIdEjbJar.ear");
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"testIdEjbJar\" />");
         final File ejbJar = Archives.jarArchive(metaInf, "testIdEjbJar", Orange.class);
 
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
         contents.put("green.jar", ejbJar);
         Archives.jarArchive(ear, contents);
 
@@ -189,11 +189,11 @@ public class EarModuleNamesTest {
 
         final File ear = new File(appsDir, "testIdApplicationClient.ear");
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("META-INF/application-client.xml", "<application-client id=\"testIdApplicationClient\" />");
         final File jar = Archives.jarArchive(metaInf, "testIdApplicationClient", Orange.class);
 
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
         contents.put("green.jar", jar);
         Archives.jarArchive(ear, contents);
 
@@ -210,9 +210,9 @@ public class EarModuleNamesTest {
         final ConfigurationFactory factory = new ConfigurationFactory();
 
         final File ear = new File(appsDir, "testIdWebapp.ear");
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
 
-        final Map<String, Object> metaInf = new HashMap<String, Object>();
+        final Map<String, Object> metaInf = new HashMap<>();
         metaInf.put("WEB-INF/web.xml", "<webapp id=\"testIdWebapp\" />");
         final File ejbJar = Archives.jarArchive(metaInf, "testIdWebapp", Orange.class);
         contents.put("green.war", ejbJar);

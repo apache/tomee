@@ -32,7 +32,7 @@ public class InstallerTools {
     }
 
     public static Class<?> loadClass(final String className, final ClassLoader classLoader) throws ClassNotFoundException {
-        final LinkedList<ClassLoader> loaders = new LinkedList<ClassLoader>();
+        final LinkedList<ClassLoader> loaders = new LinkedList<>();
         for (ClassLoader loader = classLoader; loader != null; loader = loader.getParent()) {
             loaders.addFirst(loader);
         }

@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 public class Archives {
 
     public static File fileArchive(final Class[] classes) throws IOException {
-        return fileArchive(new HashMap<String, String>(), classes);
+        return fileArchive(new HashMap<>(), classes);
     }
 
     @SuppressWarnings("unchecked")

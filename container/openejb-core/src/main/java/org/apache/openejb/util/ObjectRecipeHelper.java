@@ -32,7 +32,7 @@ public final class ObjectRecipeHelper {
 
     public static Object createMeFromSystemProps(final String prefix, final String suffix, final Class<?> clazz) {
         final Properties props = SystemInstance.get().getProperties();
-        final Map<String, Object> usedOnes = new HashMap<String, Object>();
+        final Map<String, Object> usedOnes = new HashMap<>();
 
         for (final Map.Entry<Object, Object> entry : props.entrySet()) {
             final String key = entry.getKey().toString();

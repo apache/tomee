@@ -35,9 +35,9 @@ import java.util.Set;
 public class MethodContext {
     private final BeanContext beanContext;
     private final Method beanMethod;
-    private final List<ScheduleData> schedules = new ArrayList<ScheduleData>();
-    private final List<InterceptorData> interceptors = new ArrayList<InterceptorData>();
-    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
+    private final List<ScheduleData> schedules = new ArrayList<>();
+    private final List<InterceptorData> interceptors = new ArrayList<>();
+    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<>();
     private InterceptorData self = null;
     private LockType lockType;
     private TransactionType transactionType;

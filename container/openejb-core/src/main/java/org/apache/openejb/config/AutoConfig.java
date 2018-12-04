@@ -317,7 +317,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 refShortName = refShortName.replaceFirst(".*/", "");
             }
 
-            final List<String> availableUnits = new ArrayList<String>();
+            final List<String> availableUnits = new ArrayList<>();
             for (final PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                 availableUnits.add(persistenceUnit.getName());
             }
@@ -342,7 +342,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (vagueMatches.size() != 0) {
                     // Print the full rootUrls
 
-                    final List<String> possibleUnits = new ArrayList<String>();
+                    final List<String> possibleUnits = new ArrayList<>();
                     for (final PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                         try {
                             URI unitURI = URLs.uri(persistenceUnit.getId());
@@ -484,7 +484,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
      */
     private void resolveDestinationLinks(final AppModule appModule) throws OpenEJBException {
         // build up a link resolver
-        final LinkResolver<MessageDestination> destinationResolver = new LinkResolver<MessageDestination>();
+        final LinkResolver<MessageDestination> destinationResolver = new LinkResolver<>();
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
             if (assembly != null) {
@@ -505,7 +505,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         // remember the type of each destination so we can use it to fillin MDBs that don't declare destination type
-        final Map<MessageDestination, String> destinationTypes = new HashMap<MessageDestination, String>();
+        final Map<MessageDestination, String> destinationTypes = new HashMap<>();
 
         // resolve all MDBs with destination links
         // if MessageDestination does not have a mapped name assigned, give it the destination from the MDB
@@ -908,7 +908,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return;
         }
 
-        final List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
+        final List<JndiConsumer> jndiConsumers = new ArrayList<>();
         for (final WebModule webModule : module.getWebModules()) {
             final JndiConsumer consumer = webModule.getWebApp();
             jndiConsumers.add(consumer);
@@ -918,8 +918,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 
-        List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
-        final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
+        List<ResourceInfo> resourceInfos = new ArrayList<>();
+        final Map<ResourceInfo, Resource> resourcesMap = new HashMap<>(resources.size());
         for (final Resource resource : resources) {
             final String originalId = PropertyPlaceHolderHelper.value(resource.getId());
             final String modulePrefix = module.getModuleId() + "/";
@@ -943,7 +943,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             final Collection<String> aliases = resource.getAliases();
             if (!aliases.isEmpty()) {
-                final Collection<String> newAliases = new ArrayList<String>();
+                final Collection<String> newAliases = new ArrayList<>();
                 for (final String s : aliases) {
                     newAliases.add(module.getModuleId() + "/" + s);
                 }
@@ -1591,7 +1591,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 // 2. The web module id
                 // 3. The web module context root
                 // 4. The application module id
-                final List<String> ids = new ArrayList<String>();
+                final List<String> ids = new ArrayList<>();
                 ids.add(unit.getName());
                 for (final WebModule webModule : app.getWebModules()) {
                     ids.add(webModule.getModuleId());
@@ -1804,7 +1804,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private static void suffixAliases(final ResourceInfo ri, final String suffix) {
         final Collection<String> aliases = ri.aliases;
-        final List<String> newAliases = new ArrayList<String>();
+        final List<String> newAliases = new ArrayList<>();
         for (final String alias : aliases) {
             newAliases.add(alias + suffix);
         }
@@ -2111,7 +2111,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private List<String> getResourceIds(final AppResources appResources, final String type, final Properties required) {
         final List<String> resourceIds;
-        resourceIds = new ArrayList<String>();
+        resourceIds = new ArrayList<>();
         if (appResources != null) {
             resourceIds.addAll(appResources.getResourceIds(type));
         }
@@ -2274,10 +2274,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         private String appId;
 
         @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-        private final Set<String> resourceAdapterIds = new TreeSet<String>();
-        private final Map<String, List<String>> resourceIdsByType = new TreeMap<String, List<String>>();
-        private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<String, List<String>>();
-        private final Map<String, List<String>> containerIdsByType = new TreeMap<String, List<String>>();
+        private final Set<String> resourceAdapterIds = new TreeSet<>();
+        private final Map<String, List<String>> resourceIdsByType = new TreeMap<>();
+        private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<>();
+        private final Map<String, List<String>> containerIdsByType = new TreeMap<>();
         private final Collection<ContainerInfo> containerInfos = new HashSet<>();
 
         public void dump() {
@@ -2326,7 +2326,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (messageListenerInterface != null) {
                     List<String> containerIds = containerIdsByType.get(messageListenerInterface);
                     if (containerIds == null) {
-                        containerIds = new ArrayList<String>();
+                        containerIds = new ArrayList<>();
                         containerIdsByType.put(messageListenerInterface, containerIds);
                     }
                     containerIds.add(containerInfo.id);
@@ -2363,7 +2363,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                         List<String> resourceIds = resourceIdsByType.get(type);
                         if (resourceIds == null) {
-                            resourceIds = new ArrayList<String>();
+                            resourceIds = new ArrayList<>();
                             resourceIdsByType.put(type, resourceIds);
                         }
                         resourceIds.add(resourceId);
@@ -2386,7 +2386,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                         List<String> containerIds = containerIdsByType.get(type);
                         if (containerIds == null) {
-                            containerIds = new ArrayList<String>();
+                            containerIds = new ArrayList<>();
                             containerIdsByType.put(type, containerIds);
                         }
                         containerIds.add(containerId);
@@ -2407,7 +2407,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
                     List<String> resourceEnvIds = resourceEnvIdsByType.get(type);
                     if (resourceEnvIds == null) {
-                        resourceEnvIds = new ArrayList<String>();
+                        resourceEnvIds = new ArrayList<>();
                         resourceEnvIdsByType.put(type, resourceEnvIds);
                     }
                     resourceEnvIds.add(resourceEnvId);
@@ -2421,7 +2421,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                     for (final String t : types) {
                         List<String> ids = resourceIdsByType.get(t);
                         if (ids == null) {
-                            ids = new ArrayList<String>();
+                            ids = new ArrayList<>();
                             resourceIdsByType.put(t, ids);
                         }
                         ids.add(r.getId());
@@ -2471,7 +2471,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         public List<String> getResourceIds(final String type) {
             if (type == null) {
-                final List<String> allResourceIds = new ArrayList<String>();
+                final List<String> allResourceIds = new ArrayList<>();
                 for (final List<String> resourceIds : resourceIdsByType.values()) {
                     allResourceIds.addAll(resourceIds);
                 }
@@ -2496,7 +2496,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         public List<String> getContainerIds() {
-            final ArrayList<String> ids = new ArrayList<String>();
+            final ArrayList<String> ids = new ArrayList<>();
             for (final List<String> list : containerIdsByType.values()) {
                 ids.addAll(list);
             }

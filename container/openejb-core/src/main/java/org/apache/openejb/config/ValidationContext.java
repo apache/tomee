@@ -24,9 +24,9 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class ValidationContext implements ValidationResults {
-    private final List<ValidationFailure> failures = new ArrayList<ValidationFailure>();
-    private final List<ValidationWarning> warnings = new ArrayList<ValidationWarning>();
-    private final List<ValidationError> errors = new ArrayList<ValidationError>();
+    private final List<ValidationFailure> failures = new ArrayList<>();
+    private final List<ValidationWarning> warnings = new ArrayList<>();
+    private final List<ValidationError> errors = new ArrayList<>();
 
     private final String moduleType;
     private final String name;

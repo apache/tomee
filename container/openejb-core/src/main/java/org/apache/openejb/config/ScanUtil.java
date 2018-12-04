@@ -46,8 +46,8 @@ public final class ScanUtil {
     }
 
     public static final class ScanHandler extends DefaultHandler {
-        private final Set<String> classes = new HashSet<String>();
-        private final Set<String> packages = new HashSet<String>();
+        private final Set<String> classes = new HashSet<>();
+        private final Set<String> packages = new HashSet<>();
         private Set<String> current;
         private boolean optimized = true;
 

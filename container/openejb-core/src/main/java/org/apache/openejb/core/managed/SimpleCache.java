@@ -39,12 +39,12 @@ public class SimpleCache<K, V> implements Cache<K, V> {
     /**
      * Map of all known values by key
      */
-    private final ConcurrentHashMap<K, Entry> cache = new ConcurrentHashMap<K, Entry>();
+    private final ConcurrentHashMap<K, Entry> cache = new ConcurrentHashMap<>();
 
     /**
      * All values not in use in least resently used order
      */
-    private final Queue<Entry> lru = new LinkedBlockingQueue<Entry>();
+    private final Queue<Entry> lru = new LinkedBlockingQueue<>();
 
     /**
      * Notified when values are loaded, stored, or timedOut
@@ -346,8 +346,8 @@ public class SimpleCache<K, V> implements Cache<K, V> {
         // if there are to many beans in the lru, shink is by on bulkPassivate size
         // bulkPassivate size is just an estimate, as locked or timed out beans are skipped
         if (lru.size() >= getCapacity()) {
-            final Map<K, V> valuesToStore = new LinkedHashMap<K, V>();
-            final List<Entry> entries = new ArrayList<Entry>();
+            final Map<K, V> valuesToStore = new LinkedHashMap<>();
+            final List<Entry> entries = new ArrayList<>();
 
             int bulkPassivate = getBulkPassivate();
             if (bulkPassivate < 1) {

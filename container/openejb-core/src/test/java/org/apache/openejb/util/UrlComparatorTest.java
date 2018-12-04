@@ -28,7 +28,7 @@ import java.util.Collections;
 public class UrlComparatorTest extends TestCase {
 
     public void test() throws Exception {
-        final ArrayList<URL> urls = new ArrayList<URL>();
+        final ArrayList<URL> urls = new ArrayList<>();
 
         urls.add(new URL("file:///Users/lblack/four"));
         urls.add(new URL("file:///Users/jstuart/two"));

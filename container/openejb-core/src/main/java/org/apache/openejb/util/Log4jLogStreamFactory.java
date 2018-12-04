@@ -137,7 +137,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
         final File[] paths = {confDir, baseDir, userDir};
 
-        final List<File> missing = new ArrayList<File>();
+        final List<File> missing = new ArrayList<>();
 
         for (final Map.Entry<Object, Object> entry : properties.entrySet()) {
             final String key = (String) entry.getKey();

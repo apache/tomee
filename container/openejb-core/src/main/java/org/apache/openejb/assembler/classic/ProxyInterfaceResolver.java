@@ -28,7 +28,7 @@ import java.util.List;
 public class ProxyInterfaceResolver {
 
     public static List<Class> getInterfaces(final Class implementation, final Class mainInterface, final List<Class> interfaces) {
-        final List<Class> valid = new ArrayList<Class>();
+        final List<Class> valid = new ArrayList<>();
         // The intended interface is safe to add
         if (mainInterface != null) {
             valid.add(mainInterface);
@@ -70,8 +70,8 @@ public class ProxyInterfaceResolver {
         // a runtime exception and must be throwable via the proxy.
 
 
-        final List<Class> remotes = new ArrayList<Class>();
-        final List<Class> nonremotes = new ArrayList<Class>();
+        final List<Class> remotes = new ArrayList<>();
+        final List<Class> nonremotes = new ArrayList<>();
         for (final Class interfce : valid) {
             if (Remote.class.isAssignableFrom(interfce)) {
                 remotes.add(interfce);
@@ -153,7 +153,7 @@ public class ProxyInterfaceResolver {
     }
 
     private static List<Signature> getSignatures(final Class mainInterface) {
-        final List<Signature> sigs = new ArrayList<Signature>();
+        final List<Signature> sigs = new ArrayList<>();
         for (final Method method : mainInterface.getMethods()) {
             sigs.add(new Signature(mainInterface, method));
         }
