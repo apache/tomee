@@ -34,6 +34,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final URL url) {
-        this(new FakeModule(loader), Arrays.asList(url));
+        this(new FakeModule(loader), Collections.singletonList(url));
     }
 
     public ConfigurableClasspathArchive(final Module module, final boolean forceDescriptor, final Iterable<URL> urls) {

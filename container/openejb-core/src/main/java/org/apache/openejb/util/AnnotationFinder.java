@@ -109,7 +109,7 @@ public class AnnotationFinder {
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final URL url) {
-        this(classLoader, Arrays.asList(url));
+        this(classLoader, Collections.singletonList(url));
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {

@@ -3127,7 +3127,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(Arrays.asList(beanClass)) : Classes.ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(Collections.singletonList(beanClass)) : Classes.ancestors(beanClass);
 
             for (final Class<?> clazz : classes) {
 

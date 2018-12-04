@@ -837,7 +837,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         {
             final Object pXml = appModule.getAltDDs().get("persistence.xml");
 
-            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml : new ArrayList<>(asList(URL.class.cast(pXml))));
+            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml :
+                    new ArrayList<>(Collections.singletonList(URL.class.cast(pXml))));
             if (persistenceXmls == null) {
                 persistenceXmls = new ArrayList<>();
                 appModule.getAltDDs().put("persistence.xml", persistenceXmls);
