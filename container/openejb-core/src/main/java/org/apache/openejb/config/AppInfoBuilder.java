@@ -174,7 +174,7 @@ class AppInfoBuilder {
         //
         //  EJB Jars
         //
-        final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<EjbModule, EjbJarInfo>();
+        final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<>();
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             try {
                 final EjbJarInfo ejbJarInfo = this.ejbJarInfoBuilder.buildInfo(ejbModule);
@@ -251,7 +251,7 @@ class AppInfoBuilder {
             jndiEncInfoBuilder.build(appModule.getApplication(), appInfo.appId, null, appModule.getModuleUri(), new JndiEncInfo(), new JndiEncInfo());
         }
 
-        final List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
+        final List<EnterpriseBeanInfo> beans = new ArrayList<>();
         // Build the JNDI tree for each ejb
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -283,7 +283,7 @@ class AppInfoBuilder {
 
                 @Override
                 public Set<String> getReferences(final EnterpriseBeanInfo bean) {
-                    return new LinkedHashSet<String>(bean.dependsOn);
+                    return new LinkedHashSet<>(bean.dependsOn);
                 }
             });
         } catch (final CircularReferencesException e) {
@@ -921,7 +921,7 @@ class AppInfoBuilder {
                     }
                 }
 
-                final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
+                final Set<String> keys = new HashSet<>(info.properties.stringPropertyNames());
                 for (final String key : keys) {
                     if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
                         final Object o = info.properties.remove(key);
@@ -1013,7 +1013,7 @@ class AppInfoBuilder {
 
 
     private List<PortInfo> configureWebservices(final Webservices webservices) {
-        final List<PortInfo> portMap = new ArrayList<PortInfo>();
+        final List<PortInfo> portMap = new ArrayList<>();
         if (webservices == null) {
             return portMap;
         }

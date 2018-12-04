@@ -89,7 +89,7 @@ public class IntraVmArtifact implements Externalizable {
     }
 
     private static class Handles {
-        private final List<Object> list = new ArrayList<Object>();
+        private final List<Object> list = new ArrayList<>();
 
         public int add(final Object obj) {
             final int id = list.size();

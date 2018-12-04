@@ -43,8 +43,8 @@ import java.util.Set;
  */
 public class ProviderManager {
 
-    private final List<String> namespaces = new LinkedList<String>();
-    private final Map<ID, ServiceProvider> providers = new LinkedHashMap<ID, ServiceProvider>();
+    private final List<String> namespaces = new LinkedList<>();
+    private final Map<ID, ServiceProvider> providers = new LinkedHashMap<>();
     private final ProviderLoader loader;
 
     public ProviderManager(final ProviderLoader loader) {
@@ -53,11 +53,11 @@ public class ProviderManager {
 
     public ServiceProvider get(final String namespace, final String name) {
         final ID id = new ID(namespace, name);
-        return getProvider(id, new LinkedHashSet<ID>());
+        return getProvider(id, new LinkedHashSet<>());
     }
 
     public List<ServiceProvider> getAll() {
-        return new ArrayList<ServiceProvider>(providers.values());
+        return new ArrayList<>(providers.values());
     }
 
     public void register(final String namespace, final ServiceProvider provider) {
@@ -67,7 +67,7 @@ public class ProviderManager {
 
         final ID id = new ID(namespace, provider.getId());
 
-        register(id, provider, new LinkedHashSet<ID>());
+        register(id, provider, new LinkedHashSet<>());
     }
 
     public List<ServiceProvider> load(String namespace) {
@@ -81,14 +81,14 @@ public class ProviderManager {
             namespaces.add(namespace);
 
             { // load
-                final ArrayList<ServiceProvider> list = new ArrayList<ServiceProvider>(loader.load(namespace));
+                final ArrayList<ServiceProvider> list = new ArrayList<>(loader.load(namespace));
                 for (final ServiceProvider provider : list) {
                     register(namespace, provider);
                 }
             }
         }
 
-        final List<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+        final List<ServiceProvider> providers = new ArrayList<>();
         for (final Map.Entry<ID, ServiceProvider> entry : this.providers.entrySet()) {
             if (entry.getKey().getNamespace().equals(namespace)) {
                 providers.add(entry.getValue());
@@ -144,7 +144,7 @@ public class ProviderManager {
         }
 
         { // types
-            final Set<String> types = new HashSet<String>();
+            final Set<String> types = new HashSet<>();
             types.addAll(parent.getTypes());
             types.addAll(child.getTypes());
 

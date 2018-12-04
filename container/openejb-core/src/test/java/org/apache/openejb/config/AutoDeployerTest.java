@@ -337,7 +337,7 @@ public class AutoDeployerTest {
 
     private File createEar(final File tmpdir, final Class<?>... aClass) throws IOException {
         final File ear = new File(tmpdir, "colors.ear");
-        final Map<String, Object> contents = new HashMap<String, Object>();
+        final Map<String, Object> contents = new HashMap<>();
         contents.put("foo.jar", Archives.jarArchive(aClass));
         Archives.jarArchive(ear, contents);
         return ear;

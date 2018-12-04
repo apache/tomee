@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=JPA
 type=page
 status=published
 title=JPA Usage

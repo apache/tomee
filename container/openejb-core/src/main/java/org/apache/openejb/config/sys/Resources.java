@@ -67,7 +67,7 @@ public class Resources {
 
     public List<Resource> getResource() {
         if (resource == null) {
-            resource = new ArrayList<Resource>();
+            resource = new ArrayList<>();
         }
 
         return this.resource;
@@ -75,7 +75,7 @@ public class Resources {
 
     public List<Container> getContainer() {
         if (container == null) {
-            container = new ArrayList<Container>();
+            container = new ArrayList<>();
         }
 
         return this.container;
@@ -83,21 +83,21 @@ public class Resources {
 
     public List<Service> getService() {
         if (service == null) {
-            service = new ArrayList<Service>();
+            service = new ArrayList<>();
         }
         return service;
     }
 
     public List<Connector> getConnector() {
         if (connector == null) {
-            connector = new ArrayList<Connector>();
+            connector = new ArrayList<>();
         }
         return this.connector;
     }
 
     public List<JndiProvider> getJndiProvider() {
         if (jndiProvider == null) {
-            jndiProvider = new ArrayList<JndiProvider>();
+            jndiProvider = new ArrayList<>();
         }
         return this.jndiProvider;
     }

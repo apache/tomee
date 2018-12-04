@@ -43,12 +43,12 @@ public class AppContext extends DeploymentContext {
     private final boolean standaloneModule;
     private boolean cdiEnabled;
     private WebBeansContext webBeansContext;
-    private final Collection<Injection> injections = new HashSet<Injection>();
-    private final Map<String, Object> bindings = new HashMap<String, Object>();
+    private final Collection<Injection> injections = new HashSet<>();
+    private final Map<String, Object> bindings = new HashMap<>();
 
     // TODO perhaps to be deleted
-    private final List<BeanContext> beanContexts = new ArrayList<BeanContext>();
-    private final List<WebContext> webContexts = new ArrayList<WebContext>();
+    private final List<BeanContext> beanContexts = new ArrayList<>();
+    private final List<WebContext> webContexts = new ArrayList<>();
 
     public AppContext(final String id, final SystemInstance systemInstance, final ClassLoader classLoader, final Context globalJndiContext, final Context appJndiContext, final boolean standaloneModule) {
         super(id, systemInstance.getOptions());

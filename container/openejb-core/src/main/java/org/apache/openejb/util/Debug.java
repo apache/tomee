@@ -53,7 +53,7 @@ public class Debug {
     }
 
     public static Map<String, Object> contextToMap(final Context context) throws NamingException {
-        final Map<String, Object> map = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, Object> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         contextToMap(context, "", map);
         return map;
     }
@@ -101,7 +101,7 @@ public class Debug {
             return Collections.EMPTY_LIST;
         }
 
-        final List<Field> fields = new ArrayList<Field>();
+        final List<Field> fields = new ArrayList<>();
 
         fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
 
@@ -115,9 +115,9 @@ public class Debug {
 
         private static final Trace trace = new Trace();
 
-        private final Map<String, Node> elements = new LinkedHashMap<String, Node>();
+        private final Map<String, Node> elements = new LinkedHashMap<>();
 
-        private final List<Event> events = new ArrayList<Event>();
+        private final List<Event> events = new ArrayList<>();
 
         private static final class Event {
             private final long time = System.currentTimeMillis();
@@ -165,7 +165,7 @@ public class Debug {
 
         public static void mark() {
             final Throwable throwable = new Exception().fillInStackTrace();
-            final List<StackTraceElement> stackTraceElements = new ArrayList<StackTraceElement>(Arrays.asList(throwable.getStackTrace()));
+            final List<StackTraceElement> stackTraceElements = new ArrayList<>(Arrays.asList(throwable.getStackTrace()));
             Collections.reverse(stackTraceElements);
 
             final Iterator<StackTraceElement> iterator = stackTraceElements.iterator();
@@ -183,7 +183,7 @@ public class Debug {
         }
 
         public void print(final PrintStream out) {
-            final Set<Node> seen = new HashSet<Node>();
+            final Set<Node> seen = new HashSet<>();
 
             for (final Node node : elements.values()) {
                 if (node.parent == null) {
@@ -252,7 +252,7 @@ public class Debug {
             private final String trace;
             private final StackTraceElement element;
 
-            private final List<Node> children = new ArrayList<Node>();
+            private final List<Node> children = new ArrayList<>();
 
 
             public Node(final StackTraceElement element) {

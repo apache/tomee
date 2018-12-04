@@ -222,7 +222,7 @@ public class SaxAppCtxConfig {
         }
 
         private class Pojos extends DefaultHandler {
-            protected final List<PojoConfig> genericConfigs = new ArrayList<PojoConfig>();
+            protected final List<PojoConfig> genericConfigs = new ArrayList<>();
 
             protected final Collection<String> aliases;
 
@@ -292,7 +292,7 @@ public class SaxAppCtxConfig {
             }
 
             protected Collection<Properties> propertiesForModule(final String id) {
-                final Collection<Properties> props = new ArrayList<Properties>();
+                final Collection<Properties> props = new ArrayList<>();
                 for (final DeploymentModule m : module.getDeploymentModule()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());
@@ -309,7 +309,7 @@ public class SaxAppCtxConfig {
 
             @Override
             protected Collection<Properties> propertiesForModule(final String id) {
-                final Collection<Properties> props = new ArrayList<Properties>();
+                final Collection<Properties> props = new ArrayList<>();
                 for (final WebModule m : module.getWebModules()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());

@@ -54,8 +54,8 @@ public class MethodConcurrencyBuilder {
 
         final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodConcurrencyBuilder.class);
 
-        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<>();
 
         MethodConcurrencyBuilder.normalize(methodConcurrencyInfos, lockInfos, accessTimeoutInfos);
 

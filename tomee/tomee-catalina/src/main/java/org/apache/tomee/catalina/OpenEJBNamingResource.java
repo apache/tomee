@@ -125,9 +125,9 @@ public class OpenEJBNamingResource extends NamingResourcesImpl {
 
     /**
      * tomcat uses a hastable to store entry type, null values are not allowed
-     * <p/>
+     * <p>
      * These occur when the reference is declared using a 'lookup' attribute These do not have a type associated
-     *
+     * </p>
      * @param ref
      */
     private void normalize(final ResourceBase ref) {

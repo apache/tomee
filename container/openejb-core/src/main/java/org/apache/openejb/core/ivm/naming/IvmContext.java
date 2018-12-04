@@ -72,7 +72,7 @@ public class IvmContext implements Context, Serializable {
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
     boolean readOnly;
-    Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
+    Map<String, Object> fastCache = new ConcurrentHashMap<>();
     static final String JNDI_EXCEPTION_ON_FAILED_WRITE = "openejb.jndiExceptionOnFailedWrite";
     public NameNode mynode;
 
@@ -215,7 +215,7 @@ public class IvmContext implements Context, Serializable {
 
     public static ObjectFactory[] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
-            final Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
+            final Set<ObjectFactory> factories = new HashSet<>();
             final String urlPackagePrefixes = getUrlPackagePrefixes();
             if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
@@ -471,7 +471,7 @@ public class IvmContext implements Context, Serializable {
 
     public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         if (myEnv == null) {
-            myEnv = new Hashtable<String, Object>(5);
+            myEnv = new Hashtable<>(5);
         }
         return myEnv.put(propName, propVal);
     }

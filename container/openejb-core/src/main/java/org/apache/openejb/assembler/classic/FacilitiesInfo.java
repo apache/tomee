@@ -23,13 +23,13 @@ import java.util.List;
 public class FacilitiesInfo extends InfoObject {
 
     public ProxyFactoryInfo intraVmServer;
-    public final List<JndiContextInfo> remoteJndiContexts = new ArrayList<JndiContextInfo>();
-    public final List<ResourceInfo> resources = new ArrayList<ResourceInfo>();
-    public final List<ConnectionManagerInfo> connectionManagers = new ArrayList<ConnectionManagerInfo>();
+    public final List<JndiContextInfo> remoteJndiContexts = new ArrayList<>();
+    public final List<ResourceInfo> resources = new ArrayList<>();
+    public final List<ConnectionManagerInfo> connectionManagers = new ArrayList<>();
     public TransactionServiceInfo transactionService;
     public SecurityServiceInfo securityService;
 
     // Don't add anything here unless it's overridable using the -DserviceId.property=value convention
-    public final List<ServiceInfo> services = new ArrayList<ServiceInfo>();
-    public final List<String> serverObservers = new ArrayList<String>();
+    public final List<ServiceInfo> services = new ArrayList<>();
+    public final List<String> serverObservers = new ArrayList<>();
 }

@@ -208,7 +208,7 @@ public class ApplicationComposers {
         final List<Throwable> errors = new ArrayList<>();
 
         if (isContainer()) {
-            final Map<Object, List<Method>> annotatedConfigurationMethods = findAnnotatedMethods(new HashMap<Object, List<Method>>(), Configuration.class);
+            final Map<Object, List<Method>> annotatedConfigurationMethods = findAnnotatedMethods(new HashMap<>(), Configuration.class);
             {
                 int nbProp = 0;
                 int nbOpenejb = 0;
@@ -229,10 +229,10 @@ public class ApplicationComposers {
             }
 
             int injectorSize = 0;
-            for (final List<Method> m : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.MockInjector.class).values()) {
+            for (final List<Method> m : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.MockInjector.class).values()) {
                 injectorSize += m.size();
             }
-            for (final List<Method> m : findAnnotatedMethods(new HashMap<Object, List<Method>>(), MockInjector.class).values()) {
+            for (final List<Method> m : findAnnotatedMethods(new HashMap<>(), MockInjector.class).values()) {
                 injectorSize += m.size();
             }
             if (injectorSize > 1) {
@@ -240,10 +240,10 @@ public class ApplicationComposers {
             }
 
             final List<Method> components = new ArrayList<>();
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Component.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), Component.class).values()) {
                 components.addAll(l);
             }
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.Component.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.Component.class).values()) {
                 components.addAll(l);
             }
             for (final Method method : components) {
@@ -263,10 +263,10 @@ public class ApplicationComposers {
 
         if (isApplication()) {
             final List<Method> descriptors = new ArrayList<>();
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Descriptors.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), Descriptors.class).values()) {
                 descriptors.addAll(l);
             }
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.Descriptors.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.Descriptors.class).values()) {
                 descriptors.addAll(l);
             }
             for (final Method method : descriptors) {
@@ -279,10 +279,10 @@ public class ApplicationComposers {
             }
 
             final List<Method> classes = new ArrayList<>();
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Classes.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), Classes.class).values()) {
                 classes.addAll(l);
             }
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.Classes.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.Classes.class).values()) {
                 classes.addAll(l);
             }
             for (final Method method : classes) {
@@ -294,7 +294,7 @@ public class ApplicationComposers {
                 }
             }
 
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Jars.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), Jars.class).values()) {
                 for (final Method method : l) {
                     final Class<?> returnType = method.getReturnType();
                     if (!returnType.equals(WebModule.class) && !returnType.equals(EjbModule.class)
@@ -309,10 +309,10 @@ public class ApplicationComposers {
             int modules = 0;
 
             final List<Method> moduleMethods = new ArrayList<>();
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Module.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), Module.class).values()) {
                 moduleMethods.addAll(l);
             }
-            for (final List<Method> l : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.Module.class).values()) {
+            for (final List<Method> l : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.Module.class).values()) {
                 moduleMethods.addAll(l);
             }
             for (final Method method : moduleMethods) {
@@ -669,7 +669,7 @@ public class ApplicationComposers {
         }
 
         // config for the app
-        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<Object, List<Method>>(), ApplicationConfiguration.class).entrySet()) {
+        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<>(), ApplicationConfiguration.class).entrySet()) {
             for (final Method m : method.getValue()) {
                 final Object o = m.invoke(method.getKey());
                 if (Properties.class.isInstance(o)) {
@@ -1438,12 +1438,12 @@ public class ApplicationComposers {
             }
         }
 
-        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<Object, List<Method>>(), Component.class).entrySet()) {
+        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<>(), Component.class).entrySet()) {
             for (final Method m : method.getValue()) {
                 setComponent(method.getKey(), m);
             }
         }
-        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<Object, List<Method>>(), org.apache.openejb.junit.Component.class).entrySet()) {
+        for (final Map.Entry<Object, List<Method>> method : findAnnotatedMethods(new HashMap<>(), org.apache.openejb.junit.Component.class).entrySet()) {
             for (final Method m : method.getValue()) {
                 setComponent(method.getKey(), m);
             }

@@ -68,9 +68,9 @@ public class SingletonContainer implements RpcContainer {
 
     private final SingletonInstanceManager instanceManager;
 
-    private final HashMap<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
+    private final HashMap<String, BeanContext> deploymentRegistry = new HashMap<>();
 
-    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
+    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<>();
 
     private final Object containerID;
     private final SecurityService securityService;
@@ -377,13 +377,13 @@ public class SingletonContainer implements RpcContainer {
         final Class<?> interceptorClass = interceptor.getClass();
 
         //  Add the webservice interceptor to the list of interceptor instances
-        final Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
+        final Map<String, Object> interceptors = new HashMap<>(instance.interceptors);
         {
             interceptors.put(interceptorClass.getName(), interceptor);
         }
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        final List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
+        final List<InterceptorData> interceptorDatas = new ArrayList<>();
         {
             final InterceptorData providerData = new InterceptorData(interceptorClass);
 
@@ -391,7 +391,7 @@ public class SingletonContainer implements RpcContainer {
             if (aroundInvokes == null) {
                 aroundInvokes = new ClassFinder(interceptorClass).findAnnotatedMethods(AroundInvoke.class);
                 if (SingletonContainer.class.getClassLoader() == interceptorClass.getClassLoader()) { // use cache only for server classes
-                    final List<Method> value = new CopyOnWriteArrayList<Method>(aroundInvokes);
+                    final List<Method> value = new CopyOnWriteArrayList<>(aroundInvokes);
                     aroundInvokes = interceptorCache.putIfAbsent(interceptorClass, value); // ensure it to be thread safe
                     if (aroundInvokes == null) {
                         aroundInvokes = value;

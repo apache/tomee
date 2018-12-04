@@ -50,7 +50,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     @Override
     public ScheduledFuture<?> schedule(final Runnable runnable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
-        final AtomicReference<Future<?>> futureHandle = new AtomicReference<Future<?>>();
+        final AtomicReference<Future<?>> futureHandle = new AtomicReference<>();
         final TriggerRunnable wrapper = new TriggerRunnable(this, runnable, new CURunnable(runnable), trigger, taskScheduledTime, getTaskId(runnable), AtomicReference.class.cast(futureHandle));
         final ScheduledFuture<?> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
         return initTriggerScheduledFuture(runnable, AtomicReference.class.cast(futureHandle), wrapper, ScheduledFuture.class.cast(future));
@@ -59,7 +59,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
     @Override
     public <V> ScheduledFuture<V> schedule(final Callable<V> vCallable, final Trigger trigger) {
         final Date taskScheduledTime = new Date();
-        final AtomicReference<Future<V>> futureHandle = new AtomicReference<Future<V>>();
+        final AtomicReference<Future<V>> futureHandle = new AtomicReference<>();
         final TriggerCallable<V> wrapper = new TriggerCallable<>(this, vCallable, new CUCallable<>(vCallable), trigger, taskScheduledTime, getTaskId(vCallable), futureHandle);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, trigger.getNextRunTime(wrapper.getLastExecution(), taskScheduledTime).getTime() - nowMs(), TimeUnit.MILLISECONDS);
         return initTriggerScheduledFuture(vCallable, futureHandle, wrapper, future);
@@ -77,12 +77,12 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command);
         final ScheduledFuture<?> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<Object>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
     public <V> ScheduledFuture<V> schedule(final Callable<V> callable, final long delay, final TimeUnit unit) {
-        final CUCallable<V> wrapper = new CUCallable<V>(callable);
+        final CUCallable<V> wrapper = new CUCallable<>(callable);
         final ScheduledFuture<V> future = delegate.schedule(wrapper, delay, unit);
         wrapper.taskSubmitted(future, this, callable);
         return new CUScheduleFuture<>(future, wrapper);
@@ -93,7 +93,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command);
         final ScheduledFuture<?> future = delegate.scheduleAtFixedRate(wrapper, initialDelay, period, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<Object>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class ManagedScheduledExecutorServiceImpl extends ManagedExecutorServiceI
         final CURunnable wrapper = new CURunnable(command);
         final ScheduledFuture<?> future = delegate.scheduleWithFixedDelay(wrapper, initialDelay, delay, unit);
         wrapper.taskSubmitted(future, this, command);
-        return new CUScheduleFuture<Object>(ScheduledFuture.class.cast(future), wrapper);
+        return new CUScheduleFuture<>(ScheduledFuture.class.cast(future), wrapper);
     }
 
     public static long nowMs() {

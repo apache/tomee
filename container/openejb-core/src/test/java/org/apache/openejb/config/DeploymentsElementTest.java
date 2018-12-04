@@ -71,7 +71,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(apps, appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
@@ -101,7 +101,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(apps, appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
         }
@@ -131,7 +131,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(server.getBase(), appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
@@ -163,7 +163,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(server.getBase(), appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
         }
@@ -196,7 +196,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(server.getBase(), appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
@@ -230,7 +230,7 @@ public class DeploymentsElementTest extends Assert {
 
         final File ear = new File(server.getBase(), appName + ".ear");
         {
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
         }
@@ -267,7 +267,7 @@ public class DeploymentsElementTest extends Assert {
         { // Unpacked version -- Orange
 
             final File ear = new File(server.getBase(), appName + ".ear");
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Orange.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);
@@ -279,7 +279,7 @@ public class DeploymentsElementTest extends Assert {
         { // Packed version -- Yellow
 
             final File ear = new File(server.getBase(), appName + ".ear");
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("foo.jar", Archives.jarArchive(Yellow.class));
             contents.put("META-INF/application.xml", "<application><module><ejb>foo.jar</ejb></module></application>");
             Archives.jarArchive(ear, contents);

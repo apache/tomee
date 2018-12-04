@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Testing Techniques
 type=page
 status=published
 title=Functional testing with OpenEJB, Jetty and Selenium

@@ -66,26 +66,20 @@ import java.util.logging.Logger;
 
 /**
  * <h1>Prerequisites</h1>
- * <p/>
  * System properties that must be set:
  * <ul>
- * <li/>openejb.home -> catalina.home
- * <li/>openejb.base -> catalina.base
- * <li/>tomee.war -> $tomee.war
- * <li/>tomcat.version if not set
- * <li/>tomcat.built if not set
+ * <li>openejb.home -> catalina.home</li>
+ * <li>openejb.base -> catalina.base</li>
+ * <li>tomee.war -> $tomee.war</li>
+ * <li>tomcat.version if not set</li>
+ * <li>tomcat.built if not set</li>
  * </ul>
- * <p/>
  * <h1>Integration Actions</h1>
- * <p/>
  * <ul>
- * <li/>Setup ServiceJar: set openejb.provider.default -> org.apache.tomee
- * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml
- * <li/>Init SystemInstance and OptionsLog
- * <li/>
- * <li/>
+ * <li>Setup ServiceJar: set openejb.provider.default -> org.apache.tomee
+ * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml</li>
+ * <li>Init SystemInstance and OptionsLog</li>
  * </ul>
- * <p/>
  * See {@link org.apache.openejb.config.ServiceUtils#DEFAULT_PROVIDER_URL}
  *
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $

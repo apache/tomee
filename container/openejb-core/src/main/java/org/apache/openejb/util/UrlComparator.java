@@ -66,7 +66,7 @@ public class UrlComparator implements Comparator<URL> {
     }
 
     private List<String> path(final File file) {
-        final ArrayList<String> path = new ArrayList<String>();
+        final ArrayList<String> path = new ArrayList<>();
         path(file, path);
         return path;
     }

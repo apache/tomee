@@ -375,7 +375,7 @@ public class AutoConnectionTrackerTest extends TestCase {
     public static class FakeManagedConnection implements ManagedConnection {
         private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, FakeManagedConnection.class);
         private final FakeManagedConnectionFactory mcf;
-        private final List<ConnectionEventListener> listeners = new ArrayList<ConnectionEventListener>();
+        private final List<ConnectionEventListener> listeners = new ArrayList<>();
         private FakeConnection connection;
         private PrintWriter writer;
 
@@ -530,7 +530,7 @@ public class AutoConnectionTrackerTest extends TestCase {
 
     public static class LogCaptureHandler extends Handler {
 
-        private List<LogRecord> recordList = Collections.synchronizedList(new ArrayList<LogRecord>());
+        private List<LogRecord> recordList = Collections.synchronizedList(new ArrayList<>());
 
         @Override
         public void publish(final LogRecord record) {
@@ -548,8 +548,8 @@ public class AutoConnectionTrackerTest extends TestCase {
         }
 
         public List<LogRecord> find(final String message) {
-            final List<LogRecord> allRecords = new ArrayList<LogRecord>(recordList);
-            final List<LogRecord> matchingRecords = new ArrayList<LogRecord>();
+            final List<LogRecord> allRecords = new ArrayList<>(recordList);
+            final List<LogRecord> matchingRecords = new ArrayList<>();
 
             for (final LogRecord record : allRecords) {
                 if (record.getMessage().contains(message)) {

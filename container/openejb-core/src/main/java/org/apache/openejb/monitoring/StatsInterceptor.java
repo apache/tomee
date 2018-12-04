@@ -54,7 +54,7 @@ public class StatsInterceptor {
 
     public static final InterceptorData metadata = InterceptorData.scan(StatsInterceptor.class);
 
-    private final Map<Method, Stats> map = new ConcurrentHashMap<Method, Stats>();
+    private final Map<Method, Stats> map = new ConcurrentHashMap<>();
     private final AtomicLong invocations = new AtomicLong();
     private final AtomicLong invocationTime = new AtomicLong();
 

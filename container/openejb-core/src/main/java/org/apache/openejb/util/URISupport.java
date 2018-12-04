@@ -83,7 +83,7 @@ public class URISupport {
             }
         }
 
-        final List<String> path = new ArrayList<String>();
+        final List<String> path = new ArrayList<>();
         for (int x = pathA.size() - lastMatch; x > 0; x--) {
             path.add("..");
         }
@@ -168,7 +168,7 @@ public class URISupport {
 
     public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
         try {
-            final Map<String, String> rc = new LinkedHashMap<String, String>();
+            final Map<String, String> rc = new LinkedHashMap<>();
             if (uri != null) {
                 final String[] parameters = uri.split("&");
                 for (int i = 0; i < parameters.length; i++) {
@@ -265,7 +265,7 @@ public class URISupport {
     }
 
     private static String[] splitComponents(final String str) {
-        final ArrayList<String> l = new ArrayList<String>();
+        final ArrayList<String> l = new ArrayList<>();
 
         int last = 0;
         int depth = 0;

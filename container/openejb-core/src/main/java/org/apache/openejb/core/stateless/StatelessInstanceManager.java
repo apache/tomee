@@ -115,7 +115,7 @@ public class StatelessInstanceManager {
         final ThreadFactory threadFactory = new DaemonThreadFactory("StatelessPool.worker.");
         this.executor = new ThreadPoolExecutor(
             callbackThreads, callbackThreads * 2,
-            1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
+            1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>(qsize), threadFactory);
 
         this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -489,7 +489,7 @@ public class StatelessInstanceManager {
         private final Pool<Instance> pool;
         private final Duration accessTimeout;
         private final Duration closeTimeout;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
         private final SessionContext sessionContext;
 
         private Data(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {

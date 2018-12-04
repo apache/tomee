@@ -37,7 +37,7 @@ import java.util.concurrent.Executors;
 @Connector(description = "Sample Resource Adapter", displayName = "Sample Resource Adapter", eisType = "Sample Resource Adapter", version = "1.0")
 public class SampleResourceAdapter implements ResourceAdapter {
 
-    private final Map<SampleActivationSpec, MessageEndpointFactory> targets = new ConcurrentHashMap<SampleActivationSpec, MessageEndpointFactory>();
+    private final Map<SampleActivationSpec, MessageEndpointFactory> targets = new ConcurrentHashMap<>();
     private final ExecutorService threadPool = Executors.newFixedThreadPool(50);
 
     public void start(BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {

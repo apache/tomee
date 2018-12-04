@@ -33,8 +33,8 @@ public class PortData implements PortInfo {
     private String bindingId;
 
     private URL wsdlUrl;
-    private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
-    private final List<Injection> injections = new ArrayList<Injection>();
+    private final List<HandlerChainData> handlerChains = new ArrayList<>();
+    private final List<Injection> injections = new ArrayList<>();
     private boolean mtomEnabled;
     private QName wsdlPort;
     private QName wsdlService;

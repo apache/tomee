@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public abstract class PoolDataSourceCreator implements DataSourceCreator {
-    protected final Map<Object, ObjectRecipe> recipes = new HashMap<Object, ObjectRecipe>();
+    protected final Map<Object, ObjectRecipe> recipes = new HashMap<>();
 
     protected void cleanProperty(final Object ds, final String name) {
         final Map<String, Object> unsetProperties = recipes.get(ds).getUnsetProperties();

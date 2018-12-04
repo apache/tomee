@@ -29,7 +29,7 @@ public class CompositeClassLoaderConfigurer implements ClassLoaderConfigurer {
     public CompositeClassLoaderConfigurer(final ClassLoaderConfigurer... configurers) {
         composites = configurers;
 
-        final Set<URL> urlSet = new HashSet<URL>();
+        final Set<URL> urlSet = new HashSet<>();
         for (final ClassLoaderConfigurer configurer : configurers) {
             if (configurer != null) {
                 urlSet.addAll(Arrays.asList(configurer.additionalURLs()));

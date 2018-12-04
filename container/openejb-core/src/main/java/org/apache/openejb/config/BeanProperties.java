@@ -37,7 +37,7 @@ public class BeanProperties implements DynamicDeployer {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, ModuleProperties.class);
 
-    private final Map<String, Properties> additionalProperties = new HashMap<String, Properties>();
+    private final Map<String, Properties> additionalProperties = new HashMap<>();
     private final Properties globalProperties = new Properties();
 
     @Override

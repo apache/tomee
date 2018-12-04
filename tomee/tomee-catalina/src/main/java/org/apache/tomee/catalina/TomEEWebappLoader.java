@@ -29,9 +29,7 @@ import java.io.File;
 
 /**
  * Usage example in META-INF/context.xml
- * <p/>
- * <p/>
- * <Context antiJARLocking="true" >
+ * <Context antiJARLocking="true">
  * <Loader
  * className="org.apache.tomee.catalina.ProvisioningWebappLoader"
  * searchExternalFirst="true"

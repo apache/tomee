@@ -41,7 +41,7 @@ public class CheckDependsOn extends ValidationBase {
     public void validate(final AppModule appModule) {
         module = appModule;
 
-        final LinkResolver<Bean> app = new LinkResolver<Bean>();
+        final LinkResolver<Bean> app = new LinkResolver<>();
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -88,7 +88,7 @@ public class CheckDependsOn extends ValidationBase {
                 }
 
                 public Set<String> getReferences(final Bean t) {
-                    final LinkedHashSet<String> refs = new LinkedHashSet<String>();
+                    final LinkedHashSet<String> refs = new LinkedHashSet<>();
                     for (final Bean bean : t.dependsOn) {
                         refs.add(bean.getId());
                     }
@@ -97,7 +97,7 @@ public class CheckDependsOn extends ValidationBase {
             });
         } catch (final CircularReferencesException e) {
             for (final List<Bean> circuit : e.getCircuits()) {
-                final List<String> ejbNames = new ArrayList<String>(circuit.size());
+                final List<String> ejbNames = new ArrayList<>(circuit.size());
                 for (final Bean bean : circuit) {
                     ejbNames.add(bean.bean.getEjbName());
                 }
@@ -129,7 +129,7 @@ public class CheckDependsOn extends ValidationBase {
     public static class Bean {
         private final URI moduleUri;
         private final EnterpriseBean bean;
-        private final ArrayList<Bean> dependsOn = new ArrayList<Bean>();
+        private final ArrayList<Bean> dependsOn = new ArrayList<>();
         private final EjbModule module;
         private final Resolver<Bean> resolver;
 

@@ -46,18 +46,18 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private Webservices webservices;
     private String host;
     private String contextRoot;
-    private final List<TldTaglib> taglibs = new ArrayList<TldTaglib>();
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final List<TldTaglib> taglibs = new ArrayList<>();
+    private final Set<String> watchedResources = new TreeSet<>();
     // List of all faces configuration files found in this web module
-    private final List<FacesConfig> facesConfigs = new ArrayList<FacesConfig>();
+    private final List<FacesConfig> facesConfigs = new ArrayList<>();
     private IAnnotationFinder finder;
-    private final Set<String> restClasses = new TreeSet<String>();
-    private final Set<String> ejbWebServices = new TreeSet<String>();
-    private final Set<String> ejbRestServices = new TreeSet<String>();
-    private final Set<String> jaxrsProviders = new TreeSet<String>();
-    private final Set<String> restApplications = new TreeSet<String>();
-    private final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<String, Set<String>>();
-    private final Map<String, Set<String>> webAnnotatedClasses = new HashMap<String, Set<String>>();
+    private final Set<String> restClasses = new TreeSet<>();
+    private final Set<String> ejbWebServices = new TreeSet<>();
+    private final Set<String> ejbRestServices = new TreeSet<>();
+    private final Set<String> jaxrsProviders = new TreeSet<>();
+    private final Set<String> restApplications = new TreeSet<>();
+    private final Map<String, Set<String>> jsfAnnotatedClasses = new HashMap<>();
+    private final Map<String, Set<String>> webAnnotatedClasses = new HashMap<>();
 
     private final ID id;
 

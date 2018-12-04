@@ -428,7 +428,7 @@ public class BusinessInterfacesTest extends TestCase {
             setUp();
             strict(strict);
 
-            final List<String> expectedKeys = new ArrayList<String>();
+            final List<String> expectedKeys = new ArrayList<>();
             expectedKeys.add("ann.local.noAttributes");
             expectedKeys.add("ann.remote.noAttributes");
             expectedKeys.add("noInterfaceDeclared.session");
@@ -556,7 +556,7 @@ public class BusinessInterfacesTest extends TestCase {
     public void testOrangeStrict() throws Exception {
         strict(true);
 
-        final List<String> expectedKeys = new ArrayList<String>();
+        final List<String> expectedKeys = new ArrayList<>();
         expectedKeys.add("ann.localRemote.conflict");
         expectedKeys.add("ann.localRemote.conflict");
 
@@ -712,7 +712,7 @@ public class BusinessInterfacesTest extends TestCase {
     }
 
     private Map<String, EnterpriseBeanInfo> asMap(final List<EnterpriseBeanInfo> enterpriseBeans) {
-        final Map<String, EnterpriseBeanInfo> map = new HashMap<String, EnterpriseBeanInfo>();
+        final Map<String, EnterpriseBeanInfo> map = new HashMap<>();
         for (final EnterpriseBeanInfo bean : enterpriseBeans) {
             map.put(bean.ejbName, bean);
         }
@@ -721,7 +721,7 @@ public class BusinessInterfacesTest extends TestCase {
     }
 
     private List<String> list(final Class... classes) {
-        final ArrayList<String> list = new ArrayList<String>();
+        final ArrayList<String> list = new ArrayList<>();
         for (final Class clazz : classes) {
             list.add(clazz.getName());
         }

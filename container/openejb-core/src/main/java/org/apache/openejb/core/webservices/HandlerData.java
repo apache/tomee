@@ -26,10 +26,10 @@ import java.util.Properties;
 public class HandlerData {
     private final Class<?> handlerClass;
     private final Properties initParams = new Properties();
-    private final List<QName> soapHeaders = new ArrayList<QName>();
-    private final List<String> soapRoles = new ArrayList<String>();
-    private final List<Method> postConstruct = new ArrayList<Method>();
-    private final List<Method> preDestroy = new ArrayList<Method>();
+    private final List<QName> soapHeaders = new ArrayList<>();
+    private final List<String> soapRoles = new ArrayList<>();
+    private final List<Method> postConstruct = new ArrayList<>();
+    private final List<Method> preDestroy = new ArrayList<>();
 
     public HandlerData(final Class<?> handlerClass) {
         if (handlerClass == null) {
