@@ -30,8 +30,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -206,7 +206,7 @@ public class InterceptorBindingBuilder {
         //    - Any addition for current level and/or exclusion for a lower level
         //   (lowest)
         //
-        final Set<Level> excludes = new HashSet<>();
+        final Set<Level> excludes = EnumSet.noneOf(Level.class);
         for (final InterceptorBindingInfo info : bindings) {
             final Level level = level(info);
 

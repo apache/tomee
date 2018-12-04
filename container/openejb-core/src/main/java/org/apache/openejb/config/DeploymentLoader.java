@@ -75,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,8 +93,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-
-import static java.util.Arrays.asList;
 
 /**
  * @version $Revision$ $Date$
@@ -1907,7 +1906,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public Class<? extends DeploymentModule> discoverModuleType(final URL baseUrl, final ClassLoader classLoader, final boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
-        final Set<RequireDescriptors> search = new HashSet<>();
+        final Set<RequireDescriptors> search = EnumSet.noneOf(RequireDescriptors.class);
 
         if (!searchForDescriptorlessApplications) {
             search.addAll(Arrays.asList(RequireDescriptors.values()));
