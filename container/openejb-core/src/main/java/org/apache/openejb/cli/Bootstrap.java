@@ -153,13 +153,6 @@ public class Bootstrap {
         try (final URLClassLoader loader = setupClasspath()) {
             setupHome(args);
 
-            if (loader != null) {
-                Thread.currentThread().setContextClassLoader(loader);
-                if (loader != ClassLoader.getSystemClassLoader()) {
-                    System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
-                }
-            }
-
             final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
 
             final Object main = clazz.getConstructor().newInstance();
