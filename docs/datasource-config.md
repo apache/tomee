@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Datasource
 type=page
 status=published
 title=DataSource Configuration

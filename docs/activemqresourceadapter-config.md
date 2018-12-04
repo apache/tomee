@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=ActiveMQ
 type=page
 status=published
 title=ActiveMQResourceAdapter Configuration

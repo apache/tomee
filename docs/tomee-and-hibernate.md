@@ -1,4 +1,4 @@
-index-group=Configuration
+index-group=JPA
 type=page
 status=published
 title=TomEE and Hibernate

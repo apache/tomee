@@ -1,4 +1,4 @@
-index-group=General Informations
+index-group=General Information
 type=page
 status=published
 title=About the 'tomee' webapp
