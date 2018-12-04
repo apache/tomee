@@ -16,13 +16,9 @@
  */
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
-import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
 import java.rmi.RemoteException;
 public class MoviesBusinessBean implements SessionBean {
 
@@ -46,16 +42,7 @@ public class MoviesBusinessBean implements SessionBean {
     }
 
     public void addActor(final String name) throws MovieException {
-        try {
-            final InitialContext context = new InitialContext();
-
-            final PersonLocalHome personLocalHome = (PersonLocalHome)
-                    PortableRemoteObject.narrow(context.lookup("java:comp/env/ejb/PersonBean"), PersonLocalHome.class);
-
-            final Person person = personLocalHome.create(name);
-        } catch (NamingException | CreateException e) {
-            throw new MovieException(e);
-        }
+        // this is literally a no-op now
     }
 
 }

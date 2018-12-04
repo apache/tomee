@@ -43,7 +43,7 @@ public class CustomOrmXmlTest {
     public static WebArchive createDeployment() {
         WebArchive archive = ShrinkWrap.create(WebArchive.class, CustomOrmXmlTest.class.getSimpleName() + ".war")
                 .addClasses(MovieServlet.class, MovieException.class, MoviesBusinessBean.class,
-                        MoviesBusinessLocal.class, MoviesBusinessLocalHome.class, PersonBean.class, PersonLocalHome.class, Person.class)
+                        MoviesBusinessLocal.class, MoviesBusinessLocalHome.class)
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "openejb-jar.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "ejb-jar.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
