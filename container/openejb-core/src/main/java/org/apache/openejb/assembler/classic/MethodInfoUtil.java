@@ -51,9 +51,8 @@ public class MethodInfoUtil {
      * is reached.  If the method is not found a IllegalStateException is thrown.
      *
      * @param clazz
-     * @param methodName
-     * @param parameterTypes
-     * @return
+     * @param info
+     * @return Method
      * @throws IllegalStateException if the method is not found in this class or any of its parent classes
      */
     public static Method toMethod(Class clazz, final NamedMethodInfo info) {

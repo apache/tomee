@@ -35,7 +35,7 @@ public class DDInterceptor {
      * For lifecycle callback interceptor methods, if there is no callback method defined on the bean class,
      * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned.
      * If there is more than one such interceptor method, the invocation of proceed causes the container to execute those methods in order.
-     * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
+     * @throws Exception or application exceptions that are allowed in the throws clause of the business method.
      */
     public Object ddInterceptor(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "ddInterceptor");
@@ -47,7 +47,7 @@ public class DDInterceptor {
      * This should intercept postConstruct of the bean
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     public void ddInterceptorPostConstruct(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "ddInterceptorPostConstruct");
@@ -61,7 +61,7 @@ public class DDInterceptor {
      * This should intercept postActivate of the bean
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     public void ddInterceptorPostActivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "ddInterceptorPostActivate");
@@ -74,7 +74,7 @@ public class DDInterceptor {
      * This should intercept prePassivate of the bean.
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     public void ddInterceptorPrePassivate(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "ddInterceptorPrePassivate");
@@ -87,7 +87,7 @@ public class DDInterceptor {
      * This should intercept preDestroy of the bean.
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     public void ddInterceptorPreDestroy(final InvocationContext ctx) throws Exception {
         Interceptor.profile(ctx, "ddInterceptorPreDestroy");

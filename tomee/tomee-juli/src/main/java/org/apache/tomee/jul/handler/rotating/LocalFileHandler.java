@@ -53,7 +53,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * NOTE: for simplicity the prefix `org.apache.tomee.jul.handler.rotating.LocalFileHandler.` has been removed of name columns.
- * <p/>
+ * <p>
  * |===
  * | Name                      | Default Value                                     | Description
  * | filenamePattern           | ${catalina.base}/logs/logs.%s.%03d.log            | where log files are created, it uses String.format() and gives you the date and file number - in this order.
@@ -72,12 +72,15 @@ import java.util.zip.ZipOutputStream;
  * | formatterPattern          | -                                                 | SimpleFormatter pattern (ignored if formatter is provided).
  * | formatterLocale           | -                                                 | Locale to use.
  * |===
- * <p/>
+ * </p>
+ * <p>
  * NOTE: archiving and purging are done only when a file is rotated, it means it can be ignored during days if there is no logging activity.
- * <p/>
+ * </p>
+ * <p>
  * NOTE: archiving and purging is done in a background thread pool, you can configure the number of threads in thanks to
  * `org.apache.tomee.jul.handler.rotating.BackgroundTaskRunner.threads` property in `conf/logging.properties`.
  * Default is 2 which should be fine for most applications.
+ * </p>
  */
 /*
  Open point/enhancements:
