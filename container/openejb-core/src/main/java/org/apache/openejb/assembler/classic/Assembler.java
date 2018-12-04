@@ -1416,18 +1416,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final List<CommonInfoObject> vfs = new ArrayList<>(
             appInfo.clients.size() + appInfo.connectors.size() +
                 appInfo.ejbJars.size() + appInfo.webApps.size());
-        for (final ClientInfo clientInfo : appInfo.clients) {
-            vfs.add(clientInfo);
-        }
-        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
-            vfs.add(connectorInfo);
-        }
-        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            vfs.add(ejbJarInfo);
-        }
-        for (final WebAppInfo webAppInfo : appInfo.webApps) {
-            vfs.add(webAppInfo);
-        }
+        vfs.addAll(appInfo.clients);
+        vfs.addAll(appInfo.connectors);
+        vfs.addAll(appInfo.ejbJars);
+        vfs.addAll(appInfo.webApps);
         return vfs;
     }
 
@@ -2422,12 +2414,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<String> clientIds = new ArrayList<>();
             for (final ClientInfo clientInfo : appInfo.clients) {
                 clientIds.add(clientInfo.moduleId);
-                for (final String className : clientInfo.localClients) {
-                    clientIds.add(className);
-                }
-                for (final String className : clientInfo.remoteClients) {
-                    clientIds.add(className);
-                }
+                clientIds.addAll(clientInfo.localClients);
+                clientIds.addAll(clientInfo.remoteClients);
             }
 
             for (final WebContext webContext : appContext.getWebContexts()) {

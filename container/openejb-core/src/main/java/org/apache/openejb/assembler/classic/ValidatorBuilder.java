@@ -96,9 +96,7 @@ public final class ValidatorBuilder {
             for (final PropertyType p : config.getProperty()) {
                 info.propertyTypes.put(p.getName(), p.getValue());
             }
-            for (final String element : config.getConstraintMapping()) {
-                info.constraintMappings.add(element);
-            }
+            info.constraintMappings.addAll(config.getConstraintMapping());
         }
         return info;
     }

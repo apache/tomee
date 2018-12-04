@@ -691,13 +691,9 @@ public class BeanContext extends DeploymentContext {
 
         final ArrayList<Class> classes = new ArrayList<>();
 
-        for (final Class local : businessRemotes) {
-            classes.add(local);
-        }
+        classes.addAll(businessRemotes);
 
-        for (final Class local : businessLocals) {
-            classes.add(local);
-        }
+        classes.addAll(businessLocals);
 
         classes.add(this.beanClass);
 
