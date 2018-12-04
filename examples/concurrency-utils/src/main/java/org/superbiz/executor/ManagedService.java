@@ -23,12 +23,15 @@ import javax.enterprise.context.RequestScoped;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 import static java.util.Objects.nonNull;
 
 
 @RequestScoped
 public class ManagedService {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedService.class.getSimpleName());
 
     @Resource
     private ManagedExecutorService executor;
@@ -41,7 +44,7 @@ public class ManagedService {
      * @return A {@link CompletableFuture} that will return immediately.
      */
     public CompletableFuture<Integer> asyncTask(final int value) {
-        System.out.println("Create asyncTask");
+        LOGGER.info("Create asyncTask");
         return CompletableFuture
                 .supplyAsync(longTask(value, 100, null), executor) // Execute asynchronously.
                 .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
@@ -55,7 +58,7 @@ public class ManagedService {
      * @return A {@link CompletableFuture} that will return immediately.
      */
     public CompletableFuture<Integer> asyncTaskWithException(final int value) {
-        System.out.println("Create asyncTaskWithException");
+        LOGGER.info("Create asyncTaskWithException");
         return CompletableFuture
                 .supplyAsync(longTask(value, 100, "Planned exception"), executor) // Execute asynchronously.
                 .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
@@ -74,7 +77,7 @@ public class ManagedService {
                                        final String errorMessage) {
         return () -> {
             if (nonNull(errorMessage)) {
-                System.out.println("Exception will be thrown");
+                LOGGER.severe("Exception will be thrown");
                 throw new RuntimeException(errorMessage);
             }
 
@@ -84,7 +87,7 @@ public class ManagedService {
             } catch (InterruptedException e) {
                 throw new RuntimeException("Problem while waiting");
             }
-            System.out.println("longTask complete");
+            LOGGER.info("longTask complete");
             return value + 1;
         };
     }

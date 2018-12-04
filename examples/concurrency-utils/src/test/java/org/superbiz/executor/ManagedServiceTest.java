@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -37,6 +38,8 @@ import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class ManagedServiceTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedServiceTest.class.getName());
 
     @Inject
     private ManagedService managedService;
@@ -54,7 +57,7 @@ public class ManagedServiceTest {
     @Test
     public void managedInvocationTest() {
         final CompletableFuture<Integer> future = managedService.asyncTask(1);
-        System.out.println("You can do something else in the meantime and later get the future value");
+        LOGGER.info("You can do something else in the meantime and later get the future value");
         try {
             // To prevent hanged tasks, you should obtain the value of a future with a timeout.
             assertEquals(3, future.get(200, TimeUnit.MILLISECONDS).intValue());

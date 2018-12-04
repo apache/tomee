@@ -30,12 +30,15 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class ManagedScheduledServiceTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedScheduledServiceTest.class.getSimpleName());
 
     @Inject
     private ManagedScheduledService scheduledService;
@@ -48,29 +51,44 @@ public class ManagedScheduledServiceTest {
     }
 
 
+    /**
+     * Happy path with multiple tasks to be executed after a planed amount of time.
+     *
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   we don't expect it
+     * @throws TimeoutException     we don't expect it
+     */
     @Test
     public void singleFixedDelayTask() throws InterruptedException, ExecutionException, TimeoutException {
         final Future<Integer> futureA = scheduledService.singleFixedDelayTask(1, null);
         final Future<Integer> futureB = scheduledService.singleFixedDelayTask(50, null);
-        System.out.println("Do some other work while we wait for the tasks");
+        LOGGER.info("Do some other work while we wait for the tasks");
         assertEquals(2, futureA.get(200, TimeUnit.MILLISECONDS).intValue());
         assertEquals(51, futureB.get(200, TimeUnit.MILLISECONDS).intValue());
 
     }
 
+    /**
+     * Happy path with single task to be executed periodically until it's canceled.
+     *
+     * @throws InterruptedException we don't expect it
+     */
     @Test
-    public void periodicFixedDelayTask() throws InterruptedException, TimeoutException, ExecutionException {
+    public void periodicFixedDelayTask() throws InterruptedException {
         final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, null);
+        LOGGER.info("Do some other work while we wait for the tasks");
         TimeUnit.MILLISECONDS.sleep(500);
         if (!scheduledFuture.isCancelled()) {
             scheduledFuture.cancel(true);
-            System.out.println("task stopped");
+            LOGGER.info("task stopped");
         }
     }
 
-
+    /**
+     * Exception happens while processing the task executed after a planed amount of time.
+     */
     @Test
-    public void singleFixedDelayTaskWithException() throws InterruptedException, ExecutionException, TimeoutException {
+    public void singleFixedDelayTaskWithException() {
         final Future<Integer> future = scheduledService.singleFixedDelayTask(1, "Planned exception");
         try {
             future.get(200, TimeUnit.MILLISECONDS);
@@ -82,12 +100,19 @@ public class ManagedScheduledServiceTest {
         }
     }
 
+    /**
+     * Exception happens while processing the periodic task.
+     *
+     * @throws InterruptedException we don't expect it
+     */
     @Test
-    public void periodicFixedDelayTaskWithException() throws InterruptedException {
+    public void periodicFixedDelayTaskWithException() {
         final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, "Planned exception");
-        TimeUnit.MILLISECONDS.sleep(500);
 
         try {
+            TimeUnit.MILLISECONDS.sleep(500);
+            // please note that this thread will pause here until an exception is thrown.
+            // The scheduler uses a Runnable that will never return a result.
             scheduledFuture.get(200, TimeUnit.MILLISECONDS);
         } catch (ExecutionException e) {
             // the thrown RuntimeException will be wrapped around an ExecutionException
@@ -98,7 +123,7 @@ public class ManagedScheduledServiceTest {
 
         if (!scheduledFuture.isCancelled()) {
             scheduledFuture.cancel(true);
-            System.out.println("task stopped");
+            LOGGER.info("task stopped");
         }
     }
 
