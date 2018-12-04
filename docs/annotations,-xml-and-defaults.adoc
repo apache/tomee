@@ -1,0 +1,19 @@
+:index-group: Unrevised
+:type: page
+:status: published
+:title: Annotations, XML and Defaults
+~~~~~~
+
+....
+          <p>The following is a list of all annotations and their attributes, the xml tags that correspond to them (for overriding), and what the default values are when left unspecified.</p>
+....
+
+Annotation
+
+xml element(s)
+
+default value
+
+....
+        </div>
+....
