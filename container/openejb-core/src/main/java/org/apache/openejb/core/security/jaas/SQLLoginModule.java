@@ -102,13 +102,13 @@ public class SQLLoginModule implements LoginModule {
         this.subject = subject;
         this.handler = callbackHandler;
 
-        for (final Object key : options.keySet()) {
-            final Option option = Option.findByName((String) key);
+        for (final Object o : options.entrySet()) {
+            final Option option = Option.findByName((String) ((Map.Entry) o).getKey());
             if (option != null) {
-                final String value = (String) options.get(key);
+                final String value = (String) ((Map.Entry) o).getValue();
                 optionsMap.put(option, value.trim());
             } else {
-                log.warning("Ignoring option: {0}. Not supported.", key);
+                log.warning("Ignoring option: {0}. Not supported.", ((Map.Entry) o).getKey());
             }
         }
 

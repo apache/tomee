@@ -2287,19 +2287,19 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             for (final String s : resourceAdapterIds) {
                 logger.debug(appId + " module contains resource adapter id: " + s);
             }
-            for (final String s : resourceIdsByType.keySet()) {
-                for (final String value : resourceIdsByType.get(s)) {
-                    logger.debug(appId + " module contains resource type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : resourceIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains resource type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
-            for (final String s : resourceEnvIdsByType.keySet()) {
-                for (final String value : resourceEnvIdsByType.get(s)) {
-                    logger.debug(appId + " module contains resource env type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : resourceEnvIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains resource env type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
-            for (final String s : containerIdsByType.keySet()) {
-                for (final String value : containerIdsByType.get(s)) {
-                    logger.debug(appId + " module contains container type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : containerIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains container type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
         }

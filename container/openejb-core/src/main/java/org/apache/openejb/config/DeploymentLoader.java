@@ -561,9 +561,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             // EJB modules
-            for (final String moduleName : ejbModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : ejbModules.entrySet()) {
                 try {
-                    URL ejbUrl = ejbModules.get(moduleName);
+                    URL ejbUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), ejbUrl)) {
                         try {
@@ -579,14 +579,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
                     appModule.getEjbModules().add(ejbModule);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Application Client Modules
-            for (final String moduleName : clientModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : clientModules.entrySet()) {
                 try {
-                    URL clientUrl = clientModules.get(moduleName);
+                    URL clientUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), clientUrl)) {
                         try {
@@ -603,14 +603,14 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     appModule.getClientModules().add(clientModule);
                 } catch (final Exception e) {
-                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Resource modules
-            for (final String moduleName : resouceModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : resouceModules.entrySet()) {
                 try {
-                    URL rarUrl = resouceModules.get(moduleName);
+                    URL rarUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), rarUrl)) {
                         try {
@@ -620,22 +620,22 @@ public class DeploymentLoader implements DeploymentFilterable {
                             // no-op
                         }
                     }
-                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
+                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, stringURLEntry.getKey());
                     if (connectorModule != null) {
                         appModule.getConnectorModules().add(connectorModule);
                     }
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load RAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Web modules
-            for (final String moduleName : webModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : webModules.entrySet()) {
                 try {
-                    final URL warUrl = webModules.get(moduleName);
-                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), null);
+                    final URL warUrl = stringURLEntry.getValue();
+                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(stringURLEntry.getKey()), null);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load WAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 

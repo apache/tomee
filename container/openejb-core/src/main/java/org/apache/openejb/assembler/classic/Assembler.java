@@ -611,10 +611,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             containerInfos.add(serviceInfo);
         }
 
-        final Set<String> apps = appContainers.keySet();
-        for (final String app : apps) {
-            final List<ContainerInfo> containerInfos = appContainers.get(app);
-            final ClassLoader classLoader = appClassLoaders.get(app);
+        for (final Entry<String, List<ContainerInfo>> stringListEntry : appContainers.entrySet()) {
+            final List<ContainerInfo> containerInfos = stringListEntry.getValue();
+            final ClassLoader classLoader = appClassLoaders.get(stringListEntry.getKey());
 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 
