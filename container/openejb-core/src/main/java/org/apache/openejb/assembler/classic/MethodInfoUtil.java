@@ -432,10 +432,9 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> getWildCardView(final BeanContext info) {
-        final List<Method> methods = new ArrayList<>();
 
         final List<Method> beanMethods = asList(info.getBeanClass().getMethods());
-        methods.addAll(beanMethods);
+        final List<Method> methods = new ArrayList<>(beanMethods);
 
         if (info.getRemoteInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getRemoteInterface().getMethods()));

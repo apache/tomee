@@ -971,9 +971,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         private TreeSet<Integer> getNewValuesFromDynamicExpressions(final Calendar calendar) {
 
-            final TreeSet<Integer> newValues = new TreeSet<>();
-
-            newValues.addAll(values);
+            final TreeSet<Integer> newValues = new TreeSet<>(values);
 
             for (final RangeExpression weekDayRangeExpression : weekDayRangeExpressions) {
 

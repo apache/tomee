@@ -211,8 +211,7 @@ public class BeanContext extends DeploymentContext {
         if (timeout != null) {
             final AnnotatedType annotatedType = cdiEjbBean.getAnnotatedType();
             final AnnotationManager annotationManager = getWebBeansContext().getAnnotationManager();
-            final Collection<Annotation> annotations = new HashSet<>();
-            annotations.addAll(annotationManager.getInterceptorAnnotations(annotatedType.getAnnotations()));
+            final Collection<Annotation> annotations = new HashSet<>(annotationManager.getInterceptorAnnotations(annotatedType.getAnnotations()));
             final Set<AnnotatedMethod<?>> methods = annotatedType.getMethods();
             for (final AnnotatedMethod<?> m : methods) {
                 if (timeout.equals(m.getJavaMember())) {

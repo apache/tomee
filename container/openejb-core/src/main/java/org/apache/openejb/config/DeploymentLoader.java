@@ -268,10 +268,9 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static void addWebModuleDescriptors(final URL baseUrl, final WebModule webModule, final AppModule appModule) throws OpenEJBException {
-        final Map<String, Object> otherDD = new HashMap<>();
         final List<URL> urls = webModule.getScannableUrls();
         final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-        otherDD.putAll(getDescriptors(finder, false));
+        final Map<String, Object> otherDD = new HashMap<>(getDescriptors(finder, false));
 
         // "persistence.xml" is done separately since we manage a list of url and not s single url
         try {
@@ -965,9 +964,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // determine war class path
 
-        final List<URL> webUrls = new ArrayList<>();
         ensureContainerUrls();
-        webUrls.addAll(containerUrls);
+        final List<URL> webUrls = new ArrayList<>(containerUrls);
 
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -1543,8 +1541,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // create the class loader
-        final List<URL> classPath = new ArrayList<>();
-        classPath.addAll(rarLibs.values());
+        final List<URL> classPath = new ArrayList<>(rarLibs.values());
 
         final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
         if (configurer != null) {
