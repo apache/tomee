@@ -17,13 +17,8 @@
 package org.apache.openejb.arquillian.tests.cmp.sample;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
 
 public interface MoviesBusinessLocal extends javax.ejb.EJBLocalObject {
 
-    int addMovie(final String title, final String director, int year) throws RemoteException, MovieException;
-    int addActor(final int movieId, final String firstName, final String lastName) throws RemoteException, MovieException;
-    Movie findByPrimaryKey(final int id) throws RemoteException, MovieException;
-    Collection findAll() throws RemoteException, MovieException;
-    void delete(Integer id) throws RemoteException, MovieException;
+    int addActor(final String firstName, final String lastName) throws RemoteException, MovieException;
 }
