@@ -34,13 +34,14 @@ public class ManagedScheduledService {
     @Resource
     private ManagedScheduledExecutorService executor;
 
-    public Future<Integer> singleFixedDelayTask(final int value) {
+    public Future<Integer> singleFixedDelayTask(final int value, final String errorMessage) {
         System.out.println("longCallableTask scheduled");
-        return executor.schedule(longCallableTask(value, 10, null), 100, TimeUnit.MILLISECONDS);
+        return executor.schedule(longCallableTask(value, 10, errorMessage), 100, TimeUnit.MILLISECONDS);
     }
 
-    public ScheduledFuture<?> periodicFixedDelayTask(final int value) {
-        return executor.scheduleAtFixedRate(longRunnableTask(value, 10, null), 0, 100, TimeUnit.MILLISECONDS);
+    public ScheduledFuture<?> periodicFixedDelayTask(final int value, final String errorMessage) {
+        System.out.println("longRunnableTask scheduled");
+        return executor.scheduleAtFixedRate(longRunnableTask(value, 10, errorMessage), 0, 100, TimeUnit.MILLISECONDS);
     }
 
     private Runnable longRunnableTask(final int value,

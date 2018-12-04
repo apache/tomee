@@ -27,10 +27,12 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class ManagedScheduledServiceTest {
@@ -48,12 +50,56 @@ public class ManagedScheduledServiceTest {
 
     @Test
     public void singleFixedDelayTask() throws InterruptedException, ExecutionException, TimeoutException {
-        final Future<Integer> future = scheduledService.singleFixedDelayTask(1);
-        assertEquals(2, future.get(200, TimeUnit.MILLISECONDS).intValue());
+        final Future<Integer> futureA = scheduledService.singleFixedDelayTask(1, null);
+        final Future<Integer> futureB = scheduledService.singleFixedDelayTask(50, null);
+        System.out.println("Do some other work while we wait for the tasks");
+        assertEquals(2, futureA.get(200, TimeUnit.MILLISECONDS).intValue());
+        assertEquals(51, futureB.get(200, TimeUnit.MILLISECONDS).intValue());
 
     }
 
     @Test
-    public void periodicFixedDelayTask() {
+    public void periodicFixedDelayTask() throws InterruptedException, TimeoutException, ExecutionException {
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, null);
+        TimeUnit.MILLISECONDS.sleep(500);
+        if (!scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true);
+            System.out.println("task stopped");
+        }
     }
+
+
+    @Test
+    public void singleFixedDelayTaskWithException() throws InterruptedException, ExecutionException, TimeoutException {
+        final Future<Integer> future = scheduledService.singleFixedDelayTask(1, "Planned exception");
+        try {
+            future.get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the thrown RuntimeException will be wrapped around an ExecutionException
+            assertEquals("Planned exception", e.getCause().getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+    }
+
+    @Test
+    public void periodicFixedDelayTaskWithException() throws InterruptedException {
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, "Planned exception");
+        TimeUnit.MILLISECONDS.sleep(500);
+
+        try {
+            scheduledFuture.get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the thrown RuntimeException will be wrapped around an ExecutionException
+            assertEquals("Planned exception", e.getCause().getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+
+        if (!scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true);
+            System.out.println("task stopped");
+        }
+    }
+
 }
