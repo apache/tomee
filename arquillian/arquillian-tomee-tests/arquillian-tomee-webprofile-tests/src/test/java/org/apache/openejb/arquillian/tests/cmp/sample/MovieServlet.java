@@ -52,8 +52,8 @@ public class MovieServlet extends HttpServlet {
 
             final MoviesBusinessLocal bean = home.create();
 
-            bean.addActor("Will", "Smith");
-            pw.println("Actor added successfully");
+            bean.addActor("Will Smith");
+            pw.println("Person added successfully");
             bean.remove();
             pw.flush();
 
