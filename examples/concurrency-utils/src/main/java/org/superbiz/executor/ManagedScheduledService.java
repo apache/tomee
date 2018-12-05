@@ -71,7 +71,7 @@ public class ManagedScheduledService {
      * Will simulate a long running operation
      *
      * @param value          The value to compute
-     * @param taskDurationMs the time lenght of the operation
+     * @param taskDurationMs the time length of the operation
      * @param errorMessage   If not null an exception with be thrown with this message
      * @return a {@link Runnable}
      */

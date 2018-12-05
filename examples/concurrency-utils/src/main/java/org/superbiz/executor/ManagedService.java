@@ -37,7 +37,7 @@ public class ManagedService {
     private ManagedExecutorService executor;
 
     /**
-     * Executes an opperation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
+     * Executes an operation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
      * The computation will carry on after the return of the method.
      *
      * @param value The demo data.
@@ -51,7 +51,7 @@ public class ManagedService {
     }
 
     /**
-     * Executes an opperation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
+     * Executes an operation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
      * The computation will carry on after the return of the method.
      *
      * @param value The demo data.
