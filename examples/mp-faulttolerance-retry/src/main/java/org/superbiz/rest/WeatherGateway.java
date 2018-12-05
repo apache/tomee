@@ -47,9 +47,9 @@ public class WeatherGateway {
      */
     private static final int DEFAULT_MAX_RETRY = 3;
 
-    private AtomicInteger counterStatusOfDay = new AtomicInteger();
-    private AtomicInteger counterStatusOfWeek = new AtomicInteger();
-    private AtomicInteger counterStatusOfWeekend = new AtomicInteger();
+    private final AtomicInteger counterStatusOfDay = new AtomicInteger();
+    private final AtomicInteger counterStatusOfWeek = new AtomicInteger();
+    private final AtomicInteger counterStatusOfWeekend = new AtomicInteger();
 
     private Instant statusOfWeekendInstant = null;
     private Instant statusOfMonthInstant = null;

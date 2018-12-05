@@ -174,6 +174,7 @@ BROKEN, see TOMEE-2140
     <module>mp-metrics-counted</module>
     <module>mp-metrics-timed</module>
     <module>websocket-tls-basic-auth</module>
+    <module>mp-faulttolerance-retry</module>
   </modules>
 
   <dependencies>
@@ -216,11 +217,19 @@ BROKEN, see TOMEE-2140
     <profile>
       <id>java9</id>
       <activation>
-        <jdk>[9,)</jdk>
+        <jdk>9</jdk>
       </activation>
-      <modules>
-        <module>java-modules</module>
-      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

@@ -16,8 +16,6 @@
  */
 package org.superbiz.rest;
 
-import org.eclipse.microprofile.faulttolerance.exceptions.FaultToleranceException;
 
-
-public class WeatherGatewayTimeoutException extends FaultToleranceException {
+public class WeatherGatewayTimeoutException extends RuntimeException {
 }
