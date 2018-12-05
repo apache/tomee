@@ -40,7 +40,7 @@ public class CustomOrmXmlTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
-        WebArchive archive = ShrinkWrap.create(WebArchive.class, CustomOrmXmlTest.class.getSimpleName() + ".war")
+        final WebArchive archive = ShrinkWrap.create(WebArchive.class, CustomOrmXmlTest.class.getSimpleName() + ".war")
                 .addClasses(ActorBean.class, ActorDetails.class, LocalActor.class, LocalActorHome.class,
                         LocalMovie.class, LocalMovieHome.class, MovieBean.class, MovieDetails.class,
                         MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class,

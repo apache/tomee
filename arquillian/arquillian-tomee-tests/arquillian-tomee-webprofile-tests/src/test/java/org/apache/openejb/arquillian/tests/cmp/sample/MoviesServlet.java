@@ -30,19 +30,17 @@ import javax.servlet.http.HttpServletResponse;
 public class MoviesServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
         try {
-            Context initial = new InitialContext();
-            Object objref = initial.lookup("java:comp/env/ejb/MoviesBusiness");
+            final Context initial = new InitialContext();
 
-            MoviesBusinessHome home =
-                    (MoviesBusinessHome) PortableRemoteObject.narrow(objref,
-                            MoviesBusinessHome.class);
+            final MoviesBusinessHome home = (MoviesBusinessHome)
+                    PortableRemoteObject.narrow(initial.lookup("java:comp/env/ejb/MoviesBusiness"), MoviesBusinessHome.class);
 
-            MoviesBusiness moviesBusiness = home.create();
+            final MoviesBusiness moviesBusiness = home.create();
             moviesBusiness.doLogic();
 
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new ServletException(ex);
         }
     }

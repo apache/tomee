@@ -45,14 +45,14 @@ public abstract class MovieBean implements EntityBean {
     public abstract void setActors(Collection actors);
 
     public ArrayList getCopyOfActors() {
-        ArrayList actorList = new ArrayList();
-        Collection actors = getActors();
+        final ArrayList actorList = new ArrayList();
+        final Collection actors = getActors();
 
-        Iterator i = actors.iterator();
+        final Iterator i = actors.iterator();
 
         while (i.hasNext()) {
-            LocalActor actor = (LocalActor) i.next();
-            ActorDetails details =
+            final LocalActor actor = (LocalActor) i.next();
+            final ActorDetails details =
                 new ActorDetails(actor.getActorId(), actor.getName());
 
             actorList.add(details);
@@ -61,27 +61,27 @@ public abstract class MovieBean implements EntityBean {
         return actorList;
     }
 
-    public void addActor(LocalActor player) {
+    public void addActor(final LocalActor player) {
         try {
-            Collection actors = getActors();
+            final Collection actors = getActors();
 
             actors.add(player);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new EJBException(ex.getMessage());
         }
     }
 
-    public void removeActor(LocalActor actor) {
+    public void removeActor(final LocalActor actor) {
         try {
-            Collection players = getActors();
+            final Collection players = getActors();
 
             players.remove(actor);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new EJBException(ex.getMessage());
         }
     }
 
-    public String ejbCreate(String name, String genre)
+    public String ejbCreate(final String name, final String genre)
         throws CreateException {
         setName(name);
         setGenre(genre);
@@ -89,11 +89,11 @@ public abstract class MovieBean implements EntityBean {
         return null;
     }
 
-    public void ejbPostCreate(String name, String genre)
+    public void ejbPostCreate(final String name, final String genre)
         throws CreateException {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         context = ctx;
     }
 
