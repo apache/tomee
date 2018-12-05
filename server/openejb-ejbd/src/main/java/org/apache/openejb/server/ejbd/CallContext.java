@@ -25,7 +25,7 @@ import java.util.HashMap;
 @SuppressWarnings("unchecked")
 public class CallContext {
 
-    private static final ThreadLocal<CallContext> threads = new ThreadLocal<CallContext>();
+    private static final ThreadLocal<CallContext> THREADS = new ThreadLocal<CallContext>();
     private final HashMap data = new HashMap();
 
     public CallContext() {
@@ -69,20 +69,20 @@ public class CallContext {
 
     public static void setCallContext(CallContext ctx) {
         if (ctx == null) {
-            ctx = threads.get();
+            ctx = THREADS.get();
             if (ctx != null) {
                 ctx.reset();
             }
         } else {
-            threads.set(ctx);
+            THREADS.set(ctx);
         }
     }
 
     public static CallContext getCallContext() {
-        CallContext ctx = threads.get();
+        CallContext ctx = THREADS.get();
         if (ctx == null) {
             ctx = new CallContext();
-            threads.set(ctx);
+            THREADS.set(ctx);
         }
 
         return ctx;

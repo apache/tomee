@@ -52,11 +52,11 @@ class EjbRequestHandler extends RequestHandler {
 
     public static final ServerSideResolver SERVER_SIDE_RESOLVER = new ServerSideResolver();
 
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("ejb"), "org.apache.openejb.server.util.resources");
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("ejb"), "org.apache.openejb.server.util.resources");
 
     private final ClusterableRequestHandler clusterableRequestHandler;
 
-    private final Map<String, AtomicBoolean> asynchronousInvocationCancelMap = new ConcurrentHashMap<String, AtomicBoolean>();
+    private final Map<String, AtomicBoolean> asynchronousInvocationCancelMap = new ConcurrentHashMap<>();
 
     protected EjbRequestHandler(final EjbDaemon daemon) {
         super(daemon);
@@ -69,7 +69,7 @@ class EjbRequestHandler extends RequestHandler {
 
     @Override
     public Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     @Override
@@ -259,7 +259,7 @@ class EjbRequestHandler extends RequestHandler {
             res.setResponse(version, ResponseCodes.EJB_APP_EXCEPTION, new ThrowableArtifact(e.getRootCause()));
         } catch (org.apache.openejb.SystemException e) {
             res.setResponse(version, ResponseCodes.EJB_ERROR, new ThrowableArtifact(e.getRootCause()));
-            logger.error("System error in container for request: " + req, e);
+            LOGGER.error("System error in container for request: " + req, e);
         } catch (Throwable t) {
 
             return setResponseError(res, version, t, "Unknown error in container");
@@ -280,10 +280,10 @@ class EjbRequestHandler extends RequestHandler {
                 //Ignore
             }
 
-            if (logger.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 //The req and res toString overrides are volatile
                 try {
-                    logger.debug("EJB REQUEST: " + req + " -- RESPONSE: " + res);
+                    LOGGER.debug("EJB REQUEST: " + req + " -- RESPONSE: " + res);
                 } catch (Throwable t) {
                     //Ignore
                 }
@@ -303,16 +303,16 @@ class EjbRequestHandler extends RequestHandler {
                 res.setMetaData(metaData);
                 res.writeExternal(out);
             } catch (Throwable t) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Failed to write EjbResponse", t);
-                } else if (logger.isInfoEnabled()) {
-                    logger.info("Failed to write EjbResponse - Debug for stacktrace: " + t);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Failed to write EjbResponse", t);
+                } else if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Failed to write EjbResponse - Debug for stacktrace: " + t);
                 }
             } finally {
                 try {
                     SystemInstance.get().getComponent(SecurityService.class).disassociate();
                 } catch (Throwable t) {
-                    logger.warning("Failed to disassociate security", t);
+                    LOGGER.warning("Failed to disassociate security", t);
                 }
 
                 final CallContext call = CallContext.getCallContext();
@@ -324,7 +324,7 @@ class EjbRequestHandler extends RequestHandler {
                 EJBObjectProxyHandle.resolver.set(null);
             }
         } else {
-            logger.error("EjbRequestHandler cannot process an instance of: " + response.getClass().getName());
+            LOGGER.error("EjbRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
 
@@ -433,7 +433,7 @@ class EjbRequestHandler extends RequestHandler {
         } else {
 
             result = new RemoteException("The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
-            logger.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
+            LOGGER.error(req + "The bean is not EJB compliant.  The bean should be created or and exception should be thrown.");
             res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, new ThrowableArtifact((Throwable) result));
         }
     }
@@ -471,7 +471,7 @@ class EjbRequestHandler extends RequestHandler {
         } else if (result instanceof java.util.Enumeration) {
 
             final java.util.Enumeration resultAsEnum = (java.util.Enumeration) result;
-            final java.util.List<Object> listOfPKs = new ArrayList<Object>();
+            final java.util.List<Object> listOfPKs = new ArrayList<>();
             while (resultAsEnum.hasMoreElements()) {
                 final ProxyInfo proxyInfo = ((ProxyInfo) resultAsEnum.nextElement());
                 if (proxyInfo == null) {
@@ -496,7 +496,7 @@ class EjbRequestHandler extends RequestHandler {
                 "to return neither Collection nor the Remote Interface, " +
                 "but [" + result.getClass().getName() + "]";
             result = new RemoteException(message);
-            logger.error(req + " " + message);
+            LOGGER.error(req + " " + message);
             res.setResponse(req.getVersion(), ResponseCodes.EJB_SYS_EXCEPTION, result);
         }
     }
@@ -583,10 +583,10 @@ class EjbRequestHandler extends RequestHandler {
     private EJBResponse setResponseError(final EJBResponse res, final byte version, final Throwable error, final String message) {
 
         //This is fatal for the client, but not the server.
-        if (logger.isInfoEnabled()) {
-            logger.info(message + " - Enable DEBUG for stacktrace: " + error);
-        } else if (logger.isDebugEnabled()) {
-            logger.debug(message, error);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info(message + " - Enable DEBUG for stacktrace: " + error);
+        } else if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(message, error);
         }
 
         final RemoteException re = new RemoteException(message, error);

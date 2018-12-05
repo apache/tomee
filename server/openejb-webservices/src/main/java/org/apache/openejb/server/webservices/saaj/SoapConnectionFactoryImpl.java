@@ -29,6 +29,7 @@ public class SoapConnectionFactoryImpl extends SOAPConnectionFactory {
 
     }
 
+    @Override
     public SOAPConnection createConnection() throws SOAPException {
         return getSOAPConnectionFactory().createConnection();
     }

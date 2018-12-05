@@ -33,6 +33,12 @@ public class AxisClientImpl extends AxisClient {
         this.portNameToSEIFactoryMap = portNameToSEIFactoryMap;
     }
 
+    /**
+     *
+     * @param context MessageContext
+     * @return HandlerChain
+     */
+    @Override
     protected HandlerChain getJAXRPChandlerChain(MessageContext context) {
         QName portQName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
         if (portQName == null) {

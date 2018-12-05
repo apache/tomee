@@ -74,6 +74,7 @@ public class NetmaskIPAddressPermission implements IPAddressPermission {
         }
     }
 
+    @Override
     public boolean implies(InetAddress address) {
         if (false == address instanceof Inet4Address) {
             return false;

@@ -30,13 +30,13 @@ public class JaxRpcOperationInfo {
 
     public String javaMethodName;
 
-    public List<JaxRpcParameterInfo> parameters = new ArrayList<JaxRpcParameterInfo>();
+    public List<JaxRpcParameterInfo> parameters = new ArrayList<>();
 
     public QName returnQName;
     public QName returnXmlType;
     public String returnJavaType;
 
-    public Collection<JaxRpcFaultInfo> faults = new ArrayList<JaxRpcFaultInfo>();
+    public Collection<JaxRpcFaultInfo> faults = new ArrayList<>();
 
     public static enum OperationStyle {
         ONE_WAY, REQUEST_RESPONSE, SOLICIT_RESPONSE, NOTIFICATION

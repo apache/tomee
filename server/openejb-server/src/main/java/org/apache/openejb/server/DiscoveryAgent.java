@@ -50,6 +50,8 @@ public interface DiscoveryAgent {
      * A process actively using a service may see it go down before the DiscoveryAgent notices the
      * service's failure.  That process can use this method to notify the DiscoveryAgent of the failure
      * so that other listeners of this DiscoveryAgent can also be made aware of the failure.
+     * @param serviceUri
+     * @throws java.io.IOException
      */
     void reportFailed(URI serviceUri) throws IOException;
 
