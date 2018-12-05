@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="2.0"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence 
+             http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+    <persistence-unit name="mvc-demo" transaction-type="RESOURCE_LOCAL">
+
+      <non-jta-data-source>mvc-demo</non-jta-data-source>
+
+      <class>org.superbiz.model.Address</class>
+      <class>org.superbiz.model.Person</class>
+         
+      <properties>
+          <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform"/>
+          <property name="eclipselink.ddl-generation" value="create-tables"/>
+          <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+      </properties>
+    </persistence-unit>
+
+</persistence>
