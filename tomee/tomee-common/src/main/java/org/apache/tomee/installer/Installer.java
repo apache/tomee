@@ -32,31 +32,31 @@ public class Installer implements InstallerInterface {
     private Status status = Status.NONE;
     private boolean force;
 
-    private static final boolean listenerInstalled;
-    private static final boolean agentInstalled;
+    private static final boolean LISTENERINSTALLED;
+    private static final boolean AGENTINSTALLED;
     static {
         final Options opts = SystemInstance.get().getOptions();
         // is the OpenEJB listener installed
-        listenerInstalled = "OpenEJBListener".equals(opts.get("openejb.embedder.source", ""))
+        LISTENERINSTALLED = "OpenEJBListener".equals(opts.get("openejb.embedder.source", ""))
                 || "ServerListener".equals(opts.get("openejb.embedder.source", ""));
 
         // is the OpenEJB javaagent installed
-        agentInstalled = InstallerTools.invokeStaticNoArgMethod(
+        AGENTINSTALLED = InstallerTools.invokeStaticNoArgMethod(
                 "org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
     }
 
     public static boolean isListenerInstalled() {
-        return listenerInstalled;
+        return LISTENERINSTALLED;
     }
 
     public static boolean isAgentInstalled() {
-        return agentInstalled;
+        return AGENTINSTALLED;
     }
 
     public Installer(final Paths paths) {
         this.paths = paths;
 
-        if (listenerInstalled && agentInstalled) {
+        if (LISTENERINSTALLED && AGENTINSTALLED) {
             status = Status.INSTALLED;
         }
     }
@@ -377,7 +377,7 @@ public class Installer implements InstallerInterface {
     }
 
     public void installListener(final String listener) {
-        if (listenerInstalled && !force) {
+        if (LISTENERINSTALLED && !force) {
             // OpenEJB Listener already installed
             return;
         }
@@ -460,7 +460,7 @@ public class Installer implements InstallerInterface {
     //       the geronimo locator to find the implementation
     //       because it needs some OSGi API we don't want to add
     public void installJavaagent() {
-        if (agentInstalled && !force) {
+        if (AGENTINSTALLED && !force) {
             // OpenEJB Agent already installed"
             return;
         }

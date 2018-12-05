@@ -28,6 +28,12 @@ public class NoOverrideCallbackFilter implements CallbackFilter {
         this.superClass = superClass;
     }
 
+    /**
+     *
+     * @param method Method
+     * @return int
+     */
+    @Override
     public int accept(Method method) {
         // we don't intercept non-public methods like finalize
         if (!Modifier.isPublic(method.getModifiers())) {
@@ -47,6 +53,7 @@ public class NoOverrideCallbackFilter implements CallbackFilter {
         }
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other == null) {
             return false;
@@ -65,6 +72,7 @@ public class NoOverrideCallbackFilter implements CallbackFilter {
         return superClass.equals(otherFilter.superClass);
     }
 
+    @Override
     public int hashCode() {
         return superClass.hashCode();
     }

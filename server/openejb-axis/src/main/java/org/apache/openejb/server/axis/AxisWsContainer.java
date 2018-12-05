@@ -50,7 +50,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class AxisWsContainer implements HttpListener {
-    private static final Logger logger = Logger.getInstance(LogCategory.AXIS, AxisWsContainer.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.AXIS, AxisWsContainer.class);
     public static final String REQUEST = AxisWsContainer.class.getName() + "@Request";
     public static final String RESPONSE = AxisWsContainer.class.getName() + "@Response";
 
@@ -73,6 +73,13 @@ public class AxisWsContainer implements HttpListener {
         }
     }
 
+    /**
+     *
+     * @param request HttpRequest
+     * @param response HttpResponse
+     * @throws Exception
+     */
+    @Override
     public void onMessage(final HttpRequest request, final HttpResponse response) throws Exception {
         final SaajUniverse universe = new SaajUniverse();
         universe.set(SaajUniverse.AXIS1);
@@ -186,7 +193,7 @@ public class AxisWsContainer implements HttpListener {
                     getSOAPConstants());
                 responseMessage.writeTo(res.getOutputStream());
             } catch (final Exception e) {
-                logger.warning(Messages.getMessage("exception00"), e);
+                LOGGER.warning(Messages.getMessage("exception00"), e);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
@@ -199,13 +206,13 @@ public class AxisWsContainer implements HttpListener {
         responseMessage = context.getResponseMessage();
         res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         Message responseMsg = responseMessage;
-        logger.warning(Messages.getMessage("exception00"), e);
+        LOGGER.warning(Messages.getMessage("exception00"), e);
         if (responseMsg == null) {
             final AxisFault fault = AxisFault.makeFault(e);
             //log the fault
             final Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
             if (runtimeException != null) {
-                logger.debug(Messages.getMessage("axisFault00"), fault);
+                LOGGER.debug(Messages.getMessage("axisFault00"), fault);
                 //strip runtime details
                 fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
             }
@@ -221,7 +228,7 @@ public class AxisWsContainer implements HttpListener {
         Message responseMessage;
         final Element runtimeException = fault.lookupFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);
 
-        logger.warning(Messages.getMessage("axisFault00"), fault);
+        LOGGER.warning(Messages.getMessage("axisFault00"), fault);
         if (runtimeException != null) {
             //strip runtime details
             fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_RUNTIMEEXCEPTION);

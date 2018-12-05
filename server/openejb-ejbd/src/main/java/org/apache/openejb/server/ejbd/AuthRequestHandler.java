@@ -31,8 +31,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 class AuthRequestHandler extends RequestHandler {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
-    private static final boolean debug = logger.isDebugEnabled();
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
+    private static final boolean DEBUG = LOGGER.isDebugEnabled();
 
     protected AuthRequestHandler(final EjbDaemon daemon) {
         super(daemon);
@@ -45,7 +45,7 @@ class AuthRequestHandler extends RequestHandler {
 
     @Override
     public Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     @Override
@@ -77,9 +77,9 @@ class AuthRequestHandler extends RequestHandler {
             res.setResponseCode(ResponseCodes.AUTH_DENIED);
             res.setDeniedCause(t);
         } finally {
-            if (debug) {
+            if (DEBUG) {
                 try {
-                    logger.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
+                    LOGGER.debug("AUTH REQUEST: " + req + " -- RESPONSE: " + res);
                 } catch (Exception e) {
                     //Ignore
                 }
@@ -100,10 +100,10 @@ class AuthRequestHandler extends RequestHandler {
             try {
                 res.writeExternal(out);
             } catch (Exception e) {
-                logger.fatal("Could not write AuthenticationResponse to output stream", e);
+                LOGGER.fatal("Could not write AuthenticationResponse to output stream", e);
             }
         } else {
-            logger.error("AuthRequestHandler cannot process an instance of: " + response.getClass().getName());
+            LOGGER.error("AuthRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
 }

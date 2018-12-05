@@ -30,6 +30,16 @@ public class ServiceMethodInterceptor implements MethodInterceptor {
         this.seiFactoryMap = seiFactoryMap;
     }
 
+    /**
+     *
+     * @param o Object
+     * @param method Method
+     * @param objects Object[]
+     * @param methodProxy MethodProxy
+     * @return Object
+     * @throws Throwable
+     */
+    @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         if (objects.length == 0) {
             String methodName = method.getName();
