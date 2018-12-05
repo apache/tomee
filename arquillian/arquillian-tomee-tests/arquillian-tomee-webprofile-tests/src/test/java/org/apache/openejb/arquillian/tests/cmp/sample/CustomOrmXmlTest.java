@@ -45,6 +45,8 @@ public class CustomOrmXmlTest {
                         LocalMovie.class, LocalMovieHome.class, MovieBean.class, MovieDetails.class,
                         MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class,
                         MoviesServlet.class)
+                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/custom-orm.xml")
+                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/persistence.xml"), "META-INF/persistence.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "openejb-jar.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "ejb-jar.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
