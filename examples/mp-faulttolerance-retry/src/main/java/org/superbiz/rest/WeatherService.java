@@ -66,7 +66,7 @@ public class WeatherService {
     public Response yearStatus() {
         try {
             return Response.ok().entity(weatherService.statusOfYear()).build();
-        } catch (WeatherGatewayTimeoutException e) {
+        } catch (RuntimeException e) {
             return Response.serverError().entity("WeatherGateway Service Timeout").build();
         }
     }
