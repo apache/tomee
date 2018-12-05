@@ -43,5 +43,6 @@
     <resource-ref>
         <res-ref-name>db/DataSource</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
+        <mapped-name>My DataSource</mapped-name>
     </resource-ref>
 </web-app>
