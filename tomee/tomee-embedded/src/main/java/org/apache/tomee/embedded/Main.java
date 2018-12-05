@@ -184,7 +184,7 @@ public class Main {
                     }
                 }
             });
-            if (options.hasOption(INTERACTIVE)) {
+            if (line.hasOption(INTERACTIVE)) {
                 String l;
                 final Scanner scanner = new Scanner(System.in);
                 while ((l = scanner.nextLine()) != null) {
