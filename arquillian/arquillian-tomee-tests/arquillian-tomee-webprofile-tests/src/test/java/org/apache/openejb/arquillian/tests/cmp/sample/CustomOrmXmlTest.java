@@ -70,7 +70,7 @@ public class CustomOrmXmlTest {
         Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: GENRE, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 255"));
         Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: MOVIE_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
 
-        final String[] split = output.split("\r\n");
+        final String[] split = output.split("\r?\n");
         Assert.assertEquals(7, split.length);
     }
 }
