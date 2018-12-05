@@ -79,7 +79,7 @@ public class MultipointServer {
 
     private final URI me;
 
-    private final Set<URI> roots = new LinkedHashSet<URI>();
+    private final Set<URI> roots = new LinkedHashSet<>();
 
     private final Event runs = new Event();
 
@@ -95,8 +95,8 @@ public class MultipointServer {
 
     private final Tracker tracker;
 
-    private final LinkedList<Host> connect = new LinkedList<Host>();
-    private final Map<URI, Session> connections = new HashMap<URI, Session>();
+    private final LinkedList<Host> connect = new LinkedList<>();
+    private final Map<URI, Session> connections = new HashMap<>();
 
     private long joined = 0;
 
@@ -205,12 +205,12 @@ public class MultipointServer {
     }
 
     public List<URI> getSessions() {
-        return new ArrayList<URI>(connections.keySet());
+        return new ArrayList<>(connections.keySet());
     }
 
     public List<URI> getConnectionsQueued() {
         synchronized (connect) {
-            final ArrayList<URI> uris = new ArrayList<URI>(connect.size());
+            final ArrayList<URI> uris = new ArrayList<>(connect.size());
             for (final Host host : connect) {
                 uris.add(host.getUri());
             }
@@ -322,7 +322,7 @@ public class MultipointServer {
         private final SocketChannel channel;
         private final ByteBuffer read = ByteBuffer.allocate(1024);
         private final SelectionKey key;
-        private final List<URI> listed = new ArrayList<URI>();
+        private final List<URI> listed = new ArrayList<>();
         private final long created = System.currentTimeMillis();
 
         private ByteBuffer write;
@@ -621,7 +621,7 @@ public class MultipointServer {
     private void initiateConnections() {
 
         synchronized (connect) {
-            final LinkedList<Host> unresolved = new LinkedList<Host>();
+            final LinkedList<Host> unresolved = new LinkedList<>();
 
             while (connect.size() > 0) {
 
@@ -918,7 +918,7 @@ public class MultipointServer {
 
     private ArrayList<URI> connections() {
         synchronized (connect) {
-            final ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
+            final ArrayList<URI> list = new ArrayList<>(connections.keySet());
             for (final Host host : connect) {
                 list.add(host.getUri());
             }

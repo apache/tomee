@@ -14,16 +14,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.openejb.server.auth;
+package org.apache.tomee;
 
-import java.net.InetAddress;
+public class TestCommand1 {
 
-/**
- * @version $Rev$ $Date$
- */
-public class PermitAllPermission implements IPAddressPermission {
-    @Override
-    public boolean implies(InetAddress address) {
-        return true;
+    public static void main(String[] args) {
+        final Test test = new Test();
+        test.main(args);
     }
 }

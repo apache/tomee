@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WsdlVisitor {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsdlVisitor.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, WsdlVisitor.class);
 
     protected final Definition definition;
 
@@ -123,7 +123,7 @@ public class WsdlVisitor {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             end();
         }

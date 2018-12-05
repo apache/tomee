@@ -55,7 +55,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 public class CommonsSchemaInfoBuilder {
-    private static final Log log = LogFactory.getLog(CommonsSchemaInfoBuilder.class);
+    private static final Log LOG = LogFactory.getLog(CommonsSchemaInfoBuilder.class);
     private static final String XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";
     private static final String XML_NS_NS = "http://www.w3.org/2000/xmlns/";
     private static final String SOAP_ENCODING_NS = "http://schemas.xmlsoap.org/soap/encoding/";
@@ -65,8 +65,8 @@ public class CommonsSchemaInfoBuilder {
 
     private final XmlSchemaCollection xmlSchemaCollection;
 
-    private final Map<QName, XmlTypeInfo> xmlTypes = new HashMap<QName, XmlTypeInfo>();
-    private final Map<QName, XmlElementInfo> xmlElements = new HashMap<QName, XmlElementInfo>();
+    private final Map<QName, XmlTypeInfo> xmlTypes = new HashMap<>();
+    private final Map<QName, XmlElementInfo> xmlElements = new HashMap<>();
 
     public CommonsSchemaInfoBuilder(JarFile moduleFile, URI wsdlUri) throws OpenEJBException {
         if (moduleFile == null) throw new NullPointerException("moduleFile is null");
@@ -254,7 +254,7 @@ public class CommonsSchemaInfoBuilder {
                 }
             }
         } else {
-            log.warn("Unknown schema type class " + typeInfo.getClass().getName());
+            LOG.warn("Unknown schema type class " + typeInfo.getClass().getName());
         }
 
         return typeInfo;
@@ -323,7 +323,7 @@ public class CommonsSchemaInfoBuilder {
 
                                 componentType = new QName(namespace, localPart);
                             }
-                            log.debug("determined component type from element type");
+                            LOG.debug("determined component type from element type");
                             return componentType;
                         }
                     }
@@ -351,7 +351,7 @@ public class CommonsSchemaInfoBuilder {
             if (item instanceof XmlSchemaElement) {
                 XmlSchemaElement element = (XmlSchemaElement) item;
                 QName componentType = element.getSchemaTypeName();
-                log.debug("determined component type from element type");
+                LOG.debug("determined component type from element type");
                 return componentType;
             }
         }
@@ -385,7 +385,7 @@ public class CommonsSchemaInfoBuilder {
 
 
     private static List<XmlSchemaElement> getNestedElements(XmlSchemaComplexType complexType) {
-        List<XmlSchemaElement> elements = new ArrayList<XmlSchemaElement>();
+        List<XmlSchemaElement> elements = new ArrayList<>();
         XmlSchemaParticle particle = complexType.getParticle();
         if (particle instanceof XmlSchemaElement) {
             XmlSchemaElement element = (XmlSchemaElement) particle;
