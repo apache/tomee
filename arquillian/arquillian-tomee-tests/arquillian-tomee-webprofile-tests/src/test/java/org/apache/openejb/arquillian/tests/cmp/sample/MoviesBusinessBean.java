@@ -29,12 +29,12 @@ import javax.naming.InitialContext;
 public class MoviesBusinessBean implements SessionBean {
     public void doLogic() {
         try {
-            Context initial = new InitialContext();
+            final Context initial = new InitialContext();
 
-            LocalActorHome actorHome = (LocalActorHome) initial.lookup("java:comp/env/ejb/Actor");
-            Context initial1 = new InitialContext();
+            final LocalActorHome actorHome = (LocalActorHome) initial.lookup("java:comp/env/ejb/Actor");
+            final Context initial1 = new InitialContext();
 
-            LocalMovieHome movieHome = (LocalMovieHome) initial1.lookup("java:comp/env/ejb/Movie");
+            final LocalMovieHome movieHome = (LocalMovieHome) initial1.lookup("java:comp/env/ejb/Movie");
 
             final LocalMovie movie = movieHome.create("Bad Boys", "Action Comedy");
 
@@ -43,7 +43,7 @@ public class MoviesBusinessBean implements SessionBean {
 
             movie.addActor(actor1);
             movie.addActor(actor2);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new EJBException(ex.getMessage());
         }
     }
@@ -60,16 +60,16 @@ public class MoviesBusinessBean implements SessionBean {
     public void ejbRemove() {
     }
 
-    public void setSessionContext(SessionContext sc) {
+    public void setSessionContext(final SessionContext sc) {
     }
 
-    private ArrayList copyActorsToDetails(Collection actors) {
-        ArrayList detailsList = new ArrayList();
-        Iterator i = actors.iterator();
+    private ArrayList copyActorsToDetails(final Collection actors) {
+        final ArrayList detailsList = new ArrayList();
+        final Iterator i = actors.iterator();
 
         while (i.hasNext()) {
-            LocalActor player = (LocalActor) i.next();
-            ActorDetails details =
+            final LocalActor player = (LocalActor) i.next();
+            final ActorDetails details =
                 new ActorDetails(player.getActorId(), player.getName());
 
             detailsList.add(details);

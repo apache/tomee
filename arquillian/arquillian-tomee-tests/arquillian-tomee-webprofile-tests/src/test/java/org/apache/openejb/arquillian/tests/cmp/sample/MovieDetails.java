@@ -21,7 +21,7 @@ public class MovieDetails implements java.io.Serializable {
     private String name;
     private String genre;
 
-    public MovieDetails(String id, String name, String genre) {
+    public MovieDetails(final String id, final String name, final String genre) {
         this.id = id;
         this.name = name;
         this.genre = genre;

@@ -20,7 +20,7 @@ public class ActorDetails implements java.io.Serializable {
     private Integer id;
     private String name;
 
-    public ActorDetails(Integer id, String name) {
+    public ActorDetails(final Integer id, final String name) {
         this.id = id;
         this.name = name;
     }
