@@ -43,7 +43,7 @@ public class WsServlet implements Servlet {
     public static final String WEBSERVICE_CONTAINER = WsServlet.class.getName() + "@WebServiceContainer";
 
     private static final DefaultContext DEFAULT_CONTEXT = new DefaultContext();
-    private static final ThreadLocal<ServletEndpointContext> ENDPOINTCONTENT = new ThreadLocal<>();
+    private static final ThreadLocal<ServletEndpointContext> ENDPOINT_CONTENT = new ThreadLocal<>();
 
     private ServletConfig config;
     private Object pojo;
@@ -87,7 +87,7 @@ public class WsServlet implements Servlet {
         if (service == null) throw new ServletException("WebServiceContainer has not been set");
 
         ServletEndpointContext context = getContext();
-        ENDPOINTCONTENT.set(new InvocationContext((HttpServletRequest) req));
+        ENDPOINT_CONTENT.set(new InvocationContext((HttpServletRequest) req));
         try {
             res.setContentType("text/xml");
             HttpRequest httpRequest = new ServletRequestAdapter((HttpServletRequest) req, (HttpServletResponse) res, config.getServletContext());
@@ -105,7 +105,7 @@ public class WsServlet implements Servlet {
                 throw new ServletException("Error processing webservice request", e);
             }
         } finally {
-            ENDPOINTCONTENT.set(context);
+            ENDPOINT_CONTENT.set(context);
         }
     }
 
@@ -145,7 +145,7 @@ public class WsServlet implements Servlet {
     }
 
     private static ServletEndpointContext getContext() {
-        ServletEndpointContext context = ENDPOINTCONTENT.get();
+        ServletEndpointContext context = ENDPOINT_CONTENT.get();
         return context != null ? context : DEFAULT_CONTEXT;
     }
 
