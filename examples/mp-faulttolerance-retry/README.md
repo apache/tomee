@@ -199,5 +199,13 @@ WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this
 
 ##### Run the tests
 
-You can also try it out using the [WeatherServiceTest.java](../../../../../WeatherServiceTest.java) available in the project.
+You can also try it out using the [WeatherServiceTest.java](src/test/java/org/superbiz/rest/WeatherServiceTest.java) available in the project.
+
+    mvn clean test
+    
+```
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+```
 
