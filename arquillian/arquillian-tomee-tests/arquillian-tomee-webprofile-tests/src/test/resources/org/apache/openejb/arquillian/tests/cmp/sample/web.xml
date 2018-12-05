@@ -39,4 +39,9 @@
         <home>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessHome</home>
         <remote>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusiness</remote>
     </ejb-ref>
+
+    <resource-ref>
+        <res-ref-name>db/DataSource</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+    </resource-ref>
 </web-app>
