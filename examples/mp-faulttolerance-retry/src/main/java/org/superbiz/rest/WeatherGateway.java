@@ -37,7 +37,7 @@ public class WeatherGateway {
             "Timeout when accessing AccuWeather Forecast Service.";
 
     private static final String FORECAST_TIMEOUT_MESSAGE_DELAY =
-            "Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (%d)";
+            "Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (%d)";
 
     private static final String FORECAST_BUSY_MESSAGE =
             "Error AccuWeather Forecast Service is busy. Number of Attempts: (%d) \n";
@@ -91,17 +91,17 @@ public class WeatherGateway {
             statusOfMonthInstant = Instant.now();
             throw new WeatherGatewayTimeoutException();
         }
-        return "The Forecast for the Month is sunny most of the days";
+        return "The Forecast for the Month is Sunny for most of the days";
     }
 
-    @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 500, maxDuration = 1000)
-    public String statusOfYear() {
+    @Retry(maxDuration = 1000)
+    public String statusOfYear(){
         if (counterStatusOfWeekend.addAndGet(1) <= 5) {
             logTimeoutMessage(statusOfYearInstant);
             statusOfYearInstant = Instant.now();
-            throw new WeatherGatewayTimeoutException();
+            throw new RuntimeException();
         }
-        return "Status of the Year is unavailable.";
+        return "WeatherGateway Service Error";
     }
 
     private void logTimeoutMessage(Instant instant) {

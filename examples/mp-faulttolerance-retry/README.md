@@ -2,7 +2,8 @@
 This is an example of how to use Microprofile @Retry in TomEE.
 
 #### Retry Feature
-Microprofile Fault Tolerance has a feature called Retry that can be used to recover an operation from failure, invoking the same operation again.
+Microprofile Fault Tolerance has a feature called Retry that can be used to recover an operation from failure, invoking the same operation again 
+until it reaches its stopping criteria.
 
 The Retry policy allows to configure :
 
@@ -31,7 +32,7 @@ The method statusOfDay will fail three times, each time, throwing a `WeatherGate
 @Retry annotation is configured to `retryOn` in case of failure, the FailSafe library will take the `maxRetry` value and
 retry the same operation until it reaches the number maximum of attempts, which is 3 (default value).  
 
-```
+```java
 @RequestScoped
 public class WeatherGateway{ 
    ...
@@ -70,17 +71,16 @@ returning a response to the caller, the logic states that at the third attempt, 
  As the `@Retry` annotation is configured to `abortOn` in case of `WeatherGatewayTimeoutException` happens, the remaining attempt won't be 
  executed and the caller must handle the exception.
 
-``` 
-    @Retry(maxRetries = 3, retryOn = WeatherGatewayTimeoutException.class, abortOn = WeatherGatewayBusyServiceException.class)
-    public String statusOfWeek(){
-        if(counterStatusOfWeek.addAndGet(1) <= DEFAULT_MAX_RETRY){
-            LOGGER.warning(String.format(FORECAST_TIMEOUT_MESSAGE_ATTEMPTS, DEFAULT_MAX_RETRY, counterStatusOfWeek.get()));
-            throw new WeatherGatewayTimeoutException();
-        }
-        LOGGER.log(Level.SEVERE, String.format(FORECAST_BUSY_MESSAGE, counterStatusOfWeek.get()));
-        throw new WeatherGatewayBusyServiceException();
+```java
+@Retry(maxRetries = 3, retryOn = WeatherGatewayTimeoutException.class, abortOn = WeatherGatewayBusyServiceException.class)
+public String statusOfWeek(){
+    if(counterStatusOfWeek.addAndGet(1) <= DEFAULT_MAX_RETRY){
+        LOGGER.warning(String.format(FORECAST_TIMEOUT_MESSAGE_ATTEMPTS, DEFAULT_MAX_RETRY, counterStatusOfWeek.get()));
+        throw new WeatherGatewayTimeoutException();
     }
-    
+    LOGGER.log(Level.SEVERE, String.format(FORECAST_BUSY_MESSAGE, counterStatusOfWeek.get()));
+    throw new WeatherGatewayBusyServiceException();
+}
 ```
 
 Week status call
@@ -109,16 +109,15 @@ is needed to set `jitter` to zero (0). Otherwise the delay of each new attempt w
 
 Analysing the logged messages, is possible to see that all attempts took the pretty much the same time to execute.
 
-``` 
-    @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 0)
-    public String statusOfWeekend() {
-        if (counterStatusOfWeekend.addAndGet(1) <= 5) {
-            logTimeoutMessage(statusOfWeekendInstant);
-            statusOfWeekendInstant = Instant.now();
-            throw new WeatherGatewayTimeoutException();
-        }
-        return "The Forecast for the Weekend is Scattered Showers.";
+```java 
+@Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 0)
+public String statusOfWeekend() {
+    if (counterStatusOfWeekend.addAndGet(1) <= 5) {
+        logTimeoutMessage(statusOfWeekendInstant);
+        statusOfWeekendInstant = Instant.now();
+        throw new WeatherGatewayTimeoutException();
     }
+    return "The Forecast for the Weekend is Scattered Showers.";
 }
 ```
 
@@ -130,29 +129,30 @@ Server log
 
 ```
 WARNING - Timeout when accessing AccuWeather Forecast Service.
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (501) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (500) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (500) millis
 ```
 
 ##### Example 4
 
 Basically with the same behaviour of the `Example 3`, this example sets the `delay` and `jitter` with 500 millis to randomly
-create a new delay for each new attempt after the first failure.
+create a new delay for each new attempt after the first failure. [AbstractExecution#randomDelay(delay,jitter,random)](https://github.com/jhalterman/failsafe/blob/master/src/main/java/net/jodah/failsafe/AbstractExecution.java) 
+can give a hit of how the new delay is calculated.
 
 Analysing the logged messages, is possible to see how long each attempt had to wait until its execution.
 
-``` 
-    @Retry(retryOn = WeatherGatewayTimeoutException.class, delay = 500, jitter = 500)
-    public String statusOfMonth() {
-        if (counterStatusOfWeekend.addAndGet(1) <= DEFAULT_MAX_RETRY) {
-            logTimeoutMessage(statusOfMonthInstant);
-            statusOfMonthInstant = Instant.now();
-            throw new WeatherGatewayTimeoutException();
-        }
-        return "The Forecast for the Weekend is Scattered Showers.";
+```java 
+@Retry(retryOn = WeatherGatewayTimeoutException.class, delay = 500, jitter = 500)
+public String statusOfMonth() {
+    if (counterStatusOfWeekend.addAndGet(1) <= DEFAULT_MAX_RETRY) {
+        logTimeoutMessage(statusOfMonthInstant);
+        statusOfMonthInstant = Instant.now();
+        throw new WeatherGatewayTimeoutException();
     }
+    return "The Forecast for the Weekend is Scattered Showers.";
+}
 ```
 
 Month status call
@@ -163,33 +163,41 @@ Server log
 
 ```
 WARNING - Timeout when accessing AccuWeather Forecast Service.
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (417) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (90) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (417) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (90) millis
 ```
 
 ##### Example 5
 
-``` 
-    @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 500, maxDuration = 1000)
-    public String statusOfYear() {
-        if (counterStatusOfWeekend.addAndGet(1) <= 5) {
-            logTimeoutMessage(statusOfYearInstant);
-            statusOfYearInstant = Instant.now();
-            throw new WeatherGatewayTimeoutException();
-        }
-        return "Status of the Year is unavailable.";
+If a condition for an operation be re-executed is not set as in the previous examples using the parameter `retryOn`, 
+the operation is executed again for _any_ exception that is thrown.
+
+```java 
+@Retry(maxDuration = 1000)
+public String statusOfYear(){
+    if (counterStatusOfWeekend.addAndGet(1) <= 5) {
+        logTimeoutMessage(statusOfYearInstant);
+        statusOfYearInstant = Instant.now();
+        throw new RuntimeException();
     }
+    return "WeatherGateway Service Error";
+}
 ```
 
 Year status call
 
-    GET http://localhost:8080/mp-faulttolerance-retry/weather/weekend/status
+    GET http://localhost:8080/mp-faulttolerance-retry/weather/year/statusk
 
 Server log
 
 ```
 WARNING - Timeout when accessing AccuWeather Forecast Service.
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (666) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (266) millis
-WARNING - Timeout when accessing AccuWeather Forecast Service. Delay of each attempt: (66) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (666) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (266) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (66) millis
 ```
+
+##### Run the tests
+
+You can also try it out using the [WeatherServiceTest.java](../../../../../WeatherServiceTest.java) available in the project.
+
