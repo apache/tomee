@@ -18,7 +18,6 @@ package org.apache.openejb.server;
 
 
 import java.net.URI;
-import java.io.IOException;
 
 /**
  * @version $Rev$ $Date$

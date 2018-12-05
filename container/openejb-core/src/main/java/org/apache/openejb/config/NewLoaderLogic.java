@@ -92,9 +92,9 @@ public class NewLoaderLogic {
 
     public static Set<String> callers(final Filter start) {
 
-        final Set<String> callers = new LinkedHashSet<String>();
+        final Set<String> callers = new LinkedHashSet<>();
 
-        final List<StackTraceElement> elements = new ArrayList<StackTraceElement>(Arrays.asList(new Exception().fillInStackTrace().getStackTrace()));
+        final List<StackTraceElement> elements = new ArrayList<>(Arrays.asList(new Exception().fillInStackTrace().getStackTrace()));
 
         // Yank out everything until we find a known ENTRY point
         // if we don't find one, so be it, this is only a convenience
@@ -323,7 +323,7 @@ public class NewLoaderLogic {
             exclusions = readDefaultExclusions();
         }
 
-        final List<String> excludes = new ArrayList<String>(exclusions.length + 5);
+        final List<String> excludes = new ArrayList<>(exclusions.length + 5);
         excludes.addAll(Arrays.asList(exclusions));
 
         if (ADDITIONAL_EXCLUDES != null) {
@@ -390,7 +390,7 @@ public class NewLoaderLogic {
 
     public static String[] readInputStreamList(final InputStream is) {
 
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         BufferedReader reader = null;
         String line;
 
@@ -452,7 +452,7 @@ public class NewLoaderLogic {
 
             callers.size();
 
-            final Set<String> packages = new HashSet<String>();
+            final Set<String> packages = new HashSet<>();
             for (final String caller : callers) {
                 String[] parts = caller.split("\\.");
                 if (parts.length > 2) {
@@ -573,7 +573,7 @@ public class NewLoaderLogic {
                     "='" +
                     include +
                     "'");
-                final List<String> list = new ArrayList<String>();
+                final List<String> list = new ArrayList<>();
                 for (final URL url : urls) {
                     list.add(url.toExternalForm());
                 }

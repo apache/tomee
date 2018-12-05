@@ -21,11 +21,11 @@ package org.apache.openejb.util.proxy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm6.ClassWriter;
-import org.apache.xbean.asm6.Label;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
-import org.apache.xbean.asm6.Type;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -174,7 +174,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         cw.visitField(ACC_FINAL + ACC_PRIVATE, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
         cw.visitField(ACC_FINAL + ACC_PRIVATE, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
 
-        final Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        final Map<String, List<Method>> methodMap = new HashMap<>();
 
         getNonPrivateMethods(classToProxy, methodMap);
 
@@ -220,7 +220,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 List<Method> methods = methodMap.get(method.getName());
                 if (methods == null) {
-                    methods = new ArrayList<Method>();
+                    methods = new ArrayList<>();
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {

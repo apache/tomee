@@ -75,8 +75,8 @@ public class LegacyServerTest {
         //        System.setProperty("version", OpenEjbVersion.get().getVersion());
         System.setProperty("openejb.client.connection.strategy", "roundrobin");
 
-        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.openejb", "openejb-standalone") + " - This may take a while...");
-        final File zip = Repository.getArtifact("org.apache.openejb", "openejb-standalone", "zip");
+        logger.info("Retrieving standalone server: " + Repository.guessVersion("org.apache.tomee", "openejb-standalone") + " - This may take a while...");
+        final File zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
         final File dir = Files.tmpdir();

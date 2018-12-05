@@ -309,7 +309,10 @@ public class ReadDescriptors implements DynamicDeployer {
         final Source value = getSource(module.getAltDDs().get("validation.xml"));
         if (value != null) {
             try {
-                final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(ValidationConfigType.class, value.get(), false);
+                final ValidationConfigType validationConfigType = JaxbOpenejb.unmarshal(
+                        ValidationConfigType.class, value.get(), false,
+                        "http://xmlns.jcp.org/xml/ns/validation/configuration",
+                        "http://jboss.org/xml/ns/javax/validation/configuration");
                 module.setValidationConfig(validationConfigType);
             } catch (final Exception e) {
                 logger.warning("can't read validation.xml to construct a validation factory, it will be ignored");
@@ -533,18 +536,26 @@ public class ReadDescriptors implements DynamicDeployer {
         // check is done here since later we lost the data of the origin
         ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
 
-        final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
-        current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
+        String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+        if (beanDiscoveryMode == null) {
+            beanDiscoveryMode = "ALL";
+        }
+        else if ("ALL".equalsIgnoreCase(beanDiscoveryMode) && beans.isTrim()) {
+            beanDiscoveryMode = "TRIM";
+        }
+
+        current.getDiscoveryByUrl().put(url, beanDiscoveryMode);
         return current;
     }
 
-    private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
+    // package scoped for testing
+    void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
         final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data != null && !(data instanceof EntityMappings)) {
             if (data instanceof URL) {
                 final URL url = (URL) data;
                 try {
-                    final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
+                    final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
                     ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
                 } catch (final SAXException e) {
                     throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);

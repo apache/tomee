@@ -136,7 +136,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
-        final LinkedHashSet<String> roles = new LinkedHashSet<String>(principals.length);
+        final LinkedHashSet<String> roles = new LinkedHashSet<>(principals.length);
         for (final Principal principal : principals) {
             final String name = principal.getName();
             if (logicalRoles.contains(name)) {
@@ -151,15 +151,17 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final String moduleID = newContext.getBeanContext().getModuleID();
         JavaSecurityManagers.setContextID(moduleID);
 
+        final SecurityContext defaultSecurityContext = getDefaultSecurityContext();
+
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
                 (providedSecurityContext != null ? providedSecurityContext.context : null);
-        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
+        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultSecurityContext)) {
             final Identity identity = clientIdentity.get();
             if (identity != null) {
                 securityContext = new SecurityContext(identity.subject);
             } else {
-                securityContext = getDefaultContext();
+                securityContext = defaultSecurityContext;
             }
         }
 
@@ -377,7 +379,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final Group group = new Group(groupName);
         group.addMember(user);
 
-        final HashSet<Principal> principals = new HashSet<Principal>();
+        final HashSet<Principal> principals = new HashSet<>();
         principals.add(user);
         principals.add(group);
 
@@ -398,7 +400,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         }
     }
 
-    protected SecurityContext getDefaultContext() {
+    protected SecurityContext getDefaultSecurityContext() {
         return defaultContext;
     }
 
@@ -453,7 +455,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     public static class Group implements java.security.acl.Group {
 
-        private final List<Principal> members = new ArrayList<Principal>();
+        private final List<Principal> members = new ArrayList<>();
         private final String name;
 
         public Group(final String name) {

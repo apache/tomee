@@ -356,7 +356,7 @@ public class SuperPropertiesTest extends PropertiesTest {
     }
 
     protected static Map<String, String> map(final String... keysAndValues) {
-        final Map<String, String> map = new LinkedHashMap<String, String>();
+        final Map<String, String> map = new LinkedHashMap<>();
         for (int i = 0; i + 1 < keysAndValues.length; i += 2) {
             final String key = keysAndValues[i];
             final String value = keysAndValues[i + 1];

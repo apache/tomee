@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=JMS and MDBs
 type=page
 status=published
 title=Injection Of Connectionfactory

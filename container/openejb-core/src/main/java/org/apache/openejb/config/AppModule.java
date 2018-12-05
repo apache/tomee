@@ -53,27 +53,27 @@ public class AppModule implements DeploymentModule {
     private final Properties properties = new SuperProperties().caseInsensitive(true);
     private final Application application;
     private final ValidationContext validation;
-    private final List<URL> additionalLibraries = new ArrayList<URL>();
-    private final List<URL> scannableContainerUrls = new ArrayList<URL>();
-    private final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
-    private final List<WebModule> webModules = new ArrayList<WebModule>();
-    private final List<ClientModule> clientModules = new ArrayList<ClientModule>();
-    private final List<EjbModule> ejbModules = new ArrayList<EjbModule>();
-    private final List<PersistenceModule> persistenceModules = new ArrayList<PersistenceModule>();
-    private final Map<String, TransactionType> txTypeByUnit = new HashMap<String, TransactionType>();
+    private final List<URL> additionalLibraries = new ArrayList<>();
+    private final List<URL> scannableContainerUrls = new ArrayList<>();
+    private final List<ConnectorModule> connectorModules = new ArrayList<>();
+    private final List<WebModule> webModules = new ArrayList<>();
+    private final List<ClientModule> clientModules = new ArrayList<>();
+    private final List<EjbModule> ejbModules = new ArrayList<>();
+    private final List<PersistenceModule> persistenceModules = new ArrayList<>();
+    private final Map<String, TransactionType> txTypeByUnit = new HashMap<>();
     // TODO We could turn this into the Resources JAXB object and support containers and other things as well
     private final Collection<Resource> resources = new LinkedHashSet<>();
-    private final Collection<Container> containers = new HashSet<Container>();
-    private final Collection<Service> services = new HashSet<Service>();
+    private final Collection<Container> containers = new HashSet<>();
+    private final Collection<Service> services = new HashSet<>();
     private final ClassLoader classLoader;
     private EntityMappings cmpMappings;
-    private final Map<String, Object> altDDs = new HashMap<String, Object>();
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final Map<String, Object> altDDs = new HashMap<>();
+    private final Set<String> watchedResources = new TreeSet<>();
     private final boolean standaloneModule;
     private boolean delegateFirst = DELEGATE_FIRST_DEFAULT;
-    private final Set<String> additionalLibMbeans = new TreeSet<String>();
-    private final Collection<String> jaxRsProviders = new TreeSet<String>();
-    private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<String, PojoConfiguration>();
+    private final Set<String> additionalLibMbeans = new TreeSet<>();
+    private final Collection<String> jaxRsProviders = new TreeSet<>();
+    private final Map<String, PojoConfiguration> pojoConfigurations = new HashMap<>();
     private IAnnotationFinder earLibFinder;
 
     private ID id;
@@ -268,7 +268,7 @@ public class AppModule implements DeploymentModule {
     }
 
     public List<ValidationContext> getValidationContexts() {
-        final List<ValidationContext> contexts = new ArrayList<ValidationContext>();
+        final List<ValidationContext> contexts = new ArrayList<>();
 
         contexts.add(getValidation());
 
@@ -376,7 +376,7 @@ public class AppModule implements DeploymentModule {
     }
 
     public Collection<DeploymentModule> getDeploymentModule() {
-        final ArrayList<DeploymentModule> modules = new ArrayList<DeploymentModule>();
+        final ArrayList<DeploymentModule> modules = new ArrayList<>();
         modules.addAll(ejbModules);
         modules.addAll(webModules);
         modules.addAll(connectorModules);

@@ -15,22 +15,23 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.6-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-rs</artifactId>
   <name>OpenEJB :: Server :: CXF RS</name>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.server.cxf.rs</tomee.build.name>
+  </properties>
+
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-http</artifactId>
@@ -118,14 +119,11 @@
       <artifactId>johnzon-jaxrs</artifactId>
       <version>${johnzon.version}</version>
     </dependency>
-    <!-- java 8 only, we can add it if we instantiate it after having checked java
-    NOTE: needs jsonb-api too (available in jonzon groupId)
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <version>${johnzon.version}</version>
     </dependency>
-    -->
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>

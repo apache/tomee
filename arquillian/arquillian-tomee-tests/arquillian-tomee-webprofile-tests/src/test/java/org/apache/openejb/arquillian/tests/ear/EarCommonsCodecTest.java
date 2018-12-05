@@ -54,6 +54,8 @@ public class EarCommonsCodecTest {
         final EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, "codec.ear").addAsModule(ejbJar).addAsModule(webapp);
         ear.addAsLibraries(codecLibs);
 
+        System.out.println(ear.toString(true));
+
         return ear;
     }
 

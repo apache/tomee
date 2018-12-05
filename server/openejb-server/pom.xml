@@ -20,11 +20,12 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.6-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-server</artifactId>
@@ -84,7 +85,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm6-shaded</artifactId>
+      <artifactId>xbean-asm7-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -116,6 +117,7 @@
   </dependencies>
 
   <properties>
+    <tomee.build.name>${project.groupId}.server.core</tomee.build.name>
     <openejb.osgi.import.pkg>
       javassist.util;resolution:=optional;version="[3.9,4)",
       javassist.util.proxy;resolution:=optional;version="[3.9,4)",
@@ -272,8 +274,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm5;version="[3.1,4)",
-      org.apache.xbean.asm5.commons;version="[3.1,4)",
+      org.apache.xbean.asm7;version="[3.1,4)",
+      org.apache.xbean.asm7.commons;version="[3.1,4)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",

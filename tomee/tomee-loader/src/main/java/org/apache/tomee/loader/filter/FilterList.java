@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class FilterList implements Filter {
 
-    private final List<Filter> filters = new ArrayList<Filter>();
+    private final List<Filter> filters = new ArrayList<>();
 
     public FilterList(final Filter... filters) {
         this(Arrays.asList(filters));

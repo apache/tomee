@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=DataSources
 type=page
 status=published
 title=DataSource Ciphered Password

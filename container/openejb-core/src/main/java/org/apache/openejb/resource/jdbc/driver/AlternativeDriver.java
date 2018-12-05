@@ -72,7 +72,7 @@ public class AlternativeDriver implements Driver {
             DriverManager.registerDriver(this);
         }
 
-        ensureFirst(new LinkedHashSet<Driver>());
+        ensureFirst(new LinkedHashSet<>());
     }
 
     public void deregister() throws SQLException {

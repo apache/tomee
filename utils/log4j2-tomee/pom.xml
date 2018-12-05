@@ -16,11 +16,15 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://maven.apache.org/POM/4.0.0           http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+          http://maven.apache.org/POM/4.0.0
+          http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.6-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,6 +33,7 @@
   <description>Add this module if you use log4j2 in TomEE/lib and rely on shutdown hook and don't want to loose logs.</description>
 
   <properties>
+    <tomee.build.name>${project.groupId}.util.log4j2</tomee.build.name>
     <log4j2.version>2.3</log4j2.version>
     <log4j.groupId>org.apache.logging.log4j</log4j.groupId>
   </properties>

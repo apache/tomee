@@ -52,9 +52,9 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String localHome;
     public String local;
     public String proxy;
-    public final List<String> businessLocal = new ArrayList<String>();
-    public final List<String> businessRemote = new ArrayList<String>();
-    public final List<String> parents = new ArrayList<String>();
+    public final List<String> businessLocal = new ArrayList<>();
+    public final List<String> businessRemote = new ArrayList<>();
+    public final List<String> parents = new ArrayList<>();
     public boolean localbean;
 
     public String ejbClass;
@@ -68,29 +68,29 @@ public abstract class EnterpriseBeanInfo extends InfoObject {
     public String runAs;
     public String runAsUser;
 
-    public final List<SecurityRoleReferenceInfo> securityRoleReferences = new ArrayList<SecurityRoleReferenceInfo>();
+    public final List<SecurityRoleReferenceInfo> securityRoleReferences = new ArrayList<>();
 
-    public final List<CallbackInfo> aroundInvoke = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> aroundInvoke = new ArrayList<>();
 
-    public final List<CallbackInfo> postConstruct = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> preDestroy = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> postConstruct = new ArrayList<>();
+    public final List<CallbackInfo> preDestroy = new ArrayList<>();
 
-    public final List<CallbackInfo> aroundTimeout = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> aroundTimeout = new ArrayList<>();
 
-    public final List<NamedMethodInfo> asynchronous = new ArrayList<NamedMethodInfo>();
-    public Set<String> asynchronousClasses = new HashSet<String>();
+    public final List<NamedMethodInfo> asynchronous = new ArrayList<>();
+    public Set<String> asynchronousClasses = new HashSet<>();
 
     public String containerId;
     public String serviceEndpoint;
 
-    public List<JndiNameInfo> jndiNamess = new ArrayList<JndiNameInfo>();
+    public List<JndiNameInfo> jndiNamess = new ArrayList<>();
 
-    public List<String> jndiNames = new ArrayList<String>();
+    public List<String> jndiNames = new ArrayList<>();
     public boolean loadOnStartup;
-    public final List<String> dependsOn = new ArrayList<String>();
+    public final List<String> dependsOn = new ArrayList<>();
 
     public TimeoutInfo statefulTimeout;
-    public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<MethodScheduleInfo>();
+    public List<MethodScheduleInfo> methodScheduleInfos = new ArrayList<>();
 
     public boolean restService;
     public boolean passivable;

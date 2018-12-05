@@ -26,10 +26,10 @@ public class EntityBeanInfo extends EnterpriseBeanInfo {
     public String primKeyField;
     public String persistenceType;
     public String reentrant;
-    public final List<String> cmpFieldNames = new ArrayList<String>();
-    public final List<CmrFieldInfo> cmrFields = new ArrayList<CmrFieldInfo>();
+    public final List<String> cmpFieldNames = new ArrayList<>();
+    public final List<CmrFieldInfo> cmrFields = new ArrayList<>();
     public int cmpVersion;
-    public final List<QueryInfo> queries = new ArrayList<QueryInfo>();
+    public final List<QueryInfo> queries = new ArrayList<>();
 
     public EntityBeanInfo() {
         type = ENTITY;

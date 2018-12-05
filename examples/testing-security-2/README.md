@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Security
 type=page
 status=published
 title=Testing Security 2

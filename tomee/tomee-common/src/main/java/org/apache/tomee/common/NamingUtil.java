@@ -49,8 +49,8 @@ public class NamingUtil {
     public static final String WS_PORT_QNAME = "wsportqname";
     public static final String WSDL_URL = "wsdlurl";
 
-    private static final AtomicInteger id = new AtomicInteger(31);
-    private static final Map<String,Object> registry = new ConcurrentHashMap<String, Object>();
+    private static final AtomicInteger ID = new AtomicInteger(31);
+    private static final Map<String,Object> REGISTRY = new ConcurrentHashMap<String, Object>();
 
     // these two attributes are used to be able to cleanup quickly the registry (otherwise we need to duplicate a lot of logic)
     private static StandardContext currentContext;
@@ -79,13 +79,13 @@ public class NamingUtil {
     }
 
     public static void setStaticValue(final Resource resource, final String name, final Object value) {
-        final String token = String.valueOf(id.incrementAndGet());
-        registry.put(token, value);
+        final String token = String.valueOf(ID.incrementAndGet());
+        REGISTRY.put(token, value);
         resource.setProperty("static-token" + (name != null ? "-" + name : ""), token);
         if (currentContext != null) {
             Collection<String> ids = ID_BY_CONTEXT.get(currentContext);
             if (ids == null) {
-                ids = new ArrayList<String>();
+                ids = new ArrayList<>();
                 ID_BY_CONTEXT.put(currentContext, ids);
             }
             ids.add(token);
@@ -104,7 +104,7 @@ public class NamingUtil {
         if (token == null) {
             return null;
         }
-        final T object = (T) registry.get(token);
+        final T object = (T) REGISTRY.get(token);
         return object;
     }
 
@@ -144,7 +144,7 @@ public class NamingUtil {
         final Collection<String> keys = ID_BY_CONTEXT.remove(context);
         if (keys != null) {
             for (final String k : keys) {
-                registry.remove(k);
+                REGISTRY.remove(k);
             }
         }
     }

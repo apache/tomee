@@ -50,6 +50,10 @@ public class MultipointDiscoveryAgentTest extends TestCase {
 
 
     public void test() throws Exception {
+        if ("true".equals(System.getProperty("skipMulticastTests"))) {
+            Logger.getLogger(this.getClass().getName()).warning("Skipping MulticastTest " + this.getClass().getName());
+            return;
+        }
 
         final URI testService = new URI("green://localhost:0");
 

@@ -40,7 +40,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
     };
 
     private Object defaultValue;
-    private final List<String> prefixes = new CopyOnWriteArrayList<String>();
+    private final List<String> prefixes = new CopyOnWriteArrayList<>();
 
     public ContextualJndiReference(final String jndiName) {
         super(jndiName);
@@ -104,7 +104,7 @@ public class ContextualJndiReference extends IntraVmJndiReference {
             }
         }
 
-        final Collection<Object> values = new ArrayList<Object>();
+        final Collection<Object> values = new ArrayList<>();
         for (final String p : prefixes) {
             if (p != null && !p.isEmpty()) {
                 try {

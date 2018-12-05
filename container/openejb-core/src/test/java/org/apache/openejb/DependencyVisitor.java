@@ -45,16 +45,16 @@
  */
 package org.apache.openejb;
 
-import org.apache.xbean.asm6.AnnotationVisitor;
-import org.apache.xbean.asm6.Attribute;
-import org.apache.xbean.asm6.FieldVisitor;
-import org.apache.xbean.asm6.Label;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
-import org.apache.xbean.asm6.Type;
-import org.apache.xbean.asm6.shade.commons.EmptyVisitor;
-import org.apache.xbean.asm6.signature.SignatureReader;
-import org.apache.xbean.asm6.signature.SignatureVisitor;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.Attribute;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm7.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm7.signature.SignatureReader;
+import org.apache.xbean.asm7.signature.SignatureVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -65,9 +65,9 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class DependencyVisitor extends EmptyVisitor {
-    Set<String> packages = new HashSet<String>();
+    Set<String> packages = new HashSet<>();
 
-    Map<String, Map<String, Integer>> groups = new HashMap<String, Map<String, Integer>>();
+    Map<String, Map<String, Integer>> groups = new HashMap<>();
 
     Map<String, Integer> current;
 
@@ -90,12 +90,12 @@ public class DependencyVisitor extends EmptyVisitor {
         final String[] interfaces) {
 
         if (name.startsWith("org/apache/openejb/OpenEjbContainer")) {
-            current = new HashMap<String, Integer>();
+            current = new HashMap<>();
         } else {
             final String p = getGroupKey(name);
             current = groups.get(p);
             if (current == null) {
-                current = new HashMap<String, Integer>();
+                current = new HashMap<>();
                 groups.put(p, current);
             }
 
@@ -401,7 +401,7 @@ public class DependencyVisitor extends EmptyVisitor {
         private final DependencyVisitor delegate;
 
         public SignatureAdapter(final DependencyVisitor dependencyVisitor) {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM7);
             delegate = dependencyVisitor;
         }
 

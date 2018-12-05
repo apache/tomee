@@ -81,14 +81,14 @@ public class CmpContainer implements RpcContainer {
     /**
      * Index used for getDeployments() and getDeploymentInfo(deploymentId).
      */
-    protected final Map<Object, BeanContext> deploymentsById = new HashMap<Object, BeanContext>();
+    protected final Map<Object, BeanContext> deploymentsById = new HashMap<>();
 
     /**
      * When events are fired from the CMP engine only an entity bean instance is returned.  The type of the bean is used
      * to find the deployment info.  This means that when the same type is used multiple ejb deployments a random deployment
      * will be selected to handle the ejb callback.
      */
-    protected final Map<Class, BeanContext> beansByClass = new HashMap<Class, BeanContext>();
+    protected final Map<Class, BeanContext> beansByClass = new HashMap<>();
 
     /**
      * The CmpEngine which performs the actual persistence operations
@@ -375,7 +375,7 @@ public class CmpContainer implements RpcContainer {
             //noinspection unchecked
             Set<EntityBean> registeredEntities = (LinkedHashSet<EntityBean>) synchronizationRegistry.getResource(ENTITIES_TO_STORE);
             if (registeredEntities == null) {
-                registeredEntities = new LinkedHashSet<EntityBean>();
+                registeredEntities = new LinkedHashSet<>();
                 synchronizationRegistry.putResource(ENTITIES_TO_STORE, registeredEntities);
                 synchronizationRegistry.registerInterposedSynchronization(new Synchronization() {
                     @Override
@@ -708,7 +708,7 @@ public class CmpContainer implements RpcContainer {
             // of ProxyInfo objects will be returned. If its a single-value find operation then a
             // single ProxyInfo object is returned.
             if (callMethod.getReturnType() == Collection.class || callMethod.getReturnType() == Enumeration.class) {
-                final List<ProxyInfo> proxies = new ArrayList<ProxyInfo>();
+                final List<ProxyInfo> proxies = new ArrayList<>();
                 for (final Object value : results) {
                     final EntityBean bean = (EntityBean) value;
 
@@ -769,10 +769,10 @@ public class CmpContainer implements RpcContainer {
             final Collection<Object> proxies;
             if (returnType.equals("java.util.Set")) {
                 // we collect values into a LinkedHashSet to preserve ordering
-                proxies = new LinkedHashSet<Object>();
+                proxies = new LinkedHashSet<>();
             } else {
                 // otherwise use a simple array list
-                proxies = new ArrayList<Object>();
+                proxies = new ArrayList<>();
             }
 
             final boolean isSingleValued = !returnType.equals("java.util.Collection") && !returnType.equals("java.util.Set");

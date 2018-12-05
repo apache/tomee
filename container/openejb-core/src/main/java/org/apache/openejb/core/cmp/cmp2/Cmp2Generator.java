@@ -18,12 +18,12 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.xbean.asm6.ClassWriter;
-import org.apache.xbean.asm6.FieldVisitor;
-import org.apache.xbean.asm6.Label;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
-import org.apache.xbean.asm6.Type;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.ejb.EntityContext;
 import java.lang.reflect.Field;
@@ -48,11 +48,11 @@ public class Cmp2Generator implements Opcodes {
     private final String implClassName;
     private final String beanClassName;
     private final ClassWriter cw;
-    private final Map<String, CmpField> cmpFields = new LinkedHashMap<String, CmpField>();
-    private final Collection<CmrField> cmrFields = new ArrayList<CmrField>();
+    private final Map<String, CmpField> cmpFields = new LinkedHashMap<>();
+    private final Collection<CmrField> cmrFields = new ArrayList<>();
     private final CmpField pkField;
     private final Class primKeyClass;
-    private final List<Method> selectMethods = new ArrayList<Method>();
+    private final List<Method> selectMethods = new ArrayList<>();
     private final Class beanClass;
     private final PostCreateGenerator postCreateGenerator;
     private static final String DELETED = "openejb_deleted";
@@ -1066,7 +1066,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private static String[] getExceptionTypes(final Method method) {
-        final List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
+        final List<String> types = new ArrayList<>(method.getExceptionTypes().length);
         for (final Class<?> exceptionType : method.getExceptionTypes()) {
             types.add(Type.getInternalName(exceptionType));
         }

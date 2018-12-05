@@ -78,7 +78,7 @@ public class OpenEjbTestContext implements TestContext {
     /**
      * Constructs a context for a class
      *
-     * @param testClazz
+     * @param clazz
      */
     public OpenEjbTestContext(final Class clazz) {
         this(clazz, null);
@@ -87,7 +87,6 @@ public class OpenEjbTestContext implements TestContext {
     /**
      * Constructs a context for a method
      *
-     * @param testClazz
      * @param method
      */
     public OpenEjbTestContext(final Method method) {
@@ -97,7 +96,8 @@ public class OpenEjbTestContext implements TestContext {
     /**
      * Constructs a context for a class
      *
-     * @param testClazz
+     * @param clazz
+     * @param securityRole
      */
     public OpenEjbTestContext(final Class clazz, final String securityRole) {
         this.clazz = clazz;
@@ -107,8 +107,8 @@ public class OpenEjbTestContext implements TestContext {
     /**
      * Constructs a context for a method
      *
-     * @param testClazz
      * @param method
+     * @param securityRole
      */
     public OpenEjbTestContext(final Method method, final String securityRole) {
         this.clazz = method.getDeclaringClass();

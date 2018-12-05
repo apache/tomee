@@ -79,7 +79,7 @@ import java.util.concurrent.ConcurrentMap;
 @SuppressWarnings("UnusedDeclaration")
 public abstract class WsService implements ServerService, SelfManaging {
 
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, WsService.class);
     public static final String WS_ADDRESS_FORMAT = "openejb.wsAddress.format";
     public static final String WS_FORCE_ADDRESS = "openejb.webservice.deployment.address";
     private static final boolean OLD_WEBSERVICE_DEPLOYMENT = SystemInstance.get().getOptions().get("openejb.webservice.old-deployment", false);
@@ -93,12 +93,12 @@ public abstract class WsService implements ServerService, SelfManaging {
     private String transportGuarantee;
     private String authMethod;
     private String virtualHost;
-    private final ConcurrentMap<AppInfo, Collection<BeanContext>> deployedApplications = new ConcurrentHashMap<AppInfo, Collection<BeanContext>>();
-    private final Set<WebAppInfo> deployedWebApps = new HashSet<WebAppInfo>();
-    private final Map<String, String> ejbLocations = new TreeMap<String, String>();
-    private final Map<String, String> ejbAddresses = new TreeMap<String, String>();
-    private final Map<String, String> servletAddresses = new TreeMap<String, String>();
-    private final Map<String, List<EndpointInfo>> addressesByApplication = new TreeMap<String, List<EndpointInfo>>();
+    private final ConcurrentMap<AppInfo, Collection<BeanContext>> deployedApplications = new ConcurrentHashMap<>();
+    private final Set<WebAppInfo> deployedWebApps = new HashSet<>();
+    private final Map<String, String> ejbLocations = new TreeMap<>();
+    private final Map<String, String> ejbAddresses = new TreeMap<>();
+    private final Map<String, String> servletAddresses = new TreeMap<>();
+    private final Map<String, List<EndpointInfo>> addressesByApplication = new TreeMap<>();
 
     public WsService() {
         final String format = SystemInstance.get().getOptions().get(WS_ADDRESS_FORMAT, "/{ejbDeploymentId}");
@@ -199,7 +199,7 @@ public abstract class WsService implements ServerService, SelfManaging {
     public void stop() throws ServiceException {
         if (assembler != null) {
             SystemInstance.get().removeObserver(this);
-            for (final AppInfo appInfo : new ArrayList<AppInfo>(deployedApplications.keySet())) {
+            for (final AppInfo appInfo : new ArrayList<>(deployedApplications.keySet())) {
                 undeploy(new AssemblerBeforeApplicationDestroyed(appInfo, null));
             }
             assembler = null;
@@ -223,14 +223,14 @@ public abstract class WsService implements ServerService, SelfManaging {
     public void newEjbToDeploy(final @Observes NewEjbAvailableAfterApplicationCreated event) {
         final AppInfo app = event.getApp();
         if (!deployedApplications.containsKey(app)) {
-            deployedApplications.putIfAbsent(app, new LinkedList<BeanContext>());
+            deployedApplications.putIfAbsent(app, new LinkedList<>());
         }
         deployApp(app, event.getBeanContexts());
     }
 
     public void deploy(final @Observes AssemblerAfterApplicationCreated event) {
         final AppInfo appInfo = event.getApp();
-        if (deployedApplications.put(appInfo, new LinkedList<BeanContext>()) == null) {
+        if (deployedApplications.put(appInfo, new LinkedList<>()) == null) {
             deployApp(appInfo, event.getContext().getBeanContexts());
         }
     }
@@ -258,14 +258,14 @@ public abstract class WsService implements ServerService, SelfManaging {
                 try {
                     moduleBaseUrl = new File(ejbJar.path).toURI().toURL();
                 } catch (final MalformedURLException e) {
-                    logger.error("Invalid ejb jar location " + ejbJar.path, e);
+                    LOGGER.error("Invalid ejb jar location " + ejbJar.path, e);
                 }
             }
 
             StringTemplate deploymentIdTemplate = this.wsAddressTemplate;
             if (ejbJar.properties.containsKey(WS_ADDRESS_FORMAT)) {
                 final String format = ejbJar.properties.getProperty(WS_ADDRESS_FORMAT);
-                logger.info("Using " + WS_ADDRESS_FORMAT + " '" + format + "'");
+                LOGGER.info("Using " + WS_ADDRESS_FORMAT + " '" + format + "'");
                 deploymentIdTemplate = new StringTemplate(format);
             }
             contextData.put("ejbJarId", ejbJar.moduleName);
@@ -329,13 +329,13 @@ public abstract class WsService implements ServerService, SelfManaging {
                                 // register wsdl location
                                 portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                                 setWsdl(container, address);
-                                logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
+                                LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Ejb(id=" + portInfo.portId + ")");
                                 ejbAddresses.put(bean.ejbDeploymentId, address);
                                 addressesForApp(appInfo.appId).add(new EndpointInfo(address, port.getWsdlService(), beanContext.getBeanClass().getName()));
                             }
                         }
                     } catch (final Throwable e) {
-                        logger.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
+                        LOGGER.error("Error deploying JAX-WS Web Service for EJB " + beanContext.getDeploymentID(), e);
                     } finally {
                         Thread.currentThread().setContextClassLoader(old);
                     }
@@ -367,7 +367,7 @@ public abstract class WsService implements ServerService, SelfManaging {
 
     private List<EndpointInfo> addressesForApp(final String appId) {
         if (!addressesByApplication.containsKey(appId)) {
-            addressesByApplication.put(appId, new ArrayList<EndpointInfo>());
+            addressesByApplication.put(appId, new ArrayList<>());
         }
         return addressesByApplication.get(appId);
     }
@@ -381,7 +381,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         if (!deployedWebApps.add(webApp))
             return;
 
-        final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+        final Map<String, PortInfo> ports = new TreeMap<>();
         for (final PortInfo port : webApp.portInfos) {
             ports.put(port.serviceLink, port);
         }
@@ -390,7 +390,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         try {
             moduleBaseUrl = new File(webApp.path).toURI().toURL();
         } catch (final MalformedURLException e) {
-            logger.error("Invalid ejb jar location " + webApp.path, e);
+            LOGGER.error("Invalid ejb jar location " + webApp.path, e);
         }
 
         Collection<IdPropertiesInfo> pojoConfiguration = null; // lazy init
@@ -441,12 +441,12 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // add address to global registry
                     portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                     setWsdl(container, address);
-                    logger.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                    LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
                     servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                     addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
                 }
             } catch (final Throwable e) {
-                logger.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
+                LOGGER.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);
             } finally {
                 Thread.currentThread().setContextClassLoader(old);
             }
@@ -461,7 +461,7 @@ public abstract class WsService implements ServerService, SelfManaging {
         final AppInfo appInfo = event.getApp();
         if (deployedApplications.remove(appInfo) != null) {
             for (final EjbJarInfo ejbJar : appInfo.ejbJars) {
-                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+                final Map<String, PortInfo> ports = new TreeMap<>();
                 for (final PortInfo port : ejbJar.portInfos) {
                     ports.put(port.serviceLink, port);
                 }
@@ -502,7 +502,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             for (final WebAppInfo webApp : appInfo.webApps) {
                 deployedWebApps.remove(webApp);
 
-                final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+                final Map<String, PortInfo> ports = new TreeMap<>();
                 for (final PortInfo port : webApp.portInfos) {
                     ports.put(port.serviceLink, port);
                 }
@@ -562,20 +562,21 @@ public abstract class WsService implements ServerService, SelfManaging {
     }
 
     public static String getEjbType(final int type) {
-        if (type == EnterpriseBeanInfo.STATEFUL) {
-            return "StatefulBean";
-        } else if (type == EnterpriseBeanInfo.STATELESS) {
-            return "StatelessBean";
-        } else if (type == EnterpriseBeanInfo.SINGLETON) {
-            return "SingletonBean";
-        } else if (type == EnterpriseBeanInfo.MANAGED) {
-            return "ManagedBean";
-        } else if (type == EnterpriseBeanInfo.MESSAGE) {
-            return "MessageDrivenBean";
-        } else if (type == EnterpriseBeanInfo.ENTITY) {
-            return "StatefulBean";
-        } else {
-            return "UnknownBean";
+        switch (type) {
+            case EnterpriseBeanInfo.STATEFUL:
+                return "StatefulBean";
+            case EnterpriseBeanInfo.STATELESS:
+                return "StatelessBean";
+            case EnterpriseBeanInfo.SINGLETON:
+                return "SingletonBean";
+            case EnterpriseBeanInfo.MANAGED:
+                return "ManagedBean";
+            case EnterpriseBeanInfo.MESSAGE:
+                return "MessageDrivenBean";
+            case EnterpriseBeanInfo.ENTITY:
+                return "StatefulBean";
+            default:
+                return "UnknownBean";
         }
     }
 

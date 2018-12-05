@@ -29,6 +29,7 @@ import javax.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 
 public class SystemComponentFactory implements ObjectFactory {
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         final Reference ref = (Reference) object;
 

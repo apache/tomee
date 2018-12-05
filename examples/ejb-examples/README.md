@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Misc
 type=page
 status=published
 title=EJB Examples

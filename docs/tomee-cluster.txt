@@ -1,0 +1,72 @@
+The scope of this document to to define how Apache TomEE can be configured for HA (High Availability) clustering.  
+
+The configuration will focus on two local instances, with a view to an open ended remote configuration.  
+
+It is beyond the scope of this documentation to discuss Tomcat CLustering in depth.
+Please read the [Apache Tomcat Clustering Howto](http://tomcat.apache.org/tomcat-7.0-doc/cluster-howto.html) for more information.
+
+###Local cluster
+To test clustering locally (on the same physical machine) the default ports need to be modified on the second TomEE server.
+You do not need to do this if the second TomEE instance is to run on different machine or virtual host.
+
+Note: You cannot test load balancing on a local cluster as they will be running of different ports.
+This configuration is only useful for testing Session Replication and application deployment.
+
+In the [TomEE]/conf/server.xml look for and change the following port definitions to something like:
+
+	<Server port="9005" shutdown="SHUTDOWN">
+
+	<Connector port="9080" protocol="HTTP/1.1"
+				   connectionTimeout="20000"
+				   redirectPort="9443" />
+				   
+	<!--
+	<Connector port="9443" protocol="HTTP/1.1" SSLEnabled="true"
+			   maxThreads="150" scheme="https" secure="true"
+			   clientAuth="false" sslProtocol="TLS" />
+	-->
+
+	<Connector port="9009" protocol="AJP/1.3" redirectPort="9443" />
+
+###Test Startup	
+Start both TomEE servers together and check for and resolve any errors before proceeding any further.
+
+Once you are sure both servers can run without error add the following to the **<Host>** section of both server.xml files:
+
+	...
+	<Engine name="Catalina" defaultHost="localhost">
+		...
+		<Host name="localhost"  appBase="webapps"
+            unpackWARs="true" autoDeploy="true">
+			
+			<Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"/> 
+
+Start both TomEE servers together and again check for and resolve any errors before proceeding any further.
+Basically look in both [TomEE]/logs/catalina.[date].log and search for *"SimpleTcpCluster memberAdded"*.
+This lets us know that the cluster added a new member.
+
+Stop both the servers, as we will need to add some more configuration to the *server.xml*.
+
+First create the following directory structure within the TomEE installation (You can change the names later to suit your needs if required).
+
+	[TomEE]/cluster
+	[TomEE]/cluster/temp
+	[TomEE]/cluster/watch
+	[TomEE]/cluster/webapps
+
+We now need to add these paths to the **Host** section of the configuration file:
+	
+	...
+	<Engine name="Catalina" defaultHost="localhost">
+		...
+		<Host name="localhost"  appBase="webapps"
+            unpackWARs="true" autoDeploy="true">
+			
+			<Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"> 	
+				<Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
+					tempDir="cluster/temp"
+					deployDir="cluster/webapps"
+					watchDir="cluster/watch"
+					watchEnabled="true"/>
+			</Cluster>
+		...

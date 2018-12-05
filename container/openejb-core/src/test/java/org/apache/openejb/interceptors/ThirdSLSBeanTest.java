@@ -59,7 +59,7 @@ public class ThirdSLSBeanTest extends TestCase {
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         assert bean != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("ClassLevelInterceptorOne");
         expected.add("ClassLevelInterceptorTwo");
         expected.add("MethodLevelInterceptorOne");
@@ -75,7 +75,7 @@ public class ThirdSLSBeanTest extends TestCase {
     public void testMethodWithDefaultAndClassInterceptorsExcluded() throws Exception {
         assert bean != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("MethodLevelInterceptorOne");
         expected.add("MethodLevelInterceptorTwo");
         expected.add("ThirdSLSBean");

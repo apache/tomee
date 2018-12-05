@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multicast"), MulticastDiscoveryAgent.class);
+    private static final Logger LOG = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multicast"), MulticastDiscoveryAgent.class);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -65,7 +65,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
     public void init(final Properties props) {
 
         final Options options = new Options(props);
-        options.setLogger(new OptionsLog(log));
+        options.setLogger(new OptionsLog(LOG));
 
         host = props.getProperty("bind", host);
         loopbackMode = options.get("loopback_mode", loopbackMode);
@@ -215,7 +215,7 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                         // ignore
                     } catch (IOException e) {
                         if (running.get()) {
-                            log.error("failed to process packet: " + e);
+                            LOG.error("failed to process packet: " + e);
                         }
                     }
                 }
@@ -248,10 +248,10 @@ public class MulticastDiscoveryAgent implements DiscoveryAgent, ServerService, S
                         if (failed == null) {
                             failed = e;
 
-                            log.error("Failed to advertise our service: " + uri, e);
+                            LOG.error("Failed to advertise our service: " + uri, e);
                             final String message = e.getMessage();
                             if (null != message && message.toLowerCase().contains("operation not permitted")) {
-                                log.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
+                                LOG.error("The 'Operation not permitted' error has been know to be caused by improper firewall/network setup.  "
                                     + "Please make sure that the OS is properly configured to allow multicast traffic over: " + multicast.getLocalAddress());
                             }
                         }

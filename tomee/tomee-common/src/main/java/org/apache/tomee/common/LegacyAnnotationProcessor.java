@@ -57,6 +57,9 @@ public class LegacyAnnotationProcessor {
 
     /**
      * Call postConstruct method on the specified instance.
+     * @param instance
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     public void postConstruct(final Object instance) throws IllegalAccessException, InvocationTargetException {
 
@@ -94,6 +97,9 @@ public class LegacyAnnotationProcessor {
 
     /**
      * Call preDestroy method on the specified instance.
+     * @param instance
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     public void preDestroy(final Object instance) throws IllegalAccessException, InvocationTargetException {
 
@@ -131,6 +137,10 @@ public class LegacyAnnotationProcessor {
 
     /**
      * Inject resources in specified instance.
+     * @param instance
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
+     * @throws javax.naming.NamingException
      */
     public void processAnnotations(final Object instance) throws IllegalAccessException, InvocationTargetException, NamingException {
 
@@ -217,6 +227,13 @@ public class LegacyAnnotationProcessor {
 
     /**
      * Inject resources in specified field.
+     * @param context
+     * @param instance
+     * @param field
+     * @param name
+     * @param clazz
+     * @throws javax.naming.NamingException
+     * @throws java.lang.IllegalAccessException
      */
     protected static void lookupFieldResource(final javax.naming.Context context,
                                               final Object instance, final Field field, final String name, final Class<?> clazz)
@@ -240,6 +257,14 @@ public class LegacyAnnotationProcessor {
 
     /**
      * Inject resources in specified method.
+     * @param context
+     * @param instance
+     * @param method
+     * @param name
+     * @param clazz
+     * @throws javax.naming.NamingException
+     * @throws java.lang.IllegalAccessException
+     * @throws java.lang.reflect.InvocationTargetException
      */
     protected static void lookupMethodResource(final javax.naming.Context context,
                                                final Object instance, final Method method, final String name, final Class<?> clazz)

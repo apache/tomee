@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Web Services
 type=page
 status=published
 title=Webservice Inheritance

@@ -29,6 +29,7 @@ import static org.apache.tomee.common.NamingUtil.RESOURCE_ID;
 import static org.apache.tomee.common.NamingUtil.getProperty;
 
 public class ResourceFactory extends AbstractObjectFactory {
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
 
         final Reference reference = ((Reference) object);
@@ -49,6 +50,7 @@ public class ResourceFactory extends AbstractObjectFactory {
         return super.getObjectInstance(object, name, context, environment);
     }
 
+    @Override
     protected String buildJndiName(final Reference reference) throws NamingException {
         // get and verify interface type
         String resourceId = getProperty(reference, RESOURCE_ID);

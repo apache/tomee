@@ -43,7 +43,6 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -183,10 +182,6 @@ public class ArchivingTest {
         }
 
         final File logArchive = new File("target/ArchivingTestPurge-" + format + "/logs/archives/test.2015-09-01.0.log." + format);
-        if (logArchive.delete()) {
-            System.out.println("Deleted existing test file: " + logArchive);
-        }
-
         final File parentFile = logArchive.getParentFile();
         if (!parentFile.exists() && !parentFile.mkdirs()) {
             Assert.fail("Unable to create: " + parentFile);
@@ -195,7 +190,6 @@ public class ArchivingTest {
         final WatchService watcher = FileSystems.getDefault().newWatchService();
         final WatchKey key = dir.register(watcher,
                 ENTRY_CREATE,
-                ENTRY_DELETE,
                 ENTRY_MODIFY);
 
         latch.set(new CountDownLatch(1));

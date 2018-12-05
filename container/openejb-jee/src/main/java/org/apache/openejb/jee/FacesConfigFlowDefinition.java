@@ -315,7 +315,7 @@ public class FacesConfigFlowDefinition {
      * <p/>
      * <p/>
      * Objects of the following type(s) are allowed in the list
-     * {@link FacesConfigNavigationRule }
+     * {@link FacesConfigNavigationRuleExtension }
      */
     public List<FacesNavigationRule> getNavigationRule() {
         if (navigationRule == null) {

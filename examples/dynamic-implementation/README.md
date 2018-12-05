@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Proxy Beans
 type=page
 status=published
 title=Dynamic Implementation

@@ -170,6 +170,8 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
         return get().getServletContextName();
     }
 
+
+
     @Override
     public ServletRegistration.Dynamic addServlet(final String servletName, final String className) throws IllegalArgumentException, IllegalStateException {
         return get().addServlet(servletName, className);
@@ -298,5 +300,39 @@ public class ThreadLocalServletContext extends AbstractRestThreadLocalProxy<Serv
     @Override
     public JspConfigDescriptor getJspConfigDescriptor() {
         return get().getJspConfigDescriptor();
+    }
+
+    public void setResponseCharacterEncoding(String encoding) {
+        get().setResponseCharacterEncoding(encoding);
+    }
+
+    @Override
+    public ServletRegistration.Dynamic addJspFile(String jspName, String jspFile) {
+        return get().addJspFile(jspName, jspFile);
+    }
+
+    @Override
+    public int getSessionTimeout() {
+        return get().getSessionTimeout();
+    }
+
+    @Override
+    public void setSessionTimeout(int sessionTimeout) {
+        get().setSessionTimeout(sessionTimeout);
+    }
+
+    @Override
+    public String getRequestCharacterEncoding() {
+        return get().getRequestCharacterEncoding();
+    }
+
+    @Override
+    public void setRequestCharacterEncoding(String encoding) {
+        get().setRequestCharacterEncoding(encoding);
+    }
+
+    @Override
+    public String getResponseCharacterEncoding() {
+        return get().getResponseCharacterEncoding();
     }
 }

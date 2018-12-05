@@ -62,7 +62,7 @@ public class ModulePropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/module.properties", "color=orange");
 
             final File app = Archives.fileArchive(map, WidgetBean.class);
@@ -87,7 +87,7 @@ public class ModulePropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("fooModule.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             final File module = Archives.fileArchive(map, WidgetBean.class);
 
@@ -113,7 +113,7 @@ public class ModulePropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("fooModule.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             map.put("META-INF/module.properties", "color=white");
 
@@ -139,7 +139,7 @@ public class ModulePropertiesTest extends TestCase {
         }
 
         {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             map.put("META-INF/module.properties", "color=white");
 
@@ -169,7 +169,7 @@ public class ModulePropertiesTest extends TestCase {
         {
             SystemInstance.get().getProperties().put("fooApp.fooModule.color", "orange");
 
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
             map.put("META-INF/ejb-jar.xml", "<ejb-jar id=\"fooModule\"/>");
             map.put("META-INF/module.properties", "color=white");
 

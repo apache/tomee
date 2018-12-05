@@ -41,16 +41,19 @@ import java.util.logging.Logger;
 
 /**
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
- * <p/>
+ * <p>
  * This is an alternate way to load the Tomcat integration
  * This approach is mutually exclussive to the {@link LoaderServlet}
- * <p/>
+ * </p>
+ * <p>
  * This class does nothing more than scrape around in
  * Tomcat and look for the tomee.war so it can call the embedder
- * <p/>
+ * </p>
+ * <p>
  * This class can be installed in the Tomcat server.xml as an alternate
  * way to bootstrap OpenEJB into Tomcat.  The benefit of this is that
  * OpenEJB is guaranteed to start before all webapps.
+ * </p>
  */
 public class OpenEJBListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBListener.class.getName());
@@ -84,7 +87,7 @@ public class OpenEJBListener implements LifecycleListener {
                 }
             }
             if (webappDir != null) {
-                LOGGER.info("found the tomee webapp on " + webappDir.getPath());
+                LOGGER.log(Level.INFO, "found the tomee webapp on {0}", webappDir.getPath());
                 final Properties properties = new Properties();
                 properties.setProperty("tomee.war", webappDir.getAbsolutePath());
                 properties.setProperty("openejb.embedder.source", OpenEJBListener.class.getSimpleName());
@@ -182,7 +185,7 @@ public class OpenEJBListener implements LifecycleListener {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.log(Level.WARNING, "OpenEJBListener.findOpenEjbWar: " + e.getMessage());
+            LOGGER.log(Level.WARNING, "OpenEJBListener.findOpenEjbWar: {0}", e.getMessage());
         }
 
         return null;
@@ -264,7 +267,7 @@ public class OpenEJBListener implements LifecycleListener {
             return;
         }
 
-        LOGGER.info("Extracting openejb webapp from " + src.getAbsolutePath() + " to " + dest.getAbsolutePath());
+        LOGGER.log(Level.INFO, "Extracting openejb webapp from {0} to {1}", new Object[]{src.getAbsolutePath(), dest.getAbsolutePath()});
 
         if (!dest.mkdirs()) {
             throw new IOException("Failed to create: " + dest);
@@ -315,7 +318,7 @@ public class OpenEJBListener implements LifecycleListener {
                 final long lastModified = jarEntry.getTime();
                 if (lastModified != -1 && lastModified != 0 && file != null) {
                     if (!file.setLastModified(lastModified)) {
-                        LOGGER.log(Level.WARNING, "Failed to set last modified time on: " + file.getAbsolutePath());
+                        LOGGER.log(Level.WARNING, "Failed to set last modified time on: {0}", file.getAbsolutePath());
                     }
                 }
 

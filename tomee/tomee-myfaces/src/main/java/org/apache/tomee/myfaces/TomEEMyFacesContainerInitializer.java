@@ -22,7 +22,7 @@ import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.ApplicationContext;
 import org.apache.catalina.core.ApplicationContextFacade;
 import org.apache.catalina.core.StandardContext;
-import org.apache.myfaces.ee6.MyFacesContainerInitializer;
+import org.apache.myfaces.ee.MyFacesContainerInitializer;
 import org.apache.myfaces.webapp.AbstractFacesInitializer;
 import org.apache.myfaces.webapp.StartupServletContextListener;
 import org.apache.openejb.loader.SystemInstance;

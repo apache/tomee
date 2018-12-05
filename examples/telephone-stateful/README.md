@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Other Features
 type=page
 status=published
 title=Telephone Stateful

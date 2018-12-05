@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=EJB Legacy
 type=page
 status=published
 title=Component Interfaces

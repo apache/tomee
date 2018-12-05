@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=Transactions
 type=page
 status=published
 title=Testing Transactions

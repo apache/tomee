@@ -82,7 +82,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             final Properties properties = getLowerCaseProperties();
 
             final URISupport.CompositeData compositeData = URISupport.parseComposite(new URI(brokerURI.getRawSchemeSpecificPart()));
-            final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
+            final Map<String, String> params = new HashMap<>(compositeData.getParameters());
             final PersistenceAdapter persistenceAdapter;
             if ("true".equals(params.remove("usekahadb"))) {
                 persistenceAdapter = createPersistenceAdapter("org.apache.activemq.store.kahadb.KahaDBPersistenceAdapter", "kahadb", params);
@@ -314,7 +314,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     // forking org.apache.activemq.broker.DefaultBrokerFactory.createBroker() to support network connector properties
     private BrokerService newDefaultBroker(final URI uri) throws Exception {
         final URISupport.CompositeData compositeData = URISupport.parseComposite(uri);
-        final Map<String, String> params = new HashMap<String, String>(compositeData.getParameters());
+        final Map<String, String> params = new HashMap<>(compositeData.getParameters());
 
         final BrokerService brokerService = newPatchedBrokerService();
 

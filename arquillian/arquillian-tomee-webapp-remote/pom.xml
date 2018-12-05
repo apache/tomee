@@ -16,17 +16,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.6-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
-  <artifactId>arquillian-tomee-webapp-remote</artifactId>
-  <packaging>jar</packaging>
 
+  <artifactId>arquillian-tomee-webapp-remote</artifactId>
   <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.tomee.webapp.remote</tomee.build.name>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -169,7 +173,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm6-shaded</artifactId>
+          <artifactId>xbean-asm7-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
@@ -193,11 +197,7 @@
           <groupId>hsqldb</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>bval-core</artifactId>
-          <groupId>org.apache.bval</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>bval-jsr303</artifactId>
+          <artifactId>bval-jsr</artifactId>
           <groupId>org.apache.bval</groupId>
         </exclusion>
         <exclusion>

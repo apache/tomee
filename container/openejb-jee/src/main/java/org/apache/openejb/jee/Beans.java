@@ -48,6 +48,7 @@ import java.util.Map;
  *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}interceptors" minOccurs="0"/>
  *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}decorators" minOccurs="0"/>
  *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}alternatives" minOccurs="0"/>
+ *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}trim" minOccurs="0" maxOccurs="1"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -89,6 +90,9 @@ public class Beans {
     protected List<String> decorators;
 
     protected Alternatives alternatives;
+
+    @XmlElement(name = "trim")
+    protected String trim;
 
     @XmlAttribute(name = "version")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -241,6 +245,17 @@ public class Beans {
         return alternatives;
     }
 
+    public String getTrim() {
+        return trim;
+    }
+
+    public void setTrim(String trim) {
+        this.trim = trim;
+    }
+
+    public boolean isTrim() {
+        return trim != null;
+    }
 
     /**
      * <p>Java class for anonymous complex type.

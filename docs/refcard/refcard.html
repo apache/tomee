@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta charset="utf-8">
+<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+<meta content="Asciidoctor 0.1.4" name="generator">
+<meta content="RefCard" name="description">
+<meta content="refcard" name="keywords">
+<title>Apache TomEE Reference Card</title>
+<link href="css/style.css" rel="stylesheet">
+<link href="css/github.min.css" rel="stylesheet">
+<link href="css/refcard.css" media="print, screen" rel="stylesheet" type="text/css">
+<script src="js/jquery.min.js"></script>
+<script src="js/modernizr.custom.2.6.2.js"></script>
+<script src="js/highlight.min.js"></script>
+<script src="js/refcard.js"></script>
+</head>
+<body class="article">
+<header>
+<div class="mid">
+<img id="logo" src="images/tomee.png">
+<h1>
+TomEE RefCard
+</h1>
+</div>
+</header>
+<div class="main">
+<div class="mid">
+<div class="page" id="page">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Apache TomEE is a JavaEE 6 application server.</strong></p>
+</div>
+<div class="paragraph">
+<p>This RefCard tries to sum up basic things to know.</p>
+</div>
+<div class="horizontal-block" id="Overview">
+<div class="col c2-1 c3-1 c4-1 c5-1 c6-1"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE Philosophy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Apache TomEE, pronounced "Tommy", is an all-Apache Java EE 6 Web Profile
+certified stack where Tomcat is top dog. Apache TomEE is assembled from
+a vanilla Apache Tomcat zip file. We start with Tomcat, add our jars and zip
+up the rest. The result is Tomcat with added EE features - TomEE.</p>
+</div>
+<div class="paragraph">
+<p>Its core values are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Be Tomcat</p>
+</li>
+<li>
+<p>Be certified</p>
+</li>
+<li>
+<p>Be small</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE Links</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p>TomEE Website: <a href="http://tomee.apache.org">http://tomee.apache.org</a></p>
+</li>
+<li>
+<p>TomEE Examples: <a href="http://tomee.apache.org/examples-trunk/index.html">http://tomee.apache.org/examples-trunk/index.html</a></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-2 c5-2 c6-2"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE ClassLoading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code>bootstrap ($JAVA_HOME/jre/lib/ext)
+      |
+    system (bin/boostrap.jar:bin/tomcat-juli.jar)
+      |
+    common (lib/*.jar)
+    /    \
+webapp1 webapp2</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>Classloading configuration (properties):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>openejb.classloader.forced-load=&lt;comma separated list of class name prefixes&gt;</code>: classes to load from the webapp first
+whatever is in the container</p>
+</li>
+<li>
+<p><code>openejb.classloader.forced-skip=&lt;idem&gt;</code>: classes to load from the container
+whatever is in the application</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-1 c3-3 c4-3 c5-3 c6-3"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="2">TomEE Basic Operation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Start and wait Ctrl+C</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>./bin/catalina.sh run</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Start and forget</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>./bin/catalina.sh start</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>./bin/catalina.sh stop</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy manually a webapp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>copy war over webapps/</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redeploy manually a webapp</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>delete exploded war then deploy</code></p></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE Distributions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="ulist">
+<ul>
+<li>
+<p>TomEE Web Profile: JavaEE 6 Web profile sever (certified)</p>
+</li>
+<li>
+<p>TomEE JAX-RS: previous one + JAX-RS (certified)</p>
+</li>
+<li>
+<p>TomEE+: previous one + JAXWS + JMS + Connectors</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-1 c4-4 c5-4 c6-4"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="2">TomEE Directory Layout</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bin</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">contains script to manage (start/stop/&#8230;) TomEE</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>conf</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">server global configuration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>endorsed</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">override JVM API because too old for JavaEE</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>lib</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">server libraries</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>logs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">logs directory (using default configuration)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">default tmp directory</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>webapps</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">default folder which aims to contain webapps</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>work</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">folder used by Tomcat to store "work" binaries (compiled jsp&#8230;)</p></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+</div>
+<div class="horizontal-block" id="Configuration">
+<div class="col c2-1 c3-1 c4-1 c5-1 c6-1"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scanning/Loader configuration, conf/catalina.properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="ini"># the main server classloader configuration,
+# JDBC drivers go here in general
+common.loader=${catalina.base}/lib,\
+${catalina.base}/lib/*.jar,\
+${catalina.home}/lib,${catalina.home}/lib/*.jar
+
+# other defaults are generally fine</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE system properties, conf/system.properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="ini"># handle global configuration
+# this file is an alternative
+# to JVM system properties -Dxxxx=yyyy
+
+# check libraries
+openejb.check.classloader = false
+
+# deploy internal application
+# only relevant in dev
+openejb.system.apps = true
+
+# deactivate JMX
+openejb.jmx.active = false
+
+# where to find the TomEE config file
+openejb.conf.file = conf/tomee.xml
+
+# force inclusion/exclusion of packages during classloading
+openejb.classloader.forced-load = my.pack1,my.pack2
+openejb.classloader.forced-skip = my.pack3,my.pack4
+
+# app ones
+my.system.property.config = my value
+
+# more on http://tomee.apache.org/properties-listing.html</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Logging configuration, conf/logging.properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="ini"># available handlers for logging: console, file...
+handlers = 5tomee.org.apache.juli.FileHandler, java.util.logging.ConsoleHandler
+
+# file handler configuration
+# 3 main items: level of the handler, where to log, with wich prefix
+5tomee.org.apache.juli.FileHandler.level = FINEST
+5tomee.org.apache.juli.FileHandler.directory = ${catalina.base}/logs
+5tomee.org.apache.juli.FileHandler.prefix = tomee.
+
+# each category can be configured (ex: OpenEJB)
+## level: FINEST &gt; FINE &gt; INFO &gt; WARNING &gt; SEVERE
+OpenEJB.level = WARNING
+
+## handler
+OpenEJB.handlers = 5tomee.org.apache.juli.FileHandler,\
+java.util.logging.ConsoleHandler
+
+# more on tomcat website:
+# http://tomcat.apache.org/tomcat-7.0-doc/logging.html</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Daemons configuration, conf/conf.d/*.properties</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>OpenEJB and TomEE rely on daemons for extensibility.</p>
+</div>
+<div class="paragraph">
+<p>Typically JAXWS and JAXRS uses this feature to be
+added to the server.</p>
+</div>
+<div class="paragraph">
+<p>Each daemon can get configuration.</p>
+</div>
+<div class="paragraph">
+<p>It is configurable through:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>system properties: <code>&lt;daemon name.&lt;attribute&gt;=value</code></p>
+</li>
+<li>
+<p>conf/conf.d/&lt;daemon name&gt;.properties</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All daemons have a property <code>disabled</code> which can be set to true
+to deactivate it.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-2 c5-2 c6-2"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Server configuration, conf/server.xml</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version='1.0' encoding='utf-8'?&gt;
+&lt;Server port="8005" shutdown="SHUTDOWN"&gt;
+ &lt;!-- TomEE integration with Tomcat --&gt;
+ &lt;Listener className="org.apache.tomee.catalina.ServerListener" /&gt;
+
+ &lt;Service name="Catalina"&gt;
+
+  &lt;!-- Connectors are entry points (HTTP, AJP...) --&gt;
+  &lt;Connector port="8080" protocol="HTTP/1.1" /&gt;
+
+  &lt;Engine name="Catalina" defaultHost="localhost"&gt;
+   &lt;!--
+    folder webapps will scanned for webapps
+    and webapps will be deployed on localhost
+   --&gt;
+   &lt;Host name="localhost"  appBase="webapps" /&gt;
+  &lt;/Engine&gt;
+ &lt;/Service&gt;
+&lt;/Server&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">JAXWS WS Security configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>It basically relies on openejb-jar.xml (in META-INF or WEB-INF):</p>
+</div>
+<div class="paragraph">
+<p>A complete example can be found within TomEE examples: <code>webservice-ws-security</code>.</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1"&gt;
+ &lt;ejb-deployment ejb-name="CalculatorImpl"&gt;
+  &lt;properties&gt;
+   # webservice.security.realm
+   # webservice.security.securityRealm
+   # webservice.security.transportGarantee = NONE
+   webservice.security.authMethod = WS-SECURITY
+
+   wss4j.in.action = UsernameToken
+   wss4j.in.passwordType = PasswordText
+   wss4j.in.passwordCallbackClass = org.superbiz.MyPwdHandler
+
+   # automatically added
+   wss4j.in.validator
+   .{http://docs.oasis-open.org/wss/2004/01/oasis-200401
+   -wss-wssecurity-secext-1.0.xsd}UsernameToken =
+   org.apache.openejb.server.cxf.OpenEJBLoginValidator
+  &lt;/properties&gt;
+ &lt;/ejb-deployment&gt;
+&lt;/openejb-jar&gt;</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p><code>wss4j.out.*</code> properties exist too.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scanning configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Scanning is used to find EE classes (EJB, CDI beans&#8230;).</p>
+</div>
+<div class="paragraph">
+<p>It is common to not scan <em>utility libraries</em> like commons-lang for instance.</p>
+</div>
+<div class="paragraph">
+<p>TomEE/OpenEJB support two main configurations regarding the scanning:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>exclusions.list</code>: can be in WEB-INF or in <code>&lt;tomee&gt;/conf/</code>: each line is a jar prefix
+which will not be included in the scanning. Defaults are in <code>openejb-core/!default.exclusions</code>.
+If you want to simply add your own exclusion you can use <code>default-list</code> which means the whole content of the default file.</p>
+</li>
+<li>
+<p><code>scan.xml</code>: in META-INF or WEB-INF it lists the classes/packages to scan. here is a sample:</p>
+</li>
+</ul>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0"?&gt;
+&lt;scan&gt;
+ &lt;packages&gt;
+  &lt;package&gt;org.foo1&lt;/package&gt;
+  &lt;package&gt;org.foo2&lt;/package&gt;
+ &lt;/packages&gt;
+ &lt;classes&gt;
+  &lt;class&gt;org.bar.Bar1&lt;/class&gt;
+  &lt;class&gt;org.anotherbar.Bar2&lt;/class&gt;
+ &lt;/classes&gt;
+&lt;/scan&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-1 c3-3 c4-3 c5-3 c6-3"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE application configuration, WEB-INF/resources.xml</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+  &lt;!--
+    mainly a tomee.xml embed in the application
+    (META-INF or WEB-INF)
+  --&gt;
+  &lt;Resource id="name" type="DataSource"&gt;
+      JdbcUrl = jdbc:hsqldb:mem:my-ds
+  &lt;/Resource&gt;
+&lt;/resources&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">JAXRS configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>It basically relies on openejb-jar.xml (in META-INF or WEB-INF):</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1"&gt;
+ &lt;!--
+ class-name has to be the JAXRS application name
+ or this one if no Application is defined
+ --&gt;
+ &lt;pojo-deployment class-name="jaxrs-application"&gt;
+  &lt;properties&gt;
+   cxf.jaxrs.providers = org.foo.BarProvider, id1
+  &lt;/properties&gt;
+ &lt;/pojo-deployment&gt;
+&lt;/openejb-jar&gt;</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>Values are either a class which will be instantiated (through <code>new</code>)
+or an id which will match a <code>Service</code> in a  <code>resources.xml</code> file:</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+  &lt;Service id="json" class-name="org.foo.bar"&gt;
+      Attribute1 = Value1
+      Attribute2 = Value2
+  &lt;/Resource&gt;
+&lt;/resources&gt;</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>Here is the full list of available properties configurable in <code>openejb-jar.xml</code>
+with the prefix <code>cxf.jaxrs</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>properties</p>
+</li>
+<li>
+<p>features</p>
+</li>
+<li>
+<p>in-interceptors</p>
+</li>
+<li>
+<p>out-interceptors</p>
+</li>
+<li>
+<p>in-fault-interceptors</p>
+</li>
+<li>
+<p>out-fault-interceptors</p>
+</li>
+<li>
+<p>databinding</p>
+</li>
+<li>
+<p>providers</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+excepted providers configuration all these configuration are available for CXF endpoints (including JAXWS ones).
+</td>
+</tr>
+</table>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-4 c5-4 c6-4"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE main configuration, conf/tomee.xml</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;tomee&gt;
+  &lt;!--
+  resources can be declared here
+  To lookup it directly just use openejb:Resource/&lt;id&gt; name
+  --&gt;
+  &lt;Resource id="name" type="DataSource&gt;
+      # here comes the configuration in properties like format
+      JdbcUrl = jdbc:hsqldb:mem:my-ds
+      UserName = SA
+  &lt;/Resource&gt;
+
+  &lt;!-- resource can be any class available in the container loader --&gt;
+  &lt;Resource id="foo" class-name="org.foo.MyPojo"&gt;
+    pojoAttr1 = value2
+  &lt;/Resource&gt;
+
+  &lt;!--
+   if you want to deploy ear/jar,
+   declare it + put the file in apps folder
+  --&gt;
+  &lt;Deployments dir="apps" /&gt;
+
+  &lt;!-- more on http://tomee.apache.org/containers-and-resources.html --&gt;
+&lt;/tomee&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Activating JAAS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+in the snippets <code>o.a.o</code> means <code>org.apache.openejb</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Basic JAAS configuration needs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the system property:</p>
+</li>
+</ul>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code>-Djava.security.auth.login.config=&lt;path to login.config&gt;</code></pre>
+</div>
+</div>
+
+<div class="ulist">
+<ul>
+<li>
+<p>the login.config file (see below)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Here is a sample JAAS config file using PropertiesLoginModule:</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code>PropertiesLoginModule {
+ o.a.o.core.security.jaas.PropertiesLoginModule
+ required
+ Debug=false
+ UsersFile="users.properties"
+ GroupsFile="groups.properties";
+};</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>This login module needs 2 properties files, one for group and one for users.</p>
+</div>
+<div class="paragraph">
+<p>Here is a <code>users.properties</code> file (should be in <code>conf/</code>):</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="ini">user1=pwd1
+user3=pwd2
+user3=pwd3</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>Here is a <code>groups.properties</code> file (should be in <code>conf/</code>):</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="ini">group1=user1
+group2=user2, user3</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>To integrate JAAS with Tomcat just add/replace the default tomcat realm with:</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;Realm className="org.apache.catalina.realm.JAASRealm"
+ appName="PropertiesLoginModule"
+ userClassNames="o.a.o.core.security.jaas.UserPrincipal"
+ roleClassNames="o.a.o.core.security.jaas.GroupPrincipal" /&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+</div>
+<div class="horizontal-block" id="Maven">
+<div class="col c2-2 c3-1 c4-1 c5-1 c6-1"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">OpenEJB dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;!-- core: embedded cdi, ejb, EJBContainer... --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;openejb-core&lt;/artifactId&gt;
+  &lt;version&gt;${openejb.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- for JAXWS webservices --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;openejb-cxf&lt;/artifactId&gt;
+  &lt;version&gt;${openejb.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- for JAXRS webservices --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;openejb-cxf-rs&lt;/artifactId&gt;
+  &lt;version&gt;${openejb.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- embedded arquillian adapter --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;arquillian-openejb-embedded-4&lt;/artifactId&gt;
+  &lt;version&gt;${openejb.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-2 c5-2 c6-2"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;!-- tomee zip --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;apache-tomee&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+  &lt;type&gt;zip&lt;/type&gt;
+&lt;/dependency&gt;
+
+&lt;!-- tomee arquillian adapter --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;arquillian-tomee-remote&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE Embedded dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;!-- tomee zip --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;tomee-embedded&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+  &lt;type&gt;zip&lt;/type&gt;
+&lt;/dependency&gt;
+
+&lt;!-- tomee embedded arquillian adapter --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;arquillian-tomee-embedded&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- tomee jaxrs --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;tomee-jaxrs&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- tomee jaxws --&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;org.apache.openejb&lt;/groupId&gt;
+  &lt;artifactId&gt;tomee-webservices&lt;/artifactId&gt;
+  &lt;version&gt;${tomee.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-1 c3-3 c4-3 c5-3 c6-3"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE maven plugin configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Configuration block is optional all attributes have defaul values.
+</td>
+</tr>
+</table>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;plugin&gt;
+ &lt;groupId&gt;org.apache.openejb.maven&lt;/groupId&gt;
+ &lt;artifactId&gt;tomee-maven-plugin&lt;/artifactId&gt;
+ &lt;version&gt;${tmp.version}&lt;/version&gt;
+ &lt;configuration&gt; &lt;!-- all is optional --&gt;
+  &lt;tomeeVersion&gt;1.5.0&lt;/tomeeVersion&gt;
+  &lt;tomeeClassifier&gt;plus&lt;/tomeeClassifier&gt; &lt;!-- webprofile, jaxrs --&gt;
+
+  &lt;!-- remote debugging --&gt;
+  &lt;debug&gt;false&lt;/debug&gt;
+  &lt;debugPort&gt;5005&lt;/debugPort&gt;
+
+  &lt;!-- http port - same exists for ajp and https --&gt;
+  &lt;tomeeHttpPort&gt;8080&lt;/tomeeHttpPort&gt;
+
+  &lt;!-- remove default tomee webapp --&gt;
+  &lt;removeDefaultWebapps&gt;true&lt;/removeDefaultWebapps&gt;
+  &lt;!-- remove even tomee webapp - if you don't use it --&gt;
+  &lt;removeTomeeWebapp&gt;true&lt;/removeTomeeWebapp&gt;
+
+  &lt;!-- add some libs to the server --&gt;
+  &lt;libs&gt;
+   &lt;lib&gt;mysql:mysql-connector-java:5.1.20&lt;/lib&gt;
+  &lt;/libs&gt;
+
+  &lt;!-- deploy another webapp, same exists for ear with &lt;apps /&gt; --&gt;
+  &lt;webapps&gt;
+   &lt;webapp&gt;org.superbiz:my-simple-webapp:1.0.0&lt;/webapp&gt;
+  &lt;/webapps&gt;
+
+  &lt;!-- auto update of the app --&gt;
+  &lt;/configuration&gt;
+   &lt;!-- can the app be redeployed after update --&gt;
+   &lt;reloadOnUpdate&gt;true&lt;/reloadOnUpdate&gt;
+   &lt;synchronization&gt;
+    &lt;!-- extensions updating and redeploying --&gt;
+    &lt;extensions&gt;
+     &lt;extension&gt;.class&lt;extension&gt;
+    &lt;/extensions&gt;
+    &lt;!-- extensions updating without redeploy --&gt;
+    &lt;updateOnlyExtensions&gt;
+     &lt;updateOnlyExtension&gt;.html&lt;updateOnlyExtension&gt;
+     &lt;updateOnlyExtension&gt;.js&lt;updateOnlyExtension&gt;
+     &lt;updateOnlyExtension&gt;.jcss&lt;updateOnlyExtension&gt;
+    &lt;/updateOnlyExtensions&gt;
+   &lt;/synchronization&gt;
+   &lt;!-- &lt;synchronizations/&gt; exist to handle multiple source/target --&gt;
+  &lt;/configuration&gt;
+ &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-1 c3-2 c4-4 c5-4 c6-4"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE maven plugin information</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Compatibility matrix:</p>
+</div>
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>TomEE</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Maven plugin</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.0.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.0-alpha-1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.0.0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.5.1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1.0.1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&gt;= 1.5.2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">same as TomEE</p></td>
+</tr>
+</tbody>
+</table>
+
+<div class="paragraph">
+<p>Main goals:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>tomee:run: run and wait for the server</p>
+</li>
+<li>
+<p>tomee:debug: run in debug mode and wait for the server (alias of run)</p>
+</li>
+<li>
+<p>tomee:start: run the server</p>
+</li>
+<li>
+<p>tomee:stop: stop the server (to use with start)</p>
+</li>
+<li>
+<p>tomee:configtest: run configtest tomcat command</p>
+</li>
+<li>
+<p>tomee:deploy &lt;path&gt;: deploy path archive</p>
+</li>
+<li>
+<p>tomee:undeploy &lt;path&gt;: undeploy path archive. Note it should be the same path than the one used in deploy command</p>
+</li>
+<li>
+<p>tomee:list: list ejbs deployed</p>
+</li>
+<li>
+<p>tomee:build: build tomee but does not start it</p>
+</li>
+<li>
+<p>tomee:help: this</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+almost all properties can be set as maven system properties prefixed by <code>tomee-plugin.</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+to debug use <code>mvn tomee:debug</code> instead of <code>mvn tomee:run</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Doc is on <a href="http://tomee.apache.org/tomee-maven-plugin.html">http://tomee.apache.org/tomee-maven-plugin.html</a>.</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+</div>
+<div class="horizontal-block" id="Arquillian">
+<div class="col c2-1 c3-1 c4-1 c5-1 c6-1"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">OpenEJB embedded adapter configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;arquillian
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="
+  http://jboss.org/schema/arquillian
+  http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ &lt;container qualifier="openejb" default="true"&gt;
+  &lt;configuration&gt;
+   &lt;!-- container properties (~ conf/system.properties) --&gt;
+   &lt;property name="properties"&gt;
+    # you can declare a resource, container...
+    db1 = new://Resource?type=DataSource
+    db1.JdbcUrl = jdbc:hsqldb:mem:db1
+
+    # special hook based on ShrinkWrap
+    # to predeployed some archives at startup
+    # (instead of by test)
+    #
+    # syntax is comma separated list
+    # and multiple archives in the same package
+    # can be aggregated: package.[A1|A2]
+    openejb.arquillian.predeploy-archives = org.foo.SimpleArchive
+   &lt;/property&gt;
+  &lt;/configuration&gt;
+ &lt;/container&gt;
+&lt;/arquillian&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE Arquillian Adapters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>TomEE arquillian adapters support the system property <code>openejb.arquillian.adapter</code>
+to select which adapter to use if multiple are at the classpath (Arquillian tolerate a single
+one by default).</p>
+</div>
+<div class="paragraph">
+<p>This way you can run your test against several OpenEJB/TomEE adapters in the same build (no need
+of any maven profile). A complete sample can be found here:
+<a href="http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/multiple-arquillian-adapters/">http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/multiple-arquillian-adapters/</a>).</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Simple Arquillian test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="java">@RunWith(Arquillian.class)
+public class SimpleArquillianTest {
+ @Deployment(name = "archive")
+ public static WebArchive war() {
+  return ShrinkWrap.create(WebArchive.class, "test.war")
+   .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+   .addClasses(MyBean.class);
+  }
+
+  @Inject
+  private MyBean bean;
+
+  @Test
+  public void testRunningInDep1() {
+    assertEquals("foo", bean.foo());
+  }
+}</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-2 c5-2 c6-2"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE embedded adapter configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;arquillian
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="
+  http://jboss.org/schema/arquillian
+  http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ &lt;container qualifier="tomee" default="true"&gt;
+  &lt;configuration&gt;
+   &lt;property name="serverXml"&gt;conf/server.xml&lt;/property&gt;
+
+   &lt;!-- port = -1 means random --&gt;
+   &lt;property name="httpPort"&gt;-1&lt;/property&gt;
+   &lt;property name="stopPort"&gt;-1&lt;/property&gt;
+
+   &lt;!-- ssl --&gt;
+   &lt;property name="httpsPort"&gt;-1&lt;/property&gt;
+   &lt;property name="ssl"&gt;false&lt;/property&gt;
+   &lt;property name="keystoreFile"&gt;keystore-path&lt;/property&gt;
+   &lt;property name="keystorePass"&gt;changeit&lt;/property&gt;
+   &lt;property name="keystoreType"&gt;JKS&lt;/property&gt;
+   &lt;property name="clientAuth"&gt;false&lt;/property&gt;
+   &lt;property name="keyAlias"&gt;alias&lt;/property&gt;
+   &lt;property name="sslProtocol"&gt;protocol&lt;/property&gt;
+
+   &lt;!-- where to create TomEE files --&gt;
+   &lt;property name="dir"&gt;target/tomee-embedded&lt;/property&gt;
+
+   &lt;!-- where to dump on disk applications to deploy --&gt;
+   &lt;property name="appWorkingDir"&gt;target/working-dir&lt;/property&gt;
+
+   &lt;!-- optional - limit the port allowed when random --&gt;
+   &lt;property name="portRange"&gt;20001-30000&lt;/property&gt;
+
+   &lt;!-- container config --&gt;
+   &lt;property name="properties"&gt;
+    # same as embedded case
+   &lt;/property&gt;
+   
+   &lt;!-- Deployer config --&gt;
+   &lt;property name="deployerProperties"&gt;
+    # openejb.deployer.binaries.use=true
+    # openejb.deployer.forced.appId=[name]
+    # openejb.deployer.save-deployments=false
+   &lt;/property&gt;
+  &lt;/configuration&gt;
+ &lt;/container&gt;
+&lt;/arquillian&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-1 c3-3 c4-3 c5-3 c6-3"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">TomEE remote adapter configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;arquillian
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="
+  http://jboss.org/schema/arquillian
+  http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ &lt;container qualifier="tomee" default="true"&gt;
+  &lt;configuration&gt;
+   &lt;property name="serverXml"&gt;conf/server.xml&lt;/property&gt;
+
+   &lt;!-- tomee zip to use --&gt;
+   &lt;property name="groupId"&gt;org.apache.openejb&lt;/property&gt;
+   &lt;property name="artifactId"&gt;apache-tomee&lt;/property&gt;
+   &lt;property name="version"&gt;LATEST&lt;/property&gt;
+   &lt;property name="type"&gt;zip&lt;/property&gt;
+
+   &lt;!-- tomee provided files, ignored by default --&gt;
+   &lt;property name="bin"&gt;src/test/tomee/bin&lt;/property&gt;
+   &lt;property name="conf"&gt;src/test/tomee/conf&lt;/property&gt;
+   &lt;property name="lib"&gt;src/test/tomee/lib&lt;/property&gt;
+
+   &lt;!--
+    remote debugging,
+    -Dopenejb.server.debug can activate it too
+   --&gt;
+   &lt;property name="debug"&gt;false&lt;/property&gt;
+   &lt;property name="debugPort"&gt;5005&lt;/property&gt;
+
+   &lt;!-- nice one line logging --&gt;
+   &lt;property name="simpleLog"&gt;true&lt;/property&gt;
+
+   &lt;!-- jvm config --&gt;
+   &lt;property name="catalina_opts"&gt;-XX:-UseParallelGC&lt;/property&gt;
+
+   &lt;!-- remove if exist --&gt;
+   &lt;property name="cleanOnStartUp"&gt;true&lt;/property&gt;
+
+   &lt;!-- remove default webapps --&gt;
+   &lt;property name="removeunusedWebapps"&gt;true&lt;/property&gt;
+
+   &lt;!-- port = -1 means random --&gt;
+   &lt;property name="httpPort"&gt;-1&lt;/property&gt;
+   &lt;property name="stopPort"&gt;-1&lt;/property&gt;
+
+   &lt;!-- where to create TomEE --&gt;
+   &lt;property name="dir"&gt;target/apache-tomee&lt;/property&gt;
+
+   &lt;!-- where to dump on disk applications to deploy --&gt;
+   &lt;property name="appWorkingDir"&gt;target/working-dir&lt;/property&gt;
+
+   &lt;!-- optional - limit the port allowed when random --&gt;
+   &lt;property name="portRange"&gt;20001-30000&lt;/property&gt;
+
+   &lt;!-- container config --&gt;
+   &lt;property name="properties"&gt;
+    # same as embedded case
+   &lt;/property&gt;
+   
+   &lt;!-- Deployer config --&gt;
+   &lt;property name="deployerProperties"&gt;
+    # openejb.deployer.binaries.use=true
+    # openejb.deployer.forced.appId=[name]
+    # openejb.deployer.save-deployments=false
+   &lt;/property&gt;
+   
+  &lt;/configuration&gt;
+ &lt;/container&gt;
+&lt;/arquillian&gt;</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+
+<div class="col c2-2 c3-2 c4-4 c5-4 c6-4"><div class="blk">
+<table class="tableblock frame-all grid-all" style="width: 100%">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Multiple TomEE with Arquillian</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div>
+<div class="content monospaced">
+<pre class="highlight"><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://jboss.org/schema/arquillian
+    http://jboss.org/schema/arquillian/arquillian_1_0.xsd"&gt;
+ &lt;group qualifier="tomee-cluster"&gt;
+  &lt;container qualifier="tomee-1"&gt;
+   &lt;configuration&gt;
+    &lt;property name="httpPort"&gt;-1&lt;/property&gt;
+    &lt;property name="stopPort"&gt;-1&lt;/property&gt;
+    &lt;property name="ajpPort"&gt;-1&lt;/property&gt;
+    &lt;property name="dir"&gt;target/tomee1&lt;/property&gt;
+    &lt;property name="appWorkingDir"&gt;target/wd1&lt;/property&gt;
+   &lt;/configuration&gt;
+  &lt;/container&gt;
+  &lt;container qualifier="tomee-2"&gt;
+   &lt;configuration&gt;
+    &lt;property name="httpPort"&gt;-1&lt;/property&gt;
+    &lt;property name="stopPort"&gt;-1&lt;/property&gt;
+    &lt;property name="ajpPort"&gt;-1&lt;/property&gt;
+    &lt;property name="dir"&gt;target/tomee2&lt;/property&gt;
+    &lt;property name="appWorkingDir"&gt;target/wd2&lt;/property&gt;
+   &lt;/configuration&gt;
+  &lt;/container&gt;
+ &lt;/group&gt;
+&lt;/arquillian&gt;</code></pre>
+</div>
+</div>
+
+<div class="paragraph">
+<p>Then in java just declare "as usual" multiple deployments and match them in your test methods:</p>
+</div>
+<div>
+<div class="content monospaced">
+<pre class="highlight"><code class="java">@RunWith(Arquillian.class)
+public class MultipleTomEETest {
+ @Deployment(name = "war1", testable = false)
+ @TargetsContainer("tomee-1")
+ public static WebArchive war1() {
+  return /* ... */;
+ }
+
+ @Deployment(name = "war2", testable = false)
+ @TargetsContainer("tomee-2")
+ public static WebArchive war2() {
+  return /* ... */;
+ }
+
+ @Test
+ @OperateOnDeployment("war1")
+ public void testRunningInDep1(
+    @ArquillianResource URL url) {
+   // test on tomee 1, url is contextual
+ }
+
+ @Test
+ @OperateOnDeployment("war2")
+ public void testRunningInDep1(
+    @ArquillianResource URL url) {
+   // test on tomee 1, url is contextual
+ }
+}</code></pre>
+</div>
+</div>
+</div></td>
+</tr>
+</tbody>
+</table>
+
+</div></div>
+</div>
+</div>
+</div>
+<div style="clear: both;"></div>
+<hr>
+
+</div>
+<div id="clearing-div" style="clear:both;"></div>
+</div>
+</div>
+<footer>
+<div class="mid">
+TomEE RefCard - revision 1-SNAPSHOT - 20140311-1059
+</div>
+</footer>
+</body>
+</html>

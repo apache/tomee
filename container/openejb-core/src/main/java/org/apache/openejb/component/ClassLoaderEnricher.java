@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClassLoaderEnricher {
     // files used for war or lib part of ear
-    private final Collection<URL> applicationURLs = new CopyOnWriteArrayList<URL>();
+    private final Collection<URL> applicationURLs = new CopyOnWriteArrayList<>();
 
     public URL[] applicationEnrichment() {
         return applicationURLs.toArray(new URL[applicationURLs.size()]);

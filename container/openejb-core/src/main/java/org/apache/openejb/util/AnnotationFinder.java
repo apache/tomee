@@ -18,13 +18,13 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.xbean.asm6.AnnotationVisitor;
-import org.apache.xbean.asm6.Attribute;
-import org.apache.xbean.asm6.ClassReader;
-import org.apache.xbean.asm6.ClassVisitor;
-import org.apache.xbean.asm6.FieldVisitor;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.Attribute;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassVisitor;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.BufferedInputStream;
@@ -63,7 +63,7 @@ public class AnnotationFinder {
     private static final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
 
     private final ClassLoader classLoader;
-    private final List<String> classesNotLoaded = new ArrayList<String>();
+    private final List<String> classesNotLoaded = new ArrayList<>();
     private final List<String> classNames;
 
     /**
@@ -114,7 +114,7 @@ public class AnnotationFinder {
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
         this.classLoader = classLoader;
-        classNames = new ArrayList<String>();
+        classNames = new ArrayList<>();
         for (final URL location : urls) {
             if (location == null) {
                 continue;
@@ -190,7 +190,7 @@ public class AnnotationFinder {
 
     @SuppressWarnings("deprecation")
     private static List<String> file(final URL location) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
         File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
@@ -250,7 +250,7 @@ public class AnnotationFinder {
     }
 
     private static List<String> jar(final JarFile jarFile) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         final Enumeration<? extends JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
@@ -262,7 +262,7 @@ public class AnnotationFinder {
     }
 
     private static List<String> jar(final JarInputStream jarStream) throws IOException {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         JarEntry entry;
         while ((entry = jarStream.getNextJarEntry()) != null) {
@@ -327,7 +327,7 @@ public class AnnotationFinder {
         private final Filter filter;
 
         public Visitor(final Filter filter) {
-            super(Opcodes.ASM6);
+            super(Opcodes.ASM7);
             this.filter = filter;
 
             try {

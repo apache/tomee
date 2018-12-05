@@ -22,6 +22,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
 import javax.naming.NamingException;
+import javax.validation.ClockProvider;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.ParameterNameProvider;
@@ -85,6 +86,12 @@ public class ValidatorFactoryWrapper implements ValidatorFactory, Serializable {
     @Override
     public ParameterNameProvider getParameterNameProvider() {
         return factory().getParameterNameProvider();
+    }
+
+    @Override
+    public ClockProvider getClockProvider()
+    {
+        return factory().getClockProvider();
     }
 
     @Override

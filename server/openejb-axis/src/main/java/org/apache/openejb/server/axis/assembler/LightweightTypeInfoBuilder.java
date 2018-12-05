@@ -42,7 +42,7 @@ public class LightweightTypeInfoBuilder {
     }
 
     public List<JaxRpcTypeInfo> buildTypeInfo() throws OpenEJBException {
-        List<JaxRpcTypeInfo> typeInfoList = new ArrayList<JaxRpcTypeInfo>();
+        List<JaxRpcTypeInfo> typeInfoList = new ArrayList<>();
 
         for (XmlTypeInfo xmlTypeInfo : schemaInfo.types.values()) {
             // skip anonymous elements
@@ -72,7 +72,7 @@ public class LightweightTypeInfoBuilder {
 
     private void mapFields(Class javaClass, XmlTypeInfo xmlTypeInfo, JaxRpcTypeInfo typeInfo) throws OpenEJBException {
         // Map JavaBean property name to propertyType
-        Map<String, Class> propertyToClass = new HashMap<String, Class>();
+        Map<String, Class> propertyToClass = new HashMap<>();
         try {
             for (PropertyDescriptor descriptor : Introspector.getBeanInfo(javaClass).getPropertyDescriptors()) {
                 propertyToClass.put(descriptor.getName(), descriptor.getPropertyType());

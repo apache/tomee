@@ -125,11 +125,6 @@ public class CdiEventRealm extends RealmBase {
     }
 
     @Override
-    protected String getName() {
-        return "CdiEventRealm";
-    }
-
-    @Override
     protected String getPassword(final String username) {
         // must never happen cause we overridden all authenticate() mthd
         throw new UnsupportedOperationException();

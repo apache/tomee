@@ -75,7 +75,7 @@ public class JdbcConfigTest extends TestCase {
     }
 
     private void verifyManagedConnections(final DataSource dataSource) throws SQLException {
-        final List<Connection> managedConnections = new ArrayList<Connection>();
+        final List<Connection> managedConnections = new ArrayList<>();
         try {
             for (int i = 0; i < 4; i++) {
                 final Connection connection = dataSource.getConnection();
@@ -102,7 +102,7 @@ public class JdbcConfigTest extends TestCase {
     }
 
     private void verifyUnmanagedConnections(final DataSource dataSource) throws SQLException {
-        final List<Connection> unmanagedConnections = new ArrayList<Connection>();
+        final List<Connection> unmanagedConnections = new ArrayList<>();
         try {
             for (int i = 0; i < 4; i++) {
                 final Connection connection = dataSource.getConnection();

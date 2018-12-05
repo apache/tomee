@@ -41,8 +41,8 @@ public class ServiceRefData {
     private final QName portQName;
     private final Class<?> referenceClass;
     private final URL wsdlURL;
-    private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
-    private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
+    private final List<HandlerChainData> handlerChains = new ArrayList<>();
+    private final List<PortRefData> portRefs = new ArrayList<>();
 
     public ServiceRefData(final String id, final QName serviceQName, final Class<? extends Service> serviceClass, final QName portQName, final Class<?> referenceClass, final URL wsdlURL, final List<HandlerChainData> handlerChains, final List<PortRefData> portRefs) {
         this.id = id;

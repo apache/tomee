@@ -103,7 +103,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
     private final int instanceLimit;
     private final boolean failOnUnknownActivationSpec;
 
-    private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
+    private final ConcurrentMap<Object, BeanContext> deployments = new ConcurrentHashMap<>();
     private final XAResourceWrapper xaResourceWrapper;
     private final InboundRecovery inboundRecovery;
 
@@ -272,7 +272,7 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
             final ActivationSpec activationSpec = (ActivationSpec) objectRecipe.create(activationSpecClass.getClassLoader());
 
             // verify all properties except "destination" and "destinationType" were consumed
-            final Set<String> unusedProperties = new TreeSet<String>(objectRecipe.getUnsetProperties().keySet());
+            final Set<String> unusedProperties = new TreeSet<>(objectRecipe.getUnsetProperties().keySet());
             unusedProperties.remove("destination");
             unusedProperties.remove("destinationType");
             unusedProperties.remove("destinationLookup");

@@ -25,7 +25,7 @@ import static java.util.Arrays.asList;
 // common for fatjars
 public final class FatApp {
     public static void main(final String[] args) {
-        final Collection<String> a = args == null || args.length == 0 ? new ArrayList<String>() : new ArrayList<>(asList(args));
+        final Collection<String> a = args == null || args.length == 0 ? new ArrayList<>() : new ArrayList<>(asList(args));
         if (a.size() == 1 && "--help".equals(a.iterator().next())) {
             Main.main(new String[] {"--help"});
             return;

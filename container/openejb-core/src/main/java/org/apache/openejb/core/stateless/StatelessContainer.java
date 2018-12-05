@@ -64,9 +64,9 @@ import static org.apache.openejb.core.transaction.EjbTransactionUtil.handleSyste
  */
 public class StatelessContainer implements org.apache.openejb.RpcContainer, DestroyableResource {
 
-    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<Class<?>, List<Method>>();
+    private final ConcurrentMap<Class<?>, List<Method>> interceptorCache = new ConcurrentHashMap<>();
     private final StatelessInstanceManager instanceManager;
-    private final Map<String, BeanContext> deploymentRegistry = new ConcurrentHashMap<String, BeanContext>();
+    private final Map<String, BeanContext> deploymentRegistry = new ConcurrentHashMap<>();
     private final Object containerID;
     private final SecurityService securityService;
 
@@ -294,11 +294,11 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
         final Class<?> interceptorClass = interceptor.getClass();
 
         //  Add the webservice interceptor to the list of interceptor instances
-        final Map<String, Object> interceptors = new HashMap<String, Object>(instance.interceptors);
+        final Map<String, Object> interceptors = new HashMap<>(instance.interceptors);
         interceptors.put(interceptor.getClass().getName(), interceptor);
 
         //  Create an InterceptorData for the webservice interceptor to the list of interceptorDatas for this method
-        final List<InterceptorData> interceptorDatas = new ArrayList<InterceptorData>();
+        final List<InterceptorData> interceptorDatas = new ArrayList<>();
         final InterceptorData providerData = new InterceptorData(interceptorClass);
         providerData.getAroundInvoke().addAll(retrieveAroundInvokes(interceptorClass));
         interceptorDatas.add(0, providerData);
@@ -334,7 +334,7 @@ public class StatelessContainer implements org.apache.openejb.RpcContainer, Dest
         final ClassFinder finder = new ClassFinder(interceptorClass);
         List<Method> annotated = finder.findAnnotatedMethods(AroundInvoke.class);
         if (StatelessContainer.class.getClassLoader() == interceptorClass.getClassLoader()) { // use cache only for server classes
-            final List<Method> value = new CopyOnWriteArrayList<Method>(annotated);
+            final List<Method> value = new CopyOnWriteArrayList<>(annotated);
             annotated = this.interceptorCache.putIfAbsent(interceptorClass, annotated); // ensure it to be thread safe
             if (annotated == null) {
                 annotated = value;

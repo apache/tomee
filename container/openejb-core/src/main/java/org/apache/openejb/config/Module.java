@@ -36,11 +36,11 @@ public class Module {
     private ClassLoader classLoader;
 
     private ValidationConfigType validationConfig;
-    private final Map<String, Object> altDDs = new HashMap<String, Object>();
+    private final Map<String, Object> altDDs = new HashMap<>();
     private String uniqueId;
     private AppModule appModule;
     private Resources resources;
-    private final Set<String> mbeans = new HashSet<String>();
+    private final Set<String> mbeans = new HashSet<>();
     private final Properties properties = new SuperProperties().caseInsensitive(true);
 
     public Module(final boolean needId) {
