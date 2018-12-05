@@ -12,7 +12,7 @@ import javax.mvc.binding.ParamError;
 @RequestScoped
 public class Errors {
 
-	private List<ParamError> errors = new ArrayList<>();
+    private List<ParamError> errors = new ArrayList<>();
 
     public void setErrors(List<ParamError> messages) {
         this.errors = messages;
@@ -20,15 +20,15 @@ public class Errors {
 
     public String getErrors() {
         return errors.stream()
-                .map(ParamError::getMessage)
-                .collect(Collectors.joining("<br>"));
+                     .map(ParamError::getMessage)
+                     .collect(Collectors.joining("<br>"));
     }
 
     public String getMessage(String param) {
         return errors.stream()
-                .filter(v -> v.getParamName().equals(param))
-                .map(ParamError::getMessage)
-                .findFirst()
-                .orElse("");
+                     .filter(v -> v.getParamName().equals(param))
+                     .map(ParamError::getMessage)
+                     .findFirst()
+                     .orElse("");
     }
 }

@@ -9,7 +9,8 @@ import javax.ws.rs.Path;
 @Path("home")
 public class HomeController {
 
-	@GET
-	@View("home.jsp")
-	public void homePage() {}
+    @GET
+    @View("home.jsp")
+    public void homePage() {
+    }
 }

@@ -26,7 +26,7 @@ public class Person {
     private Long id;
 
     @FormParam("name")
-    @NotEmpty(message="can not be empty")
+    @NotEmpty(message = "can not be empty")
     @Size(min = 1, max = 20)
     @MvcBinding
     private String name;
@@ -48,7 +48,7 @@ public class Person {
 
     @FormParam("description")
     @Column
-    @NotEmpty(message="can not be empty")
+    @NotEmpty(message = "can not be empty")
     @MvcBinding
     @Size(min = 10, max = 20)
     private String description;

@@ -20,6 +20,8 @@ public class PersonProducer {
     }
 
     public void closeEntityManager(@Disposes EntityManager manager) {
-        if (manager.isOpen()) { manager.close(); }
+        if (manager.isOpen()) {
+            manager.close();
+        }
     }
 }

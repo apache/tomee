@@ -11,7 +11,7 @@
 
       <class>org.superbiz.model.Address</class>
       <class>org.superbiz.model.Person</class>
-         
+
       <properties>
           <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform"/>
           <property name="eclipselink.ddl-generation" value="create-tables"/>

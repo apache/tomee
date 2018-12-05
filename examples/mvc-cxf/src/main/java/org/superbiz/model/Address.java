@@ -11,12 +11,12 @@ import javax.ws.rs.FormParam;
 public class Address {
 
     @FormParam("country")
-    @NotEmpty(message="can not be empty")
+    @NotEmpty(message = "can not be empty")
     @MvcBinding
     private String country;
 
     @FormParam("state")
-    @NotEmpty(message="can not be empty")
+    @NotEmpty(message = "can not be empty")
     @MvcBinding
     private String state;
 
@@ -37,8 +37,7 @@ public class Address {
             return false;
         }
         Address address = (Address) o;
-        return Objects.equals(country, address.country) &&
-                Objects.equals(state, address.state);
+        return Objects.equals(country, address.country) && Objects.equals(state, address.state);
     }
 
     @Override

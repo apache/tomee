@@ -9,15 +9,15 @@ import javax.mvc.RedirectScoped;
 @RedirectScoped
 public class Messages implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String messageRedirect;
+    private String messageRedirect;
 
-	public String getMessageRedirect() {
-		return messageRedirect;
-	}
+    public String getMessageRedirect() {
+        return messageRedirect;
+    }
 
-	public void setMessageRedirect(String messageRedirect) {
-		this.messageRedirect = messageRedirect;
-	}
+    public void setMessageRedirect(String messageRedirect) {
+        this.messageRedirect = messageRedirect;
+    }
 }

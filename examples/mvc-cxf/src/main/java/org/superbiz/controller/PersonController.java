@@ -11,23 +11,19 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.mvc.Models;
 import javax.mvc.Controller;
+import javax.mvc.Models;
 import javax.mvc.View;
 import javax.mvc.binding.BindingResult;
-import javax.mvc.binding.ValidationError;
 import javax.validation.Valid;
 import javax.validation.executable.ExecutableType;
 import javax.validation.executable.ValidateOnExecution;
 import javax.ws.rs.BeanParam;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
-
 
 import org.mvcspec.ozark.engine.Viewable;
 import org.superbiz.model.Errors;
@@ -35,23 +31,21 @@ import org.superbiz.model.Messages;
 import org.superbiz.model.Person;
 import org.superbiz.persistence.PersonRepository;
 
-
-
 @Controller
 @Path("mvc")
 public class PersonController {
 
     private static final Supplier<WebApplicationException> NOT_FOUND_EXCEPTION = () -> new WebApplicationException(NOT_FOUND);
-    
+
     @Inject
     private Models models;
-    
+
     @Inject
     private Messages message;
-    
-    @Inject 
+
+    @Inject
     private Errors erros;
-    
+
     @Inject
     private BindingResult bindingResult;
 
@@ -61,7 +55,7 @@ public class PersonController {
     @GET
     @Path("new")
     public Viewable newElement() {
-    	this.models.put("countries", getCountries());
+        this.models.put("countries", getCountries());
         return new Viewable("insert.jsp");
     }
 
@@ -74,16 +68,16 @@ public class PersonController {
 
     @POST
     @Path("add")
-    @ValidateOnExecution(type=ExecutableType.NONE)
+    @ValidateOnExecution(type = ExecutableType.NONE)
     public String add(@Valid @BeanParam Person person) {
-    	if (bindingResult.isFailed()) {
+        if (bindingResult.isFailed()) {
 
-    		this.getErros();
-    		this.models.put("countries", getCountries());
-    		this.models.put("person", person);
-    		return "insert.jsp";
+            this.getErros();
+            this.models.put("countries", getCountries());
+            this.models.put("person", person);
+            return "insert.jsp";
 
-    	}
+        }
         repository.save(person);
         message.setMessageRedirect("The " + person.getName() + " was successfully registered ! ");
         return "redirect:mvc/show";
@@ -91,16 +85,16 @@ public class PersonController {
 
     @POST
     @Path("update")
-    @ValidateOnExecution(type=ExecutableType.NONE)
+    @ValidateOnExecution(type = ExecutableType.NONE)
     public String update(@Valid @BeanParam Person person) {
-    	if (bindingResult.isFailed()) { 
+        if (bindingResult.isFailed()) {
 
-    		this.getErros();
-    		this.models.put("countries", getCountries());
-    		this.models.put("person", person);
-    		return "change.jsp";
-    		
-    	}
+            this.getErros();
+            this.models.put("countries", getCountries());
+            this.models.put("person", person);
+            return "change.jsp";
+
+        }
         repository.save(person);
         message.setMessageRedirect("The " + person.getName() + " was changed successfully ! ");
         return "redirect:mvc/show";
@@ -126,19 +120,19 @@ public class PersonController {
     }
 
     private String getCountryName(String country) {
-    	return new Locale(country,country).getDisplayCountry(Locale.ENGLISH);
+        return new Locale(country, country).getDisplayCountry(Locale.ENGLISH);
     }
 
     private List<String> getCountries() {
-		return Arrays.stream(Locale.getISOCountries())
-					 .map(country -> getCountryName(country))
-					 .sorted((a, b) -> a.compareTo(b))
-					 .collect(Collectors.toList());
+        return Arrays.stream(Locale.getISOCountries())
+                     .map(country -> getCountryName(country))
+                     .sorted((a, b) -> a.compareTo(b))
+                     .collect(Collectors.toList());
     }
-    
+
     private void getErros() {
-    	erros.setErrors(
-                bindingResult.getAllErrors().stream()
-                .collect(toList()));
+        erros.setErrors(bindingResult.getAllErrors()
+                                     .stream()
+                                     .collect(toList()));
     }
 }
