@@ -95,13 +95,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <repositories>
-    <repository>
-      <id>apache-m2-snapshot</id>
-      <name>Apache Snapshot Repository</name>
-      <url>https://repository.apache.org/content/groups/snapshots</url>
-    </repository>
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -164,13 +157,7 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>ziplock</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  </dependencies>q
 
   <profiles>
     <profile>
