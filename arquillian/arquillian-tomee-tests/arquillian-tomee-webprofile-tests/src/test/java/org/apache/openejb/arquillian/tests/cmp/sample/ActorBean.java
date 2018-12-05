@@ -37,15 +37,15 @@ public abstract class ActorBean implements EntityBean {
 
     public abstract void setMovies(Collection movies);
 
-    public String ejbCreate(String name) throws CreateException {
+    public String ejbCreate(final String name) throws CreateException {
         setName(name);
         return null;
     }
 
-    public void ejbPostCreate(String name) throws CreateException {
+    public void ejbPostCreate(final String name) throws CreateException {
     }
 
-    public void setEntityContext(EntityContext ctx) {
+    public void setEntityContext(final EntityContext ctx) {
         context = ctx;
     }
 
