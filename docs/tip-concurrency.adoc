@@ -1,9 +1,9 @@
 :index-group: Tips
 and Tricks
-:type: page
-:status: published
-:title: Global Concurrency Management
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Global Concurrency Management
+
 
 If for whatever reason you want to define the global default concurrency
 add this to your META-INF/ejb-jar.xml:

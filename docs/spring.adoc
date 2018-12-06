@@ -1,8 +1,8 @@
 :index-group: Spring
-:type: page
-:status: published
-:title: Spring
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Spring
+
 \{note} This document and the related feature is considered a prototype
 and will change based on user feedback. All comments suggestions
 welcome. \{note}

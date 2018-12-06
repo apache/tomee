@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Validation Tool
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Validation Tool
+
 
 # NAME
 

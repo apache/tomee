@@ -1,8 +1,8 @@
 :index-group: Testing Techniques
-:type: page
-:status: published
-:title: Configuring Logging in Tests 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Configuring Logging in Tests 
+
 # embedded.logging.properties
 
 When in embedded mode OpenEJB uses an embedded.logging.properties file

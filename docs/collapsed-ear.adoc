@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Collapsed EAR 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Collapsed EAR 
+
 # One archive
 
 The basic idea of this approach is that your Servlets and EJBs are

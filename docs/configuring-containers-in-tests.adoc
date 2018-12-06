@@ -1,8 +1,8 @@
 :index-group: Testing Techniques
-:type: page
-:status: published
-:title: Configuring Containers in Tests
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Configuring Containers in Tests
+
 Like Resources, Containers
 can also be declared via InitialContext properties as well. The most
 useful is to declare a Stateful SessionBean container so that it's

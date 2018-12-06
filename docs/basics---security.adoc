@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Basics - Security
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Basics - Security
+
 This section is under construction, please check back later.
 
 == Related Documents

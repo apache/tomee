@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Topic Configuration
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Topic Configuration
+
 
 A Topic can be declared via xml in the `<tomee-home>/conf/tomee.xml`
 file or in a `WEB-INF/resources.xml` file using a declaration like the

@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: Multipoint Considerations
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Multipoint Considerations
+
 
 == Network size
 

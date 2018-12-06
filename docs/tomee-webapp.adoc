@@ -1,8 +1,8 @@
 :index-group: General Information
-:type: page
-:status: published
-:title: About the 'tomee' webapp
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: About the 'tomee' webapp
+
 Notice: Licensed to the Apache Software
 Foundation (ASF) under one or more contributor license agreements. See
 the NOTICE file distributed with this work for additional information

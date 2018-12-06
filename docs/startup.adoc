@@ -1,9 +1,9 @@
 :index-group: OpenEJB
 Standalone Server
-:type: page
-:status: published
-:title: Startup 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Startup 
+
 # NAME
 
 openejb start - OpenEJB Remote Server

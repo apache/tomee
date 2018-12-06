@@ -1,7 +1,7 @@
-:title: openejb.xml
-:type: page
-:status: published
-~~~~~~
+:jbake-title: openejb.xml
+:jbake-type: page
+:jbake-status: published
+
 
 # Overview
 

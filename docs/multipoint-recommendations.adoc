@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: Multipoint Recommendations
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Multipoint Recommendations
+
 
 As mentioned the `initialServers` is only used for bootstrapping the
 multipoint network. Once running, all servers will dynamically establish

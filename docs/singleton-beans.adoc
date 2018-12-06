@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Singleton Beans 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Singleton Beans 
+
 # Singleton Overview For the first time in years EJB has a new
 bean type, the _@Singleton_. In my opinion, the javax.ejb.Singleton will
 replace a lot of what people are using @Stateless for today.

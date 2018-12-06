@@ -1,8 +1,8 @@
 :index-group: JPA
-:type: page
-:status: published
-:title: persistence-context 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: persistence-context 
+
 # Via annotation
 
 Both lookup and injection of an EntityManager can be configured via the

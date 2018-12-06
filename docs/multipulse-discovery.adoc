@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: MultiPulse (UDP) Discovery
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: MultiPulse (UDP) Discovery
+
 
 MultiPulse is an alternative multicast lookup that does not use a
 regular heartbeat. Instead, servers listen for a multicast request

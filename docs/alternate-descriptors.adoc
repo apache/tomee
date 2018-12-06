@@ -1,8 +1,8 @@
 :index-group: Testing Techniques
-:type: page
-:status: published
-:title: Alternate Descriptors
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Alternate Descriptors
+
 As of OpenEJB 3.1.1, you have the
 ability to specify an alternate set of deployment descriptors to use for
 a given environment. This is focused mostly on testing where it is often

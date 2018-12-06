@@ -1,8 +1,8 @@
 :index-group: Spring
-:type: page
-:status: published
-:title: Spring EJB and JPA
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Spring EJB and JPA
+
 \{note}OpenEJB 3.1 or later required\{note} This example shows
 how to combine Spring, OpenEJB and Hibernate using the integration code
 provided by OpenEJB. Here, OpenEJB is used as an embeddable EJB
@@ -92,7 +92,7 @@ in the Spring xml file as shown here.
 \{snippet:id=resources|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
 And finally our Spring beans.
 \{snippet:id=pojos|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
-:title: Don't forget}
+:jbake-title: Don't forget}
 \{snippet:id=annotations|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
 It allows various annotations to be detected in bean classes: Spring's
 @Required and @Autowired, as well as JSR 250's @PostConstruct,

@@ -1,8 +1,8 @@
 :index-group: Configuration
-:type: page
-:status: published
-:title: Configuring JavaMail 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Configuring JavaMail 
+
 # Declaring a JavaMail Resource
 
 The basics are that any properties listed in the element are given

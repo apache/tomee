@@ -1,9 +1,9 @@
 :index-group: Tips
 and Tricks
-:type: page
-:status: published
-:title: Jersey Client
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Jersey Client
+
 
 If you have an application that uses jersey-client in any way then it
 may fail with an error along the lines of:

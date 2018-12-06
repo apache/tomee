@@ -1,9 +1,9 @@
 :index-group: OpenEJB
 Standalone Server
-:type: page
-:status: published
-:title: Properties Tool 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Properties Tool 
+
 # Properties Command line Tool
 
 To see all configurable properties in use by OpenEJB, using the

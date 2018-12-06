@@ -1,5 +1,5 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Features
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Features
+

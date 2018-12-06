@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Client-Server Transports 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Client-Server Transports 
+
 # Client/Server transports
 
 jar

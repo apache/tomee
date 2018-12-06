@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Deployment ID
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Deployment ID
+
 
 # What is a Deployment ID?
 

@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: Multipoint (TCP) Discovery
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Multipoint (TCP) Discovery
+
 
 As TCP has no real broadcast functionality to speak of, communication of
 who is in the network is achieved by each server having a physical

@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Generating EJB 3 annotations 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Generating EJB 3 annotations 
+
 # Generating EJB 3 annotations
 
 The OpenEJB Eclipse plugin is able to provide some assistance in helping

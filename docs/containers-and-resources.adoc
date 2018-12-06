@@ -1,8 +1,8 @@
 :index-group: Configuration
-:type: page
-:status: published
-:title: Containers and Resources
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Containers and Resources
+
 
 ....
           <p><a name="ContainersandResources-containers"></a></p>

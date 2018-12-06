@@ -1,8 +1,8 @@
 :index-group: Configuration
-:type: page
-:status: published
-:title: Deployments
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Deployments
+
 
 # The 'Deployments' element in openejb.xml
 

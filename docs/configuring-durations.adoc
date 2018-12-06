@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Configuring Durations
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Configuring Durations
+
 The time based configuration properties of containers
 and beans support plain english, such as:
 

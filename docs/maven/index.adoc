@@ -1,9 +1,9 @@
 :index-group: TomEE
 Maven Plugin
-:type: page
-:status: published
-:title: TomEE Maven Plugin
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: TomEE Maven Plugin
+
 
 Inspired by the Jetty Maven Plugin, the TomEE Maven Plugin is a
 feature-rich plugin that allows for:

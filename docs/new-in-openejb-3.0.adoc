@@ -1,7 +1,7 @@
-:title:  New in OpenEJB 3.0
-:type: page
-:status: published
-~~~~~~
+:jbake-title:  New in OpenEJB 3.0
+:jbake-type: page
+:jbake-status: published
+
 
 # EJB 3.0
 

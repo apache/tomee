@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: TomEE/OpenEJB provisioning
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: TomEE/OpenEJB provisioning
+
 
 == Summary
 

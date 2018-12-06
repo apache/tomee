@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
+:jbake-type: page
+:jbake-status: published
 
-~~~~~~
+
 # Via annotation
 
 ....

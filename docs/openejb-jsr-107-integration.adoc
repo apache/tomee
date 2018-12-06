@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: OpenEJB JSR-107 Integration
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: OpenEJB JSR-107 Integration
+
 
 # OpenEJB JSR-107 (JCACHE) Integration
 

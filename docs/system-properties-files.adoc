@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: System Properties Files
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: System Properties Files
+
 
 == OpenEJB System Properties File
 

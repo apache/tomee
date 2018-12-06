@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: OpenEJB 3
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: OpenEJB 3
+
 
 # Past, Present, and Future
 

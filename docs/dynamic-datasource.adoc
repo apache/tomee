@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Dynamic Datasource 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Dynamic Datasource 
+
 # OpenEJB dynamic datasource
 
 == Goal

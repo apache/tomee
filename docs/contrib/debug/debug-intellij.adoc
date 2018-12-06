@@ -1,8 +1,8 @@
 :index-group: IDE
-:type: page
-:status: published
+:jbake-type: page
+:jbake-status: published
 
-~~~~~~
+
 #Debugging an Apache
 TomEE App in Intellij IDEA
 

@@ -1,8 +1,8 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+
 Setting the following logging category to "debug" will open up some new
 logging information.
 

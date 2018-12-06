@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Multiple Business Interface Hazzards 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Multiple Business Interface Hazzards 
+
 # UndeclaredThrowableException
 
 When two java interfaces are implemented by a proxy and those two

@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: StatefulContainer Configuration
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: StatefulContainer Configuration
+
 
 A StatefulContainer can be declared via xml in the
 `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file

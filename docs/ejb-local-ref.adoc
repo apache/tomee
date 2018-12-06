@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: ejb-local-ref 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: ejb-local-ref 
+
 # Via annotation
 
 Usable by EJB, Interceptor, Servlet, Filter, or Listener

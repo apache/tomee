@@ -1,8 +1,8 @@
 :index-group: EJB
-:type: page
-:status: published
-:title: Ejbd Transport
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Ejbd Transport
+
 
 The Ejbd Transport allows to remotely access EJBs that have a remote
 interface. Nevertheless it is not based on IIOP.

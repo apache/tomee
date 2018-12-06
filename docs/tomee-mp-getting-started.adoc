@@ -1,9 +1,9 @@
 :index-group: TomEE
 Maven Plugin
-:type: page
-:status: published
-:title: TomEE Maven Plugin
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: TomEE Maven Plugin
+
 
 ###Add The TomEE Maven Plugin To An Existing Project
 

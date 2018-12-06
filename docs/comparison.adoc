@@ -1,8 +1,8 @@
 :index-group: General Information
-:type: page
-:status: published
-:title: Comparison
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Comparison
+
 
 Apache OpenEJB and Apache TomEE are born from the same project and
 community. They differ in two major ways, only one of them technical:

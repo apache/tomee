@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Details on openejb-jar
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Details on openejb-jar
+
 
 # What is an openejb-jar.xml?
 

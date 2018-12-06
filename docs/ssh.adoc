@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: SSH
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: SSH
+
 
 == Connecting To OpenEJB or TomEE Through SSH
 

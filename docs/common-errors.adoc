@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Common Errors
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Common Errors
+
 
 <a name="CommonErrors-Cannotfindcontainer"FOO"forbean"BAR""> # Cannot
 find container "FOO" for bean "BAR"

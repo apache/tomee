@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: App Clients and JNDI
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: App Clients and JNDI
+
 There are some slight differences between the way OpenEJB
 does app clients and the way Geronimo does app clients
 

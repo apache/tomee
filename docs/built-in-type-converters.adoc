@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Built-in Type Converters
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Built-in Type Converters
+
 The following built-in types are supported for
 @Resource injection in EJBs via elements in a META-INF/ejb-jar.xml or
 via plain properties in a META-INF/env-entries.properties file.

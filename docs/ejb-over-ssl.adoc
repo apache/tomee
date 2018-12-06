@@ -1,8 +1,8 @@
 :index-group: Configuration
-:type: page
-:status: published
-:title: EJB over SSL
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: EJB over SSL
+
 
 It is possible to setup client/server requests over SSL. EJB requests
 from a remote client can happen two different ways:

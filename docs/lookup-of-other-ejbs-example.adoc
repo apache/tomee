@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Lookup of other EJBs Example 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Lookup of other EJBs Example 
+
 # Overview
 
 This example shows how to configure JNDI to lookup other EJBs using

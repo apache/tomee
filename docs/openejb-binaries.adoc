@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: OpenEJB Binaries
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: OpenEJB Binaries
+
 Add this to your _$HOME/.m2/settings.xml_ to enable publishing to
 the Apache Nexus repo. This works for snapshots or staging final
 binaries.

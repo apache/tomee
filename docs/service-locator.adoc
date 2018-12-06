@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Service Locator
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Service Locator
+
 The functionality of the
 link:jndi-names.html[openejb.jndiname.format] allows for writing some
 really fun service locator code. Creating the exact layout you want

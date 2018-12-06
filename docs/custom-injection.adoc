@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Custom Injection 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Custom Injection 
+
 # Overview
 
 As noted in the link:injection-of-env-entry-example.html[Injection of

@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: EJB Refs
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: EJB Refs
+
 
 TomEE complains it doesn't know the container type, so I added
 type="javax.naming.InitialContext" and it worked (mostly). ##

@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: Multicast (UDP) Discovery
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Multicast (UDP) Discovery
+
 
 Multicast is the preferred way to broadcast the heartbeat on the
 network. The simple technique of broadcasting a non-changing service URI

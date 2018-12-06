@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Unix Daemon
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Unix Daemon
+
 
 Apache TomEE can be run as a daemon using the
 http://commons.apache.org/daemon/jsvc.html[jsvc] tool from the

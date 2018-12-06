@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Basics - Transactions
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Basics - Transactions
+
 One of the many benefits of EJB, is that
 transactions within the EJB container are generally managed entirely
 automatically. Any EJB component will, by default, partake in that

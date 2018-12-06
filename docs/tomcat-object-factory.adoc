@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Tomcat Object Factory
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Tomcat Object Factory
+
 _The TomcatEjbFactory as discussed in the
 http://www.onjava.com/pub/a/onjava/2003/02/12/ejb_tomcat.html[OnJava
 article "OpenEJB: EJB for Tomcat"] is no longer required._

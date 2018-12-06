@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Common DataSource Configurations
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Common DataSource Configurations
+
 
 See the link:datasource-config.html[DataSource Configuration] for
 details on all configuration options for DataSources.

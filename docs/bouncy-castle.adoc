@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Installing Bouncy Castle
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Installing Bouncy Castle
+
 Notice: Licensed to the Apache Software Foundation (ASF)
 under one or more contributor license agreements. See the NOTICE file
 distributed with this work for additional information regarding

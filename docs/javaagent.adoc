@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: JavaAgent
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: JavaAgent
+
 
 # Adding a JavaAgent
 

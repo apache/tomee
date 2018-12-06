@@ -1,8 +1,8 @@
 :index-group: Arquillian
-:type: page
-:status: published
-:title: Getting started with Arquillian and TomEE
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Getting started with Arquillian and TomEE
+
 
 Arquillian is a testing framework on top of JUnit (or TestNG if you
 prefer). It makes it easier to do integration tests in a managed

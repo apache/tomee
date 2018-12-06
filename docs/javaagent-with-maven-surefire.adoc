@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: JavaAgent with Maven Surefire 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: JavaAgent with Maven Surefire 
+
 == Maven2
 
 In maven2 you can enable the javaagent for your tests by adding this to

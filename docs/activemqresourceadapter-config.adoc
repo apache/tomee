@@ -1,8 +1,8 @@
 :index-group: ActiveMQ
-:type: page
-:status: published
-:title: ActiveMQResourceAdapter Configuration
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: ActiveMQResourceAdapter Configuration
+
 
 A ActiveMQResourceAdapter can be declared via xml in the
 `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file

@@ -1,8 +1,8 @@
 :index-group: JPA
-:type: page
-:status: published
-:title: TomEE and Hibernate
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: TomEE and Hibernate
+
 
 Apache TomEE ships with OpenJPA as the default JPA provider, however any
 valid JPA 2.0 provider can be used.

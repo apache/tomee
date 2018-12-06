@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Eclipse Plugin 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Eclipse Plugin 
+
 # What is it?
 
 The _OpenEJB Eclipse Plugin_ will be a suite of tools made available via

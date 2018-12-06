@@ -1,9 +1,9 @@
 :index-group: OpenEJB
 Standalone Server
-:type: page
-:status: published
-:title: Understanding the Directory Layout
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Understanding the Directory Layout
+
 
 Unpacking the standalone OpenEJB will result in the following directory
 layout:

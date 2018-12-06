@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Remote Server
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Remote Server
+
 
 !http://www.openejb.org/images/diagram-remote-server.gif|valign=top,
 align=right, hspace=15! # Accessing EJBs Remotely

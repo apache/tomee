@@ -1,9 +1,9 @@
 :index-group: Tips
 and Tricks
-:type: page
-:status: published
-:title: WebLogic Lookup
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: WebLogic Lookup
+
 
 How to lookup WebLogic Objects from within a TomEE context:
 

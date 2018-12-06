@@ -1,5 +1,5 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Declaring References
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Declaring References
+

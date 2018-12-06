@@ -1,9 +1,9 @@
 :index-group: TomEE
 Maven Plugin
-:type: page
-:status: published
-:title: TomEE Embedded Maven Plugin
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: TomEE Embedded Maven Plugin
+
 
 link:tomee-maven-plugin.html[TomEE Maven Plugin] provides a nice way to
 run "as in production" a server fully configured keeping the

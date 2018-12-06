@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: InitialContext Configuration
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: InitialContext Configuration
+
 
 A InitialContext can be declared via xml in the
 `<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file

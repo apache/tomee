@@ -1,8 +1,8 @@
 :index-group: JPA
-:type: page
-:status: published
-:title: JPA Usage
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: JPA Usage
+
 # Things to watch out for
 
 == Critical: Always set jta-data-source and non-jta-data-source

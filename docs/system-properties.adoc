@@ -1,8 +1,8 @@
 :index-group: Configuration
-:type: page
-:status: published
-:title: System Properties
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: System Properties
+
 
 You can find a list of properties link:properties-listing.html[here].
 But read on to understand how these can be used.

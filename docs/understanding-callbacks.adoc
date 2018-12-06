@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Understanding Callbacks
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Understanding Callbacks
+
 The rules here are pretty hard to follow without
 examples.
 

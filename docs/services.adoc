@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: ServicePool and Services
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: ServicePool and Services
+
 
 OpenEJB and TomEE services using ServicePool as wrapper - for instance
 ejbd service or all services not implementing SelfManaging interface -

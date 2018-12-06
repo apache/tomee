@@ -1,8 +1,8 @@
 :index-group: Testing Techniques
-:type: page
-:status: published
-:title: Configuring DataSources in Tests 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Configuring DataSources in Tests 
+
 # InitialContext
 properties
 

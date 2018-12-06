@@ -1,9 +1,9 @@
 :index-group: Discovery
 and Failover
-:type: page
-:status: published
-:title: EJB Client/Server Failover
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: EJB Client/Server Failover
+
 
 OpenEJB supports stateless failover. Specifically, the ability for an
 EJB client to failover from one server to the next if a request cannot
@@ -54,7 +54,7 @@ the selection of the first server.
 Each discoverable service has a URI which is broadcast as a heartbeat to
 other servers in the cluster. This URI advertises the service's type,
 its cluster group, and its location in the format of
-'group:type:location'. Say for example
+'group:jbake-type:location'. Say for example
 "cluster1:ejb:ejbd://thehost:4201". The URI is sent out repeatedly in a
 pulse and its presence on the network indicates its availability and its
 absence indicates the service is no longer available.

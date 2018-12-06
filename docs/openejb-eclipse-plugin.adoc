@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: OpenEJB Eclipse Plugin 
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: OpenEJB Eclipse Plugin 
+
 # OpenEJB Eclipse Plugin
 
 === Overview

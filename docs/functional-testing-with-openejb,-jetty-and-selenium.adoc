@@ -1,8 +1,8 @@
 :index-group: Testing Techniques
-:type: page
-:status: published
-:title: Functional testing with OpenEJB, Jetty and Selenium
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Functional testing with OpenEJB, Jetty and Selenium
+
 Obviously, OpenEJB is
 great for unit testing EJBs, but I wondered whether I might also be able
 to use this embedded functionality to functionally test my application.

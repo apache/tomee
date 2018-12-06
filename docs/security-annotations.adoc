@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Security Annotations
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Security Annotations
+
 This page shows the correct usage of the security
 related annotations:
 

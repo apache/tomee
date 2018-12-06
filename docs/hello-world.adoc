@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Hello World
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Hello World
+
 This page shows the basic steps required to create, build, and
 run an EJB and EJB client in its most minimum form. It does not hide
 steps or rely on special build tools or IDEs and is about the most

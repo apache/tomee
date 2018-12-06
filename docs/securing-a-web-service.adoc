@@ -1,8 +1,8 @@
 :index-group: Unrevised
-:type: page
-:status: published
-:title: Securing a Web Service
-~~~~~~
+:jbake-type: page
+:jbake-status: published
+:jbake-title: Securing a Web Service
+
 
 Web Services are a very common way to implement a Service Oriented
 Architecture (SOA).
