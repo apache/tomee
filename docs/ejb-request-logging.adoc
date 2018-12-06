@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Notice: Licensed to the Apache Software Foundation (ASF)
+NOTE: Licensed to the Apache Software Foundation (ASF)
 under one or more contributor license agreements. See the NOTICE file
 distributed with this work for additional information regarding
 copyright ownership. The ASF licenses this file to you under the Apache
