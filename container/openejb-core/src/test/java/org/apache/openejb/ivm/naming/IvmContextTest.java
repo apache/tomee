@@ -329,8 +329,8 @@ public class IvmContextTest {
         }
         writer.println();
 
-        for (Context subContext : subContexts.keySet()) {
-            hasErrors |= listContext(subContext, subContexts.get(subContext), writer);
+        for (Map.Entry<Context, String> contextStringEntry : subContexts.entrySet()) {
+            hasErrors |= listContext(contextStringEntry.getKey(), contextStringEntry.getValue(), writer);
         }
 
         return hasErrors;

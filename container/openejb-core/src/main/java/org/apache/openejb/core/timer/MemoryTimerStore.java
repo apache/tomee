@@ -225,8 +225,7 @@ public class MemoryTimerStore implements TimerStore {
         @Override
         public Map<Long, TimerData> getTasks() {
             checkThread();
-            final TreeMap<Long, TimerData> allTasks = new TreeMap<>();
-            allTasks.putAll(taskStore);
+            final TreeMap<Long, TimerData> allTasks = new TreeMap<>(taskStore);
             for (final Long key : remove) {
                 allTasks.remove(key);
             }

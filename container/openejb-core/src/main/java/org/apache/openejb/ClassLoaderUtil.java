@@ -334,8 +334,7 @@ public class ClassLoaderUtil {
             urls = rawUrls;
         } else {
             final CompositeClassLoaderConfigurer configurer = new CompositeClassLoaderConfigurer(configurer1, configurer2, configurer3);
-            final Collection<URL> list = new ArrayList<>();
-            list.addAll(Arrays.asList(rawUrls));
+            final Collection<URL> list = new ArrayList<>(Arrays.asList(rawUrls));
             ClassLoaderConfigurer.Helper.configure(list, configurer);
             urls = list.toArray(new URL[list.size()]);
         }

@@ -199,8 +199,7 @@ public class StatelessPoolStatsTest extends TestCase {
             operations, "void", MBeanOperationInfo.UNKNOWN));
         expectedOperations.add(new MBeanOperationInfo("flush", "", new MBeanParameterInfo[0], "void", MBeanOperationInfo.UNKNOWN));
 
-        final List<MBeanOperationInfo> actualOperations = new ArrayList<>();
-        actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));
+        final List<MBeanOperationInfo> actualOperations = new ArrayList<>(Arrays.asList(poolMBeanInfo.getOperations()));
         assertEquals(expectedOperations, actualOperations);
     }
 
