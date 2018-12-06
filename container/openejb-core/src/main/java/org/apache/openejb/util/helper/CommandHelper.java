@@ -25,7 +25,6 @@ import org.apache.openejb.table.Line;
 import org.apache.openejb.table.Lines;
 import org.apache.openejb.util.JavaSecurityManagers;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public final class CommandHelper {
