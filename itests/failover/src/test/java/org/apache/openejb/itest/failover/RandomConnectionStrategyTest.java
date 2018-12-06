@@ -91,8 +91,6 @@ public class RandomConnectionStrategyTest {
             root.ignoreOut();
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
-//            root.setDebug(true);
-//            root.setDebugPort(5006);
 
             final StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
             multipoint.setBind("localhost");
