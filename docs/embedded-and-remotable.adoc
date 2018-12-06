@@ -66,7 +66,7 @@ you call _listen_ to get your answer.
 
 \{snippet:id=code|url=openejb3/examples/telephone-stateful/src/main/java/org/superbiz/telephone/Telephone.java|lang=java}
 
-:jbake-title: EJB3 Notes} The bean class uses the annotation _@Remote_ but
+{title= EJB3 Notes} The bean class uses the annotation _@Remote_ but
 does not specify a list of interfaces as is normally required. Per EJB3
 rules, if the bean implements exactly _one business interface_ it may
 use @Remote with no other values and that business interface is then
