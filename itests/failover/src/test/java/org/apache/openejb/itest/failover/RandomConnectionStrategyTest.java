@@ -88,11 +88,11 @@ public class RandomConnectionStrategyTest {
             root = new StandaloneServer(home, home);
             root.killOnExit();
             root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
-//            root.ignoreOut();
+            root.ignoreOut();
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
-            root.setDebug(true);
-            root.setDebugPort(5006);
+//            root.setDebug(true);
+//            root.setDebugPort(5006);
 
             final StandaloneServer.ServerService multipoint = root.getServerService("multipoint");
             multipoint.setBind("localhost");
@@ -118,7 +118,7 @@ public class RandomConnectionStrategyTest {
 
             final StandaloneServer server = new StandaloneServer(home, home);
             server.killOnExit();
-//            server.ignoreOut();
+            server.ignoreOut();
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
             server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
