@@ -1,9 +1,8 @@
-:index-group: TomEE
-Maven Plugin
+# TomEE Embedded Maven Plugin
+:index-group: TomEE Maven Plugin
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: TomEE Embedded Maven Plugin
 
 
 link:tomee-maven-plugin.html[TomEE Maven Plugin] provides a nice way to

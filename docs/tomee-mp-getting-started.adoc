@@ -1,9 +1,8 @@
-:index-group: TomEE
-Maven Plugin
+# TomEE Maven Plugin
+:index-group: TomEE Maven Plugin
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: TomEE Maven Plugin
 
 
 ###Add The TomEE Maven Plugin To An Existing Project
