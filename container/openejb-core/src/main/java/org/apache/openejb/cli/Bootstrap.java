@@ -172,10 +172,12 @@ public class Bootstrap {
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
      */
     public static void main(final String[] args) throws Exception {
+        ClassLoader cl = null;
         setupHome(args);
         try (final URLClassLoader loader = setupClasspath()) {
 
             if (loader != null) {
+                cl = Thread.currentThread().getContextClassLoader();
                 Thread.currentThread().setContextClassLoader(loader);
                 if (loader != ClassLoader.getSystemClassLoader()) {
                     System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
@@ -197,6 +199,10 @@ public class Bootstrap {
                 throw Error.class.cast(cause);
             }
             throw new IllegalStateException(cause);
+        } finally {
+            if (cl != null) {
+                Thread.currentThread().setContextClassLoader(cl);
+            }
         }
     }
 }
