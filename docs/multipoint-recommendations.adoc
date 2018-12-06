@@ -1,9 +1,8 @@
-:index-group: Discovery
-and Failover
+# Multipoint Recommendations
+:index-group: Discovery and Failover
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Multipoint Recommendations
 
 
 As mentioned the `initialServers` is only used for bootstrapping the

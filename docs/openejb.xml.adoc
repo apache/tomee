@@ -1,10 +1,10 @@
-:jbake-title: openejb.xml
+# openejb.xml
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# Overview
+## Overview
 
 The openejb.xml is the main configuration file for the container system
 and its services such as transaction, security, and data sources.

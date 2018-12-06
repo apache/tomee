@@ -1,9 +1,8 @@
-:index-group: Discovery
-and Failover
+# Multipoint (TCP) Discovery
+:index-group: Discovery and Failover
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Multipoint (TCP) Discovery
 
 
 As TCP has no real broadcast functionality to speak of, communication of

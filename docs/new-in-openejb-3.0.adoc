@@ -1,10 +1,9 @@
-:jbake-title:  New in OpenEJB 3.0
+# New in OpenEJB 3.0
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-
-# EJB 3.0
+## EJB 3.0
 
 OpenEJB 3.0 supports the EJB 3.0 specification as well as the prior EJB
 2.1, EJB 2.0, and EJB 1.1. New features in EJB 3.0 include:

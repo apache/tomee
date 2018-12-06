@@ -1,9 +1,8 @@
-:index-group: Discovery
-and Failover
+# MultiPulse (UDP) Discovery
+:index-group: Discovery and Failover
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: MultiPulse (UDP) Discovery
 
 
 MultiPulse is an alternative multicast lookup that does not use a
