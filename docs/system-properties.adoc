@@ -1,8 +1,8 @@
+# System Properties
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: System Properties
 
 
 You can find a list of properties link:properties-listing.html[here].

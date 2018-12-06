@@ -1,8 +1,8 @@
+# Functional testing with OpenEJB, Jetty and Selenium
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Functional testing with OpenEJB, Jetty and Selenium
 
 Obviously, OpenEJB is
 great for unit testing EJBs, but I wondered whether I might also be able

@@ -1,8 +1,8 @@
+# JavaAgent with Maven Surefire 
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: JavaAgent with Maven Surefire 
 
 == Maven2
 

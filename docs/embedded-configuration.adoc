@@ -1,8 +1,8 @@
+# Embedded Configuration
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Embedded Configuration
 
 
 # Defaults, Overrides and Order

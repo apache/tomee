@@ -1,8 +1,8 @@
+# Basics - Security
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Basics - Security
 
 This section is under construction, please check back later.
 

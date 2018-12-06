@@ -1,8 +1,8 @@
+# Documentation
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Documentation
 
 
 See also the link:examples-trunk/index.html[examples page] for

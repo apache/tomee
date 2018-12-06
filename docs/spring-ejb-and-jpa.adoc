@@ -1,8 +1,8 @@
+# Spring EJB and JPA
 :index-group: Spring
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Spring EJB and JPA
 
 \{note}OpenEJB 3.1 or later required\{note} This example shows
 how to combine Spring, OpenEJB and Hibernate using the integration code

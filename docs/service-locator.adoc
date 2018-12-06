@@ -1,8 +1,8 @@
+# Service Locator
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Service Locator
 
 The functionality of the
 link:jndi-names.html[openejb.jndiname.format] allows for writing some

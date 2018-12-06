@@ -1,8 +1,8 @@
+# Securing a Web Service
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Securing a Web Service
 
 
 Web Services are a very common way to implement a Service Oriented

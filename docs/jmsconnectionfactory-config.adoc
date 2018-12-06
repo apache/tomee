@@ -1,8 +1,8 @@
+# JmsConnectionFactory Configuration
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: JmsConnectionFactory Configuration
 
 
 A JmsConnectionFactory can be declared via xml in the

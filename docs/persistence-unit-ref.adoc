@@ -1,8 +1,8 @@
+# persistence-unit-ref
 :index-group: JPA
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: persistence-unit-ref
 
 Both lookup and injection of an
 EntityManagerFactory can be configured via the @PersistenceUnit

@@ -1,8 +1,8 @@
+# Generating EJB 3 annotations 
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Generating EJB 3 annotations 
 
 # Generating EJB 3 annotations
 

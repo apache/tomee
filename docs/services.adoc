@@ -1,8 +1,8 @@
+# ServicePool and Services
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: ServicePool and Services
 
 
 OpenEJB and TomEE services using ServicePool as wrapper - for instance

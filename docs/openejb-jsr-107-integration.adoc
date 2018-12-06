@@ -1,8 +1,8 @@
+# OpenEJB JSR-107 Integration
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: OpenEJB JSR-107 Integration
 
 
 # OpenEJB JSR-107 (JCACHE) Integration

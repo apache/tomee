@@ -1,8 +1,8 @@
+# ActiveMQResourceAdapter Configuration
 :index-group: ActiveMQ
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: ActiveMQResourceAdapter Configuration
 
 
 A ActiveMQResourceAdapter can be declared via xml in the

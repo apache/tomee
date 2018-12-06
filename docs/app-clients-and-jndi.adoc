@@ -1,8 +1,8 @@
+# App Clients and JNDI
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: App Clients and JNDI
 
 There are some slight differences between the way OpenEJB
 does app clients and the way Geronimo does app clients

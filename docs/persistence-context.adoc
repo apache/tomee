@@ -1,8 +1,8 @@
+# persistence-context 
 :index-group: JPA
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: persistence-context 
 
 # Via annotation
 

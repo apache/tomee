@@ -1,8 +1,8 @@
+# Unix Daemon
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Unix Daemon
 
 
 Apache TomEE can be run as a daemon using the

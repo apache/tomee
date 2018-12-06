@@ -1,8 +1,8 @@
+# TomEE and WebSphere MQ
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: TomEE and WebSphere MQ
 
 Notice: Licensed to the Apache Software Foundation
 (ASF) under one or more contributor license agreements. See the NOTICE

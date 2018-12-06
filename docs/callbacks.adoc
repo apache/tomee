@@ -1,8 +1,8 @@
+# Callbacks
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Callbacks
 
 Correct usage of PostConstruct, PreDestroy, PrePassivate, PostActivate,
 and AroundInvoke for EJBs and Interceptors.

@@ -1,8 +1,8 @@
+# TomEE and NetBeans
 :index-group: IDE
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: TomEE and NetBeans
 
 Notice: Licensed to the Apache Software Foundation (ASF) under
 one or more contributor license agreements. See the NOTICE file

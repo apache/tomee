@@ -1,8 +1,8 @@
+# DataSource Creator
 :index-group: Datasource
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: DataSource Creator
 
 TomEE uses  `creator` to create the connection pool factory. In other
 terms it means you can use any pool you want for DataSource in TomEE.

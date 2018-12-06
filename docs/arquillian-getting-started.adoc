@@ -1,8 +1,8 @@
+# Getting started with Arquillian and TomEE
 :index-group: Arquillian
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Getting started with Arquillian and TomEE
 
 
 Arquillian is a testing framework on top of JUnit (or TestNG if you

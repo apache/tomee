@@ -1,8 +1,8 @@
+# BmpEntityContainer Configuration
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: BmpEntityContainer Configuration
 
 
 A BmpEntityContainer can be declared via xml in the

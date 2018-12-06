@@ -1,8 +1,8 @@
+# Constructor Injection
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Constructor Injection
 
 For those of you who would like to use final fields,
 wish to avoid numerous setters, or dislike private field injection and

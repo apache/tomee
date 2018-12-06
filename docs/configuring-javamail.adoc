@@ -1,8 +1,8 @@
+# Configuring JavaMail 
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Configuring JavaMail 
 
 # Declaring a JavaMail Resource
 

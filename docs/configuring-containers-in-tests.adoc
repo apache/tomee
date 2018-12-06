@@ -1,8 +1,8 @@
+# Configuring Containers in Tests
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Configuring Containers in Tests
 
 Like Resources, Containers
 can also be declared via InitialContext properties as well. The most

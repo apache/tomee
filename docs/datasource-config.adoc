@@ -1,8 +1,8 @@
+# DataSource Configuration
 :index-group: Datasource
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: DataSource Configuration
 
 
 A DataSource can be declared via xml in the

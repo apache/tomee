@@ -1,8 +1,8 @@
+# Basics - Transactions
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Basics - Transactions
 
 One of the many benefits of EJB, is that
 transactions within the EJB container are generally managed entirely

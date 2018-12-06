@@ -1,8 +1,8 @@
+# JMS Resources and MDB Container
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: JMS Resources and MDB Container
 
 
 == External ActiveMQ Broker

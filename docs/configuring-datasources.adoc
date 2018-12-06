@@ -1,8 +1,8 @@
+# Configuring DataSources in tomee.xml
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Configuring DataSources in tomee.xml
 
 
 The __ element is used to configure a _javax.sql.DataSource_. It is also

@@ -1,8 +1,8 @@
+# Local Server
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Local Server
 
 !http://www.openejb.org/images/diagram-local-server.gif|valign=top,
 align=right, hspace=15! # Accessing EJBs Locally

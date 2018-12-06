@@ -1,8 +1,8 @@
+# Concepts
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Concepts
 
 OpenEJB was founded on the idea that it would be embedded into
 third-party environments whom would likely already have three things:

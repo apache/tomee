@@ -1,8 +1,8 @@
+# Common Errors
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Common Errors
 
 
 <a name="CommonErrors-Cannotfindcontainer"FOO"forbean"BAR""> # Cannot
