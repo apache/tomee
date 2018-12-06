@@ -1,9 +1,8 @@
-:index-group: Tips
-and Tricks
+# Installing TomEE using the drop-in .war approach
+:index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Installing TomEE using the drop-in .war approach
 
 NOTE: Licensed to the
 Apache Software Foundation (ASF) under one or more contributor license
