@@ -178,8 +178,14 @@ public class Bootstrap {
         setupHome(args);
         try (final URLClassLoader loader = setupClasspath()) {
 
-            final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
+            if (loader != null) {
+                Thread.currentThread().setContextClassLoader(loader);
+                if (loader != ClassLoader.getSystemClassLoader()) {
+                    System.setProperty("openejb.classloader.first.disallow-system-loading", "true");
+                }
+            }
 
+            final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
             final Object main = clazz.getConstructor().newInstance();
             main.getClass().getMethod("main", String[].class).invoke(main, new Object[]{args});
         } catch (final InvocationTargetException e) {
