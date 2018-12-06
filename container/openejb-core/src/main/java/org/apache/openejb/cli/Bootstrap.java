@@ -24,7 +24,9 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -117,6 +119,7 @@ public class Bootstrap {
                     if (repository.endsWith("*.jar")) {
                         final File dir = new File(repository.substring(0, repository.length() - "*.jar".length()));
                         if (dir.isDirectory()) {
+                            addJarsToPath(dynamicURLClassLoader, dir);
                             dynamicURLClassLoader.add(dir.toURI().toURL());
                         }
                     } else if (repository.endsWith(".jar")) {
@@ -132,6 +135,7 @@ public class Bootstrap {
                     }
                 }
             } else {
+                addJarsToPath(dynamicURLClassLoader, lib);
                 dynamicURLClassLoader.add(lib.toURI().toURL());
             }
 
@@ -143,12 +147,33 @@ public class Bootstrap {
         return null;
     }
 
+    private static void addJarsToPath(final BasicURLClassPath.CustomizableURLClassLoader classLoader, final File folder) throws MalformedURLException {
+        if (classLoader == null || folder == null) {
+            return;
+        }
+
+        if (! folder.exists()) {
+            return;
+        }
+
+        final File[] jarFiles = folder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".jar");
+            }
+        });
+
+        for (final File jarFile : jarFiles) {
+            classLoader.add(jarFile.toURI().toURL());
+        }
+    }
+
     /**
      * Read commands from BASE_PATH (using XBean's ResourceFinder) and execute the one specified on the command line
      */
     public static void main(final String[] args) throws Exception {
+        setupHome(args);
         try (final URLClassLoader loader = setupClasspath()) {
-            setupHome(args);
 
             final Class<?> clazz = (loader == null ? Bootstrap.class.getClassLoader() : loader).loadClass(OPENEJB_CLI_MAIN_CLASS_NAME);
 
