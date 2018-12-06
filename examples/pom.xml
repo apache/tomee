@@ -175,6 +175,7 @@ BROKEN, see TOMEE-2140
     <module>mp-metrics-timed</module>
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
+    <module>mvc-cxf</module>
   </modules>
 
   <dependencies>
