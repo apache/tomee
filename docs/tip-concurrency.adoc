@@ -1,9 +1,8 @@
-:index-group: Tips
-and Tricks
+# Global Concurrency Management
+:index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Global Concurrency Management
 
 
 If for whatever reason you want to define the global default concurrency

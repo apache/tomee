@@ -1,9 +1,8 @@
-:index-group: Tips
-and Tricks
+# WebLogic Lookup
+:index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: WebLogic Lookup
 
 
 How to lookup WebLogic Objects from within a TomEE context:

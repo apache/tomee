@@ -1,9 +1,8 @@
-:index-group: Tips
-and Tricks
+# Jersey Client
+:index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Jersey Client
 
 
 If you have an application that uses jersey-client in any way then it
