@@ -93,7 +93,7 @@ in the Spring xml file as shown here.
 \{snippet:id=resources|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
 And finally our Spring beans.
 \{snippet:id=pojos|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
-:jbake-title: Don't forget}
+{title= Don't forget}
 \{snippet:id=annotations|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
 It allows various annotations to be detected in bean classes: Spring's
 @Required and @Autowired, as well as JSR 250's @PostConstruct,

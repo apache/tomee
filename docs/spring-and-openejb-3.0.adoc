@@ -1,4 +1,4 @@
-:jbake-title: Spring and OpenEJB 3.0
+# Spring and OpenEJB 3.0
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -213,7 +213,7 @@ Spring bean definitions combined
 </bean>
 ....
 
-:jbake-title: Some more useful info.} Here is a bunch of links suggested
+{title= Some more useful info.} Here is a bunch of links suggested
 by a user. If anybody has time to go through them and write a doc, that
 would be great. These links explain how to make available spring
 components to openejb
