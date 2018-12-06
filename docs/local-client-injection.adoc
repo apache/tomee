@@ -1,10 +1,10 @@
-# Local Client Injection
+# OpenEJB 3.1.1 or later required}
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-:jbake-title: OpenEJB 3.1.1 or later required}
+## Local Client Injection
 
 The _@LocalClient_ annotation (org.apache.openejb.api.LocalClient) is an
 innovation that crosses concepts of an Java EE Application Client with a
