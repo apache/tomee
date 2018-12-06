@@ -68,7 +68,8 @@ public class TomEECliIT {
         final ProcessBuilder builder = new ProcessBuilder()
             .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
                             tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "openejb-core-8.0.0-SNAPSHOT.jar" + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar",
+                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar" + File.pathSeparator +
+                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-lang3-3.8.1.jar",
                     "org.apache.openejb.cli.Bootstrap", "classloadertest");
 
         final Process start = builder.start();
@@ -162,7 +163,8 @@ public class TomEECliIT {
                 .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
                                 jar2.getAbsolutePath() + File.pathSeparator +
                                 tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "openejb-core-8.0.0-SNAPSHOT.jar" + File.pathSeparator +
-                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar",
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar" + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-lang3-3.8.1.jar",
                         "org.apache.openejb.cli.Bootstrap", "classloadertest2");
 
         final Process start = builder.start();
