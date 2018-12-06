@@ -1,14 +1,14 @@
 = TomEE Examples
 
-These examples demonstrate particular features of the JEE ecosystem to help
+These examples demonstrate particular features of the Java EE ecosystem to help
 developers in the creation of their own applications.
 
 The idea is that each example focuses in a very specific framework feature and
-demonstrates it's usage and behaviour in a simple way.
+demonstrates its usage and behaviour in a simple way.
 
 == Rules to create a new example.
 
-* Demo just one feaure with simple business logic.
+* Demo just one feature with simple business logic.
 * Don't use more than 4 names in the example's name.
 Like in the _cdi-basic_ example where @Inject is demontrated in the _Course_ class.
 * If your example has already 1000 lines, consider either simplifying it or split it.
