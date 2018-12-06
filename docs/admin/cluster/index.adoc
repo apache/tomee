@@ -1,7 +1,7 @@
+# Clustering and High Availability (HA)
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
-:jbake-title: Clustering and High Availability (HA)
 
 === Session clustering
 

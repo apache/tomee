@@ -1,4 +1,4 @@
-:jbake-title: Java Naming and Directory Interface (JNDI)
+# Java Naming and Directory Interface (JNDI)
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
