@@ -1,5 +1,6 @@
 :index-group: Discovery
 and Failover
+:jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 :jbake-title: EJB Client/Server Failover
@@ -54,7 +55,8 @@ the selection of the first server.
 Each discoverable service has a URI which is broadcast as a heartbeat to
 other servers in the cluster. This URI advertises the service's type,
 its cluster group, and its location in the format of
-'group:jbake-type:location'. Say for example
+'group:jbake-date: 2018-12-05
+:jbake-type:location'. Say for example
 "cluster1:ejb:ejbd://thehost:4201". The URI is sent out repeatedly in a
 pulse and its presence on the network indicates its availability and its
 absence indicates the service is no longer available.
