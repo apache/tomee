@@ -80,7 +80,7 @@ public class SQLLoginModule implements LoginModule {
     private static final Logger log = Logger.getInstance(
         LogCategory.OPENEJB_SECURITY, "org.apache.openejb.util.resources");
 
-    private final EnumMap<Option, String> optionsMap = new EnumMap<Option, String>(Option.class);
+    private final EnumMap<Option, String> optionsMap = new EnumMap<>(Option.class);
     private String connectionURL;
     private Properties properties;
     private Driver driver;
@@ -95,20 +95,20 @@ public class SQLLoginModule implements LoginModule {
     private CallbackHandler handler;
     private String cbUsername;
     private String cbPassword;
-    private final Set<String> groups = new HashSet<String>();
-    private final Set<Principal> allPrincipals = new HashSet<Principal>();
+    private final Set<String> groups = new HashSet<>();
+    private final Set<Principal> allPrincipals = new HashSet<>();
 
     public void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map sharedState, final Map options) {
         this.subject = subject;
         this.handler = callbackHandler;
 
-        for (final Object key : options.keySet()) {
-            final Option option = Option.findByName((String) key);
+        for (final Object o : options.entrySet()) {
+            final Option option = Option.findByName((String) ((Map.Entry) o).getKey());
             if (option != null) {
-                final String value = (String) options.get(key);
+                final String value = (String) ((Map.Entry) o).getValue();
                 optionsMap.put(option, value.trim());
             } else {
-                log.warning("Ignoring option: {0}. Not supported.", key);
+                log.warning("Ignoring option: {0}. Not supported.", ((Map.Entry) o).getKey());
             }
         }
 

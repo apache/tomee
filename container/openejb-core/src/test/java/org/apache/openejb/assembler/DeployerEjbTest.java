@@ -158,7 +158,7 @@ public class DeployerEjbTest {
         Collection<AppInfo> deployedApps = deployer.getDeployedApps();
 
         if (null == deployedApps) {
-            deployedApps = new ArrayList<AppInfo>();
+            deployedApps = new ArrayList<>();
         }
 
         if (deployedApps.size() < 1) {

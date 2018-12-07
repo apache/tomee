@@ -30,6 +30,7 @@ import java.util.Hashtable;
  */
 public class LookupFactory implements ObjectFactory {
 
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         if (!(object instanceof Reference)) {
             return null;

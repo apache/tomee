@@ -105,14 +105,14 @@ public class ClassLoaderUtil {
     private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
         List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
         if (classLoaders == null) {
-            classLoaders = new ArrayList<ClassLoader>(2);
+            classLoaders = new ArrayList<>(2);
             classLoadersByApp.put(appId, classLoaders);
         }
         classLoaders.add(classLoader);
 
         Set<String> apps = appsByClassLoader.get(classLoader);
         if (apps == null) {
-            apps = new LinkedHashSet<String>(1);
+            apps = new LinkedHashSet<>(1);
             appsByClassLoader.put(classLoader, apps);
         }
         apps.add(appId);
@@ -176,7 +176,7 @@ public class ClassLoaderUtil {
      */
     private static List<String> getClosedJarFiles(final ClassLoader cl) {
 
-        final List<String> files = new ArrayList<String>();
+        final List<String> files = new ArrayList<>();
 
         if (null != cl && cl instanceof URLClassLoader) {
 
@@ -334,8 +334,7 @@ public class ClassLoaderUtil {
             urls = rawUrls;
         } else {
             final CompositeClassLoaderConfigurer configurer = new CompositeClassLoaderConfigurer(configurer1, configurer2, configurer3);
-            final Collection<URL> list = new ArrayList<URL>();
-            list.addAll(Arrays.asList(rawUrls));
+            final Collection<URL> list = new ArrayList<>(Arrays.asList(rawUrls));
             ClassLoaderConfigurer.Helper.configure(list, configurer);
             urls = list.toArray(new URL[list.size()]);
         }

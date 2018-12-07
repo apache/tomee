@@ -115,7 +115,7 @@ public class WsDeployer implements DynamicDeployer {
     private void processPorts(final WebModule webModule) throws OpenEJBException {
         // map existing webservice port declarations by servlet link
         Webservices webservices = webModule.getWebservices();
-        final Map<String, PortComponent> portMap = new TreeMap<String, PortComponent>();
+        final Map<String, PortComponent> portMap = new TreeMap<>();
         if (webservices != null) {
             for (final WebserviceDescription webserviceDescription : webservices.getWebserviceDescription()) {
                 for (final PortComponent portComponent : webserviceDescription.getPortComponent()) {
@@ -130,7 +130,7 @@ public class WsDeployer implements DynamicDeployer {
 
         // map existing servlet-mapping declarations
         final WebApp webApp = webModule.getWebApp();
-        final Map<String, ServletMapping> servletMappings = new TreeMap<String, ServletMapping>();
+        final Map<String, ServletMapping> servletMappings = new TreeMap<>();
         for (final ServletMapping servletMapping : webApp.getServletMapping()) {
             servletMappings.put(servletMapping.getServletName(), servletMapping);
         }
@@ -251,7 +251,7 @@ public class WsDeployer implements DynamicDeployer {
     private void processPorts(final EjbModule ejbModule) throws OpenEJBException {
         // map existing webservice port declarations by servlet link
         Webservices webservices = ejbModule.getWebservices();
-        final Map<String, PortComponent> portMap = new TreeMap<String, PortComponent>();
+        final Map<String, PortComponent> portMap = new TreeMap<>();
         if (webservices != null) {
             for (final WebserviceDescription webserviceDescription : webservices.getWebserviceDescription()) {
                 for (final PortComponent portComponent : webserviceDescription.getPortComponent()) {

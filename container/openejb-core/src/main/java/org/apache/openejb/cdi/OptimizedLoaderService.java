@@ -223,7 +223,7 @@ public class OptimizedLoaderService implements LoaderService {
         private static final String SERVICE_CONFIG = "META-INF/services/" + Extension.class.getName();
         private static final String FILE_ENCODING = "UTF-8";
 
-        private List<Class<?>> foundServiceClasses = new ArrayList<Class<?>>();
+        private List<Class<?>> foundServiceClasses = new ArrayList<>();
         private ClassLoader loader;
 
         private List<Extension> loadServiceImplementations() {

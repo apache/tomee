@@ -25,7 +25,7 @@ import java.util.Properties;
 public class ServiceInfo extends InfoObject {
 
     public String service;
-    public List<String> types = new ArrayList<String>();
+    public List<String> types = new ArrayList<>();
     public String description;
     public String id;
     public String displayName;

@@ -184,7 +184,7 @@ public class SingletonInstanceManager {
                 try {
                     callContext.setCurrentOperation(Operation.CREATE);
                     final Method create = beanContext.getCreateMethod();
-                    final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<InterceptorData>(), new HashMap());
+                    final InterceptorStack ejbCreate = new InterceptorStack(context.getBean(), create, Operation.CREATE, new ArrayList<>(), new HashMap());
                     ejbCreate.invoke();
                 } finally {
                     callContext.setCurrentOperation(originalOperation);
@@ -356,8 +356,8 @@ public class SingletonInstanceManager {
     }
 
     private final class Data {
-        private final AtomicReference<Future<Instance>> singleton = new AtomicReference<Future<Instance>>();
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final AtomicReference<Future<Instance>> singleton = new AtomicReference<>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
         private final BeanContext info;
 
         public Data(final BeanContext info) {

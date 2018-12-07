@@ -1,4 +1,8 @@
-Title: Schedule CDI Events
+index-group=Unrevised
+type=page
+status=published
+title=Schedule CDI Events
+~~~~~~
 
 This example uses a nice CDI/EJB combination to schedule CDI Events.  This is useful if you want CDI Events that fire regularly or at a specific time or calendar date.
 
@@ -160,4 +164,3 @@ What would happen if you did?  Depends on the `@Singleton` `@Lock` policy
  - `@Lock(READ)` allows for parallel execution of the `timeout` method.  Events will fire in parallel for a while.  However since they actually are taking 70 minutes each, within an hour or so we'll run out of threads in the timer pool just like above.
 
 The elegant solution is to use `@Lock(WRITE)` then specify some short timeout like `@AccessTimeout(value = 1, unit = TimeUnit.MINUTES)` on the `timeout` method.  When the next 5 minute invocation is triggered, it will wait up until 1 minute to get access to the Singleton before giving up.  This will keep your timer pool from filling up with backed up jobs -- the "overflow" is simply discarded.
-

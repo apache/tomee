@@ -43,7 +43,9 @@ Licensed to the Apache Software Foundation (ASF) under one or more
             <configuration>
               <target>
                 <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[TOMEE]" value="${project.version}"/>
-                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[OPENEJB]" value="{project.version}"/>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[OPENEJB]" value="${project.version}"/>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[OPENJPA]" value="${openjpa.version}"/>
+                <replace file="${project.build.directory}/classes/archetype-resources/pom.xml" token="[JAVAEE]" value="${version.javaee-api}"/>
               </target>
             </configuration>
           </execution>

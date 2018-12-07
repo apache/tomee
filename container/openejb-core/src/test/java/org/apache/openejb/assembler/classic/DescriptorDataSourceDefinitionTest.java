@@ -194,7 +194,7 @@ public class DescriptorDataSourceDefinitionTest {
         }
 
         public List<Movie> getMovies() throws Exception {
-            final ArrayList<Movie> movies = new ArrayList<Movie>();
+            final ArrayList<Movie> movies = new ArrayList<>();
             final Connection conn = movieDatabase.getConnection();
             try {
                 final PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");

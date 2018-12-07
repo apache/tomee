@@ -124,7 +124,7 @@ public class ManagedExecutorServiceImpl extends AbstractExecutorService implemen
 
     @Override
     public <T> Future<T> submit(final Callable<T> task) {
-        final CUCallable<T> wrapper = new CUCallable<T>(task);
+        final CUCallable<T> wrapper = new CUCallable<>(task);
         final Future<T> future = delegate.submit(wrapper);
         wrapper.taskSubmitted(future, this, task);
         return new CUFuture<>(future, wrapper);

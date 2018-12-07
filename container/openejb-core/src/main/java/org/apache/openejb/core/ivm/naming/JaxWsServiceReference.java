@@ -51,11 +51,11 @@ public class JaxWsServiceReference extends Reference {
     private final Class<? extends Service> serviceClass;
     private final Class<?> referenceClass;
     private final URL wsdlUrl;
-    private final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
+    private final List<HandlerChainData> handlerChains = new ArrayList<>();
     private final Collection<Injection> injections;
     private final Properties properties;
     private PortAddressRegistry portAddressRegistry;
-    private final List<PortRefData> portRefs = new ArrayList<PortRefData>();
+    private final List<PortRefData> portRefs = new ArrayList<>();
 
     public JaxWsServiceReference(final String id, final QName serviceQName, final Class<? extends Service> serviceClass,
                                  final QName portQName, final Class<?> referenceClass, final URL wsdlUrl,
@@ -96,8 +96,8 @@ public class JaxWsServiceReference extends Reference {
         }
 
         // add the port addresses to the portRefData
-        final Map<QName, PortRefData> portsByQName = new HashMap<QName, PortRefData>();
-        final List<PortRefData> ports = new ArrayList<PortRefData>(portRefs.size() + portAddresses.size());
+        final Map<QName, PortRefData> portsByQName = new HashMap<>();
+        final List<PortRefData> ports = new ArrayList<>(portRefs.size() + portAddresses.size());
         for (final PortRefData portRef : portRefs) {
             final PortRefData port = new PortRefData(portRef);
             if (port.getQName() != null) {

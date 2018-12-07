@@ -54,9 +54,9 @@ public class AutoDeployer {
 
     private final ConfigurationFactory factory;
     private final long pollIntervalMillis;
-    private final Map<String, FileInfo> files = new HashMap<String, FileInfo>();
+    private final Map<String, FileInfo> files = new HashMap<>();
     private final Timer timer;
-    private final List<Deployments> deployments = new ArrayList<Deployments>();
+    private final List<Deployments> deployments = new ArrayList<>();
 
     public AutoDeployer(final ConfigurationFactory factory, final List<Deployments> deployments) {
         final Options options = SystemInstance.get().getOptions();
@@ -268,7 +268,7 @@ public class AutoDeployer {
         try {
             final List<File> files = list();
 
-            final HashSet<String> missingFilesList = new HashSet<String>(this.files.keySet());
+            final HashSet<String> missingFilesList = new HashSet<>(this.files.keySet());
 
             for (final File file : files) {
 
@@ -320,7 +320,7 @@ public class AutoDeployer {
     }
 
     private List<File> list() {
-        final List<File> files = new ArrayList<File>();
+        final List<File> files = new ArrayList<>();
 
         { // list all the files associated with hot deploy locations
 

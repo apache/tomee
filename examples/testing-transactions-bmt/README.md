@@ -1,4 +1,8 @@
-Title: Testing Transactions BMT
+index-group=Unrevised
+type=page
+status=published
+title=Testing Transactions BMT
+~~~~~~
 
 Shows how to begin, commit and rollback transactions using a UserTransaction via a Stateful Bean.
 

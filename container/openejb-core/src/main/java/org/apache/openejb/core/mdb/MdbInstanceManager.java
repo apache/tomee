@@ -30,7 +30,10 @@ import org.apache.openejb.core.interceptor.InterceptorData;
 import org.apache.openejb.core.interceptor.InterceptorStack;
 import org.apache.openejb.core.timer.TimerServiceWrapper;
 import org.apache.openejb.loader.Options;
-import org.apache.openejb.monitoring.*;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.openejb.monitoring.ManagedMBean;
+import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.monitoring.StatsInterceptor;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.Duration;
@@ -112,7 +115,7 @@ public class MdbInstanceManager {
 
     private final Map<BeanContext, MdbPoolContainer.MdbActivationContext> activationContexts = new ConcurrentHashMap<>();
     private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
-    protected final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+    protected final List<ObjectName> jmxNames = new ArrayList<>();
     private final ResourceAdapter resourceAdapter;
     private final InboundRecovery inboundRecovery;
     private final Object containerID;
@@ -142,7 +145,7 @@ public class MdbInstanceManager {
         final ThreadFactory threadFactory = new DaemonThreadFactory("InstanceManagerPool.worker.");
         this.executor = new ThreadPoolExecutor(
                 callbackThreads, callbackThreads * 2,
-                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(qsize), threadFactory);
+                1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>(qsize), threadFactory);
 
         this.executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -215,7 +218,6 @@ public class MdbInstanceManager {
         beanContext.set(EJBContext.class, mdbContext);
         data.setBaseContext(mdbContext);
         beanContext.setContainerData(data);
-
         final MBeanServer server = LocalMBeanServer.get();
 
         final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
@@ -665,7 +667,7 @@ public class MdbInstanceManager {
         private final Pool<Instance> pool;
         private final Duration accessTimeout;
         private final Duration closeTimeout;
-        private final List<ObjectName> jmxNames = new ArrayList<ObjectName>();
+        private final List<ObjectName> jmxNames = new ArrayList<>();
         private BaseContext baseContext;
 
         public Data(final Pool<Instance> pool, final Duration accessTimeout, final Duration closeTimeout) {

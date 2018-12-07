@@ -134,7 +134,7 @@ public class ServiceUtils {
 
 
     public static List<ServiceProvider> getServiceProvidersByServiceType(final String type) throws OpenEJBException {
-        final ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+        final ArrayList<ServiceProvider> providers = new ArrayList<>();
         if (type == null) {
             return providers;
         }

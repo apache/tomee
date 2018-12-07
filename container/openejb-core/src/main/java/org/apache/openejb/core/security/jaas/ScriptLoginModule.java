@@ -56,14 +56,14 @@ public class ScriptLoginModule implements LoginModule {
 
     private Map<String, ?> options;
 
-    public Set<Principal> principals = new LinkedHashSet<Principal>();
+    public Set<Principal> principals = new LinkedHashSet<>();
 
     private UserData userData;
 
     private final class UserData {
         public final String user;
         public final String pass;
-        public final Set<String> groups = new HashSet<String>();
+        public final Set<String> groups = new HashSet<>();
 
         private UserData(final String user, final String pass) {
             this.user = user;

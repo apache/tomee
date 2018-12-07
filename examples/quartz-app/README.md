@@ -1,6 +1,10 @@
-Title: Quartz Resource Adapter usage
+index-group=Java EE Connectors
+type=page
+status=published
+title=Quartz Resource Adapter usage
+~~~~~~
 
-Note this example is somewhat dated.  It predates the schedule API which was added to EJB 3.1.  Modern applications should use the schedule API which has many, if not all,
+Note: this example is somewhat dated.  It predates the schedule API which was added to EJB 3.1.  Modern applications should use the schedule API which has many, if not all,
 the same features as Quartz.  In fact, Quartz is the engine that drives the `@Schedule` and `ScheduleExpression` support in OpenEJB and TomEE.
 
 Despite being dated from a scheduling perspective it is still an excellent reference for how to plug-in and test a custom Java EE Resource Adapter.
@@ -8,9 +12,9 @@ Despite being dated from a scheduling perspective it is still an excellent refer
 # Project structure
 
 As `.rar` files do not do well on a standard classpath structure the goal is to effectively "unwrap" the `.rar` so that its dependencies are on the classpath and its `ra.xml` file
-can be found in scanned by OpenEJB.
+can be found and scanned by OpenEJB.
 
-We do this by creating a mini maven module to represent the rar in maven terms.  The `pom.xml` of the "rar module" declares all of the jars that would be inside `.rar` as maven
+We do this by creating a mini maven module to represent the `.rar` in maven terms.  The `pom.xml` of the "rar module" declares all of the jars that would be inside the `.rar` as maven
 dependencies.  The `ra.xml` file is added to the project in `src/main/resources/META-INF/ra.xml` where it will be visible to other modules.
 
     quartz-app
@@ -228,4 +232,3 @@ Here we see the outbound resource adapter used in a stateless session bean to sc
     Results :
 
     Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-

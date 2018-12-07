@@ -25,10 +25,10 @@ public class ManagedBeanInfo extends EnterpriseBeanInfo {
         type = MANAGED;
     }
 
-    public final List<CallbackInfo> postActivate = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> prePassivate = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> postActivate = new ArrayList<>();
+    public final List<CallbackInfo> prePassivate = new ArrayList<>();
 
-    public final List<RemoveMethodInfo> removeMethods = new ArrayList<RemoveMethodInfo>();
+    public final List<RemoveMethodInfo> removeMethods = new ArrayList<>();
 
     public boolean hidden;
 }

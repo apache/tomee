@@ -57,7 +57,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private final TransactionSynchronizationRegistry registry;
     private final TransactionManager txMgr;
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, "org.apache.openejb.resource");
-    private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
+    private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
@@ -115,13 +115,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
             if (currentTx != null) {
                 Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
                 if (txConnections == null) {
-                    txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                    txConnections = new HashMap<>();
                     registry.putResource(KEY, txConnections);
                 }
 
                 Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
                 if (connectionObjects == null) {
-                    connectionObjects = new HashMap<ConnectionInfo, Object>();
+                    connectionObjects = new HashMap<>();
                     txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
                 }
 
@@ -133,14 +133,14 @@ public class AutoConnectionTracker implements ConnectionTracker {
                         final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
                         if (txConnections != null && txConnections.size() > 0) {
 
-                            for (final ManagedConnectionInfo managedConnectionInfo : txConnections.keySet()) {
+                            for (final Map.Entry<ManagedConnectionInfo, Map<ConnectionInfo, Object>> managedConnectionInfoMapEntry : txConnections.entrySet()) {
                                 final StringBuilder sb = new StringBuilder();
-                                final Collection<ConnectionInfo> connectionInfos = txConnections.get(managedConnectionInfo).keySet();
+                                final Collection<ConnectionInfo> connectionInfos = managedConnectionInfoMapEntry.getValue().keySet();
                                 for (final ConnectionInfo connectionInfo : connectionInfos) {
                                     sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
                                 }
 
-                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfo + "\nAbandoned connection information: " + sb.toString());
+                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfoMapEntry.getKey() + "\nAbandoned connection information: " + sb);
                             }
                         }
                     }
@@ -177,13 +177,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
         if (currentTx != null) {
             Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
             if (txConnections == null) {
-                txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                txConnections = new HashMap<>();
                 registry.putResource(KEY, txConnections);
             }
 
             Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
             if (connectionObjects == null) {
-                connectionObjects = new HashMap<ConnectionInfo, Object>();
+                connectionObjects = new HashMap<>();
                 txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
             }
 

@@ -85,7 +85,7 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             final PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
             // Create entity manager factories with the validator factory
-            final Map<String, Object> properties = new HashMap<String, Object>();
+            final Map<String, Object> properties = new HashMap<>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
                 properties.put("javax.persistence.validation.factory",
                         potentialValidators != null && potentialValidators.size() == 1 ? // optim to avoid lookups

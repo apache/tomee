@@ -1,15 +1,20 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Microprofile Metrics
 This is an example on how to use microprofile metrics in TomEE.
+
 
 ##### Run the application:
 
     mvn clean install tomee:run 
 
-Within the application there is an enpoint that will give you weather status for the day and week.
+Within the application there is an endpoint that will give you weather status for the day and week.
 
 ##### For the day status call:
 
-    GET http://localhost:8080/rest-mp-metrics/wather/day/status
+    GET http://localhost:8080/rest-mp-metrics/weather/day/status
     
 ##### Response:
 
@@ -17,7 +22,7 @@ Within the application there is an enpoint that will give you weather status for
     
 
 #### Counted Feature
-Microprofile metrics has a feature that can be used to count requests to a service.
+MicroProfile metrics has a feature that can be used to count requests to a service.
 
 To use this feature you need to annotate the JAX-RS resource method with @Counted.
 
@@ -46,7 +51,7 @@ Optional. Sets the name of the metric. If not explicitly given the name of the a
 If true, uses the given name as the absolute name of the metric. If false, prepends the package name and class name before the given name. Default value is false.
 
 **String displayName**
-Optional. A human readable display name for metadata.
+Optional. A human-readable display name for metadata.
 
 **String description**
 Optional. A description of the metric.

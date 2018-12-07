@@ -100,7 +100,7 @@ public class CheckClassLoading extends ValidationBase {
     public static class Classes {
         private static final String[] CLASS_EXTENSION = new String[]{".class"};
 
-        private final Map<String, Collection<String>> fileByArchive = new TreeMap<String, Collection<String>>();
+        private final Map<String, Collection<String>> fileByArchive = new TreeMap<>();
 
         public Classes(final URL[] urls) {
             list(urls);
@@ -125,7 +125,7 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     public static Collection<DiffItem> intersection(final Classes cl1, final Classes cl2) {
-        final List<DiffItem> diff = new ArrayList<DiffItem>();
+        final List<DiffItem> diff = new ArrayList<>();
         for (final Map.Entry<String, Collection<String>> entry1 : cl1.fileByArchive.entrySet()) {
             for (final Map.Entry<String, Collection<String>> entry2 : cl2.fileByArchive.entrySet()) {
                 final Collection<String> v1 = entry1.getValue();
@@ -165,7 +165,7 @@ public class CheckClassLoading extends ValidationBase {
                 throw new IllegalArgumentException(archive.getPath() + " is not a file");
             }
 
-            final List<String> files = new ArrayList<String>();
+            final List<String> files = new ArrayList<>();
 
             try (JarFile file = new JarFile(archive)) {
                 final Enumeration<JarEntry> entries = file.entries();
@@ -190,7 +190,7 @@ public class CheckClassLoading extends ValidationBase {
     }
 
     public static class DiffItem {
-        private Collection<String> files = new ArrayList<String>();
+        private Collection<String> files = new ArrayList<>();
         private final String file1;
         private final String file2;
 

@@ -32,7 +32,7 @@ public class CheckInjectionTargets extends ValidationBase {
     public void validate(final EjbModule ejbModule) {
 
         for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
-            final List<JndiReference> entries = new ArrayList<JndiReference>();
+            final List<JndiReference> entries = new ArrayList<>();
             entries.addAll(bean.getEjbLocalRef());
             entries.addAll(bean.getEjbRef());
             entries.addAll(bean.getEnvEntry());

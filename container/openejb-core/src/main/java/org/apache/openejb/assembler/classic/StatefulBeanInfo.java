@@ -26,13 +26,13 @@ public class StatefulBeanInfo extends EnterpriseBeanInfo {
         type = STATEFUL;
     }
 
-    public final List<CallbackInfo> postActivate = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> prePassivate = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> postActivate = new ArrayList<>();
+    public final List<CallbackInfo> prePassivate = new ArrayList<>();
 
-    public final List<InitMethodInfo> initMethods = new ArrayList<InitMethodInfo>();
-    public final List<RemoveMethodInfo> removeMethods = new ArrayList<RemoveMethodInfo>();
+    public final List<InitMethodInfo> initMethods = new ArrayList<>();
+    public final List<RemoveMethodInfo> removeMethods = new ArrayList<>();
 
-    public final List<CallbackInfo> afterBegin = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> beforeCompletion = new ArrayList<CallbackInfo>();
-    public final List<CallbackInfo> afterCompletion = new ArrayList<CallbackInfo>();
+    public final List<CallbackInfo> afterBegin = new ArrayList<>();
+    public final List<CallbackInfo> beforeCompletion = new ArrayList<>();
+    public final List<CallbackInfo> afterCompletion = new ArrayList<>();
 }

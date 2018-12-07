@@ -41,7 +41,7 @@ public class MBeanDeployer implements DynamicDeployer {
     @Override
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
         logger.debug("looking for annotated MBeans in " + appModule.getModuleId());
-        final List<String> done = new ArrayList<String>();
+        final List<String> done = new ArrayList<>();
 
         ClassLoader cl = appModule.getClassLoader();
         if (cl == null) {
@@ -51,7 +51,7 @@ public class MBeanDeployer implements DynamicDeployer {
             }
         }
 
-        final Collection<Class<? extends Annotation>> mbeanClasses = new ArrayList<Class<? extends Annotation>>(2);
+        final Collection<Class<? extends Annotation>> mbeanClasses = new ArrayList<>(2);
         mbeanClasses.add(MBean.class);
 
         try { // for OSGi environment, javax.management is imported by the JRE

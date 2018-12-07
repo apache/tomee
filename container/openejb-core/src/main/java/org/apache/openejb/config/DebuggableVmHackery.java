@@ -55,7 +55,7 @@ class DebuggableVmHackery implements DynamicDeployer {
 
             ejbJar.setRelationships(null);
 
-            final List<String> removed = new ArrayList<String>();
+            final List<String> removed = new ArrayList<>();
 
             for (final EnterpriseBean bean : ejbJar.getEnterpriseBeans()) {
 
@@ -149,6 +149,6 @@ class DebuggableVmHackery implements DynamicDeployer {
     }
 
     public <T> List<T> copy(final Collection<T> list) {
-        return new ArrayList<T>(list);
+        return new ArrayList<>(list);
     }
 }

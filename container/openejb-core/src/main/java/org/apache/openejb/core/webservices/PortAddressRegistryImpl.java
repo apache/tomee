@@ -28,10 +28,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class PortAddressRegistryImpl implements PortAddressRegistry {
-    private final Map<String, PortAddress> portsById = new TreeMap<String, PortAddress>();
-    private final Map<String, Map<String, PortAddress>> portsByInterface = new TreeMap<String, Map<String, PortAddress>>();
-    private final Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<String, Map<String, PortAddress>>();
-    private final Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<QName, Map<String, PortAddress>>();
+    private final Map<String, PortAddress> portsById = new TreeMap<>();
+    private final Map<String, Map<String, PortAddress>> portsByInterface = new TreeMap<>();
+    private final Map<String, Map<String, PortAddress>> portsByServiceId = new TreeMap<>();
+    private final Map<QName, Map<String, PortAddress>> portsByServiceQName = new HashMap<>();
 
     public synchronized void addPort(final String serviceId, final QName serviceQName, final String portId, final QName portQName, final String portInterface, final String address) throws OpenEJBException {
         if (serviceId == null) {
@@ -63,7 +63,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         if (portInterface != null) { // localbean have no interface
             ports = portsByInterface.get(portInterface);
             if (ports == null) {
-                ports = new TreeMap<String, PortAddress>();
+                ports = new TreeMap<>();
                 portsByInterface.put(portInterface, ports);
             }
             ports.put(portId, portAddress);
@@ -72,7 +72,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         // portsByServiceId
         ports = portsByServiceId.get(serviceId);
         if (ports == null) {
-            ports = new TreeMap<String, PortAddress>();
+            ports = new TreeMap<>();
             portsByServiceId.put(serviceId, ports);
         }
         ports.put(portId, portAddress);
@@ -80,7 +80,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         // portsByServiceQName
         ports = portsByServiceQName.get(serviceQName);
         if (ports == null) {
-            ports = new TreeMap<String, PortAddress>();
+            ports = new TreeMap<>();
             portsByServiceQName.put(serviceQName, ports);
         }
         ports.put(portId, portAddress);
@@ -159,7 +159,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         }
 
         // find matching ports by id
-        final Map<String, PortAddress> ports = new TreeMap<String, PortAddress>();
+        final Map<String, PortAddress> ports = new TreeMap<>();
         if (id != null) {
             final Map<String, PortAddress> idPorts = portsByServiceId.get(id);
             if (idPorts != null) {
@@ -175,7 +175,7 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
             }
         }
 
-        final Set<PortAddress> portAddresses = new HashSet<PortAddress>(ports.values());
+        final Set<PortAddress> portAddresses = new HashSet<>(ports.values());
         return portAddresses;
     }
 

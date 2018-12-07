@@ -23,8 +23,8 @@ import org.apache.openejb.config.DeploymentLoader;
  * @version $Id$
  */
 public class TomcatDeploymentLoader extends DeploymentLoader {
-    private StandardContext standardContext;
-    private String moduleId;
+    private final StandardContext standardContext;
+    private final String moduleId;
 
     public TomcatDeploymentLoader(final StandardContext standardContext, final String moduleId) {
         this.standardContext = standardContext;

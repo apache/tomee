@@ -1,0 +1,7 @@
+= Advanced
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+Click link:../docs.html[here] to find advanced documentation.
