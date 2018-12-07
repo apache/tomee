@@ -26,10 +26,24 @@ import java.util.zip.ZipInputStream;
  * @version $Rev$ $Date$
  */
 public class Zips {
+
+    /**
+     *
+     * @param zipFile File
+     * @param destination File
+     * @throws IOException
+     */
     public static void unzip(final File zipFile, final File destination) throws IOException {
         unzip(zipFile, destination, false);
     }
 
+    /**
+     *
+     * @param zipFile File
+     * @param destination File
+     * @param noparent boolean
+     * @throws IOException
+     */
     public static void unzip(final File zipFile, final File destination, final boolean noparent) throws IOException {
 
         Files.dir(destination);
@@ -46,6 +60,13 @@ public class Zips {
         }
     }
 
+    /**
+     *
+     * @param read InputStream
+     * @param destination File
+     * @param noparent boolean
+     * @throws IOException
+     */
     public static void unzip(final InputStream read, final File destination, final boolean noparent) throws IOException {
         try {
             // Open the ZIP file

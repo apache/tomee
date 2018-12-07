@@ -22,10 +22,15 @@ public class WebAppClassPath extends TomcatClassPath {
         this(getContextClassLoader());
     }
 
+    /**
+     *
+     * @param classLoader ClassLoader
+     */
     public WebAppClassPath(final ClassLoader classLoader) {
         super(classLoader);
     }
 
+    @Override
     protected void rebuild() {
     }
 }
