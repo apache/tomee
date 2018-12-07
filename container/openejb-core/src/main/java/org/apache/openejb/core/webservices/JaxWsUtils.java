@@ -286,12 +286,12 @@ public final class JaxWsUtils {
 
     public static String getServiceWsdlLocation(final Class<?> clazz, final ClassLoader loader) {
         final String wsdlLocation = getWsdlLocation(clazz);
-        if (wsdlLocation != null && !wsdlLocation.equals("")) {
+        if (wsdlLocation != null && !wsdlLocation.isEmpty()) {
             return wsdlLocation;
         }
 
         final String serviceInterfaceClassName = getServiceInterface(clazz);
-        if (serviceInterfaceClassName != null && !serviceInterfaceClassName.equals("")) {
+        if (serviceInterfaceClassName != null && !serviceInterfaceClassName.isEmpty()) {
             try {
                 final Class serviceInterfaceClass = loader.loadClass(serviceInterfaceClassName);
                 return getWsdlLocation(serviceInterfaceClass);
@@ -304,7 +304,7 @@ public final class JaxWsUtils {
 
     public static boolean containsWsdlLocation(final Class<?> clazz, final ClassLoader loader) {
         final String wsdlLocSEIFromAnnotation = getServiceWsdlLocation(clazz, loader);
-        return wsdlLocSEIFromAnnotation != null && !wsdlLocSEIFromAnnotation.equals("");
+        return wsdlLocSEIFromAnnotation != null && !wsdlLocSEIFromAnnotation.isEmpty();
     }
 
     public static String getBindingUriFromAnn(final Class<?> clazz) {

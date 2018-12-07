@@ -109,7 +109,7 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Object lookup(final String compositName) throws NamingException {
-        if (compositName.equals("")) {
+        if (compositName.isEmpty()) {
             return this;
         }
 

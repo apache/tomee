@@ -234,7 +234,7 @@ public class EjbResolver {
 
     public String resolve(final Reference ref, final URI moduleUri) {
 
-        if (ref.getMappedName() != null && !ref.getMappedName().equals("")) {
+        if (ref.getMappedName() != null && !ref.getMappedName().isEmpty()) {
             return ref.getMappedName();
         }
 
