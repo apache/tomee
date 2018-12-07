@@ -53,7 +53,7 @@ public class MoviesServlet extends HttpServlet {
             try (final Connection connection = ds.getConnection();
                  final PreparedStatement ps = connection.prepareStatement(
                          "select TABLE_NAME, COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH " +
-                                 "from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'PUBLIC'");
+                                 "from INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA = 'PUBLIC' and TABLE_NAME in ('ACTOR', 'MOVIE', 'ACTOR_MOVIE')");
 
                  final ResultSet rs = ps.executeQuery()) {
 
