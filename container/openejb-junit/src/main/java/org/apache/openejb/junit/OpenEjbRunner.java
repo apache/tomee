@@ -28,7 +28,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class OpenEjbRunner extends Runner {
