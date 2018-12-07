@@ -27,6 +27,11 @@ import java.security.PrivilegedAction;
 import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
+
+    /**
+     *
+     * @return ClassLoader
+     */
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
@@ -39,6 +44,12 @@ public abstract class BasicURLClassPath implements ClassPath {
     private Field ucpField;
     private boolean ucpFieldErrorLogged;
 
+    /**
+     *
+     * @param jar URL
+     * @param loader URLClassLoader
+     * @throws Exception
+     */
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
         final Object cp = getURLClassPath(loader);
         if (cp == null && CustomizableURLClassLoader.class.isInstance(loader)) {
@@ -69,8 +80,8 @@ public abstract class BasicURLClassPath implements ClassPath {
 
     /**
      *
-     * @param dir
-     * @param loader
+     * @param dir File
+     * @param loader URLClassLoader
      * @throws Exception
      */
     protected synchronized void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
@@ -119,7 +130,7 @@ public abstract class BasicURLClassPath implements ClassPath {
 
     /**
      *
-     * @param loader
+     * @param loader URLClassLoader
      * @return Object
      * @throws Exception
      */
@@ -159,10 +170,18 @@ public abstract class BasicURLClassPath implements ClassPath {
             ClassLoader.registerAsParallelCapable();
         }
 
+        /**
+         *
+         * @param parent ClassLoader
+         */
         public CustomizableURLClassLoader(final ClassLoader parent) {
             super(new URL[0], parent);
         }
 
+        /**
+         *
+         * @param url URL
+         */
         public void add(final URL url) {
             super.addURL(url);
         }
