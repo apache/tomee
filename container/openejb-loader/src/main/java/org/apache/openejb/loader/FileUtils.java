@@ -24,7 +24,7 @@ import java.util.Hashtable;
 @SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class FileUtils {
 
-    private static final java.util.Random _random = new java.util.Random();
+    private static final java.util.Random RANDOM = new java.util.Random();
 
     private File home;
 
@@ -32,6 +32,12 @@ public class FileUtils {
         this(homeDir, defaultDir, SystemInstance.get().getProperties());
     }
 
+    /**
+     *
+     * @param homeDir
+     * @param defaultDir
+     * @param env
+     */
     @SuppressWarnings("UseOfObsoleteCollectionType")
     public FileUtils(final String homeDir, final String defaultDir, final Hashtable env) {
 
@@ -59,6 +65,12 @@ public class FileUtils {
         }
     }
 
+    /**
+     *
+     * @param path
+     * @return File
+     * @throws IOException
+     */
     public File getDirectory(final String path) throws IOException {
         return getDirectory(path, false);
     }
@@ -72,6 +84,13 @@ public class FileUtils {
         return this.getDirectory().equals(that.getDirectory());
     }
 
+    /**
+     *
+     * @param path
+     * @param create
+     * @return File
+     * @throws IOException
+     */
     public File getDirectory(final String path, final boolean create) throws IOException {
         File dir = new File(home, path);
         dir = dir.getCanonicalFile();
@@ -92,18 +111,39 @@ public class FileUtils {
         return dir;
     }
 
+    /**
+     *
+     * @return File
+     */
     public File getDirectory() {
         return home;
     }
 
+    /**
+     *
+     * @param dir
+     */
     public void setDirectory(final File dir) {
         this.home = dir;
     }
 
+    /**
+     *
+     * @param path
+     * @return File
+     * @throws IOException
+     */
     public File getFile(final String path) throws IOException {
         return getFile(path, true);
     }
 
+    /**
+     *
+     * @param path
+     * @param validate
+     * @return File
+     * @throws IOException
+     */
     public File getFile(final String path, final boolean validate) throws IOException {
         File file = new File(path);
 
@@ -120,10 +160,16 @@ public class FileUtils {
         return file;
     }
 
+    /**
+     *
+     * @param pathPrefix
+     * @return File
+     * @throws IOException
+     */
     public static File createTempDirectory(final String pathPrefix) throws IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
 
-            final String path = pathPrefix + _random.nextLong();
+            final String path = pathPrefix + RANDOM.nextLong();
             final File tmpDir = new File(path);
 
             if (!tmpDir.exists() && tmpDir.mkdirs()) {
@@ -133,6 +179,11 @@ public class FileUtils {
         throw new IOException("Cannot create temporary directory at: " + pathPrefix);
     }
 
+    /**
+     *
+     * @return File
+     * @throws IOException
+     */
     public static File createTempDirectory() throws IOException {
         final String prefix = System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "openejb";
         return createTempDirectory(prefix);

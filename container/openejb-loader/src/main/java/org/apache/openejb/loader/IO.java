@@ -68,6 +68,12 @@ public class IO {
         MAX_TIMEOUT = timeout;
     }
 
+    /**
+     *
+     * @param uri URI
+     * @return String
+     * @throws IOException
+     */
     public static String readFileAsString(final URI uri) throws IOException {
         final StringBuilder builder = new StringBuilder("");
         for (final Proxy proxy : ProxySelector.getDefault().select(uri)) {
@@ -95,18 +101,44 @@ public class IO {
         return builder.toString();
     }
 
+    /**
+     *
+     * @param resource URL
+     * @return Properties
+     * @throws IOException
+     */
     public static Properties readProperties(final URL resource) throws IOException {
         return readProperties(resource, new Properties());
     }
 
+    /**
+     *
+     * @param resource URL
+     * @param properties Properties
+     * @return Properties
+     * @throws IOException
+     */
     public static Properties readProperties(final URL resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
     }
 
+    /**
+     *
+     * @param resource File
+     * @return Properties
+     * @throws IOException
+     */
     public static Properties readProperties(final File resource) throws IOException {
         return readProperties(resource, new Properties());
     }
 
+    /**
+     *
+     * @param resource File
+     * @param properties Properties
+     * @return Properties
+     * @throws IOException
+     */
     public static Properties readProperties(final File resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
     }
@@ -134,6 +166,12 @@ public class IO {
         return properties;
     }
 
+    /**
+     *
+     * @param url URL
+     * @return String
+     * @throws IOException
+     */
     public static String readString(final URL url) throws IOException {
         final InputStream in = url.openStream();
         try {
@@ -144,6 +182,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param file File
+     * @return String
+     * @throws IOException
+     */
     public static String readString(final File file) throws IOException {
         final FileReader in = new FileReader(file);
         try {
@@ -154,23 +198,46 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param file File
+     * @return String
+     * @throws IOException
+     */
     public static String slurp(final File file) throws IOException {
         try (final InputStream is = read(file)) {
             return slurp(is);
         }
     }
 
-
+    /**
+     *
+     * @param url URL
+     * @return String
+     * @throws IOException
+     */
     public static String slurp(final URL url) throws IOException {
         return slurp(url.openStream());
     }
 
+    /**
+     *
+     * @param in InputStream
+     * @return String
+     * @throws IOException
+     */
     public static String slurp(final InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         copy(in, out);
         return new String(out.toByteArray());
     }
 
+    /**
+     *
+     * @param file File
+     * @param string String
+     * @throws IOException
+     */
     public static void writeString(final File file, final String string) throws IOException {
         final FileWriter out = new FileWriter(file);
         try {
@@ -186,6 +253,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from File
+     * @param to File
+     * @throws IOException
+     */
     public static void copy(final File from, final File to) throws IOException {
         if (!from.isDirectory()) {
             final FileOutputStream fos = new FileOutputStream(to);
@@ -199,6 +272,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param srcDir File
+     * @param destDir File
+     * @throws IOException
+     */
     public static void copyDirectory(final File srcDir, final File destDir) throws IOException {
         if (srcDir == null) {
             throw new NullPointerException("Source must not be null");
@@ -221,7 +300,7 @@ public class IO {
         if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
             final File[] srcFiles = srcDir.listFiles();
             if (srcFiles != null && srcFiles.length > 0) {
-                exclusionList = new ArrayList<String>(srcFiles.length);
+                exclusionList = new ArrayList<>(srcFiles.length);
                 for (final File srcFile : srcFiles) {
                     final File copiedFile = new File(destDir, srcFile.getName());
                     exclusionList.add(copiedFile.getCanonicalPath());
@@ -260,6 +339,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from File
+     * @param to OutputStream
+     * @throws IOException
+     */
     public static void copy(final File from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
@@ -269,6 +354,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from URL
+     * @param to OutputStream
+     * @throws IOException
+     */
     public static void copy(final URL from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
         try {
@@ -278,6 +369,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from InputStream
+     * @param to File
+     * @throws IOException
+     */
     public static void copy(final InputStream from, final File to) throws IOException {
         final OutputStream write = write(to);
         try {
@@ -287,6 +384,13 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from InputStream
+     * @param to File
+     * @param append boolean
+     * @throws IOException
+     */
     public static void copy(final InputStream from, final File to, final boolean append) throws IOException {
         final OutputStream write = write(to, append);
         try {
@@ -296,6 +400,12 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param from InputStream
+     * @param to OutputStream
+     * @throws IOException
+     */
     public static void copy(final InputStream from, final OutputStream to) throws IOException {
         final byte[] buffer = new byte[1024];
         int length;
@@ -305,24 +415,52 @@ public class IO {
         to.flush();
     }
 
+    /**
+     *
+     * @param from byte[]
+     * @param to File
+     * @throws IOException
+     */
     public static void copy(final byte[] from, final File to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
+    /**
+     *
+     * @param from byte[]
+     * @param to OutputStream
+     * @throws IOException
+     */
     public static void copy(final byte[] from, final OutputStream to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
+    /**
+     *
+     * @param file File
+     * @return ZipOutputStream
+     * @throws IOException
+     */
     public static ZipOutputStream zip(final File file) throws IOException {
         final OutputStream write = write(file);
         return new ZipOutputStream(write);
     }
 
+    /**
+     *
+     * @param file File
+     * @return ZipInputStream
+     * @throws IOException
+     */
     public static ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
         return new ZipInputStream(read);
     }
 
+    /**
+     *
+     * @param closeable Closeable
+     */
     public static void close(final Closeable closeable) {
         if (closeable == null) {
             return;
@@ -341,45 +479,92 @@ public class IO {
         }
     }
 
+    /**
+     *
+     * @param file File
+     * @return boolean
+     */
     public static boolean delete(final File file) {
         if (file == null) {
             return false;
         }
         if (!file.delete()) {
-            Logger.getLogger(IO.class.getName()).log(Level.WARNING, "Delete failed on: " + file.getAbsolutePath());
+            Logger.getLogger(IO.class.getName()).log(Level.WARNING, "Delete failed on: {0}", file.getAbsolutePath());
             return false;
         }
 
         return true;
     }
 
+    /**
+     *
+     * @param destination File
+     * @return OutputStream
+     * @throws FileNotFoundException
+     */
     public static OutputStream write(final File destination) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
         return new BufferedOutputStream(out, 32768);
     }
 
+    /**
+     *
+     * @param destination File
+     * @param append boolean
+     * @return OutputStream
+     * @throws FileNotFoundException
+     */
     public static OutputStream write(final File destination, final boolean append) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination, append);
         return new BufferedOutputStream(out, 32768);
     }
 
+    /**
+     *
+     * @param source File
+     * @return InputStream
+     * @throws FileNotFoundException
+     */
     public static InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
         return new BufferedInputStream(in, 32768);
     }
 
+    /**
+     *
+     * @param content String
+     * @return InputStream
+     */
     public static InputStream read(final String content) {
         return read(content.getBytes());
     }
 
+    /**
+     *
+     * @param content String
+     * @param encoding String
+     * @return InputStream
+     * @throws UnsupportedEncodingException
+     */
     public static InputStream read(final String content, final String encoding) throws UnsupportedEncodingException {
         return read(content.getBytes(encoding));
     }
 
+    /**
+     *
+     * @param content byte[]
+     * @return InputStream
+     */
     public static InputStream read(final byte[] content) {
         return new ByteArrayInputStream(content);
     }
 
+    /**
+     *
+     * @param url URL
+     * @return InputStream
+     * @throws IOException
+     */
     public static InputStream read(final URL url) throws IOException {
         return url.openStream();
     }

@@ -67,6 +67,12 @@ public abstract class BasicURLClassPath implements ClassPath {
         });
     }
 
+    /**
+     *
+     * @param dir
+     * @param loader
+     * @throws Exception
+     */
     protected synchronized void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
         if (dir == null || !dir.exists()) {
             return;
@@ -111,6 +117,12 @@ public abstract class BasicURLClassPath implements ClassPath {
         }
     }
 
+    /**
+     *
+     * @param loader
+     * @return Object
+     * @throws Exception
+     */
     protected Object getURLClassPath(final URLClassLoader loader) throws Exception {
         final Field ucpField = this.getUcpField();
         if (ucpField == null) {

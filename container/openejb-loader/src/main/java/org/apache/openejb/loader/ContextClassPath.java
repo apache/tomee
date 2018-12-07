@@ -26,11 +26,20 @@ import java.net.URLClassLoader;
 
 public class ContextClassPath extends BasicURLClassPath {
 
+    /**
+     *
+     * @return the context ClassLoader for this Thread or null
+     */
     @Override
     public ClassLoader getClassLoader() {
         return getContextClassLoader();
     }
 
+    /**
+     *
+     * @param dir
+     * @throws Exception
+     */
     @Override
     public void addJarsToPath(final File dir) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();
@@ -40,6 +49,11 @@ public class ContextClassPath extends BasicURLClassPath {
         }
     }
 
+    /**
+     *
+     * @param jar
+     * @throws Exception
+     */
     @Override
     public void addJarToPath(final URL jar) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();

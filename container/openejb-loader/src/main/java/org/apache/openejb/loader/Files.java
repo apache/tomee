@@ -46,6 +46,11 @@ public class Files {
     private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
     private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
+    /**
+     *
+     * @param parts String...
+     * @return File
+     */
     public static File path(final String... parts) {
         File dir = null;
         for (final String part : parts) {
@@ -59,6 +64,12 @@ public class Files {
         return null != dir ? dir.getAbsoluteFile() : dir;
     }
 
+    /**
+     *
+     * @param dir File
+     * @param parts String...
+     * @return File
+     */
     public static File path(final File dir, final String... parts) {
         File base = dir;
         int idx = 0;
@@ -77,17 +88,34 @@ public class Files {
         return base.getAbsoluteFile();
     }
 
+    /**
+     *
+     * @param dir File
+     * @param regex String
+     * @return List of Files
+     */
     public static List<File> collect(final File dir, final String regex) {
         return collect(dir, Pattern.compile(regex));
     }
 
+    /**
+     *
+     * @param dir File
+     * @param pattern Pattern
+     * @return List of Files
+     */
     public static List<File> collect(final File dir, final Pattern pattern) {
         return collect(dir, new PatternFileFilter(pattern));
     }
 
-
+    /**
+     *
+     * @param dir File
+     * @param filter FileFilter
+     * @return List of Files
+     */
     public static List<File> collect(final File dir, final FileFilter filter) {
-        final List<File> accepted = new ArrayList<File>();
+        final List<File> accepted = new ArrayList<>();
         if (filter.accept(dir)) {
             accepted.add(dir);
         }
@@ -102,6 +130,13 @@ public class Files {
         return accepted;
     }
 
+    /**
+     *
+     * @param file File
+     * @param s String
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File exists(final File file, final String s) {
         if (!file.exists()) {
             throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
@@ -109,6 +144,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File exists(final File file) {
         if (!file.exists()) {
             throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
@@ -116,6 +157,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File dir(final File file) {
         if (!file.isDirectory()) {
             throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
@@ -124,6 +171,13 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @throws IOException
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File touch(final File file) throws IOException {
         if (!file.createNewFile()) {
             throw new FileRuntimeException("Cannot create file: " + file.getAbsolutePath());
@@ -131,6 +185,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File file(final File file) {
         exists(file);
         if (!file.isFile()) {
@@ -139,6 +199,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File notHidden(final File file) {
         exists(file);
         if (file.isHidden()) {
@@ -147,6 +213,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File writable(final File file) {
         if (!file.canWrite()) {
             throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
@@ -154,6 +226,12 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File readable(final File file) {
         if (!file.canRead()) {
             throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
@@ -161,10 +239,21 @@ public class Files {
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     */
     public static File readableFile(final File file) {
         return readable(file(file));
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File mkdir(final File file) {
         if (file.exists()) {
             return file;
@@ -185,10 +274,21 @@ public class Files {
         }
     }
 
+    /**
+     *
+     * @param file file
+     * @param name String
+     * @return File
+     */
     public static File mkdir(final File file, final String name) {
         return mkdir(new File(file, name));
     }
 
+    /**
+     *
+     * @return File
+     * @Throws IOException on failure at any point
+     */
     public static File tmpdir() {
         try {
             File file;
@@ -223,11 +323,22 @@ public class Files {
         }
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     */
     public static File mkparent(final File file) {
         mkdirs(file.getParentFile());
         return file;
     }
 
+    /**
+     *
+     * @param file File
+     * @return File
+     * @Throws FileRuntimeException on failure at any point
+     */
     public static File mkdirs(final File file) {
 
         if (!file.exists()) {
@@ -245,8 +356,8 @@ public class Files {
     }
 
 
-    // Shutdown hook for recursive delete on tmp directories
-    static final List<String> delete = new ArrayList<String>();
+    // Shutdown hook for recursive DELETE on tmp directories
+    static final List<String> DELETE = new ArrayList<String>();
 
     static {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -263,11 +374,19 @@ public class Files {
         }
     }
 
+    /**
+     *
+     * @param file File
+     */
     public static void deleteOnExit(final File file) {
-        delete.add(file.getAbsolutePath());
+        DELETE.add(file.getAbsolutePath());
         flagForDeleteOnExit(file);
     }
 
+    /**
+     *
+     * @param file File
+     */
     public static void flagForDeleteOnExit(final File file) {
         if (file.exists()) {
             if (file.isDirectory()) {
@@ -288,14 +407,14 @@ public class Files {
     }
 
     private static void delete() {
-        for (final String path : delete) {
+        for (final String path : DELETE) {
             delete(new File(path));
         }
     }
 
     /**
      * Delete a file and all contents if specified file is a directory.
-     * If the delete fails then the file/s are flagged for delete on exit.
+     * If the DELETE fails then the file/s are flagged for DELETE on exit.
      *
      * @param file File
      */
@@ -350,9 +469,16 @@ public class Files {
         }
     }
 
+    /**
+     *
+     * @param dir File
+     * @param pattern String
+     * @return File
+     * @Throws IllegalStateException on failure at any point
+     */
     public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             throw new IllegalStateException(String.format("Missing '%s'", pattern));
         }
         if (matches.size() > 1) {
@@ -362,7 +488,7 @@ public class Files {
     }
 
     private static String join(final String delimiter, final Collection<File> collection) {
-        if (collection.size() == 0) {
+        if (collection.isEmpty()) {
             return "";
         }
         final StringBuilder sb = new StringBuilder();
@@ -374,6 +500,11 @@ public class Files {
 
     // return the token as url if simply a path otheriwse if ending by *.jar returning the list of
     // files in the folder
+    /**
+     *
+     * @param path String
+     * @return List of files in the folder
+     */
     public static Set<URL> listJars(final String path) {
         final Set<URL> set = new HashSet<>();
 
@@ -423,6 +554,12 @@ public class Files {
         return set;
     }
 
+    /**
+     *
+     * @param url URL
+     * @return File
+     * @Throws IllegalStateException on failure at any point
+     */
     public static File toFile(final URL url) {
         if ("jar".equals(url.getProtocol())) {
             try {
@@ -451,8 +588,14 @@ public class Files {
         }
     }
 
+    /**
+     *
+     * @param urls Set<URL>
+     * @param algo String
+     * @return String
+     */
     public static String hash(final Set<URL> urls, final String algo) {
-        final Collection<File> files = new ArrayList<File>();
+        final Collection<File> files = new ArrayList<>();
 
         for (final URL u : urls) {
             final File file = toFile(u);
