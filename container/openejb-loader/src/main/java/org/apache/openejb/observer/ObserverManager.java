@@ -43,18 +43,23 @@ import java.util.logging.Logger;
 
 public class ObserverManager {
 
-    private static final ThreadLocal<Set<Invocation>> seen = new ThreadLocal<Set<Invocation>>() {
+    private static final ThreadLocal<Set<Invocation>> SEEN = new ThreadLocal<Set<Invocation>>() {
         @Override
         protected Set<Invocation> initialValue() {
-            return new HashSet<Invocation>();
+            return new HashSet<>();
         }
     };
 
     // lazy init since it is used in SystemInstance
     private static final AtomicReference<Logger> LOGGER = new AtomicReference<Logger>();
-    private final Set<Observer> observers = new LinkedHashSet<Observer>();
-    private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
+    private final Set<Observer> observers = new LinkedHashSet<>();
+    private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
+    /**
+     *
+     * @param observer Object
+     * @return boolean
+     */
     public boolean addObserver(final Object observer) {
         if (observer == null) {
             throw new IllegalArgumentException("observer cannot be null");
@@ -74,6 +79,11 @@ public class ObserverManager {
         }
     }
 
+    /**
+     *
+     * @param observer Object
+     * @return boolean
+     */
     public boolean removeObserver(final Object observer) {
         if (observer == null) {
             throw new IllegalArgumentException("listener cannot be null");
@@ -99,7 +109,7 @@ public class ObserverManager {
         try {
             return doFire(event);
         } finally {
-            seen.remove();
+            SEEN.remove();
         }
     }
 
@@ -168,17 +178,13 @@ public class ObserverManager {
             }
         }
 
-        if (list.getInvocations().size() == 0) {
-
-            return IGNORE;
-
-        } else if (list.getInvocations().size() == 1) {
-
-            return list.getInvocations().get(0);
-
-        } else {
-
-            return list;
+        switch (list.getInvocations().size()) {
+            case 0:
+                return IGNORE;
+            case 1:
+                return list.getInvocations().get(0);
+            default:
+                return list;
         }
     }
 
@@ -187,9 +193,9 @@ public class ObserverManager {
      */
     public class Observer {
 
-        private final Map<Class, Invocation> before = new ConcurrentHashMap<Class, Invocation>();
-        private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
-        private final Map<Class, Invocation> after = new ConcurrentHashMap<Class, Invocation>();
+        private final Map<Class, Invocation> before = new ConcurrentHashMap<>();
+        private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
+        private final Map<Class, Invocation> after = new ConcurrentHashMap<>();
         private final Object observer;
 
         public Observer(final Object observer) {
@@ -197,7 +203,7 @@ public class ObserverManager {
                 throw new IllegalArgumentException("observer cannot be null");
             }
 
-            final Set<Method> methods = new HashSet<Method>();
+            final Set<Method> methods = new HashSet<>();
             methods.addAll(Arrays.asList(observer.getClass().getMethods()));
             methods.addAll(Arrays.asList(observer.getClass().getDeclaredMethods()));
 
@@ -315,14 +321,30 @@ public class ObserverManager {
             }
         }
 
+        /**
+         *
+         * @param event Phase
+         * @param eventType Class
+         * @return Invocation
+         */
         public Invocation get(final Phase event, final Class eventType) {
             return get(map(event), eventType);
         }
 
+        /**
+         *
+         * @param eventType Class
+         * @return Invocation
+         */
         public Invocation getAfter(final Class eventType) {
             return get(after, eventType);
         }
 
+        /**
+         *
+         * @param eventType Class
+         * @return
+         */
         public Invocation getBefore(final Class eventType) {
             return get(before, eventType);
         }
@@ -395,17 +417,26 @@ public class ObserverManager {
         private final Method method;
         private final Object observer;
 
+        /**
+         *
+         * @param method Method
+         * @param observer Object
+         */
         public MethodInvocation(final Method method, final Object observer) {
             this.method = method;
             this.observer = observer;
         }
 
+        /**
+         *
+         * @param event Object
+         */
         @Override
         public void invoke(final Object event) {
             try {
                 method.invoke(observer, event);
             } catch (final InvocationTargetException e) {
-                if (!seen.get().add(this)) {
+                if (!SEEN.get().add(this)) {
                     return;
                 }
 
@@ -505,16 +536,29 @@ public class ObserverManager {
 
     public static class InvocationList implements Invocation {
 
-        private final List<Invocation> invocations = new LinkedList<Invocation>();
+        private final List<Invocation> invocations = new LinkedList<>();
 
+        /**
+         *
+         * @param invocation Invocation
+         * @return boolean
+         */
         public boolean add(final Invocation invocation) {
             return invocations.add(invocation);
         }
 
+        /**
+         *
+         * @return
+         */
         public List<Invocation> getInvocations() {
             return invocations;
         }
 
+        /**
+         *
+         * @param event Object
+         */
         @Override
         public void invoke(final Object event) {
             for (final Invocation invocation : invocations) {

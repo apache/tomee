@@ -27,15 +27,28 @@ public class ComponentRemoved<T> {
     private final Class<T> type;
     private final T component;
 
+    /**
+     *
+     * @param type
+     * @param component
+     */
     public ComponentRemoved(final Class<T> type, final T component) {
         this.type = type;
         this.component = component;
     }
 
+    /**
+     *
+     * @return
+     */
     public Class<T> getType() {
         return type;
     }
 
+    /**
+     *
+     * @return
+     */
     public T getComponent() {
         return component;
     }

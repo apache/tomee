@@ -57,6 +57,11 @@ public class HttpResolver implements ArchiveResolver {
         return lastPart(rawLocation.replace(':', '/'));
     }
 
+    /**
+     *
+     * @param location String
+     * @return String
+     */
     public static String lastPart(final String location) {
         int idx = location.lastIndexOf('/');
         if (idx <= 0) {

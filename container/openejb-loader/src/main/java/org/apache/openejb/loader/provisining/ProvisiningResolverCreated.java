@@ -22,10 +22,19 @@ import org.apache.openejb.observer.Event;
 public class ProvisiningResolverCreated {
     private final ProvisioningResolver resolver;
 
+    /**
+     *
+     * @param provisioningResolver ProvisioningResolver
+     */
     public ProvisiningResolverCreated(final ProvisioningResolver provisioningResolver) {
         resolver = provisioningResolver;
     }
 
+    /**
+     *
+     * @param resolver ArchiveResolver
+     * @return ProvisiningResolverCreated
+     */
     public ProvisiningResolverCreated register(final ArchiveResolver resolver) {
         this.resolver.addResolver(resolver);
         return this;

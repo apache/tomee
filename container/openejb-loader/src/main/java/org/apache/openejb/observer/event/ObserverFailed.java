@@ -34,6 +34,13 @@ public class ObserverFailed {
 
     private final Throwable throwable;
 
+    /**
+     *
+     * @param observer Object
+     * @param method Method
+     * @param event Object
+     * @param throwable Throwable
+     */
     public ObserverFailed(final Object observer, final Method method, final Object event, final Throwable throwable) {
         this.observer = observer;
         this.event = event;
@@ -41,18 +48,34 @@ public class ObserverFailed {
         this.throwable = throwable;
     }
 
+    /**
+     *
+     * @return Method
+     */
     public Method getMethod() {
         return method;
     }
 
+    /**
+     *
+     * @return Object
+     */
     public Object getObserver() {
         return observer;
     }
 
+    /**
+     *
+     * @return Object
+     */
     public Object getEvent() {
         return event;
     }
 
+    /**
+     *
+     * @return Throwable
+     */
     public Throwable getThrowable() {
         return throwable;
     }

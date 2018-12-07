@@ -74,16 +74,29 @@ public class ProvisioningResolver {
         }
     }
 
+    /**
+     *
+     * @param resolver ArchiveResolver
+     */
     public void addResolver(final ArchiveResolver resolver) {
         if (resolvers.put(resolver.prefix(), resolver) != null) {
             Logger.getLogger(ProvisioningResolver.class.getName()).warning("Overriding resolver " + resolver.prefix() + " with " + resolver);
         }
     }
 
+    /**
+     *
+     * @param resolver ArchiveResolver
+     */
     public void removeResolver(final ArchiveResolver resolver) {
         resolvers.remove(resolver.prefix());
     }
 
+    /**
+     *
+     * @param rawLocation String
+     * @return
+     */
     public Set<String> realLocation(final String rawLocation) {
         // if direct file path then use it
         final File file = new File(rawLocation);
@@ -158,6 +171,12 @@ public class ProvisioningResolver {
         }
     }
 
+    /**
+     *
+     * @param rawLocation String
+     * @return InputStream
+     * @throws MalformedURLException
+     */
     public InputStream resolveStream(final String rawLocation) throws MalformedURLException {
         final File file = new File(rawLocation);
         if (file.exists()) {
@@ -172,10 +191,19 @@ public class ProvisioningResolver {
         return null;
     }
 
+    /**
+     *
+     * @return String
+     */
     public static String cache() {
         return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, TEMP_DIR);
     }
 
+    /**
+     *
+     * @param path String
+     * @return File
+     */
     public static File cacheFile(final String path) {
         final String cache = cache();
         if (new File(cache).isAbsolute()) {
