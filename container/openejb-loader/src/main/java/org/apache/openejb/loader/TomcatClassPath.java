@@ -93,20 +93,12 @@ public class TomcatClassPath extends BasicURLClassPath {
         }
     }
 
-    /**
-     *
-     * @return ClassLoader
-     */
     @Override
     public ClassLoader getClassLoader() {
         return (serverLoader != null) ? serverLoader : commonLoader;
         //        return commonLoader;
     }
 
-    /**
-     *
-     * @return ClassLoader
-     */
     @SuppressWarnings("UnusedDeclaration")
     public ClassLoader getCommonLoader() {
         return commonLoader;

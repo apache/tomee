@@ -654,28 +654,16 @@ public class Options {
 
     public static class NullLog implements Log {
 
-        /**
-         *
-         * @return boolean
-         */
         @Override
         public boolean isDebugEnabled() {
             return false;
         }
 
-        /**
-         *
-         * @return boolean
-         */
         @Override
         public boolean isInfoEnabled() {
             return false;
         }
 
-        /**
-         *
-         * @return boolean
-         */
         @Override
         public boolean isWarningEnabled() {
             return false;

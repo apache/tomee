@@ -26,10 +26,6 @@ import java.net.URL;
  */
 public class JarLocation {
 
-    /**
-     *
-     * @return File
-     */
     public static File get() {
         return jarLocation(JarLocation.class);
     }

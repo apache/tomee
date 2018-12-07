@@ -37,18 +37,10 @@ public class ComponentRemoved<T> {
         this.component = component;
     }
 
-    /**
-     *
-     * @return
-     */
     public Class<T> getType() {
         return type;
     }
 
-    /**
-     *
-     * @return
-     */
     public T getComponent() {
         return component;
     }

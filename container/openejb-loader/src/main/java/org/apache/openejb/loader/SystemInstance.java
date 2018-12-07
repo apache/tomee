@@ -158,27 +158,15 @@ public final class SystemInstance {
         return observerManager.removeObserver(observer);
     }
 
-    /**
-     *
-     * @return long
-     */
     @SuppressWarnings("unused")
     public long getStartTime() {
         return startTime;
     }
 
-    /**
-     *
-     * @return Options
-     */
     public Options getOptions() {
         return options;
     }
 
-    /**
-     *
-     * @return Properties
-     */
     public Properties getProperties() {
         return internalProperties;
     }
@@ -219,10 +207,6 @@ public final class SystemInstance {
         return internalProperties.setProperty(key, value);
     }
 
-    /**
-     *
-     * @return FileUtils
-     */
     public FileUtils getHome() {
         if (!isInitialized()) {
             return new FileUtils("openejb.home", "user.dir", System.getProperties());
@@ -230,10 +214,6 @@ public final class SystemInstance {
         return home;
     }
 
-    /**
-     *
-     * @return FileUtils
-     */
     public FileUtils getBase() {
         if (!isInitialized()) {
             return new FileUtils("openejb.base", "openejb.home", System.getProperties());
@@ -241,18 +221,10 @@ public final class SystemInstance {
         return base;
     }
 
-    /**
-     *
-     * @return ClassPath
-     */
     public ClassPath getClassPath() {
         return classPath;
     }
 
-    /**
-     *
-     * @return ClassLoader
-     */
     public ClassLoader getClassLoader() {
         return classLoader;
     }
@@ -452,18 +424,10 @@ public final class SystemInstance {
         return SYSTEM.get();
     }
 
-    /**
-     *
-     * @return String
-     */
     public String currentProfile() {
         return getProperty(PROFILE_PROP, DEFAULT_PROFILE);
     }
 
-    /**
-     *
-     * @return boolean
-     */
     public boolean isDefaultProfile() {
         return DEFAULT_PROFILE.equals(currentProfile());
     }
