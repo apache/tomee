@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<ejb-jar xmlns="http://java.sun.com/xml/ns/j2ee" version="2.1"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
+  <display-name>RosterJAR</display-name>
+  <enterprise-beans>
+    <session>
+      <ejb-name>RosterBean</ejb-name>
+      <home>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessHome</home>
+      <remote>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusiness</remote>
+      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessBean</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+      <ejb-local-ref>
+        <ejb-ref-name>ejb/Actor</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalActorHome</local-home>
+        <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalActor</local>
+        <ejb-link>ActorBean</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+        <ejb-ref-name>ejb/Movie</ejb-ref-name>
+        <ejb-ref-type>Entity</ejb-ref-type>
+        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovieHome</local-home>
+        <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovie</local>
+        <ejb-link>MovieBean</ejb-link>
+      </ejb-local-ref>
+      <security-identity>
+        <use-caller-identity/>
+      </security-identity>
+    </session>
+    <entity>
+      <ejb-name>MovieBean</ejb-name>
+      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovieHome</local-home>
+      <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovie</local>
+      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.MovieBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Movie</abstract-schema-name>
+      <cmp-field>
+        <description>no description</description>
+        <field-name>movieId</field-name>
+      </cmp-field>
+      <cmp-field>
+        <description>no description</description>
+        <field-name>name</field-name>
+      </cmp-field>
+      <cmp-field>
+        <description>no description</description>
+        <field-name>genre</field-name>
+      </cmp-field>
+      <primkey-field>movieId</primkey-field>
+      <security-identity>
+        <use-caller-identity/>
+      </security-identity>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>select object(m) from Movie m</ejb-ql>
+      </query>
+    </entity>
+    <entity>
+      <ejb-name>ActorBean</ejb-name>
+      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalActorHome</local-home>
+      <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalActor</local>
+      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.ActorBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>Actor</abstract-schema-name>
+      <cmp-field>
+        <description>no description</description>
+        <field-name>actorId</field-name>
+      </cmp-field>
+      <cmp-field>
+        <description>no description</description>
+        <field-name>name</field-name>
+      </cmp-field>
+      <primkey-field>actorId</primkey-field>
+      <security-identity>
+        <use-caller-identity/>
+      </security-identity>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>select object(a) from Actor a</ejb-ql>
+      </query>
+    </entity>
+  </enterprise-beans>
+  <relationships>
+    <ejb-relation>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>ActorBean</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>movies</cmr-field-name>
+          <cmr-field-type>java.util.Collection</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+      <ejb-relationship-role>
+        <multiplicity>Many</multiplicity>
+        <relationship-role-source>
+          <ejb-name>MovieBean</ejb-name>
+        </relationship-role-source>
+        <cmr-field>
+          <cmr-field-name>actors</cmr-field-name>
+          <cmr-field-type>java.util.Collection</cmr-field-type>
+        </cmr-field>
+      </ejb-relationship-role>
+    </ejb-relation>
+  </relationships>
+  <assembly-descriptor>
+    <container-transaction>
+      <method>
+        <ejb-name>RosterBean</ejb-name>
+        <method-intf>Remote</method-intf>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>MovieBean</ejb-name>
+        <method-intf>Local</method-intf>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+    <container-transaction>
+      <method>
+        <ejb-name>ActorBean</ejb-name>
+        <method-intf>Local</method-intf>
+        <method-name>*</method-name>
+      </method>
+      <trans-attribute>Required</trans-attribute>
+    </container-transaction>
+  </assembly-descriptor>
+</ejb-jar>

@@ -75,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,8 +93,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-
-import static java.util.Arrays.asList;
 
 /**
  * @version $Revision$ $Date$
@@ -268,10 +267,9 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static void addWebModuleDescriptors(final URL baseUrl, final WebModule webModule, final AppModule appModule) throws OpenEJBException {
-        final Map<String, Object> otherDD = new HashMap<>();
         final List<URL> urls = webModule.getScannableUrls();
         final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-        otherDD.putAll(getDescriptors(finder, false));
+        final Map<String, Object> otherDD = new HashMap<>(getDescriptors(finder, false));
 
         // "persistence.xml" is done separately since we manage a list of url and not s single url
         try {
@@ -563,9 +561,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             // EJB modules
-            for (final String moduleName : ejbModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : ejbModules.entrySet()) {
                 try {
-                    URL ejbUrl = ejbModules.get(moduleName);
+                    URL ejbUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), ejbUrl)) {
                         try {
@@ -581,14 +579,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
                     appModule.getEjbModules().add(ejbModule);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Application Client Modules
-            for (final String moduleName : clientModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : clientModules.entrySet()) {
                 try {
-                    URL clientUrl = clientModules.get(moduleName);
+                    URL clientUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), clientUrl)) {
                         try {
@@ -605,14 +603,14 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     appModule.getClientModules().add(clientModule);
                 } catch (final Exception e) {
-                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Resource modules
-            for (final String moduleName : resouceModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : resouceModules.entrySet()) {
                 try {
-                    URL rarUrl = resouceModules.get(moduleName);
+                    URL rarUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), rarUrl)) {
                         try {
@@ -622,22 +620,22 @@ public class DeploymentLoader implements DeploymentFilterable {
                             // no-op
                         }
                     }
-                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
+                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, stringURLEntry.getKey());
                     if (connectorModule != null) {
                         appModule.getConnectorModules().add(connectorModule);
                     }
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load RAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Web modules
-            for (final String moduleName : webModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : webModules.entrySet()) {
                 try {
-                    final URL warUrl = webModules.get(moduleName);
-                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), null);
+                    final URL warUrl = stringURLEntry.getValue();
+                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(stringURLEntry.getKey()), null);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    logger.error("Unable to load WAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -838,7 +836,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         {
             final Object pXml = appModule.getAltDDs().get("persistence.xml");
 
-            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml : new ArrayList<>(asList(URL.class.cast(pXml))));
+            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml :
+                    new ArrayList<>(Collections.singletonList(URL.class.cast(pXml))));
             if (persistenceXmls == null) {
                 persistenceXmls = new ArrayList<>();
                 appModule.getAltDDs().put("persistence.xml", persistenceXmls);
@@ -965,9 +964,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // determine war class path
 
-        final List<URL> webUrls = new ArrayList<>();
         ensureContainerUrls();
-        webUrls.addAll(containerUrls);
+        final List<URL> webUrls = new ArrayList<>(containerUrls);
 
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -1543,8 +1541,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // create the class loader
-        final List<URL> classPath = new ArrayList<>();
-        classPath.addAll(rarLibs.values());
+        final List<URL> classPath = new ArrayList<>(rarLibs.values());
 
         final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
         if (configurer != null) {
@@ -1909,7 +1906,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public Class<? extends DeploymentModule> discoverModuleType(final URL baseUrl, final ClassLoader classLoader, final boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
-        final Set<RequireDescriptors> search = new HashSet<>();
+        final Set<RequireDescriptors> search = EnumSet.noneOf(RequireDescriptors.class);
 
         if (!searchForDescriptorlessApplications) {
             search.addAll(Arrays.asList(RequireDescriptors.values()));

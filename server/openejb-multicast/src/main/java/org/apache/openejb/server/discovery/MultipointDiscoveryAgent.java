@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
-    private static final Logger LOG = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointDiscoveryAgent.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointDiscoveryAgent.class);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -86,7 +86,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     public void init(final Properties props) {
 
         final Options options = new Options(props);
-        options.setLogger(new OptionsLog(LOG));
+        options.setLogger(new OptionsLog(LOGGER));
 
         host = props.getProperty("bind", host);
         port = options.get("port", port);
@@ -178,9 +178,9 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     public void start() throws ServiceException {
         try {
             if (running.compareAndSet(false, true)) {
-                LOG.info("MultipointDiscoveryAgent Starting");
+                LOGGER.info("MultipointDiscoveryAgent Starting");
                 multipointServer = new MultipointServer(host, discoveryHost, port, tracker, name, debug, roots, reconnectDelay).start();
-                LOG.info("MultipointDiscoveryAgent Started");
+                LOGGER.info("MultipointDiscoveryAgent Started");
 
                 this.port = multipointServer.getPort();
 
@@ -206,7 +206,7 @@ public class MultipointDiscoveryAgent implements DiscoveryAgent, ServerService, 
     @Managed
     public void stop() throws ServiceException {
         if (running.compareAndSet(true, false)) {
-            LOG.info("MultipointDiscoveryAgent Stopping");
+            LOGGER.info("MultipointDiscoveryAgent Stopping");
             multipointServer.stop();
         }
     }

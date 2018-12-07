@@ -133,14 +133,14 @@ public class AutoConnectionTracker implements ConnectionTracker {
                         final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
                         if (txConnections != null && txConnections.size() > 0) {
 
-                            for (final ManagedConnectionInfo managedConnectionInfo : txConnections.keySet()) {
+                            for (final Map.Entry<ManagedConnectionInfo, Map<ConnectionInfo, Object>> managedConnectionInfoMapEntry : txConnections.entrySet()) {
                                 final StringBuilder sb = new StringBuilder();
-                                final Collection<ConnectionInfo> connectionInfos = txConnections.get(managedConnectionInfo).keySet();
+                                final Collection<ConnectionInfo> connectionInfos = managedConnectionInfoMapEntry.getValue().keySet();
                                 for (final ConnectionInfo connectionInfo : connectionInfos) {
                                     sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
                                 }
 
-                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfo + "\nAbandoned connection information: " + sb);
+                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfoMapEntry.getKey() + "\nAbandoned connection information: " + sb);
                             }
                         }
                     }

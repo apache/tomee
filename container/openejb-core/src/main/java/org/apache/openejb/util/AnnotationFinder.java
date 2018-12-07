@@ -36,7 +36,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -109,7 +108,7 @@ public class AnnotationFinder {
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final URL url) {
-        this(classLoader, Arrays.asList(url));
+        this(classLoader, Collections.singletonList(url));
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
