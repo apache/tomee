@@ -16,8 +16,10 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
+import org.apache.tomee.microprofile.jwt.jaxrs.MPJWPProviderRegistration;
 import org.eclipse.microprofile.jwt.Claim;
 
 import javax.enterprise.event.Observes;
@@ -100,4 +102,7 @@ public class MPJWTCDIExtension implements Extension {
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTProducer.class));
     }
 
+    static {
+        SystemInstance.get().addObserver(new MPJWPProviderRegistration());
+    }
 }
