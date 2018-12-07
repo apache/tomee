@@ -249,7 +249,7 @@ public class ObserverManager {
                 }
             }
 
-            if (methods.size() == 0 && after.size() == 0 && before.size() == 0) {
+            if (methods.isEmpty() && after.isEmpty() && before.isEmpty()) {
                 throw new NotAnObserverException("Object has no @Observes methods. For example: public void observe(@Observes RetryConditionAdded event){...}");
             }
         }
@@ -486,6 +486,7 @@ public class ObserverManager {
                     return event;
                 }
 
+                @Override
                 public String toString() {
                     return "AfterEvent{} " + event;
                 }
@@ -507,6 +508,7 @@ public class ObserverManager {
                     return event;
                 }
 
+                @Override
                 public String toString() {
                     return "BeforeEvent{} " + event;
                 }
