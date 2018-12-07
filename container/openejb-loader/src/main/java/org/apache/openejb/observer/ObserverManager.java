@@ -549,10 +549,6 @@ public class ObserverManager {
             return invocations.add(invocation);
         }
 
-        /**
-         *
-         * @return
-         */
         public List<Invocation> getInvocations() {
             return invocations;
         }

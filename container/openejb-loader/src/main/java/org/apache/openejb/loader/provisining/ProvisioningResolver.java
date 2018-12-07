@@ -191,10 +191,6 @@ public class ProvisioningResolver {
         return null;
     }
 
-    /**
-     *
-     * @return String
-     */
     public static String cache() {
         return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, TEMP_DIR);
     }

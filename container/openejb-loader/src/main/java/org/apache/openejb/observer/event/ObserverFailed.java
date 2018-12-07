@@ -48,34 +48,18 @@ public class ObserverFailed {
         this.throwable = throwable;
     }
 
-    /**
-     *
-     * @return Method
-     */
     public Method getMethod() {
         return method;
     }
 
-    /**
-     *
-     * @return Object
-     */
     public Object getObserver() {
         return observer;
     }
 
-    /**
-     *
-     * @return Object
-     */
     public Object getEvent() {
         return event;
     }
 
-    /**
-     *
-     * @return Throwable
-     */
     public Throwable getThrowable() {
         return throwable;
     }

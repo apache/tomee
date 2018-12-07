@@ -34,10 +34,6 @@ public class ObserverAdded {
         this.observer = observer;
     }
 
-    /**
-     *
-     * @return Object
-     */
     public Object getObserver() {
         return observer;
     }
