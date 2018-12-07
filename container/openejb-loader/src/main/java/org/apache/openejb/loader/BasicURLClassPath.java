@@ -28,10 +28,6 @@ import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
 
-    /**
-     *
-     * @return ClassLoader
-     */
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override

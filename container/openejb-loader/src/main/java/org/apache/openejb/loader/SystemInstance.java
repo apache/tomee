@@ -318,7 +318,7 @@ public final class SystemInstance {
         return removed;
     }
 
-    private static final AtomicReference<SystemInstance> SYSTEM = new AtomicReference<SystemInstance>();
+    private static final AtomicReference<SystemInstance> SYSTEM = new AtomicReference<>();
 
     static {
         reset();
