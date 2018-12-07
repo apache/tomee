@@ -237,12 +237,12 @@ public class ServiceUtils {
         String providerName = null;
         String serviceName = null;
 
-        if (id.indexOf("#") != -1) {
-            providerName = id.substring(0, id.indexOf("#"));
-            serviceName = id.substring(id.indexOf("#") + 1);
-        } else if (id.indexOf(":") != -1) {
-            providerName = id.substring(0, id.indexOf(":"));
-            serviceName = id.substring(id.indexOf(":") + 1);
+        if (id.indexOf('#') != -1) {
+            providerName = id.substring(0, id.indexOf('#'));
+            serviceName = id.substring(id.indexOf('#') + 1);
+        } else if (id.indexOf(':') != -1) {
+            providerName = id.substring(0, id.indexOf(':'));
+            serviceName = id.substring(id.indexOf(':') + 1);
         } else {
             providerName = currentDefaultProviderUrl(DEFAULT_PROVIDER_URL);
             serviceName = id;

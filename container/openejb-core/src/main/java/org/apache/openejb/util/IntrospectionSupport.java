@@ -262,7 +262,7 @@ public class IntrospectionSupport {
 
     public static String simpleName(final Class clazz) {
         String name = clazz.getName();
-        final int p = name.lastIndexOf(".");
+        final int p = name.lastIndexOf('.');
         if (p >= 0) {
             name = name.substring(p + 1);
         }

@@ -162,7 +162,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         expr = expr.replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
 
 
-        if (expr.length() > 1 && expr.indexOf(",") > 0) {
+        if (expr.length() > 1 && expr.indexOf(',') > 0) {
 
             final String[] expressions = expr.split(",");
 

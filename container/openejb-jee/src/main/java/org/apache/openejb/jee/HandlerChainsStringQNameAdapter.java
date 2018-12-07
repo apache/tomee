@@ -37,7 +37,7 @@ public class HandlerChainsStringQNameAdapter extends XmlAdapter<String, QName> {
         if (value == null || value.isEmpty()) {
             return new QName(XMLConstants.NULL_NS_URI, "");
         }
-        final int colonIndex = value.indexOf(":");
+        final int colonIndex = value.indexOf(':');
         if (colonIndex == -1) {
             return new QName(XMLConstants.NULL_NS_URI, value);
         }
