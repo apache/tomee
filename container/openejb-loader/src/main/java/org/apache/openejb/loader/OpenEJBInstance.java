@@ -25,12 +25,21 @@ public class OpenEJBInstance {
     private final Method init;
     private final Method isInitialized;
 
+    /**
+     *
+     * @throws Exception
+     */
     public OpenEJBInstance() throws Exception {
         final Class<?> openejb = loadOpenEJBClass();
         this.init = openejb.getMethod("init", Properties.class);
         this.isInitialized = openejb.getMethod("isInitialized");
     }
 
+    /**
+     *
+     * @param props Properties
+     * @throws Exception
+     */
     public void init(final Properties props) throws Exception {
         try {
             init.invoke(null, props);
@@ -44,6 +53,10 @@ public class OpenEJBInstance {
         }
     }
 
+    /**
+     *
+     * @return boolean
+     */
     public boolean isInitialized() {
         try {
             return (Boolean) isInitialized.invoke(null);

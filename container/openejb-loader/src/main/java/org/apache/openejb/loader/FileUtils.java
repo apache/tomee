@@ -34,9 +34,9 @@ public class FileUtils {
 
     /**
      *
-     * @param homeDir
-     * @param defaultDir
-     * @param env
+     * @param homeDir String
+     * @param defaultDir String
+     * @param env Hashtable
      */
     @SuppressWarnings("UseOfObsoleteCollectionType")
     public FileUtils(final String homeDir, final String defaultDir, final Hashtable env) {
@@ -67,7 +67,7 @@ public class FileUtils {
 
     /**
      *
-     * @param path
+     * @param path String
      * @return File
      * @throws IOException
      */
@@ -86,8 +86,8 @@ public class FileUtils {
 
     /**
      *
-     * @param path
-     * @param create
+     * @param path String
+     * @param create boolean
      * @return File
      * @throws IOException
      */
@@ -121,7 +121,7 @@ public class FileUtils {
 
     /**
      *
-     * @param dir
+     * @param dir File
      */
     public void setDirectory(final File dir) {
         this.home = dir;
@@ -129,7 +129,7 @@ public class FileUtils {
 
     /**
      *
-     * @param path
+     * @param path String
      * @return File
      * @throws IOException
      */
@@ -139,8 +139,8 @@ public class FileUtils {
 
     /**
      *
-     * @param path
-     * @param validate
+     * @param path String
+     * @param validate boolean
      * @return File
      * @throws IOException
      */
@@ -162,7 +162,7 @@ public class FileUtils {
 
     /**
      *
-     * @param pathPrefix
+     * @param pathPrefix String
      * @return File
      * @throws IOException
      */

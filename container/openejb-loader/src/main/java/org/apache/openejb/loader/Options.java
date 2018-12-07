@@ -73,37 +73,76 @@ public class Options {
     private final Options parent;
     private final TomEEPropertyAdapter properties;
 
+    /**
+     *
+     * @param properties Properties
+     */
     public Options(final Properties properties) {
         this(properties, new NullOptions());
     }
 
+    /**
+     *
+     * @param properties Properties
+     * @param parent Options
+     */
     public Options(final Properties properties, final Options parent) {
         this.parent = parent;
         this.properties = new TomEEPropertyAdapter(properties);
     }
 
+    /**
+     *
+     * @return Properties
+     */
     public Properties getProperties() {
         return properties.delegate;
     }
 
+    /**
+     *
+     * @param logger Log
+     */
     public void setLogger(final Log logger) {
         parent.setLogger(logger);
     }
 
+    /**
+     *
+     * @return Log
+     */
     public Log getLogger() {
         return parent.getLogger();
     }
 
+    /**
+     *
+     * @param property String
+     * @return boolean
+     */
     public boolean has(final String property) {
         return properties.containsKey(property) || parent.has(property);
     }
 
+    /**
+     *
+     * @param property String
+     * @param defaultValue String
+     * @return String
+     */
     public String get(final String property, final String defaultValue) {
         final String value = properties.getProperty(property);
 
         return value != null ? log(property, value) : parent.get(property, defaultValue);
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param defaultValue T
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public <T> T get(final String property, final T defaultValue) {
         if (defaultValue == null) {
@@ -128,6 +167,12 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param property String
+     * @param defaultValue int
+     * @return int
+     */
     public int get(final String property, final int defaultValue) {
         final String value = properties.getProperty(property);
 
@@ -143,6 +188,12 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param property String
+     * @param defaultValue long
+     * @return long
+     */
     public long get(final String property, final long defaultValue) {
         final String value = properties.getProperty(property);
 
@@ -158,6 +209,12 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param property String
+     * @param defaultValue boolean
+     * @return boolean
+     */
     public boolean get(final String property, final boolean defaultValue) {
         final String value = properties.getProperty(property);
 
@@ -173,6 +230,12 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param property String
+     * @param defaultValue
+     * @return
+     */
     public Class<?> get(final String property, final Class<?> defaultValue) {
         final String className = properties.getProperty(property);
 
@@ -189,6 +252,13 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param defaultValue
+     * @return
+     */
     public <T extends Enum<T>> T get(final String property, final T defaultValue) {
         final String value = properties.getProperty(property);
 
@@ -210,11 +280,25 @@ public class Options {
         }
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param defaultValue T...
+     * @return
+     */
     public <T extends Enum<T>> Set<T> getAll(final String property, final T... defaultValue) {
         final EnumSet<T> defaults = EnumSet.copyOf(Arrays.asList(defaultValue));
         return getAll(property, defaults);
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param defaultValue
+     * @return
+     */
     public <T extends Enum<T>> Set<T> getAll(final String property, final Set<T> defaultValue) {
         final Class<T> enumType;
         try {
@@ -227,6 +311,13 @@ public class Options {
         return getAll(property, defaultValue, enumType);
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param enumType
+     * @return
+     */
     public <T extends Enum<T>> Set<T> getAll(final String property, final Class<T> enumType) {
         return getAll(property, Collections.EMPTY_SET, enumType);
     }
@@ -310,6 +401,13 @@ public class Options {
         return value;
     }
 
+    /**
+     *
+     * @param <T>
+     * @param property String
+     * @param value
+     * @return
+     */
     public <T extends Enum<T>> Set<T> logAll(final String property, final Set<T> value) {
         if (!getLogger().isInfoEnabled()) {
             return value;
@@ -320,7 +418,12 @@ public class Options {
         return value;
     }
 
-
+    /**
+     *
+     * @param <T>
+     * @param items
+     * @return
+     */
     protected static <T extends Enum<T>> String[] lowercase(final T... items) {
         final String[] values = new String[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -329,6 +432,12 @@ public class Options {
         return values;
     }
 
+    /**
+     *
+     * @param <T>
+     * @param items
+     * @return
+     */
     protected static <T extends Enum<T>> String[] lowercase(final Collection<T> items) {
         final String[] values = new String[items.size()];
         int i = 0;
@@ -338,16 +447,32 @@ public class Options {
         return values;
     }
 
+    /**
+     *
+     * @param <V>
+     * @param v
+     * @return
+     */
     protected static <V extends Enum<V>> String possibleValues(final V v) {
         final Class<? extends Enum> enumType = v.getClass();
         return possibleValues(enumType);
     }
 
+    /**
+     *
+     * @param enumType
+     * @return
+     */
     protected static String possibleValues(final Class<? extends Enum> enumType) {
         return join(", ", lowercase(enumType.getEnumConstants()));
     }
 
-
+    /**
+     *
+     * @param delimiter String
+     * @param collection Object...
+     * @return String
+     */
     public static String join(final String delimiter, final Object... collection) {
         final StringBuilder sb = new StringBuilder();
         for (final Object obj : collection) {
@@ -422,7 +547,7 @@ public class Options {
 
                 final String defaultValues;
 
-                if (defaults.size() == 0) {
+                if (defaults.isEmpty()) {
                     defaultValues = "NONE";
                 } else if (defaults.size() == enumType.getEnumConstants().length) {
                     defaultValues = "ALL";
@@ -469,10 +594,19 @@ public class Options {
         public static final int OPENEJB_PREFIX_LENGHT = "openejb.".length();
         private final Properties delegate;
 
+        /**
+         *
+         * @param properties Properties
+         */
         public TomEEPropertyAdapter(final Properties properties) {
             this.delegate = properties;
         }
 
+        /**
+         *
+         * @param key String
+         * @return String
+         */
         public String getProperty(final String key) {
             String value = delegate.getProperty(key);
 
@@ -483,6 +617,11 @@ public class Options {
             return value;
         }
 
+        /**
+         *
+         * @param key String
+         * @return boolean
+         */
         public boolean containsKey(final String key) {
             return delegate.containsKey(key)
                 || delegate.containsKey(getTomeeKey(key));
@@ -514,41 +653,81 @@ public class Options {
     }
 
     public static class NullLog implements Log {
+
+        /**
+         *
+         * @return boolean
+         */
         @Override
         public boolean isDebugEnabled() {
             return false;
         }
 
+        /**
+         *
+         * @return boolean
+         */
         @Override
         public boolean isInfoEnabled() {
             return false;
         }
 
+        /**
+         *
+         * @return boolean
+         */
         @Override
         public boolean isWarningEnabled() {
             return false;
         }
 
+        /**
+         *
+         * @param message String
+         * @param t Throwable
+         */
         @Override
         public void warning(final String message, final Throwable t) {
         }
 
+        /**
+         *
+         * @param message String
+         */
         @Override
         public void warning(final String message) {
         }
 
+        /**
+         *
+         * @param message String
+         * @param t Throwable
+         */
         @Override
         public void debug(final String message, final Throwable t) {
         }
 
+        /**
+         *
+         * @param message String
+         */
         @Override
         public void debug(final String message) {
         }
 
+        /**
+         *
+         * @param message String
+         * @param t Throwable
+         */
         @Override
         public void info(final String message, final Throwable t) {
         }
 
+        /**
+         *
+         * @param message String
+         */
         @Override
         public void info(final String message) {
         }

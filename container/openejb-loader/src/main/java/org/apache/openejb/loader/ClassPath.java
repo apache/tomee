@@ -23,7 +23,17 @@ public interface ClassPath {
 
     ClassLoader getClassLoader();
 
+    /**
+     *
+     * @param dir File
+     * @throws Exception
+     */
     void addJarsToPath(File dir) throws Exception;
 
+    /**
+     *
+     * @param dir URL
+     * @throws Exception
+     */
     void addJarToPath(URL dir) throws Exception;
 }

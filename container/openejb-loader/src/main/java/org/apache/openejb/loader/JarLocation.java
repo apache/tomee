@@ -26,14 +26,29 @@ import java.net.URL;
  */
 public class JarLocation {
 
+    /**
+     *
+     * @return File
+     */
     public static File get() {
         return jarLocation(JarLocation.class);
     }
 
+    /**
+     *
+     * @param resourceName String
+     * @return File
+     */
     public static File jarFromResource(final String resourceName) {
         return jarFromResource(Thread.currentThread().getContextClassLoader(), resourceName);
     }
 
+    /**
+     *
+     * @param loader ClassLoader
+     * @param resourceName String
+     * @return File
+     */
     public static File jarFromResource(final ClassLoader loader, final String resourceName) {
         try {
             URL url = loader.getResource(resourceName);
@@ -68,6 +83,11 @@ public class JarLocation {
         }
     }
 
+    /**
+     *
+     * @param clazz Class
+     * @return File
+     */
     public static File jarLocation(final Class clazz) {
         try {
             final String classFileName = clazz.getName().replace(".", "/") + ".class";
@@ -80,13 +100,23 @@ public class JarLocation {
         }
     }
 
+    /**
+     *
+     * @param classFileName String
+     * @param url URL
+     * @return File
+     */
     public static File toFile(final String classFileName, final URL url) {
         String path = url.getFile();
         path = path.substring(0, path.length() - classFileName.length());
         return new File(decode(path));
     }
 
-
+    /**
+     *
+     * @param fileName String
+     * @return String
+     */
     public static String decode(final String fileName) {
         if (fileName.indexOf('%') == -1) {
             return fileName;
