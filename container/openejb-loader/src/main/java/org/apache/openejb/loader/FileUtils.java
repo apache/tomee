@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class FileUtils {
 
-    private static final ThreadLocalRandom _random = ThreadLocalRandom.current();
+    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
     private File home;
 
@@ -166,7 +166,7 @@ public class FileUtils {
     public static File createTempDirectory(final String pathPrefix) throws IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
 
-            final String path = pathPrefix + _random.nextLong();
+            final String path = pathPrefix + RANDOM.nextLong();
             final File tmpDir = new File(path);
 
             if (!tmpDir.exists() && tmpDir.mkdirs()) {

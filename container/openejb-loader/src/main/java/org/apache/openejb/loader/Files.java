@@ -357,7 +357,7 @@ public class Files {
 
 
     // Shutdown hook for recursive DELETE on tmp directories
-    static final List<String> DELETE = new ArrayList<String>();
+    private static final List<String> DELETE = new ArrayList<>();
 
     static {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
