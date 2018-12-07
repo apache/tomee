@@ -364,7 +364,7 @@ public class Options {
      * @return
      */
     public static <T extends Enum<T>> T valueOf(final Class<T> enumType, final String name) {
-        final Map<String, T> map = new HashMap<String, T>();
+        final Map<String, T> map = new HashMap<>();
         for (final T t : enumType.getEnumConstants()) {
             map.put(t.name().toUpperCase(), t);
         }

@@ -43,7 +43,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  * @version $Rev$ $Date$
  */
 public class Files {
-    private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
+    private static final Map<String, MessageDigest> DIGESTS = new HashMap<>();
     private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
     /**

@@ -51,7 +51,7 @@ public class ObserverManager {
     };
 
     // lazy init since it is used in SystemInstance
-    private static final AtomicReference<Logger> LOGGER = new AtomicReference<Logger>();
+    private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();
     private final Set<Observer> observers = new LinkedHashSet<>();
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
