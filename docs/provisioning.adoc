@@ -45,7 +45,7 @@ JVM ones.
 
 Example:
 
-[source,java]
+[source,properties]
 ----
 http://atos.net/foo/bar/my-http-file.jar 
 ----
@@ -59,14 +59,14 @@ maven informations to deploy your application.
 
 The location should follow:
 
-[source,java]
+[source,properties]
 ----
 mvn:groupId/artifactId[/[version]/[type]]
 ----
 
 or
 
-[source,java]
+[source,properties]
 ----
 mvn:groupId:artifactId[:[version]:[type]]
 ----
@@ -75,7 +75,7 @@ Note: classifier are supported (through version field)
 
 For instance you can use:
 
-[source,java]
+[source,properties]
 ----
 mvn:net.atos.xa/my-application/1.0.0/war
 ----
@@ -96,7 +96,7 @@ a look to other tip pages).
 Another way to install it with tomee is to edit or create the file
 /conf/provisioning.properties and add the line:
 
-[source,java]
+[source,properties]
 ----
 zip=http://repo1.maven.org/maven2/org/apache/openejb/openejb-provisionning/<version>/openejb-provisionning-<version>.zip
 ----

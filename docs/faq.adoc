@@ -76,7 +76,7 @@ your test case do this:
 
 "org.apache.openejb.client.LocalInitialContextFactory");
 
-[source,java]
+[source,properties]
 ----
        URL config =
 ----

@@ -92,7 +92,7 @@ source of logging information.
 For your purposes, here are the contents of the default
 embedded.logging.properties file contained in OpenEJB 3.1.1
 
-[source,java]
+[source,properties]
 ----
 log4j.rootLogger           = fatal,C
 log4j.category.OpenEJB         = warn

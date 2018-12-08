@@ -18,7 +18,7 @@ you don't want them to be started.
 In TomEE the transport is the Tomcat one. It uses a servlet brought by
 TomEE webapp. Here is the servlet as defined in TomEE webapp:
 
-[source,java]
+[source,xml]
 ----
 <servlet>
     <servlet-name>ServerServlet</servlet-name>
@@ -104,7 +104,7 @@ default for `tomee.serialization.class.blacklist` is `*` since TomEE
 If an EJB request fails because a class is not whitelisted you will find
 this log entry:
 
-[source,java]
+[source,properties]
 ----
 WARN - "null OEJP/4.7" FAIL "Security error - foo.Bar is not whitelisted as deserializable, prevented before loading it." - Debug for StackTrace
 ----
@@ -116,7 +116,7 @@ on server side as well as on client side.
 If you only want to support serialization of the classes `foo.Bar` and
 `foo.Baz` you can configure the properties like this:
 
-[source,java]
+[source,properties]
 ----
 tomee.serialization.class.whitelist = foo.Bar,foo.Baz
 tomee.serialization.class.blacklist = -
@@ -125,7 +125,7 @@ tomee.serialization.class.blacklist = -
 If you trust all classes in the package `foo` define the properties like
 this:
 
-[source,java]
+[source,properties]
 ----
 tomee.serialization.class.whitelist = foo.
 tomee.serialization.class.blacklist = -
@@ -137,7 +137,7 @@ classes in the package `foo2` otherwise.)
 If you trust all classes in the package `foo` except the class `foo.Bar`
 you have to configure the properties like this:
 
-[source,java]
+[source,properties]
 ----
 tomee.serialization.class.whitelist = foo.
 tomee.serialization.class.blacklist = foo.Bar
@@ -153,7 +153,7 @@ applications runs on TomEE 1.7.3 but does not on TomEE 1.7.4 showing the
 aforementioned log message, you can define the configuration so that the
 serialization will work in the same way as it did with TomEE 1.7.3:
 
-[source,java]
+[source,properties]
 ----
 tomee.serialization.class.whitelist = 
 tomee.serialization.class.blacklist = org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process
@@ -184,7 +184,7 @@ TomEE 1.7.2 did not have any kind of blacklist when deserializing
 objects over Ejbd. If you want to revert to this behavior you can simply
 deactivate the blacklist with this configuration:
 
-[source,java]
+[source,properties]
 ----
 tomee.serialization.class.whitelist =
 tomee.serialization.class.blacklist = -

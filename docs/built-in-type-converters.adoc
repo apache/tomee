@@ -76,7 +76,7 @@ public class MyBean {
 
 Works with an ejb-jar.xml as follows:
 
-[source,java]
+[source,xml]
 ----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0"
 metadata-complete="false">
@@ -95,7 +95,7 @@ metadata-complete="false">
 
 Or with an env-entries.properties file as follows:
 
-[source,java]
+[source,properties]
 ----
 org.superbiz.foo.MyBean/myDate = 2008-04-19
 ----

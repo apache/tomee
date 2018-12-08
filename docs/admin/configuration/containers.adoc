@@ -38,7 +38,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=STATELESS
 Foo.AccessTimeout = 30 seconds
@@ -335,7 +335,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=STATEFUL
 Foo.AccessTimeout = 30 seconds
@@ -431,7 +431,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=SINGLETON
 Foo.AccessTimeout = 30 seconds
@@ -475,7 +475,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=MESSAGE
 Foo.ResourceAdapter = Default JMS Resource Adapter
@@ -522,7 +522,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=MANAGED
 ----
@@ -543,7 +543,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=CMP_ENTITY
 Foo.CmpEngineFactory = org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
@@ -571,7 +571,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Container?type=BMP_ENTITY
 Foo.PoolSize = 10

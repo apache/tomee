@@ -12,7 +12,7 @@ javax.mail.Session.getDefaultInstance(Properties props).
 
 Here might be some example properties.
 
-[source,java]
+[source,xml]
 ----
 <Resource id="SuperbizMail" type="javax.mail.Session">
    mail.smtp.host=mail.superbiz.org
@@ -38,7 +38,7 @@ values before attempting to use them.
 If you wanted to do a System property or InitialContext property
 override of the above example mail session, you could do so like this:
 
-[source,java]
+[source,bash]
 ----
 java ... -DSuperbizMail.mail.smtp.host=localhost
 ----

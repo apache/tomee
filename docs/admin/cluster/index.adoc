@@ -37,7 +37,7 @@ In this way the issues with UDP being unordered and unreliable melt away as stat
 
 When you boot the server there should be a conf/multicast.properties file containing:
 
-[source,bash]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MulticastDiscoveryAgent
 bind        = 239.255.2.3
@@ -111,7 +111,7 @@ MultiPulse is only useful in network scenarios where both client and server can 
 
 After you boot the server for the first time the default configuration will create the file conf/conf.d/multipulse.properties containing:
 
-[source,bash]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MulticastPulseAgent
 bind        = 239.255.2.3
@@ -128,7 +128,7 @@ The group setting can be changed to further group/cluster servers that may use t
 
 The next step is to ensure that the advertised services are configured for discovery. Edit the ejbd.properties file (and any other enabled services such as http, etc.) and ensure that the discovery option is set to a value that remote clients will be able to resolve.
 
-[source,bash]
+[source,properties]
 ----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 0.0.0.0
@@ -185,7 +185,7 @@ The entire process is essentially the art of using a statically maintained list 
 
 In the server this list can be specified via the conf/multipoint.properties file like so:
 
-[source,bash]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MultipointDiscoveryAgent
 bind        = 127.0.0.1

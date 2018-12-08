@@ -13,7 +13,7 @@ like deployed while in an embedded mode.
 Simplify the issue of searching for annotated applications by adding an
 ejb-jar.xml like this to your app:
 
-[source,java]
+[source,xml]
 ----
 <ejb-jar/>
 ----
@@ -68,7 +68,7 @@ _openejb.exclude-include.order_ properties if you wish to work in the
 opposite direction or change the processing order. The default values
 for the properties are as follows:
 
-[source,java]
+[source,properties]
 ----
   openejb.exclude-include.order=include-exclude //Defines the processing order
    openejb.deployments.classpath.include=""      //Include nothing
@@ -100,7 +100,7 @@ for your ejb module is in the classpath, a little debug code like this
 in your test setup will help you see what OpenEJB sees (which may be
 nothing):
 
-[source,java]
+[source,properties]
 ----
 Enumeration<URL> ejbJars =
 this.getClass().getClassLoader().getResources("META-INF/ejb-jar.xml");

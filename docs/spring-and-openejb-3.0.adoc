@@ -49,7 +49,7 @@ public class OpenEjbFactoryBean implements org.springframework.beans.factory.Fac
 
 And include that at the top of your spring xml file as follows:
 
-[source,java]
+[source,xml]
 ----
 <bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
   <property name="jndiEnvironment">
@@ -162,7 +162,7 @@ public class OrangeUnitFactoryBean implements org.springframework.beans.factory.
 The factory bean would then be declared in your spring xml file as
 follows:
 
-[source,java]
+[source,xml]
 ----
 <bean id="OrangeUnit" class="org.acme.OrangeUnitFactoryBean">
   <property name="context" ref="OpenEjbContext">
@@ -187,7 +187,7 @@ public class SomePojo {
 
 In the spring xml
 
-[source,java]
+[source,xml]
 ----
 <bean id="SomePojo" class="org.acme.SomePojo">
   <property name="entityManager" ref="OrangeUnit">
@@ -199,7 +199,7 @@ spring xml:
 
 Spring bean definitions combined
 
-[source,java]
+[source,xml]
 ----
 <bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
   <property name="jndiEnvironment">

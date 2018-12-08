@@ -26,7 +26,7 @@ going to do a better job at ensuring reliability and ordering.
 When you boot the server there should be a `conf/multicast.properties`
 file containing:
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MulticastDiscoveryAgent
 bind        = 239.255.2.3

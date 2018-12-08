@@ -10,7 +10,7 @@ To start using ApplicationComposer you need to add some dependencies.
 
 The minimum required one is `openejb-core`:
 
-[source,java]
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.openejb</groupId>
@@ -22,7 +22,7 @@ The minimum required one is `openejb-core`:
 If you need JAXRS services you'll add (or replace thanks to transitivity
 of maven) `openejb-cxf-rs`:
 
-[source,java]
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.openejb</groupId>
@@ -34,7 +34,7 @@ of maven) `openejb-cxf-rs`:
 If you need JAXWS services you'll add (or replace thanks to transitivity
 of maven) `openejb-cxf`:
 
-[source,java]
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.openejb</groupId>

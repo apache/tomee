@@ -213,7 +213,7 @@ needed.
 
 Singletons can be declared in the ejb-jar.xml as follows:
 
-[source,java]
+[source,xml]
 ----
 <ejb-jar>
   <enterprise-beans>

@@ -140,7 +140,7 @@ container=Default Stateless Container) INFO - Deployed
 Application(path=classpath.ear) Tests run: 2, Failures: 0, Errors: 0,
 Skipped: 0, Time elapsed: 1.244 sec
 
-[source,java]
+[source,properties]
 ----
 Results :
 

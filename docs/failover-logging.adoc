@@ -6,14 +6,14 @@
 Setting the following logging category to "debug" will open up some new
 logging information.
 
-[source,java]
+[source,properties]
 ----
 log4j.category.OpenEJB.server.discovery = debug
 ----
 
 Or more specifically as:
 
-[source,java]
+[source,properties]
 ----
 log4j.category.OpenEJB.server.discovery.multipoint = debug
 log4j.category.OpenEJB.server.discovery.multicast = debug
@@ -22,7 +22,7 @@ log4j.category.OpenEJB.server.discovery.multicast = debug
 The nature of the debug output is to display all configuration
 information at startup:
 
-[source,java]
+[source,properties]
 ----
 DEBUG - Using default 'heart_rate=500'
 DEBUG - Using default 'max_missed_heartbeats=10'
@@ -35,7 +35,7 @@ INFO - Created Tracker{group='default', groupPrefix='default:', heartRate=500, m
 
 Changing the configuration should reflect in the logging as follows:
 
-[source,java]
+[source,properties]
 ----
 INFO - Using 'heart_rate=200'
 INFO - Using 'max_missed_heartbeats=2'
@@ -48,7 +48,7 @@ INFO - Created Tracker{group='default', groupPrefix='default:', heartRate=200, m
 
 As well as any events at runtime:
 
-[source,java]
+[source,properties]
 ----
 DEBUG - Expired Service{uri=green://localhost:0, broadcastString='default:green://localhost:0&#39;} Timeout{lastSeen=-5005, threshold=5000}
 

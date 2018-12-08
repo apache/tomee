@@ -12,7 +12,7 @@
 To include a single jar by name, just declare a 'Deployments' element
 with a 'jar' attribute pointing to the jar file on the file system.
 
-[source,java]
+[source,xml]
 ----
 <openejb>
 ...
@@ -34,7 +34,7 @@ To point to a directory that contains several jar files that OpenEJB
 should load, simply declare a 'Deployments' element with a 'dir'
 attribute pointing to the directory containing the jar files.
 
-[source,java]
+[source,xml]
 ----
 <openejb>
 ...
@@ -82,7 +82,7 @@ For example, if you have a directory structure like this:
 Then you would delcare a 'Deployments' element with the 'dir' attribute
 set to 'C:' as shown below.
 
-[source,java]
+[source,xml]
 ----
 <openejb>
 ...
@@ -105,7 +105,7 @@ is an incredible asset.
 If your ejbs were loaded successfully you should see entries like the
 following (1.x and higher only):
 
-[source,java]
+[source,properties]
 ----
 INFO :  Loaded EJBs from
 /usr/local/openejb-1.0-beta1/beans/openejb-itests-beans.jar
@@ -116,7 +116,7 @@ INFO :  Loaded EJBs from
 If your ejbs failed to load, you will see an entry similar to the
 following.
 
-[source,java]
+[source,properties]
 ----
 WARN :  Jar not loaded. /usr/local/openejb-1.0-beta1/beans/helloworld.jar.
 Jar failed validation.  Use the validation tool for more details
@@ -127,7 +127,7 @@ in the log file at startup. The Deployment ID listed is the JNDI name
 used to lookup the ejb from a client of the Local or Remote Servers. The
 beans listed below are from our test suite.
 
-[source,java]
+[source,properties]
 ----
 DEBUG:  Deployments   : 19
 DEBUG:  Type        Deployment ID

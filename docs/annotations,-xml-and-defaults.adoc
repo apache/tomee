@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-[source,java]
+[source,xml]
 ----
           <p>The following is a list of all annotations and their attributes, the xml tags that correspond to them (for overriding), and what the default values are when left unspecified.</p>
 ----
@@ -16,7 +16,7 @@ xml element(s)
 
 default value
 
-[source,java]
+[source,xml]
 ----
         </div>
 ----

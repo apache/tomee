@@ -43,7 +43,7 @@ public class MyBean implements MyInterface {
 The above @PersistenceUnit annotation usage is 100% equivalent to the
 following xml.
 
-[source,java]
+[source,xml]
 ----
 <persistence-unit-ref>
     <persistence-unit-ref-name>org.superbiz.calculator.MyBean/myBarEntityManagerFactory</persistence-unit-ref-name>
@@ -85,7 +85,7 @@ public class MyBean implements MyInterface {
 The above @PersistenceUnit annotation usage is 100% equivalent to the
 following xml.
 
-[source,java]
+[source,xml]
 ----
 <persistence-unit-ref>
     <persistence-unit-ref-name>myFooEntityManagerFactory</persistence-unit-ref-name>

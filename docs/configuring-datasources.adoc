@@ -21,7 +21,7 @@ For example, this annotation in your bean:
 
 Would map to a Resource declared in your openejb.xml as follows:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDerbyDatasource" type="javax.sql.DataSource">
  . . . .
@@ -31,7 +31,7 @@ Would map to a Resource declared in your openejb.xml as follows:
 Note that in the xml element, the _type_ value of _javax.sql.DataSource_
 can abbreviated to just _DataSource_ as follows:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDerbyDatasource" type="DataSource">
  . . . .
@@ -41,7 +41,7 @@ can abbreviated to just _DataSource_ as follows:
 It is also possible to specify the path to the driver jar file using a
 classpath attribute like so:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDerbyDatasource" type="DataSource" classpath="/path/to/driver.jar">
  . . . .
@@ -50,7 +50,7 @@ classpath attribute like so:
 
 ...Or in a http://maven.apache.org/[Maven] environment like so:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDerbyDatasource" type="DataSource" classpath="mvn:org.apache.derby:derby:10.10.1.1">
  . . . .
@@ -80,7 +80,7 @@ link:dynamic-datasource.html[Dynamic Datasource] for more details.
 
 === Example 1
 
-[source,java]
+[source,xml]
 ----
 <Resource id="Default JDBC Database" type="DataSource">
    . . . . .
@@ -92,7 +92,7 @@ Database_
 
 === Example 2
 
-[source,java]
+[source,xml]
 ----
 <Resource id="Derby Database"  type="DataSource">
   . . . . .
@@ -121,7 +121,7 @@ example of Derby.
 
 With a Resource declaration in your openejb.xml like this:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDerbyDatabase"  type="DataSource">
   . . . . .
@@ -174,7 +174,7 @@ public class FooBean {
 
 _OR_
 
-[source,java]
+[source,xml]
 ----
 <resource-ref>
   <res-ref-name>myDerbyDatabase</res-ref-name>
@@ -184,7 +184,7 @@ _OR_
 
 _OR_
 
-[source,java]
+[source,xml]
 ----
 <resource-ref>
    <res-ref-name>jdbc/myDerbyDatabase</res-ref-name>
@@ -194,7 +194,7 @@ _OR_
 
 _OR_
 
-[source,java]
+[source,xml]
 ----
 <resource-ref>
    <res-ref-name>someOtherName</res-ref-name>

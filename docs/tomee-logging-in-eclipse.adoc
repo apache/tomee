@@ -9,7 +9,7 @@ It seems that WTP doesn't manage correctly Tomcat logging configuration
 (which needs to be done through system properties). A quick workaround
 is to add these properties manually:
 
-[source,java]
+[source,properties]
 ----
 -Djava.util.logging.config.file="<tomee>/conf/logging.properties"
 -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager

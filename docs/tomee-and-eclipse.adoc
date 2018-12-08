@@ -110,7 +110,7 @@ hot deployment alter this value to true and restart Tomee.
 
 This is the relevant snippet of the web.xml file.
 
-[source,java]
+[source,xml]
 ----
 <servlet>
     <servlet-name>jsp</servlet-name>
@@ -130,7 +130,7 @@ It seems that WTP doesn't manage correctly Tomcat logging configuration
 (which needs to be done through system properties). A quick workaround
 is to add these properties manually:
 
-[source,java]
+[source,properties]
 ----
 -Djava.util.logging.config.file="<tomee>/conf/logging.properties"
 -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager

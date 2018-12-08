@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-[source,java]
+[source,xml]
 ----
           <p><a name="ContainersandResources-containers"></a></p>
 ----

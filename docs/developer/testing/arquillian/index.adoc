@@ -184,7 +184,7 @@ IMPORTANT: if a server is already started on host:port then it will be used inst
 
 To use a custom instance with arquillian ensure to have ejbd and tomee webapp activated. A way is to have in `conf/system.properties` these entries:
 
-[source]
+[source,properties]
 ----
 tomee.remote.support=true
 openejb.system.apps=true

@@ -37,7 +37,7 @@ public class MyEjbRemoteRefBean implements MyBeanInterface {
 
 The above @EJB annotation usage is 100% equivalent to the following xml.
 
-[source,java]
+[source,xml]
 ----
 <ejb-ref>
     <ejb-ref-name>myFooEjb</ejb-ref-name>

@@ -10,7 +10,7 @@ various persistence providers out there.
 
 # TopLink
 
-[source,java]
+[source,xml]
 ----
 <properties>
  
@@ -24,7 +24,7 @@ various persistence providers out there.
 
 # OpenJPA
 
-[source,java]
+[source,xml]
 ----
 <properties>
   <!--http://openjpa.apache.org/faq.html-->
@@ -41,7 +41,7 @@ various persistence providers out there.
 
 # Hibernate
 
-[source,java]
+[source,xml]
 ----
 <properties>
   <property name="hibernate.hbm2ddl.auto" value="create-drop"/>

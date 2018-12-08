@@ -10,7 +10,7 @@ A MessageDrivenContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Container id="myMessageDrivenContainer" type="MESSAGE">
     activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
@@ -26,7 +26,7 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myMessageDrivenContainer = new://Container?type=MESSAGE
 myMessageDrivenContainer.activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec

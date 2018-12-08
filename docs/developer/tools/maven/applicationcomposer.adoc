@@ -14,7 +14,7 @@ IMPORTANT: the dependencies are retrieved with `MavenProject.getArtifacts()` whi
 
 === Run goal configuration
 
-[source]
+[source,bash]
 ----
 mvn process-classes applicationcomposer:run -DskipTests
 ----
@@ -30,7 +30,7 @@ mvn process-classes applicationcomposer:run -DskipTests
 
 === Zip goal configuration
 
-[source]
+[source,bash]
 ----
 mvn process-classes applicationcomposer:zip -DskipTests
 ----

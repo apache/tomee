@@ -13,7 +13,7 @@ before you start reading:
 
 == Default JNDI name The default JNDI name is in the following format:
 
-[source,java]
+[source,json]
 ----
 {deploymentId}{interfaceType.annotationName}
 ----
@@ -152,7 +152,7 @@ InitialContext properties when embedded.
 It's possible to set the openejb.jndiname.format for an ejb-jar jar in a
 META-INF/openejb-jar.xml file as follows:
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <properties>
@@ -167,7 +167,7 @@ META-INF/openejb-jar.xml file as follows:
 The following sets the name specifically for the interface
 org.superbiz.Foo.
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -178,7 +178,7 @@ org.superbiz.Foo.
 
 Or more generally...
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -189,7 +189,7 @@ Or more generally...
 
 Or more generally still...
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -200,7 +200,7 @@ Or more generally still...
 
 The 'name' attribute can still use templates if it likes, such as:
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -226,7 +226,7 @@ intention with these examples is to show the various ways you can
 isolate specific interfaces or types of interfaces to gain more specific
 control on how they are named.
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -242,7 +242,7 @@ control on how they are named.
 
 Or
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -263,7 +263,7 @@ Or
 
 Or
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
@@ -279,7 +279,7 @@ Or
 
 or
 
-[source,java]
+[source,xml]
 ----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">

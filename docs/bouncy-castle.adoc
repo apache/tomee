@@ -28,7 +28,7 @@ directory
 
 The entry to `java.security` will look something like the following:
 
-[source,java]
+[source,properties]
 ----
 security.provider.N=org.bouncycastle.jce.provider.BouncyCastleProvider
 ----

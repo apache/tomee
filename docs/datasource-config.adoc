@@ -10,7 +10,7 @@ A DataSource can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myDataSource" type="javax.sql.DataSource">
     accessToUnderlyingConnectionAllowed = false
@@ -49,7 +49,7 @@ Alternatively, a DataSource can be declared via properties in the
 `-D` properties. The properties can also be used when embedding TomEE
 via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myDataSource = new://Resource?type=javax.sql.DataSource
 myDataSource.accessToUnderlyingConnectionAllowed = false
@@ -473,7 +473,7 @@ XaDataSource can be defined as a standard resource using `class-name`.
 
 First solution is to define as `JdbcDriver` an XADataSource:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myXaDs" type="DataSource">
     JdbcDriver = org.foo.MyXaDataSource
@@ -499,7 +499,7 @@ factory mecanism.
 
 An alternative is to define a resource for the XaDataSource:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myXa" class-name="org.foo.MyXaDataSource">
     myXaProperty = value
@@ -508,7 +508,7 @@ An alternative is to define a resource for the XaDataSource:
 
 And then wrap it in the pool:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myXaDs" type="DataSource">
     DataSourceCreator = [dbcp|dbcp-alternative]
@@ -523,7 +523,7 @@ because it is reusing direct dbcp JTA management.
 
 For TomEE 1.7.0/1.7.1 you can need to add the property:
 
-[source,java]
+[source,properties]
 ----
  openejb.datasource.pool = true
 ----

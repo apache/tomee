@@ -161,7 +161,7 @@ public class Client {
 Open Client.java in eclipse and run it as a java application. You should
 see the following message in the console view:
 
-[source,java]
+[source,properties]
 ----
 My First Remote Stateless Session Bean
 ----

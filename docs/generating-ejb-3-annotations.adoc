@@ -16,7 +16,7 @@ of your project. If you are using Maven, you can add the following to
 your POM (you will need to update your Eclipse project using mvn
 eclipse:eclipse afterwards)
 
-[source,java]
+[source,xml]
 ----
   <dependencies>
     ...

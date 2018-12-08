@@ -10,7 +10,7 @@ A StatefulContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Container id="myStatefulContainer" type="STATEFUL">
     accessTimeout = 30 seconds
@@ -28,7 +28,7 @@ Alternatively, a StatefulContainer can be declared via properties in the
 `-D` properties. The properties can also be used when embedding TomEE
 via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myStatefulContainer = new://Container?type=STATEFUL
 myStatefulContainer.accessTimeout = 30 seconds

@@ -21,14 +21,14 @@ Note: only the first one will be used.
 Add to your `CATALINA_OPTS` the `java.security.auth.login.config` system
 property:
 
-[source,java]
+[source,properties]
 ----
 -Djava.security.auth.login.config=$CATALINA_BASE/conf/login.config
 ----
 
 Configure your realm in server.xml file
 
-[source,java]
+[source,xml]
 ----
 <?xml version='1.0' encoding='utf-8'?>
 <Server port="8005" shutdown="SHUTDOWN">
@@ -73,7 +73,7 @@ Place `users.properties` and `groups.properties` files in
 `$CATALINA_BASE/conf/` folder. `users.properties` file contains user
 name and associated password entries, ex.:
 
-[source,java]
+[source,properties]
 ----
 me=password
 tomee=tomee
@@ -81,7 +81,7 @@ tomee=tomee
 
 `groups.properties` file specifies groups and their users, ex.:
 
-[source,java]
+[source,properties]
 ----
 my-role=me
 manager-gui=tomee,me

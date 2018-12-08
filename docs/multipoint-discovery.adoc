@@ -35,7 +35,7 @@ maintained list.
 In the server this list can be specified via the
 `conf/multipoint.properties` file like so:
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MultipointDiscoveryAgent
 bind        = 127.0.0.1

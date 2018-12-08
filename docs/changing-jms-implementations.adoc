@@ -48,7 +48,7 @@ These values can be overridden in the `tomee.xml` or `openejb.xml`
 Let's say that the following file lives in the jar at
 `META-INF/org.superbiz/service-jar.xml`
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <ServiceJar>
@@ -128,7 +128,7 @@ Once this file is packed in a jar and added to the `<tomee.home>/lib` or
 "instances" of these things in your `tomee.xml` or `openejb.xml` config
 file as follows:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="My Generic Adapter" type="GenericJMSRA" provider="org.superbiz:genericra">
 AdapterProperty1 PropertyValue1
@@ -139,7 +139,7 @@ AdapterProperty2 PropertyValue2
 
 Or in properties like so:
 
-[source,java]
+[source,properties]
 ----
 myGenericAdapter = new://Resource?type=GenericJMSRA&provider=org.superbiz:genericra
 myGenericAdapter.AdapterProperty1 = PropertyValue1

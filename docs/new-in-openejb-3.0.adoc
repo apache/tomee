@@ -88,7 +88,7 @@ things that need injection that are not container controlled resources
 via a properties file and skip the need for an ejb-jar.xml and it's 5
 lines per property madness.
 
-[source,java]
+[source,properties]
 ----
 blog = http://acme.org/myblog
 birthday = locale=en_US style=MEDIUM Mar 1, 1954
@@ -145,7 +145,7 @@ Embedding ## Tomcat 6 Support ## Business locals remotable
 If you want to make business local interfaces remotable, you can set
 this property:
 
-[source,java]
+[source,properties]
 ----
   openejb.remotable.businessLocals=true
 ----

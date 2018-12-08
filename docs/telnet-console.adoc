@@ -14,7 +14,7 @@ _____________________
 $ ./bin/openejb start
 _____________________
 
-[source,java]
+[source,properties]
 ----
 OPENEJB_HOME=/Users/dblevins/Desktop/openejb-1.0
 OpenEJB 1.0    build: 20060226-1701
@@ -38,7 +38,7 @@ _______________________
 $ telnet localhost 4202
 _______________________
 
-[source,java]
+[source,properties]
 ----
 Trying ::1...
 Connected to localhost.
@@ -105,7 +105,7 @@ ____________________________
 $ cat conf/telnet.properties
 ____________________________
 
-[source,java]
+[source,properties]
 ----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1
@@ -122,7 +122,7 @@ concurrently access the Telnet service via this file.
 
 Simply edit the config file and set 'disabled' to true
 
-[source,java]
+[source,properties]
 ----
     disabled    = true
 ----
@@ -141,7 +141,7 @@ rest of the file is a direct copy of the xinet.d syntax for HBA.
 For an example to restrict access to the localhost, you could configure
 the Telnet Service like this:
 
-[source,java]
+[source,properties]
 ----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1
@@ -154,7 +154,7 @@ the Telnet Service like this:
 If you wanted to restrict access to localhost _and_ say the hosts
 192.168.1.207 and 192.168.1.16, you can simply add them to the list.
 
-[source,java]
+[source,properties]
 ----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1

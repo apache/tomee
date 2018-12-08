@@ -33,7 +33,7 @@ public class MyModel {
 
 will be mapped to:
 
-[source,java]
+[source,json]
 ----
 {
   "id": 1234,

@@ -10,7 +10,7 @@ A ManagedContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Container id="myManagedContainer" type="MANAGED">
 </Container>
@@ -21,7 +21,7 @@ Alternatively, a ManagedContainer can be declared via properties in the
 `-D` properties. The properties can also be used when embedding TomEE
 via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myManagedContainer = new://Container?type=MANAGED
 ----

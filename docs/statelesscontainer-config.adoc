@@ -10,7 +10,7 @@ A StatelessContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Container id="myStatelessContainer" type="STATELESS">
     accessTimeout = 30 seconds
@@ -35,7 +35,7 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myStatelessContainer = new://Container?type=STATELESS
 myStatelessContainer.accessTimeout = 30 seconds

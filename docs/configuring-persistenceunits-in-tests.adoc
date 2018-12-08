@@ -33,7 +33,7 @@ properties or the initial context properties. The format is:
 
 So for example with the following persistence.xml:
 
-[source,java]
+[source,xml]
 ----
 <persistence>
   <persistence-unit name="movie-unit">

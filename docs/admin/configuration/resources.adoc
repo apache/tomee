@@ -22,7 +22,7 @@ Finally the id is an attribute in XML and the key of the resource definition in 
 
 Let see it with a sample, both delcarations are the same:
 
-[source,bash]
+[source,properties]
 ----
 myDataSource = new://Resource?type=DataSource
 myDataSource.JdbcUrl = jdbc:hsqldb:mem:site
@@ -117,7 +117,7 @@ is still supported on `Password` value. Default `PasswordCipher` being `PlainTex
 
 Sample:
 
-[source,bash]
+[source,properties]
 ----
 ds = new://Resource?type=javax.sql.DataSource
 # our password is "Passw0rd"
@@ -172,7 +172,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ActiveMQResourceAdapter
 Foo.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false
@@ -222,7 +222,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.ConnectionFactory
 Foo.ResourceAdapter = Default JMS Resource Adapter
@@ -277,7 +277,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.Queue
 # not set means id
@@ -307,7 +307,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.Topic
 # not set means id
@@ -334,7 +334,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=org.omg.CORBA.ORB
 ----
@@ -361,7 +361,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 mail/mysession = new://Resource?type=javax.mail.Session
 mail/mysession.mail.transport.protocol = smtp
@@ -399,7 +399,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedExecutorService
 Foo.Core = 5
@@ -454,7 +454,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedScheduledExecutorService
 Foo.Core = 5
@@ -483,7 +483,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedThreadFactory
 Foo.Prefix = openejb-managed-thread-
@@ -512,7 +512,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ContextService
 ----
@@ -535,7 +535,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedThreadFactory
 Foo.Prefix = openejb-managed-thread-
@@ -564,7 +564,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ContextService
 ----

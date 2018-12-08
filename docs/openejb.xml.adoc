@@ -12,7 +12,7 @@ and its services such as transaction, security, and data sources.
 The format is a mix of xml and properties inspired by the format of the
 httpd configuration file. Basically:
 
-[source,java]
+[source,xml]
 ----
 <tag id="">
   ...properties...
@@ -21,7 +21,7 @@ httpd configuration file. Basically:
 
 Such as:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="MyDataSource" type="DataSource">
   username foo
@@ -33,7 +33,7 @@ _Note the space_. White space is a valid name/value pair separator in
 any java properties file (along with semi-colon). So the above is
 equivalent to:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="MyDataSource" type="DataSource">
   username = foo

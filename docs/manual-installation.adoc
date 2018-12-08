@@ -65,7 +65,7 @@ your conf/server.xml file to load the OpenEJB listener:
 
 The snippet is shown below
 
-[source,java]
+[source,xml]
 ----
 <!-- Note:  A "Server" is not itself a "Container", so you may not
 define subcomponents such as "Valves" at this
@@ -102,7 +102,7 @@ First, copy the OpenEJB JavaAgent jar into the lib directory.
 Simply, add the snippet marked below in bin/catalina.bat (Windows) or
 bin/catalina.sh (Unix) file to enable the OpenEJB javaagent:
 
-[source,java]
+[source,properties]
 ----
 if not exist "%CATALINA_BASE%\conf\logging.properties" goto noJuli
 set JAVA_OPTS=%JAVA_OPTS%

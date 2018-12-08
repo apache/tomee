@@ -33,7 +33,7 @@ For example,
 
 is injected with the following resource:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="moviesDatabase" type="DataSource">    
 JdbcDriver org.hsqldb.jdbcDriver    

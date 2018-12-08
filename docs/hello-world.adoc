@@ -58,14 +58,14 @@ file under this directory - _logs_: Contains log files.
 === Create a working directory Assuming you are in your home directory,
 create a directory named projects
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~$ mkdir projects
 ----
 
 Go to the projects directory
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~$ cd projects
 ----
@@ -75,7 +75,7 @@ install Java (version 5 or higher). Also set it up so that you can run
 the java and javac commands from any directory ### Set OPENEJB_HOME We
 will setup this variable to refer to the openejb install location.
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ export
 ----
@@ -117,7 +117,7 @@ our classpath to compile our source code. These annotations can be found
 in the $OPENEJB_HOME/lib/javaee-5.0-1.jar. Lets compile our source (make
 sure you are in the projects directory)
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ javac -cp $OPENEJB_HOME/lib/javaee-5.0-1.jar -d
 ----
@@ -130,7 +130,7 @@ directory. All class files should be under org/acme directory. ###
 Package the EJB To package the EJB into a JAR, run the following command
 while you are in the projects directory
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ jar cvf hello.jar org
 ----
@@ -139,7 +139,7 @@ The above command will package everything under the org directory
 (including the org directory itself) into a jar file named hello.jar.
 Below is the output from running the above command:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ jar cvf hello.jar org
 added manifest
@@ -176,7 +176,7 @@ result = h.sayHello(); System.out.println(result); } }
 
 === Compile HelloClient.java Run the following command:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ javac  -d . HelloClient.java
 ----
@@ -184,7 +184,7 @@ karan@poweredge:~/projects$ javac  -d . HelloClient.java
 == Start the Server Go to the OpenEJB install directory (i.e.
 OPENEJB_HOME) and run the following command:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/install/openejb-3.0$ bin/openejb start
 ----
@@ -192,7 +192,7 @@ karan@poweredge:~/install/openejb-3.0$ bin/openejb start
 Once the Server starts, you will see an output similar to the below in
 your console:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/install/openejb-3.0$ bin/openejb start
 Apache OpenEJB 3.0    build: 20070926-12:34
@@ -215,14 +215,14 @@ directories. ## Deploy the EJB We will now use the deploy command to
 deploy the EJB in hello.jar. While you are in the projects directory,
 run the following command:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ $OPENEJB_HOME/bin/openejb deploy hello.jar
 ----
 
 The above command should give you the following output:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ $OPENEJB_HOME/bin/openejb deploy hello.jar
 Application deployed successfully at "hello.jar"
@@ -238,7 +238,7 @@ the JNDI name we used in the client to lookup the EJB ## Run the Client
 While you are in the projects directory, run the following command to
 run the client:
 
-[source,java]
+[source,bash]
 ----
 karan@poweredge:~/projects$ java -cp
 ----
@@ -248,7 +248,7 @@ org.acme.HelloClient
 
 The above should give you the following output:
 
-[source,java]
+[source,properties]
 ----
 Hello World!!!!
 ----

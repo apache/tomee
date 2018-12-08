@@ -11,7 +11,7 @@ if you are not at all familiar with Arquillian.
 All the Arquillian Adapters for TomEE support the following
 configuration options in the *src/test/resources/arquillian.xml*:
 
-[source,java]
+[source,xml]
 ----
 <container qualifier="tomee" default="true">
     <configuration>
@@ -33,7 +33,7 @@ configuration options in the *src/test/resources/arquillian.xml*:
 The above can also be set as system properties rather than via the
 *src/test/resources/arquillian.xml* file.
 
-[source,java]
+[source,xml]
 ----
 <build>
   <plugins>
@@ -93,7 +93,7 @@ Adapter.
 To use the TomEE Embedded Arquillian Adapter, simply add these Maven
 dependencies to your Maven pom.xml:
 
-[source,java]
+[source,xml]
 ----
 <dependency>
   <groupId>org.apache.openejb</groupId>
@@ -157,7 +157,7 @@ The following shows a typical configuration for testing against TomEE
 `<tomee.classifier>webprofile</tomee.classifier>` to
 `<tomee.classifier>plus</tomee.classifier>`
 
-[source,java]
+[source,xml]
 ----
 <properties>
   <tomee.version>1.7.1</tomee.version>
@@ -225,7 +225,7 @@ Setting up both adapters is quite easy via Maven profiles. Here the
 default adapter is the Embedded Adapter, the Remote Adapter will run
 with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
 
-[source,java]
+[source,xml]
 ----
 <profiles>
 

@@ -41,7 +41,7 @@ public class MyBean implements MyInterface {
 The above @PersistenceContext annotation usage is 100% equivalent to the
 following xml.
 
-[source,java]
+[source,xml]
 ----
 <persistence-context-ref>
     <persistence-context-ref-name>myFooEntityManager</persistence-context-ref-name>

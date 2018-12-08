@@ -10,7 +10,7 @@ For a unit called "movie-unit" using two datasources called
 "movieDatabase" and "movieDatabaseUnmanaged" the following
 persistence.xml would work.
 
-[source,java]
+[source,xml]
 ----
 <persistence version="1.0"
        xmlns="http://java.sun.com/xml/ns/persistence"

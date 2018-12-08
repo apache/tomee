@@ -132,7 +132,7 @@ Calling EntityManager.merge() will re-attach a Detached object.
 Servlets and EJBs can use RESOURCE_LOCAL persistence units through the
 EntityManagerFactory as follows:
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8" ?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
@@ -183,7 +183,7 @@ public class MyEjbOrServlet ... {
 
 EJBs can use JTA persistence units through the EntityManager as follows:
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8" ?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">

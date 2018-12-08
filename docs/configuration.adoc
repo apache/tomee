@@ -32,7 +32,7 @@ OpenEJB saves deployment descriptors - ejb-jar.xml and openejb-jar.xml
 
 Show a config file with the elements hyperlinked.
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0"?>
 <openejb>
@@ -99,7 +99,7 @@ openejb.home are added to the classpath.
 
 A summary of the above in a different notation:
 
-[source,java]
+[source,properties]
 ----
 openejb.home = user.dir (can be set explicitly)
 openejb.base = openejb.home (can be set explicitly)

@@ -9,7 +9,7 @@ A Queue can be declared via xml in the `<tomee-home>/conf/tomee.xml`
 file or in a `WEB-INF/resources.xml` file using a declaration like the
 following. All properties in the element body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Resource id="myQueue" type="javax.jms.Queue">
     destination = 
@@ -21,7 +21,7 @@ Alternatively, a Queue can be declared via properties in the
 `-D` properties. The properties can also be used when embedding TomEE
 via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 myQueue = new://Resource?type=javax.jms.Queue
 myQueue.destination = 

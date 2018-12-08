@@ -44,7 +44,7 @@ The only loss of functionality would be the ability to remotely execute
 EJBs over HTTP. However this can easily be added to a different webapp
 like so:
 
-[source,java]
+[source,xml]
 ----
 <servlet>
   <servlet-name>ServerServlet</servlet-name>

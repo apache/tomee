@@ -18,7 +18,7 @@ server can be configured to send multicast UDP packets.
 After you boot the server for the first time the default configuration
 will create the file `conf/conf.d/multipulse.properties` containing:
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.discovery.MulticastPulseAgent
 bind        = 239.255.2.3
@@ -46,7 +46,7 @@ for discovery. Edit the `ejbd.properties` file (and any other enabled
 services such as http, etc.) and ensure that the `discovery` option is
 set to a value that remote clients will be able to resolve.
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 0.0.0.0

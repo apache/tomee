@@ -54,7 +54,7 @@ the new property value before constructing the individual component.
 
 # Example output
 
-[source,java]
+[source,properties]
 ----
 # Container(id=Default CMP Container)
 # className: org.apache.openejb.core.cmp.CmpContainer

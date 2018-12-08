@@ -7,7 +7,7 @@
 
 == External ActiveMQ Broker
 
-[source,java]
+[source,xml]
 ----
 <tomee>
     <Resource id="MyJmsResourceAdapter" type="ActiveMQResourceAdapter">
@@ -35,7 +35,7 @@ work, such as 'failover:'.
 
 == Internal ActiveMQ Broker
 
-[source,java]
+[source,xml]
 ----
 <tomee>
     <Resource id="MyJmsResourceAdapter" type="ActiveMQResourceAdapter">
@@ -65,7 +65,7 @@ Adding the `DataSource` property to your `ActiveMQResourceAdapter`
 config will automatically setup JDBC Persistence using the
 `org.apache.activemq.store.jdbc.JDBCPersistenceAdapter`
 
-[source,java]
+[source,xml]
 ----
 <tomee>
     <Resource id="MyJmsResourceAdapter" type="ActiveMQResourceAdapter">
@@ -112,7 +112,7 @@ Create an link:activemq.xml[activemq.xml file] a in
 Then use the `xbean:file:` url prefix in the `BrokerXmlConfig` as shown
 belog.
 
-[source,java]
+[source,xml]
 ----
 <tomee>
     <Resource id="MyJmsResourceAdapter" type="ActiveMQResourceAdapter">
@@ -166,7 +166,7 @@ InitialContext context = new InitialContext(p);
 From anywhere in the same VM as the EJB Container you could lookup the
 above resources like so:
 
-[source,java]
+[source,properties]
 ----
 javax.jms.ConnectionFactory cf = (ConnectionFactory)
         context.lookup("openejb:Resource/MyJmsConnectionFactory");

@@ -13,7 +13,7 @@ details on all configuration options for DataSources.
 The drivers are included with OpenEJB 3.0 and HSQLDB is the default
 database.
 
-[source,java]
+[source,xml]
 ----
 <Resource id="HSQLDB Database" type="DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
@@ -25,7 +25,7 @@ database.
 
 == Derby (Embedded)
 
-[source,java]
+[source,xml]
 ----
 <Resource id="Derby Database" type="DataSource">
     #Embedded Derby example
@@ -39,7 +39,7 @@ database.
 
 == MySQL
 
-[source,java]
+[source,xml]
 ----
 <Resource id="MySQL Database" type="DataSource">
     #  MySQL example
@@ -55,7 +55,7 @@ database.
 
 == Oracle
 
-[source,java]
+[source,xml]
 ----
 <Resource id="Oracle Database" type="DataSource">
     #  Oracle example
@@ -71,7 +71,7 @@ database.
 
 == OracleXA
 
-[source,java]
+[source,xml]
 ----
 <Resource id="OracleXA Database" type="DataSource">
     #  OracleXA example
@@ -87,7 +87,7 @@ database.
 
 == PosgreSQL
 
-[source,java]
+[source,xml]
 ----
 <Resource id="PostgreSQL Database" type="DataSource">
     #  PostgreSQL example
@@ -103,7 +103,7 @@ database.
 
 == InstantDB
 
-[source,java]
+[source,xml]
 ----
 <Resource id="InstantDB Database" type="DataSource">
     #  InstantDB example

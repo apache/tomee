@@ -56,7 +56,7 @@ and setup in OpenEJB Standalone by default.
 
 Its configuration `conf/ejbds.properties` looks like this:
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 127.0.0.1
@@ -109,7 +109,7 @@ You must now instruct the client and server to use that suite.
 
 On the server:
 
-[source,java]
+[source,properties]
 ----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 127.0.0.1
@@ -124,7 +124,7 @@ discovery   = ejb:ejbds://{bind}:{port}
 
 On the client, you must supply a property:
 
-[source,java]
+[source,properties]
 ----
 -Dopenejb.client.enabledCipherSuites=TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA
 ----

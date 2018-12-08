@@ -15,7 +15,7 @@ feature-rich plugin that allows for:
 Simply add the following to the , and optionally the ), section of your
 `pom.xml`
 
-[source,java]
+[source,xml]
 ----
 <plugins>
     <plugin>
@@ -113,7 +113,7 @@ This plugin is also usable in projects which are not war. For instance
 you can use it in a pom project to setup a TomEE install, add libraries,
 deploy apps then run the server.
 
-[source,java]
+[source,xml]
 ----
   <plugin>
     <groupId>org.apache.openejb.maven</groupId>
@@ -147,7 +147,7 @@ deploy apps then run the server.
 
 ###Auto Reloading Example
 
-[source,java]
+[source,xml]
 ----
 <plugin>
   <groupId>org.apache.openejb.maven</groupId>

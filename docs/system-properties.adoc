@@ -17,7 +17,7 @@ of the format:
 
 ..where id is the value in the config file for example:
 
-[source,java]
+[source,xml]
 ----
 <Connector id="mysql"> 
     JdbcDriver com.mysql.jdbc.Driver 
@@ -65,7 +65,7 @@ one of the following: bind, port, threads, disabled, only_from.
 So to set the address and port the ejbd service will bind to, simply
 specify this on the command line:
 
-[source,java]
+[source,properties]
 ----
 ./bin/openejb start -Dejbd.bind=192.168.1.12 -Dejbd.port=9988
 ----

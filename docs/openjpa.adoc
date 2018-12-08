@@ -8,7 +8,7 @@ OpenJPA is bundled with OpenEJB as the default persistence provider.
 
 An example of working `persistence.xml` for OpenJPA:
 
-[source,java]
+[source,xml]
 ----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -27,7 +27,7 @@ An example of working `persistence.xml` for OpenJPA:
 Where the datasources above are configured in your openejb.xml as
 follows:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="movieDatabase" type="DataSource">
   JdbcDriver = org.hsqldb.jdbcDriver
@@ -66,7 +66,7 @@ objects. If you add the _openjpa.jdbc.SynchronizeMappings_ property as
 shown below OpenJPA will auto-create all your tables, all your primary
 keys and all foreign keys exactly to match your objects.
 
-[source,java]
+[source,xml]
 ----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -98,7 +98,7 @@ EntityManager entityManager;
 
 on a persistence unit setup as RESOURCE_LOCAL ...
 
-[source,java]
+[source,xml]
 ----
 <persistence-unit name="movie-unit" transaction-type="RESOURCE_LOCAL">
   ...

@@ -188,7 +188,7 @@ throws Throwable \{ return args[0] ; } } }
 
 Running this code will result in the following exception:
 
-[source,java]
+[source,properties]
 ----
 java.lang.IllegalArgumentException: methods with same signature
 ----

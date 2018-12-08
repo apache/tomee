@@ -38,7 +38,7 @@ public class MyEjbLocalRefBean implements MyBeanInterface {
 
 The above @EJB annotation usage is 100% equivalent to the following xml.
 
-[source,java]
+[source,xml]
 ----
 <ejb-local-ref>
   <ejb-ref-name>myFooEjb</ejb-ref-name>

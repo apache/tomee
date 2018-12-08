@@ -84,7 +84,7 @@ public class Stratocaster {
 
 == The META-INF/env-entries.properties file
 
-[source,java]
+[source,properties]
 ----
 guitarStringGuages=E1=0.052\nA=0.042\nD=0.030\nG=0.017\nB=0.013\nE=0.010
 certificateOfAuthenticity=/tmp/strat-certificate.txt

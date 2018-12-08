@@ -10,7 +10,7 @@ A SingletonContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-[source,java]
+[source,xml]
 ----
 <Container id="mySingletonContainer" type="SINGLETON">
     accessTimeout = 30 seconds
@@ -23,7 +23,7 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-[source,java]
+[source,properties]
 ----
 mySingletonContainer = new://Container?type=SINGLETON
 mySingletonContainer.accessTimeout = 30 seconds

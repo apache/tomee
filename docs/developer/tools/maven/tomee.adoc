@@ -113,21 +113,21 @@ The format can be:
 
 - a maven dependency:
 
-[source]
+[source,properties]
 ----
 groupId:artifactId:version
 ----
 
 - a zip dependency and extracted in lib folder:
 
-[source]
+[source,properties]
 ----
 unzip:groupId:artifactId:version
 ----
 
 - a matching prefix to remove:
 
-[source]
+[source,properties]
 ----
 remove:prefix
 ----

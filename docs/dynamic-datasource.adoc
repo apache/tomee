@@ -173,7 +173,7 @@ META-INF/. For example META-INF/org.router.
 
 This file will contain something like:
 
-[source,java]
+[source,xml]
 ----
 <ServiceJar>
   <ServiceProvider id="DeterminedRouter" service="Resource"
@@ -189,7 +189,7 @@ This file will contain something like:
 In the openejb.xml file, you have to declare your dynamic database and
 in our example it needs the proxied datasources too:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="router" type="<your implementation>" provider="<your provider>">
   Param value

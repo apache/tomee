@@ -9,7 +9,7 @@
 In maven2 you can enable the javaagent for your tests by adding this to
 your pom.xml file:
 
-[source,java]
+[source,xml]
 ----
 <build>
   <plugins>
@@ -21,7 +21,7 @@ pertest
 
 -javaagent:latexmath:[${basedir}/target/openejb-javaagent-3.0.jar</argLine>  <workingDirectory>$]\{basedir}/target
 
-[source,java]
+[source,xml]
 ----
     <!-- this tells maven to copy the openejb-javaagent jar into your
 ----
@@ -31,7 +31,7 @@ copy process-resources copy org.apache.openejb openejb-javaagent 3.0
 
 $\{project.build.directory}
 
-[source,java]
+[source,xml]
 ----
   </plugins>
 </build>

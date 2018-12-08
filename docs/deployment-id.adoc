@@ -203,7 +203,7 @@ loaded. In addition, the system will log a warning like the following
 one asking you to redeploy the jar and choose an different deployment ID
 for the bean.
 
-[source,java]
+[source,properties]
 ----
 WARN : Jar C:\openejb\beans\fooEjbs.jar cannot be loaded.  The Deployment ID "/my/bean/foo" is already in use.  Please redeploy this jar and assign a different deployment ID to the bean with the ejb-name "FooBean".
 ----
@@ -230,7 +230,7 @@ rest of the beans in the disneyEjbs.jar as they may need the
 "DonaldDuckBean" bean to function properly. The disneyEjbs.jar is
 skipped and the following warning is logged.
 
-[source,java]
+[source,properties]
 ----
 WARN : Jar C:\openejb\beans\disneyEjbs.jar cannot be loaded.  The  Deployment ID "/my/favorite/duck" is already in use.  Please redeploy  this jar and assign a different deployment ID to the bean with the ejb-name "DonaldDuckBean".
 ----

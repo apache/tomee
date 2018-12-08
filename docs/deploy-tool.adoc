@@ -147,7 +147,7 @@ _________________________
 On running the deploy tool with a valid EJB jar the following output is
 printed on the console
 
-[source,java]
+[source,properties]
 ----
 Application deployed successfully at {0}
 App(id=C:\samples\Calculator-new\hello-addservice.jar)

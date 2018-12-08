@@ -77,7 +77,7 @@ setters can be used as a way to inject environment entry values.
 You could look up the env-entry using JNDI lookup() method and the
 following name:
 
-[source,java]
+[source,properties]
 ----
 java:comp/env/org.apache.openejb.examples.resource.InvoiceBean/maxLineItems
 ----
@@ -98,7 +98,7 @@ public void setMaxLineItems(int maxLineItems) {
 
 ==== Using env-entry in ejb-jar.xml
 
-[source,java]
+[source,xml]
 ----
 <env-entry>
     <description>The maximum number of line items per invoice.</description>        

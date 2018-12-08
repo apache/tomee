@@ -44,7 +44,7 @@ This is the openejb-jar.xml that is created by the Deploy tool in the
 Hello World example. As you can see, the file format is extremely
 simple.
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
@@ -65,7 +65,7 @@ your jar.
 
 Then you simply add a element to your element like this
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
@@ -92,7 +92,7 @@ and provide access to the desired resource.
 You will need one element for every element in your ejb-jar.xml. So if
 you had an ejb-jar.xml like the following
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0"?>
 <ejb-jar>
@@ -131,7 +131,7 @@ you had an ejb-jar.xml like the following
 Then you would need two elements for that bean in your openejb-jar.xml
 file as such.
 
-[source,java]
+[source,xml]
 ----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">

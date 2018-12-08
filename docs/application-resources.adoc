@@ -18,7 +18,7 @@ available server-wide, whereas defining the resource within a
 As a simple example, a JMS queue can be defined within `tomee.xml` with
 the following configuration.
 
-[source,java]
+[source,xml]
 ----
 <tomee>
     <Resource id="MyQueue" type="javax.jms.Queue"/>
@@ -48,7 +48,7 @@ public class JmsClient {
 As an alternative to defining a resource in XML, resources can also be
 defined using system properties:
 
-[source,java]
+[source,properties]
 ----
 MyQueue = new://Resource?type=javax.jms.Queue
 ----
@@ -69,7 +69,7 @@ and password to be able to connect to a database. That would be
 configured with the following syntax. Notice the key/value pair syntax
 for the properties within the `<Resource>` tag.
 
-[source,java]
+[source,xml]
 ----
 <Resource id="DB" type="DataSource">
   JdbcDriver  com.mysql.jdbc.Driver
@@ -151,7 +151,7 @@ public class Configuration {
 Can be defined in `tomee.xml` using the following configuration (note
 the `class-name` attribute):
 
-[source,java]
+[source,xml]
 ----
 <Resource id="config" class-name="org.superbiz.Configuration">
     url http://localhost
@@ -193,7 +193,7 @@ public class Configuration {
 
 Using the same resource definition:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="config" class-name="org.superbiz.Configuration">
     url http://localhost
@@ -217,7 +217,7 @@ The format of `resources.xml` uses the same `<Resource>` tag as
 `tomee.xml`. One key difference is the root element of the XML is
 `<resources>` and not `<tomee>`.
 
-[source,java]
+[source,xml]
 ----
 <resources>
     <Resource id="config" class-name="org.superbiz.Configuration">
@@ -281,7 +281,7 @@ specified on the `Resource`, TomEE will instantiate the resource using
 its no-arg constructor. If you wish to pass constructor arguments,
 specify the arguments as a comma separated list:
 
-[source,java]
+[source,xml]
 ----
 <Resource id="config" class-name="org.superbiz.Configuration" constructor="id, poolSize">
     url http://localhost

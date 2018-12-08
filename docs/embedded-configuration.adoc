@@ -101,7 +101,7 @@ Here's an example of the same properties being specified via a
 classpath, not in a subdirectory of a path in the classpath such as
 META-INF, but at the root of any of the paths in the classpath.
 
-[source]
+[source,properties]
 ----
 # set the initial context factory
 java.naming.factory.initial = org.apache.openejb.client.LocalInitialContextFactory
@@ -128,7 +128,7 @@ openejb.validation.output.level = verbose
 Then OpenEJB can be booted via the `InitialContext` as normal.
 Properties can still be used to override any of the above properties:
 
-[source]
+[source,java]
 ----
 Properties p = new Properties();
 

@@ -32,7 +32,7 @@ whichever JPA provider it needs.
 The following is an example of a fairly common `persistence.xml` for
 Hibernate
 
-[source,java]
+[source,xml]
 ----
 <persistence version="1.0"
        xmlns="http://java.sun.com/xml/ns/persistence"
@@ -55,7 +55,7 @@ Hibernate
 Note, TomEE will automatically add the following property unless it is
 explicitly configured:
 
-[source,java]
+[source,xml]
 ----
       <property name="hibernate.transaction.manager_lookup_class"
                 value="org.apache.openejb.hibernate.TransactionManagerLookup"/>
@@ -122,7 +122,7 @@ be sure to put your Database JDBC driver in `<tomee-home>/lib`.
 The actual Maven dependencies for your project can be added in the usual
 way:
 
-[source,java]
+[source,xml]
 ----
     <!-- Hibernate -->      
     <dependency>

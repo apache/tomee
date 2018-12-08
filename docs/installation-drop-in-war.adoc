@@ -32,7 +32,7 @@ http://tomcat.apache.org/download-70.cgi
 * Update $CATALINA_HOME/conf/tomcat-users.xml to add a tomee user to
 allow access to the installer page.
 +
-[source,java]
+[source,xml]
 ----
  <!-- Activate/create these lines to get access to TomEE GUI -->
  <role rolename="tomee-admin" />
