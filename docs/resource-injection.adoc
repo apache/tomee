@@ -62,10 +62,11 @@ environment entries at deployment time using deployment descriptor
 
 ==== @Resource annotation of a field
 
-....
+[source,java]
+----
 @Resource
 int maxLineItems = 10;
-....
+----
 
 == Injection through a setter method (method-level injection)
 
@@ -76,9 +77,10 @@ setters can be used as a way to inject environment entry values.
 You could look up the env-entry using JNDI lookup() method and the
 following name:
 
-....
+[source,java]
+----
 java:comp/env/org.apache.openejb.examples.resource.InvoiceBean/maxLineItems
-....
+----
 
 The pattern is to combine the fully-qualified class name and the name of
 a instance field (or a name of the setter method without _set_ prefix
@@ -86,27 +88,30 @@ and the first letter lowercased).
 
 ==== @Resource annotation of a setter method
 
-....
+[source,java]
+----
 @Resource
 public void setMaxLineItems(int maxLineItems) {
     this.maxLineItems = maxLineItems;
 }
-....
+----
 
 ==== Using env-entry in ejb-jar.xml
 
-....
+[source,java]
+----
 <env-entry>
     <description>The maximum number of line items per invoice.</description>        
     <env-entry-name>org.apache.openejb.examples.injection.InvoiceBean/maxLineItems</env-entry-name>
     <env-entry-type>java.lang.Integer</env-entry-type>
     <env-entry-value>15</env-entry-value>
 </env-entry>
-....
+----
 
 ==== Using @Resource annotated env-entry
 
-....
+[source,java]
+----
 public void addLineItem(LineItem item) throws TooManyItemsException {
    if (item == null) {
       throw new IllegalArgumentException("Line item must not be null");
@@ -119,7 +124,7 @@ public void addLineItem(LineItem item) throws TooManyItemsException {
       throw new TooManyItemsException("Number of items exceeded the maximum limit");
    }
 }
-....
+----
 
 # JUnit Test
 
@@ -129,18 +134,20 @@ then write our test methods.
 
 ==== Test fixture
 
-....
+[source,java]
+----
 protected void setUp() throws Exception {
     Properties properties = new Properties();
     properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
     properties.setProperty("openejb.deployments.classpath.include", ".*resource-injection.*");
     initialContext = new InitialContext(properties);
 }
-....
+----
 
 ==== Test methods
 
-....
+[source,java]
+----
 public void testAddLineItem() throws Exception {
     Invoice order = (Invoice)initialContext.lookup("InvoiceBeanBusinessRemote");
     assertNotNull(order);
@@ -152,7 +159,7 @@ public void testAddLineItem() throws Exception {
     fail("Test failed due to: " + tmie.getMessage());
     }
 }
-....
+----
 
 # Running
 
@@ -165,7 +172,8 @@ $ cd injection-of-env-entry
 $ mvn clean test
 ___________________________
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -198,4 +206,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -40,14 +40,15 @@ app like this:
 
 Just initialize your test case like so:
 
-....
+[source,java]
+----
  Properties properties = new Properties();
  properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
       "org.apache.openejb.client.LocalInitialContextFactory");
  properties.setProperty("openejb.altdd.prefix", "test");
 
  InitialContext initialContext = new InitialContext(properties);
-....
+----
 
 The logical result will be the prefixed file replacing the non-prefixed
 file as the active descriptor:
@@ -85,12 +86,13 @@ both have their own ejb-jar.xml files:
 
 The "foo" test case could set the _openejb.altdd.prefix_ as follows:
 
-....
+[source,java]
+----
  //...
  properties.setProperty("openejb.altdd.prefix", "footest, test");
 
  InitialContext initialContext = new InitialContext(properties);
-....
+----
 
 Resulting the following logical view of the app:
 
@@ -100,12 +102,13 @@ Resulting the following logical view of the app:
 
 And the "bar" test case could set the _openejb.altdd.prefix_ as follows:
 
-....
+[source,java]
+----
  //...
  properties.setProperty("openejb.altdd.prefix", "footest, test");
 
  InitialContext initialContext = new InitialContext(properties);
-....
+----
 
 Resulting the following logical view of the app:
 

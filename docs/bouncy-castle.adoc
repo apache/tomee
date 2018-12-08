@@ -28,9 +28,10 @@ directory
 
 The entry to `java.security` will look something like the following:
 
-....
+[source,java]
+----
 security.provider.N=org.bouncycastle.jce.provider.BouncyCastleProvider
-....
+----
 
 Replace `N` with the order of precedence you would like to give Bouncy
 Castle in comparison to the other providers in the file. *Recommended*

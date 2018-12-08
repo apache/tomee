@@ -110,7 +110,8 @@ hot deployment alter this value to true and restart Tomee.
 
 This is the relevant snippet of the web.xml file.
 
-....
+[source,java]
+----
 <servlet>
     <servlet-name>jsp</servlet-name>
     <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
@@ -121,7 +122,7 @@ This is the relevant snippet of the web.xml file.
     </init-param>
     ....
 </servlet>
-....
+----
 
 == How to use JULI for TomEE in WTP?
 
@@ -129,10 +130,11 @@ It seems that WTP doesn't manage correctly Tomcat logging configuration
 (which needs to be done through system properties). A quick workaround
 is to add these properties manually:
 
-....
+[source,java]
+----
 -Djava.util.logging.config.file="<tomee>/conf/logging.properties"
 -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
-....
+----
 
 More information on:
 http://wiki.eclipse.org/WTP_Tomcat_FAQ#How_do_I_enable_the_JULI_logging_in_a_Tomcat_5.5_Server_instance.3F

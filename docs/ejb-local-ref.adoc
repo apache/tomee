@@ -8,7 +8,8 @@
 
 Usable by EJB, Interceptor, Servlet, Filter, or Listener
 
-....
+[source,java]
+----
 package org.superbiz.refs;
 
 import javax.ejb.EJB;
@@ -31,13 +32,14 @@ public class MyEjbLocalRefBean implements MyBeanInterface {
         BarLocal barLocal = (BarLocal) context.lookup("java:comp/env/org.superbiz.refs.MyEjbLocalRefBean/myBarEjb");
     }
 }
-....
+----
 
 # Via xml
 
 The above @EJB annotation usage is 100% equivalent to the following xml.
 
-....
+[source,java]
+----
 <ejb-local-ref>
   <ejb-ref-name>myFooEjb</ejb-ref-name>
   <local>org.superbiz.refs.FooLocal</local>
@@ -51,4 +53,4 @@ The above @EJB annotation usage is 100% equivalent to the following xml.
     <injection-target-name>myBarEjb</injection-target-name>
   </injection-target>
 </ejb-local-ref>
-....
+----

@@ -142,11 +142,12 @@ line or via system properties. So it is possible easily set the
 
 A bash example might look something like:
 
-....
+[source,java]
+----
 !/bin/bash
 
 OPENEJB_HOME=/opt/openejb-3.1.3
 INITIAL_LIST=$(cat /some/shared/directory/our_initial_servers.txt)
 
 $OPENEJB_HOME/bin/openejb start -Dmultipoint.initialServers=$INITIAL_LIST
-....
+----

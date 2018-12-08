@@ -34,17 +34,19 @@ http://svn.apache.org/repos/asf/tomee/tomee/trunk
 Use http://subversion.apache.org/[Subversion] to checkout the example
 sources from a console like so:
 
-....
+[source,java]
+----
 svn co http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/[example]
     
-....
+----
 
 Or that you may of course also be using your own project pom.xml
 
 If you want to use the latest snapshot locate the __ section in your
 pom.xml and ensure the following repository exists:
 
-....
+[source,java]
+----
 <repositories>
   <repository>
     <id>apache-m2-snapshot</id>
@@ -58,4 +60,4 @@ pom.xml and ensure the following repository exists:
     </snapshots>
   </repository>
 </repositories>
-....
+----

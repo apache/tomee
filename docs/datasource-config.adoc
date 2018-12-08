@@ -10,7 +10,8 @@ A DataSource can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-....
+[source,java]
+----
 <Resource id="myDataSource" type="javax.sql.DataSource">
     accessToUnderlyingConnectionAllowed = false
     alternateUsernameAllowed = false
@@ -41,14 +42,15 @@ body are optional.
     userName = sa
     validationQuery = 
 </Resource>
-....
+----
 
 Alternatively, a DataSource can be declared via properties in the
 `<tomee-home>/conf/system.properties` file or via Java VirtualMachine
 `-D` properties. The properties can also be used when embedding TomEE
 via the `javax.ejb.embeddable.EJBContainer` API or `InitialContext`
 
-....
+[source,java]
+----
 myDataSource = new://Resource?type=javax.sql.DataSource
 myDataSource.accessToUnderlyingConnectionAllowed = false
 myDataSource.alternateUsernameAllowed = false
@@ -78,7 +80,7 @@ myDataSource.testWhileIdle = false
 myDataSource.timeBetweenEvictionRuns = -1 millisecond
 myDataSource.userName = sa
 myDataSource.validationQuery = 
-....
+----
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
@@ -348,12 +350,13 @@ Wether SQL queries should be logged or not
 If true the raw physical connection to the database can be accessed
 using the following construct:
 
-....
+[source,java]
+----
 Connection conn = ds.getConnection();
 Connection rawConn = ((DelegatingConnection) conn).getInnermostDelegate();
 ...
 conn.close()
-....
+----
 
 Default is false, because misbehaving programs can do harmfull things to
 the raw connection shuch as closing the raw connection or continuing to
@@ -423,10 +426,11 @@ statements.
 If true, a statement pool is created for each Connection and
 PreparedStatements created by one of the following methods are pooled:
 
-....
+[source,java]
+----
 public PreparedStatement prepareStatement(String sql);
 public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
-....
+----
 
 == testOnBorrow
 
@@ -469,7 +473,8 @@ XaDataSource can be defined as a standard resource using `class-name`.
 
 First solution is to define as `JdbcDriver` an XADataSource:
 
-....
+[source,java]
+----
 <Resource id="myXaDs" type="DataSource">
     JdbcDriver = org.foo.MyXaDataSource
 
@@ -477,7 +482,7 @@ First solution is to define as `JdbcDriver` an XADataSource:
 
     myPoolProperty = 10
 </Resource>
-....
+----
 
 This solution merges properties for the XaDataSource and the pool
 (tomcat-jdbc for TomEE, dbcp for OpenEJB by default but still
@@ -494,20 +499,22 @@ factory mecanism.
 
 An alternative is to define a resource for the XaDataSource:
 
-....
+[source,java]
+----
 <Resource id="myXa" class-name="org.foo.MyXaDataSource">
     myXaProperty = value
 </Resource>
-....
+----
 
 And then wrap it in the pool:
 
-....
+[source,java]
+----
 <Resource id="myXaDs" type="DataSource">
     DataSourceCreator = [dbcp|dbcp-alternative]
     myPoolProperty = 10
 </Resource>
-....
+----
 
 Note: `dbcp` is more adapted than `dbcp-alternative` in most of the case
 because it is reusing direct dbcp JTA management.
@@ -516,9 +523,10 @@ because it is reusing direct dbcp JTA management.
 
 For TomEE 1.7.0/1.7.1 you can need to add the property:
 
-....
+[source,java]
+----
  openejb.datasource.pool = true
-....
+----
 
 in resource properties to ensure the resource is pooled.
 

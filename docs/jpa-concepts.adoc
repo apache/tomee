@@ -132,7 +132,8 @@ Calling EntityManager.merge() will re-attach a Detached object.
 Servlets and EJBs can use RESOURCE_LOCAL persistence units through the
 EntityManagerFactory as follows:
 
-....
+[source,java]
+----
 <?xml version="1.0" encoding="UTF-8" ?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -143,11 +144,12 @@ EntityManagerFactory as follows:
   </persistence-unit>
 
 </persistence>
-....
+----
 
 And referenced as follows
 
-....
+[source,java]
+----
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -175,13 +177,14 @@ public class MyEjbOrServlet ... {
 
     ...
 }
-....
+----
 
 == Valid JTA Unit usage
 
 EJBs can use JTA persistence units through the EntityManager as follows:
 
-....
+[source,java]
+----
 <?xml version="1.0" encoding="UTF-8" ?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -193,11 +196,12 @@ EJBs can use JTA persistence units through the EntityManager as follows:
   </persistence-unit>
     
 </persistence>
-....
+----
 
 And referenced as follows
 
-....
+[source,java]
+----
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -220,4 +224,4 @@ public class MyEjb implements MyEjbInterface {
 
     }
 }
-....
+----

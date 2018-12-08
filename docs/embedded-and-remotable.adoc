@@ -126,7 +126,8 @@ $ mvn clean install
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -134,7 +135,7 @@ Running org.superbiz.telephone.TelephoneTest
 Apache OpenEJB 3.0    build: 20080408-04:13
 http://tomee.apache.org/
 INFO - openejb.home =
-....
+----
 
 /Users/dblevins/work/openejb-3.0/examples/telephone-stateful INFO -
 openejb.base =
@@ -168,8 +169,9 @@ admin thread 127.0.0.1 4200 +
 ------- Ready! Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time
 elapsed: 0.89 sec
 
-....
+[source,java]
+----
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -568,5 +568,3 @@ Declarable in properties via
 ----
 Foo = new://Resource?type=ContextService
 ----
-
-

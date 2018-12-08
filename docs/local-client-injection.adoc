@@ -37,7 +37,8 @@ The injection occurs via acquiring a LocalInitialContext via the
 LocalInitialContextFactory and calling _bind("inject", instance)_
 passing in the instantiated local client object:
 
-....
+[source,java]
+----
 @LocalClient
 public class MoviesTest extends TestCase {
 
@@ -59,7 +60,7 @@ public class MoviesTest extends TestCase {
 
     //... other test methods
 }
-....
+----
 
 # Discovery
 

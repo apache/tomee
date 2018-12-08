@@ -104,7 +104,8 @@ ___________________
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -112,7 +113,7 @@ Running org.superbiz.ejblookup.EjbDependencyTest
 Apache OpenEJB 3.1.5-SNAPSHOT    build: 20101129-09:51
 http://tomee.apache.org/
 INFO - openejb.home =
-....
+----
 
 /Users/dblevins/work/openejb-3.1.x/examples/lookup-of-ejbs INFO -
 openejb.base =
@@ -139,8 +140,9 @@ container=Default Stateless Container) INFO - Deployed
 Application(path=classpath.ear) Tests run: 2, Failures: 0, Errors: 0,
 Skipped: 0, Time elapsed: 1.244 sec
 
-....
+[source,java]
+----
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

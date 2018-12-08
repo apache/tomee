@@ -44,7 +44,8 @@ The only loss of functionality would be the ability to remotely execute
 EJBs over HTTP. However this can easily be added to a different webapp
 like so:
 
-....
+[source,java]
+----
 <servlet>
   <servlet-name>ServerServlet</servlet-name>
   <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
@@ -54,12 +55,13 @@ like so:
   <servlet-name>ServerServlet</servlet-name>
   <url-pattern>/myejbs/*</url-pattern>
 </servlet-mapping>
-....
+----
 
 Then you can create an `InitialContext` that points to that webapp like
 so:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put("java.naming.provider.url", "http://127.0.0.1:8080/mywebapp/myejbs");
@@ -70,4 +72,4 @@ p.put("java.naming.security.credentials", "mypass");
 InitialContext ctx = new InitialContext(p);
 
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
-....
+----

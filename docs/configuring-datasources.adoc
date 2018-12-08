@@ -14,43 +14,48 @@ attributes.
 
 For example, this annotation in your bean:
 
-....
+[source,java]
+----
 @Resource(name = "myDerbyDatasource", type = javax.sql.DataSource.class)
-....
+----
 
 Would map to a Resource declared in your openejb.xml as follows:
 
-....
+[source,java]
+----
 <Resource id="myDerbyDatasource" type="javax.sql.DataSource">
  . . . .
 <Resource>
-....
+----
 
 Note that in the xml element, the _type_ value of _javax.sql.DataSource_
 can abbreviated to just _DataSource_ as follows:
 
-....
+[source,java]
+----
 <Resource id="myDerbyDatasource" type="DataSource">
  . . . .
 <Resource>
-....
+----
 
 It is also possible to specify the path to the driver jar file using a
 classpath attribute like so:
 
-....
+[source,java]
+----
 <Resource id="myDerbyDatasource" type="DataSource" classpath="/path/to/driver.jar">
  . . . .
 <Resource>
-....
+----
 
 ...Or in a http://maven.apache.org/[Maven] environment like so:
 
-....
+[source,java]
+----
 <Resource id="myDerbyDatasource" type="DataSource" classpath="mvn:org.apache.derby:derby:10.10.1.1">
  . . . .
 <Resource>  
-....
+----
 
 See link:containers-and-resources.html[Containers and Resources] for a
 complete list of supported DataSource properties.
@@ -75,22 +80,24 @@ link:dynamic-datasource.html[Dynamic Datasource] for more details.
 
 === Example 1
 
-....
+[source,java]
+----
 <Resource id="Default JDBC Database" type="DataSource">
    . . . . .
 </Resource>
-....
+----
 
 The global jndi name would be _java:openejb/Resource/Default JDBC
 Database_
 
 === Example 2
 
-....
+[source,java]
+----
 <Resource id="Derby Database"  type="DataSource">
   . . . . .
 </Resource>
-....
+----
 
 The global jndi name would be _java:openejb/Resource/Derby Database_
 
@@ -114,36 +121,40 @@ example of Derby.
 
 With a Resource declaration in your openejb.xml like this:
 
-....
+[source,java]
+----
 <Resource id="myDerbyDatabase"  type="DataSource">
   . . . . .
 </Resource>
-....
+----
 
 There are several possible ways to refer to it, as follows.
 
 _BY matching variable name to resource name_
 
-....
+[source,java]
+----
 @Stateless
 public class FooBean {
     @Resource DataSource myDerbyDatabase;
 }
-....
+----
 
 _OR BY matching name_
 
-....
+[source,java]
+----
 @Stateless
 public class FooBean {
     @Resource(name="myDerbyDatabase")
     DataSource dataSource;
 }
-....
+----
 
 _OR BY JNDI lookup_
 
-....
+[source,java]
+----
 @Resource(name="myDerbyDatabase", type=javax.sql.DataSource.class)
 @Stateless
 public class FooBean {
@@ -159,32 +170,35 @@ public class FooBean {
         initialContext.lookup("java:comp/env/myDerbyDatabase");
     }
 }
-....
+----
 
 _OR_
 
-....
+[source,java]
+----
 <resource-ref>
   <res-ref-name>myDerbyDatabase</res-ref-name>
   <res-type>javax.sql.DataSource</res-type>
 </resource-ref>
-....
+----
 
 _OR_
 
-....
+[source,java]
+----
 <resource-ref>
    <res-ref-name>jdbc/myDerbyDatabase</res-ref-name>
    <res-type>javax.sql.DataSource</res-type>
 </resource-ref>
-....
+----
 
 _OR_
 
-....
+[source,java]
+----
 <resource-ref>
    <res-ref-name>someOtherName</res-ref-name>
    <res-type>javax.sql.DataSource</res-type>
    <mapped-name>myDerbyDatabase</mapped-name>
 </resource-ref>
-....
+----

@@ -16,7 +16,8 @@ of your project. If you are using Maven, you can add the following to
 your POM (you will need to update your Eclipse project using mvn
 eclipse:eclipse afterwards)
 
-....
+[source,java]
+----
   <dependencies>
     ...
     <dependency>
@@ -26,7 +27,7 @@ eclipse:eclipse afterwards)
       <scope>provided</scope>
     </dependency>
   </dependencies>
-....
+----
 
 Alternatively, import the API jars into your project, and add them to
 your build path.
@@ -46,9 +47,10 @@ Select or deselect the other options as appropriate, and select 'Next'.
 
 Options:
 
-....
+[source,java]
+----
 * Alter SessionBean interfaces - This option makes your session beans
-....
+----
 
 implement your remote / local interfaces as opposed to
 javax.ejb.SessionBean, and stops your remote / local interfaces

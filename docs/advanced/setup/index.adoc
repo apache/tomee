@@ -139,4 +139,3 @@ source "$proc_script_base/bin/setenv.sh"
 # we support parameters like timeout and force, typically we would call it this way: ./shutdown 1200 -force
 "$CATALINA_HOME/bin/shutdown.sh" "$@"
 ----
-

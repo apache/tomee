@@ -19,9 +19,10 @@ functionnal reasons (filtering, aggregation, enriching...).
 The interface Router (_org.apache.openejb.resource.jdbc.Router_) have
 only one method to get the datasource to use:
 
-....
+[source,java]
+----
 Router.getDataSource()
-....
+----
 
 The _org.apache.openejb.resource.jdbc.RoutedDataSource_ wraps a
 classical data source. It has to be used to declare your datasource.
@@ -61,7 +62,8 @@ to set to choose the real database to use between three.
 
 So in your code you want something like:
 
-....
+[source,java]
+----
 public class RoutedEJBBean {
     @PersistenceContext(unitName = "router")
     private EntityManager em;
@@ -76,14 +78,15 @@ public class RoutedEJBBean {
         em.persist(new Person(id, name));
     }
 }
-....
+----
 
 == The router implementation
 
 The router will simply manage a map to store proxied datasources and a
 field to store the datasource used in the current thread (ThreadLocal).
 
-....
+[source,java]
+----
 public class DeterminedRouter implements Router {
     private String dataSourceNames; // used to store configuration (openejb.xml)
     private String defaultDataSourceName; // defautl data source name
@@ -161,7 +164,7 @@ public class DeterminedRouter implements Router {
         this.defaultDataSourceName = name;
     }
 }
-....
+----
 
 == Creation of the service provider for the router
 
@@ -170,7 +173,8 @@ META-INF/. For example META-INF/org.router.
 
 This file will contain something like:
 
-....
+[source,java]
+----
 <ServiceJar>
   <ServiceProvider id="DeterminedRouter" service="Resource"
            type="org.apache.openejb.resource.jdbc.Router" class-name="implementation class">
@@ -178,14 +182,15 @@ This file will contain something like:
     ParamWithNoDefaultValue
   </ServiceProvider>
 </ServiceJar>
-....
+----
 
 == openejb.xml
 
 In the openejb.xml file, you have to declare your dynamic database and
 in our example it needs the proxied datasources too:
 
-....
+[source,java]
+----
 <Resource id="router" type="<your implementation>" provider="<your provider>">
   Param value
 </Resource>
@@ -216,4 +221,4 @@ in our example it needs the proxied datasources too:
   Password
   JtaManaged true
 </Resource>
-....
+----

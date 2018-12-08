@@ -44,14 +44,15 @@ This is the openejb-jar.xml that is created by the Deploy tool in the
 Hello World example. As you can see, the file format is extremely
 simple.
 
-....
+[source,java]
+----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
     <ejb-deployment  ejb-name="Hello"
          deployment-id="Hello"
          container-id="Default Stateless Container"/>
 </openejb-jar>
-....
+----
 
 The _ejb-name_ attribute is the name you gave the bean in your
 ejb-jar.xml. The _deployment-id_ is the name you want to use to lookup
@@ -64,7 +65,8 @@ your jar.
 
 Then you simply add a element to your element like this
 
-....
+[source,java]
+----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
     
@@ -78,7 +80,7 @@ Then you simply add a element to your element like this
     </ejb-deployment>
 
 </openejb-jar>
-....
+----
 
 The _res-ref-name_ attribute refers to the element of the bean's
 declaration in the ejb-jar.xml. The _res-id_ attribute refers to the id
@@ -90,7 +92,8 @@ and provide access to the desired resource.
 You will need one element for every element in your ejb-jar.xml. So if
 you had an ejb-jar.xml like the following
 
-....
+[source,java]
+----
 <?xml version="1.0"?>
 <ejb-jar>
   <enterprise-beans>
@@ -123,12 +126,13 @@ you had an ejb-jar.xml like the following
     </session>
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 Then you would need two elements for that bean in your openejb-jar.xml
 file as such.
 
-....
+[source,java]
+----
 <?xml version="1.0"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
     
@@ -145,7 +149,7 @@ file as such.
     </ejb-deployment>
 
 </openejb-jar>
-....
+----
 
 This would require two declarations in your openejb.conf, one with the
 _id_ attribute set to _"My Oracle JDBC Database"_ , and another with

@@ -33,9 +33,10 @@ the container is able to access through its filesystem.
 
 Example:
 
-....
+[source,java]
+----
 /MIDDLE/foo/bar/my-local-file.jar
-....
+----
 
 === Http/https
 
@@ -44,9 +45,10 @@ JVM ones.
 
 Example:
 
-....
+[source,java]
+----
 http://atos.net/foo/bar/my-http-file.jar 
-....
+----
 
 === Maven
 
@@ -57,23 +59,26 @@ maven informations to deploy your application.
 
 The location should follow:
 
-....
+[source,java]
+----
 mvn:groupId/artifactId[/[version]/[type]]
-....
+----
 
 or
 
-....
+[source,java]
+----
 mvn:groupId:artifactId[:[version]:[type]]
-....
+----
 
 Note: classifier are supported (through version field)
 
 For instance you can use:
 
-....
+[source,java]
+----
 mvn:net.atos.xa/my-application/1.0.0/war
-....
+----
 
 ==== Installation
 
@@ -91,6 +96,7 @@ a look to other tip pages).
 Another way to install it with tomee is to edit or create the file
 /conf/provisioning.properties and add the line:
 
-....
+[source,java]
+----
 zip=http://repo1.maven.org/maven2/org/apache/openejb/openejb-provisionning/<version>/openejb-provisionning-<version>.zip
-....
+----

@@ -5,9 +5,10 @@
 :jbake-status: published
 
 
-....
+[source,java]
+----
           <p><a name="ContainersandResources-containers"></a></p>
-....
+----
 
 CMP_ENTITY
 

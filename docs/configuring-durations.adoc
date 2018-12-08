@@ -29,7 +29,8 @@ be nice when using the abbreviated forms:
 
 Abbreviations are accepted as follows:
 
-....
+[source,java]
+----
   if (u.equalsIgnoreCase("NANOSECONDS")) return TimeUnit.NANOSECONDS;
   if (u.equalsIgnoreCase("NANOSECOND")) return TimeUnit.NANOSECONDS;
   if (u.equalsIgnoreCase("NANOS")) return TimeUnit.NANOSECONDS;
@@ -66,4 +67,4 @@ Abbreviations are accepted as follows:
   if (u.equalsIgnoreCase("DAYS")) return TimeUnit.DAYS;
   if (u.equalsIgnoreCase("DAY")) return TimeUnit.DAYS;
   if (u.equalsIgnoreCase("D")) return TimeUnit.DAYS;
-....
+----

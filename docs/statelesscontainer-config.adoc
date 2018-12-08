@@ -10,7 +10,8 @@ A StatelessContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-....
+[source,java]
+----
 <Container id="myStatelessContainer" type="STATELESS">
     accessTimeout = 30 seconds
     callbackThreads = 5
@@ -26,7 +27,7 @@ body are optional.
     strictPooling = true
     sweepInterval = 5 minutes
 </Container>
-....
+----
 
 Alternatively, a StatelessContainer can be declared via properties in
 the `<tomee-home>/conf/system.properties` file or via Java
@@ -34,7 +35,8 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-....
+[source,java]
+----
 myStatelessContainer = new://Container?type=STATELESS
 myStatelessContainer.accessTimeout = 30 seconds
 myStatelessContainer.callbackThreads = 5
@@ -49,7 +51,7 @@ myStatelessContainer.replaceAged = true
 myStatelessContainer.replaceFlushed = false
 myStatelessContainer.strictPooling = true
 myStatelessContainer.sweepInterval = 5 minutes
-....
+----
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style
@@ -290,12 +292,13 @@ is used in creating the offset and allows the spreading to push the
 initial ages into the future or into the past. The pool is filled at
 startup as follows:
 
-....
+[source,java]
+----
 for (int i = 0; i < poolMin; i++) {
     long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
     pool.add(new Bean(), ageOffset));
 }
-....
+----
 
 The default `MaxAgeOffset` is -1 which causes the initial instances in
 the pool to live a bit longer before expiring. As a concrete example,
@@ -385,7 +388,8 @@ A bean may flush its pool by casting the `SessionContext` to `Flushable`
 and calling `flush()`. See `SweepInterval` for details on how flush is
 performed.
 
-....
+[source,java]
+----
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -401,7 +405,7 @@ public class MyBean {
         ((Flushable) sessionContext).flush();
     }
 }
-....
+----
 
 == strictPooling
 

@@ -38,7 +38,8 @@ For example, here is an EJB that returns another bean, through a remote
 method call. In this case, the _OtherBean_ instance, will have the same
 security as _MyBean_, including the principal (username), roles, etc.
 
-....
+[source,java]
+----
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
 
@@ -51,4 +52,4 @@ public class MyBean
     return (IOtherBean) context.lookup("java:comp/env/otherBean");
     }
 }
-....
+----

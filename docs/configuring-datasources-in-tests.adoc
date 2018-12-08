@@ -10,7 +10,8 @@ properties
 You can configure data sources from within your test case (avoiding the
 need for an `openejb.xml` entirely) like so:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
@@ -20,22 +21,24 @@ p.put("myDataSource.JdbcUrl", "jdbc:derby:derbyDB;create=true");
 p.put("myDataSource.JtaManaged", "true");
 
 Context context = new InitialContext(p);
-....
+----
 
 Under certain circumstances it may be necessary to load two versions of
 the same driver. This is possible by definition of a classpath for the
 resource which points to the specific driver files required for the
 DataSource:
 
-....
+[source,java]
+----
 p.put("myDataSourceOne", "new://Resource?type=DataSource&classpath=/path/to/driverVersionOne.jar");
 p.put("myDataSourceOne.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
 p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseOne;create=true");
-....
+
 p.put("myDataSourceTwo", "new://Resource?type=DataSource&classpath=/path/to/driverVersionTwo.jar");
 p.put("myDataSourceTwo.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
 p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseTwo;create=true");
-....
+[source,java]
+----
 
 This will allow an application to communicate through legacy drivers to
 the same JDBC provider.

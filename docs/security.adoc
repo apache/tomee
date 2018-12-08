@@ -16,7 +16,8 @@ To make your program authenticate itself to the server, simply construct
 your InitialContext with the standard javax.naming.Context properties
 for user/pass info, which is:
 
-....
+[source,java]
+----
 Properties props = new Properties();
 props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 props.setProperty(Context.PROVIDER_URL, "ejbd://localhost:4201");
@@ -26,7 +27,7 @@ props.setProperty("openejb.authentication.realmName", "PropertiesLogin");
 // optional
 InitialContext ctx = new InitialContext(props);
 ctx.lookup(...);
-....
+----
 
 That will get you logged in and all your calls from that context should
 execute as you.

@@ -35,13 +35,14 @@ maintained list.
 In the server this list can be specified via the
 `conf/multipoint.properties` file like so:
 
-....
+[source,java]
+----
 server      = org.apache.openejb.server.discovery.MultipointDiscoveryAgent
 bind        = 127.0.0.1
 port        = 4212
 disabled    = false
 initialServers = 192.168.1.20:4212, 192.168.1.30:4212, 192.168.1.40:4212
-....
+----
 
 The above configuration shows the server has an `port` `4212` open for
 connections by other servers for multipoint communication. The
@@ -57,23 +58,25 @@ participate directly in multipoint communication and do *not* connect to
 the multipoint port. The server list is simply a list of the regular
 `ejbd://` urls that a client normally uses to connect to a server.
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put(Context.PROVIDER_URL, "failover:ejbd://192.168.1.20:4201,ejbd://192.168.1.30:4201");
 InitialContext remoteContext = new InitialContext(p);
-....
+----
 
 Failover can work entirely driven by the server, the client does not
 need to be configured to participate. A client can connect as usual to
 the server.
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put(Context.PROVIDER_URL, "ejbd://192.168.1.20:4201");
 InitialContext remoteContext = new InitialContext(p);
-....
+----
 
 If the server at `192.168.1.20:4201` supports failover, so will the
 client.

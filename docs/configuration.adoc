@@ -32,7 +32,8 @@ OpenEJB saves deployment descriptors - ejb-jar.xml and openejb-jar.xml
 
 Show a config file with the elements hyperlinked.
 
-....
+[source,java]
+----
 <?xml version="1.0"?>
 <openejb>
   <Container id="Default CMP Container" ctype="CMP_ENTITY">
@@ -50,7 +51,7 @@ Show a config file with the elements hyperlinked.
   <Deployments jar="c:/my/app/employee.jar"/>
   <Deployments dir="beans/" />
 </openejb>
-....
+----
 
 == Basic Layout
 
@@ -98,14 +99,15 @@ openejb.home are added to the classpath.
 
 A summary of the above in a different notation:
 
-....
+[source,java]
+----
 openejb.home = user.dir (can be set explicitly)
 openejb.base = openejb.home (can be set explicitly)
 openejb.conf = openejb.base/conf/openejb.conf (can be set explicitly)
 logging.conf = openejb.base/conf/logging.conf (can be set explicitly)
 deployments  = paths listed in openejb.conf (relative paths resolved from openejb.base)
 Classpath includes openejb.home/lib and openejb.home/dist
-....
+----
 
 === Example layout
 
@@ -115,7 +117,8 @@ jars by name (abc-ejbs.jar and xyz-ejbs.jar).
 
 An example layout:
 
-....
+[source,java]
+----
 /usr/local/openejb  (openejb.home)
 /usr/local/openejb/lib  (in classpath)
 /usr/local/openejb/dist (in classpath)
@@ -125,7 +128,7 @@ An example layout:
 /home/jsmith/foo_app/abc-ejbs.jar (Deployment entry in openejb.conf)
 /home/jsmith/foo_app/xyz-ejbs.jar (Deployment entry in openejb.conf)
 /home/jsmith/foo_app/logs/  
-....
+----
 
 === Another Example layout
 
@@ -134,7 +137,8 @@ explicit paths for the openejb and log4j configuration files.
 
 An example layout:
 
-....
+[source,java]
+----
 /usr/local/openejb  (openejb.home)
 /usr/local/openejb/lib  (in classpath)
 /usr/local/openejb/dist (in classpath)
@@ -144,4 +148,4 @@ An example layout:
 /home/jsmith/foo_app/xyz-ejbs.jar (Deployment entry in openejb.xml)
 /home/jsmith/foo_app/log4j.conf  (log4j.configuration)
 /home/jsmith/foo_app/mylogs/  (logging dir as defined in log4j.conf)
-....
+----

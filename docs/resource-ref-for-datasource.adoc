@@ -6,7 +6,8 @@
 
 # Via annotation
 
-....
+[source,java]
+----
 package org.superbiz.refs;
 
 import javax.annotation.Resource;
@@ -30,14 +31,15 @@ public class MyDataSourceRefBean implements MyBeanInterface {
         DataSource barDataSource = (DataSource) context.lookup("java:comp/env/org.superbiz.refs.MyDataSourceRefBean/myBarDataSource");
     }
 }
-....
+----
 
 == Via xml
 
 The above @Resource annotation usage is 100% equivalent to the following
 xml.
 
-....
+[source,java]
+----
 <resource-ref>
     <res-ref-name>myFooDataSource</res-ref-name>
     <res-type>javax.sql.DataSource</res-type>
@@ -50,4 +52,4 @@ xml.
         <injection-target-name>myBarDataSource</injection-target-name>
     </injection-target>
 </resource-ref>
-....
+----

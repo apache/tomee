@@ -51,15 +51,17 @@ pom you have access to the following configuration:
 
 Then simply run
 
-....
+[source,java]
+----
 mvn tomee:deploy <path>
-....
+----
 
 or
 
-....
+[source,java]
+----
 mvn tomee:undeploy <path>
-....
+----
 
 ===== The Deployer through TomEE Webapp
 

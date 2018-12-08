@@ -10,11 +10,12 @@ A BmpEntityContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-....
+[source,java]
+----
 <Container id="myBmpEntityContainer" type="BMP_ENTITY">
     poolSize = 10
 </Container>
-....
+----
 
 Alternatively, a BmpEntityContainer can be declared via properties in
 the `<tomee-home>/conf/system.properties` file or via Java
@@ -22,10 +23,11 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-....
+[source,java]
+----
 myBmpEntityContainer = new://Container?type=BMP_ENTITY
 myBmpEntityContainer.poolSize = 10
-....
+----
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style

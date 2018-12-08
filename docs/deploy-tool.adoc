@@ -147,7 +147,8 @@ _________________________
 On running the deploy tool with a valid EJB jar the following output is
 printed on the console
 
-....
+[source,java]
+----
 Application deployed successfully at {0}
 App(id=C:\samples\Calculator-new\hello-addservice.jar)
     EjbJar(id=hello-addservice.jar, path=C:\samples\Calculator-new\hello-addservice.jar)
@@ -158,7 +159,7 @@ App(id=C:\samples\Calculator-new\hello-addservice.jar)
     Ejb(ejb-name=AddServiceBean, id=AddServiceBean)
         Jndi(name=AddServiceBean)
         Jndi(name=AddServiceBeanLocal)
-....
+----
 
 Note: In the above case the command used is: > openejb deploy
 hello-addservice.jar

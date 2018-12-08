@@ -18,11 +18,12 @@ available server-wide, whereas defining the resource within a
 As a simple example, a JMS queue can be defined within `tomee.xml` with
 the following configuration.
 
-....
+[source,java]
+----
 <tomee>
     <Resource id="MyQueue" type="javax.jms.Queue"/>
 </tomee>
-....
+----
 
 Once the resource has been defined, the server will create an instance
 of the resource during startup, and it will be available to be injected
@@ -30,7 +31,8 @@ into managed components using the `@Resource` annotation, as shown
 below. The `name` attribute on the `@Resource` annotation should match
 the `id` attribute on the `Resource` tag.
 
-....
+[source,java]
+----
 public class JmsClient {
 
     @Resource(name="MyQueue")
@@ -41,14 +43,15 @@ public class JmsClient {
     }
 
 }
-....
+----
 
 As an alternative to defining a resource in XML, resources can also be
 defined using system properties:
 
-....
+[source,java]
+----
 MyQueue = new://Resource?type=javax.jms.Queue
-....
+----
 
 Resources, or attributes for resources specified using system properties
 will override definitions specified in `tomee.xml`. Server-wide
@@ -66,14 +69,15 @@ and password to be able to connect to a database. That would be
 configured with the following syntax. Notice the key/value pair syntax
 for the properties within the `<Resource>` tag.
 
-....
+[source,java]
+----
 <Resource id="DB" type="DataSource">
   JdbcDriver  com.mysql.jdbc.Driver
   JdbcUrl     jdbc:mysql://localhost/test
   UserName    test
   Password    password
 </Resource>
-....
+----
 
 Specifying the key/value pairs specific to a Resource can also be done
 when defining the resource via system properties. This is done be
@@ -81,13 +85,14 @@ specifying an additional property for each key/value pair, using the
 resource ID as a prefix: `<resourceId>.<propertyName>=<value>`. The
 system properties equivalent of the resource above is:
 
-....
+[source,java]
+----
 p.setProperty("DB", "new://Resource?type=DataSource");
 p.setProperty("DB.JdbcDriver", "com.mysql.jdbc.Driver");
 p.setProperty("DB,JdbcUrl", "jdbc:mysql://localhost/test");
 p.setProperty("DB.UserName", "test");
 p.setProperty("DB.Password", "password");
-....
+----
 
 The `<Resource>` tag has a number of attributes which control the way
 that the resource get created.
@@ -131,7 +136,8 @@ known resource types are.
 
 So the following simple resource
 
-....
+[source,java]
+----
 public class Configuration {
 
     private String url;
@@ -140,18 +146,19 @@ public class Configuration {
 
     // getters and setters
 }
-....
+----
 
 Can be defined in `tomee.xml` using the following configuration (note
 the `class-name` attribute):
 
-....
+[source,java]
+----
 <Resource id="config" class-name="org.superbiz.Configuration">
     url http://localhost
     username tomee
     poolSize 20
 </Resource>
-....
+----
 
 This resource must be available in TomEE's system classpath - i.e. it
 must be defined in a .jar within the `lib/` directory.
@@ -167,7 +174,8 @@ below, and this will have any used properties from the resource
 configuration set added to it. So as an alternative to the above code,
 you could do:
 
-....
+[source,java]
+----
 public class Configuration {
 
     private Properties properties;
@@ -181,17 +189,18 @@ public class Configuration {
     }
 
 }
-....
+----
 
 Using the same resource definition:
 
-....
+[source,java]
+----
 <Resource id="config" class-name="org.superbiz.Configuration">
     url http://localhost
     username tomee
     poolSize 20
 </Resource>
-....
+----
 
 the url, username and poolSize values will now be available in the
 properties field, so for example, the username property could be
@@ -208,7 +217,8 @@ The format of `resources.xml` uses the same `<Resource>` tag as
 `tomee.xml`. One key difference is the root element of the XML is
 `<resources>` and not `<tomee>`.
 
-....
+[source,java]
+----
 <resources>
     <Resource id="config" class-name="org.superbiz.Configuration">
         url http://localhost
@@ -216,7 +226,7 @@ The format of `resources.xml` uses the same `<Resource>` tag as
         poolSize 20
     </Resource>
 </resources>
-....
+----
 
 This mechanism allows you to package your custom resources within your
 application, alongside your application code, rather than requiring a
@@ -271,13 +281,14 @@ specified on the `Resource`, TomEE will instantiate the resource using
 its no-arg constructor. If you wish to pass constructor arguments,
 specify the arguments as a comma separated list:
 
-....
+[source,java]
+----
 <Resource id="config" class-name="org.superbiz.Configuration" constructor="id, poolSize">
     url http://localhost
     username tomee
     poolSize 20
 </Resource>
-....
+----
 
 === factory-name method
 
@@ -290,7 +301,8 @@ no argument method that returns an object on the class specified in the
 
 For example:
 
-....
+[source,java]
+----
 public class Factory {
 
     private Properties properties;
@@ -318,7 +330,7 @@ public class Factory {
         UserName tomee
     </Resource>
 </resources>
-....
+----
 
 === @PostConstruct / @PreDestroy
 
@@ -331,7 +343,8 @@ destroyed. Using @PostConstruct will effectively force a lazily loaded
 resource to be instantiated when the application is starting - in the
 same way that the `InitializeAfterDeployment` property does.
 
-....
+[source,java]
+----
 public class MyClass {
 
     private Properties properties;
@@ -351,7 +364,7 @@ public class MyClass {
     }
 
 }
-....
+----
 
 == Examples
 

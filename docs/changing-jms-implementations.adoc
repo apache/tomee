@@ -48,7 +48,8 @@ These values can be overridden in the `tomee.xml` or `openejb.xml`
 Let's say that the following file lives in the jar at
 `META-INF/org.superbiz/service-jar.xml`
 
-....
+[source,java]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <ServiceJar>
   <ServiceProvider
@@ -115,7 +116,7 @@ Let's say that the following file lives in the jar at
           TopicClassName
   </ServiceProvider>
 </ServiceJar>
-....
+----
 
 It is strongly recommended to not leave the values in the
 service-jar.xml file blank as shown above. It is possible to setup
@@ -127,21 +128,23 @@ Once this file is packed in a jar and added to the `<tomee.home>/lib` or
 "instances" of these things in your `tomee.xml` or `openejb.xml` config
 file as follows:
 
-....
+[source,java]
+----
 <Resource id="My Generic Adapter" type="GenericJMSRA" provider="org.superbiz:genericra">
 AdapterProperty1 PropertyValue1
 AdapterProperty2 PropertyValue2
 ...
 </Resource>
-....
+----
 
 Or in properties like so:
 
-....
+[source,java]
+----
 myGenericAdapter = new://Resource?type=GenericJMSRA&provider=org.superbiz:genericra
 myGenericAdapter.AdapterProperty1 = PropertyValue1
 myGenericAdapter.AdapterProperty2 = PropertyValue2
-....
+----
 
 This is basically the same as all configuration in TomEE/OpenEJB, but
 with the addition that you must specify the `provider` attribute so the

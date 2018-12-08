@@ -15,7 +15,8 @@ feature-rich plugin that allows for:
 Simply add the following to the , and optionally the ), section of your
 `pom.xml`
 
-....
+[source,java]
+----
 <plugins>
     <plugin>
       <groupId>org.apache.openejb.maven</groupId>
@@ -27,7 +28,7 @@ Simply add the following to the , and optionally the ), section of your
       </configuration>
     </plugin>
 </plugins>
-....
+----
 
 ###Plugin Goals
 
@@ -112,7 +113,8 @@ This plugin is also usable in projects which are not war. For instance
 you can use it in a pom project to setup a TomEE install, add libraries,
 deploy apps then run the server.
 
-....
+[source,java]
+----
   <plugin>
     <groupId>org.apache.openejb.maven</groupId>
     <artifactId>tomee-maven-plugin</artifactId>
@@ -141,11 +143,12 @@ deploy apps then run the server.
       </libs>
     </configuration>
   </plugin>
-....
+----
 
 ###Auto Reloading Example
 
-....
+[source,java]
+----
 <plugin>
   <groupId>org.apache.openejb.maven</groupId>
   <artifactId>tomee-maven-plugin</artifactId>
@@ -159,7 +162,7 @@ deploy apps then run the server.
     <reloadOnUpdate>true</reloadOnUpdate>
   </configuration>
 </plugin>
-....
+----
 
 The Synchronization block supports the following configuration options:
 

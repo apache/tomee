@@ -7,7 +7,8 @@
 #
 Via annotation
 
-....
+[source,java]
+----
 package org.superbiz.refs;
 
 import javax.ejb.EJB;
@@ -30,13 +31,14 @@ public class MyEjbRemoteRefBean implements MyBeanInterface {
         BarRemote barRemote = (BarRemote) context.lookup("java:comp/env/org.superbiz.refs.MyEjbRemoteRefBean/myBarEjb");
     }
 }
-....
+----
 
 # Via xml
 
 The above @EJB annotation usage is 100% equivalent to the following xml.
 
-....
+[source,java]
+----
 <ejb-ref>
     <ejb-ref-name>myFooEjb</ejb-ref-name>
     <remote>org.superbiz.refs.FooRemote</remote>
@@ -50,4 +52,4 @@ The above @EJB annotation usage is 100% equivalent to the following xml.
       <injection-target-name>myBarEjb</injection-target-name>
     </injection-target>
 </ejb-ref>
-....
+----

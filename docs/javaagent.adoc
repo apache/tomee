@@ -12,16 +12,18 @@ persistence provider or if using CMP.
 
 Adding a java agent is done via a vm parameter as follows:
 
-....
+[source,java]
+----
 java -javaagent:openejb-javaagent-4.6.0.jar _\[other params...](other-params....html)
-....
+----
 
 == Maven2
 
 In maven2 you can enable the javaagent for your tests by adding this to
 your pom.xml file:
 
-....
+[source,java]
+----
 <build>
   <plugins>
     <!-- this configures the surefire plugin to run your tests with the javaagent enabled -->
@@ -61,4 +63,4 @@ your pom.xml file:
     </plugin>
   </plugins>
 </build>
-....
+----

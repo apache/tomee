@@ -10,7 +10,8 @@ A TransactionManager can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-....
+[source,java]
+----
 <TransactionManager id="myTransactionManager" type="TransactionManager">
     adler32Checksum = true
     bufferSizeKb = 32
@@ -27,7 +28,7 @@ body are optional.
     threadsWaitingForceThreshold = -1
     txRecovery = false
 </TransactionManager>
-....
+----
 
 Alternatively, a TransactionManager can be declared via properties in
 the `<tomee-home>/conf/system.properties` file or via Java
@@ -35,7 +36,8 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-....
+[source,java]
+----
 myTransactionManager = new://TransactionManager?type=TransactionManager
 myTransactionManager.adler32Checksum = true
 myTransactionManager.bufferSizeKb = 32
@@ -51,7 +53,7 @@ myTransactionManager.maxLogFiles = 2
 myTransactionManager.minBuffers = 4
 myTransactionManager.threadsWaitingForceThreshold = -1
 myTransactionManager.txRecovery = false
-....
+----
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style

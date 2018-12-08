@@ -12,7 +12,8 @@ javax.mail.Session.getDefaultInstance(Properties props).
 
 Here might be some example properties.
 
-....
+[source,java]
+----
 <Resource id="SuperbizMail" type="javax.mail.Session">
    mail.smtp.host=mail.superbiz.org
    mail.smtp.port=25
@@ -21,7 +22,7 @@ Here might be some example properties.
    mail.smtp.user=someuser
    password=mypassword
 </Resource>
-....
+----
 
 You can create as many entries like this as you wish, they just have to
 have a unique 'id'.
@@ -37,6 +38,7 @@ values before attempting to use them.
 If you wanted to do a System property or InitialContext property
 override of the above example mail session, you could do so like this:
 
-....
+[source,java]
+----
 java ... -DSuperbizMail.mail.smtp.host=localhost
-....
+----

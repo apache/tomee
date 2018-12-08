@@ -60,7 +60,8 @@ To use an OpenEJB additional type in xml, simply declare it as
 java.lang.String and it will be converted on the fly to the field/setter
 type used by the bean class. For example:
 
-....
+[source,java]
+----
 package org.superbiz.foo;
 
 import java.util.Date;
@@ -71,11 +72,12 @@ public class MyBean {
     @Resource
     private Date myDate;
 }
-....
+----
 
 Works with an ejb-jar.xml as follows:
 
-....
+[source,java]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0"
 metadata-complete="false">
   <enterprise-beans>
@@ -89,10 +91,11 @@ metadata-complete="false">
     </session>
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 Or with an env-entries.properties file as follows:
 
-....
+[source,java]
+----
 org.superbiz.foo.MyBean/myDate = 2008-04-19
-....
+----

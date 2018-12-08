@@ -20,7 +20,8 @@ examples start with this basic class that has a built-in lookup allowing
 for a common prefix to be optionally applied to the beginning of all
 lookup strings.
 
-....
+[source,java]
+----
 public class MyLocator {
     private final Context context;
 
@@ -44,12 +45,13 @@ public class MyLocator {
         }
     }
 }
-....
+----
 
 == Just the interface Usable with JNDI name formats ending in the full
 class name of the interface such as: - \{interfaceClass}
 
-....
+[source,java]
+----
 public <T> T lookup(Class<T> type) {
     return (T) lookup(type.getName());
 }
@@ -58,17 +60,18 @@ public <T> T lookup(Class<T> type) {
 
 MyLocator locator = new MyLocator();
 Widget widget = locator.lookup(Widget.class);   
-....
+----
 
 Or with a common prefix or with a common prefix supplied in constructor
 such as: - \{moduleId}/\{interfaceClass} -
 ejb/\{moduleId}/\{interfaceClass}
 
-....
+[source,java]
+----
 MyLocator locator = new MyLocator("ejb/superbiz");
 Widget widget = locator.lookup(Widget.class);   
 Store store = locator.lookup(Store.class);
-....
+----
 
 == Interface class and a prefix
 
@@ -89,11 +92,12 @@ Or with a common prefix or with a common prefix supplied in constructor
 such as: - \{moduleId}/\{ejbName}/\{interfaceClass} -
 ejb/\{moduleId}/\{deploymentId}/\{interfaceClass}
 
-....
+[source,java]
+----
 MyLocator locator = new MyLocator("accountingApp");
 Widget widget = locator.lookup("RedWidgetBean", Widget.class);   
 Store store = locator.lookup("StoreBean", Store.class);
-....
+----
 
 == Interface class and ejb class
 
@@ -107,7 +111,8 @@ class.
 
 Works with: - \{interfaceClass}/\{ejbClass}
 
-....
+[source,java]
+----
 public <T> T lookup(Class<T> type, Class ejbClass) {
     return (T) lookup(type.getName() + "/" + ejbClass.getName());
 }
@@ -116,17 +121,18 @@ public <T> T lookup(Class<T> type, Class ejbClass) {
 
 MyLocator locator = new MyLocator();
 Widget widget = locator.lookup(Widget.class, BlueWidgetBean.class);   
-....
+----
 
 Or with a common prefix or with a common prefix supplied in constructor
 such as: - \{moduleId}/\{interfaceClass}/\{ejbClass} -
 ejb/\{moduleId}/\{interfaceClass}/\{ejbClass}
 
-....
+[source,java]
+----
 MyLocator locator = new MyLocator("ejb/purchasingApp");
 Widget widget = locator.lookup(Widget.class, RedWidgetBean.class);
 Store store = locator.lookup(Store.class, StoreBean.class);
-....
+----
 
 == Interface class and ejb class with simple names
 
@@ -134,26 +140,29 @@ Similar to the above example but using the simple name of the classes
 resulting in a JNDI tree that's a bit more human readable. -
 \{ejbClass.simpleName}/\{interfaceClass.simpleName}
 
-....
+[source,java]
+----
 public <T> T lookup(Class ejbClass, Class<T> type) {
     return (T) lookup(ejbClass.getSimpleName() + "" + type.getSimpleName());
 }
-....
+----
 
 and
 
-....
+[source,java]
+----
 MyLocator locator = new MyLocator();
 Widget widget = locator.lookup(RedWidgetBean.class, Widget.class);   
-....
+----
 
 Or with a common prefix or with a common prefix supplied in constructor
 such as: -
 \{moduleId}/\{ejbClass.simpleName}/\{interfaceClass.simpleName} -
 ejb/\{moduleId}/\{ejbClass.simpleName}/\{interfaceClass.simpleName}
 
-....
+[source,java]
+----
 MyLocator locator = new MyLocator("shippingApp");
 Widget widget = locator.lookup(GreenWidgetBean.class, Widget.class);   
 Store store = locator.lookup(SuperStoreBean.class, Store.class);
-....
+----

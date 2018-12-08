@@ -111,5 +111,3 @@ Finally if you don't use `Authorization` header you can change the used header s
 
 NOTE: `authorization`, `authorizationHeader`, `basic.username`, and `basic.password` are removed
 from the URL before opening the connection and therefore not logged in the remote server access log since version 7.0.3.
-
-

@@ -22,7 +22,8 @@ http://people.apache.org/~jgallimore/PersonApp.zip[here] .
 I created a class to start my embedded OpenEJB and Jetty instances and
 configure them to see the EJB and WAR modules of my application:
 
-....
+[source,java]
+----
 public class EmbeddedServer {
     private static EmbeddedServer instance = new EmbeddedServer();
     private Server server;
@@ -122,7 +123,7 @@ public class EmbeddedServer {
     return webApp;
     }
 } 
-....
+----
 
 This class sets up an embedded instance of Jetty, running on port 9091.
 You'll notice the setupJndi() method. This looks through the ejb-ref
@@ -138,7 +139,8 @@ In the last code sample, we also set up a custom ServletHandler in Jetty
 - this is to perform dependency injection. The custom ServletHandler
 looks like this:
 
-....
+[source,java]
+----
 public class EmbeddedServerServletHandler extends ServletHandler {
     private InitialContext initialContext;
 
@@ -149,18 +151,20 @@ public class EmbeddedServerServletHandler extends ServletHandler {
     public Servlet customizeServlet(Servlet servlet) throws Exception {
     Class<? extends Servlet> servletClass = servlet.getClass();
         Field[]
-....
+----
 
 declaredFields = servletClass.getDeclaredFields();
 
-....
+[source,java]
+----
     for (Field declaredField : declaredFields) {
             Annotation[]
-....
+----
 
 annotations = declaredField.getAnnotations();
 
-....
+[source,java]
+----
         for (Annotation annotation : annotations) {
         if (EJB.class.equals(annotation.annotationType())) {
             // inject into this field
@@ -186,7 +190,7 @@ annotations = declaredField.getAnnotations();
     return new EJBHelper().getBeanInfo(fieldType);
     }
 } 
-....
+----
 
 This looks up deployed beans that match the field type, and uses
 reflection to set the field.
@@ -196,7 +200,8 @@ reflection to set the field.
 We can now write a functional test. I use a base abstract class to make
 sure the Embedded server is running, and start Selenium:
 
-....
+[source,java]
+----
 public abstract class FunctionalTestCase extends TestCase {
     protected DefaultSelenium selenium;
 
@@ -211,11 +216,12 @@ public abstract class FunctionalTestCase extends TestCase {
     selenium.stop();
     }
 }
-....
+----
 
 and I can then I write a test like this:
 
-....
+[source,java]
+----
 public class AddPersonTest extends FunctionalTestCase {
     public void testShouldAddAPerson() throws Exception {
     selenium.open("/People");
@@ -231,7 +237,7 @@ public class AddPersonTest extends FunctionalTestCase {
 
     }
 } 
-....
+----
 
 === Sample code
 

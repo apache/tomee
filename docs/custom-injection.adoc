@@ -33,7 +33,8 @@ http://tomee.apache.org/downloads.html[download page].
 
 == Bean Class
 
-....
+[source,java]
+----
 @Stateless
 public class Stratocaster {
 
@@ -79,17 +80,18 @@ public class Stratocaster {
         return certificateOfAuthenticity;
     }
 }
-....
+----
 
 == The META-INF/env-entries.properties file
 
-....
+[source,java]
+----
 guitarStringGuages=E1=0.052\nA=0.042\nD=0.030\nG=0.017\nB=0.013\nE=0.010
 certificateOfAuthenticity=/tmp/strat-certificate.txt
 dateCreated=1962-03-01
 pickups=S,S,S
 style=VINTAGE
-....
+----
 
 == The Custom Type and Editor
 
@@ -98,7 +100,8 @@ we'd like to allow abbreviated versions of the enum constants to be
 usable. We do this by creating a custom PropertyEditor for our Pickup
 enum like so:
 
-....
+[source,java]
+----
 public class PickupEditor extends java.beans.PropertyEditorSupport {
     public void setAsText(String text) throws IllegalArgumentException {
         text = text.trim();
@@ -108,13 +111,14 @@ public class PickupEditor extends java.beans.PropertyEditorSupport {
         else throw new IllegalStateException("H and S are the only supported Pickup aliases");
     }
 }
-....
+----
 
 We cleverly install this PropertyEditor in a static block in the Pickup
 class that will be executed should someone actually reference the Pickup
 type.
 
-....
+[source,java]
+----
 public enum Pickup {
 
     HUMBUCKER,
@@ -127,11 +131,12 @@ public enum Pickup {
         PropertyEditorManager.registerEditor(Pickup.class, PickupEditor.class);
     }
 }
-....
+----
 
 # Test Case
 
-....
+[source,java]
+----
 public class StratocasterTest extends TestCase {
 
     @EJB
@@ -161,7 +166,7 @@ public class StratocasterTest extends TestCase {
 
     }
 }
-....
+----
 
 # Running it
 
@@ -174,7 +179,8 @@ ___________________
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -200,4 +206,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.705 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

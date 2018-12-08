@@ -10,7 +10,8 @@ For a unit called "movie-unit" using two datasources called
 "movieDatabase" and "movieDatabaseUnmanaged" the following
 persistence.xml would work.
 
-....
+[source,java]
+----
 <persistence version="1.0"
        xmlns="http://java.sun.com/xml/ns/persistence"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,7 +30,7 @@ persistence.xml would work.
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 Note that as of OpenEJB 3.1 you do not need to set the
 `hibernate.transaction.manager_lookup_class` as it will be set for you
@@ -58,7 +59,8 @@ strategy like the following will do the trick. This
 "DynamicTransactionManagerLookup" class can be packed in your jar and
 deployed with your app.
 
-....
+[source,java]
+----
 import org.hibernate.HibernateException;
 import org.hibernate.transaction.TransactionManagerLookup;
 import javax.transaction.TransactionManager;
@@ -94,7 +96,7 @@ public class DynamicTransactionManagerLookup implements TransactionManagerLookup
         return impl.getUserTransactionName();
     }
 }
-....
+----
 
 Then set the Hibernate specific configuration property
 _hibernate.transaction.manager_lookup_class_ to the name of the factory

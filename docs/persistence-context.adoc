@@ -9,7 +9,8 @@
 Both lookup and injection of an EntityManager can be configured via the
 `@PersistenceContext` annotation.
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import javax.persistence.PersistenceContext;
@@ -33,14 +34,15 @@ public class MyBean implements MyInterface {
         EntityManager barEntityManager = (EntityManager) context.lookup("java:comp/env/org.superbiz.MyBean/myBarEntityManager");
     }
 }
-....
+----
 
 # Via xml
 
 The above @PersistenceContext annotation usage is 100% equivalent to the
 following xml.
 
-....
+[source,java]
+----
 <persistence-context-ref>
     <persistence-context-ref-name>myFooEntityManager</persistence-context-ref-name>
     <persistence-unit-name>foo-unit</persistence-unit-name>
@@ -56,4 +58,4 @@ following xml.
         <injection-target-name>myBarEntityManager</injection-target-name>
     </injection-target>
 </persistence-context-ref>
-....
+----

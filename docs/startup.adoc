@@ -94,9 +94,10 @@ That's it. The ejbd will start up and bind to IP 127.0.0.1 and port
 The following properties would then be used to get an InitialContext
 from the Remote Server.
 
-....
+[source,java]
+----
 java.naming.factory.initial  =
-....
+----
 
 org.apache.openejb.client.RemoteInitialContextFactory
 java.naming.provider.url = ejbd://127.0.0.1:4201
@@ -142,9 +143,10 @@ will start up and bind to IP 10.45.67.8 and port 4201. The following
 properties would then be used to get an InitialContext from the EJBd
 Server Service.
 
-....
+[source,java]
+----
    java.naming.factory.initial      =
-....
+----
 
 org.apache.openejb.client.RemoteInitialContextFactory
 java.naming.provider.url = ejbd://10.45.67.8:4201
@@ -158,9 +160,10 @@ _openejb start -Dejbd.bind=myhost.foo.com_
 The following properties would then be used to get an InitialContext
 from the Remote Server.
 
-....
+[source,java]
+----
    java.naming.factory.initial      =
-....
+----
 
 org.apache.openejb.client.RemoteInitialContextFactory
 java.naming.provider.url = ejbd://myhost.foo.com:4201
@@ -183,9 +186,10 @@ The server will start up and bind to IP 127.0.0.1 and port 8765.
 The following properties would then be used to get an InitialContext
 from the Remote Server.
 
-....
+[source,java]
+----
    java.naming.factory.initial      =
-....
+----
 
 org.apache.openejb.client.RemoteInitialContextFactory
 java.naming.provider.url = ejbd://127.0.0.1:8765
@@ -200,9 +204,10 @@ The server will start up and the EJB over HTTP service will bind to IP
 The following properties would then be used to get an InitialContext
 from the HTTP/Remote Server.
 
-....
+[source,java]
+----
    java.naming.factory.initial      =
-....
+----
 
 org.apache.openejb.client.RemoteInitialContextFactory
 java.naming.provider.url = http://127.0.0.1:8888/openejb
@@ -254,12 +259,13 @@ starts.
 Once you start OpenEJB using the _openejb start_ command the following
 output will be seen on the console
 
-....
+[source,java]
+----
 Apache OpenEJB 3.0    build: 20070825-01:10
 http://tomee.apache.org/
 OpenEJB ready.
 [OPENEJB:init]
-....
+----
 
 OpenEJB Remote Server ** Starting Services ** NAME IP PORT httpejbd
 0.0.0.0 4204 telnet 0.0.0.0 4202 ejbd 0.0.0.0 4201 hsql 0.0.0.0 9001

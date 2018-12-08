@@ -12,7 +12,8 @@ some very nasty side effects happen, namely you loose the ability to
 throw any checked exceptions that are not in the throws clause of both
 methods.
 
-....
+[source,java]
+----
 import junit.framework.TestCase;
 
 import java.lang.reflect.InvocationHandler;
@@ -27,19 +28,21 @@ public class ExceptionTest extends TestCase {
     public void test() throws Exception {
     ClassLoader classLoader = this.getClass().getClassLoader();
         Class[]
-....
+----
 
 interfaces = new Class[]\{One.class, Two.class};
 
-....
+[source,java]
+----
     InvocationHandler h = new TestInvocationHandler();
 
     Object proxy =
-....
+----
 
 java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
 
-....
+[source,java]
+----
     One one = (One) proxy;
 
     try {
@@ -59,11 +62,12 @@ java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
     } catch(UndeclaredThrowableException u) {
         Throwable t = u.getCause();
         fail("Undeclared: "+t); // This will always be the code that
-....
+----
 
 executes } catch(Throwable t)\{ fail("Caught: "+t); }
 
-....
+[source,java]
+----
     Two two = (Two) proxy;
     try {
         two.run(new CommonException());
@@ -71,11 +75,12 @@ executes } catch(Throwable t)\{ fail("Caught: "+t); }
     } catch(UndeclaredThrowableException u) {
         Throwable t = u.getCause();
         fail("Undeclared: "+t); // This will always be the code that
-....
+----
 
 executes } catch(Throwable t)\{ fail("Caught: "+t); }
 
-....
+[source,java]
+----
     }
 
     public static class CommonException extends Exception {
@@ -102,7 +107,7 @@ executes } catch(Throwable t)\{ fail("Caught: "+t); }
     }
 
     private static class TestInvocationHandler implements InvocationHandler
-....
+----
 
 \{ public Object invoke(Object proxy, Method method, Object[] args)
 throws Throwable \{ throw (Throwable)args[0] ; } } }
@@ -115,7 +120,8 @@ those two interfaces declare the _same method_ but with _different
 return types_ the VM proxy code will refuse to create a proxy at all.
 Take this code example:
 
-....
+[source,java]
+----
 import junit.framework.TestCase;
 
 import java.lang.reflect.InvocationHandler;
@@ -129,19 +135,21 @@ public class ReturnTest extends TestCase {
     public void test() throws Exception {
     ClassLoader classLoader = this.getClass().getClassLoader();
         Class[]
-....
+----
 
 interfaces = new Class[]\{ReturnTest.One.class, ReturnTest.Two.class};
 
-....
+[source,java]
+----
     InvocationHandler h = new ReturnTest.TestInvocationHandler();
 
     Object proxy =
-....
+----
 
 java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
 
-....
+[source,java]
+----
     One one = (One) proxy;
     try {
         Object object = one.run(new ThingOne());
@@ -173,16 +181,17 @@ java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
     }
 
     private static class TestInvocationHandler implements InvocationHandler
-....
+----
 
 \{ public Object invoke(Object proxy, Method method, Object[] args)
 throws Throwable \{ return args[0] ; } } }
 
 Running this code will result in the following exception:
 
-....
+[source,java]
+----
 java.lang.IllegalArgumentException: methods with same signature
-....
+----
 
 run(java.lang.Object) but incompatible return types: [class
 ReturnTestlatexmath:[$ThingOne, class ReturnTest$]ThingTwo] at

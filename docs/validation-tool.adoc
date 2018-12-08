@@ -113,13 +113,14 @@ classloader, perhaps because it is only in the child classloader.
 
 Here is a more concrete example:
 
-....
+[source,java]
+----
 public interface Person extends EJBObject {
 }
 
 public interface Employee extends Person {
 }
-....
+----
 
 Ok, so when we build our ejb jar, we put both the Person and Employee
 interfaces in the jar, so everything should be good (so we think). But
