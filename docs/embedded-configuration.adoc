@@ -1,4 +1,4 @@
-# Embedded Configuration
+# OpenEJB Embedded Configuration
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -18,20 +18,20 @@ several places to put your overrides and an a specific order how they
 are applied. Here they are in order of preference; 1 = highest, 5 =
 lowest.
 
-\{row \{span8 *InitialContext*
+*InitialContext*
 
-[arabic]
 . InitialContext properties
 . jndi.properties from the classpath
 . System properties
 . openejb.xml declarations/properties
 . service-jar.xml declarations/properties (internal concept) }
 
-\{span8 *EJBContainer API* 1. EJBContainer.createEJBContainer(Map)
-entries 1. System properties 1. openejb.xml declarations/properties 1.
-service-jar.xml declarations/properties (internal concept)
+*EJBContainer API*
 
-} }
+. EJBContainer.createEJBContainer(Map) entries
+. System properties
+. openejb.xml declarations/properties
+. service-jar.xml declarations/properties (internal concept)
 
 It opens up some interesting possibilities in how you configure your
 environment. You could do 100% of your configuration in your test case
@@ -66,7 +66,8 @@ link:properties-listing.html[OpenEJB Properties] for details on those.
 
 # Example of using InitialContext properties
 
-....
+[source,java]
+----
 Properties p = new Properties();
 
 // set the initial context factory
@@ -91,7 +92,7 @@ p.put("openejb.descriptors.output ", " true");
 p.put("openejb.validation.output.level ", " verbose");
 
 InitialContext initialContext = new InitialContext(p);
-....
+----
 
 # Example of using jndi.properties
 
@@ -100,7 +101,8 @@ Here's an example of the same properties being specified via a
 classpath, not in a subdirectory of a path in the classpath such as
 META-INF, but at the root of any of the paths in the classpath.
 
-....
+[source]
+----
 # set the initial context factory
 java.naming.factory.initial = org.apache.openejb.client.LocalInitialContextFactory
 
@@ -121,15 +123,16 @@ movie-unit.hibernate.dialect = org.hibernate.dialect.HSQLDialect
 openejb.jndiname.format = {ejbName}/{interfaceClass}
 openejb.descriptors.output = true
 openejb.validation.output.level = verbose
-....
+----
 
 Then OpenEJB can be booted via the `InitialContext` as normal.
 Properties can still be used to override any of the above properties:
 
-....
+[source]
+----
 Properties p = new Properties();
 
 p.put("openejb.validation.output.level ", " medium");
 
 InitialContext initialContext = new InitialContext(p);
-....
+----
