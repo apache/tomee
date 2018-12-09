@@ -20,12 +20,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
-import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class FileUtils {
 
-    private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private static final java.util.Random RANDOM = new java.util.Random();
 
     private File home;
 
