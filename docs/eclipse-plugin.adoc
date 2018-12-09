@@ -1,10 +1,10 @@
-# Eclipse Plugin 
+= Eclipse Plugin
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# What is it?
+= What is it?
 
 The _OpenEJB Eclipse Plugin_ will be a suite of tools made available via
 Eclipse to make EJB development with OpenEJB easier. The initial
@@ -15,7 +15,7 @@ and Eclipse project integration. From there, the sky is the limit so
 feel free to suggest features on the [OpenEJB Dev list|Mailing
 Lists#MailingLists-DeveloperMailingList] .
 
-# How to get involved?
+= How to get involved?
 
 Just the same as getting involved with any part of OpenEJB -- send a
 mail to the
@@ -23,19 +23,19 @@ link:mailing-lists#mailinglists-developermailinglist.html[OpenEJB Dev
 list] and say "Hi!" We're a very relaxed group so no need to be perfect
 or overly prepared. Just dive right in, we're always happy to have more.
 
-# Where do I get it?
+= Where do I get it?
 
 The initiative is just launching, but you can grab what we have right
 here and start hacking.
 
 http://svn.apache.org/repos/asf/tomee/openejb-eclipse-plugin/trunk/
 
-# What do I need to help?
+= What do I need to help?
 
 http://www.eclipse.org[Eclipse] http://www.eclipse.org/webtools[Eclipse
 Web Tools]
 
-# Resources
+= Resources
 
 http://eclipsezilla.eclipsecon.org/show_bug.cgi?id=3581[EclipseCon
 Presentation for Extending WTP]

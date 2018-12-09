@@ -1,4 +1,4 @@
-# Manual Installation
+= Manual Installation
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -23,7 +23,7 @@ http://tomee.apache.org/downloads.html[download page]
 . Add the OpenEJB JavaAgent to the bin/catalina.bat or bin/catalina.bat
 script
 
-##Install openejb.war
+== Install openejb.war
 
 Once Tomcat has been link:tomcat-installation.html[installed] , the
 OpenEJB plugin for Tomcat can be installed. The war can be obtained from
@@ -143,6 +143,6 @@ fi
 #End of Snippet to add
 ----
 
-##Note: The example above is an excerpt from the middle of the
+== Note: The example above is an excerpt from the middle of the
 bin/catalina.sh file. Search for the this section and add the snippet
 shown

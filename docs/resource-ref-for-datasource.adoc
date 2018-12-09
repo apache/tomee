@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-# Via annotation
+= Via annotation
 
 [source,java]
 ----

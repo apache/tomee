@@ -1,4 +1,4 @@
-# Hello World
+= Hello World
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -257,7 +257,7 @@ Hello World!!!!
 Just send us an email at users@tomee.apache.org. If possible, send us
 the contents of logs/openejb.log file in the email.
 
-# Looking for more?
+= Looking for more?
 
 More EJB 3.0 examples, sample applications, tutorials and howtos
 available link:examples.html[here] .

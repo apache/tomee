@@ -1,10 +1,10 @@
-# Custom Injection 
+= Custom Injection
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Overview
+= Overview
 
 As noted in the link:injection-of-env-entry-example.html[Injection of
 env-entry Example] , the EJB 3.0 supported env-entry types are fairly

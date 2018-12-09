@@ -1,10 +1,10 @@
-== Application Composer Getting Started
+= Application Composer Getting Started
 
 ApplicationComposer API is mainly contained in
 `org.apache.openejb.testing` package (historically, today we would have
 called the package `org.apache.tomee.applicationcomposer`).
 
-=== Dependencies
+== Dependencies
 
 To start using ApplicationComposer you need to add some dependencies.
 
@@ -45,9 +45,9 @@ of maven) `openejb-cxf`:
 
 etc...
 
-=== ApplicationComposer Components
+== ApplicationComposer Components
 
-==== @Module
+=== @Module
 
 An ApplicationComposer needs at minimum a module (the application you
 need to deploy).
@@ -89,7 +89,7 @@ public WebApp app() {
 }
 ----
 
-==== @Configuration
+=== @Configuration
 
 Often you need to customize a bit the container or at least create some
 resources like test databases. To do so you can create a method
@@ -128,7 +128,7 @@ public class MyAppComposer() {
 }
 ----
 
-==== @Component
+=== @Component
 
 Sometimes you need to customize a container component. The most common
 use case is the security service to mock a little bit authorization if
@@ -149,9 +149,9 @@ public SecurityService mockSecurity() {
 }
 ----
 
-=== How to run it?
+== How to run it?
 
-==== JUnit
+=== JUnit
 
 If you use JUnit you have mainly 2 solutions to run you "model" using
 the ApplicationComposer:
@@ -176,7 +176,7 @@ service for instance).
 Finally just write `@Test` method using test class injections as if the
 test class was a managed bean!
 
-==== TestNG
+=== TestNG
 
 TestNG integration is quite simple today and mainly
 `ApplicationComposerListener` class you can configure as a listener to
@@ -185,7 +185,7 @@ get ApplicationComposer features.
 Finally just write TestNG `@Test` method using test class injections as
 if the test class was a managed bean!
 
-==== Standalone
+=== Standalone
 
 Since TomEE 2.x you can also use `ApplicationComposers` to directly run
 you ApplicationComposer model as a standalone application:
@@ -207,7 +207,7 @@ instantiated getting the second parameter as argument (ie you can
 propagate your main parameter to your model to modify your application
 depending it!)
 
-=== JUnit Sample
+== JUnit Sample
 
 [source,java]
 ----
@@ -228,7 +228,7 @@ public class MyTest {
 }
 ----
 
-=== Going further
+== Going further
 
 If you want to learn more about ApplicationComposer see
 link:advanced.html[Advanced] page.

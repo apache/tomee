@@ -1,4 +1,4 @@
-# Property Overriding
+= Property Overriding
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -15,7 +15,7 @@ overwritten before the component is created.
 
 We call this overriding and there are several ways to do it.
 
-# The openejb.xml
+= The openejb.xml
 
 The default openejb.xml file has most of the useful properties for each
 component explicitly listed with default values for documentation

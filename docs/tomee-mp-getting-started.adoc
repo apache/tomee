@@ -1,11 +1,11 @@
-# TomEE Maven Plugin
+= TomEE Maven Plugin
 :index-group: TomEE Maven Plugin
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-###Add The TomEE Maven Plugin To An Existing Project
+== Add The TomEE Maven Plugin To An Existing Project
 
 If you already have a maven project set up then just add the plugin as
 described link:maven/index.html[here]
@@ -26,7 +26,7 @@ The simplest path is to allow Maven to create an example project for
 you. Even if you have an existing project you can always use the
 template as a reference.
 
-###Generate a Basic TomEE-Project With Maven
+== Generate a Basic TomEE-Project With Maven
 
 TomEE provides a maven-archetype for generating a template project. This
 template project is preconfigured with `javaee-api` (scope provided) and
@@ -74,7 +74,7 @@ the generated application:
 cd tomee-demo
 ----
 
-###Starting a TomEE-Project with Maven
+== Starting a TomEE-Project with Maven
 
 With using the archetype everything you need is in place already. So you
 just have to start TomEE with:
@@ -89,7 +89,7 @@ has to download e.g. TomEE. Once those parts are downloaded, starting
 maven, deploying and starting the generated application takes less than
 10s (depending on your computer).
 
-###Accessing a running application
+== Accessing a running application
 
 The application gets deployed to `target/apache-tomee/webapps`. If
 everything worked correctly, you should see a directory ('ROOT') as well

@@ -1,10 +1,10 @@
-# persistence-context 
+= persistence-context
 :index-group: JPA
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Via annotation
+= Via annotation
 
 Both lookup and injection of an EntityManager can be configured via the
 `@PersistenceContext` annotation.
@@ -36,7 +36,7 @@ public class MyBean implements MyInterface {
 }
 ----
 
-# Via xml
+= Via xml
 
 The above @PersistenceContext annotation usage is 100% equivalent to the
 following xml.

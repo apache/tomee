@@ -1,4 +1,4 @@
-# Security Annotations
+= Security Annotations
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -252,7 +252,7 @@ public class OpenSourceProjectBean implements Project {
 * Allow anyone logged in or not to invoke 'svnCheckout'.
 * Allow _no one_ logged in or not to invoke 'deleteProject'.
 
-# Illegal Usage
+= Illegal Usage
 
 Generally, security restrictions cannot be made on AroundInvoke methods
 and most callbacks.

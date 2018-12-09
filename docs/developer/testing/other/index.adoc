@@ -4,14 +4,14 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-=== EJBContainer
+== EJBContainer
 
 The `EJBContainer` API is a JavaEE API enriched by some OpenEJB features to make the testing easier.
 
 It starts a container (embedded for case we are interested in) scanning the classpath. This operation can be
 slow and if you go with this solution maybe think to start it only once for all tests.
 
-==== Sample
+=== Sample
 
 [source,java]
 ----
@@ -70,11 +70,11 @@ It will use `createEJBContainer()` method to start the container and application
 
 OpenEJB provides the `bind("inject")` hack to be able to get injection in the test class.
 
-=== OpenEJB JUnit
+== OpenEJB JUnit
 
 `openejb-junit` is another artifact providing some facilities for testing.
 
-==== EJBContainer Rule
+=== EJBContainer Rule
 
 [source,java]
 ----
@@ -106,7 +106,7 @@ public class TestEJBContainerDefaultConfig {
 
 TIP: there is the equivalent runner: `@RunWith(EJBContainerRunner.class)`
 
-==== InjectRule: injections for EJBContainerRule
+=== InjectRule: injections for EJBContainerRule
 
 [source,java]
 ----

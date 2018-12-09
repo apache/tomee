@@ -1,4 +1,4 @@
-# Apache TomEE configuration
+= Apache TomEE configuration
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -17,7 +17,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
-###Configuring Resources:
+== Configuring Resources:
 
 * Drivers are dropped into tomeeDir/lib
 * Resources are configured in tomeeDir/conf/tomee.xml. +

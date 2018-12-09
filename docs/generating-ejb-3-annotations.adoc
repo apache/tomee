@@ -1,10 +1,10 @@
-# Generating EJB 3 annotations 
+= Generating EJB 3 annotations
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Generating EJB 3 annotations
+= Generating EJB 3 annotations
 
 The OpenEJB Eclipse plugin is able to provide some assistance in helping
 you migrate EJB 2.x projects to EJB 3.0, by analyzing your ejb-jar.xml

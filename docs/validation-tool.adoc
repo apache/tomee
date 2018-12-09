@@ -1,19 +1,19 @@
-# Validation Tool
+= Validation Tool
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# NAME
+= NAME
 
 openejb validate - OpenEJB Validation Tool
 
-# SYNOPSIS
+= SYNOPSIS
 
 openejb validate link:options.html[options] jarfiles
 
-# NOTE
+= NOTE
 
 The OpenEJB Validation tool must be executed from the OPENEJB_HOME
 directory. This is the directory where OpenEJB was installed or
@@ -47,7 +47,7 @@ in shorthand as show below.
 
 _openejb validate -help_
 
-# DESCRIPTION
+= DESCRIPTION
 
 The validation tool currently checks for the following things: * Does
 the Jar have all the ejb-class class files * Does the Jar have all the
@@ -62,7 +62,7 @@ any create methods in the ejb-class, but not in the home interface
 
 More checks will be added in the future.
 
-# OPTIONS
+= OPTIONS
 
 -v
 

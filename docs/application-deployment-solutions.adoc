@@ -1,4 +1,4 @@
-# Deploying An Application To TomEE Or OpenEJB
+= Deploying An Application To TomEE Or OpenEJB
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page

@@ -1,4 +1,4 @@
-# TomEE Maven Plugin
+= TomEE Maven Plugin
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -30,7 +30,7 @@ Simply add the following to the , and optionally the ), section of your
 </plugins>
 ----
 
-###Plugin Goals
+== Plugin Goals
 
 Goal
 

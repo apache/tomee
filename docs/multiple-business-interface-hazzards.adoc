@@ -1,10 +1,10 @@
-# Multiple Business Interface Hazzards 
+= Multiple Business Interface Hazzards
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# UndeclaredThrowableException
+= UndeclaredThrowableException
 
 When two java interfaces are implemented by a proxy and those two
 interfaces declare the _same method_ but with _different throws clauses_
@@ -112,7 +112,7 @@ executes } catch(Throwable t)\{ fail("Caught: "+t); }
 \{ public Object invoke(Object proxy, Method method, Object[] args)
 throws Throwable \{ throw (Throwable)args[0] ; } } }
 
-# IllegalArgumentException
+= IllegalArgumentException
 
 This one is less of a runtime problem as doing this will cause things to
 fail up front. When two java interfaces are implemented by a proxy and

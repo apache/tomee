@@ -1,4 +1,4 @@
-# Application discovery via the classpath
+= Application discovery via the classpath
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,7 +8,7 @@ This document
 details the various ways to get OpenEJB to detect applications you would
 like deployed while in an embedded mode.
 
-# Empty ejb-jar.xml approach (recommended)
+= Empty ejb-jar.xml approach (recommended)
 
 Simplify the issue of searching for annotated applications by adding an
 ejb-jar.xml like this to your app:

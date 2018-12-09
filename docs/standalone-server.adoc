@@ -17,7 +17,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
-#Links to guide you through OpenEJB-Standalone-Server
+= Links to guide you through OpenEJB-Standalone-Server
 
 * link:startup.html[Startup]
 * link:deploy-tool.html[Deploy Tool]

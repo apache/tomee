@@ -6,7 +6,7 @@
 
 TomEE Embedded Maven plugin has a single goal: `tomee-embedded:run`.
 
-=== Configuration
+== Configuration
 
 [.table.table-bordered,options="header"]
 |===

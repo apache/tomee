@@ -1,4 +1,4 @@
-# Remote Server
+= Remote Server
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -14,7 +14,7 @@ accessing an EJB's Remote Interface is the same, however to actually
 connect across a network to the server, you need to specify different
 JNDI parameters.
 
-# Short version
+= Short version
 
 Using OpenEJB's default remote server implementation is pretty straight
 forward. You simply need to:

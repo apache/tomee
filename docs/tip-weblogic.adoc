@@ -1,4 +1,4 @@
-# WebLogic Lookup
+= WebLogic Lookup
 :index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page

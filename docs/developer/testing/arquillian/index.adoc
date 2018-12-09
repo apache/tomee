@@ -11,7 +11,7 @@ TomEE has several arquillian adapter flavors:
 - tomee-remote: a standard TomEE running in its own process as in production
 - tomee-webapp (not recommanded): an adapter starting from a Tomcat and installing tomee-webapp
 
-=== Embedded or Remote?
+== Embedded or Remote?
 
 Big advantage of embedded adapters is to be able to debug as usual. However it has few drawbacks which can make you
 rething this choice:
@@ -28,9 +28,9 @@ to the switch of adapter) on your continuous integration platform.
 
 NOTE: all configurations have defaults
 
-=== OpenEJB Embedded
+== OpenEJB Embedded
 
-==== Coordinates
+=== Coordinates
 
 [source,xml]
 ----
@@ -41,7 +41,7 @@ NOTE: all configurations have defaults
 </dependency>
 ----
 
-==== arquillian.xml
+=== arquillian.xml
 
 |===
 |Name|Description
@@ -74,9 +74,9 @@ Sample:
 </arquillian>
 ----
 
-=== TomEE Embedded
+== TomEE Embedded
 
-==== Coordinates
+=== Coordinates
 
 [source,xml]
 ----
@@ -87,7 +87,7 @@ Sample:
 </dependency>
 ----
 
-==== Configuration
+=== Configuration
 
 |===
 |Name|Description
@@ -178,7 +178,7 @@ Sample:
 </arquillian>
 ----
 
-=== TomEE Remote
+== TomEE Remote
 
 IMPORTANT: if a server is already started on host:port then it will be used instead of starting the configured TomEE type.
 
@@ -216,7 +216,7 @@ For really remote instances (= not on localhost) you need the `deployerPropertie
 </arquillian>
 ----
 
-==== Coordinates
+=== Coordinates
 
 [source,xml]
 ----
@@ -227,7 +227,7 @@ For really remote instances (= not on localhost) you need the `deployerPropertie
 </dependency>
 ----
 
-==== Configuration
+=== Configuration
 
 |===
 |Name|Description
@@ -352,7 +352,7 @@ Sample:
 </arquillian>
 ----
 
-=== Multiple instances
+== Multiple instances
 
 With arquillian you can create cluster or isolated instances. Here is a sample `arquillian.xml`:
 

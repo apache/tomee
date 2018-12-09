@@ -1,10 +1,10 @@
-# Hibernate
+= Hibernate
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Sample persistence.xml
+= Sample persistence.xml
 
 For a unit called "movie-unit" using two datasources called
 "movieDatabase" and "movieDatabaseUnmanaged" the following

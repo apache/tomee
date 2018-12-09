@@ -1,21 +1,21 @@
-# Deploy Tool
+= Deploy Tool
 :index-group: OpenEJB Standalone Server
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# NAME
+= NAME
 
 openejb deploy - OpenEJB Deploy Tool
 
-# SYNOPSIS
+= SYNOPSIS
 
 ____________________________________________________________________
 openejb deploy link:#DeployTool-OPTIONS[options] <file> [<file> ...]
 ____________________________________________________________________
 
-# NOTE
+= NOTE
 
 The OpenEJB Deploy tool is an OPTIONAL tool that allows you to deploy
 into a running server and get feedback as if the app was deployed and
@@ -60,7 +60,7 @@ _____________________
 openejb deploy --help
 _____________________
 
-# DESCRIPTION
+= DESCRIPTION
 
 The files passed to the Deploy Tool can be any combination of the
 following:
@@ -84,7 +84,7 @@ it an EJB 3.0 application by nature.
 `META-INF/MANIFEST.MF` containing the `Main-Class` attribute, are
 assumed to be _Application Client_ archives.
 
-# OPTIONS
+= OPTIONS
 
 -d, --debug
 
@@ -127,7 +127,7 @@ EJBs. The default is 'ejbd://localhost:4201'.
 
 Prints the OpenEJB version and exits.
 
-# EXAMPLES
+= EXAMPLES
 
 == Deploying multiple jar files
 
@@ -142,7 +142,7 @@ _________________________
 openejb deploy myapp*.jar
 _________________________
 
-# OUTPUT
+= OUTPUT
 
 On running the deploy tool with a valid EJB jar the following output is
 printed on the console

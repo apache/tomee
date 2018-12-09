@@ -9,7 +9,7 @@ if you don't need to tune their configuration - when a bean of their type if fou
 
 To avoid that use `openejb.offline` property and set it to `true`. See link:server.html[Server Configuration] for more detail.
 
-=== @Stateless
+== @Stateless
 
 A `@Stateless` container.
 
@@ -58,9 +58,9 @@ Foo.UseOneSchedulerThreadByBean = false
 Foo.EvictionThreads = 1
 ----
 
-==== Configuration
+=== Configuration
 
-===== AccessTimeout
+==== AccessTimeout
 
 Specifies the time an invokation should wait for an instance
 of the pool to become available.
@@ -76,7 +76,7 @@ Any usage of the `javax.ejb.AccessTimeout` annotation will
 override this setting for the bean or method where the
 annotation is used.
 
-===== MaxSize
+==== MaxSize
 
 Specifies the size of the bean pools for this stateless
 SessionBean container.  If StrictPooling is not used, instances
@@ -84,7 +84,7 @@ will still be created beyond this number if there is demand, but
 they will not be returned to the pool and instead will be
 immediately destroyed.
 
-===== MinSize
+==== MinSize
 
 Specifies the minimum number of bean instances that should be in
 the pool for each bean.  Pools are prefilled to the minimum on
@@ -103,7 +103,7 @@ side of the pool reaches its `MaxAge`, it is also immediately
 replaced.  Replacement is done in a background queue using the
 number of threads specified by `CallbackThreads`.
 
-===== StrictPooling
+==== StrictPooling
 
 StrictPooling tells the container what to do when the pool
 reaches it's maximum size and there are incoming requests that
@@ -122,7 +122,7 @@ Setting `StrictPooling` to `false` and `MaxSize` to `0` will result in
 no pooling. Instead instances will be created on demand and live
 for exactly one method call before being removed.
 
-===== MaxAge
+==== MaxAge
 
 Specifies the maximum time that an instance should live before
 it should be retired and removed from use.  This will happen
@@ -134,7 +134,7 @@ Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
-===== ReplaceAged
+==== ReplaceAged
 
 When `ReplaceAged` is enabled, any instances in the pool that
 expire due to reaching their `MaxAge` will be replaced immediately
@@ -150,7 +150,7 @@ Instances from the minimum side of the pool are always replaced
 when they reach their `MaxAge`, this setting dictates the
 treatment of non-minimum instances.
 
-===== ReplaceFlushed
+==== ReplaceFlushed
 
 When `ReplaceFlushed` is enabled, any instances in the pool that
 are flushed will be replaced immediately so that the pool will
@@ -189,7 +189,7 @@ public class MyBean {
 }
 ----
 
-===== MaxAgeOffset
+==== MaxAgeOffset
 
 Applies to MaxAge usage and would rarely be changed, but is a
 nice feature to understand.
@@ -236,7 +236,7 @@ instances will of course reach their MaxAge at the same time.
 It is possible to set to decimal values such as -0.5, 0.5, -1.2,
 or 1.2.
 
-===== IdleTimeout
+==== IdleTimeout
 
 Specifies the maximum time that an instance should be allowed to
 sit idly in the pool without use before it should be retired and
@@ -246,7 +246,7 @@ Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 "1 hour and 27 minutes and 10 seconds"
 
-===== GarbageCollection
+==== GarbageCollection
 
 Allows Garbage Collection to be used as a mechanism for shrinking
 the pool.  When set to true all instances in the pool, excluding
@@ -266,7 +266,7 @@ hour per free MB in the heap) does not affect the ability for the
 VM to garbage collect SoftReferences in the event that memory is
 needed to avoid an `OutOfMemoryException`.
 
-===== SweepInterval
+==== SweepInterval
 
 The frequency in which the container will sweep the pool and
 evict expired instances.  Eviction is how the `IdleTimeout`,
@@ -284,7 +284,7 @@ Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
-===== CallbackThreads
+==== CallbackThreads
 
 When sweeping the pool for expired instances a thread pool is
 used to process calling `@PreDestroy` on expired instances as well
@@ -293,7 +293,7 @@ to the minimum after a Flush or `MaxAge` expiration.  The
 `CallbackThreads` setting dictates the size of the thread pool and
 is shared by all beans deployed in the container.
 
-===== CloseTimeout
+==== CloseTimeout
 
 PostConstruct methods are invoked on all instances in the pool
 when the bean is undeployed and its pool is closed.  The
@@ -304,17 +304,17 @@ Usable time units: nanoseconds, microsecons, milliseconds,
 seconds, minutes, hours, days.  Or any combination such as
 `1 hour and 27 minutes and 10 seconds`
 
-===== UseOneSchedulerThreadByBean
+==== UseOneSchedulerThreadByBean
 
 back to previous behavior (TomEE 1.x) where 1 scheduler thread was used for stateless eviction
 by bean (ie for 500 stateless beans you get 500 eviction threads)
 
-===== EvictionThreads
+==== EvictionThreads
 
 number of threads to associate to eviction threads (1 is not bad for most applications)
 
 
-=== @Stateful
+== @Stateful
 
 A `@Stateful` container.
 
@@ -347,9 +347,9 @@ Foo.Capacity = 1000
 Foo.BulkPassivate = 100
 ----
 
-==== Configuration
+=== Configuration
 
-===== AccessTimeout
+==== AccessTimeout
 
 Specifies the maximum time an invocation could wait for the
 `@Stateful` bean instance to become available before giving up.
@@ -365,7 +365,7 @@ Any usage of the `javax.ejb.AccessTimeout` annotation will
 override this setting for the bean or method where the
 annotation is used.
 
-===== Cache
+==== Cache
 
 The cache is responsible for managing stateful bean
 instances.  The cache can page instances to disk as memory
@@ -373,7 +373,7 @@ is filled and can destroy abandoned instances.  A different
 cache implementation can be used by setting this property
 to the fully qualified class name of the Cache implementation.
 
-===== Passivator
+==== Passivator
 
 The passivator is responsible for writing beans to disk
 at passivation time. Different passivators can be used
@@ -388,7 +388,7 @@ Known implementations:
 - org.apache.openejb.core.stateful.RAFPassivater
 - org.apache.openejb.core.stateful.SimplePassivater
 
-===== TimeOut
+==== TimeOut
 
 Specifies the time a bean can be idle before it is removed by the container.
 
@@ -400,23 +400,23 @@ A value of 0 would mean a bean can be immediately removed by the container.
 Any usage of the `javax.ejb.StatefulTimeout` annotation will
 override this setting for the bean where the annotation is used.
 
-===== Frequency
+==== Frequency
 
 Specifies the frequency (in seconds) at which the bean cache is checked for
 idle beans.
 
-===== Capacity
+==== Capacity
 
 Specifies the size of the bean pools for this
 stateful SessionBean container.
 
-===== BulkPassivate
+==== BulkPassivate
 
 Property name that specifies the number of instances
 to passivate at one time when doing bulk passivation.
 
 
-=== @Singleton
+== @Singleton
 
 A `@Singleton` container.
 
@@ -437,9 +437,9 @@ Foo = new://Container?type=SINGLETON
 Foo.AccessTimeout = 30 seconds
 ----
 
-==== Configuration
+=== Configuration
 
-===== AccessTimeout
+==== AccessTimeout
 
 Specifies the maximum time an invocation could wait for the
 `@Singleton` bean instance to become available before giving up.
@@ -456,7 +456,7 @@ override this setting for the bean or method where the
 annotation is used.
 
 
-=== @MessageDriven
+== @MessageDriven
 
 A MDB container.
 
@@ -485,31 +485,31 @@ Foo.InstanceLimit = 10
 Foo.FailOnUnknowActivationSpec = true
 ----
 
-==== Configuration
+=== Configuration
 
-===== ResourceAdapter
+==== ResourceAdapter
 
 The resource adapter delivers messages to the container
 
-===== MessageListenerInterface
+==== MessageListenerInterface
 
 Specifies the message listener interface handled by this container
 
-===== ActivationSpecClass
+==== ActivationSpecClass
 
 Specifies the activation spec class
 
-===== InstanceLimit
+==== InstanceLimit
 
 Specifies the maximum number of bean instances that are
 allowed to exist for each MDB deployment.
 
-===== FailOnUnknowActivationSpec
+==== FailOnUnknowActivationSpec
 
 Log a warning if true or throw an exception if false is an activation spec can't be respected
 
 
-=== @Managed
+== @Managed
 
 A managed bean container.
 
@@ -528,7 +528,7 @@ Foo = new://Container?type=MANAGED
 ----
 
 
-=== CMP entity
+== CMP entity
 
 A CMP bean container.
 
@@ -549,14 +549,14 @@ Foo = new://Container?type=CMP_ENTITY
 Foo.CmpEngineFactory = org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
 ----
 
-==== Configuration
+=== Configuration
 
-===== CmpEngineFactory
+==== CmpEngineFactory
 
 The engine to use for this container. By default TomEE only provides the JPA implementation.
 
 
-=== BMP entity
+== BMP entity
 
 A BMP entity container.
 
@@ -577,9 +577,9 @@ Foo = new://Container?type=BMP_ENTITY
 Foo.PoolSize = 10
 ----
 
-==== Configuration
+=== Configuration
 
-===== PoolSize
+==== PoolSize
 
 Specifies the size of the bean pools for this
 bmp entity container.

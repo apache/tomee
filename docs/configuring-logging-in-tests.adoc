@@ -1,10 +1,10 @@
-# Configuring Logging in Tests 
+= Configuring Logging in Tests
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# embedded.logging.properties
+= embedded.logging.properties
 
 When in embedded mode OpenEJB uses an embedded.logging.properties file
 packed in our openejb-core jar which use to configure the logging. This
@@ -35,7 +35,7 @@ control over the other 95% as well.
 replacing the embedded.logging.properties you will pick these up
 automatically when you upgrade.
 
-# Overriding (recommended)
+= Overriding (recommended)
 
 As mentioned in link:embedded-configuration.html[Embedded Configuration]
 much can be done with simple overriding. The default
@@ -87,7 +87,7 @@ overriding order is as follows: 1 = highest, 4 = lowest.
 By default there are no logging settings in 1-3, so #4 is the only
 source of logging information.
 
-# Default embedded.logging.properties contents
+= Default embedded.logging.properties contents
 
 For your purposes, here are the contents of the default
 embedded.logging.properties file contained in OpenEJB 3.1.1

@@ -1,4 +1,4 @@
-# Containers and Resources
+= Containers and Resources
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page

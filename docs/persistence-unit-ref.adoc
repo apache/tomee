@@ -1,4 +1,4 @@
-# persistence-unit-ref
+= persistence-unit-ref
 :index-group: JPA
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -9,7 +9,7 @@ EntityManagerFactory can be configured via the @PersistenceUnit
 annotation or in xml. Annotations and xml have equal function in both
 lookup and injection.
 
-# Injection and Lookup
+= Injection and Lookup
 
 == Via annotation
 
@@ -80,7 +80,7 @@ public class MyBean implements MyInterface {
 }
 ----
 
-# Via xml
+= Via xml
 
 The above @PersistenceUnit annotation usage is 100% equivalent to the
 following xml.

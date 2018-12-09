@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-# From Glassfish
+= From Glassfish
 Application Server to TomEE (plus)
 
 This page aims at reporting feedback from users while migrating from

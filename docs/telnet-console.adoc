@@ -1,4 +1,4 @@
-# Telnet Console
+= Telnet Console
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -6,7 +6,7 @@
 
 \{note} Availability: Since OpenEJB 0.9\{note}
 
-# Basic Usage
+= Basic Usage
 
 To use OpenEJB's Telnet Console, simply boot your server normally.
 
@@ -94,7 +94,7 @@ Deployments:
 
 $ exit Connection closed by foreign host.
 
-# Configuring the Telnet Service
+= Configuring the Telnet Service
 
 The configuration of all server services (network facing services) is
 done in xinet.d style config files. The telnet shell is controlled via
@@ -118,7 +118,7 @@ ____________________________
 You can change the IP, port, and even the number of threads allowed to
 concurrently access the Telnet service via this file.
 
-# Disabling the Telnet Service
+= Disabling the Telnet Service
 
 Simply edit the config file and set 'disabled' to true
 
@@ -129,7 +129,7 @@ Simply edit the config file and set 'disabled' to true
 
 Then restart OpenEJB.
 
-# Restricting Access
+= Restricting Access
 
 It is unlikely you want just anyone to be able to login and execute
 commands. While you can't restrict access on a user basis, yet, you can

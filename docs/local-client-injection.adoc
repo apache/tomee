@@ -1,4 +1,4 @@
-# Local Client Injection
+= Local Client Injection
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -31,7 +31,7 @@ that needs to pull objects from the Embedded EJB container. Classes with
 module may have as many classes annotated with @LocalClient as it
 wishes.
 
-# Injection
+= Injection
 
 The injection occurs via acquiring a LocalInitialContext via the
 LocalInitialContextFactory and calling _bind("inject", instance)_
@@ -62,7 +62,7 @@ public class MoviesTest extends TestCase {
 }
 ----
 
-# Discovery
+= Discovery
 
 All EJB modules are scanned for @LocalClient classes, even if those EJB
 Modules are inside .war files as with the

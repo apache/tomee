@@ -1,4 +1,4 @@
-# Common PersistenceProvider properties
+= Common PersistenceProvider properties
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,7 +8,7 @@ While not a definitive list, it
 does help to show a side-by-side view of common properties used by the
 various persistence providers out there.
 
-# TopLink
+= TopLink
 
 [source,xml]
 ----
@@ -22,7 +22,7 @@ various persistence providers out there.
 </properties>
 ----
 
-# OpenJPA
+= OpenJPA
 
 [source,xml]
 ----
@@ -39,7 +39,7 @@ various persistence providers out there.
 </properties>
 ----
 
-# Hibernate
+= Hibernate
 
 [source,xml]
 ----

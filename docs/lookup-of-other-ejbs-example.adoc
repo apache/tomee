@@ -1,10 +1,10 @@
-# Lookup of other EJBs Example 
+= Lookup of other EJBs Example
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Overview
+= Overview
 
 This example shows how to configure JNDI to lookup other EJBs using
 either the _@EJB_ annotation or the _ejb-jar.xml_ deployment descriptor.
@@ -63,7 +63,7 @@ _java:comp/env/myFriend_ differently which is allowed as _java:comp_ is
 a namespace that is private to each bean and not visible to other beans
 -- so the names do not have to match.
 
-# The Code
+= The Code
 
 Here we show the code for _RedBean_ and _BlueBean_ and their shared
 business local interface _Friend_.
@@ -85,7 +85,7 @@ If there is a desire to not use annotations, the above annotation usage
 is equivalent to the following ejb-jar.xml
 \{snippet:url=openejb3/examples/lookup-of-ejbs-with-descriptor/src/main/resources/META-INF/ejb-jar.xml|lang=xml}
 
-# Writing a unit test for the example
+= Writing a unit test for the example
 
 Writing an unit test for this example is quite simple. We need just to
 write a setup method to create and initialize the InitialContext, and
@@ -93,7 +93,7 @@ then write our test methods
 
 \{snippet:id=code|url=openejb3/examples/lookup-of-ejbs/src/test/java/org/superbiz/ejblookup/EjbDependencyTest.java|lang=java}
 
-# Running
+= Running
 
 Running the example is fairly simple. In the "lookup-of-ejbs" directory
 of the openejb:download.html[examples zip] , just run:

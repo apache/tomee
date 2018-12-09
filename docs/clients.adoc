@@ -1,11 +1,11 @@
-# Clients
+= Clients
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-=== Local Client (embedded container)
+== Local Client (embedded container)
 
 [source,java]
 ----
@@ -17,9 +17,9 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-=== Local Client (non-default realm name)
+== Local Client (non-default realm name)
 
-=== Login configuration file (conf/login.config)
+== Login configuration file (conf/login.config)
 
 [source,java]
 ----
@@ -37,7 +37,7 @@ MyApp {
 };
 ----
 
-=== Code
+== Code
 
 [source,java]
 ----
@@ -50,7 +50,7 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-=== Remote Client (openejb standalone)
+== Remote Client (openejb standalone)
 
 [source,java]
 ----
@@ -66,7 +66,7 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-=== Remote Client with HTTP (openejb standalone)
+== Remote Client with HTTP (openejb standalone)
 
 [source,java]
 ----
@@ -82,7 +82,7 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-=== Remote Client with HTTP (in TomEE)
+== Remote Client with HTTP (in TomEE)
 
 [source,java]
 ----
@@ -98,4 +98,4 @@ InitialContext ctx = new InitialContext(p);
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
 ----
 
-=== Remote Client using @EJB Injection see here: ejb-refs
+== Remote Client using @EJB Injection see here: ejb-refs

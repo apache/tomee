@@ -1,4 +1,4 @@
-# TomEE and NetBeans
+= TomEE and NetBeans
 :index-group: IDE
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -38,7 +38,7 @@ This should resolve the detection issue and will not break your
 installation - Be sure to document the change for yourself as a
 reminder.
 
-###Quickstart Check out this video on
+== Quickstart Check out this video on
 https://www.youtube.com/watch?v=HISV7eagogI[How to Consume REST in a
 Java Client]
 

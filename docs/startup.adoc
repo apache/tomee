@@ -1,18 +1,18 @@
-# Startup 
+= Startup
 :index-group: OpenEJB Standalone Server
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# NAME
+= NAME
 
 openejb start - OpenEJB Remote Server
 
-# SYNOPSIS
+= SYNOPSIS
 
 openejb start link:#options.html[#options]
 
-# NOTE
+= NOTE
 
 The OpenEJB Remote Server can be started by running the openejb.bat
 script for windows and the openejb script for Linux and other Unix based
@@ -45,7 +45,7 @@ in shorthand as show below.
 
 _openejb start -help_
 
-# DESCRIPTION
+= DESCRIPTION
 
 Starts OpenEJB as an EJB Server that can be accessed by remote clients
 via the OpenEJB Remote Server.
@@ -61,7 +61,7 @@ OpenEJB itself is configured with the OpenEJB configuration file, which
 is extremely simple and self-documenting. This file is located at
 c:-3.0.xml.
 
-# OPTIONS
+= OPTIONS
 
 | _-D=_ | Specifies a system property passed into OpenEJB at startup. |
 | _--admin-bind _ | Sets the host to which the admin service should be
@@ -82,7 +82,7 @@ to which the telnet service should be bound.| | _--telnet-port _ | Sets
 the port to which the telnet service should be bound.| | -v, --_version_
 | Print the version. |
 
-# EXAMPLES
+= EXAMPLES
 
 == Example: Simplest scenario
 
@@ -254,7 +254,7 @@ _openejb start -Dtelnet.disabled=true_
 Prevents the Telnet Server Service from starting when the OpenEJB Server
 starts.
 
-# CONSOLE OUTPUT
+= CONSOLE OUTPUT
 
 Once you start OpenEJB using the _openejb start_ command the following
 output will be seen on the console

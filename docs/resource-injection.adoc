@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-# @Resource
+= @Resource
 Overview
 
 This example demonstrates the use of the injection of environment
@@ -49,7 +49,7 @@ ___________________
 $ mvn clean install
 ___________________
 
-# The Code
+= The Code
 
 == Injection through field (field-level injection)
 
@@ -60,7 +60,7 @@ The default value of 10 is assigned. You can modify the value of the
 environment entries at deployment time using deployment descriptor
 (*ejb-jar.xml*).
 
-==== @Resource annotation of a field
+=== @Resource annotation of a field
 
 [source,java]
 ----
@@ -86,7 +86,7 @@ The pattern is to combine the fully-qualified class name and the name of
 a instance field (or a name of the setter method without _set_ prefix
 and the first letter lowercased).
 
-==== @Resource annotation of a setter method
+=== @Resource annotation of a setter method
 
 [source,java]
 ----
@@ -96,7 +96,7 @@ public void setMaxLineItems(int maxLineItems) {
 }
 ----
 
-==== Using env-entry in ejb-jar.xml
+=== Using env-entry in ejb-jar.xml
 
 [source,xml]
 ----
@@ -108,7 +108,7 @@ public void setMaxLineItems(int maxLineItems) {
 </env-entry>
 ----
 
-==== Using @Resource annotated env-entry
+=== Using @Resource annotated env-entry
 
 [source,java]
 ----
@@ -126,13 +126,13 @@ public void addLineItem(LineItem item) throws TooManyItemsException {
 }
 ----
 
-# JUnit Test
+= JUnit Test
 
 Writing an JUnit test for this example is quite simple. We need just to
 write a setup method to create and initialize the InitialContext, and
 then write our test methods.
 
-==== Test fixture
+== Test fixture
 
 [source,java]
 ----
@@ -144,7 +144,7 @@ protected void setUp() throws Exception {
 }
 ----
 
-==== Test methods
+== Test methods
 
 [source,java]
 ----
@@ -161,7 +161,7 @@ public void testAddLineItem() throws Exception {
 }
 ----
 
-# Running
+= Running
 
 Running the example is fairly simple. Just execute the following
 commands:

@@ -1,10 +1,10 @@
-# Singleton Beans 
+= Singleton Beans
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Singleton Overview For the first time in years EJB has a new
+= Singleton Overview For the first time in years EJB has a new
 bean type, the _@Singleton_. In my opinion, the javax.ejb.Singleton will
 replace a lot of what people are using @Stateless for today.
 
@@ -209,7 +209,7 @@ of creating circular dependencies, it is better not to use the
 @DependsOn annotation "just in case" and should only be used when truly
 needed.
 
-# XML and Annotation Overriding
+= XML and Annotation Overriding
 
 Singletons can be declared in the ejb-jar.xml as follows:
 

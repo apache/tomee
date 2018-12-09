@@ -1,11 +1,11 @@
-# Deployment ID
+= Deployment ID
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# What is a Deployment ID?
+= What is a Deployment ID?
 
 Every bean deployed in OpenEJB has a unique deployment-id that
 identifies it within the scope of the entire container system. The
@@ -61,7 +61,7 @@ the bean's OpenEJB deployment id. This leaves up to you to guarantee
 that bean's ejb-name will be unique across all beans and jars in the
 container system. In other words, be very careful with the -D option!
 
-# How is it used?
+= How is it used?
 
 == In the container system
 
@@ -192,7 +192,7 @@ bean = context.resolve( name );
 ...
 ----
 
-# What happens if there is a duplicate deployment ID?
+= What happens if there is a duplicate deployment ID?
 
 The deployment ID uniquely identifies the bean in the OpenEJB container
 system. Therefore, no two beans can share the same deployment ID.

@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-# Maven
+= Maven
 Information
 
 This page is intended to provide an insight into basic

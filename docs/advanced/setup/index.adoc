@@ -93,7 +93,7 @@ Click on a tree node or open a folder to see the detail there.
 
 endif::[]
 
-=== Instance scripts
+== Instance scripts
 
 The idea for instances (applications) scripts is to simply delegate to tomcat ones but customizing the JVM and TomEE versions.
 
@@ -101,7 +101,7 @@ Customizing the version (and locations) is done in `bin/setenv.sh` of instances.
 
 Here are an example for the common scripts (of course you can write helper version like restart etc).
 
-==== setenv.sh
+=== setenv.sh
 
 [source,bash]
 ----
@@ -117,7 +117,7 @@ export CATALINA_BASE="/some/path/application1/"
 export CATALINA_PID="/some/path/application1/work/tomee.pid"
 ----
 
-==== startup
+=== startup
 
 [source,bash]
 ----
@@ -128,7 +128,7 @@ source "$proc_script_base/bin/setenv.sh"
 nohup "$CATALINA_HOME/bin/startup.sh" "$@" > $proc_script_base/logs/nohup.log &
 ----
 
-==== shutdown
+=== shutdown
 
 [source,bash]
 ----

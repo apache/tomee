@@ -1,11 +1,11 @@
-# JNDI Names
+= JNDI Names
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# What's My Bean's JNDI Name? There are two things to keep in mind
+= What's My Bean's JNDI Name? There are two things to keep in mind
 before you start reading:
 
 1 OpenEJB provides a default JNDI name to your EJB. +
@@ -23,7 +23,7 @@ _interfaceType.annotationName_ are pre-defined variables. There are
 other pre-defined variables available which you could use to customize
 the JNDI name format.
 
-# JNDI Name Formatting
+= JNDI Name Formatting
 
 The _openejb.jndiname.format_ property allows you to supply a template
 for the global JNDI names of all your EJBs. With it, you have complete
@@ -121,7 +121,7 @@ interfaceClass.packageName
 for a class named org.acme.superfun.WidgetRemote results in
 org.acme.superfun
 
-# Setting the JNDI name
+= Setting the JNDI name
 
 It's possible to set the desired jndi name format for the whole server
 level, an ejb-jar, an ejb, an ejb's "local" interface
@@ -289,11 +289,11 @@ or
 </openejb-jar>
 ----
 
-# Changing the Default Setting
+= Changing the Default Setting
 
 _You are responsible for ensuring the names don't conflict._
 
-=== Conservative settings
+== Conservative settings
 
 A very conservative setting such as
 

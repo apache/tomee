@@ -1,4 +1,4 @@
-# About the 'tomee' webapp
+= About the 'tomee' webapp
 :index-group: General Information
 :jbake-date: 2018-12-05
 :jbake-type: page

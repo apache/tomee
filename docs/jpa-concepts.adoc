@@ -1,10 +1,10 @@
-# JPA Concepts 
+= JPA Concepts
 :index-group: JPA
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# JPA 101
+= JPA 101
 
 If there's one thing you have to understand to successfully use JPA
 (Java Persistence API) it's the concept of a _Cache_. Almost everything

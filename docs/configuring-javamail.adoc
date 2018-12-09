@@ -1,10 +1,10 @@
-# Configuring JavaMail 
+= Configuring JavaMail
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Declaring a JavaMail Resource
+= Declaring a JavaMail Resource
 
 The basics are that any properties listed in the element are given
 directly to the javamail provider via

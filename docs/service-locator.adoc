@@ -1,4 +1,4 @@
-# Service Locator
+= Service Locator
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -10,7 +10,7 @@ really fun service locator code. Creating the exact layout you want
 using the exact data you want means you can create robust libraries for
 pulling things out of JNDI.
 
-# Lookup examples
+= Lookup examples
 
 To get the creative juices flowing here are a few examples of lookup
 methods you could create for your service locator, the jndi name formats

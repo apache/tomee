@@ -1,4 +1,4 @@
-# Configuring DataSources in tomee.xml
+= Configuring DataSources in tomee.xml
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page

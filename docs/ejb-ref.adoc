@@ -1,10 +1,10 @@
-# ejb-ref 
+= ejb-ref
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-#
+= 
 Via annotation
 
 [source,java]
@@ -33,7 +33,7 @@ public class MyEjbRemoteRefBean implements MyBeanInterface {
 }
 ----
 
-# Via xml
+= Via xml
 
 The above @EJB annotation usage is 100% equivalent to the following xml.
 
