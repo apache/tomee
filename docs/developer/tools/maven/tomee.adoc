@@ -18,7 +18,7 @@ TomEE Maven Plugin is a set of goals for the development and to prepare to go in
 - `tomee:stop`
 - `tomee:undeploy`
 
-=== Run
+== Run
 
 The most commonly used goal, it allows to start a tomee with applications. Here is its configuration:
 
@@ -95,7 +95,7 @@ Synchronization are blocks defining a source and target folder and both are sync
 `src/main/webapp` resources in `target/apache-tomee/webapps/myapp/`.
 
 
-==== Customizers
+=== Customizers
 
 Customizers are java classes loadable by the plugin and with a main or implementing `Runnable` and taking optionally
 as constructor parameter a `File` representing `tomee.base` or no arguments.
@@ -107,32 +107,32 @@ There are two scripting flavors of that: js and groovy. Both will have some cont
 - catalinaBase: tomee base path
 - resolver: a maven resolver to get a dependency using maven. For instance: `resolver.resolve('group', 'artfact', 'version', 'type')`
 
-==== Dependencies (libs)
+=== Dependencies (libs)
 
 The format can be:
 
 - a maven dependency:
 
-[source]
+[source,properties]
 ----
 groupId:artifactId:version
 ----
 
 - a zip dependency and extracted in lib folder:
 
-[source]
+[source,properties]
 ----
 unzip:groupId:artifactId:version
 ----
 
 - a matching prefix to remove:
 
-[source]
+[source,properties]
 ----
 remove:prefix
 ----
 
-==== Example
+=== Example
 
 [source,xml]
 ----
@@ -165,7 +165,7 @@ remove:prefix
 </plugin>
 ----
 
-=== Build
+== Build
 
 Excepted synchronization, build plugin inherit from `run` Mojo its configuration. It just adds the following:
 
@@ -178,6 +178,6 @@ Excepted synchronization, build plugin inherit from `run` Mojo its configuration
 |skipArchiveRootFolder|false|don't add a root folder in the zip
 |===
 
-=== Tomcat like goals
+== Tomcat like goals
 
 `configtest`, `start` and `stop` just execute these commands on the server (like on `catalina.sh`).

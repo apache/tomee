@@ -34,6 +34,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public ConfigurableClasspathArchive(final ClassLoader loader, final URL url) {
-        this(new FakeModule(loader), Arrays.asList(url));
+        this(new FakeModule(loader), Collections.singletonList(url));
     }
 
     public ConfigurableClasspathArchive(final Module module, final boolean forceDescriptor, final Iterable<URL> urls) {
@@ -64,7 +65,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     public static List<Archive> archive(final Module module, final Iterable<URL> urls, final boolean forceDescriptor) {
-        final List<Archive> archives = new ArrayList<Archive>();
+        final List<Archive> archives = new ArrayList<>();
         for (final URL location : urls) {
             try {
                 archives.add(archive(module, location, forceDescriptor));
@@ -117,7 +118,7 @@ public class ConfigurableClasspathArchive extends CompositeArchive implements Sc
     }
 
     private static Filter filters(final Set<String> packageNames) {
-        final List<Filter> filters = new ArrayList<Filter>();
+        final List<Filter> filters = new ArrayList<>();
         for (final String packageName : packageNames) {
             filters.add(new PackageFilter(packageName));
         }

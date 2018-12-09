@@ -36,11 +36,11 @@ public final class SimpleJSonParser {
             current = (char) read; // cast after otherwise -1 test will likely fail if the input file is not correct
 
             if (current == '{') {
-                json = new HashMap<String, Object>();
+                json = new HashMap<>();
             } else if (current == '}') {
                 return json;
             } else if (current == '[') {
-                array = new ArrayList<Object>();
+                array = new ArrayList<>();
             } else if (current == ']') {
                 return array;
             } else if (current == '"') {

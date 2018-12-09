@@ -51,7 +51,7 @@ public class HandlerResolverImpl implements HandlerResolver {
     private final List<HandlerChainData> handlerChains;
     private final Collection<Injection> injections;
     private final Context context;
-    private final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>();
+    private final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<>();
 
     public HandlerResolverImpl(final List<HandlerChainData> handlerChains, final Collection<Injection> injections, final Context context) {
         this.handlerChains = handlerChains;
@@ -60,7 +60,7 @@ public class HandlerResolverImpl implements HandlerResolver {
     }
 
     public void destroyHandlers() {
-        final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<InjectionProcessor<Handler>>(this.handlerInstances);
+        final List<InjectionProcessor<Handler>> handlerInstances = new ArrayList<>(this.handlerInstances);
         this.handlerInstances.clear();
         for (final InjectionProcessor<Handler> handlerInstance : handlerInstances) {
             handlerInstance.preDestroy();
@@ -68,7 +68,7 @@ public class HandlerResolverImpl implements HandlerResolver {
     }
 
     public List<Handler> getHandlerChain(final PortInfo portInfo) {
-        List<Handler> chain = new ArrayList<Handler>();
+        List<Handler> chain = new ArrayList<>();
         for (final HandlerChainData handlerChain : handlerChains) {
             List<Handler> handlers = buildHandlers(portInfo, handlerChain);
             handlers = sortHandlers(handlers);
@@ -85,7 +85,7 @@ public class HandlerResolverImpl implements HandlerResolver {
             return Collections.emptyList();
         }
 
-        final List<Handler> handlers = new ArrayList<Handler>(handlerChain.getHandlers().size());
+        final List<Handler> handlers = new ArrayList<>(handlerChain.getHandlers().size());
         for (final HandlerData handler : handlerChain.getHandlers()) {
             final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
                     Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
@@ -120,7 +120,7 @@ public class HandlerResolverImpl implements HandlerResolver {
 
             try { // old way
                 final Class<? extends Handler> handlerClass = handler.getHandlerClass().asSubclass(Handler.class);
-                final InjectionProcessor<Handler> processor = new InjectionProcessor<Handler>(handlerClass,
+                final InjectionProcessor<Handler> processor = new InjectionProcessor<>(handlerClass,
                     injections,
                     handler.getPostConstruct(),
                     handler.getPreDestroy(),
@@ -207,8 +207,8 @@ public class HandlerResolverImpl implements HandlerResolver {
      * @return sorted list of handlers
      */
     private List<Handler> sortHandlers(final List<Handler> handlers) {
-        final List<LogicalHandler> logicalHandlers = new ArrayList<LogicalHandler>();
-        final List<Handler> protocolHandlers = new ArrayList<Handler>();
+        final List<LogicalHandler> logicalHandlers = new ArrayList<>();
+        final List<Handler> protocolHandlers = new ArrayList<>();
 
         for (final Handler handler : handlers) {
             if (handler instanceof LogicalHandler) {
@@ -218,7 +218,7 @@ public class HandlerResolverImpl implements HandlerResolver {
             }
         }
 
-        final List<Handler> sortedHandlers = new ArrayList<Handler>();
+        final List<Handler> sortedHandlers = new ArrayList<>();
         sortedHandlers.addAll(logicalHandlers);
         sortedHandlers.addAll(protocolHandlers);
         return sortedHandlers;

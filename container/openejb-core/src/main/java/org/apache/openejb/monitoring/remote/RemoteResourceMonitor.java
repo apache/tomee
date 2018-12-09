@@ -54,7 +54,7 @@ public class RemoteResourceMonitor implements DynamicMBean {
         new MBeanParameterInfo("host", String.class.getName(), "the host to ping")
     }, String.class.getName(), MBeanOperationInfo.INFO);
 
-    private final Collection<String> hosts = new CopyOnWriteArraySet<String>();
+    private final Collection<String> hosts = new CopyOnWriteArraySet<>();
     private ObjectName objectName;
     private MBeanInfo info;
 
@@ -135,7 +135,7 @@ public class RemoteResourceMonitor implements DynamicMBean {
     }
 
     private void buildMBeanInfo() {
-        final List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> operationInfos = new ArrayList<>();
         for (final String host : hosts) {
             operationInfos.add(new MBeanOperationInfo(host, "ping host " + host, EMPTY_PARAMETERS, String.class.getName(), MBeanOperationInfo.INFO));
         }

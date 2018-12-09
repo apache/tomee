@@ -1,0 +1,153 @@
+= Multipoint Recommendations
+:index-group: Discovery and Failover
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+As mentioned the `initialServers` is only used for bootstrapping the
+multipoint network. Once running, all servers will dynamically establish
+direct connections with each other and there is no single point of
+failure.
+
+However to ensure that the bootstrapping process can occur successfully,
+the `initialServers` property of the `conf/multipoint.properties` file
+must be set carefully and with a specific server start order in mind.
+Each server consults its `initialServers` list exactly once in the
+bootstrapping phase at startup, after that time connections are made
+dynamically.
+
+This means that at least one of the servers listed in `initialServers`
+must already be running when the server starts or the server might never
+become introduced and connected to all the other servers in the network.
+
+== Failed scenario background
+
+As an example of a failed scenario, imagine there are three servers;
+`server1`, `server2`, `server3`. They are setup only to point to the
+server in front of them making a chain:
+
+* server1; `initialServers = server2`
+* server2; `initialServers = server3`
+* server3; `initialServers = *&lt;blank>*`
+
+Which is essentially `server1` -> `server2` -> `server3`. This scenario
+could work, but they servers would have to be started in exactly the
+opposite order:
+
+[arabic]
+. `server3` starts
+. `server2` starts
+[arabic]
+.. _static:_ connect to `server3`
+. `server1` starts
+[arabic]
+.. _static:_ connect to `server2`
+.. _dynamic:_ connect to `server3`
+
+At this point all servers would be fully connected. But the above setup
+is flawed and could easily fail. The first flaw is `server3` lists
+nothing in its `initialServers` list, so if it were restarted it would
+leave the multipoint network and not know how to get back in.
+
+The second flaw is if you started them in any other order, you would
+also not get a fully connected multipoint network. Say the servers were
+started in "front" order:
+
+[arabic]
+. `server1` starts
+[arabic]
+.. _static:_ connect to `server2` - failed, `server2` not started.
+. `server2` starts
+[arabic]
+.. _static:_ connect to `server3` - failed, `server3` not started.
+. `server3` starts
+[arabic]
+.. no connection attempts, initialServers list is empty.
+
+After startup completes, all servers will be completely isolated and
+failover will not work. The described setup is weaker than it needs to
+be. Listing just one server means the listed server is a potential point
+of weakness. As a matter of trivia, it is interesting to point out that
+you could bring a fourth server online temporarily that lists all three
+servers. Once it makes the introductions and all servers learn of each
+other, you could shut it down again.
+
+The above setup is easily fixable via better configuration. If `server3`
+listed both `server1` and `server2` in its initialServers list, rather
+than listing nothing at all, then all servers would fully discover each
+other regardless of startup order; assuming all three servers did
+eventually start.
+
+== Bootstrapping Three Servers or Less
+
+In a three sever scenario, we recommend simply having all three servers
+list all three servers.
+
+* server1/conf/multipoint.properties
+** `initialServers = server1, server2, server3`
+* server2/conf/multipoint.properties
+** `initialServers = server1, server2, server3`
+* server3/conf/multipoint.properties
+** `initialServers = server1, server2, server3`
+
+There's no harm to a server listing itself. It gives you one clean list
+to maintain and it will work even if you decide not to start one of the
+three servers.
+
+== Bootstrapping Four Servers or More
+
+In a scenario of four or more, we recommend picking at least to servers
+and focus on always keeping at least one of them running. Lets refer to
+them as "root" servers for simplicity sake.
+
+* server1/conf/multipoint.properties
+** `initialServers = server2`
+* server2/conf/multipoint.properties
+** `initialServers = server1`
+
+Root `server1` would list root `server2` so they would always be linked
+to each other regardless of start order or if one of them went down.
+`Server1` could be shutdown and reconnect on startup to the full
+multipoint network through `server2`, and vice versa.
+
+All other servers would simply list the root servers (`server1`,
+`server2`) in their initialServers list.
+
+* server3/conf/multipoint.properties
+** `initialServers = server1, server2`
+* server4/conf/multipoint.properties
+** `initialServers = server1, server2`
+* serverN/conf/multipoint.properties
+** `initialServers = server1, server2`
+
+As long as at least one root server (`server1` or `server2`) was
+running, you can bring other servers on and offline at will and always
+have a fully connected graph.
+
+Of course all servers once running and connected will have a full list
+of all other servers in the network, so if at any time the "root"
+servers weren't around to make initial introductions to new servers it
+would be no trouble. It's possible to reconfigure new servers to point
+at any other server in the network as all servers will have the full
+list. So these "root" servers are no real point of failure in function,
+but only of convenience.
+
+== Setting initialServers overrides
+
+Always remember that any property in a
+`conf/<server-service>.properties` file can be overridden on the command
+line or via system properties. So it is possible easily set the
+`initialServers` list in startup scripts.
+
+A bash example might look something like:
+
+[source,java]
+----
+!/bin/bash
+
+OPENEJB_HOME=/opt/openejb-3.1.3
+INITIAL_LIST=$(cat /some/shared/directory/our_initial_servers.txt)
+
+$OPENEJB_HOME/bin/openejb start -Dmultipoint.initialServers=$INITIAL_LIST
+----

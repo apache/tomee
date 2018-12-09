@@ -26,10 +26,10 @@ import java.util.List;
 
 public class JndiEncInfoBuilderInsertTest {
     final JndiEncInfoBuilder builder = new JndiEncInfoBuilder(new AppInfo());
-    final List<InjectableInfo> global = new ArrayList<InjectableInfo>();
-    final List<InjectableInfo> app = new ArrayList<InjectableInfo>();
-    final List<InjectableInfo> module = new ArrayList<InjectableInfo>();
-    final List<InjectableInfo> comp = new ArrayList<InjectableInfo>();
+    final List<InjectableInfo> global = new ArrayList<>();
+    final List<InjectableInfo> app = new ArrayList<>();
+    final List<InjectableInfo> module = new ArrayList<>();
+    final List<InjectableInfo> comp = new ArrayList<>();
 
     private void insert(final String referenceName) {
         final InjectableInfo injectableInfo = new InjectableInfo();
@@ -38,7 +38,7 @@ public class JndiEncInfoBuilderInsertTest {
     }
 
     private String[] getNames(final List<InjectableInfo> infoList) {
-        final List<String> names = new ArrayList<String>();
+        final List<String> names = new ArrayList<>();
         for (final InjectableInfo info : infoList) {
             names.add(info.referenceName);
         }

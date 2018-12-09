@@ -24,5 +24,5 @@ import java.util.Set;
 // TODO: find a better name, key can be a classname, a jar/file path...
 public class ClassListInfo extends InfoObject {
     public String name;
-    public final Set<String> list = new HashSet<String>();
+    public final Set<String> list = new HashSet<>();
 }

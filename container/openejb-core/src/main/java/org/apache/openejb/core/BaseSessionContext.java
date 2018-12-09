@@ -126,19 +126,19 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             final EjbObjectProxyHandler handler;
             switch (di.getComponentType()) {
                 case STATEFUL: {
-                    handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
+                    handler = new StatefulEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<>(), interfce);
                     break;
                 }
                 case STATELESS: {
-                    handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
+                    handler = new StatelessEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<>(), interfce);
                     break;
                 }
                 case SINGLETON: {
-                    handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
+                    handler = new SingletonEjbObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<>(), interfce);
                     break;
                 }
                 case MANAGED: {
-                    handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<Class>(), interfce);
+                    handler = new ManagedObjectHandler(di, threadContext.getPrimaryKey(), interfaceType, new ArrayList<>(), interfce);
                     break;
                 }
                 default:
@@ -148,8 +148,7 @@ public abstract class BaseSessionContext extends BaseContext implements SessionC
             if (InterfaceType.LOCALBEAN.equals(interfaceType)) {
                 return LocalBeanProxyFactory.constructProxy(di.get(BeanContext.ProxyClass.class).getProxy(), handler);
             } else {
-                final List<Class> interfaces = new ArrayList<Class>();
-                interfaces.addAll(di.getInterfaces(interfaceType));
+                final List<Class> interfaces = new ArrayList<>(di.getInterfaces(interfaceType));
                 interfaces.add(Serializable.class);
                 interfaces.add(IntraVmProxy.class);
                 if (BeanType.STATEFUL.equals(type) || BeanType.MANAGED.equals(type)) {

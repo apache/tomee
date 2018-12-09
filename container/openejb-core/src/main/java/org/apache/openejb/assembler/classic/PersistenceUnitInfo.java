@@ -30,13 +30,13 @@ public class PersistenceUnitInfo extends InfoObject {
     public String transactionType;
     public String jtaDataSource;
     public String nonJtaDataSource;
-    public final List<String> mappingFiles = new ArrayList<String>();
-    public final List<String> jarFiles = new ArrayList<String>();
-    public final List<String> classes = new ArrayList<String>();
+    public final List<String> mappingFiles = new ArrayList<>();
+    public final List<String> jarFiles = new ArrayList<>();
+    public final List<String> classes = new ArrayList<>();
     public boolean excludeUnlistedClasses;
     public final Properties properties = new Properties();
     public String persistenceUnitRootUrl;
-    public final Set<String> watchedResources = new TreeSet<String>();
+    public final Set<String> watchedResources = new TreeSet<>();
     public String persistenceXMLSchemaVersion;
     public String sharedCacheMode;
     public String validationMode;

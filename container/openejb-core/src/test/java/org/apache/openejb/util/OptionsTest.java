@@ -214,7 +214,7 @@ public class OptionsTest extends TestCase {
 
     // Just to test if the logging works as expected
     private static class TestLog implements Options.Log {
-        private final List<Message> messages = new ArrayList<Message>();
+        private final List<Message> messages = new ArrayList<>();
 
         public boolean isDebugEnabled() {
             return isInfoEnabled();

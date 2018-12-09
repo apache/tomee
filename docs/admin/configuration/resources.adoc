@@ -12,7 +12,7 @@ Most resources will be created automatically if there is no matching resources -
 when an injection will be found. To avoid that use `openejb.offline` property and set it to `true`.
 See link:server.html[Server Configuration] for more detail.
 
-=== Definition a resource: how does it work?
+== Definition a resource: how does it work?
 
 Before all let see how properties syntax is equivalent to XML one (system.properties and tomee.xml typically).
 
@@ -22,7 +22,7 @@ Finally the id is an attribute in XML and the key of the resource definition in 
 
 Let see it with a sample, both delcarations are the same:
 
-[source,bash]
+[source,properties]
 ----
 myDataSource = new://Resource?type=DataSource
 myDataSource.JdbcUrl = jdbc:hsqldb:mem:site
@@ -45,7 +45,7 @@ One started you can get injected any resource using `@Resource`:
 private DataSource dataSource;
 ----
 
-=== Factory syntax
+== Factory syntax
 
 Here are the attributes of a resource:
 
@@ -81,14 +81,14 @@ In the same spirit you can skip properties fallback using `SkipPropertiesFallbac
 fallback all unset properties (no matching property found) to a `Properties` instance and set it if one matching property is found.
 In Oracle case for instance it matches the connection properties which can have side effects.
 
-===== Value ciphering
+=== Value ciphering
 
 The propertie values support ciphering using the syntax `cipher:{algorithm}:{cipheredValue}`, for instance `cipher:Static3DES:xMH5uM1V9vQzVUv5LG7YLA==` will
 be read as `Passw0rd`. Ciphers can be computed using `tomee.sh` script: `${tomee.home}/bin/tomee.sh cipher Passw0rd`.
 
-=== Common Resources
+== Common Resources
 
-==== DataSources
+=== DataSources
 
 DataSources have defaults for all values and a default datasource can be provided automatically but if you want to
 configure it here are the common properties:
@@ -109,7 +109,7 @@ entries we try to keep in sync for both:
 | Password | the password of the user
 |===
 
-===== Password and ciphering
+==== Password and ciphering
 
 DataSource were the first resource to support password ciphering. Originally it was another property which is still supported.
 It is called `PasswordCipher`. Its value is the ciphering algorithm and it affects the password value. However `cipher:xxx`
@@ -117,7 +117,7 @@ is still supported on `Password` value. Default `PasswordCipher` being `PlainTex
 
 Sample:
 
-[source,bash]
+[source,properties]
 ----
 ds = new://Resource?type=javax.sql.DataSource
 # our password is "Passw0rd"
@@ -125,7 +125,7 @@ ds.Password = xMH5uM1V9vQzVUv5LG7YLA==
 ds.PasswordCipher = Static3DES
 ----
 
-===== Advanced DataSource configuration
+==== Advanced DataSource configuration
 
 TomEE also provides few utilities you can add in DataSource properties:
 
@@ -141,7 +141,7 @@ TomEE also provides few utilities you can add in DataSource properties:
 | DataSourceCreator | which pool to use, `dbcp`, `tomcat`, `dbcp-alternative` (DBCP and TomEE proxying instead of DBCP JTA integration), `simple` (no pooling)
 |===
 
-===== DataSource and JTA
+==== DataSource and JTA
 
 `JtaManaged` determines wether or not this data source should be JTA managed
 or user managed.  If set to 'true' it will automatically be enrolled
@@ -149,14 +149,14 @@ in any ongoing transactions.  Calling begin/commit/rollback or setAutoCommit
 on the datasource or connection will not be allowed.  If you need to perform
 these functions yourself, set `JtaManaged` to `false`
 
-===== DataSource and JPA
+==== DataSource and JPA
 
 In terms of JPA persistence.xml:
 
 - `JtaManaged=true` can be used as a 'jta-data-source'
 - `JtaManaged=false` can be used as a 'non-jta-data-source'
 
-=== ActiveMQResourceAdapter
+== ActiveMQResourceAdapter
 
 Declarable in tomee.xml via
 
@@ -172,7 +172,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ActiveMQResourceAdapter
 Foo.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false
@@ -181,28 +181,28 @@ Foo.DataSource = Default Unmanaged JDBC Database
 Foo.StartupTimeout = 10 seconds
 ----
 
-==== Configuration
+=== Configuration
 
-===== BrokerXmlConfig
+==== BrokerXmlConfig
 
 Broker configuration URI as defined by ActiveMQ
 see http://activemq.apache.org/broker-configuration-uri.html
 BrokerXmlConfig xbean:file:conf/activemq.xml - Requires xbean-spring.jar and dependencies
 
-===== ServerUrl
+==== ServerUrl
 
 Broker address
 
-===== DataSource
+==== DataSource
 
 DataSource for persistence messages
 
-===== StartupTimeout
+==== StartupTimeout
 
 How long to wait for broker startup
 
 
-=== javax.jms.ConnectionFactory
+== javax.jms.ConnectionFactory
 
 An ActiveMQ (JMS) connection factory.
 
@@ -222,7 +222,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.ConnectionFactory
 Foo.ResourceAdapter = Default JMS Resource Adapter
@@ -233,35 +233,35 @@ Foo.ConnectionMaxWaitTime = 5 seconds
 Foo.ConnectionMaxIdleTime = 15 Minutes
 ----
 
-==== Configuration
+=== Configuration
 
-===== ResourceAdapter
+==== ResourceAdapter
 
 An ActiveMQ (JMS) resource adapter.
 
-===== TransactionSupport
+==== TransactionSupport
 
 Specifies if the connection is enrolled in global transaction
 allowed values: `xa`, `local` or `none`. Default to `xa`.
 
-===== PoolMaxSize
+==== PoolMaxSize
 
 Maximum number of physical connection to the ActiveMQ broker.
 
-===== PoolMinSize
+==== PoolMinSize
 
 Minimum number of physical connection to the ActiveMQ broker.
 
-===== ConnectionMaxWaitTime
+==== ConnectionMaxWaitTime
 
 Maximum amount of time to wait for a connection.
 
-===== ConnectionMaxIdleTime
+==== ConnectionMaxIdleTime
 
 Maximum amount of time a connection can be idle before being reclaimed.
 
 
-=== javax.jms.Queue
+== javax.jms.Queue
 
 An ActiveMQ (JMS) queue.
 
@@ -277,21 +277,21 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.Queue
 # not set means id
 Foo.destination =
 ----
 
-==== Configuration
+=== Configuration
 
-===== destination
+==== destination
 
 Specifies the name of the queue
 
 
-=== javax.jms.Topic
+== javax.jms.Topic
 
 An ActiveMQ (JMS) topic.
 
@@ -307,21 +307,21 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=javax.jms.Topic
 # not set means id
 Foo.destination =
 ----
 
-==== Configuration
+=== Configuration
 
-===== destination
+==== destination
 
 Specifies the name of the topic
 
 
-=== org.omg.CORBA.ORB
+== org.omg.CORBA.ORB
 
 NOTE: to use it you need to add an implementation of corba.
 
@@ -334,13 +334,13 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=org.omg.CORBA.ORB
 ----
 
 
-=== javax.mail.Session
+== javax.mail.Session
 
 A mail session.
 
@@ -361,7 +361,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 mail/mysession = new://Resource?type=javax.mail.Session
 mail/mysession.mail.transport.protocol = smtp
@@ -379,7 +379,7 @@ same configuration and return the same instance. For tomee it is likely better t
 and use `aliases` option of the resource to define an alias if you need to share the same instance accross multiple names.
 
 
-=== ManagedExecutorService
+== ManagedExecutorService
 
 A concurrency utility for EE executor service.
 
@@ -399,7 +399,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedExecutorService
 Foo.Core = 5
@@ -410,34 +410,34 @@ Foo.ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
 Foo.Lazy = true
 ----
 
-==== Configuration
+=== Configuration
 
-===== Core
+==== Core
 
 The pool core size.
 
-===== Max
+==== Max
 
 The pool max size.
 
-===== KeepAlive
+==== KeepAlive
 
 The thread keep alive time (in duration format)
 
-===== Queue
+==== Queue
 
 The queue type size.
 
-===== ThreadFactory
+==== ThreadFactory
 
 The thread factory implementation class.
 
-===== Lazy
+==== Lazy
 
 If set to true the pool is created when first accessed otherwise it is created at startup.
 
 
-=== ManagedScheduledExecutorService
+== ManagedScheduledExecutorService
 
 Inherit from `ManagedExecutorService` and adds scheduling abilities.
 
@@ -454,7 +454,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedScheduledExecutorService
 Foo.Core = 5
@@ -462,12 +462,12 @@ Foo.ThreadFactory = org.apache.openejb.threads.impl.ManagedThreadFactoryImpl
 Foo.Lazy = true
 ----
 
-==== Configuration
+=== Configuration
 
 See `ManagedExecutorService`.
 
 
-=== ManagedThreadFactory
+== ManagedThreadFactory
 
 A thread factory for a `ManagedExecutorService`.
 
@@ -483,22 +483,22 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedThreadFactory
 Foo.Prefix = openejb-managed-thread-
 Foo.Lazy = true
 ----
 
-==== Configuration
+=== Configuration
 
-===== Prefix
+==== Prefix
 
 The thread prefix (suffixed with thread id).
 
 
 
-=== ContextService
+== ContextService
 
 A concurrency utilities for JavaEE context service. It allows to create
 contextual proxies (inheriting from security, classloader...contexts).
@@ -512,13 +512,13 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ContextService
 ----
 
 
-=== JndiProvider: inject remote clients
+== JndiProvider: inject remote clients
 
 A thread factory for a `ManagedExecutorService`.
 Default implementation is `org.apache.openejb.threads.impl.ManagedThreadFactoryImpl`.
@@ -535,22 +535,22 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ManagedThreadFactory
 Foo.Prefix = openejb-managed-thread-
 Foo.Lazy = true
 ----
 
-==== Configuration
+=== Configuration
 
-===== Prefix
+==== Prefix
 
 The thread prefix (suffixed with thread id).
 
 
 
-=== ContextService
+== ContextService
 
 A concurrency utilities for JavaEE context service. It allows to create
 contextual proxies (inheriting from security, classloader...contexts).
@@ -564,9 +564,7 @@ Declarable in tomee.xml via
 
 Declarable in properties via
 
-[source,bash]
+[source,properties]
 ----
 Foo = new://Resource?type=ContextService
 ----
-
-

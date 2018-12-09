@@ -50,7 +50,7 @@ public class EjbJarBuilder {
         final Context moduleJndiContext = new JndiEncBuilder(ejbJar.moduleJndiEnc, moduleInjections, null, ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, classLoader, context.getProperties())
             .build(JndiEncBuilder.JndiScope.module);
 
-        final HashMap<String, BeanContext> deployments = new HashMap<String, BeanContext>();
+        final HashMap<String, BeanContext> deployments = new HashMap<>();
 
         final ModuleContext moduleContext = !ejbJar.properties.containsKey("openejb.test.module") ?
                 new ModuleContext(ejbJar.moduleName, ejbJar.moduleUri, ejbJar.uniqueId, context, moduleJndiContext, classLoader) :

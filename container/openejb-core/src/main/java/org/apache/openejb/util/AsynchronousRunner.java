@@ -44,7 +44,7 @@ public class AsynchronousRunner {
      */
     public Future<Object> runAsync(final Object object, final Method method, final Object... arguments) {
         final Callable<Object> callable = new MethodInvoker(object, method, arguments);
-        final FutureTask<Object> futureTask = new FutureTask<Object>(callable);
+        final FutureTask<Object> futureTask = new FutureTask<>(callable);
         executor.execute(futureTask);
         return futureTask;
     }

@@ -37,7 +37,7 @@ public class ReflectionInvocationContext implements InvocationContext {
     private final Object target;
     private final Method method;
     private final Object[] parameters;
-    private final Map<String, Object> contextData = new TreeMap<String, Object>();
+    private final Map<String, Object> contextData = new TreeMap<>();
     private final Class<?>[] parameterTypes;
 
     private final Operation operation;

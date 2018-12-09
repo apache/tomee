@@ -33,7 +33,7 @@ public final class XADataSourceResource {
 
     private static class LazyXADataSourceHandler implements InvocationHandler {
         private final String name;
-        private final AtomicReference<XADataSource> ref = new AtomicReference<XADataSource>();
+        private final AtomicReference<XADataSource> ref = new AtomicReference<>();
 
         public LazyXADataSourceHandler(final String xaDataSource) {
             if (xaDataSource.startsWith("openejb:") || xaDataSource.startsWith("java:global")) {

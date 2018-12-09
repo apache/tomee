@@ -45,7 +45,7 @@ public class References {
             return objects;
         }
 
-        final Map<String, Node> nodes = new LinkedHashMap<String, Node>();
+        final Map<String, Node> nodes = new LinkedHashMap<>();
 
         // Create nodes
         for (final T obj : objects) {
@@ -77,16 +77,16 @@ public class References {
 
         //detect circus
         if (circuitFounded) {
-            final Set<Circuit> circuits = new LinkedHashSet<Circuit>();
+            final Set<Circuit> circuits = new LinkedHashSet<>();
 
             for (final Node node : nodes.values()) {
-                findCircuits(circuits, node, new Stack<Node>());
+                findCircuits(circuits, node, new Stack<>());
             }
 
-            final ArrayList<Circuit> list = new ArrayList<Circuit>(circuits);
+            final ArrayList<Circuit> list = new ArrayList<>(circuits);
             Collections.sort(list);
 
-            final List<List> all = new ArrayList<List>();
+            final List<List> all = new ArrayList<>();
             for (final Circuit circuit : list) {
                 all.add(unwrap(circuit.nodes));
             }
@@ -156,7 +156,7 @@ public class References {
     }
 
     private static <T> List<T> unwrap(final List<Node> nodes) {
-        final ArrayList<T> referees = new ArrayList<T>(nodes.size());
+        final ArrayList<T> referees = new ArrayList<>(nodes.size());
         for (final Node node : nodes) {
             referees.add((T) node.object);
         }
@@ -167,7 +167,7 @@ public class References {
         if (stack.contains(node)) {
             final int fromIndex = stack.indexOf(node);
             final int toIndex = stack.size();
-            final ArrayList<Node> circularity = new ArrayList<Node>(stack.subList(fromIndex, toIndex));
+            final ArrayList<Node> circularity = new ArrayList<>(stack.subList(fromIndex, toIndex));
 
             // add ending node to list so a full circuit is shown
             circularity.add(node);
@@ -191,8 +191,8 @@ public class References {
     private static class Node implements Comparable<Node> {
         private final String name;
         private final Object object;
-        private final List<Node> initialReferences = new ArrayList<Node>();
-        private final Set<Node> references = new HashSet<Node>();
+        private final List<Node> initialReferences = new ArrayList<>();
+        private final Set<Node> references = new HashSet<>();
         private Node next;
         private Node previous;
 
@@ -234,7 +234,7 @@ public class References {
 
         public Circuit(final List<Node> nodes) {
             this.nodes = nodes;
-            atomic = new ArrayList<Node>(nodes);
+            atomic = new ArrayList<>(nodes);
             atomic.remove(atomic.size() - 1);
             Collections.sort(atomic);
         }

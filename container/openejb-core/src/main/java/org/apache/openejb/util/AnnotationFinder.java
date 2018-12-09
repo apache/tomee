@@ -36,7 +36,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -63,7 +62,7 @@ public class AnnotationFinder {
     private static final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
 
     private final ClassLoader classLoader;
-    private final List<String> classesNotLoaded = new ArrayList<String>();
+    private final List<String> classesNotLoaded = new ArrayList<>();
     private final List<String> classNames;
 
     /**
@@ -109,12 +108,12 @@ public class AnnotationFinder {
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final URL url) {
-        this(classLoader, Arrays.asList(url));
+        this(classLoader, Collections.singletonList(url));
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
         this.classLoader = classLoader;
-        classNames = new ArrayList<String>();
+        classNames = new ArrayList<>();
         for (final URL location : urls) {
             if (location == null) {
                 continue;
@@ -190,7 +189,7 @@ public class AnnotationFinder {
 
     @SuppressWarnings("deprecation")
     private static List<String> file(final URL location) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
         File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
@@ -250,7 +249,7 @@ public class AnnotationFinder {
     }
 
     private static List<String> jar(final JarFile jarFile) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         final Enumeration<? extends JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
@@ -262,7 +261,7 @@ public class AnnotationFinder {
     }
 
     private static List<String> jar(final JarInputStream jarStream) throws IOException {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         JarEntry entry;
         while ((entry = jarStream.getNextJarEntry()) != null) {

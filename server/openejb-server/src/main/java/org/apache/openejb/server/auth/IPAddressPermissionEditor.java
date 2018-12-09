@@ -25,10 +25,12 @@ import java.beans.PropertyEditorSupport;
 public class IPAddressPermissionEditor extends PropertyEditorSupport {
     private IPAddressPermission addressMask;
 
+    @Override
     public void setAsText(final String text) throws IllegalArgumentException {
         addressMask = IPAddressPermissionFactory.getIPAddressMask(text);
     }
 
+    @Override
     public Object getValue() {
         return addressMask;
     }

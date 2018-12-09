@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 public class AbstractRestThreadLocalProxy<T> implements Serializable {
 
-    private final ThreadLocal<T> infos = new ThreadLocal<T>();
+    private final ThreadLocal<T> infos = new ThreadLocal<>();
     private final Class<T> clazz;
 
     protected AbstractRestThreadLocalProxy(final Class<T> clazz) {

@@ -1,0 +1,183 @@
+= TransactionManager Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A TransactionManager can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<TransactionManager id="myTransactionManager" type="TransactionManager">
+    adler32Checksum = true
+    bufferSizeKb = 32
+    checksumEnabled = true
+    defaultTransactionTimeout = 10 minutes
+    flushSleepTime = 50 Milliseconds
+    logFileDir = txlog
+    logFileExt = log
+    logFileName = howl
+    maxBlocksPerFile = -1
+    maxBuffers = 0
+    maxLogFiles = 2
+    minBuffers = 4
+    threadsWaitingForceThreshold = -1
+    txRecovery = false
+</TransactionManager>
+----
+
+Alternatively, a TransactionManager can be declared via properties in
+the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+myTransactionManager = new://TransactionManager?type=TransactionManager
+myTransactionManager.adler32Checksum = true
+myTransactionManager.bufferSizeKb = 32
+myTransactionManager.checksumEnabled = true
+myTransactionManager.defaultTransactionTimeout = 10 minutes
+myTransactionManager.flushSleepTime = 50 Milliseconds
+myTransactionManager.logFileDir = txlog
+myTransactionManager.logFileExt = log
+myTransactionManager.logFileName = howl
+myTransactionManager.maxBlocksPerFile = -1
+myTransactionManager.maxBuffers = 0
+myTransactionManager.maxLogFiles = 2
+myTransactionManager.minBuffers = 4
+myTransactionManager.threadsWaitingForceThreshold = -1
+myTransactionManager.txRecovery = false
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared TransactionManager a
+warning will be logged. If a TransactionManager is needed by the
+application and one is not declared, TomEE will create one dynamically
+using default settings. Multiple TransactionManager declarations are
+allowed. # Supported Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+adler32Checksum
+
+boolean
+
+true
+
+Requires TxRecovery
+
+bufferSizeKb
+
+int
+
+32
+
+Requires TxRecovery
+
+checksumEnabled
+
+boolean
+
+true
+
+Requires TxRecovery
+
+defaultTransactionTimeout
+
+time
+
+10 minutes
+
+flushSleepTime
+
+time
+
+50 Milliseconds
+
+Requires TxRecovery
+
+logFileDir
+
+String
+
+txlog
+
+Requires TxRecovery
+
+logFileExt
+
+String
+
+log
+
+Requires TxRecovery
+
+logFileName
+
+String
+
+howl
+
+Requires TxRecovery
+
+maxBlocksPerFile
+
+int
+
+-1
+
+Requires TxRecovery
+
+maxBuffers
+
+int
+
+0
+
+Requires TxRecovery
+
+maxLogFiles
+
+int
+
+2
+
+Requires TxRecovery
+
+minBuffers
+
+int
+
+4
+
+Requires TxRecovery
+
+threadsWaitingForceThreshold
+
+int
+
+-1
+
+Requires TxRecovery
+
+txRecovery
+
+boolean
+
+false
+
+When set to true, Howl logging is enabled

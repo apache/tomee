@@ -48,8 +48,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class AxisService extends WsService {
-    private final Map<String, AxisWsContainer> wsContainers = new TreeMap<String, AxisWsContainer>();
+    private final Map<String, AxisWsContainer> wsContainers = new TreeMap<>();
 
+    @Override
     public String getName() {
         return "axis";
     }
@@ -95,6 +96,7 @@ public class AxisService extends WsService {
     }
 
 
+    @Override
     protected void destroyEjbWsContainer(String deploymentId) {
         AxisWsContainer container = wsContainers.remove(deploymentId);
         if (container != null) {
@@ -102,6 +104,7 @@ public class AxisService extends WsService {
         }
     }
 
+    @Override
     protected HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration serviceInfos) throws Exception {
         ClassLoader classLoader = target.getClassLoader();
 
@@ -131,6 +134,7 @@ public class AxisService extends WsService {
         return container;
     }
 
+    @Override
     protected void destroyPojoWsContainer(String serviceId) {
         AxisWsContainer container = wsContainers.remove(serviceId);
         if (container != null) {
@@ -143,7 +147,7 @@ public class AxisService extends WsService {
         if (handlerChains == null || handlerChains.isEmpty()) return null;
         List<HandlerData> handlers = handlerChains.get(0).getHandlers();
 
-        List<HandlerInfo> handlerInfos = new ArrayList<HandlerInfo>(handlers.size());
+        List<HandlerInfo> handlerInfos = new ArrayList<>(handlers.size());
         for (HandlerData handler : handlers) {
             Class<?> handlerClass = handler.getHandlerClass();
             Map initParams = new HashMap(handler.getInitParams());

@@ -36,13 +36,13 @@ public class ReferencesTest extends TestCase {
     private List<Bean> beans;
 
     public void testEmptyList() {
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
         assertEquals(0, sort(beans, visitor).size());
     }
 
     public void test() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean a = bean("a");
         final Bean b = bean("b", "a");
@@ -54,7 +54,7 @@ public class ReferencesTest extends TestCase {
 
     public void testSimple() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean c = bean("c", "b", "a");
         final Bean b = bean("b", "a");
@@ -67,7 +67,7 @@ public class ReferencesTest extends TestCase {
 
     public void testOrder() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean c = bean("c", "b", "a");
         final Bean b = bean("b", "a");
@@ -85,7 +85,7 @@ public class ReferencesTest extends TestCase {
 
     public void testOrder2() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean c = bean("c", "b", "a");
         final Bean a = bean("a");
@@ -103,7 +103,7 @@ public class ReferencesTest extends TestCase {
 
     public void testCircuit() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean a = bean("a", "c");
         final Bean b = bean("b", "a");
@@ -121,7 +121,7 @@ public class ReferencesTest extends TestCase {
 
     public void testCircuit2() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean a = bean("a", "c");
         final Bean b = bean("b", "a");
@@ -144,7 +144,7 @@ public class ReferencesTest extends TestCase {
 
     public void testCircuit3() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean a = bean("a", "a", "b", "c");
         final Bean b = bean("b", "a", "b", "c");
@@ -171,7 +171,7 @@ public class ReferencesTest extends TestCase {
 
     public void testNonSuchObject() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean a = bean("a");
         final Bean b = bean("b", "a");
@@ -190,7 +190,7 @@ public class ReferencesTest extends TestCase {
     // this test needs to pass
     public void testNoReferences() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean b = bean("b");
         final Bean a = bean("a");
@@ -208,7 +208,7 @@ public class ReferencesTest extends TestCase {
     // this should pass but doesn't
     public void testOrderedReferences() {
 
-        beans = new ArrayList<Bean>();
+        beans = new ArrayList<>();
 
         final Bean b = bean("b");
         final Bean a = bean("a");
@@ -239,10 +239,8 @@ public class ReferencesTest extends TestCase {
 
         public Bean(final String name, final String... refs) {
             this.name = name;
-            this.refs = new LinkedHashSet<String>(refs.length);
-            for (final String s : refs) {
-                this.refs.add(s);
-            }
+            this.refs = new LinkedHashSet<>(refs.length);
+            this.refs.addAll(Arrays.asList(refs));
         }
 
         public String toString() {

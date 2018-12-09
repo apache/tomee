@@ -1,0 +1,74 @@
+= Understanding the Directory Layout
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+Unpacking the standalone OpenEJB will result in the following directory
+layout:
+
+[source,java]
+----
+apache-openejb-[version]\apps
+apache-openejb-[version]\bin
+apache-openejb-[version]\conf
+apache-openejb-[version]\data
+apache-openejb-[version]\lib
+apache-openejb-[version]\logs
+apache-openejb-[version]\LICENSE
+apache-openejb-[version]\NOTICE
+apache-openejb-[version]\README.txt
+----
+
+= Directories
+
+== bin/
+
+Contains commands to start/stop the server (You can also do a lot of
+other stuff like deploy/undeploy, but we will just talk about things
+needed to get you started)
+
+== lib/
+
+Contains several jar files (you only need of few of these jars in your
+classpath to do EJB development)
+
+== apps/
+
+Once you create your EJB's and jar them up, you can place your jar file
+in this directory and start the server. The server will automatically
+deploy all the EJB's contained in this JAR.
+
+== logs/
+
+Contains log files.
+
+== conf/
+
+This directory contains nothing but a README.txt file at the time
+OpenEJB is unpacked. The first time OpenEJB is started however, these
+files will be created:
+
+[source,java]
+----
+  conf/
+    openejb.xml            (main config file)    
+    logging.properties         (log levels and files)    
+    login.config           (jaas config file)
+    users.properties           (users that can log in)
+    groups.properties          (groups in which users belong)
+
+    conf.d/
+
+        admin.properties        (network socket for administration)
+        ejbd.properties         (network socket for ejb invocations)
+        hsql.properties         (network socket for hsql client access)
+        httpejbd.properties     (network socket for ejb invocations over http)
+        telnet.properties       (network socket for telnet "server") 
+----
+
+These files can be edited as desired. If at any time you are unhappy
+with your changes or simply wish to start over, you can delete or move
+any of the files above and a new one containing the default values will
+be automatically created.

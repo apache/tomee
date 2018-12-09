@@ -1,0 +1,70 @@
+= Configuring Durations
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+The time based configuration properties of containers
+and beans support plain english, such as:
+
+* "1 hour"
+* "27 minutes"
+* "10 seconds"
+
+For convenience it is possible to specify a _compound_ form, such as:
+
+* "3 days and 2 hours"
+* "1 hour, 45 minutes"
+* "15 minutes, 23 seconds, and 10 milliseconds"
+
+Spaces are also optional between the number and the time unit, which can
+be nice when using the abbreviated forms:
+
+* "1hr"
+* "27m"
+* "10s"
+* "3d and 2hr"
+* "1hr, 45min"
+* "15m, 23s, and 10ms"
+
+Abbreviations are accepted as follows:
+
+[source,java]
+----
+  if (u.equalsIgnoreCase("NANOSECONDS")) return TimeUnit.NANOSECONDS;
+  if (u.equalsIgnoreCase("NANOSECOND")) return TimeUnit.NANOSECONDS;
+  if (u.equalsIgnoreCase("NANOS")) return TimeUnit.NANOSECONDS;
+  if (u.equalsIgnoreCase("NANO")) return TimeUnit.NANOSECONDS;
+  if (u.equalsIgnoreCase("NS")) return TimeUnit.NANOSECONDS;
+
+  if (u.equalsIgnoreCase("MICROSECONDS")) return TimeUnit.MICROSECONDS;
+  if (u.equalsIgnoreCase("MICROSECOND")) return TimeUnit.MICROSECONDS;
+  if (u.equalsIgnoreCase("MICROS")) return TimeUnit.MICROSECONDS;
+  if (u.equalsIgnoreCase("MICRO")) return TimeUnit.MICROSECONDS;
+
+  if (u.equalsIgnoreCase("MILLISECONDS")) return TimeUnit.MILLISECONDS;
+  if (u.equalsIgnoreCase("MILLISECOND")) return TimeUnit.MILLISECONDS;
+  if (u.equalsIgnoreCase("MILLIS")) return TimeUnit.MILLISECONDS;
+  if (u.equalsIgnoreCase("MILLI")) return TimeUnit.MILLISECONDS;
+  if (u.equalsIgnoreCase("MS")) return TimeUnit.MILLISECONDS;
+
+  if (u.equalsIgnoreCase("SECONDS")) return TimeUnit.SECONDS;
+  if (u.equalsIgnoreCase("SECOND")) return TimeUnit.SECONDS;
+  if (u.equalsIgnoreCase("SEC")) return TimeUnit.SECONDS;
+  if (u.equalsIgnoreCase("S")) return TimeUnit.SECONDS;
+
+  if (u.equalsIgnoreCase("MINUTES")) return TimeUnit.MINUTES;
+  if (u.equalsIgnoreCase("MINUTE")) return TimeUnit.MINUTES;
+  if (u.equalsIgnoreCase("MIN")) return TimeUnit.MINUTES;
+  if (u.equalsIgnoreCase("M")) return TimeUnit.MINUTES;
+
+  if (u.equalsIgnoreCase("HOURS")) return TimeUnit.HOURS;
+  if (u.equalsIgnoreCase("HOUR")) return TimeUnit.HOURS;
+  if (u.equalsIgnoreCase("HRS")) return TimeUnit.HOURS;
+  if (u.equalsIgnoreCase("HR")) return TimeUnit.HOURS;
+  if (u.equalsIgnoreCase("H")) return TimeUnit.HOURS;
+
+  if (u.equalsIgnoreCase("DAYS")) return TimeUnit.DAYS;
+  if (u.equalsIgnoreCase("DAY")) return TimeUnit.DAYS;
+  if (u.equalsIgnoreCase("D")) return TimeUnit.DAYS;
+----

@@ -19,7 +19,6 @@ package org.apache.openejb.daemon;
 import org.apache.openejb.cli.Bootstrap;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.Server;
-import org.apache.openejb.server.ServerRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NTService {
 
-    private static final NTService instance = new NTService();
+    private static final NTService INSTANCE = new NTService();
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
@@ -37,7 +36,7 @@ public class NTService {
      */
     public static void start(final String[] args) {
         try {
-            instance.startImpl(args);
+            INSTANCE.startImpl(args);
         } catch (Throwable e) {
             e.printStackTrace(System.err);
         }
@@ -50,7 +49,7 @@ public class NTService {
      */
     public static void stop(final String[] args) {
         try {
-            instance.stopImpl();
+            INSTANCE.stopImpl();
         } catch (Throwable e) {
             e.printStackTrace(System.err);
         }
@@ -70,7 +69,7 @@ public class NTService {
                 System.setProperty("openejb.home", System.getProperty("user.dir"));
             }
 
-            final ArrayList<String> list = new ArrayList<String>();
+            final ArrayList<String> list = new ArrayList<>();
             list.addAll(Arrays.asList(args));
 
             if (!list.contains("start")) {

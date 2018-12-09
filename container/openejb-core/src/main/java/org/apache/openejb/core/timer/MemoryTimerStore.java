@@ -47,8 +47,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MemoryTimerStore implements TimerStore {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getInstance(LogCategory.TIMER, "org.apache.openejb.util.resources");
-    private final Map<Long, TimerData> taskStore = new ConcurrentHashMap<Long, TimerData>();
-    private final Map<Transaction, TimerDataView> tasksByTransaction = new ConcurrentHashMap<Transaction, TimerDataView>();
+    private final Map<Long, TimerData> taskStore = new ConcurrentHashMap<>();
+    private final Map<Transaction, TimerDataView> tasksByTransaction = new ConcurrentHashMap<>();
     private final AtomicLong counter = new AtomicLong(0);
 
     private final TransactionManager transactionManager;
@@ -71,7 +71,7 @@ public class MemoryTimerStore implements TimerStore {
     public Collection<TimerData> getTimers(final String deploymentId) {
         try {
             final TimerDataView tasks = getTasks();
-            return new ArrayList<TimerData>(tasks.getTasks().values());
+            return new ArrayList<>(tasks.getTasks().values());
         } catch (final TimerStoreException e) {
             return Collections.emptySet();
         }
@@ -80,7 +80,7 @@ public class MemoryTimerStore implements TimerStore {
     @Override
     public Collection<TimerData> loadTimers(final EjbTimerServiceImpl timerService, final String deploymentId) throws TimerStoreException {
         final TimerDataView tasks = getTasks();
-        final Collection<TimerData> out = new LinkedList<TimerData>();
+        final Collection<TimerData> out = new LinkedList<>();
         for (final TimerData data : tasks.getTasks().values()) {
             if (deploymentId == null || deploymentId.equals(data.getDeploymentId())) {
                 out.add(data);
@@ -169,7 +169,7 @@ public class MemoryTimerStore implements TimerStore {
     private class LiveTimerDataView implements TimerDataView {
         @Override
         public Map<Long, TimerData> getTasks() {
-            return new TreeMap<Long, TimerData>(taskStore);
+            return new TreeMap<>(taskStore);
         }
 
         @Override
@@ -184,8 +184,8 @@ public class MemoryTimerStore implements TimerStore {
     }
 
     private class TxTimerDataView implements Synchronization, TimerDataView {
-        private final Map<Long, TimerData> add = new TreeMap<Long, TimerData>();
-        private final Set<Long> remove = new TreeSet<Long>();
+        private final Map<Long, TimerData> add = new TreeMap<>();
+        private final Set<Long> remove = new TreeSet<>();
         private final Lock lock = new ReentrantLock();
         private final RuntimeException concurentException;
         private final WeakReference<Transaction> tansactionReference;
@@ -208,7 +208,7 @@ public class MemoryTimerStore implements TimerStore {
             concurentException.fillInStackTrace();
             try {
                 transaction.registerSynchronization(this);
-                tansactionReference = new WeakReference<Transaction>(transaction);
+                tansactionReference = new WeakReference<>(transaction);
             } catch (final RollbackException e) {
                 throw new TimerStoreException("Transaction has been rolled back");
             } catch (final SystemException e) {
@@ -225,8 +225,7 @@ public class MemoryTimerStore implements TimerStore {
         @Override
         public Map<Long, TimerData> getTasks() {
             checkThread();
-            final TreeMap<Long, TimerData> allTasks = new TreeMap<Long, TimerData>();
-            allTasks.putAll(taskStore);
+            final TreeMap<Long, TimerData> allTasks = new TreeMap<>(taskStore);
             for (final Long key : remove) {
                 allTasks.remove(key);
             }

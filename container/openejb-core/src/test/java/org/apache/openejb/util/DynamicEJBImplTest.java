@@ -177,7 +177,7 @@ public class DynamicEJBImplTest {
 
     @Test
     public void query() {
-        final Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<>();
         params.put("name", "foo");
 
         Collection<User> users = dao.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);
@@ -203,7 +203,7 @@ public class DynamicEJBImplTest {
 
     @Test
     public void inheritance() {
-        final Map<String, String> params = new HashMap<String, String>();
+        final Map<String, String> params = new HashMap<>();
         params.put("name", "foo");
 
         Collection<User> users = child.namedQuery("dynamic-ejb-impl-test.query", params, 0, 100);

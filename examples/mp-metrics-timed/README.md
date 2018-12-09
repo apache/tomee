@@ -9,7 +9,7 @@ This is an example on how to use MicroProfile metrics in TomEE.
 
     mvn clean install tomee:run 
 
-Within the application there is an endpoint that will give you weather status for the day.
+Within the application there is an endpoint that will give you the weather status for the day.
 
 ##### For the day status call:
 
@@ -128,7 +128,7 @@ For json format add the header _Accept=application/json_ to the request.
     }
    
 #### Metric metadata
-A metric will have a metadata so you can know more information about it, like displayName, description, tags e etc.
+A metric will have metadata so you can know more about it, like displayName, description, tags e etc.
 
 Check the metric metadata doing a _OPTIONS_ request:
 

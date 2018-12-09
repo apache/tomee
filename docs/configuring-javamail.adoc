@@ -1,0 +1,44 @@
+= Configuring JavaMail
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Declaring a JavaMail Resource
+
+The basics are that any properties listed in the element are given
+directly to the javamail provider via
+javax.mail.Session.getDefaultInstance(Properties props).
+
+Here might be some example properties.
+
+[source,xml]
+----
+<Resource id="SuperbizMail" type="javax.mail.Session">
+   mail.smtp.host=mail.superbiz.org
+   mail.smtp.port=25
+   mail.transport.protocol=smtp
+   mail.smtp.auth=true
+   mail.smtp.user=someuser
+   password=mypassword
+</Resource>
+----
+
+You can create as many entries like this as you wish, they just have to
+have a unique 'id'.
+
+Careful not to add whitespace at the end of your property values. A
+java.util.Properties object will leave those in the property values and
+they will be passed to the JavaMail provider with the whitespace on the
+end which may cause issues if the provider does not actively trim the
+values before attempting to use them.
+
+== Overriding
+
+If you wanted to do a System property or InitialContext property
+override of the above example mail session, you could do so like this:
+
+[source,bash]
+----
+java ... -DSuperbizMail.mail.smtp.host=localhost
+----

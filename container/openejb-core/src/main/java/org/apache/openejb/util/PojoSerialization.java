@@ -270,7 +270,7 @@ public class PojoSerialization implements Serializable {
     }
 
     protected void write(final ObjectOutput out) throws IOException {
-        final List<Class> classes = new ArrayList<Class>();
+        final List<Class> classes = new ArrayList<>();
         Class c = object.getClass();
         while (c != null && !c.equals(Object.class)) {
             classes.add(c);

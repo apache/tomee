@@ -74,7 +74,7 @@ public class RemoteServer {
     private boolean serverHasAlreadyBeenStarted = true;
 
     private Properties properties;
-    private final AtomicReference<Process> server = new AtomicReference<Process>();
+    private final AtomicReference<Process> server = new AtomicReference<>();
     private final int tries;
     private final boolean verbose;
     private final int portShutdown;
@@ -223,7 +223,7 @@ public class RemoteServer {
                     java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
-                final List<String> argsList = new ArrayList<String>(20);
+                final List<String> argsList = new ArrayList<>(20);
                 argsList.add(java);
                 argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
@@ -247,7 +247,7 @@ public class RemoteServer {
                     argsList.addAll(parse(javaOpts.replace("${openejb.base}", home.getAbsolutePath())));
                 }
 
-                final Map<String, String> addedArgs = new HashMap<String, String>();
+                final Map<String, String> addedArgs = new HashMap<>();
                 if (additionalArgs != null) {
                     for (final String arg : additionalArgs) {
                         final int equal = arg.indexOf('=');

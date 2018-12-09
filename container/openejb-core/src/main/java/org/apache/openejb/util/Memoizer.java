@@ -25,7 +25,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 public class Memoizer<K, V> implements Computable<K, V> {
-    private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<K, Future<V>>();
+    private final ConcurrentMap<K, Future<V>> cache = new ConcurrentHashMap<>();
 
     private final Computable<K, V> c;
 
@@ -52,7 +52,7 @@ public class Memoizer<K, V> implements Computable<K, V> {
                         return c.compute(key);
                     }
                 };
-                final FutureTask<V> futureTask = new FutureTask<V>(eval);
+                final FutureTask<V> futureTask = new FutureTask<>(eval);
                 future = cache.putIfAbsent(key, futureTask);
                 if (future == null) {
                     future = futureTask;

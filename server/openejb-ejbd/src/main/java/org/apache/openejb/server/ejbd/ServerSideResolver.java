@@ -44,7 +44,7 @@ public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjec
 
             final InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null) ? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
 
-            final ArrayList<Class> interfaces = new ArrayList<Class>();
+            final ArrayList<Class> interfaces = new ArrayList<>();
             if (interfaceType.isBusiness()) {
                 interfaces.addAll(ejb.getBusinessClasses());
             } else {
@@ -72,7 +72,7 @@ public class ServerSideResolver implements EJBHomeProxyHandle.Resolver, EJBObjec
 
             final InterfaceType interfaceType = (ejb.getRemoteInterfaceClass() == null) ? InterfaceType.BUSINESS_REMOTE_HOME : InterfaceType.EJB_HOME;
 
-            final ArrayList<Class> interfaces = new ArrayList<Class>();
+            final ArrayList<Class> interfaces = new ArrayList<>();
             if (interfaceType.isBusiness()) {
                 interfaces.addAll(ejb.getBusinessClasses());
             } else {

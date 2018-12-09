@@ -70,7 +70,7 @@ public class Messages {
                 messages = new EmptyResourceBundle();
             }
 
-            formats = new ConcurrentHashMap<String, MessageFormat>();
+            formats = new ConcurrentHashMap<>();
 
             _rbBundles.put(resourceName, messages);
             _rbFormats.put(resourceName, formats);

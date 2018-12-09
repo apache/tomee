@@ -46,7 +46,7 @@ public class HeavyweightTypeInfoBuilder {
     private static final String SOAP_ENCODING_NS = "http://schemas.xmlsoap.org/soap/encoding/";
     private static final String XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";
 
-    private static final Log log = LogFactory.getLog(HeavyweightTypeInfoBuilder.class);
+    private static final Log LOG = LogFactory.getLog(HeavyweightTypeInfoBuilder.class);
 
     private final JavaWsdlMapping mapping;
     private final ClassLoader classLoader;
@@ -65,9 +65,9 @@ public class HeavyweightTypeInfoBuilder {
     }
 
     public List<JaxRpcTypeInfo> buildTypeInfo() throws OpenEJBException {
-        List<JaxRpcTypeInfo> typeInfos = new ArrayList<JaxRpcTypeInfo>();
+        List<JaxRpcTypeInfo> typeInfos = new ArrayList<>();
 
-        Set<QName> mappedTypeQNames = new HashSet<QName>();
+        Set<QName> mappedTypeQNames = new HashSet<>();
 
         //
         // Map types with explicity Java to XML mappings
@@ -108,7 +108,7 @@ public class HeavyweightTypeInfoBuilder {
             if ("element".equals(javaXmlTypeMapping.getQNameScope())) {
                 XmlElementInfo elementInfo = schemaInfo.elements.get(qname);
                 if (elementInfo == null) {
-                    log.warn("Element [" + qname + "] not been found in schema, known elements: " + schemaInfo.elements.keySet());
+                    LOG.warn("Element [" + qname + "] not been found in schema, known elements: " + schemaInfo.elements.keySet());
                 }
                 xmlTypeQName = elementInfo.xmlType;
             } else {
@@ -119,10 +119,10 @@ public class HeavyweightTypeInfoBuilder {
             XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlTypeQName);
             if (xmlTypeInfo == null) {
                 // if this is a built in type then assume this is a redundant mapping
-                if (WebserviceNameSpaces.contains(xmlTypeInfo.qname.getNamespaceURI())) {
+                if (WEBSERVICE_NAMESPACES.contains(xmlTypeInfo.qname.getNamespaceURI())) {
                     continue;
                 }
-                log.warn("Schema type QName [" + qname + "] not been found in schema: " + schemaInfo.types.keySet());
+                LOG.warn("Schema type QName [" + qname + "] not been found in schema: " + schemaInfo.types.keySet());
                 continue;
             }
 
@@ -148,7 +148,7 @@ public class HeavyweightTypeInfoBuilder {
         // Map types used in operations
         //
         for (JaxRpcOperationInfo operationInfo : operations) {
-            List<JaxRpcParameterInfo> parameters = new ArrayList<JaxRpcParameterInfo>(operationInfo.parameters);
+            List<JaxRpcParameterInfo> parameters = new ArrayList<>(operationInfo.parameters);
 
             // add the return type to the parameters so it is processed below
             if (operationInfo.returnXmlType != null) {
@@ -173,7 +173,7 @@ public class HeavyweightTypeInfoBuilder {
                 // get the xml type info
                 XmlTypeInfo xmlTypeInfo = schemaInfo.types.get(xmlType);
                 if (xmlTypeInfo == null) {
-                    log.warn("Type QName [" + xmlType + "] defined by operation [" + operationInfo + "] has not been found in schema: " + schemaInfo.types.keySet());
+                    LOG.warn("Type QName [" + xmlType + "] defined by operation [" + operationInfo + "] has not been found in schema: " + schemaInfo.types.keySet());
                     continue;
                 }
                 mappedTypeQNames.add(xmlTypeInfo.qname);
@@ -190,7 +190,7 @@ public class HeavyweightTypeInfoBuilder {
                 if (xmlTypeInfo.simpleBaseType == null && !clazz.isArray()) {
                     if (!mappedTypeQNames.contains(xmlTypeInfo.qname)) {
                         // TODO: this lookup is not enough: the jaxrpc mapping file may define an anonymous mapping
-                        log.warn("Operation " + operationInfo.name + "] uses XML type [" + xmlTypeInfo + "], whose mapping is not declared by the jaxrpc mapping file.\n Continuing deployment; " + "yet, the deployment is not-portable.");
+                        LOG.warn("Operation " + operationInfo.name + "] uses XML type [" + xmlTypeInfo + "], whose mapping is not declared by the jaxrpc mapping file.\n Continuing deployment; " + "yet, the deployment is not-portable.");
                     }
                     continue;
                 }
@@ -250,15 +250,15 @@ public class HeavyweightTypeInfoBuilder {
     private void mapFields(Class javaClass, XmlTypeInfo xmlTypeInfo, JavaXmlTypeMapping javaXmlTypeMapping, JaxRpcTypeInfo typeInfo) throws OpenEJBException {
         // Skip arrays since they can't define a variable-mapping element
         if (!javaClass.isArray()) {
-            // if there is a variable-mapping, log a warning
+            // if there is a variable-mapping, LOG a warning
             if (!javaXmlTypeMapping.getVariableMapping().isEmpty()) {
-                log.warn("Ignoring variable-mapping defined for class " + javaClass + " which is an array.");
+                LOG.warn("Ignoring variable-mapping defined for class " + javaClass + " which is an array.");
             }
             return;
         }
 
         // Index Java bean properties by name
-        Map<String, Class> properties = new HashMap<String, Class>();
+        Map<String, Class> properties = new HashMap<>();
         try {
             PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(javaClass).getPropertyDescriptors();
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -350,7 +350,7 @@ public class HeavyweightTypeInfoBuilder {
     /**
      * All of the known built in XML Schemas used by webservices.  This is used to supress unknown type exceptions
      */
-    private static final Set<String> WebserviceNameSpaces = Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(
+    private static final Set<String> WEBSERVICE_NAMESPACES = Collections.unmodifiableSet(new LinkedHashSet<String>(Arrays.asList(
         "http://schemas.xmlsoap.org/soap/encoding/", // SOAP 1.1
         "http://www.w3.org/2003/05/soap-encoding",   // SOAP 1.2
         "http://xml.apache.org/xml-soap",            // Apache XMLSOAP

@@ -130,6 +130,6 @@ class RemoveWebServices implements DynamicDeployer {
     }
 
     public <T> List<T> copy(final Collection<T> list) {
-        return new ArrayList<T>(list);
+        return new ArrayList<>(list);
     }
 }

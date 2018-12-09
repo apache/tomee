@@ -35,7 +35,6 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
-import org.apache.openejb.InvalidateReferenceException;
 import org.apache.openejb.RpcContainer;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.server.ServerRuntimeException;
@@ -63,7 +62,7 @@ public class EjbRpcProvider extends RPCProvider {
 
     public EjbRpcProvider(BeanContext ejbDeployment) {
         this.ejbDeployment = ejbDeployment;
-        this.handlerInfos = new ArrayList<HandlerInfo>();
+        this.handlerInfos = new ArrayList<>();
     }
 
     public EjbRpcProvider(BeanContext ejbDeployment, List<HandlerInfo> handlerInfos) {
@@ -71,6 +70,15 @@ public class EjbRpcProvider extends RPCProvider {
         this.handlerInfos = handlerInfos;
     }
 
+    /**
+     *
+     * @param msgContext msgContext
+     * @param reqEnv reqEnv
+     * @param resEnv resEnv
+     * @param obj obj
+     * @throws Exception
+     */
+    @Override
     public void processMessage(MessageContext msgContext, SOAPEnvelope reqEnv, SOAPEnvelope resEnv, Object obj) throws Exception {
 
         RPCElement body = getBody(reqEnv, msgContext);
@@ -98,6 +106,16 @@ public class EjbRpcProvider extends RPCProvider {
         }
     }
 
+    /**
+     *
+     * @param msgContext msgContext
+     * @param service service
+     * @param clsName clsName
+     * @param scopeHolder scopeHolder
+     * @return
+     * @throws Exception
+     */
+    @Override
     public Object getServiceObject(MessageContext msgContext, Handler service, String clsName, IntHolder scopeHolder) throws Exception {
         return ejbDeployment;
     }

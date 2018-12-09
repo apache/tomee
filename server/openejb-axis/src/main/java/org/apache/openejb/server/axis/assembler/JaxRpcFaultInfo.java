@@ -26,5 +26,5 @@ public class JaxRpcFaultInfo {
     public QName xmlType;
     public String javaType;
     public boolean complex;
-    public List<JaxRpcParameterInfo> parameters = new ArrayList<JaxRpcParameterInfo>();
+    public List<JaxRpcParameterInfo> parameters = new ArrayList<>();
 }

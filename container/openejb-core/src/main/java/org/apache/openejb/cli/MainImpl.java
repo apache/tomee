@@ -156,7 +156,7 @@ public class MainImpl implements Main {
     }
 
     private String[] processSystemProperties(String[] args) {
-        final ArrayList<String> argsList = new ArrayList<String>();
+        final ArrayList<String> argsList = new ArrayList<>();
 
         // We have to pre-screen for openejb.base as it has a direct affect
         // on where we look for the conf/system.properties file which we

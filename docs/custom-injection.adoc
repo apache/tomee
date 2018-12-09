@@ -1,0 +1,209 @@
+= Custom Injection
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Overview
+
+As noted in the link:injection-of-env-entry-example.html[Injection of
+env-entry Example] , the EJB 3.0 supported env-entry types are fairly
+limited. Also the use of several tags in an ejb-jar.xml can get a bit
+verbose.
+
+OpenEJB does not restrict you to just these data types or require you to
+use an ejb-jar.xml to declare them.
+
+* `@Resource` can be used on any type for which there is
+`java.beans.PropertyEditor`
+* You may `install your own` PropertyEditors and package them with your
+app.
+* Java Generics are supported (e.g. List myURIs)
+* You may use a `META-INF/env-entries.properties` file as an alternative
+to an ejb-jar.xml
+
+See link:built-in-type-converters.html[Built-in Type Converters] for a
+full list of supported env-entry types.
+
+The source for this example is the "custom-injection" directory located
+in the link:downloads.html[openejb-examples.zip] available on the
+http://tomee.apache.org/downloads.html[download page].
+
+# The Code
+
+== Bean Class
+
+[source,java]
+----
+@Stateless
+public class Stratocaster {
+
+    @Resource(name = "pickups")
+    private List<Pickup> pickups;
+
+    @Resource(name = "style")
+    private Style style;
+
+    @Resource(name = "dateCreated")
+    private Date dateCreated;
+
+    @Resource(name = "guitarStringGuages")
+    private Map<String, Float> guitarStringGuages;
+
+    @Resource(name = "certificateOfAuthenticity")
+    private File certificateOfAuthenticity;
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    /**
+     * Gets the guage of the electric guitar strings
+     * used in this guitar.
+     *
+     * @param string
+     * @return
+     */
+    public float getStringGuage(String string) {
+        return guitarStringGuages.get(string);
+    }
+
+    public List<Pickup> getPickups() {
+        return pickups;
+    }
+
+    public Style getStyle() {
+        return style;
+    }
+
+    public File getCertificateOfAuthenticity() {
+        return certificateOfAuthenticity;
+    }
+}
+----
+
+== The META-INF/env-entries.properties file
+
+[source,properties]
+----
+guitarStringGuages=E1=0.052\nA=0.042\nD=0.030\nG=0.017\nB=0.013\nE=0.010
+certificateOfAuthenticity=/tmp/strat-certificate.txt
+dateCreated=1962-03-01
+pickups=S,S,S
+style=VINTAGE
+----
+
+== The Custom Type and Editor
+
+Support for java.lang.Enum types is already built-in, but we've decided
+we'd like to allow abbreviated versions of the enum constants to be
+usable. We do this by creating a custom PropertyEditor for our Pickup
+enum like so:
+
+[source,java]
+----
+public class PickupEditor extends java.beans.PropertyEditorSupport {
+    public void setAsText(String text) throws IllegalArgumentException {
+        text = text.trim();
+
+        if (text.equalsIgnoreCase("H")) setValue(Pickup.HUMBUCKER);
+        else if (text.equalsIgnoreCase("S")) setValue(Pickup.SINGLE_COIL);
+        else throw new IllegalStateException("H and S are the only supported Pickup aliases");
+    }
+}
+----
+
+We cleverly install this PropertyEditor in a static block in the Pickup
+class that will be executed should someone actually reference the Pickup
+type.
+
+[source,java]
+----
+public enum Pickup {
+
+    HUMBUCKER,
+    SINGLE_COIL;
+
+    // Here's the little magic where we register the PickupEditor
+    // which knows how to create this object from a string.
+    // You can add any of your own Property Editors in the same way.
+    static {
+        PropertyEditorManager.registerEditor(Pickup.class, PickupEditor.class);
+    }
+}
+----
+
+# Test Case
+
+[source,java]
+----
+public class StratocasterTest extends TestCase {
+
+    @EJB
+    private Stratocaster strat;
+
+    public void test() throws Exception {
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
+
+        Date date = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US).parse("Mar 1, 1962");
+        assertEquals("Strat.getDateCreated()", date, strat.getDateCreated());
+
+        List<Pickup> pickups = asList(Pickup.SINGLE_COIL, Pickup.SINGLE_COIL, Pickup.SINGLE_COIL);
+        assertEquals("Strat.getPickups()", pickups, strat.getPickups());
+
+        assertEquals("Strat.getStyle()", Style.VINTAGE, strat.getStyle());
+
+        assertEquals("Strat.getStringGuage(\"E1\")", 0.052F, strat.getStringGuage("E1"));
+        assertEquals("Strat.getStringGuage(\"A\")", 0.042F, strat.getStringGuage("A"));
+        assertEquals("Strat.getStringGuage(\"D\")", 0.030F, strat.getStringGuage("D"));
+        assertEquals("Strat.getStringGuage(\"G\")", 0.017F, strat.getStringGuage("G"));
+        assertEquals("Strat.getStringGuage(\"B\")", 0.013F, strat.getStringGuage("B"));
+        assertEquals("Strat.getStringGuage(\"E\")", 0.010F, strat.getStringGuage("E"));
+
+        File file = new File("/tmp/strat-certificate.txt");
+        assertEquals("Strat.getCertificateOfAuthenticity()", file,strat.getCertificateOfAuthenticity());
+
+
+    }
+}
+----
+
+# Running it
+
+Running the example is fairly simple. In the "custom-injection"
+directory of the openejb:download.html[examples zip], just run:
+
+___________________
+$ mvn clean install
+___________________
+
+Which should create output like the following.
+
+[source,java]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.enventries.StratocasterTest
+Apache OpenEJB 3.1-SNAPSHOT    build: 20080409-12:05
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/work/openejb3/examples/custom-injection
+INFO - openejb.base = /Users/dblevins/work/openejb3/examples/custom-injection
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=Default JDK 1.3 ProxyFactory, type=ProxyFactory, provider-id=Default JDK 1.3 ProxyFactory)
+INFO - Found EjbModule in classpath: /Users/dblevins/work/openejb3/examples/custom-injection/target/classes
+INFO - Configuring app: /Users/dblevins/work/openejb3/examples/custom-injection/target/classes
+INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+INFO - Auto-creating a container for bean StratocasterImpl: Container(type=STATELESS, id=Default Stateless Container)
+INFO - Loaded Module: /Users/dblevins/work/openejb3/examples/custom-injection/target/classes
+INFO - Assembling app: /Users/dblevins/work/openejb3/examples/custom-injection/target/classes
+INFO - Jndi(name=StratocasterImplLocal) --> Ejb(deployment-id=StratocasterImpl)
+INFO - Created Ejb(deployment-id=StratocasterImpl, ejb-name=StratocasterImpl, container=Default Stateless Container)
+INFO - Deployed Application(path=/Users/dblevins/work/openejb3/examples/custom-injection/target/classes)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.705 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----
