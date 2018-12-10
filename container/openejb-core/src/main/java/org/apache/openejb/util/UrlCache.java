@@ -202,7 +202,7 @@ public class UrlCache {
 
         // generate a nice cache file name
         final String name = sourceFile.getName();
-        final int dot = name.lastIndexOf(".");
+        final int dot = name.lastIndexOf('.');
         String prefix = name;
         String suffix = "";
         if (dot > 0) {

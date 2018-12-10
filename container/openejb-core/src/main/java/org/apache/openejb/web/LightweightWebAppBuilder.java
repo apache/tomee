@@ -432,7 +432,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         try { // in WEB-INF/classes
             return loader.loadClass(className(classname));
         } catch (final ClassNotFoundException cnfe) { // in a dependency (jar)
-            return loader.loadClass(className(path.substring(path.indexOf("!") + 2)));
+            return loader.loadClass(className(path.substring(path.indexOf('!') + 2)));
         }
     }
 

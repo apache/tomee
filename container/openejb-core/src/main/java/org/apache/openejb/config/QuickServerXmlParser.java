@@ -78,7 +78,7 @@ public class QuickServerXmlParser extends DefaultHandler {
             if (protocol == null) {
                 protocol = DEFAULT_CONNECTOR_KEY;
             } else if (protocol.contains("/")) {
-                protocol = protocol.substring(0, protocol.indexOf("/"));
+                protocol = protocol.substring(0, protocol.indexOf('/'));
             }
             final String port = attributes.getValue("port");
             final String ssl = attributes.getValue("secure");

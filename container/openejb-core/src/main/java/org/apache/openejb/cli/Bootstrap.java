@@ -64,7 +64,7 @@ public class Bootstrap {
             if (classURL != null) {
                 String propsString = classURL.getFile();
 
-                propsString = propsString.substring(0, propsString.indexOf("!"));
+                propsString = propsString.substring(0, propsString.indexOf('!'));
 
                 final URI uri = URLs.uri(propsString);
 
@@ -83,8 +83,8 @@ public class Bootstrap {
     }
 
     private static void addProperty(final String arg) {
-        final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-        final String val = arg.substring(arg.indexOf("=") + 1);
+        final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf('='));
+        final String val = arg.substring(arg.indexOf('=') + 1);
 
         JavaSecurityManagers.setSystemProperty(prop, val);
     }

@@ -43,7 +43,7 @@ public class Messages {
 
     private static String packageName(final Class clazz) {
         final String name = clazz.getName();
-        return name.substring(0, name.lastIndexOf("."));
+        return name.substring(0, name.lastIndexOf('.'));
     }
 
     public Messages(final String resourceName) {

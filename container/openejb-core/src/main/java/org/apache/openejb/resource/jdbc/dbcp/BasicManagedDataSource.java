@@ -260,7 +260,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
         final ReentrantLock l = lock;
         l.lock();
         try {
-            if (s == null || s.equals("")) {
+            if (s == null || s.isEmpty()) {
                 return;
             }
             final int level = IsolationLevels.getIsolationLevel(s);

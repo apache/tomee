@@ -115,7 +115,7 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
 
             // try first locally
         } else {
-            final int repoIdx = raw.lastIndexOf("!");
+            final int repoIdx = raw.lastIndexOf('!');
             toParse = raw.substring(repoIdx + 1);
         }
 
