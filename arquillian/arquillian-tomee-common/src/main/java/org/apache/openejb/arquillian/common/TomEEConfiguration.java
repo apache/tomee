@@ -26,18 +26,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class TomEEConfiguration implements ContainerConfiguration {
 
+    private final String executionId = UUID.randomUUID().toString();
+
     protected boolean exportConfAsSystemProperty;
     protected int httpsPort = 8443;
     protected int httpPort = 8080;
     protected int stopPort = 8005;
-    protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee";
-    protected String appWorkingDir = System.getProperty("java.io.tmpdir") + "/arquillian-tomee-app-working-dir";
+    protected String dir = System.getProperty("java.io.tmpdir") + "/arquillian-apache-tomee-" + executionId;
+    protected String appWorkingDir = System.getProperty("java.io.tmpdir") + "/arquillian-tomee-app-working-dir-" + executionId;
     protected String host = "localhost";
     protected String stopHost = "localhost"; // generally localhost but host (http) can be different
     protected String stopCommand = "SHUTDOWN"; // default one - can be overriden in server.xml
