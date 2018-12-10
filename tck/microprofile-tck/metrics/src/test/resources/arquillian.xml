@@ -28,9 +28,7 @@
       <property name="stopPort">-1</property>
       <property name="classifier">microprofile</property>
       <property name="conf">src/test/conf</property>
-      <property name="dir">target/tomee</property>
-      <property name="appWorkingDir">target/workdir</property>
-      <property name="cleanOnStartUp">true</property>
+      <property name="cleanOnStartUp">false</property>
       <property name="properties">
         MP_METRICS_TAGS = tier=integration
       </property>

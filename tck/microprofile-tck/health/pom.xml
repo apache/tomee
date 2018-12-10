@@ -36,6 +36,7 @@
         <!-- Updated version to fix hanging text -->
         <version>2.22.0</version>
         <configuration>
+          <forkCount>1C</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.health:microprofile-health-tck</dependency>
           </dependenciesToScan>

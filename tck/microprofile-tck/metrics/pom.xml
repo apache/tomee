@@ -37,6 +37,7 @@
         <version>2.22.0</version>
         <configuration>
           <reuseForks>false</reuseForks>
+          <forkCount>1C</forkCount>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-api-tck</dependency>
             <dependency>org.eclipse.microprofile.metrics:microprofile-metrics-rest-tck</dependency>
