@@ -4,11 +4,11 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-=== `application.properties`
+== `application.properties`
 
 This file is located in `WEB-INF` for a war and `META-INF` for an ear.
 
-==== `@Asynchronous` configuration
+=== `@Asynchronous` configuration
 
 Default pool size for `@Asynchronous` is 5. It can be very small for some applications highly relying on
 asynchronism or reactive patterns. Therefore it is possible to customize it adding these entries in `application.properties`:
@@ -27,7 +27,7 @@ asynchronism or reactive patterns. Therefore it is possible to customize it addi
 | AsynchronousPool.RejectedExecutionHandlerClass | - | A fully qualified name of a `java.util.concurrent.RejectedExecutionHandler`
 |===
 
-==== TimerService and `@Scheduled`
+=== TimerService and `@Scheduled`
 
 `timerStore.class` allows to switch from the in memory (`org.apache.openejb.core.timer.MemoryTimerStore`) timer storage
 for quartz tasks to a custom implementation (using a database or anything for instance). Constructor can take a `TransactionManager`
@@ -35,13 +35,13 @@ or nothing.
 
 All quartz properties prefixed with `org.apache.openejb.quartz.` (instead of `org.quartz.`) are passthrough to quartz.
 
-==== CDI
+=== CDI
 
 The boolean `openejb.cdi.skip-resource-validation` allows to not validate resources ie `@EJB` and `@Resource` usages in CDI beans.
 
 All properties understood by OpenWebBeans will also be passthrough to OpenWebBeans from this location, see http://openwebbeans.apache.org/owbconfig.html[OWB config] for more details.
 
-==== `@WebServiceRef`
+=== `@WebServiceRef`
 
 [.table.table-bordered,options="header"]
 |===
@@ -49,7 +49,7 @@ All properties understood by OpenWebBeans will also be passthrough to OpenWebBea
 | cxf.jaxws.client.wsFeatures | Allows to set WSFeature on the client injection. Values is a list (comma separated) of resource id in resources.xml or fully qualified names.
 |===
 
-==== `@Stateless`
+=== `@Stateless`
 
 [.table.table-bordered,options="header"]
 |===
@@ -59,7 +59,7 @@ All properties understood by OpenWebBeans will also be passthrough to OpenWebBea
 | BackgroundStartup | Don't create instances in parallel if minimum count is > 0, default to false
 |===
 
-=== `resources.xml`
+== `resources.xml`
 
 `resources.xml` is a tomee.xml using application classloader.
 
@@ -87,7 +87,7 @@ to use a MySQL database on OpenShift you can do:
 
 `resources.xml` supports `Resource`, `Service` and `Container`.
 
-==== `resources.xml` mecanism
+=== `resources.xml` mecanism
 
 `resources.xml` resources are still available globally like any `tomee.xml` resource.
 

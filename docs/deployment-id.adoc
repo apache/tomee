@@ -1,11 +1,11 @@
-# Deployment ID
+= Deployment ID
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# What is a Deployment ID?
+= What is a Deployment ID?
 
 Every bean deployed in OpenEJB has a unique deployment-id that
 identifies it within the scope of the entire container system. The
@@ -61,7 +61,7 @@ the bean's OpenEJB deployment id. This leaves up to you to guarantee
 that bean's ejb-name will be unique across all beans and jars in the
 container system. In other words, be very careful with the -D option!
 
-# How is it used?
+= How is it used?
 
 == In the container system
 
@@ -101,11 +101,12 @@ Each bean is added to the public, global namespace using it's deployment
 id as its JNDI lookup. For example, if a bean had a deployment-id of
 "/my/bean/foo", a non-bean client could lookup that bean as follows.
 
-....
+[source,java]
+----
 ...
 Object bean = initialContext.lookup("/my/bean/Foo");
 ...
-....
+----
 
 If a bean in the container system made the above JNDI call, the Local
 Server would see the bean's identity (deployment id) hidden in the
@@ -138,11 +139,12 @@ Just as before, clients can lookup beans from the Remote Server using
 the bean's deployment id. For example, if a bean had a deployment-id of
 "/my/bean/foo", a client could lookup that bean as follows.
 
-....
+[source,java]
+----
 ...
 Object bean = initialContext.lookup("/my/bean/Foo");
 ...
-....
+----
 
 == In the CORBA Adapter
 
@@ -158,7 +160,8 @@ So, just as with the Local Server and Remote Server, clients can lookup
 beans using the bean's deployment id. OpenORB has a JNDI implementation
 of their naming service, so lookups can be done just as before.
 
-....
+[source,java]
+----
 ...
 String[] args = ...
 
@@ -187,9 +190,9 @@ name[0] = new org.omg.CosNaming.NameComponent("/my/bean/foo","");
 // Equvalent to an InitialContext.lookup("/my/bean/foo");
 bean = context.resolve( name );
 ...
-....
+----
 
-# What happens if there is a duplicate deployment ID?
+= What happens if there is a duplicate deployment ID?
 
 The deployment ID uniquely identifies the bean in the OpenEJB container
 system. Therefore, no two beans can share the same deployment ID.
@@ -200,9 +203,10 @@ loaded. In addition, the system will log a warning like the following
 one asking you to redeploy the jar and choose an different deployment ID
 for the bean.
 
-....
+[source,properties]
+----
 WARN : Jar C:\openejb\beans\fooEjbs.jar cannot be loaded.  The Deployment ID "/my/bean/foo" is already in use.  Please redeploy this jar and assign a different deployment ID to the bean with the ejb-name "FooBean".
-....
+----
 
 For example, the acmeEjbs.jar contains a bean with the ejb-name
 "DaffyDuckBean". The disneyEjbs.jar contains contains a bean with the
@@ -226,6 +230,7 @@ rest of the beans in the disneyEjbs.jar as they may need the
 "DonaldDuckBean" bean to function properly. The disneyEjbs.jar is
 skipped and the following warning is logged.
 
-....
+[source,properties]
+----
 WARN : Jar C:\openejb\beans\disneyEjbs.jar cannot be loaded.  The  Deployment ID "/my/favorite/duck" is already in use.  Please redeploy  this jar and assign a different deployment ID to the bean with the ejb-name "DonaldDuckBean".
-....
+----

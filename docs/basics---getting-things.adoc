@@ -1,10 +1,10 @@
-# Basics - Getting Things 
+= Basics - Getting Things
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Getting Stuff from the Container
+= Getting Stuff from the Container
 
 Generally speaking the only way to get a
 link:container-managed-resource.html[Container-Managed Resource] is via

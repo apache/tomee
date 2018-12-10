@@ -1,5 +1,5 @@
-# Deploying An Application To TomEE Or OpenEJB
-:index-group: Unrevised
+= Deploying An Application To TomEE Or OpenEJB
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -51,15 +51,17 @@ pom you have access to the following configuration:
 
 Then simply run
 
-....
+[source,bash]
+----
 mvn tomee:deploy <path>
-....
+----
 
 or
 
-....
+[source,bash]
+----
 mvn tomee:undeploy <path>
-....
+----
 
 ===== The Deployer through TomEE Webapp
 

@@ -1,4 +1,4 @@
-# EJB over SSL
+= EJB over SSL
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -23,7 +23,8 @@ Once that is done and the `tomee` webapp can be accessed with `https`,
 an EJB client can invoke over `https` using the following
 `InitialContext` setup:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put("java.naming.provider.url", "https://127.0.0.1:8443/tomee/ejb");
@@ -34,7 +35,7 @@ p.put("java.naming.security.credentials", "mypass");
 InitialContext ctx = new InitialContext(p);
 
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
-....
+----
 
 If you setup Tomcat (TomEE) to use the APR (Apache Portable Runitme)
 implementation of SSL on the server side, and you have connection issues
@@ -55,7 +56,8 @@ and setup in OpenEJB Standalone by default.
 
 Its configuration `conf/ejbds.properties` looks like this:
 
-....
+[source,properties]
+----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 127.0.0.1
 port        = 4203
@@ -64,12 +66,13 @@ threads     = 200
 backlog     = 200
 secure      = true
 discovery   = ejb:ejbds://{bind}:{port}
-....
+----
 
 To access this service from a remote client, the `InitialContext` would
 be setup like the following:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put("java.naming.provider.url", "ejbd://localhost:4201");
@@ -80,7 +83,7 @@ p.put("java.naming.security.credentials", "mypass");
 InitialContext ctx = new InitialContext(p);
 
 MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
-....
+----
 
 === Changing the Cipher Suite
 
@@ -106,7 +109,8 @@ You must now instruct the client and server to use that suite.
 
 On the server:
 
-....
+[source,properties]
+----
 server      = org.apache.openejb.server.ejbd.EjbServer
 bind        = 127.0.0.1
 port        = 4203
@@ -116,13 +120,14 @@ backlog     = 200
 secure      = true
 enabledCipherSuites = TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA
 discovery   = ejb:ejbds://{bind}:{port}
-....
+----
 
 On the client, you must supply a property:
 
-....
+[source,properties]
+----
 -Dopenejb.client.enabledCipherSuites=TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA
-....
+----
 
 The final piece is to make sure your server has available a private
 certificate that the the client can trust. This can be certificate from

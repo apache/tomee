@@ -1,4 +1,4 @@
-# Manual Installation
+= Manual Installation
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -23,7 +23,7 @@ http://tomee.apache.org/downloads.html[download page]
 . Add the OpenEJB JavaAgent to the bin/catalina.bat or bin/catalina.bat
 script
 
-##Install openejb.war
+== Install openejb.war
 
 Once Tomcat has been link:tomcat-installation.html[installed] , the
 OpenEJB plugin for Tomcat can be installed. The war can be obtained from
@@ -51,12 +51,13 @@ All Tomcat listener classes must be available in the Tomcat common class
 loader, so the openejb-loader jar must be copied into the Tomcat lib
 directory.
 
-....
+[source,java]
+----
     C:\apache-tomcat-6.0.14>copy webapps\openejb\lib\openejb-loader-3.0.0-SNAPSHOT.jar lib\openejb-loader.jar
     1 file(s) copied.
 
     apache-tomcat-6.0.14$ cp webapps/openejb/lib/openejb-loader-*.jar lib/openejb-loader.jar
-....
+----
 
 Add the following
 `<Listener className="org.apache.openejb.loader.OpenEJBListener" />` to
@@ -64,7 +65,8 @@ your conf/server.xml file to load the OpenEJB listener:
 
 The snippet is shown below
 
-....
+[source,xml]
+----
 <!-- Note:  A "Server" is not itself a "Container", so you may not
 define subcomponents such as "Valves" at this
 level.
@@ -79,7 +81,7 @@ className="org.apache.openejb.loader.OpenEJBListener" />
 <!--APR library loader. Documentation at /docs/apr.html -->    
 <Listener
 className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
-....
+----
 
 == Update the Tomcat annotations-api.jar file
 
@@ -100,7 +102,8 @@ First, copy the OpenEJB JavaAgent jar into the lib directory.
 Simply, add the snippet marked below in bin/catalina.bat (Windows) or
 bin/catalina.sh (Unix) file to enable the OpenEJB javaagent:
 
-....
+[source,properties]
+----
 if not exist "%CATALINA_BASE%\conf\logging.properties" goto noJuli
 set JAVA_OPTS=%JAVA_OPTS%
 -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
@@ -138,8 +141,8 @@ JAVA_OPTS=""-javaagent:$CATALINA_BASE/lib/openejb-javaagent.jar"
 $JAVA_OPTS"
 fi
 #End of Snippet to add
-....
+----
 
-##Note: The example above is an excerpt from the middle of the
+== Note: The example above is an excerpt from the middle of the
 bin/catalina.sh file. Search for the this section and add the snippet
 shown

@@ -12,9 +12,9 @@ This plugin has two goal:
 IMPORTANT: the dependencies are retrieved with `MavenProject.getArtifacts()` which means you artifacts should be a `war`
 - maven doesn't populate it with a `jar` - and the compile phase - at least - should be passed to ensure it is populated.
 
-=== Run goal configuration
+== Run goal configuration
 
-[source]
+[source,bash]
 ----
 mvn process-classes applicationcomposer:run -DskipTests
 ----
@@ -28,9 +28,9 @@ mvn process-classes applicationcomposer:run -DskipTests
 |mavenLog|true|force to use maven logging in openejb
 |===
 
-=== Zip goal configuration
+== Zip goal configuration
 
-[source]
+[source,bash]
 ----
 mvn process-classes applicationcomposer:zip -DskipTests
 ----

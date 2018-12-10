@@ -79,6 +79,10 @@ public abstract class TomEEContainer<Configuration extends TomEEConfiguration> i
         this.options = new Options(System.getProperties());
     }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
     protected void resetSerialization() {
         if (this.configuration.isUnsafeEjbd() && "-".equals(System.getProperty("tomee.serialization.class.blacklist"))) {
             System.clearProperty("tomee.serialization.class.blacklist");

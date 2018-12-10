@@ -122,6 +122,12 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
       <version>${microprofile.rest-client.impl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.json</groupId>
+          <artifactId>javax.json-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

@@ -1,4 +1,4 @@
-# EJB Client/Server Failover
+= EJB Client/Server Failover
 :index-group: Discovery and Failover
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -75,7 +75,7 @@ will broadcast all it's services with the group prefixed in the URI, as
 well it will ignore any services it sees broadcast if they do not share
 the same group name.
 
-#Details
+= Details
 
 Multicast
 

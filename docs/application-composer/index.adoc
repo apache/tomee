@@ -1,4 +1,4 @@
-== Application Composer
+= Application Composer
 
 Here is the subdomain dedicated to the Application Composer.
 

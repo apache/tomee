@@ -1,4 +1,4 @@
-# TomEE and Arquillian
+= TomEE and Arquillian
 :index-group: Arquillian
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -11,7 +11,8 @@ if you are not at all familiar with Arquillian.
 All the Arquillian Adapters for TomEE support the following
 configuration options in the *src/test/resources/arquillian.xml*:
 
-....
+[source,xml]
+----
 <container qualifier="tomee" default="true">
     <configuration>
         <property name="httpPort">-1</property>
@@ -27,12 +28,13 @@ configuration options in the *src/test/resources/arquillian.xml*:
         -->
     </configuration>
 </container>
-....
+----
 
 The above can also be set as system properties rather than via the
 *src/test/resources/arquillian.xml* file.
 
-....
+[source,xml]
+----
 <build>
   <plugins>
     <plugin>
@@ -47,7 +49,7 @@ The above can also be set as system properties rather than via the
     </plugin>
   </plugins>
 </build>
-....
+----
 
 When a port is set to -1, a random port will be chosen. This is key to
 avoiding port conflicts on CI systems or for just plain clean testing.
@@ -56,21 +58,23 @@ The TomEE Arquillian adapters will export the actual port chosen back as
 a system property using the same name. The test case can use the
 property to retrieve the port and contact the server.
 
-....
+[source,java]
+----
 URL url = new URL("http://localhost:" + System.getProperty("tomee.httpPort");
 // use the URL to connect to the server
-....
+----
 
 If that property returns null
 
 When you are actually using a test on the client side, you can use
 instead
 
-....
+[source,java]
+----
 import org.jboss.arquillian.test.api.ArquillianResource;
 ...
 @ArquillianResource private URL url;
-....
+----
 
 The URL will get injected by Arquillian. Be careful, that injection only
 works if your are on the client side (it does not make sense in the
@@ -89,7 +93,8 @@ Adapter.
 To use the TomEE Embedded Arquillian Adapter, simply add these Maven
 dependencies to your Maven pom.xml:
 
-....
+[source,xml]
+----
 <dependency>
   <groupId>org.apache.openejb</groupId>
   <artifactId>arquillian-tomee-embedded</artifactId>
@@ -111,7 +116,7 @@ dependencies to your Maven pom.xml:
   <artifactId>tomee-jaxrs</artifactId>
   <version>1.7.1</version>
 </dependency>
-....
+----
 
 As mentioned above the Embedded Adapter has the following properties
 which can be specified in the *src/test/resources/arquillian.xml* file:
@@ -142,16 +147,18 @@ the production system environment.
 On a local machine clients can get the remote server port using the
 following System property:
 
-....
+[source,java]
+----
 final String port = System.getProperty("server.http.port");
-....
+----
 
 The following shows a typical configuration for testing against TomEE
 (webprofile version). The same can be done against TomEE+ by changing
 `<tomee.classifier>webprofile</tomee.classifier>` to
 `<tomee.classifier>plus</tomee.classifier>`
 
-....
+[source,xml]
+----
 <properties>
   <tomee.version>1.7.1</tomee.version>
   <tomee.classifier>webprofile</tomee.classifier>
@@ -184,7 +191,7 @@ The following shows a typical configuration for testing against TomEE
     <type>zip</type>
   </dependency>
 </dependencies>
-....
+----
 
 The Remote Adapter has the following properties which can be specified
 in the *src/test/resources/arquillian.xml* file:
@@ -218,7 +225,8 @@ Setting up both adapters is quite easy via Maven profiles. Here the
 default adapter is the Embedded Adapter, the Remote Adapter will run
 with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
 
-....
+[source,xml]
+----
 <profiles>
 
   <profile>
@@ -308,4 +316,4 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
   </profile>
 
 </profiles>
-....
+----

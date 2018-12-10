@@ -16,13 +16,24 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
+import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.jaxrs.MPJWPProviderRegistration;
 import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
@@ -31,6 +42,7 @@ import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.inject.Provider;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,7 +67,7 @@ public class MPJWTCDIExtension implements Extension {
 
     private Set<InjectionPoint> injectionPoints = new HashSet<>();
 
-    public void collectConfigProducer(@Observes final ProcessInjectionPoint<?, ?> pip) {
+    public void collectConfigProducer(@Observes final ProcessInjectionPoint<?, ?> pip, final BeanManager bm) {
         final Claim claim = pip.getInjectionPoint().getAnnotated().getAnnotation(Claim.class);
         if (claim != null) {
             injectionPoints.add(pip.getInjectionPoint());
@@ -91,13 +103,43 @@ public class MPJWTCDIExtension implements Extension {
                         abd.addBean(claimBean);
                     }
                 });
+
+        abd.addBean()
+                .id(MPJWTCDIExtension.class.getName() + "#" + JsonWebToken.class.getName())
+                .beanClass(JsonWebToken.class)
+                .types(JsonWebToken.class, Object.class)
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(Dependent.class)
+                .createWith(ctx -> {
+                    final Principal principal = getContextualReference(Principal.class, bm);
+                    if (JsonWebToken.class.isInstance(principal)) {
+                        return JsonWebToken.class.cast(principal);
+                    }
+
+                    return null;
+                });
     }
 
     public void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery bbd, final BeanManager beanManager) {
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(ConfigurableJWTAuthContextInfo.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
-        bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTProducer.class));
     }
 
+    public static <T> T getContextualReference(Class<T> type, final BeanManager beanManager) {
+        final Set<Bean<?>> beans = beanManager.getBeans(type);
+
+        if (beans == null || beans.isEmpty()) {
+            throw new IllegalStateException("Could not find beans for Type=" + type);
+        }
+
+        final Bean<?> bean = beanManager.resolve(beans);
+        final CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
+        return (T) beanManager.getReference(bean, type, creationalContext);
+    }
+
+    static {
+        SystemInstance.get().addObserver(new MPJWPProviderRegistration());
+    }
 }

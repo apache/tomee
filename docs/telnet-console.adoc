@@ -1,4 +1,4 @@
-# Telnet Console
+= Telnet Console
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -6,7 +6,7 @@
 
 \{note} Availability: Since OpenEJB 0.9\{note}
 
-# Basic Usage
+= Basic Usage
 
 To use OpenEJB's Telnet Console, simply boot your server normally.
 
@@ -14,14 +14,15 @@ _____________________
 $ ./bin/openejb start
 _____________________
 
-....
+[source,properties]
+----
 OPENEJB_HOME=/Users/dblevins/Desktop/openejb-1.0
 OpenEJB 1.0    build: 20060226-1701
 http://www.openejb.org
 resources 1
 OpenEJB ready.
 [init]
-....
+----
 
 OpenEJB Remote Server ** Starting Services ** NAME IP PORT +
 webadmin 0.0.0.0 4203 +
@@ -37,18 +38,20 @@ _______________________
 $ telnet localhost 4202
 _______________________
 
-....
+[source,properties]
+----
 Trying ::1...
 Connected to localhost.
 Escape character is '^]
-....
+----
 
 '. OpenEJB Remote Server Console type 'help' for a list of commands
 [openejb] $ help stop exit system version lookup help [openejb] $ system
 Containers: Default BMP Container Default CMP Container Default Stateful
 Container Default Stateless Container
 
-....
+[source,java]
+----
 Deployments:
  client/tests/stateful/EncBean
  client/tests/entity/cmp/RMI-over-IIOP/EJBHome
@@ -87,11 +90,11 @@ Deployments:
  client/tests/entity/cmp/allowed_operations/EntityHome
  client/tests/stateless/RMI-over-IIOP/EJBHome
 [openejb]
-....
+----
 
 $ exit Connection closed by foreign host.
 
-# Configuring the Telnet Service
+= Configuring the Telnet Service
 
 The configuration of all server services (network facing services) is
 done in xinet.d style config files. The telnet shell is controlled via
@@ -102,29 +105,31 @@ ____________________________
 $ cat conf/telnet.properties
 ____________________________
 
-....
+[source,properties]
+----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1
     port    = 4202
     disabled    = false
     threads = 5
 #   only_from   = 192.168.1.123
-....
+----
 
 You can change the IP, port, and even the number of threads allowed to
 concurrently access the Telnet service via this file.
 
-# Disabling the Telnet Service
+= Disabling the Telnet Service
 
 Simply edit the config file and set 'disabled' to true
 
-....
+[source,properties]
+----
     disabled    = true
-....
+----
 
 Then restart OpenEJB.
 
-# Restricting Access
+= Restricting Access
 
 It is unlikely you want just anyone to be able to login and execute
 commands. While you can't restrict access on a user basis, yet, you can
@@ -136,23 +141,25 @@ rest of the file is a direct copy of the xinet.d syntax for HBA.
 For an example to restrict access to the localhost, you could configure
 the Telnet Service like this:
 
-....
+[source,properties]
+----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1
     port    = 4202
     disabled    = false
     threads = 5
     only_from   = localhost
-....
+----
 
 If you wanted to restrict access to localhost _and_ say the hosts
 192.168.1.207 and 192.168.1.16, you can simply add them to the list.
 
-....
+[source,properties]
+----
     server  = org.openejb.server.telnet.TelnetServer
     bind    = 127.0.0.1
     port    = 4202
     disabled    = false
     threads = 5
     only_from   = localhost, 192.168.1.207, 192.168.1.16
-....
+----

@@ -6,7 +6,7 @@
 
 ApplicationComposer API is mainly contained in org.apache.openejb.testing package (historically, today we would have called the package org.apache.tomee.applicationcomposer).
 
-=== Dependencies
+== Dependencies
 
 To start using ApplicationComposer you need to add some dependencies.
 
@@ -43,9 +43,9 @@ If you need JAXWS services you'll add (or replace thanks to transitivity of mave
 </dependency>
 ----
 
-=== ApplicationComposer Components
+== ApplicationComposer Components
 
-==== @Module
+=== @Module
 An ApplicationComposer needs at minimum a module (the application you need to deploy).
 
 To do so you have two cases:
@@ -81,7 +81,7 @@ public WebApp app() {
 }
 ----
 
-==== @Configuration
+=== @Configuration
 Often you need to customize a bit the container or at least create some resources like test databases. To do so you can create a method returning Properties which will be the container properties.
 
 Note: to simplify writing properties you can use PropertiesBuilder util class which is just a fluent API to write properties.
@@ -114,7 +114,7 @@ public class MyAppComposer() {
 }
 ----
 
-==== @Component
+=== @Component
 Sometimes you need to customize a container component. The most common use case is the security service to mock a little bit authorization if you don't care in your test.
 
 To do so just write a method decorated with @Component returning the instance you desire.
@@ -129,7 +129,7 @@ public SecurityService mockSecurity() {
 }
 ----
 
-==== @Descriptors
+=== @Descriptors
 You can reuse existing file descriptors using @Descriptors. The name is the file name and the path either a classpath path or a file path:
 
 [source,java]
@@ -143,7 +143,7 @@ public class MyTest {
 
 Note: this can be put in a @Module method as well.
 
-==== Services
+=== Services
 If you want to test a JAXRS or JAXWS service you need to activate these services.
 
 To do so just add the needed dependency and use @EnableServices:
@@ -157,7 +157,7 @@ public class MyTest {
 }
 ----
 
-==== Random port
+=== Random port
 Services like JAXRS and JAXWS relies on HTTP. Often it is nice to have a random port to be able to deploy multiple tests/projects on the same CI platform at the same time.
 
 To shortcut all the needed logic you can use @RandomPort. It is simply an injection giving you either the port (int) or the root context (URL):
@@ -173,13 +173,13 @@ public class MyTest {
 
 Note: you can generate this way multiple ports. The value is the name of the service it will apply on (being said http is an alias for httpejbd which is our embedded http layer).
 
-==== Nice logs
+=== Nice logs
 @SimpleLog annotation allows you to have one liner logs
 
-==== @JaxrsProvider
+=== @JaxrsProvider
 @JaxrsProvider allows you to specify on a @Module method the list of JAXRS provider you want to use.
 
-==== Dependencies without hacky code
+=== Dependencies without hacky code
 @Jars allows you to add dependencies (scanned) to your application automatically (like CDI libraries):
 
 [source,java]
@@ -192,13 +192,13 @@ public WebApp app() {
 }
 ----
 
-==== @Default
+=== @Default
 @Default (openejb one not CDI one) automatically adds in the application target/classes as binaries and src/main/webapp as resources for maven projects.
 
-==== @CdiExtensions
+=== @CdiExtensions
 This annotation allows you to control which extensions are activated during the test.
 
-==== @AppResource
+=== @AppResource
 This annotation allows injection of few particular test resources like:
 
 the test AppModule (application meta)
@@ -206,15 +206,15 @@ the test Context (JNDI)
 the test ApplicationComposers (underlying runner)
 ContextProvider: allow to mock JAXRS contexts
 
-==== @MockInjector
+=== @MockInjector
 Allows to mock EJB injections. It decorates a dedicated method returning an instance (or Class) implementing FallbackPropertyInjector.
 
-==== @WebResource
+=== @WebResource
 Allow for web application to add folders containing web resources.
 
 
-=== How to run it?
-==== JUnit
+== How to run it?
+=== JUnit
 If you use JUnit you have mainly 2 solutions to run you "model" using the ApplicationComposer:
 
 using ApplicationComposer runner:
@@ -231,12 +231,12 @@ Tip: since TomEE 7.x ApplicationComposerRule is decomposed in 2 rules if you nee
 
 Finally just write `@Test` method using test class injections as if the test class was a managed bean!
 
-==== TestNG
+=== TestNG
 TestNG integration is quite simple today and mainly ApplicationComposerListener class you can configure as a listener to get ApplicationComposer features.
 
 Finally just write TestNG @Test method using test class injections as if the test class was a managed bean!
 
-==== Standalone
+=== Standalone
 Since TomEE 7.x you can also use ApplicationComposers to directly run you ApplicationComposer model as a standalone application:
 
 [source,java]
@@ -252,7 +252,7 @@ public class MyApp {
 
 Tip: if MyApp has `@PostConstruct` methods they will be respected and if MyApp has a constructor taking an array of String it will be instantiated getting the second parameter as argument (ie you can propagate your main parameter to your model to modify your application depending it!)
 
-=== JUnit Sample
+== JUnit Sample
 
 [source,java]
 ----
@@ -273,7 +273,7 @@ public class MyTest {
 }
 ----
 
-=== Start and Deploy once
+== Start and Deploy once
 
 When having a huge suite of test it can be long to start/deploy/undeploy/shutdown he container/application for each method.
 
@@ -308,7 +308,7 @@ public class MyTest {
 TIP: if you need a real TomEE container then you can have a look to `TomEEEmbeddedSingleRunner` which does deploys the classpath
 using tomee-embedded.
 
-==== Configure what to deploy
+=== Configure what to deploy
 
 As all tests will reuse the same application the model (the class declaring the application with `@Classes`, `@Module` etc...) needs to be extracted from the test class itself.
 
@@ -321,7 +321,7 @@ If you have several "groups" you can use JUnit `@Category` to differentiate them
 in `surefire` plugin you declare two `executions` enforcing the system property `tomee.application-composer.application` for each of them
 and the associated `@Category`.
 
-==== Available injections
+=== Available injections
 
 - If the application model class uses `@RandomPort` then the test classes can get it as well
 - CDI injections are supported
@@ -331,5 +331,5 @@ Compared to a standalone usage it misses all other EE injections (`@PersistenceC
 and just expose them or wrap them in your tests thanks to the `@Application` field.
 
 
-=== Going further
+== Going further
 If you want to learn more about ApplicationComposer see link:../../../advanced/applicationcomposer/index.html[ApplicationComposer Advanced] page.

@@ -14,7 +14,7 @@ link:getting-started-with-eclipse-and-webby.html[Get started with
 Eclipse (m2e-Webby)] +
 link:tomee-and-netbeans.html[Get started with Netbeans]
 
-###General Informations link:comparison.html[Comparison: OpenEJB, TomEE,
+= General Informations link:comparison.html[Comparison: OpenEJB, TomEE,
 TomEE+] +
 link:tomee-directory-structure.html[TomEE Directory structure] +
 link:deploying-in-tomee.html[Deploying in TomEE] +
@@ -65,7 +65,7 @@ link:multipoint-recommendations.html[Multipoint Recommendations] +
 link:failover-logging.html[Logging Events] +
 } \{span-one-third
 
-###OpenEJB Standalone Server
+= OpenEJB Standalone Server
 link:understanding-the-directory-layout.html[Understanding the Directory
 Layout] +
 link:startup.html[Startup] +

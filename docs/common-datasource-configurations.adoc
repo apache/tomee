@@ -1,5 +1,5 @@
-# Common DataSource Configurations
-:index-group: Unrevised
+= Common DataSource Configurations
+:index-group: Datasource
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -13,18 +13,20 @@ details on all configuration options for DataSources.
 The drivers are included with OpenEJB 3.0 and HSQLDB is the default
 database.
 
-....
+[source,xml]
+----
 <Resource id="HSQLDB Database" type="DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
     JdbcUrl jdbc:hsqldb:file:hsqldb
     UserName sa
     Password
 </Resource>
-....
+----
 
 == Derby (Embedded)
 
-....
+[source,xml]
+----
 <Resource id="Derby Database" type="DataSource">
     #Embedded Derby example
 
@@ -33,11 +35,12 @@ database.
     UserName admin
     Password pass
 </Resource>
-....
+----
 
 == MySQL
 
-....
+[source,xml]
+----
 <Resource id="MySQL Database" type="DataSource">
     #  MySQL example
     #
@@ -48,11 +51,12 @@ database.
     JdbcUrl jdbc:mysql://localhost/test
     UserName    test
 </Resource>
-....
+----
 
 == Oracle
 
-....
+[source,xml]
+----
 <Resource id="Oracle Database" type="DataSource">
     #  Oracle example
     #
@@ -63,11 +67,12 @@ database.
     UserName    scott
     Password    tiger
 </Resource>
-....
+----
 
 == OracleXA
 
-....
+[source,xml]
+----
 <Resource id="OracleXA Database" type="DataSource">
     #  OracleXA example
     #
@@ -78,11 +83,12 @@ database.
     UserName    scott
     Password    tiger
 </Resource>
-....
+----
 
 == PosgreSQL
 
-....
+[source,xml]
+----
 <Resource id="PostgreSQL Database" type="DataSource">
     #  PostgreSQL example
     #
@@ -93,11 +99,12 @@ database.
     UserName     postgres
     Password     pass
 </Resource>
-....
+----
 
 == InstantDB
 
-....
+[source,xml]
+----
 <Resource id="InstantDB Database" type="DataSource">
     #  InstantDB example
     #
@@ -106,7 +113,7 @@ database.
     UserName     Admin
     Password     pass
 </Resource>
-....
+----
 
 Internally, from TomEE 1.5.0, JDBC pools are managed via Tomcat-pool.
 You can still switch back to Apache Commons DBCP by adding the following

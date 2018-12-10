@@ -4,7 +4,7 @@
 :jbake-status: published
 
 
-# @Resource
+= @Resource
 Overview
 
 This example demonstrates the use of the injection of environment
@@ -49,7 +49,7 @@ ___________________
 $ mvn clean install
 ___________________
 
-# The Code
+= The Code
 
 == Injection through field (field-level injection)
 
@@ -60,12 +60,13 @@ The default value of 10 is assigned. You can modify the value of the
 environment entries at deployment time using deployment descriptor
 (*ejb-jar.xml*).
 
-==== @Resource annotation of a field
+=== @Resource annotation of a field
 
-....
+[source,java]
+----
 @Resource
 int maxLineItems = 10;
-....
+----
 
 == Injection through a setter method (method-level injection)
 
@@ -76,37 +77,41 @@ setters can be used as a way to inject environment entry values.
 You could look up the env-entry using JNDI lookup() method and the
 following name:
 
-....
+[source,properties]
+----
 java:comp/env/org.apache.openejb.examples.resource.InvoiceBean/maxLineItems
-....
+----
 
 The pattern is to combine the fully-qualified class name and the name of
 a instance field (or a name of the setter method without _set_ prefix
 and the first letter lowercased).
 
-==== @Resource annotation of a setter method
+=== @Resource annotation of a setter method
 
-....
+[source,java]
+----
 @Resource
 public void setMaxLineItems(int maxLineItems) {
     this.maxLineItems = maxLineItems;
 }
-....
+----
 
-==== Using env-entry in ejb-jar.xml
+=== Using env-entry in ejb-jar.xml
 
-....
+[source,xml]
+----
 <env-entry>
     <description>The maximum number of line items per invoice.</description>        
     <env-entry-name>org.apache.openejb.examples.injection.InvoiceBean/maxLineItems</env-entry-name>
     <env-entry-type>java.lang.Integer</env-entry-type>
     <env-entry-value>15</env-entry-value>
 </env-entry>
-....
+----
 
-==== Using @Resource annotated env-entry
+=== Using @Resource annotated env-entry
 
-....
+[source,java]
+----
 public void addLineItem(LineItem item) throws TooManyItemsException {
    if (item == null) {
       throw new IllegalArgumentException("Line item must not be null");
@@ -119,28 +124,30 @@ public void addLineItem(LineItem item) throws TooManyItemsException {
       throw new TooManyItemsException("Number of items exceeded the maximum limit");
    }
 }
-....
+----
 
-# JUnit Test
+= JUnit Test
 
 Writing an JUnit test for this example is quite simple. We need just to
 write a setup method to create and initialize the InitialContext, and
 then write our test methods.
 
-==== Test fixture
+== Test fixture
 
-....
+[source,java]
+----
 protected void setUp() throws Exception {
     Properties properties = new Properties();
     properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
     properties.setProperty("openejb.deployments.classpath.include", ".*resource-injection.*");
     initialContext = new InitialContext(properties);
 }
-....
+----
 
-==== Test methods
+== Test methods
 
-....
+[source,java]
+----
 public void testAddLineItem() throws Exception {
     Invoice order = (Invoice)initialContext.lookup("InvoiceBeanBusinessRemote");
     assertNotNull(order);
@@ -152,9 +159,9 @@ public void testAddLineItem() throws Exception {
     fail("Test failed due to: " + tmie.getMessage());
     }
 }
-....
+----
 
-# Running
+= Running
 
 Running the example is fairly simple. Just execute the following
 commands:
@@ -165,7 +172,8 @@ $ cd injection-of-env-entry
 $ mvn clean test
 ___________________________
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -198,4 +206,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 sec
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -1,4 +1,4 @@
-# Unix Daemon
+= Unix Daemon
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -18,11 +18,12 @@ used.
 First, we'll need to locate and unpack the
 `commons-daemon-native.tar.gz`
 
-....
+[source,bash]
+----
 cd $TOMEE_HOME/bin
 tar xzvf commons-daemon-native.tar.gz
 cd commons-daemon-1.0.7-native-src/unix/
-....
+----
 
 Note that the `commons-daemon-1.0.7-native-src` directory may have a
 slightly different version number.
@@ -38,40 +39,45 @@ You have to specify the `JAVA_HOME` of the SDK either with the
 `--with-java=<dir>` parameter or set the `JAVA_HOME` environment to
 point to your SDK installation. For example:
 
-....
+[source,properties]
+----
 ./configure --with-java=/usr/java
-....
+----
 
 or
 
-....
+[source,properties]
+----
 export JAVA_HOME
 ./configure
-....
+----
 
 If your operating system is supported, configure will go through
 cleanly, otherwise it will report an error (please send us the details
 of your OS/JDK, or a patch against the sources). To build the binaries
 and libraries simply do:
 
-....
+[source,java]
+----
 make
-....
+----
 
 This will generate the executable file `jsvc`.
 
 Finally, we'll want to set the execution bits and move the `jsvc` binary
 
-....
+[source,properties]
+----
 chmod 755 jsvc
 mv jsvc $TOMEE_HOME/bin
-....
+----
 
 Done!
 
 As one script, the above might look like:
 
-....
+[source,bash]
+----
 cd $TOMEE_HOME/bin
 tar xzvf commons-daemon-native.tar.gz
 cd commons-daemon-1.0.7-native-src/unix/
@@ -79,33 +85,36 @@ cd commons-daemon-1.0.7-native-src/unix/
 make
 chmod 755 jsvc
 mv jsvc ../..
-....
+----
 
 == Starting (unix)
 
-....
+[source,bash]
+----
 sudo "$TOMEE_HOME/bin/jsvc" -cp "$TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar" \
     "-javaagent:$TOMEE_HOME/lib/openejb-javaagent.jar" -outfile "$TOMEE_HOME/logs/catalina.out" \
     -errfile "$TOMEE_HOME/logs/catalina.err" org.apache.catalina.startup.Bootstrap
-....
+----
 
 == Starting (osx)
 
 For a 64-bit JVM such as OSX Lion
 
-....
+[source,bash]
+----
 sudo arch -arch x86_64 "$TOMEE_HOME/bin/jsvc" -jvm server -cp "$TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar" \
     "-javaagent:$TOMEE_HOME/lib/openejb-javaagent.jar" -outfile "$TOMEE_HOME/logs/catalina.out" \
     -errfile "$TOMEE_HOME/logs/catalina.err" org.apache.catalina.startup.Bootstrap
-....
+----
 
 For a 32-bit JVM
 
-....
+[source,bash]
+----
 sudo arch -arch i386 "$TOMEE_HOME/bin/jsvc" -jvm server -cp "$TOMEE_HOME/bin/bootstrap.jar:$TOMEE_HOME/bin/tomcat-juli.jar" \
     "-javaagent:$TOMEE_HOME/lib/openejb-javaagent.jar" -outfile "$TOMEE_HOME/logs/catalina.out" \
     -errfile "$TOMEE_HOME/logs/catalina.err" org.apache.catalina.startup.Bootstrap
-....
+----
 
 === Note on formatting
 
@@ -119,7 +128,8 @@ as long as the resulting command is one long line.
 Ensure your `$TOME_HOME` and `$JAVA_HOME` variables are set correctly.
 You should see similar output with the following two commands
 
-....
+[source,bash]
+----
 mingus:~ 01:51:37
 $ ls $TOMEE_HOME
 LICENSE     RELEASE-NOTES   bin     endorsed    logs        webapps
@@ -128,14 +138,15 @@ NOTICE      RUNNING.txt conf        lib     temp        work
 mingus:~ 01:51:46
 $ ls $JAVA_HOME
 bin bundle  lib man
-....
+----
 
 The `jsvc -debug` option can also show useful information for
 troubleshooting:
 
-....
+[source,java]
+----
 $TOMEE_HOME/bin/jsvc -debug
-....
+----
 
 Note on OSX, `$JAVA_HOME` should be set to
 `/System/Library/Frameworks/JavaVM.framework/Home`

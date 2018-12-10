@@ -1,4 +1,4 @@
-# Spring EJB and JPA
+= Spring EJB and JPA
 :index-group: Spring
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -140,13 +140,14 @@ $ mvn clean install
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.spring.MoviesTest
 log4j:WARN No appenders could be found for logger
-....
+----
 
 (org.springframework.context.support.ClassPathXmlApplicationContext).
 log4j:WARN Please initialize the log4j system properly. Apache OpenEJB
@@ -188,8 +189,9 @@ Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to
 Spring bean CineplexImplLocal Tests run: 1, Failures: 0, Errors: 0,
 Skipped: 0, Time elapsed: 3.141 sec
 
-....
+[source,properties]
+----
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

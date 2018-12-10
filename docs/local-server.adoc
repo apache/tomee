@@ -1,4 +1,4 @@
-# Local Server
+= Local Server
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -12,7 +12,7 @@ what we call the Local Server and avoid the network overhead and enjoy
 an easy way to embedd OpenEJB. Instead of putting the app in the server,
 put the server in the app!
 
-# Say what?! A local server?
+= Say what?! A local server?
 
 Yes, you read correctly. OpenEJB can be embedded and treated as your
 very own personal EJB container.
@@ -50,7 +50,7 @@ things. All it does is dish out proxies to your app that can be used to
 shoot calls right into the EJB Container. Very light, very fast, very
 easy for testing, debugging, developing, etc.
 
-# Embedding
+= Embedding
 
 !http://www.openejb.org/images/diagram-local-server.gif|valign=top,
 align=right, hspace=15! \{include:OPENEJBx30:Embedding}

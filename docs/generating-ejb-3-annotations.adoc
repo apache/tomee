@@ -1,10 +1,10 @@
-# Generating EJB 3 annotations 
-:index-group: Unrevised
+= Generating EJB 3 annotations
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Generating EJB 3 annotations
+= Generating EJB 3 annotations
 
 The OpenEJB Eclipse plugin is able to provide some assistance in helping
 you migrate EJB 2.x projects to EJB 3.0, by analyzing your ejb-jar.xml
@@ -16,7 +16,8 @@ of your project. If you are using Maven, you can add the following to
 your POM (you will need to update your Eclipse project using mvn
 eclipse:eclipse afterwards)
 
-....
+[source,xml]
+----
   <dependencies>
     ...
     <dependency>
@@ -26,7 +27,7 @@ eclipse:eclipse afterwards)
       <scope>provided</scope>
     </dependency>
   </dependencies>
-....
+----
 
 Alternatively, import the API jars into your project, and add them to
 your build path.
@@ -46,9 +47,10 @@ Select or deselect the other options as appropriate, and select 'Next'.
 
 Options:
 
-....
+[source,java]
+----
 * Alter SessionBean interfaces - This option makes your session beans
-....
+----
 
 implement your remote / local interfaces as opposed to
 javax.ejb.SessionBean, and stops your remote / local interfaces

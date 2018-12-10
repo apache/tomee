@@ -1,4 +1,4 @@
-# Global Concurrency Management
+= Global Concurrency Management
 :index-group: Tips and Tricks
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,7 +8,8 @@
 If for whatever reason you want to define the global default concurrency
 add this to your META-INF/ejb-jar.xml:
 
-....
+[source,xml]
+----
 <?xml version="1.0"?>
 <ejb-jar
     xmlns="http://java.sun.com/xml/ns/javaee"
@@ -23,10 +24,11 @@ add this to your META-INF/ejb-jar.xml:
         </session>
     <enterprise-beans>
 </ejb-jar>
-....
+----
 
 You may need to create the file if it does not exist.
 
-....
+[source,java]
+----
 src/main/resources/META-INF/ejb-jar.xml
-....
+----

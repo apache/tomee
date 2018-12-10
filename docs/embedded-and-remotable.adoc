@@ -1,10 +1,10 @@
-# Embedded and Remotable 
+= Embedded and Remotable
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Overview
+= Overview
 
 This example shows how to use OpenEJB3's remoting capabilities in an
 embedded scenario. By remoting we mean that you wish to allow _clients
@@ -51,7 +51,7 @@ for network sockets. This example shows the use of OpenEJB in an
 embedded environment where connection _outside_ the vm is
 required.\{note}
 
-# The Code
+= The Code
 
 For this example we have a simple Stateful bean called TelephoneBean as
 defined below. As a simple way of demonstrating the state we have to
@@ -78,7 +78,7 @@ rules change and require that you specify both interfaces in the @Remote
 annotation as in @Remote(\{Telephone.class, SecondInterface.class}).
 \{tip}
 
-# Embedding
+= Embedding
 
 We're going to embed OpenEJB3 into a plain JUnit TestCase as a simple
 means of demonstrating the remote capabilities. We'll do the embedding
@@ -111,13 +111,13 @@ like any other remote EJB client.
 
 \{snippet:id=remotecontext|url=openejb3/examples/telephone-stateful/src/test/java/org/superbiz/telephone/TelephoneTest.java|lang=java}
 
-# Maven setup
+= Maven setup
 
 \{snippet:id=desc|url=openejb3/examples/telephone-stateful/pom.xml}
 
 \{snippet:id=openejbdep|url=openejb3/examples/telephone-stateful/pom.xml|lang=xml}
 
-# Running
+= Running
 
 Running the example is fairly simple. In the "telephone-stateful"
 directory of the openejb:download.html[examples zip] , just run:
@@ -126,7 +126,8 @@ $ mvn clean install
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -134,7 +135,7 @@ Running org.superbiz.telephone.TelephoneTest
 Apache OpenEJB 3.0    build: 20080408-04:13
 http://tomee.apache.org/
 INFO - openejb.home =
-....
+----
 
 /Users/dblevins/work/openejb-3.0/examples/telephone-stateful INFO -
 openejb.base =
@@ -168,8 +169,9 @@ admin thread 127.0.0.1 4200 +
 ------- Ready! Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time
 elapsed: 0.89 sec
 
-....
+[source,properties]
+----
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

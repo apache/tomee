@@ -4,12 +4,12 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-=== Administration
+== Administration
 - link:admin/configuration/index.html[Server Configuration]
 - link:admin/directory-structure.html[Directory Structure]
 - link:admin/cluster/index.html[Clustering and High Availability (HA)]
 
-=== Developers
+== Developers
 - link:developer/ide/index.html[IDEs - Eclipse, Intellij Idea and Netbeans]
 - link:developer/testing/index.html[Unit Testing - Arquillian, OpenEJB JUnit, TomEE Embedded and ApplicationComposer]
 - link:developer/tools/index.html[Build Tools and Plugins]
@@ -18,7 +18,7 @@
 - link:developer/configuration/cxf.html[Apache CXF Configuration - JAX-RS (RESTful Services) and JAX-WS (Web Services)]
 - link:developer/classloading/index.html[Understanding the TomEE ClassLoader]
 
-=== Advanced
+== Advanced
 - link:advanced/applicationcomposer/index.html[`ApplicationComposer` with JBatch]
 - link:advanced/setup/index.html[How to Setup TomEE in Production]
 - link:advanced/shading/index.html[Fat / Uber Jar Deployment using the Maven Shade Plugin]

@@ -1,5 +1,5 @@
-# EJB Request Logging
-:index-group: Unrevised
+= EJB Request Logging
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -27,11 +27,12 @@ On the client requests/responses are logged on java.util.logging
 `FINEST` level in category `OpenEJB.client`. The code is similar to the
 following:
 
-....
+[source,java]
+----
 final long time = System.nanoTime() - start;
 final String message = String.format("Invocation %sns - %s - Request(%s) - Response(%s)", time, conn.getURI(), req, res);
 logger.log(Level.FINEST, message);
-....
+----
 
 Note that the check to see if FINEST is enabled is cached for
 performance reasons, so it must be set at VM startup.
@@ -42,9 +43,10 @@ On the server requests/responses are logged in java.util.logging `FINE`
 in category`"OpenEJB.server.remote.ejb`. The code for that is similar to
 this:
 
-....
+[source,java]
+----
 logger.fine("EJB REQUEST: " + req + " -- RESPONSE: " + res);
-....
+----
 
 == Request times
 
@@ -83,9 +85,10 @@ security.
 This information is available in JMX. A sample JMX ObjectName for a
 `CounterBean` will look like this:
 
-....
+[source,properties]
+----
 openejb.management:J2EEServer=openejb,J2EEApplication=null,EJBModule=StatsModule,StatelessSessionBean=CounterBean,j2eeType=Invocations,name=CounterBean
-....
+----
 
 All beans have the following MBean attributes, listed here in shorthand:
 

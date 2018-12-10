@@ -1,4 +1,4 @@
-# Understanding Callbacks
+= Understanding Callbacks
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -16,7 +16,8 @@ have an AroundInvoke method and so on.
 
 So the following is legal.
 
-....
+[source,java]
+----
 public class Plant {
     @AroundInvoke
     public Object a(InvocationContext ctx) throws Exception {
@@ -46,7 +47,7 @@ public class Apple extends Fruit implements AppleLocal {
 public interface AppleLocal {
     public String grow();
 }
-....
+----
 
 The result is that when the "grow" method on AppleLocal (and
 consequently on Apple) is invoked, the container will first invoke the
@@ -57,7 +58,8 @@ are ways to effectively shut off the callbacks, including AroundInvoke,
 of a parent class by simply overriding the method. We can shut off the
 "a" around invoke with a slightly different version of Apple as follows:
 
-....
+[source,java]
+----
 @Stateless
 public class Apple extends Fruit implements AppleLocal {
 
@@ -75,7 +77,7 @@ public class Apple extends Fruit implements AppleLocal {
         return "ready to pick";
     }
 }
-....
+----
 
 The result of this is that when the "grow" method on AppleLocal is
 invoked, the container will first invoke the AroundInvoke methods "b"
@@ -85,11 +87,12 @@ When they say that an AroundInvoke method cannot be a business method,
 they mean that they cannot be exposed to clients through a local or
 remote interface. The following would be illegal.
 
-....
+[source,java]
+----
 public interface AppleLocal {
     public String grow();
 
     // This is an AroundInvoke method in the bean class, not a legal business method!
     public Object c(InvocationContext ctx) throws Exception;
 }
-....
+----

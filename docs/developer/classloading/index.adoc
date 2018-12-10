@@ -56,4 +56,3 @@ ifndef::backend-pdf[]
 Click on the tree (JVM) on the left to see the detail there.
 
 endif::[]
-

@@ -1,4 +1,4 @@
-# Remote Server
+= Remote Server
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -14,7 +14,7 @@ accessing an EJB's Remote Interface is the same, however to actually
 connect across a network to the server, you need to specify different
 JNDI parameters.
 
-# Short version
+= Short version
 
 Using OpenEJB's default remote server implementation is pretty straight
 forward. You simply need to:
@@ -30,25 +30,28 @@ So, here it is in short.
 
 Deploy your bean with the Deploy Tool:
 
-....
+[source,java]
+----
 c:\openejb> openejb.bat deploy beans\myBean.jar
-....
+----
 
 See the openejbx30:deploy-tool.html[OPENEJBx30:Deploy Tool]
 documentation for more details on deploying beans.
 
 Start the server:
 
-....
+[source,java]
+----
 c:\openejb> openejb.bat start -h 25.14.3.92 -p 4201
-....
+----
 
 See the Remote Server command-line guide for more details on starting
 the Remote Server.
 
 Create an initial context in your client as such:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
 p.put("java.naming.provider.url", "ejbd://25.14.3.92:4201");
@@ -56,7 +59,7 @@ p.put("java.naming.security.principal", "myuser");
 p.put("java.naming.security.credentials", "mypass");
     
 InitialContext ctx = new InitialContext(p);
-....
+----
 
 If you don't have any EJBs or clients to run, try the ubiquitous
 openejbx30:hello-world.html[Hello World] example. Add the following

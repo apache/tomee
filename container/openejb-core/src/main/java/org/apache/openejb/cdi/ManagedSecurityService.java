@@ -19,24 +19,72 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.webbeans.config.WebBeansContext;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityService {
     private final org.apache.webbeans.corespi.security.ManagedSecurityService delegate = new org.apache.webbeans.corespi.security.ManagedSecurityService();
 
+    private final boolean useWrapper;
+    private Principal proxy = null;
+
+
+    public ManagedSecurityService(final WebBeansContext context) {
+        useWrapper = (!Boolean.parseBoolean(context.getOpenWebBeansConfiguration()
+                .getProperty("org.apache.webbeans.component.PrincipalBean.proxy", "true").trim()));
+
+        if (useWrapper) {
+            final ClassLoader loader = ManagedSecurityService.class.getClassLoader();
+
+            final String[] apiInterfaces = context.getOpenWebBeansConfiguration()
+                    .getProperty("org.apache.webbeans.component.PrincipalBean.proxyApis", "org.eclipse.microprofile.jwt.JsonWebToken").split(",");
+
+            List<Class> interfaceList = new ArrayList<>();
+
+            for (final String apiInterface : apiInterfaces) {
+                try {
+                    final Class<?> clazz = loader.loadClass(apiInterface.trim());
+                    interfaceList.add(clazz);
+                } catch (NoClassDefFoundError | ClassNotFoundException e) {
+                    // TODO: log severe error here with guidance
+                }
+            }
+
+            proxy = Principal.class.cast(Proxy.newProxyInstance(loader, interfaceList.toArray(new Class[0]), new InvocationHandler() {
+                @Override
+                public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                    return method.invoke(doGetPrincipal(), args);
+                }
+            }));
+        }
+    }
+
     @Override
     public Principal getCurrentPrincipal() {
+        if (useWrapper) {
+            return proxy;
+        }
+
+        return doGetPrincipal();
+    }
+
+    private Principal doGetPrincipal() {
         final SecurityService<?> service = SystemInstance.get().getComponent(SecurityService.class);
         if (service != null) {
             return service.getCallerPrincipal();
         }
+
         return null;
     }
 
@@ -104,4 +152,5 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
     public Properties doPrivilegedGetSystemProperties() {
         return delegate.doPrivilegedGetSystemProperties();
     }
+
 }

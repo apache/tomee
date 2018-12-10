@@ -208,7 +208,7 @@ public class InitEjbDeployments implements DynamicDeployer {
 
         // we don't have the ejb class object (only the string name) so we have
         // to extract the simple name from the FQN of the class
-        final int simpleNameIdx = bean.getEjbClass().lastIndexOf(".");
+        final int simpleNameIdx = bean.getEjbClass().lastIndexOf('.');
         contextData.put("ejbClass.simpleName", bean.getEjbClass().substring(simpleNameIdx + 1));
 
         contextData.put("ejbName", bean.getEjbName());

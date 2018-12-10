@@ -1,4 +1,4 @@
-# Getting started with Arquillian and TomEE
+= Getting started with Arquillian and TomEE
 :index-group: Arquillian
 :jbake-date: 2018-12-05
 :jbake-type: page

@@ -194,14 +194,14 @@ shadowJar {
 
 Then run:
 
-[source]
+[source,properties]
 ----
 gradle clean build shadowJar
 ----
 
 and you'll get `build/libs/demo-gradle-tomee-embedded-shade-1.0-SNAPSHOT-bundle.jar` ready to run with:
 
-[source]
+[source,bash]
 ----
 java -jar build/libs/demo-gradle-tomee-embedded-shade-1.0-SNAPSHOT-bundle.jar --as-war --simple-log=true
 ----

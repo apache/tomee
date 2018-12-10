@@ -1,10 +1,11 @@
-# openejb.xml
+= openejb.xml
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-## Overview
+== Overview
 
 The openejb.xml is the main configuration file for the container system
 and its services such as transaction, security, and data sources.
@@ -12,31 +13,34 @@ and its services such as transaction, security, and data sources.
 The format is a mix of xml and properties inspired by the format of the
 httpd configuration file. Basically:
 
-....
+[source,xml]
+----
 <tag id="">
   ...properties...
 </tag>
-....
+----
 
 Such as:
 
-....
+[source,xml]
+----
 <Resource id="MyDataSource" type="DataSource">
   username foo
   password bar
 </Resource>
-....
+----
 
 _Note the space_. White space is a valid name/value pair separator in
 any java properties file (along with semi-colon). So the above is
 equivalent to:
 
-....
+[source,xml]
+----
 <Resource id="MyDataSource" type="DataSource">
   username = foo
   password = bar
 </Resource>
-....
+----
 
 You are free to use white space, ":", or "=" for your name/value pair
 separator with no effect on OpenEJB.
