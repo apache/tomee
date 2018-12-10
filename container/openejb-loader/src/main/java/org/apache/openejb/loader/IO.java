@@ -69,10 +69,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method for reading files as String
+     * 
      * @param uri URI
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String readFileAsString(final URI uri) throws IOException {
         final StringBuilder builder = new StringBuilder("");
@@ -102,42 +103,46 @@ public class IO {
     }
 
     /**
-     *
+     * Method for reading Properties
+     * 
      * @param resource URL
      * @return Properties
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static Properties readProperties(final URL resource) throws IOException {
         return readProperties(resource, new Properties());
     }
 
     /**
-     *
+     * Reading Properties 
+     * 
      * @param resource URL
      * @param properties Properties
      * @return Properties
-     * @throws IOException
+     * @throws IOException if and I/O error occurs
      */
     public static Properties readProperties(final URL resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
     }
 
     /**
-     *
+     * Read properties of the specified pathname
+     * 
      * @param resource File
      * @return Properties
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static Properties readProperties(final File resource) throws IOException {
         return readProperties(resource, new Properties());
     }
 
     /**
-     *
+     * Read properties of the specified pathname
+     * 
      * @param resource File
      * @param properties Properties
      * @return Properties
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static Properties readProperties(final File resource, final Properties properties) throws IOException {
         return readProperties(read(resource), properties);
@@ -167,10 +172,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method for reading the String of the specified pathname
+     * 
      * @param url URL
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String readString(final URL url) throws IOException {
         final InputStream in = url.openStream();
@@ -183,10 +189,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method for reading the String of the specified pathname
+     * 
      * @param file File
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String readString(final File file) throws IOException {
         final FileReader in = new FileReader(file);
@@ -199,10 +206,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to read the entire File into a String
+     * 
      * @param file File
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String slurp(final File file) throws IOException {
         try (final InputStream is = read(file)) {
@@ -211,20 +219,22 @@ public class IO {
     }
 
     /**
-     *
+     * Method to read the entire specified pathname into a String
+     * 
      * @param url URL
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String slurp(final URL url) throws IOException {
         return slurp(url.openStream());
     }
 
     /**
-     *
+     * Method to read the entire InputStream into a String
+     * 
      * @param in InputStream
      * @return String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static String slurp(final InputStream in) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -233,10 +243,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to write the specified String to File
+     * 
      * @param file File
      * @param string String
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void writeString(final File file, final String string) throws IOException {
         final FileWriter out = new FileWriter(file);
@@ -254,10 +265,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy File object
+     * 
      * @param from File
      * @param to File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copy(final File from, final File to) throws IOException {
         if (!from.isDirectory()) {
@@ -273,10 +285,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy directory 
+     * 
      * @param srcDir File
      * @param destDir File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copyDirectory(final File srcDir, final File destDir) throws IOException {
         if (srcDir == null) {
@@ -340,10 +353,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy File to OutputStream 
+     * 
      * @param from File
      * @param to OutputStream
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copy(final File from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
@@ -355,10 +369,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy from specified pathname to OutputStream
+     * 
      * @param from URL
      * @param to OutputStream
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copy(final URL from, final OutputStream to) throws IOException {
         final InputStream read = read(from);
@@ -370,10 +385,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy from InputStream to File 
+     * 
      * @param from InputStream
      * @param to File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copy(final InputStream from, final File to) throws IOException {
         final OutputStream write = write(to);
@@ -385,11 +401,12 @@ public class IO {
     }
 
     /**
-     *
+     * Method to copy InputStream to File and append
+     * 
      * @param from InputStream
      * @param to File
      * @param append boolean
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static void copy(final InputStream from, final File to, final boolean append) throws IOException {
         final OutputStream write = write(to, append);
@@ -400,12 +417,6 @@ public class IO {
         }
     }
 
-    /**
-     *
-     * @param from InputStream
-     * @param to OutputStream
-     * @throws IOException
-     */
     public static void copy(final InputStream from, final OutputStream to) throws IOException {
         final byte[] buffer = new byte[1024];
         int length;
@@ -415,31 +426,20 @@ public class IO {
         to.flush();
     }
 
-    /**
-     *
-     * @param from byte[]
-     * @param to File
-     * @throws IOException
-     */
     public static void copy(final byte[] from, final File to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
-    /**
-     *
-     * @param from byte[]
-     * @param to OutputStream
-     * @throws IOException
-     */
     public static void copy(final byte[] from, final OutputStream to) throws IOException {
         copy(new ByteArrayInputStream(from), to);
     }
 
     /**
-     *
+     * Method for writing specified File as ZIP file format
+     * 
      * @param file File
-     * @return ZipOutputStream
-     * @throws IOException
+     * @return ZipOutputStream ZipOutputStream
+     * @throws IOException if an I/O error occurs
      */
     public static ZipOutputStream zip(final File file) throws IOException {
         final OutputStream write = write(file);
@@ -447,10 +447,11 @@ public class IO {
     }
 
     /**
-     *
+     * Method to unzip ZIP file 
+     * 
      * @param file File
      * @return ZipInputStream
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public static ZipInputStream unzip(final File file) throws IOException {
         final InputStream read = read(file);
@@ -480,9 +481,10 @@ public class IO {
     }
 
     /**
-     *
+     * Delete file
+     * 
      * @param file File
-     * @return boolean
+     * @return boolean if file successfully deleted
      */
     public static boolean delete(final File file) {
         if (file == null) {
@@ -497,10 +499,11 @@ public class IO {
     }
 
     /**
-     *
+     * Write data to the specified File destination
+     * 
      * @param destination File
      * @return OutputStream
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file is not found
      */
     public static OutputStream write(final File destination) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination);
@@ -508,11 +511,12 @@ public class IO {
     }
 
     /**
-     *
+     * Write data to the specified File destination and append 
+     * 
      * @param destination File
      * @param append boolean
      * @return OutputStream
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file is not found
      */
     public static OutputStream write(final File destination, final boolean append) throws FileNotFoundException {
         final OutputStream out = new FileOutputStream(destination, append);
@@ -520,10 +524,11 @@ public class IO {
     }
 
     /**
-     *
+     * Read data from the specified File source
+     * 
      * @param source File
      * @return InputStream
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if the file is not found
      */
     public static InputStream read(final File source) throws FileNotFoundException {
         final InputStream in = new FileInputStream(source);
@@ -531,7 +536,8 @@ public class IO {
     }
 
     /**
-     *
+     * Read the next byte from the specified String to input stream
+     * 
      * @param content String
      * @return InputStream
      */
@@ -540,7 +546,8 @@ public class IO {
     }
 
     /**
-     *
+     * Read the next byte from the specified String to input stream using encoding
+     * 
      * @param content String
      * @param encoding String
      * @return InputStream
@@ -551,7 +558,8 @@ public class IO {
     }
 
     /**
-     *
+     * Read the data from byte array 
+     * 
      * @param content byte[]
      * @return InputStream
      */
@@ -560,7 +568,7 @@ public class IO {
     }
 
     /**
-     *
+     * Open connection to the specified URL and return InputStream for reading from the connection
      * @param url URL
      * @return InputStream
      * @throws IOException

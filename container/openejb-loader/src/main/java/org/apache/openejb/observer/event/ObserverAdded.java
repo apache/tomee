@@ -26,10 +26,6 @@ public class ObserverAdded {
 
     private final Object observer;
 
-    /**
-     *
-     * @param observer Object
-     */
     public ObserverAdded(final Object observer) {
         this.observer = observer;
     }

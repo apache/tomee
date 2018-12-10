@@ -20,11 +20,6 @@ import java.util.Properties;
 
 public interface Loader {
 
-    /**
-     *
-     * @param properties Properties
-     * @throws Exception
-     */
     void init(Properties properties) throws Exception;
 
 }

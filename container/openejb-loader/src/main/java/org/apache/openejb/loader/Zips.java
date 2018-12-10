@@ -28,7 +28,8 @@ import java.util.zip.ZipInputStream;
 public class Zips {
 
     /**
-     *
+     * Unzip the specified ZIP file to the specified destination
+     * 
      * @param zipFile File
      * @param destination File
      * @throws IOException
@@ -38,7 +39,8 @@ public class Zips {
     }
 
     /**
-     *
+     * Unzip the specified ZIP file to the specified destination
+     * 
      * @param zipFile File
      * @param destination File
      * @param noparent boolean
@@ -61,7 +63,8 @@ public class Zips {
     }
 
     /**
-     *
+     * Method to unzip ZIP files
+     * 
      * @param read InputStream
      * @param destination File
      * @param noparent boolean

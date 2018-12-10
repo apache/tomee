@@ -56,7 +56,8 @@ public class ObserverManager {
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
     /**
-     *
+     * Add Object to Observer
+     * 
      * @param observer Object
      * @return boolean
      */
@@ -80,7 +81,8 @@ public class ObserverManager {
     }
 
     /**
-     *
+     * Remove Object from Observer
+     * 
      * @param observer Object
      * @return boolean
      */
@@ -321,30 +323,14 @@ public class ObserverManager {
             }
         }
 
-        /**
-         *
-         * @param event Phase
-         * @param eventType Class
-         * @return Invocation
-         */
         public Invocation get(final Phase event, final Class eventType) {
             return get(map(event), eventType);
         }
 
-        /**
-         *
-         * @param eventType Class
-         * @return Invocation
-         */
         public Invocation getAfter(final Class eventType) {
             return get(after, eventType);
         }
 
-        /**
-         *
-         * @param eventType Class
-         * @return
-         */
         public Invocation getBefore(final Class eventType) {
             return get(before, eventType);
         }
@@ -417,20 +403,11 @@ public class ObserverManager {
         private final Method method;
         private final Object observer;
 
-        /**
-         *
-         * @param method Method
-         * @param observer Object
-         */
         public MethodInvocation(final Method method, final Object observer) {
             this.method = method;
             this.observer = observer;
         }
 
-        /**
-         *
-         * @param event Object
-         */
         @Override
         public void invoke(final Object event) {
             try {
@@ -540,11 +517,6 @@ public class ObserverManager {
 
         private final List<Invocation> invocations = new LinkedList<>();
 
-        /**
-         *
-         * @param invocation Invocation
-         * @return boolean
-         */
         public boolean add(final Invocation invocation) {
             return invocations.add(invocation);
         }
@@ -553,10 +525,6 @@ public class ObserverManager {
             return invocations;
         }
 
-        /**
-         *
-         * @param event Object
-         */
         @Override
         public void invoke(final Object event) {
             for (final Invocation invocation : invocations) {

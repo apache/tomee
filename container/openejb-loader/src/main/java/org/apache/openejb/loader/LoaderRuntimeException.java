@@ -18,19 +18,10 @@ package org.apache.openejb.loader;
 
 public class LoaderRuntimeException extends RuntimeException {
 
-    /**
-     *
-     * @param str String
-     * @param e Throwable
-     */
     public LoaderRuntimeException(final String str, final Throwable e) {
         super(str, e);
     }
 
-    /**
-     *
-     * @param e Exception
-     */
     public LoaderRuntimeException(final Exception e) {
         super(e);
     }

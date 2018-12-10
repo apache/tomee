@@ -75,7 +75,8 @@ public class ProvisioningResolver {
     }
 
     /**
-     *
+     * Add ArchiveResolver to resolvers
+     * 
      * @param resolver ArchiveResolver
      */
     public void addResolver(final ArchiveResolver resolver) {
@@ -85,7 +86,8 @@ public class ProvisioningResolver {
     }
 
     /**
-     *
+     * Remove ArchiveResolver
+     * 
      * @param resolver ArchiveResolver
      */
     public void removeResolver(final ArchiveResolver resolver) {
@@ -93,7 +95,8 @@ public class ProvisioningResolver {
     }
 
     /**
-     *
+     * Real path location of the specified location
+     * 
      * @param rawLocation String
      * @return
      */
@@ -171,12 +174,6 @@ public class ProvisioningResolver {
         }
     }
 
-    /**
-     *
-     * @param rawLocation String
-     * @return InputStream
-     * @throws MalformedURLException
-     */
     public InputStream resolveStream(final String rawLocation) throws MalformedURLException {
         final File file = new File(rawLocation);
         if (file.exists()) {
@@ -196,7 +193,7 @@ public class ProvisioningResolver {
     }
 
     /**
-     *
+     * Cache the specified String pathname
      * @param path String
      * @return File
      */

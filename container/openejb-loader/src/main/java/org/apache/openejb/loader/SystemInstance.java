@@ -130,18 +130,13 @@ public final class SystemInstance {
         System.setProperty("derby.system.home", System.getProperty("derby.system.home", baseDirCanonicalPath));
     }
 
-    /**
-     *
-     * @param <E>
-     * @param event
-     * @return
-     */
     public <E> E fireEvent(final E event) {
         return observerManager.fireEvent(event);
     }
 
     /**
-     *
+     * Add the specified Object to Observer
+     * 
      * @param observer Object
      * @return boolean
      */
@@ -150,7 +145,8 @@ public final class SystemInstance {
     }
 
     /**
-     *
+     * Remove the specified Object from Observer
+     * 
      * @param observer Object
      * @return boolean
      */
@@ -172,7 +168,8 @@ public final class SystemInstance {
     }
 
     /**
-     *
+     * Return the property by the specified String key
+     * 
      * @param key String
      * @return String
      */
@@ -181,7 +178,9 @@ public final class SystemInstance {
     }
 
     /**
-     *
+     * Return the property by the specified String key
+     * if the key is not found the default value will be returned
+     * 
      * @param key String
      * @param defaultValue String
      * @return String
@@ -312,11 +311,6 @@ public final class SystemInstance {
         }
     }
 
-    /**
-     *
-     * @param properties Properties
-     * @throws Exception
-     */
     public static synchronized void init(final Properties properties) throws Exception {
         if (initialized) {
             return;
@@ -347,7 +341,8 @@ public final class SystemInstance {
     }
 
     /**
-     *
+     * Returns the conf by the specified pathname
+     * 
      * @param subPath String
      * @return File
      */

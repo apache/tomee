@@ -43,11 +43,6 @@ public final class ProvisioningUtil {
         // no-op
     }
 
-    /**
-     *
-     * @return
-     * @throws IOException
-     */
     public static Collection<File> addAdditionalLibraries() throws IOException {
         final File conf = SystemInstance.get().getConf(ADDITIONAL_LIB_CONFIG);
         if (conf == null || !conf.exists()) {
@@ -148,11 +143,6 @@ public final class ProvisioningUtil {
         return libs;
     }
 
-    /**
-     *
-     * @param location String
-     * @return
-     */
     public static Set<String> realLocation(final String location) {
         final boolean initialized = SystemInstance.isInitialized();
         if (!initialized) {

@@ -31,12 +31,6 @@ public class FileUtils {
         this(homeDir, defaultDir, SystemInstance.get().getProperties());
     }
 
-    /**
-     *
-     * @param homeDir String
-     * @param defaultDir String
-     * @param env Hashtable
-     */
     @SuppressWarnings("UseOfObsoleteCollectionType")
     public FileUtils(final String homeDir, final String defaultDir, final Hashtable env) {
 
@@ -65,10 +59,12 @@ public class FileUtils {
     }
 
     /**
-     *
+     * Returns the cannonical pathname
+     * 
+     * 
      * @param path String
      * @return File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     public File getDirectory(final String path) throws IOException {
         return getDirectory(path, false);
@@ -84,11 +80,12 @@ public class FileUtils {
     }
 
     /**
-     *
+     * Returns canonical form of the specified path
+     * 
      * @param path String
-     * @param create boolean
+     * @param create boolean 
      * @return File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs 
      */
     public File getDirectory(final String path, final boolean create) throws IOException {
         File dir = new File(home, path);
@@ -114,16 +111,13 @@ public class FileUtils {
         return home;
     }
 
-    /**
-     *
-     * @param dir File
-     */
     public void setDirectory(final File dir) {
         this.home = dir;
     }
 
     /**
-     *
+     * Returns File at specified path String
+     * 
      * @param path String
      * @return File
      * @throws IOException
@@ -133,11 +127,12 @@ public class FileUtils {
     }
 
     /**
-     *
+     * Returns File at specified path String
+     * 
      * @param path String
      * @param validate boolean
      * @return File
-     * @throws IOException
+     * @throws IOException if and I/O error occurs
      */
     public File getFile(final String path, final boolean validate) throws IOException {
         File file = new File(path);
@@ -156,9 +151,12 @@ public class FileUtils {
     }
 
     /**
-     *
-     * @param pathPrefix String
-     * @return File
+     * Creates Temp Directory
+     * 
+     * Throws IOException if directory doesn't exists and if it fails to create directories
+     * 
+     * @param pathPrefix path prefix 
+     * @return File File 
      * @throws IOException
      */
     public static File createTempDirectory(final String pathPrefix) throws IOException {
@@ -175,8 +173,11 @@ public class FileUtils {
     }
 
     /**
-     *
-     * @return File
+     * Creates Temp Directory 
+     * 
+     * Throws IOException if directory doesn't exists and if it fails to create directories
+     * 
+     * @return File File
      * @throws IOException
      */
     public static File createTempDirectory() throws IOException {

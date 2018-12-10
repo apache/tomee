@@ -36,7 +36,8 @@ public class ContextClassPath extends BasicURLClassPath {
     }
 
     /**
-     *
+     * Add Jars to URLClassPath
+     * 
      * @param dir File
      * @throws Exception
      */
@@ -50,7 +51,8 @@ public class ContextClassPath extends BasicURLClassPath {
     }
 
     /**
-     *
+     * Add Jar to URLClassPath
+     * 
      * @param jar URL
      * @throws Exception
      */

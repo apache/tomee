@@ -28,6 +28,11 @@ import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
 
+    /**
+     * Returns the context ClassLoader for this Thread or null
+     * 
+     * @return ClassLoader ClassLoader
+     */
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
@@ -41,7 +46,9 @@ public abstract class BasicURLClassPath implements ClassPath {
     private boolean ucpFieldErrorLogged;
 
     /**
-     *
+     * Add Jar to the URLClassPath
+     * 
+     * Throws Exception if fails any
      * @param jar URL
      * @param loader URLClassLoader
      * @throws Exception
@@ -75,7 +82,8 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     /**
-     *
+     * Adds Jars to the URLClassPath
+     * 
      * @param dir File
      * @param loader URLClassLoader
      * @throws Exception
@@ -125,7 +133,7 @@ public abstract class BasicURLClassPath implements ClassPath {
     }
 
     /**
-     *
+     * 
      * @param loader URLClassLoader
      * @return Object
      * @throws Exception
@@ -166,17 +174,14 @@ public abstract class BasicURLClassPath implements ClassPath {
             ClassLoader.registerAsParallelCapable();
         }
 
-        /**
-         *
-         * @param parent ClassLoader
-         */
         public CustomizableURLClassLoader(final ClassLoader parent) {
             super(new URL[0], parent);
         }
 
         /**
-         *
-         * @param url URL
+         * URLs to be added to the URL list for searching classes and resources
+         * 
+         * @param url the URL to be added to the URLs list
          */
         public void add(final URL url) {
             super.addURL(url);

@@ -34,13 +34,6 @@ public class ObserverFailed {
 
     private final Throwable throwable;
 
-    /**
-     *
-     * @param observer Object
-     * @param method Method
-     * @param event Object
-     * @param throwable Throwable
-     */
     public ObserverFailed(final Object observer, final Method method, final Object event, final Throwable throwable) {
         this.observer = observer;
         this.event = event;

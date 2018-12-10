@@ -24,14 +24,18 @@ public interface ClassPath {
     ClassLoader getClassLoader();
 
     /**
-     *
+     * Add Jars to the URL ClassPath
+     * Throws Exception if it fails
+     * 
      * @param dir File
      * @throws Exception
      */
     void addJarsToPath(File dir) throws Exception;
 
     /**
-     *
+     * Add Jar to the URL ClassPath
+     * Throws Exception if it fails
+     * 
      * @param dir URL
      * @throws Exception
      */

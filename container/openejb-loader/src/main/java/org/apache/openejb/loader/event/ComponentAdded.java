@@ -27,11 +27,6 @@ public class ComponentAdded<T> {
     private final Class<T> type;
     private final T component;
 
-    /**
-     *
-     * @param type
-     * @param component
-     */
     public ComponentAdded(final Class<T> type, final T component) {
         this.type = type;
         this.component = component;

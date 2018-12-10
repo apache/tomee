@@ -93,12 +93,6 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         return Objects.requireNonNull(SystemInstance.get().getComponent(ProvisioningResolver.class)).resolveStream(repo1Url);
     }
 
-    /**
-     *
-     * @param raw String
-     * @return String
-     * @throws MalformedURLException
-     */
     public String quickMvnUrl(final String raw) throws MalformedURLException {
         final String base;
         if (raw.contains(SNAPSHOT_SUFFIX) && raw.contains("apache")) {
@@ -295,10 +289,6 @@ public class MavenResolver implements ArchiveResolver, ProvisioningResolverAware
         return defaultVersion;
     }
 
-    /**
-     *
-     * @param resolver ProvisioningResolver
-     */
     @Override
     public void setResolver(final ProvisioningResolver resolver) {
         this.resolver = resolver;

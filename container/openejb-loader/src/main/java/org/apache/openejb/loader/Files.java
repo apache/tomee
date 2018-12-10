@@ -47,7 +47,8 @@ public class Files {
     private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
     /**
-     *
+     * Returns the absolute path of the File Object
+     * 
      * @param parts String...
      * @return File
      */
@@ -65,7 +66,8 @@ public class Files {
     }
 
     /**
-     *
+     * Returns the absolute path of the File Object
+     * 
      * @param dir File
      * @param parts String...
      * @return File
@@ -89,7 +91,8 @@ public class Files {
     }
 
     /**
-     *
+     * Returns a List of pathnames for File Objects
+     * 
      * @param dir File
      * @param regex String
      * @return List of Files
@@ -99,7 +102,8 @@ public class Files {
     }
 
     /**
-     *
+     * Returns a List of pathnames for File Objects
+     * 
      * @param dir File
      * @param pattern Pattern
      * @return List of Files
@@ -109,7 +113,8 @@ public class Files {
     }
 
     /**
-     *
+     * Returns a List of pathnames for File Objects
+     * 
      * @param dir File
      * @param filter FileFilter
      * @return List of Files
@@ -131,7 +136,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if the file or direcotory exists
+     * 
      * @param file File
      * @param s String
      * @return File
@@ -145,7 +151,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if the file or direcotory exists
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -158,7 +165,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if it is a directory
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -172,10 +180,11 @@ public class Files {
     }
 
     /**
-     *
+     * Method to create a file
+     * 
      * @param file File
      * @return File
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      * @Throws FileRuntimeException on failure at any point
      */
     public static File touch(final File file) throws IOException {
@@ -186,7 +195,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if the specified File Object is a File
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -200,7 +210,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if File Object is hidden
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -214,7 +225,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if File Object is writeable
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -227,7 +239,8 @@ public class Files {
     }
 
     /**
-     *
+     * Method to check if File Object is readable
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -240,7 +253,8 @@ public class Files {
     }
 
     /**
-     *
+     * File Object is readble
+     * 
      * @param file File
      * @return File
      */
@@ -249,10 +263,11 @@ public class Files {
     }
 
     /**
-     *
+     * Create directory by the specified path
+     * 
      * @param file File
      * @return File
-     * @Throws FileRuntimeException on failure at any point
+     * @Throws FileRuntimeException if it fails to create directory
      */
     public static File mkdir(final File file) {
         if (file.exists()) {
@@ -275,7 +290,8 @@ public class Files {
     }
 
     /**
-     *
+     * Create directory by the specified parent pathname and child pathname
+     * 
      * @param file file
      * @param name String
      * @return File
@@ -285,9 +301,10 @@ public class Files {
     }
 
     /**
-     *
+     * Method to create tmp directory
+     * 
      * @return File
-     * @Throws IOException on failure at any point
+     * @Throws IOException if an I/O error occurs
      */
     public static File tmpdir() {
         try {
@@ -324,9 +341,10 @@ public class Files {
     }
 
     /**
-     *
+     * Create parent pathname by the specified pathname
+     * 
      * @param file File
-     * @return File
+     * @return File 
      */
     public static File mkparent(final File file) {
         mkdirs(file.getParentFile());
@@ -334,7 +352,8 @@ public class Files {
     }
 
     /**
-     *
+     * Create directories by the specified pathname
+     * 
      * @param file File
      * @return File
      * @Throws FileRuntimeException on failure at any point
@@ -375,7 +394,8 @@ public class Files {
     }
 
     /**
-     *
+     * Delete File Object when exit
+     * 
      * @param file File
      */
     public static void deleteOnExit(final File file) {
@@ -384,7 +404,8 @@ public class Files {
     }
 
     /**
-     *
+     * Delete File Objects when exit
+     * 
      * @param file File
      */
     public static void flagForDeleteOnExit(final File file) {
@@ -469,13 +490,6 @@ public class Files {
         }
     }
 
-    /**
-     *
-     * @param dir File
-     * @param pattern String
-     * @return File
-     * @Throws IllegalStateException on failure at any point
-     */
     public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
         if (matches.isEmpty()) {
@@ -554,12 +568,6 @@ public class Files {
         return set;
     }
 
-    /**
-     *
-     * @param url URL
-     * @return File
-     * @Throws IllegalStateException on failure at any point
-     */
     public static File toFile(final URL url) {
         if ("jar".equals(url.getProtocol())) {
             try {
@@ -588,12 +596,6 @@ public class Files {
         }
     }
 
-    /**
-     *
-     * @param urls Set<URL>
-     * @param algo String
-     * @return String
-     */
     public static String hash(final Set<URL> urls, final String algo) {
         final Collection<File> files = new ArrayList<>();
 

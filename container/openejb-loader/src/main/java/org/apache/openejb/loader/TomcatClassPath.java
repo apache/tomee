@@ -48,10 +48,6 @@ public class TomcatClassPath extends BasicURLClassPath {
         this(getCommonLoader(getContextClassLoader()));
     }
 
-    /**
-     *
-     * @param classLoader ClassLoader
-     */
     public TomcatClassPath(final ClassLoader classLoader) {
         this.commonLoader = classLoader;
 
@@ -129,11 +125,6 @@ public class TomcatClassPath extends BasicURLClassPath {
         rebuild();
     }
 
-    /**
-     *
-     * @param jar URL
-     * @throws Exception
-     */
     public void _addJarToPath(final URL jar) throws Exception {
         ClassLoader classLoader = commonLoader;
 

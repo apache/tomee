@@ -31,7 +31,8 @@ public class JarLocation {
     }
 
     /**
-     *
+     * Return jar from the specified resource name
+     * 
      * @param resourceName String
      * @return File
      */
@@ -40,7 +41,8 @@ public class JarLocation {
     }
 
     /**
-     *
+     * Return jar from the specified resource name
+     * 
      * @param loader ClassLoader
      * @param resourceName String
      * @return File
@@ -80,7 +82,8 @@ public class JarLocation {
     }
 
     /**
-     *
+     * Return jar location
+     * 
      * @param clazz Class
      * @return File
      */
@@ -96,23 +99,12 @@ public class JarLocation {
         }
     }
 
-    /**
-     *
-     * @param classFileName String
-     * @param url URL
-     * @return File
-     */
     public static File toFile(final String classFileName, final URL url) {
         String path = url.getFile();
         path = path.substring(0, path.length() - classFileName.length());
         return new File(decode(path));
     }
 
-    /**
-     *
-     * @param fileName String
-     * @return String
-     */
     public static String decode(final String fileName) {
         if (fileName.indexOf('%') == -1) {
             return fileName;
