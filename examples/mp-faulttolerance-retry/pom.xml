@@ -8,7 +8,7 @@
         <version>8.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <name>OpenEJB :: Examples :: MicroProfile Fault Tolerance Retry</name>
     <artifactId>mp-faulttolerance-retry</artifactId>
     <packaging>war</packaging>
 
