@@ -39,18 +39,39 @@ public class PropertiesRest {
     @ConfigProperty(name = "java.runtime.version")
     private String javaVersion;
 
+    /**
+     *
+     * Get the default value configured on @ConfigProperty, that because
+     * the property defaultProperty doesn't exists, so it will get the value
+     * configured on defaultValue
+     *
+     * @return defaultValue from @ConfigProperty
+     */
     @GET
     @Path("defaultProperty")
     public String getDefaultProperty() {
         return defaultProperty;
     }
 
+    /**
+     *
+     * Get the value from property java.runtime.version, but in this case
+     * it shows how you can get the value using Config class.
+     *
+     * @return javaVersion from Config.getValue
+     */
     @GET
     @Path("javaVersion")
     public String getJavaVersionPropertyFromSystemProperties() {
         return config.getValue("java.runtime.version", String.class);
     }
 
+    /**
+     * Get the value from property java.runtime.version, but in this case
+     * it shows how you can get value injected using @ConfigProperty.
+     *
+     * @return javaVersion injected from Config
+     */
     @GET
     @Path("injectedJavaVersion")
     public String getJavaVersionWithInjection() {
