@@ -16,52 +16,74 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import java.security.interfaces.RSAPublicKey;
+import org.jose4j.jwk.JsonWebKey;
+import org.jose4j.lang.JoseException;
+
+import java.security.Key;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthContextInfo {
+    public static final String DEFAULT_KEY = "DEFAULT";
 
-    private RSAPublicKey signerKey;
+    private Map<String, Key> signerKeys;
     private String issuedBy;
     private int expGracePeriodSecs = 60;
 
-    public JWTAuthContextInfo() {
-    }
-
-    public JWTAuthContextInfo(final RSAPublicKey signerKey, final String issuedBy) {
-        this.signerKey = signerKey;
+    private JWTAuthContextInfo(final Key signerKey, final String issuedBy) {
+        this.signerKeys = Collections.singletonMap(DEFAULT_KEY, signerKey);
         this.issuedBy = issuedBy;
     }
 
-    public JWTAuthContextInfo(final JWTAuthContextInfo orig) {
-        this.signerKey = orig.signerKey;
-        this.issuedBy = orig.issuedBy;
-        this.expGracePeriodSecs = orig.expGracePeriodSecs;
+    private JWTAuthContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
+        if (signerKeys.size() == 1) {
+            final Key singleKey = signerKeys.values().iterator().next();
+            this.signerKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
+        } else {
+            this.signerKeys = Collections.unmodifiableMap(signerKeys);
+        }
+        this.issuedBy = issuedBy;
     }
 
-    public RSAPublicKey getSignerKey() {
-        return signerKey;
+    public static JWTAuthContextInfo authContextInfo(final Key signerKey, final String issuedBy) {
+        return new JWTAuthContextInfo(signerKey, issuedBy);
     }
 
-    public void setSignerKey(final RSAPublicKey signerKey) {
-        this.signerKey = signerKey;
+    public static JWTAuthContextInfo authContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
+        return new JWTAuthContextInfo(signerKeys, issuedBy);
+    }
+
+    public boolean isSingleKey() {
+        return signerKeys.size() == 1;
+    }
+
+    public Key getSignerKey() {
+        return signerKeys.get("DEFAULT");
+    }
+
+    public List<JsonWebKey> getSignerKeys() {
+        return signerKeys.entrySet().stream().map(key -> {
+            try {
+                final JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(key.getValue());
+                jsonWebKey.setKeyId(key.getKey());
+                return jsonWebKey;
+            } catch (final JoseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).collect(Collectors.toList());
     }
 
     public String getIssuedBy() {
         return issuedBy;
     }
 
-    public void setIssuedBy(final String issuedBy) {
-        this.issuedBy = issuedBy;
-    }
-
     public int getExpGracePeriodSecs() {
         return expGracePeriodSecs;
-    }
-
-    public void setExpGracePeriodSecs(final int expGracePeriodSecs) {
-        this.expGracePeriodSecs = expGracePeriodSecs;
     }
 }

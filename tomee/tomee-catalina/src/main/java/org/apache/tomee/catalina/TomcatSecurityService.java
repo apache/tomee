@@ -120,7 +120,11 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
     private Subject createSubject(final Realm realm, final Principal principal) {
         final Set<Principal> principals = new HashSet<>();
-        principals.add(new TomcatUser(realm, principal));
+        if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
+            principals.add(principal);
+        } else {
+            principals.add(new TomcatUser(realm, principal));
+        }
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
