@@ -17,7 +17,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
-#Deploying in TomEE
+= Deploying in TomEE
 
 Deploying applications in TomEE is as simple as deploying them in
 Tomcat.
@@ -35,7 +35,7 @@ Read on to learn more about packaging EJBs in a WAR file.
 
 == Packaging
 
-==== One archive
+=== One archive
 
 The basic idea of this approach is that your Servlets and EJBs are
 together in your WAR file as one application.
@@ -46,7 +46,7 @@ together in your WAR file as one application.
 * Can put the web.xml and ejb-jar.xml in the same archive (the WAR file)
 * EJBs can see Servlet classes and vice versa
 
-==== Not quite J2EE (But it is Java EE 6)
+=== Not quite J2EE (But it is Java EE 6)
 
 This is very different than J2EE or Java EE 5 as there are not several
 levels of separation and classloader hierarchy any more. +

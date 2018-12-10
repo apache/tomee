@@ -1,10 +1,10 @@
-# Configuring Logging in Tests 
+= Configuring Logging in Tests
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# embedded.logging.properties
+= embedded.logging.properties
 
 When in embedded mode OpenEJB uses an embedded.logging.properties file
 packed in our openejb-core jar which use to configure the logging. This
@@ -35,7 +35,7 @@ control over the other 95% as well.
 replacing the embedded.logging.properties you will pick these up
 automatically when you upgrade.
 
-# Overriding (recommended)
+= Overriding (recommended)
 
 As mentioned in link:embedded-configuration.html[Embedded Configuration]
 much can be done with simple overriding. The default
@@ -45,7 +45,8 @@ replace it completely if all you want to do is tweak a few values.
 You can also put logging tweaks right in your InitialContext properties
 like so:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
@@ -66,7 +67,7 @@ p.put("log4j.appender.C", "org.apache.log4j.ConsoleAppender");
 p.put("log4j.appender.C.layout", "org.apache.log4j.SimpleLayout");
 
 Context context = new InitialContext(p);
-....
+----
 
 Essentially, everything starting with "log4j." gets applied as overrides
 on top of the embedded.logging.properties we find in the classpath. This
@@ -86,12 +87,13 @@ overriding order is as follows: 1 = highest, 4 = lowest.
 By default there are no logging settings in 1-3, so #4 is the only
 source of logging information.
 
-# Default embedded.logging.properties contents
+= Default embedded.logging.properties contents
 
 For your purposes, here are the contents of the default
 embedded.logging.properties file contained in OpenEJB 3.1.1
 
-....
+[source,properties]
+----
 log4j.rootLogger           = fatal,C
 log4j.category.OpenEJB         = warn
 log4j.category.OpenEJB.server      = info
@@ -107,7 +109,7 @@ log4j.category.openjpa         = error
 
 log4j.appender.C           = org.apache.log4j.ConsoleAppender
 log4j.appender.C.layout        = org.apache.log4j.SimpleLayout
-....
+----
 
 Here is that file's location in svn as well as all of the previous
 versions. Future versions will follow the same pattern.

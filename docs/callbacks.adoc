@@ -1,4 +1,4 @@
-# Callbacks
+= Callbacks
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -28,7 +28,8 @@ throws Exception
 
 == Stateless
 
-....
+[source,java]
+----
 import javax.ejb.Stateless;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -53,11 +54,12 @@ public class MyStatelessBean implements  MyBusinessInterface  {
     return invocationContext.proceed();
     }
 }
-....
+----
 
 == Stateful
 
-....
+[source,java]
+----
 import javax.ejb.Stateful;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
@@ -94,11 +96,12 @@ public class MyStatefulBean implements  MyBusinessInterface  {
 
     }
 }
-....
+----
 
 == MessageDriven
 
-....
+[source,java]
+----
 import javax.ejb.MessageDriven;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -123,11 +126,12 @@ public class MyMessageDrivenBean implements  MyListenerInterface  {
           return invocationContext.proceed();
     }
 }
-....
+----
 
 == Interceptor
 
-....
+[source,java]
+----
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.interceptor.InvocationContext;
@@ -162,4 +166,4 @@ public class MyInterceptor {
 
     }
 }
-....
+----

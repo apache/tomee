@@ -33,7 +33,7 @@ public class MyModel {
 
 will be mapped to:
 
-[source,java]
+[source,json]
 ----
 {
   "id": 1234,
@@ -203,4 +203,3 @@ TomEE uses by default Johnzon as JAX-RS provider for versions 7.x. If you want h
 
 Note: as you can see you mainly just need to define a service with the id johnzon (same as in openejb-jar.xml)
 and you can reference other instances using $id for services and @id for resources.
-

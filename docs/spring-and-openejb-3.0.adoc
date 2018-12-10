@@ -1,4 +1,5 @@
-# Spring and OpenEJB 3.0
+= Spring and OpenEJB 3.0
+:index-group: Spring
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -11,7 +12,8 @@ If you wish to use OpenEJB inside Spring you can do so pretty easily.
 Include OpenEJB and its dependencies in your classpath as you would in a
 plain embedded scenario then add a custom factory like the following:
 
-....
+[source,java]
+----
 public class OpenEjbFactoryBean implements org.springframework.beans.factory.FactoryBean {
 
     private Properties properties = new Properties();
@@ -44,11 +46,12 @@ public class OpenEjbFactoryBean implements org.springframework.beans.factory.Fac
         return true;
     }
 }
-....
+----
 
 And include that at the top of your spring xml file as follows:
 
-....
+[source,xml]
+----
 <bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
   <property name="jndiEnvironment">
     <props>
@@ -60,7 +63,7 @@ And include that at the top of your spring xml file as follows:
     </props>
   </property>
 </bean>
-....
+----
 
 The value of is meant to be illustrative of the kinds of properties you
 can pass into OpenEJB. It's possible to create any number of
@@ -85,7 +88,8 @@ pull the EntityManager out and return it
 
 OrangeUnitBean.java
 
-....
+[source,java]
+----
 /*
  * OpenEJB will automatically find this bean.  Just put it in the same jar
  * that your META-INF/persistence.xml file is located in and make sure that
@@ -102,22 +106,24 @@ public class OrangeUnitBean implements OrangeUnitLocal {
         return entityManager;
     }
 }
-....
+----
 
 OrangeUnitLocal.java
 
-....
+[source,java]
+----
 /**
  * The local interface for the OrangeUnitBean
  */
 public interface OrangeUnitLocal {
    public EntityManager getEntityManager();
 }
-....
+----
 
 OrangeUnitFactoryBean.java
 
-....
+[source,java]
+----
 /**
  * This factory bean will lookup the OrangeUnitBean using the javax.naming.Context
  * that is created via the OpenEjbFactoryBean above.  It will simply grab the EntityManager
@@ -152,20 +158,22 @@ public class OrangeUnitFactoryBean implements org.springframework.beans.factory.
         return true;
     }
 }
-....
+----
 
 The factory bean would then be declared in your spring xml file as
 follows:
 
-....
+[source,xml]
+----
 <bean id="OrangeUnit" class="org.acme.OrangeUnitFactoryBean">
   <property name="context" ref="OpenEjbContext">
 </bean>
-....
+----
 
 The EntityManager can then easily be consumed by a spring bean.
 
-....
+[source,java]
+----
 public class SomePojo {
 
     private EntityManager entityManager;
@@ -176,22 +184,24 @@ public class SomePojo {
 
     ...
 }
-....
+----
 
 In the spring xml
 
-....
+[source,xml]
+----
 <bean id="SomePojo" class="org.acme.SomePojo">
   <property name="entityManager" ref="OrangeUnit">
 </bean>
-....
+----
 
 Here's what all three declarations would look like together in your
 spring xml:
 
 Spring bean definitions combined
 
-....
+[source,xml]
+----
 <bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
   <property name="jndiEnvironment">
     <props>
@@ -211,7 +221,7 @@ Spring bean definitions combined
 <bean id="SomePojo" class="org.acme.SomePojo">
   <property name="entityManager" ref="OrangeUnit">
 </bean>
-....
+----
 
 {title= Some more useful info.} Here is a bunch of links suggested
 by a user. If anybody has time to go through them and write a doc, that

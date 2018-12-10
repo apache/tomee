@@ -1,4 +1,4 @@
-# Security Annotations
+= Security Annotations
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -29,7 +29,8 @@ Allow anyone logged in or not to invoke 'svnCheckout'.
 
 These three examples are all equivalent.
 
-....
+[source,java]
+----
 @Stateless
 public class OpenSourceProjectBean implements Project {
 
@@ -57,7 +58,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow anyone logged in or not to invoke 'svnCheckout'.
 
@@ -66,7 +67,8 @@ public class OpenSourceProjectBean implements Project {
 Restrict the 'svnCommit' method to only individuals logged in and part
 of the "committer" role. Note that more than one role can be listed.
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer"})
 public class OpenSourceProjectBean implements Project {
@@ -80,7 +82,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow only logged in users in the "committer" role to invoke
 'svnCommit'.
@@ -91,7 +93,8 @@ public class OpenSourceProjectBean implements Project {
 You need to update the @DeclareRoles when referencing roles via
 isCallerInRole(roleName).
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer", "contributor"})
 public class OpenSourceProjectBean implements Project {
@@ -109,14 +112,15 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 == Restricting all methods in a class
 
 Placing the annotation at the class level changes the default of
 PermitAll
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer"})
 @RolesAllowed({"committer"})
@@ -134,7 +138,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow only logged in users in the "committer" role to invoke
 'svnCommit', 'svnCheckout' or 'submitPatch'.
@@ -145,7 +149,8 @@ Security annotations can be used at the class level and method level at
 the same time. These rules do not stack, so marking 'submitPatch'
 overrides the default of "committers".
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer", "contributor"})
 @RolesAllowed({"committer"})
@@ -164,7 +169,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow only logged in users in the "committer" role to invoke
 'svnCommit' or 'svnCheckout'
@@ -177,7 +182,8 @@ When annotating a bean class with @RolesAllowed, the @PermitAll
 annotation becomes very useful on individual methods to open them back
 up again.
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer", "contributor"})
 @RolesAllowed({"committer"})
@@ -197,7 +203,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow only logged in users in the "committer" role to invoke
 'svnCommit'.
@@ -211,7 +217,8 @@ The @DenyAll annotation can be used to restrict business interface
 access from anyone, logged in or not. The method is still invokable from
 within the bean class itself.
 
-....
+[source,java]
+----
 @Stateless
 @DeclareRoles({"committer", "contributor"})
 @RolesAllowed({"committer"})
@@ -236,7 +243,7 @@ public class OpenSourceProjectBean implements Project {
     return s;
     }
 }
-....
+----
 
 * Allow only logged in users in the "committer" role to invoke
 'svnCommit'.
@@ -245,14 +252,15 @@ public class OpenSourceProjectBean implements Project {
 * Allow anyone logged in or not to invoke 'svnCheckout'.
 * Allow _no one_ logged in or not to invoke 'deleteProject'.
 
-# Illegal Usage
+= Illegal Usage
 
 Generally, security restrictions cannot be made on AroundInvoke methods
 and most callbacks.
 
 The following usages of @RolesAllowed have no effect.
 
-....
+[source,java]
+----
 @Stateful
 @DecalredRoles({"committer"})
 public class MyStatefulBean implements  MyBusinessInterface  {
@@ -272,11 +280,12 @@ public class MyStatefulBean implements  MyBusinessInterface  {
     @AroundInvoke
     @RolesAllowed({"committer"})
     public Object invoke(InvocationContext invocationContext) throws
-....
+----
 
 Exception \{ return invocationContext.proceed(); }
 
-....
+[source,java]
+----
     @PostActivate
     @RolesAllowed({"committer"})
     public void activated(){
@@ -289,4 +298,4 @@ Exception \{ return invocationContext.proceed(); }
 
     }
 }
-....
+----

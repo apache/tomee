@@ -1,11 +1,11 @@
-# Running a standalone OpenEJB server
-:index-group: Unrevised
+= Running a standalone OpenEJB server
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# Configuring the OpenEJB Runtime The OpenEJB Eclipse plugin provides
+= Configuring the OpenEJB Runtime The OpenEJB Eclipse plugin provides
 support for running OpenEJB as a standalone server in Eclipse using WTP.
 
 To setup a server, first of all, you will need to have a copy of OpenEJB
@@ -25,7 +25,7 @@ image:http://people.apache.org/~jgallimore/images/server_step_5.jpg[http://peopl
 
 Browse to, or enter the path to your copy of OpenEJB. Click on Finish.
 
-# Configuring the OpenEJB Server Open the Servers view (if it isn't
+= Configuring the OpenEJB Server Open the Servers view (if it isn't
 already), and right click and select New->Server.
 
 image:http://people.apache.org/~jgallimore/images/server_step_8.jpg[http://people.apache.org/~jgallimore/images/server_step_8.jpg]
@@ -39,7 +39,7 @@ Select the EJB port for the server, and select Finish.
 
 image:http://people.apache.org/~jgallimore/images/server_step_10.jpg[http://people.apache.org/~jgallimore/images/server_step_10.jpg]
 
-# Deploying a project In order to deploy your project to an OpenEJB
+= Deploying a project In order to deploy your project to an OpenEJB
 server in Eclipse, your project must be a Java EE project, with the EJB
 facet enabled. If your project doesn't have the Faceted nature, you can
 use the OpenEJB plugin to add it. Simply select OpenEJB->Add Faceted

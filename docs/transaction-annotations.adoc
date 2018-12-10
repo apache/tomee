@@ -1,4 +1,4 @@
-# Transaction Annotations
+= Transaction Annotations
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -117,7 +117,8 @@ state.
 
 == On Methods
 
-....
+[source,java]
+----
 @Stateless
 public static class MyBean implements MyBusinessInterface {
 
@@ -130,14 +131,15 @@ public static class MyBean implements MyBusinessInterface {
     return s;
     }
 }
-....
+----
 
 * _codeRed_ will be invoked with the attribute of _MANDATORY_
 * _codeBlue_ will be invoked with the default attribute of _REQUIRED_
 
 == On Classes
 
-....
+[source,java]
+----
 @Stateless
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public static class MyBean implements MyBusinessInterface {
@@ -150,14 +152,15 @@ public static class MyBean implements MyBusinessInterface {
     return s;
     }
 }
-....
+----
 
 * _codeRed_ and _codeBlue_ will be invoked with the attribute of
 _MANDATORY_
 
 == Mixed on classes and methods
 
-....
+[source,java]
+----
 @Stateless
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 public static class MyBean implements MyBusinessInterface {
@@ -176,20 +179,21 @@ public static class MyBean implements MyBusinessInterface {
     return s;
     }
 }
-....
+----
 
 * _codeRed_ will be invoked with the attribute of _NEVER_
 * _codeBlue_ will be invoked with the attribute of _SUPPORTS_
 * _codeGreen_ will be invoked with the attribute of _REQUIRED_
 
-# Illegal Usage
+= Illegal Usage
 
 Generally, transaction annotationss cannot be made on AroundInvoke
 methods and most callbacks.
 
 The following usages of @TransactionAttribute have no effect.
 
-....
+[source,java]
+----
 @Stateful
 public class MyStatefulBean implements  MyBusinessInterface  {
 
@@ -223,4 +227,4 @@ public class MyStatefulBean implements  MyBusinessInterface  {
 
     }
 }
-....
+----

@@ -1,10 +1,10 @@
-# Collapsed EAR 
+= Collapsed EAR
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# One archive
+= One archive
 
 The basic idea of this approach is that your Servlets and EJBs are
 together in your WAR file as one app.
@@ -16,7 +16,7 @@ no EAR required.
 file).
 * EJBs can see Servlet classes and vice versa.
 
-# Not quite J2EE (it is truly Java EE6)
+= Not quite J2EE (it is truly Java EE6)
 
 This is very different than J2EE or Java EE 5 as there aren't several
 levels of separation and classloader hierarchy. This is going to take
@@ -40,7 +40,7 @@ in a specially formatted 'Class-Path' entry in the EAR's MANIFEST file.
 Critically speaking, forcing more than one classloader on an application
 is where J2EE "jumps the shark" for a large majority of people's needs.
 
-# Example with Tomcat
+= Example with Tomcat
 
 If you want to try to work with Servlets/JSP and OpenEJB using Tomcat,
 see the openejbx30:tomcat.html[setup page] and the

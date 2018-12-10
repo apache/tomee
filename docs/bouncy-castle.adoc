@@ -1,4 +1,4 @@
-# Installing Bouncy Castle
+= Installing Bouncy Castle
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -28,9 +28,10 @@ directory
 
 The entry to `java.security` will look something like the following:
 
-....
+[source,properties]
+----
 security.provider.N=org.bouncycastle.jce.provider.BouncyCastleProvider
-....
+----
 
 Replace `N` with the order of precedence you would like to give Bouncy
 Castle in comparison to the other providers in the file. *Recommended*

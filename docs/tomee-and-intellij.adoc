@@ -1,4 +1,4 @@
-# TomEE and Intellij
+= TomEE and Intellij
 :index-group: IDE
 :jbake-date: 2018-12-05
 :jbake-type: page

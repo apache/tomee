@@ -1,4 +1,4 @@
-# Understanding the Directory Layout
+= Understanding the Directory Layout
 :index-group: OpenEJB Standalone Server
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,7 +8,8 @@
 Unpacking the standalone OpenEJB will result in the following directory
 layout:
 
-....
+[source,java]
+----
 apache-openejb-[version]\apps
 apache-openejb-[version]\bin
 apache-openejb-[version]\conf
@@ -18,9 +19,9 @@ apache-openejb-[version]\logs
 apache-openejb-[version]\LICENSE
 apache-openejb-[version]\NOTICE
 apache-openejb-[version]\README.txt
-....
+----
 
-# Directories
+= Directories
 
 == bin/
 
@@ -49,7 +50,8 @@ This directory contains nothing but a README.txt file at the time
 OpenEJB is unpacked. The first time OpenEJB is started however, these
 files will be created:
 
-....
+[source,java]
+----
   conf/
     openejb.xml            (main config file)    
     logging.properties         (log levels and files)    
@@ -64,7 +66,7 @@ files will be created:
         hsql.properties         (network socket for hsql client access)
         httpejbd.properties     (network socket for ejb invocations over http)
         telnet.properties       (network socket for telnet "server") 
-....
+----
 
 These files can be edited as desired. If at any time you are unhappy
 with your changes or simply wish to start over, you can delete or move

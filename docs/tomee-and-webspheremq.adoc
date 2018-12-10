@@ -1,4 +1,4 @@
-# TomEE and WebSphere MQ
+= TomEE and WebSphere MQ
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page

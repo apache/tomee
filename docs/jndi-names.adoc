@@ -1,11 +1,11 @@
-# JNDI Names
+= JNDI Names
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-# What's My Bean's JNDI Name? There are two things to keep in mind
+= What's My Bean's JNDI Name? There are two things to keep in mind
 before you start reading:
 
 1 OpenEJB provides a default JNDI name to your EJB. +
@@ -13,16 +13,17 @@ before you start reading:
 
 == Default JNDI name The default JNDI name is in the following format:
 
-....
+[source,json]
+----
 {deploymentId}{interfaceType.annotationName}
-....
+----
 
 Lets try and understand the above format. Both _deploymentId_ and
 _interfaceType.annotationName_ are pre-defined variables. There are
 other pre-defined variables available which you could use to customize
 the JNDI name format.
 
-# JNDI Name Formatting
+= JNDI Name Formatting
 
 The _openejb.jndiname.format_ property allows you to supply a template
 for the global JNDI names of all your EJBs. With it, you have complete
@@ -120,7 +121,7 @@ interfaceClass.packageName
 for a class named org.acme.superfun.WidgetRemote results in
 org.acme.superfun
 
-# Setting the JNDI name
+= Setting the JNDI name
 
 It's possible to set the desired jndi name format for the whole server
 level, an ejb-jar, an ejb, an ejb's "local" interface
@@ -136,10 +137,11 @@ and override that further for a specific interface of that ejb.
 The jndi name format can be set on a server level via a _system
 property_, for example:
 
-....
+[source,java]
+----
 $ ./bin/openejb start
 -Dopenejb.jndiname.format=\{ejbName}/\{interfaceClass}"
-....
+----
 
 As usual, other ways of specifying system properties are via the
 conf/system.properties file in a standalone server, or via the
@@ -150,57 +152,62 @@ InitialContext properties when embedded.
 It's possible to set the openejb.jndiname.format for an ejb-jar jar in a
 META-INF/openejb-jar.xml file as follows:
 
-....
+[source,xml]
+----
 <openejb-jar>
   <properties>
      openejb.deploymentId.format = {ejbName}
      openejb.jndiname.format = {deploymentId}{interfaceType.annotationName}
   </properties>
 </openejb-jar>
-....
+----
 
 == Via the tag for a specific ejb
 
 The following sets the name specifically for the interface
 org.superbiz.Foo.
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <jndi name="foo" interface="org.superbiz.Foo"/>  
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 Or more generally...
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <jndi name="foo" interface="Remote"/> 
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 Or more generally still...
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <jndi name="foo"/> 
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 The 'name' attribute can still use templates if it likes, such as:
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <jndi name="ejb/{interfaceClass.simpleName}" interface="org.superbiz.Foo"/> 
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 === Multiple tags
 
@@ -219,7 +226,8 @@ intention with these examples is to show the various ways you can
 isolate specific interfaces or types of interfaces to gain more specific
 control on how they are named.
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <jndi name="LocalOne" interface="org.superbiz.LocalOne"/>
@@ -230,11 +238,12 @@ control on how they are named.
     <jndi name="FooLocalHome" interface="org.superbiz.FooLocalHome"/>
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 Or
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <!-- applies to LocalOne and LocalTwo -->
@@ -250,11 +259,12 @@ Or
     <jndi name="{interfaceClass.simpleName}" interface="LocalHome"/> 
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 Or
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <!-- applies to RemoteOne, RemoteTwo, FooHome, and FooLocalHome -->
@@ -265,24 +275,25 @@ Or
     <jndi name="LocalTwo" interface="org.superbiz.LocalTwo"/>
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
 or
 
-....
+[source,xml]
+----
 <openejb-jar>
   <ejb-deployment ejb-name="FooBean">
     <!-- applies to LocalOne, LocalTwo, RemoteOne, RemoteTwo, FooHome, and FooLocalHome -->
     <jndi name="{interfaceClass.simpleName}"/> 
   </ejb-deployment>
 </openejb-jar>
-....
+----
 
-# Changing the Default Setting
+= Changing the Default Setting
 
 _You are responsible for ensuring the names don't conflict._
 
-=== Conservative settings
+== Conservative settings
 
 A very conservative setting such as
 

@@ -1,10 +1,10 @@
-# Properties Tool 
+= Properties Tool
 :index-group: OpenEJB Standalone Server
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Properties Command line Tool
+= Properties Command line Tool
 
 To see all configurable properties in use by OpenEJB, using the
 following tool against a running server:
@@ -28,7 +28,7 @@ component declarations. The only warning is that any properties of type
 ".password" will have their values masked, so make sure you edit them if
 you reapply them back into conf/openejb.xml or conf/system.properties.
 
-# Property Overriding
+= Property Overriding
 
 Any component configured in OpenEJB via the openejb.xml (and some that
 aren't) can be overridden using system properties. The format is:
@@ -52,9 +52,10 @@ is created).
 At startup, OpenEJB will find the component with the given id and apply
 the new property value before constructing the individual component.
 
-# Example output
+= Example output
 
-....
+[source,properties]
+----
 # Container(id=Default CMP Container)
 # className: org.apache.openejb.core.cmp.CmpContainer
 #
@@ -215,4 +216,4 @@ admin.port=4200
 admin.threads=1
 admin.name=admin
 admin.server=org.apache.openejb.server.admin.AdminDaemon
-....
+----

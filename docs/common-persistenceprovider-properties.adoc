@@ -1,4 +1,4 @@
-# Common PersistenceProvider properties
+= Common PersistenceProvider properties
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -8,9 +8,10 @@ While not a definitive list, it
 does help to show a side-by-side view of common properties used by the
 various persistence providers out there.
 
-# TopLink
+= TopLink
 
-....
+[source,xml]
+----
 <properties>
  
   <!--http://www.oracle.com/technology/products/ias/toplink/JPA/essentials/toplink-jpa-extensions.html-->
@@ -19,11 +20,12 @@ various persistence providers out there.
   <property name="toplink.ddl-generation.output-mode" value="both"/>
   <property name="toplink.target-server" value="pl.zsk.samples.ejbservice.OpenEJBServerPlatform"/>
 </properties>
-....
+----
 
-# OpenJPA
+= OpenJPA
 
-....
+[source,xml]
+----
 <properties>
   <!--http://openjpa.apache.org/faq.html-->
   <!-- does not create foreign keys, creates schema and deletes content of a database
@@ -35,13 +37,14 @@ various persistence providers out there.
   <property name="openjpa.jdbc.MappingDefaults" value="ForeignKeyDeleteAction=restrict, JoinForeignKeyDeleteAction=restrict"/>
   <property name="openjpa.Log" value="DefaultLevel=TRACE,SQL=TRACE" />
 </properties>
-....
+----
 
-# Hibernate
+= Hibernate
 
-....
+[source,xml]
+----
 <properties>
   <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
   <property name="hibernate.transaction.manager_lookup_class" value="org.apache.openejb.hibernate.TransactionManagerLookup"/>
 </properties>
-....
+----

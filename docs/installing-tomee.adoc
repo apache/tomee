@@ -1,4 +1,4 @@
-# Installing TomEE
+= Installing TomEE
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -49,15 +49,17 @@ this directory as $CATALINA_HOME in the following.
 
 To start TomEE as a background process, invoke
 
-....
+[source,java]
+----
 $CATALINA_HOME/bin/startup.sh
-....
+----
 
 To start TomEE in foreground, invoke
 
-....
+[source,java]
+----
 $CATALINA_HOME/bin/catalina.sh run
-....
+----
 
 == Log Messages
 
@@ -67,17 +69,19 @@ console.
 When running TomEE in background, it will only print a couple of
 environment variables. The log messages go to a file
 
-....
+[source,java]
+----
 $CATALINA_HOME/logs/catalina.out
-....
+----
 
 == Stopping TomEE
 
 To stop TomEE, invoke
 
-....
+[source,java]
+----
 $CATALINA_HOME/bin/shutdown.sh
-....
+----
 
 If you started TomEE in foreground via `catalina.sh run`, it is safe to
 simply type `Ctrl-C`.

@@ -1,4 +1,4 @@
-# Apache TomEE and security
+= Apache TomEE and security
 :index-group: Configuration
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -40,15 +40,17 @@ To put it short,
 * TomEE uses Tomcat's Security Realm
 * ....
 Extra TomEE layer adds support for JAAS JACC WS Security
-....
+[source,java]
+----
 * ....
 Supports any org.apache.catalina.Realm implementation
-....
+----
 * ....
 E.g. add users to $CATALINA_BASE/conf/tomcat-users.xml
-....
+[source,java]
+----
 * ....
 Alternatively use login.config to provide your own security module
-....
+----
 
-####See Also: link:tomee-jaas.html[TomEE-and-JAAS]
+== See Also: link:tomee-jaas.html[TomEE-and-JAAS]

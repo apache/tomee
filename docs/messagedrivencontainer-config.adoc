@@ -1,4 +1,4 @@
-# MessageDrivenContainer Configuration
+= MessageDrivenContainer Configuration
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
@@ -10,14 +10,15 @@ A MessageDrivenContainer can be declared via xml in the
 using a declaration like the following. All properties in the element
 body are optional.
 
-....
+[source,xml]
+----
 <Container id="myMessageDrivenContainer" type="MESSAGE">
     activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
     instanceLimit = 10
     messageListenerInterface = javax.jms.MessageListener
     resourceAdapter = Default JMS Resource Adapter
 </Container>
-....
+----
 
 Alternatively, a MessageDrivenContainer can be declared via properties
 in the `<tomee-home>/conf/system.properties` file or via Java
@@ -25,13 +26,14 @@ VirtualMachine `-D` properties. The properties can also be used when
 embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
 `InitialContext`
 
-....
+[source,properties]
+----
 myMessageDrivenContainer = new://Container?type=MESSAGE
 myMessageDrivenContainer.activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
 myMessageDrivenContainer.instanceLimit = 10
 myMessageDrivenContainer.messageListenerInterface = javax.jms.MessageListener
 myMessageDrivenContainer.resourceAdapter = Default JMS Resource Adapter
-....
+----
 
 Properties and xml can be mixed. Properties will override the xml
 allowing for easy configuration change without the need for $\{} style

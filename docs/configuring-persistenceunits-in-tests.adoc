@@ -1,10 +1,10 @@
-# Configuring PersistenceUnits in Tests 
+= Configuring PersistenceUnits in Tests
 :index-group: Testing Techniques
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-# Overriding the
+= Overriding the
 persistence.xml
 
 The most common situation in EJB related testing by far is the need to
@@ -33,7 +33,8 @@ properties or the initial context properties. The format is:
 
 So for example with the following persistence.xml:
 
-....
+[source,xml]
+----
 <persistence>
   <persistence-unit name="movie-unit">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -45,13 +46,14 @@ So for example with the following persistence.xml:
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 You can override and add persistence unit properties in your test case.
 There are currently no facilities for removing them (if you have a need
 for that let us know -- it hasn't really come up so far).
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.openejb.client.LocalInitialContextFactory");
 
@@ -59,7 +61,7 @@ p.put("movie-unit.hibernate.hbm2ddl.auto", "update");
 p.put("movie-unit.hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 
 context = new InitialContext(p);
-....
+----
 
 The overriding order is as follows: 1 = highest, 4 = lowest.
 
@@ -89,7 +91,8 @@ below.
 Note that you *must* use the *unit name* as the prefix. This will not
 work:
 
-....
+[source,java]
+----
     Properties p = new Properties();
     p.put(Context.INITIAL_CONTEXT_FACTORY,"org.apache.openejb.client.LocalInitialContextFactory");
 
@@ -97,7 +100,7 @@ work:
     p.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
 
     context = new InitialContext(p);
-....
+----
 
 Currently, only properties that start with the unit name are search and
 applied.

@@ -4,7 +4,7 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-=== Server
+== Server
 
 [.table.table-bordered,options="header"]
 |===
@@ -71,7 +71,7 @@
 |openejb.environment.default	|bool|should default JMS resources be created or not, default to false to ensure no port is bound or multiple resources are created and completely uncontrolled (doesn't apply to datasources etc for compatibility). For tests only!
 |===
 
-=== Client
+== Client
 
 [.table.table-bordered,options="header"]
 |===

@@ -1,10 +1,10 @@
-# FAQ 
+= FAQ
 :index-group: Unrevised
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
-##
+== 
  General
 
  
@@ -67,26 +67,29 @@ classpath. For maven, something that winds up directly under
 "target/classes/" or "target/test-classes/" will work just fine. Then in
 your test case do this:
 
-....
+[source,java]
+----
    protected void setUp() throws Exception {
        Properties properties = new Properties();
        properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, 
-....
+----
 
 "org.apache.openejb.client.LocalInitialContextFactory");
 
-....
+[source,properties]
+----
        URL config =
-....
+----
 
 this.getClass().getClassLoader().getResource("openejb.xml");
 properties.setProperty("openejb.configuration",
 config.toExternalForm());
 
-....
+[source,java]
+----
        initialContext = new InitialContext(properties);
    }
-....
+----
 
 The file itself doesn't have to be called "openejb.xml", you could have
 a few different files like that for different testing scenarios each
