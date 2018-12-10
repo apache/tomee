@@ -1,5 +1,5 @@
 = Deploying An Application To TomEE Or OpenEJB
-:index-group: Unrevised
+:index-group: EJB
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
