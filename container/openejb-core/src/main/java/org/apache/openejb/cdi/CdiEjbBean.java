@@ -71,7 +71,7 @@ import javax.interceptor.Interceptor;
 import javax.transaction.UserTransaction;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
-    private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
+    private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<>();
 
     private final BeanContext beanContext;
     private final boolean isDependentAndStateful;
@@ -162,7 +162,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     @Override
     public List<Class<?>> getBusinessLocalInterfaces() {
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final List<Class<?>> classes = new ArrayList<>();
         for (final Type t : getTypes()) {
             if (Class.class.isInstance(t)) {
                 classes.add(Class.class.cast(t));
@@ -211,7 +211,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     }
 
     private List<Method> findRemove(final Class<?> beanClass, final Class<?> beanInterface) {
-        final List<Method> toReturn = new ArrayList<Method>();
+        final List<Method> toReturn = new ArrayList<>();
 
         // Get all the public methods of the bean class and super class
         final Method[] methods = beanClass.getMethods();
@@ -327,7 +327,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes) {
             super(beanAttributes, false);
             this.beanContext = bc;
-            this.ejbTypes = new HashSet<Type>();
+            this.ejbTypes = new HashSet<>();
             initTypes();
         }
 
@@ -400,7 +400,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
         @Override
         public InjectionTarget<T> createInjectionTarget(final Bean<T> bean) {
-            final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
+            final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
             final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
 
             for (final InjectionPoint ip : it.getInjectionPoints()) {
@@ -413,7 +413,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             }
 
             if (!EjbInjectionTargetImpl.class.isInstance(it)) {
-                return new EjbInjectionTargetImpl<T>(injectionTarget, it);
+                return new EjbInjectionTargetImpl<>(injectionTarget, it);
             }
             return it;
         }

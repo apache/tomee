@@ -1,0 +1,55 @@
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+. # TomEE
+versioning policies
+
+TomEE version policy is made of three dot-separated numbers: x.y.z
+
+* x is the major version. It corresponds to the maximum Java EE
+specification supported by TomEE and a codebase generation, starting
+with value 1 for Java EE 6 support. Next major will be 7 targetting
+JavaEE 7 etc...
+* y is the minor version. It corresponds to a features level, starting
+at 0. Initial TomEE release was 1.0.0, followed by 1.5.0 because of the
+accumulation of features changes delivered since 1.0.0. Note that
+features changes must comply with the Java EE specification level given
+by TomEE's major version.
+* z is the fix level. It corresponds to bug fixes changes without new
+features, starting at 0. Upgrades of embedded components (Tomcat,
+OpenEJB, MyFaces, etc.) are normally part of bug fixes releases.
+
+These policies allow an Java EE application to be certified with a given
+TomEEE version x.y.z and to be compatible with TomEE versions x.y1.*
+with y1>y and compatible with TomEE version x.y.z1 with z1>z.
+
+Important: being JavaEE certified means the server passed the Test
+Compatibility Kit (TCK). To simplify/summarize it is a big test suite to
+validate your are compliant with a JavaEE version. TomEE 1.x passed the
+JavaEE 6 TCK which was donated to Apache Software Foundation by Oracle.
+This donation hasn't been done to Apache for JavaEE 7 so TomEE is not
+able for now to be validated against it and therefore TomEE versions
+targetting JavaEE 7 are not yet certified.
+
+To make it more explicit here is a small table showing the targetted
+JavaEE version and the related certification state by version:
+
+TomEE Version
+
+JavaEE Version
+
+Certified
+
+1.x
+
+6
+
+Yes
+
+7.x
+
+7
+
+No

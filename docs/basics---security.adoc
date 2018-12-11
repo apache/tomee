@@ -1,0 +1,55 @@
+= Basics - Security
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+This section is under construction, please check back later.
+
+== Related Documents
+
+link:security.html[Security] - login module configuration
+link:security-annotations.html[Security Annotations] - EJB3 related
+annotation based security.
+
+== Server Side Security
+
+There's a few things that should be noted about security from the server
+side perspective.
+
+=== Security Propagation Note, this is partially documented in the EJB 3
+spec section 14.8.1.1.
+
+[arabic]
+. Once a remote bean has been instantiated, from within the container,
+it inherits the entire security context, and all roles will be inherited
+the same as the method where the bean is being looked up.
+. Looking up a bean via an `InitialContext`, or via injection, will
+inherit the security context (user, roles, etc), thereby propagating the
+security through to any container bean in the chain of method calls.
+. No properties are allowed for the `InitialContext`, and you _MUST_ be
+calling the no args constructor only. There are documents elsewhere that
+describe using the OpenEJB initial context factories and such, with
+usernames and passwords, etc; it should be noted that this method of
+using the factories is OpenEJB specific, to facilitate non-standard
+clients not running in an EJB container, etc.
+
+For example, here is an EJB that returns another bean, through a remote
+method call. In this case, the _OtherBean_ instance, will have the same
+security as _MyBean_, including the principal (username), roles, etc.
+
+[source,java]
+----
+import javax.ejb.EJB;
+import javax.naming.InitialContext;
+
+@EJB(name = "otherBean", beanInterface = IOtherBean.class)
+public class MyBean
+{
+    public IOtherBean getOtherBean()
+    {
+    InitialContext context = new InitialContext();
+    return (IOtherBean) context.lookup("java:comp/env/otherBean");
+    }
+}
+----

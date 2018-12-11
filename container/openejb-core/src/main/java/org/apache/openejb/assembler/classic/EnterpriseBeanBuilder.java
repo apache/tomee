@@ -40,6 +40,7 @@ import javax.persistence.SynchronizationType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 class EnterpriseBeanBuilder {
     private final EnterpriseBeanInfo bean;
     private final BeanType ejbType;
-    private final List<Exception> warnings = new ArrayList<Exception>();
+    private final List<Exception> warnings = new ArrayList<>();
     private final ModuleContext moduleContext;
     private final List<Injection> moduleInjections;
 
@@ -103,12 +104,12 @@ class EnterpriseBeanBuilder {
             local = loadClass(bean.local, "classNotFound.local");
         }
 
-        final List<Class> businessLocals = new ArrayList<Class>();
+        final List<Class> businessLocals = new ArrayList<>();
         for (final String businessLocal : bean.businessLocal) {
             businessLocals.add(loadClass(businessLocal, "classNotFound.businessLocal"));
         }
 
-        final List<Class> businessRemotes = new ArrayList<Class>();
+        final List<Class> businessRemotes = new ArrayList<>();
         for (final String businessRemote : bean.businessRemote) {
             businessRemotes.add(loadClass(businessRemote, "classNotFound.businessRemote"));
         }
@@ -131,7 +132,7 @@ class EnterpriseBeanBuilder {
         // determine the injections
         final InjectionBuilder injectionBuilder = new InjectionBuilder(moduleContext.getClassLoader());
         final List<Injection> injections = injectionBuilder.buildInjections(bean.jndiEnc);
-        final Set<Class<?>> relevantClasses = new HashSet<Class<?>>();
+        final Set<Class<?>> relevantClasses = new HashSet<>();
         Class c = ejbClass;
         do {
             relevantClasses.add(c);
@@ -186,7 +187,7 @@ class EnterpriseBeanBuilder {
 
             for (final InitMethodInfo init : statefulBeanInfo.initMethods) {
                 final Method beanMethod = MethodInfoUtil.toMethod(ejbClass, init.beanMethod);
-                final List<Method> methods = new ArrayList<Method>();
+                final List<Method> methods = new ArrayList<>();
 
                 if (home != null) {
                     methods.addAll(Arrays.asList(home.getMethods()));
@@ -387,7 +388,7 @@ class EnterpriseBeanBuilder {
                         candidateInfo.className = info.className;
                         candidateInfo.id = info.id;
                         candidateInfo.methodName = info.methodName;
-                        candidateInfo.methodParams = Arrays.asList(Timer.class.getName());
+                        candidateInfo.methodParams = Collections.singletonList(Timer.class.getName());
                         timeout = MethodInfoUtil.toMethod(ejbClass, candidateInfo);
                     }
                 }

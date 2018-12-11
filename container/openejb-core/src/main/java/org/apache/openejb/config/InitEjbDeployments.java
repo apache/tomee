@@ -48,7 +48,7 @@ public class InitEjbDeployments implements DynamicDeployer {
 
     public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
-        final Set<String> abstractSchemaNames = new HashSet<String>();
+        final Set<String> abstractSchemaNames = new HashSet<>();
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             for (final EnterpriseBean bean : ejbModule.getEjbJar().getEnterpriseBeans()) {
                 if (isCmpEntity(bean)) {
@@ -62,7 +62,7 @@ public class InitEjbDeployments implements DynamicDeployer {
         }
 
 
-        final Map<String, String> contextData = new HashMap<String, String>();
+        final Map<String, String> contextData = new HashMap<>();
         contextData.put("appId", appModule.getModuleId());
 
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
@@ -99,7 +99,7 @@ public class InitEjbDeployments implements DynamicDeployer {
     }
 
     public EjbModule deploy(final EjbModule ejbModule) throws OpenEJBException {
-        return deploy(ejbModule, new HashMap<String, String>(), new HashSet<String>());
+        return deploy(ejbModule, new HashMap<>(), new HashSet<>());
     }
 
     private EjbModule deploy(final EjbModule ejbModule, final Map<String, String> contextData, final Set<String> abstractSchemaNames) throws OpenEJBException {
@@ -208,7 +208,7 @@ public class InitEjbDeployments implements DynamicDeployer {
 
         // we don't have the ejb class object (only the string name) so we have
         // to extract the simple name from the FQN of the class
-        final int simpleNameIdx = bean.getEjbClass().lastIndexOf(".");
+        final int simpleNameIdx = bean.getEjbClass().lastIndexOf('.');
         contextData.put("ejbClass.simpleName", bean.getEjbClass().substring(simpleNameIdx + 1));
 
         contextData.put("ejbName", bean.getEjbName());

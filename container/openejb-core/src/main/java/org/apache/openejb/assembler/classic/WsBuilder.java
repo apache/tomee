@@ -56,9 +56,9 @@ public class WsBuilder {
     }
 
     public static List<HandlerChainData> toHandlerChainData(final List<HandlerChainInfo> chains, final ClassLoader classLoader) throws OpenEJBException {
-        final List<HandlerChainData> handlerChains = new ArrayList<HandlerChainData>();
+        final List<HandlerChainData> handlerChains = new ArrayList<>();
         for (final HandlerChainInfo handlerChain : chains) {
-            final List<HandlerData> handlers = new ArrayList<HandlerData>();
+            final List<HandlerData> handlers = new ArrayList<>();
             for (final HandlerInfo handler : handlerChain.handlers) {
                 try {
                     final Class<?> handlerClass = classLoader.loadClass(handler.handlerClass);

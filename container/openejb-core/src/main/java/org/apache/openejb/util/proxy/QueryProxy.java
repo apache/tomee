@@ -62,8 +62,8 @@ public class QueryProxy implements InvocationHandler {
     public static final String AND = "And";
 
     // cache for finders of the current instance
-    private final Map<String, Class<?>> returnsTypes = new ConcurrentHashMap<String, Class<?>>();
-    private final Map<String, List<String>> conditions = new ConcurrentHashMap<String, List<String>>();
+    private final Map<String, Class<?>> returnsTypes = new ConcurrentHashMap<>();
+    private final Map<String, List<String>> conditions = new ConcurrentHashMap<>();
 
     private EntityManager em;
 
@@ -367,7 +367,7 @@ public class QueryProxy implements InvocationHandler {
         if (conditions.containsKey(methodName)) {
             parsed = conditions.get(methodName);
         } else {
-            parsed = new ArrayList<String>();
+            parsed = new ArrayList<>();
 
             String toParse = methodName.substring(FIND_PREFIX.length());
             if (toParse.startsWith(BY)) {

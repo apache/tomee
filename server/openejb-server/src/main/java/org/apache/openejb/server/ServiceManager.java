@@ -80,7 +80,7 @@ public abstract class ServiceManager {
 
     protected List<ServerService> initServers(final Map<String, Properties> availableServices)
         throws IOException {
-        final List<ServerService> enabledServers = new ArrayList<ServerService>();
+        final List<ServerService> enabledServers = new ArrayList<>();
 
         for (final Map.Entry<String, Properties> serviceInfo : availableServices.entrySet()) {
             final String serviceName = serviceInfo.getKey();

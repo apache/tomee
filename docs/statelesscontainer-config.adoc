@@ -1,0 +1,445 @@
+= StatelessContainer Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A StatelessContainer can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<Container id="myStatelessContainer" type="STATELESS">
+    accessTimeout = 30 seconds
+    callbackThreads = 5
+    closeTimeout = 5 minutes
+    garbageCollection = false
+    idleTimeout = 0 minutes
+    maxAge = 0 hours
+    maxAgeOffset = -1
+    maxSize = 10
+    minSize = 0
+    replaceAged = true
+    replaceFlushed = false
+    strictPooling = true
+    sweepInterval = 5 minutes
+</Container>
+----
+
+Alternatively, a StatelessContainer can be declared via properties in
+the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+myStatelessContainer = new://Container?type=STATELESS
+myStatelessContainer.accessTimeout = 30 seconds
+myStatelessContainer.callbackThreads = 5
+myStatelessContainer.closeTimeout = 5 minutes
+myStatelessContainer.garbageCollection = false
+myStatelessContainer.idleTimeout = 0 minutes
+myStatelessContainer.maxAge = 0 hours
+myStatelessContainer.maxAgeOffset = -1
+myStatelessContainer.maxSize = 10
+myStatelessContainer.minSize = 0
+myStatelessContainer.replaceAged = true
+myStatelessContainer.replaceFlushed = false
+myStatelessContainer.strictPooling = true
+myStatelessContainer.sweepInterval = 5 minutes
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared StatelessContainer a
+warning will be logged. If a StatelessContainer is needed by the
+application and one is not declared, TomEE will create one dynamically
+using default settings. Multiple StatelessContainer declarations are
+allowed. # Supported Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+accessTimeout
+
+time
+
+30 seconds
+
+Specifies the time an invokation should wait for an instance of the pool
+to become available.
+
+callbackThreads
+
+int
+
+5
+
+The number of threads for constructing and destroying beans.
+
+closeTimeout
+
+time
+
+5 minutes
+
+Maximum time to wait for instances to be destroyed when shutting down
+the pool
+
+garbageCollection
+
+boolean
+
+false
+
+Allows Garbage Collection to be used as a mechanism for shrinking the
+pool.
+
+idleTimeout
+
+time
+
+0 minutes
+
+Specifies the maximum time that an instance should be allowed to sit
+idly in the pool without use before it should be retired and removed.
+
+maxAge
+
+time
+
+0 hours
+
+Specifies the maximum time that an instance should live before it should
+be retired and removed from use.
+
+maxAgeOffset
+
+int
+
+-1
+
+Applies to MaxAge usage and would rarely be changed, but is a nice
+feature to understand.
+
+maxSize
+
+int
+
+10
+
+Specifies the size of the instance pool for this stateless SessionBean
+container.
+
+minSize
+
+int
+
+0
+
+Specifies the minimum number of bean instances that should be in the
+pool for each bean.
+
+replaceAged
+
+boolean
+
+true
+
+When `ReplaceAged` is enabled, any instances in the pool that expire due
+to reaching their `MaxAge` will be replaced immediately so that the pool
+will remain at its current size.
+
+replaceFlushed
+
+boolean
+
+false
+
+When `ReplaceFlushed` is enabled, any instances in the pool that are
+flushed will be replaced immediately so that the pool will remain at its
+current size.
+
+strictPooling
+
+boolean
+
+true
+
+StrictPooling tells the container what to do when the pool reaches it's
+maximum size and there are incoming requests that need instances.
+
+sweepInterval
+
+time
+
+5 minutes
+
+The frequency in which the container will sweep the pool and evict
+expired instances.
+
+== accessTimeout
+
+Specifies the time an invokation should wait for an instance of the pool
+to become available.
+
+After the timeout is reached, if an instance in the pool cannot be
+obtained, the method invocation will fail.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as "1 hour and 27 minutes
+and 10 seconds"
+
+Any usage of the `javax.ejb.AccessTimeout` annotation will override this
+setting for the bean or method where the annotation is used.
+
+== callbackThreads
+
+The number of threads for constructing and destroying beans.
+
+When sweeping the pool for expired instances a thread pool is used to
+process calling `@PreDestroy` on expired instances as well as creating
+new instances as might be required to fill the pool to the minimum after
+a Flush or `MaxAge` expiration. The `CallbackThreads` setting dictates
+the size of the thread pool and is shared by all beans deployed in the
+container.
+
+== closeTimeout
+
+Maximum time to wait for instances to be destroyed when shutting down
+the pool
+
+PostConstruct methods are invoked on all instances in the pool when the
+bean is undeployed and its pool is closed. The `CloseTimeout` specifies
+the maximum time to wait for the pool to close and `PostConstruct`
+methods to be invoked.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as
+`1 hour and 27 minutes and 10 seconds`
+
+== garbageCollection
+
+Allows Garbage Collection to be used as a mechanism for shrinking the
+pool.
+
+When set to true all instances in the pool, excluding the minimum, are
+eligible for garbage collection by the virtual machine as per the rules
+of `java.lang.ref.SoftReference` and can be claimed by the JVM to free
+memory. Instances garbage collected will have their `@PreDestroy`
+methods called during finalization.
+
+In the OpenJDK VM the `-XX:SoftRefLRUPolicyMSPerMB` flag can adjust how
+aggressively SoftReferences are collected. The default OpenJDK setting
+is 1000, resulting in inactive pooled instances living one second of
+lifetime per free megabyte in the heap, which is very aggressive. The
+setting should be increased to get the most out of the
+`GarbageCollection` feature of the pool. Much higher settings are safe.
+Even a setting as high as 3600000 (1 hour per free MB in the heap) does
+not affect the ability for the VM to garbage collect SoftReferences in
+the event that memory is needed to avoid an `OutOfMemoryException`.
+
+== idleTimeout
+
+Specifies the maximum time that an instance should be allowed to sit
+idly in the pool without use before it should be retired and removed.
+
+Only instances in surplus of the pool's `MinSize` are eligible to expire
+via `IdleTimeout` Instances that expire due to `IdleTimeout` will have
+their `@PreDestroy` methods invoked before being completely destroyed.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as "1 hour and 27 minutes
+and 10 seconds"
+
+== maxAge
+
+Specifies the maximum time that an instance should live before it should
+be retired and removed from use.
+
+This will happen gracefully. Useful for situations where bean instances
+are designed to hold potentially expensive resources such as memory or
+file handles and need to be periodically cleared out.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as
+`1 hour and 27 minutes and 10 seconds`
+
+== maxAgeOffset
+
+Applies to MaxAge usage and would rarely be changed, but is a nice
+feature to understand.
+
+When the container first starts and the pool is filled to the minimum
+size, all those "minimum" instances will have the same creation time and
+therefore all expire at the same time dictated by the `MaxAge` setting.
+To protect against this sudden drop scenario and provide a more gradual
+expiration from the start the container will spread out the age of the
+instances that fill the pool to the minimum using an offset.
+
+The `MaxAgeOffset` is not the final value of the offset, but rather it
+is used in creating the offset and allows the spreading to push the
+initial ages into the future or into the past. The pool is filled at
+startup as follows:
+
+[source,java]
+----
+for (int i = 0; i < poolMin; i++) {
+    long ageOffset = (maxAge / poolMin * i * maxAgeOffset) % maxAge;
+    pool.add(new Bean(), ageOffset));
+}
+----
+
+The default `MaxAgeOffset` is -1 which causes the initial instances in
+the pool to live a bit longer before expiring. As a concrete example,
+let's say the MinSize is 4 and the MaxAge is 100 years. The generated
+offsets for the four instances created at startup would be 0, -25, -50,
+-75. So the first instance would be "born" at age 0, die at 100, living
+100 years. The second instance would be born at -25, die at 100, living
+a total of 125 years. The third would live 150 years. The fourth 175
+years.
+
+A `MaxAgeOffset` of 1 would cause instances to be "born" older and
+therefore die sooner. Using the same example `MinSize` of 4 and `MaxAge`
+of `100 years`, the life spans of these initial four instances would be
+100, 75, 50, and 25 years respectively.
+
+A `MaxAgeOffset` of 0 will cause no "spreading" of the age of the first
+instances used to fill the pool to the minimum and these instances will
+of course reach their MaxAge at the same time. It is possible to set to
+decimal values such as -0.5, 0.5, -1.2, or 1.2.
+
+== maxSize
+
+Specifies the size of the instance pool for this stateless SessionBean
+container.
+
+Each `@Stateless` bean will get its own instance pool. If StrictPooling
+is not used, instances will still be created beyond this number if there
+is demand, but they will not be returned to the pool and instead will be
+immediately expire.
+
+== minSize
+
+Specifies the minimum number of bean instances that should be in the
+pool for each bean.
+
+Pools are prefilled to the minimum on startup. Note this will create
+start order dependencies between other beans that also eagerly start,
+such as other `@Stateless` beans with a minimum or `@Singleton` beans
+using `@Startup`. The `@DependsOn` annotation can be used to
+appropriately influence start order.
+
+The minimum pool size is rigidly maintained. Instances in the minimum
+side of the pool are not eligible for `IdleTimeout` or
+`GarbageCollection`, but are subject to `MaxAge` and flushing.
+
+If the pool is flushed it is immediately refilled to the minimum size
+with `MaxAgeOffset` applied. If an instance from the minimum side of the
+pool reaches its `MaxAge`, it is also immediately replaced. Replacement
+is done in a background queue using the number of threads specified by
+`CallbackThreads`.
+
+== replaceAged
+
+When `ReplaceAged` is enabled, any instances in the pool that expire due
+to reaching their `MaxAge` will be replaced immediately so that the pool
+will remain at its current size.
+
+Replacement is done in a background queue so that incoming threads will
+not have to wait for instance creation.
+
+The aim of his option is to prevent user requests from paying the
+instance creation cost as `MaxAge` is enforced, potentially while under
+heavy load at peak hours.
+
+Instances from the minimum side of the pool are always replaced when
+they reach their `MaxAge`, this setting dictates the treatment of
+non-minimum instances.
+
+== replaceFlushed
+
+When `ReplaceFlushed` is enabled, any instances in the pool that are
+flushed will be replaced immediately so that the pool will remain at its
+current size.
+
+Replacement is done in a background queue so that incoming threads will
+not have to wait for instance creation.
+
+The aim of his option is to prevent user requests from paying the
+instance creation cost if a flush performed while under heavy load at
+peak hours.
+
+Instances from the minimum side of the pool are always replaced when
+they are flushed, this setting dictates the treatment of non-minimum
+instances.
+
+A bean may flush its pool by casting the `SessionContext` to `Flushable`
+and calling `flush()`. See `SweepInterval` for details on how flush is
+performed.
+
+[source,java]
+----
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import java.io.Flushable;
+import java.io.IOException;
+
+public class MyBean {
+
+    private SessionContext sessionContext;
+
+    public void flush() throws IOException {
+
+        ((Flushable) sessionContext).flush();
+    }
+}
+----
+
+== strictPooling
+
+StrictPooling tells the container what to do when the pool reaches it's
+maximum size and there are incoming requests that need instances.
+
+With strict pooling, requests will have to wait for instances to become
+available. The pool size will never grow beyond the the set `MaxSize`
+value. The maximum amount of time a request should wait is specified via
+the `AccessTimeout` setting.
+
+Without strict pooling, the container will create temporary instances to
+meet demand. The instances will last for just one method invocation and
+then are removed.
+
+Setting `StrictPooling` to `false` and `MaxSize` to `0` will result in
+no pooling. Instead instances will be created on demand and live for
+exactly one method call before being removed.
+
+== sweepInterval
+
+The frequency in which the container will sweep the pool and evict
+expired instances.
+
+Eviction is how the `IdleTimeout`, `MaxAge`, and pool "flush"
+functionality is enforced. Higher intervals are better.
+
+Instances in use are excluded from sweeping. Should an instance expire
+while in use it will be evicted immediately upon return to the pool.
+Effectively `MaxAge` and flushes will be enforced as a part of normal
+activity or sweeping, while IdleTimeout is only enforcable via sweeping.
+This makes aggressive sweeping less important for a pool under moderate
+load.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as
+`1 hour and 27 minutes and 10 seconds`

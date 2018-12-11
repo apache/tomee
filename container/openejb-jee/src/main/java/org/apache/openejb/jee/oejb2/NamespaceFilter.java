@@ -190,7 +190,7 @@ public class NamespaceFilter extends XMLFilterImpl {
             } else {
                 uri = possibleNamespaces.get(0);
             }
-        } else if (correctable && !previousNs.equals(uri) && !previousNs.equals("")) {
+        } else if (correctable && !previousNs.equals(uri) && !previousNs.isEmpty()) {
             uri = previousNs;
         }
 

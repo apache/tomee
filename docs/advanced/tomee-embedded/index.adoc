@@ -156,7 +156,7 @@ Here are the recognized entries (they match the configuration, see org.apache.to
 
 Here is a sample to add BASIC security on `/api/*`:
 
-[source]
+[source,properties]
 ----
 # security configuration
 securityConstraint =
@@ -176,7 +176,7 @@ properties.java.security.auth.login.config = configuration/login.jaas
 
 And here a configuration to exclude jackson packages from scanning and use log4j2 as main logger (needs it as dependency):
 
-[source]
+[source,properties]
 ----
 properties.openejb.log.factory = log4j2
 properties.openejb.container.additional.include = com.fasterxml.jackson,org.apache.logging.log4j

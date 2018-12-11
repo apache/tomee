@@ -43,6 +43,16 @@ public class ServiceEndpointMethodInterceptor implements MethodInterceptor {
         this.credentialsName = credentialsName;
     }
 
+    /**
+     *
+     * @param o Object
+     * @param method Method
+     * @param objects Object[]
+     * @param methodProxy MethodProxy
+     * @return Object
+     * @throws Throwable
+     */
+    @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         SaajUniverse universe = new SaajUniverse();
         universe.set(SaajUniverse.AXIS1);

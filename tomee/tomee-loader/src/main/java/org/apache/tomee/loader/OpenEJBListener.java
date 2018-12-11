@@ -41,16 +41,19 @@ import java.util.logging.Logger;
 
 /**
  * The sole purpose of this class is to call the {@link TomcatEmbedder#embed} method
- * <p/>
+ * <p>
  * This is an alternate way to load the Tomcat integration
  * This approach is mutually exclussive to the {@link LoaderServlet}
- * <p/>
+ * </p>
+ * <p>
  * This class does nothing more than scrape around in
  * Tomcat and look for the tomee.war so it can call the embedder
- * <p/>
+ * </p>
+ * <p>
  * This class can be installed in the Tomcat server.xml as an alternate
  * way to bootstrap OpenEJB into Tomcat.  The benefit of this is that
  * OpenEJB is guaranteed to start before all webapps.
+ * </p>
  */
 public class OpenEJBListener implements LifecycleListener {
     private static final Logger LOGGER = Logger.getLogger(OpenEJBListener.class.getName());

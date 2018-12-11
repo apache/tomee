@@ -1,0 +1,787 @@
+= TomEE Embedded Maven Plugin
+:index-group: TomEE Maven Plugin
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+link:tomee-maven-plugin.html[TomEE Maven Plugin] provides a nice way to
+run "as in production" a server fully configured keeping the
+configuration in the project (easiness of sharing between team members).
+However for modern web development the fact to run the "exploded war"
+prevents to develop web resources in place. TomEE embedded maven plugin
+solves it directly allowing to directly deploy the war project in place
+using "classpath as war" option.
+
+It also allows to use a flat classpath deployment which is often use
+with microservices.
+
+tomee-embedded:run
+
+Full name:
+
+org.apache.tomee.maven:tomee-embedded-maven-plugin:7.0.0-M1:run
+
+Description:
+
+Run an Embedded TomEE.
+
+Attributes:
+
+Requires a Maven project to be executed.
+
+Requires dependency resolution of artifacts in scope: runtime+system.
+
+Requires dependency collection of artifacts in scope: runtime.
+
+Optional Parameters
+
+Name
+
+Type
+
+Since
+
+Description
+
+ajpPort
+
+int
+
+-
+
+(no description)Default value is: 8009.User property is:
+tomee-embedded-plugin.ajp.
+
+applicationCopyFolder
+
+File
+
+-
+
+(no description)Default value is:
+$\{project.build.directory}/tomee-embedded/applications.User property
+is: tomee-plugin.application-copy.
+
+applicationScopes
+
+List
+
+-
+
+(no description)
+
+applications
+
+List
+
+-
+
+(no description)
+
+classpathAsWar
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-embedded-plugin.classpathAsWar.
+
+clientAuth
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.clientAuth.
+
+containerProperties
+
+Map
+
+-
+
+(no description)
+
+context
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.context.
+
+dir
+
+String
+
+-
+
+(no description)Default value is:
+$\{project.build.directory}/apache-tomee-embedded.User property is:
+tomee-embedded-plugin.lib.
+
+docBase
+
+File
+
+-
+
+(no description)Default value is:
+$\{project.basedir}/src/main/webapp.User property is:
+tomee-embedded-plugin.docBase.
+
+forceJspDevelopment
+
+boolean
+
+-
+
+force webapp to be reloadableDefault value is: true.User property is:
+tomee-plugin.jsp-development.
+
+host
+
+String
+
+-
+
+(no description)Default value is: localhost.User property is:
+tomee-embedded-plugin.host.
+
+httpPort
+
+int
+
+-
+
+(no description)Default value is: 8080.User property is:
+tomee-embedded-plugin.http.
+
+httpsPort
+
+int
+
+-
+
+(no description)Default value is: 8443.User property is:
+tomee-embedded-plugin.httpsPort.
+
+inlinedServerXml
+
+PlexusConfiguration
+
+-
+
+(no description)
+
+inlinedTomEEXml
+
+PlexusConfiguration
+
+-
+
+(no description)
+
+keepServerXmlAsThis
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-embedded-plugin.keepServerXmlAsThis.
+
+keyAlias
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.keyAlias.
+
+keystoreFile
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.keystoreFile.
+
+keystorePass
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.keystorePass.
+
+keystoreType
+
+String
+
+-
+
+(no description)Default value is: JKS.User property is:
+tomee-embedded-plugin.keystoreType.
+
+mavenLog
+
+boolean
+
+-
+
+(no description)Default value is: true.User property is:
+tomee-embedded-plugin.mavenLog.
+
+modules
+
+List
+
+-
+
+(no description)Default value is: $\{project.build.outputDirectory}.User
+property is: tomee-embedded-plugin.modules.
+
+packaging
+
+String
+
+-
+
+(no description)Default value is: $\{project.packaging}.
+
+quickSession
+
+boolean
+
+-
+
+(no description)Default value is: true.User property is:
+tomee-embedded-plugin.quickSession.
+
+roles
+
+Map
+
+-
+
+(no description)
+
+serverXml
+
+File
+
+-
+
+(no description)
+
+skipCurrentProject
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-plugin.skip-current-project.
+
+skipHttp
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-embedded-plugin.skipHttp.
+
+ssl
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-embedded-plugin.ssl.
+
+sslProtocol
+
+String
+
+-
+
+(no description)User property is: tomee-embedded-plugin.sslProtocol.
+
+stopPort
+
+int
+
+-
+
+(no description)Default value is: 8005.User property is:
+tomee-embedded-plugin.stop.
+
+useProjectClasspath
+
+boolean
+
+-
+
+(no description)Default value is: true.User property is:
+tomee-embedded-plugin.useProjectClasspath.
+
+users
+
+Map
+
+-
+
+(no description)
+
+warFile
+
+File
+
+-
+
+(no description)Default value is:
+latexmath:[${project.build.directory}/$]\{project.build.finalName}.
+
+webResourceCached
+
+boolean
+
+-
+
+(no description)Default value is: true.User property is:
+tomee-embedded-plugin.webResourceCached.
+
+withEjbRemote
+
+boolean
+
+-
+
+(no description)Default value is: false.User property is:
+tomee-embedded-plugin.withEjbRemote.
+
+workDir
+
+File
+
+-
+
+(no description)Default value is:
+$\{project.build.directory}/tomee-embedded-work.User property is:
+tomee-plugin.work.
+
+Parameter Details
+
+ajpPort:
+
+(no description)
+
+Type: int
+
+Required: No
+
+User Property: tomee-embedded-plugin.ajp
+
+Default: 8009
+
+applicationCopyFolder:
+
+(no description)
+
+Type: java.io.File
+
+Required: No
+
+User Property: tomee-plugin.application-copy
+
+Default: $\{project.build.directory}/tomee-embedded/applications
+
+applicationScopes:
+
+(no description)
+
+Type: java.util.List
+
+Required: No
+
+applications:
+
+(no description)
+
+Type: java.util.List
+
+Required: No
+
+classpathAsWar:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.classpathAsWar
+
+Default: false
+
+clientAuth:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.clientAuth
+
+containerProperties:
+
+(no description)
+
+Type: java.util.Map
+
+Required: No
+
+context:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.context
+
+dir:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.lib
+
+Default: $\{project.build.directory}/apache-tomee-embedded
+
+docBase:
+
+(no description)
+
+Type: java.io.File
+
+Required: No
+
+User Property: tomee-embedded-plugin.docBase
+
+Default: $\{project.basedir}/src/main/webapp
+
+forceJspDevelopment:
+
+force webapp to be reloadable
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-plugin.jsp-development
+
+Default: true
+
+host:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.host
+
+Default: localhost
+
+httpPort:
+
+(no description)
+
+Type: int
+
+Required: No
+
+User Property: tomee-embedded-plugin.http
+
+Default: 8080
+
+httpsPort:
+
+(no description)
+
+Type: int
+
+Required: No
+
+User Property: tomee-embedded-plugin.httpsPort
+
+Default: 8443
+
+inlinedServerXml:
+
+(no description)
+
+Type: org.codehaus.plexus.configuration.PlexusConfiguration
+
+Required: No
+
+inlinedTomEEXml:
+
+(no description)
+
+Type: org.codehaus.plexus.configuration.PlexusConfiguration
+
+Required: No
+
+keepServerXmlAsThis:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.keepServerXmlAsThis
+
+Default: false
+
+keyAlias:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.keyAlias
+
+keystoreFile:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.keystoreFile
+
+keystorePass:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.keystorePass
+
+keystoreType:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.keystoreType
+
+Default: JKS
+
+mavenLog:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.mavenLog
+
+Default: true
+
+modules:
+
+(no description)
+
+Type: java.util.List
+
+Required: No
+
+User Property: tomee-embedded-plugin.modules
+
+Default: $\{project.build.outputDirectory}
+
+packaging:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+Default: $\{project.packaging}
+
+quickSession:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.quickSession
+
+Default: true
+
+roles:
+
+(no description)
+
+Type: java.util.Map
+
+Required: No
+
+serverXml:
+
+(no description)
+
+Type: java.io.File
+
+Required: No
+
+skipCurrentProject:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-plugin.skip-current-project
+
+Default: false
+
+skipHttp:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.skipHttp
+
+Default: false
+
+ssl:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.ssl
+
+Default: false
+
+sslProtocol:
+
+(no description)
+
+Type: java.lang.String
+
+Required: No
+
+User Property: tomee-embedded-plugin.sslProtocol
+
+stopPort:
+
+(no description)
+
+Type: int
+
+Required: No
+
+User Property: tomee-embedded-plugin.stop
+
+Default: 8005
+
+useProjectClasspath:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.useProjectClasspath
+
+Default: true
+
+users:
+
+(no description)
+
+Type: java.util.Map
+
+Required: No
+
+warFile:
+
+(no description)
+
+Type: java.io.File
+
+Required: No
+
+Default:
+latexmath:[${project.build.directory}/$]\{project.build.finalName}
+
+webResourceCached:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.webResourceCached
+
+Default: true
+
+withEjbRemote:
+
+(no description)
+
+Type: boolean
+
+Required: No
+
+User Property: tomee-embedded-plugin.withEjbRemote
+
+Default: false
+
+workDir:
+
+(no description)
+
+Type: java.io.File
+
+Required: No
+
+User Property: tomee-plugin.work
+
+Default: $\{project.build.directory}/tomee-embedded-work

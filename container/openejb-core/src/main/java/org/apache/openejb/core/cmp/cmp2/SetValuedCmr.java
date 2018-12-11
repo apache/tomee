@@ -76,7 +76,7 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
 
         if (cmrSet == null) {
-            cmrSet = new CmrSet<Bean, Proxy>(source, sourceProperty, relatedInfo, relatedProperty, others);
+            cmrSet = new CmrSet<>(source, sourceProperty, relatedInfo, relatedProperty, others);
             try {
                 transactionRegistry.putResource(this, cmrSet);
             } catch (final IllegalStateException ignored) {

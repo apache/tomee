@@ -278,7 +278,7 @@ public class FinderFactory {
             final Archive archive = ((AnnotationFinder) limitedFinder).getArchive();
             if (archive instanceof WebappAggregatedArchive) {
                 final Map<URL, List<String>> index = ((WebappAggregatedArchive) archive).getClassesMap();
-                final Map<String, String> urlByClasses = new HashMap<String, String>();
+                final Map<String, String> urlByClasses = new HashMap<>();
                 for (final Map.Entry<URL, List<String>> entry : index.entrySet()) {
                     final String url = entry.getKey().toExternalForm();
                     for (final String current : entry.getValue()) {
@@ -401,12 +401,12 @@ public class FinderFactory {
 
         @Override
         public <T> List<Class<? extends T>> findSubclasses(final Class<T> clazz) {
-            return filter(delegate.findSubclasses(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
+            return filter(delegate.findSubclasses(clazz), new ClassPredicate<>(getAnnotatedClassNames()));
         }
 
         @Override
         public <T> List<Class<? extends T>> findImplementations(final Class<T> clazz) {
-            return filter(delegate.findImplementations(clazz), new ClassPredicate<T>(getAnnotatedClassNames()));
+            return filter(delegate.findImplementations(clazz), new ClassPredicate<>(getAnnotatedClassNames()));
         }
 
         @Override

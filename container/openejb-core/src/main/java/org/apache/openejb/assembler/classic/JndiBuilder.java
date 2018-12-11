@@ -203,7 +203,7 @@ public class JndiBuilder {
             format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
 
             { // illegal format check
-                final int index = format.indexOf(":");
+                final int index = format.indexOf(':');
                 if (index > -1) {
                     logger.error("Illegal " + JNDINAME_FORMAT + " contains a colon ':'.  Everything before the colon will be removed, '" + format + "' ");
                     format = format.substring(index + 1);
@@ -212,7 +212,7 @@ public class JndiBuilder {
 
             this.template = new StringTemplate(format);
 
-            beanInfos = new HashMap<String, EnterpriseBeanInfo>();
+            beanInfos = new HashMap<>();
             for (final EnterpriseBeanInfo beanInfo : ejbJarInfo.enterpriseBeans) {
                 beanInfos.put(beanInfo.ejbDeploymentId, beanInfo);
             }
@@ -225,7 +225,7 @@ public class JndiBuilder {
             // TODO we should just pass in the ModuleContext
             final ModuleContext moduleContext = it.next().getModuleContext();
 
-            appContext = new HashMap<String, String>();
+            appContext = new HashMap<>();
             putAll(appContext, SystemInstance.get().getProperties());
             putAll(appContext, moduleContext.getAppContext().getProperties());
             putAll(appContext, moduleContext.getProperties());
@@ -253,7 +253,7 @@ public class JndiBuilder {
         private Map<String, StringTemplate> addTemplate(final Map<String, StringTemplate> map, final String key, final StringTemplate template) {
             Map<String, StringTemplate> m = map;
             if (m == null) {
-                m = new TreeMap<String, StringTemplate>();
+                m = new TreeMap<>();
             }
             m.put(key, template);
             return m;
@@ -264,7 +264,7 @@ public class JndiBuilder {
 
             final EnterpriseBeanInfo beanInfo = beanInfos.get(bean.getDeploymentID());
 
-            templates = new HashMap<String, Map<String, StringTemplate>>();
+            templates = new HashMap<>();
             templates.put("", addTemplate(null, DEFAULT_NAME_KEY, template));
 
             for (final JndiNameInfo nameInfo : beanInfo.jndiNamess) {
@@ -277,7 +277,7 @@ public class JndiBuilder {
             beanInfo.jndiNames.clear();
             beanInfo.jndiNamess.clear();
 
-            this.beanContext = new HashMap<String, String>(appContext);
+            this.beanContext = new HashMap<>(appContext);
             putAll(this.beanContext, bean.getProperties());
             this.beanContext.put("ejbType", bean.getComponentType().name());
             this.beanContext.put("ejbClass", bean.getBeanClass().getName());
@@ -311,7 +311,7 @@ public class JndiBuilder {
                 template = templates.get("");
             }
 
-            final Map<String, String> contextData = new HashMap<String, String>(beanContext);
+            final Map<String, String> contextData = new HashMap<>(beanContext);
             contextData.put("interfaceType", type.getAnnotationName());
             contextData.put("interfaceType.annotationName", type.getAnnotationName());
             contextData.put("interfaceType.annotationNameLC", type.getAnnotationName().toLowerCase());
@@ -340,7 +340,7 @@ public class JndiBuilder {
 
         @Override
         public Map<String, String> getNames(final Class interfce, final Interface type) {
-            final Map<String, String> names = new HashMap<String, String>();
+            final Map<String, String> names = new HashMap<>();
             for (final String key : KEYS.split(",")) {
                 names.put(key, getName(interfce, key, type));
             }
@@ -379,7 +379,7 @@ public class JndiBuilder {
 
         @Override
         public Map<String, String> getNames(final Class interfce, final Interface type) {
-            final Map<String, String> names = new HashMap<String, String>();
+            final Map<String, String> names = new HashMap<>();
             names.put("", getName(interfce, DEFAULT_NAME_KEY, type));
             return names;
         }
@@ -759,7 +759,7 @@ public class JndiBuilder {
     }
 
     protected static final class Bindings {
-        private final List<String> bindings = new ArrayList<String>();
+        private final List<String> bindings = new ArrayList<>();
 
         public List<String> getBindings() {
             return bindings;

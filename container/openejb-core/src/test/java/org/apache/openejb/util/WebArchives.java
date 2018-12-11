@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotNull;
 public class WebArchives {
 
     public static File warArchive(final Class... classes) throws IOException {
-        return warArchive(new HashMap<String, String>(), "temp", classes);
+        return warArchive(new HashMap<>(), "temp", classes);
     }
 
 

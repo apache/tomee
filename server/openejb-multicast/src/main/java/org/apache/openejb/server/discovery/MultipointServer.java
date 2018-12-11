@@ -71,7 +71,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Managed
 public class MultipointServer {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointServer.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipoint"), MultipointServer.class);
 
     private static final URI END_LIST = URI.create("end:list");
 
@@ -79,7 +79,7 @@ public class MultipointServer {
 
     private final URI me;
 
-    private final Set<URI> roots = new LinkedHashSet<URI>();
+    private final Set<URI> roots = new LinkedHashSet<>();
 
     private final Event runs = new Event();
 
@@ -95,8 +95,8 @@ public class MultipointServer {
 
     private final Tracker tracker;
 
-    private final LinkedList<Host> connect = new LinkedList<Host>();
-    private final Map<URI, Session> connections = new HashMap<URI, Session>();
+    private final LinkedList<Host> connect = new LinkedList<>();
+    private final Map<URI, Session> connections = new HashMap<>();
 
     private long joined = 0;
 
@@ -145,7 +145,7 @@ public class MultipointServer {
             this.roots.size(),
             reconnectDelay.toString());
 
-        log.debug(format);
+        LOGGER.debug(format);
 
         selector = Selector.open();
 
@@ -205,12 +205,12 @@ public class MultipointServer {
     }
 
     public List<URI> getSessions() {
-        return new ArrayList<URI>(connections.keySet());
+        return new ArrayList<>(connections.keySet());
     }
 
     public List<URI> getConnectionsQueued() {
         synchronized (connect) {
-            final ArrayList<URI> uris = new ArrayList<URI>(connect.size());
+            final ArrayList<URI> uris = new ArrayList<>(connect.size());
             for (final Host host : connect) {
                 uris.add(host.getUri());
             }
@@ -243,7 +243,7 @@ public class MultipointServer {
             final Host host = new Host(uri);
             synchronized (connect) {
                 if (!connections.containsKey(uri) && !connect.contains(host)) {
-                    log.info("Reconnect{uri=" + uri + "}");
+                    LOGGER.info("Reconnect{uri=" + uri + "}");
                     connect.addLast(host);
                     host.resolveDns();
                     this.joined = System.nanoTime();
@@ -256,7 +256,7 @@ public class MultipointServer {
         if (running.compareAndSet(false, true)) {
 
             final String multipointServer = Join.join(".", "MultipointServer", name, port);
-            log.info("MultipointServer Starting : Thread '" + multipointServer + "'");
+            LOGGER.info("MultipointServer Starting : Thread '" + multipointServer + "'");
 
             final Thread thread = new Thread(new Runnable() {
                 @Override
@@ -322,7 +322,7 @@ public class MultipointServer {
         private final SocketChannel channel;
         private final ByteBuffer read = ByteBuffer.allocate(1024);
         private final SelectionKey key;
-        private final List<URI> listed = new ArrayList<URI>();
+        private final List<URI> listed = new ArrayList<>();
         private final long created = System.currentTimeMillis();
 
         private ByteBuffer write;
@@ -339,7 +339,7 @@ public class MultipointServer {
             this.uri = uri != null ? uri : createURI(address.getHostName(), address.getPort());
             this.key = channel.register(selector, 0, this);
             sessionsCreated.record();
-            log.info("Constructing " + this);
+            LOGGER.info("Constructing " + this);
         }
 
         public Session ops(final int ops) {
@@ -354,8 +354,8 @@ public class MultipointServer {
         public void state(final int ops, final State state) {
             //            trace("transition "+state +"  "+ops);
             if (this.state != state) {
-                if (log.isDebugEnabled()) {
-                    log.debug(message(state.name()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(message(state.name()));
                 }
             }
             this.state = state;
@@ -370,8 +370,8 @@ public class MultipointServer {
         private void trace(final String str) {
             //            println(message(str));
 
-            if (log.isDebugEnabled()) {
-                log.debug(message(str));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(message(str));
                 //                new Exception().fillInStackTrace().printStackTrace();
             }
         }
@@ -379,8 +379,8 @@ public class MultipointServer {
         private void info(final String str) {
             //            println(message(str));
 
-            if (log.isInfoEnabled()) {
-                log.info(message(str));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info(message(str));
             }
         }
 
@@ -537,10 +537,10 @@ public class MultipointServer {
                 failed = 0;
             } catch (IOException ex) {
                 if (failed++ > 100) {
-                    log.fatal("Too many Multipoint Failures.  Terminating service.", ex);
+                    LOGGER.fatal("Too many Multipoint Failures.  Terminating service.", ex);
                     return;
                 }
-                log.error("Multipoint Failure.", ex);
+                LOGGER.error("Multipoint Failure.", ex);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -607,7 +607,7 @@ public class MultipointServer {
             // This keeps the heartbeat and rejoin regular
             selectorTimeout = adjustedSelectorTimeout(start);
         }
-        log.info("MultipointServer has terminated.");
+        LOGGER.info("MultipointServer has terminated.");
     }
 
     private long adjustedSelectorTimeout(final long start) {
@@ -621,20 +621,20 @@ public class MultipointServer {
     private void initiateConnections() {
 
         synchronized (connect) {
-            final LinkedList<Host> unresolved = new LinkedList<Host>();
+            final LinkedList<Host> unresolved = new LinkedList<>();
 
             while (connect.size() > 0) {
 
                 final Host host = connect.removeFirst();
 
-                log.debug("Initiate(uri=" + host.getUri() + ")");
+                LOGGER.debug("Initiate(uri=" + host.getUri() + ")");
 
                 if (connections.containsKey(host.getUri()))
                     continue;
 
                 if (!host.isDone()) {
                     unresolved.add(host);
-                    log.debug("Unresolved(uri=" + host.getUri() + ")");
+                    LOGGER.debug("Unresolved(uri=" + host.getUri() + ")");
                     continue;
                 }
 
@@ -644,11 +644,11 @@ public class MultipointServer {
                 } catch (ExecutionException e) {
                     final Throwable t = (e.getCause() != null) ? e.getCause() : e;
                     final String message = String.format("Failed Connect{uri=%s} %s{message=\"%s\"}", host.getUri(), t.getClass().getSimpleName(), t.getMessage());
-                    log.warning(message);
+                    LOGGER.warning(message);
                     continue;
                 } catch (TimeoutException e) {
                     unresolved.add(host);
-                    log.debug("Unresolved(uri=" + host.getUri() + ")");
+                    LOGGER.debug("Unresolved(uri=" + host.getUri() + ")");
                     continue;
                 }
 
@@ -918,7 +918,7 @@ public class MultipointServer {
 
     private ArrayList<URI> connections() {
         synchronized (connect) {
-            final ArrayList<URI> list = new ArrayList<URI>(connections.keySet());
+            final ArrayList<URI> list = new ArrayList<>(connections.keySet());
             for (final Host host : connect) {
                 list.add(host.getUri());
             }
@@ -935,10 +935,10 @@ public class MultipointServer {
             // map as this particular session is not in that
             // map -- only the good session that will not be
             // closed is in there.
-            log.info("Hungup " + session);
+            LOGGER.info("Hungup " + session);
             session.trace("hungup");
         } else {
-            log.info("Closed " + session);
+            LOGGER.info("Closed " + session);
             session.trace("closed");
             synchronized (connect) {
                 connections.remove(session.uri);
@@ -975,7 +975,7 @@ public class MultipointServer {
 
         synchronized (connect) {
             if (!connections.containsKey(uri) && !connect.contains(host)) {
-                log.info("Queuing{uri=" + uri + "}");
+                LOGGER.info("Queuing{uri=" + uri + "}");
                 connect.addLast(host);
                 host.resolveDns();
             }

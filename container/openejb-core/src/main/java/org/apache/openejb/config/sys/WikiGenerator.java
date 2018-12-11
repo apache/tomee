@@ -94,7 +94,7 @@ public class WikiGenerator {
         }
         out.println();
 
-        final ArrayList<String> seen = new ArrayList<String>();
+        final ArrayList<String> seen = new ArrayList<>();
         for (final ServiceProvider provider : servicesJar.getServiceProvider()) {
             if ("Resource".equals(provider.getService())) {
 
@@ -126,7 +126,7 @@ public class WikiGenerator {
         out.println();
         final SuperProperties properties = (SuperProperties) provider.getProperties();
 
-        final Map<String, String> defaults = new LinkedHashMap<String, String>();
+        final Map<String, String> defaults = new LinkedHashMap<>();
 
         if (properties.size() > 0) {
             out.println("## Properties");

@@ -60,8 +60,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessLocalBeanInterface() throws Exception {
-        final List localbeanExpectedLifecycle = new ArrayList();
-        localbeanExpectedLifecycle.addAll(expectedLifecycle);
+        final List localbeanExpectedLifecycle = new ArrayList(expectedLifecycle);
 
         // WAS can't avoid the extra constructor call
         // NOW it was rewritten to avoid it
@@ -162,8 +161,7 @@ public class StatefulContainerTest extends TestCase {
     }
 
     public void testBusinessLocalBeanInterfaceInTx() throws Exception {
-        final List localbeanExpectedLifecycle = new ArrayList();
-        localbeanExpectedLifecycle.addAll(inTxExpectedLifecycle);
+        final List localbeanExpectedLifecycle = new ArrayList(inTxExpectedLifecycle);
 
         // WAS can't avoid the extra constructor call
         // NOW it was rewritten to avoid it
@@ -249,7 +247,7 @@ public class StatefulContainerTest extends TestCase {
         WidgetBean.lifecycle.clear();
 
         expectedLifecycle = Arrays.asList(Lifecycle.values());
-        inTxExpectedLifecycle = new ArrayList<Lifecycle>();
+        inTxExpectedLifecycle = new ArrayList<>();
         for (final Lifecycle lifecycle : Lifecycle.values()) {
             if (!lifecycle.name().startsWith("PRE_PASSIVATE") &&
                 !lifecycle.name().startsWith("POST_ACTIVATE")) {

@@ -41,7 +41,7 @@ public class JtaQuery implements Query {
     private final Object[] args;
     private final Method method;
     private final JtaEntityManager jtaEntityManager;
-    private final Collection<QueryOperation> appliedOperations = new ArrayList<QueryOperation>();
+    private final Collection<QueryOperation> appliedOperations = new ArrayList<>();
 
     private boolean underTx;
     private boolean unwrap;

@@ -46,7 +46,7 @@ public class Log4jPrintWriter extends PrintWriter {
     }
 
     public void flush() {
-        if (!text.toString().equals("")) {
+        if (!text.toString().isEmpty()) {
             flushLine();
         }
     }
@@ -88,7 +88,7 @@ public class Log4jPrintWriter extends PrintWriter {
     }
 
     public void println() {
-        if (!text.toString().equals("")) {
+        if (!text.toString().isEmpty()) {
             flushLine();
         }
     }

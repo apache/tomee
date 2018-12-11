@@ -201,7 +201,7 @@ public class JtaEntityManagerRegistry {
 
     private class ExtendedRegistry {
         private final Map<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>> entityManagersByDeploymentId =
-            new HashMap<InstanceId, Map<EntityManagerFactory, EntityManagerTracker>>();
+            new HashMap<>();
 
         private void addEntityManagers(final InstanceId instanceId, final Map<EntityManagerFactory, EntityManagerTracker> entityManagers)
             throws EntityManagerAlreadyRegisteredException {

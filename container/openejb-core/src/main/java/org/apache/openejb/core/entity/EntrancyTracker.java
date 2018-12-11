@@ -32,7 +32,7 @@ public class EntrancyTracker {
      */
     private final ThreadLocal<Set<InstanceKey>> inCallThreadLocal = new ThreadLocal<Set<InstanceKey>>() {
         protected Set<InstanceKey> initialValue() {
-            return new HashSet<InstanceKey>();
+            return new HashSet<>();
         }
     };
 
@@ -56,7 +56,7 @@ public class EntrancyTracker {
             //noinspection unchecked
             inCall = (Set<InstanceKey>) synchronizationRegistry.getResource(EntrancyTracker.class);
             if (inCall == null) {
-                inCall = new HashSet<InstanceKey>();
+                inCall = new HashSet<>();
                 synchronizationRegistry.putResource(EntrancyTracker.class, inCall);
             }
         } catch (final IllegalStateException e) {

@@ -33,7 +33,7 @@ import java.util.Properties;
 
 class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
 
-    public static final ThreadLocal<ServerMetaData> serverMetaData = new ThreadLocal<ServerMetaData>();
+    public static final ThreadLocal<ServerMetaData> SERVER_META_DATA = new ThreadLocal<ServerMetaData>();
 
     protected ServerMetaData defaultServerMetaData;
 
@@ -44,7 +44,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
             uriString = (props.getProperty("openejb.ejbd.uri", uriString));
             this.defaultServerMetaData = new ServerMetaData(new URI(uriString));
         } catch (Exception e) {
-            EjbDaemon.logger.error("Failed to read 'openejb.ejbd.uri': " + uriString, e);
+            EjbDaemon.LOGGER.error("Failed to read 'openejb.ejbd.uri': " + uriString, e);
         }
     }
 
@@ -81,7 +81,7 @@ class ClientObjectFactory implements org.apache.openejb.spi.ApplicationServer {
     }
 
     private ServerMetaData getServerMetaData() {
-        ServerMetaData serverMetaData = ClientObjectFactory.serverMetaData.get();
+        ServerMetaData serverMetaData = ClientObjectFactory.SERVER_META_DATA.get();
         if (serverMetaData == null) {
             serverMetaData = defaultServerMetaData;
         }

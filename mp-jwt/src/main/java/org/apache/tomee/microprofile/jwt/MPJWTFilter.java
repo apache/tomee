@@ -16,6 +16,11 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.tomee.catalina.OpenEJBSecurityListener;
+import org.apache.tomee.catalina.TomcatSecurityService;
+import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -41,26 +46,24 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 // async is supported because we only need to do work on the way in
-@WebFilter(asyncSupported = true, urlPatterns = "/*")
+//@WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class MPJWTFilter implements Filter {
-
-    @Inject
-    private Instance<JWTAuthContextInfo> authContextInfo;
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        // nothing so far
     }
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        if (authContextInfo.isUnsatisfied()) {
+        final Optional<JWTAuthContextInfo> authContextInfo = getAuthContextInfo();
+        if (!authContextInfo.isPresent()) {
             chain.doFilter(request,response);
             return;
         }
@@ -69,8 +72,15 @@ public class MPJWTFilter implements Filter {
 
         // now wrap the httpServletRequest and override the principal so CXF can propagate into the SecurityContext
         try {
-            chain.doFilter(new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get()), response);
+            final MPJWTServletRequestWrapper wrappedRequest = new MPJWTServletRequestWrapper(httpServletRequest, authContextInfo.get());
+            chain.doFilter(wrappedRequest, response);
 
+            Object state = request.getAttribute("MP_JWT_PRE_LOGIN_STATE");
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (TomcatSecurityService.class.isInstance(securityService) && state != null) {
+                final TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                tomcatSecurityService.exitWebApp(state);
+            }
         } catch (final Exception e) {
             // this is an alternative to the @Provider bellow which requires registration on the fly
             // or users to add it into their webapp for scanning or into the Application itself
@@ -89,6 +99,19 @@ public class MPJWTFilter implements Filter {
     @Override
     public void destroy() {
         // nothing to do
+    }
+
+    @Inject
+    private Instance<JWTAuthContextInfo> authContextInfo;
+    @Inject
+    private ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo;
+
+    private Optional<JWTAuthContextInfo> getAuthContextInfo() {
+        if (!authContextInfo.isUnsatisfied()) {
+            return Optional.of(authContextInfo.get());
+        }
+
+        return configurableJWTAuthContextInfo.getJWTAuthContextInfo();
     }
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
@@ -122,6 +145,19 @@ public class MPJWTFilter implements Filter {
                 } catch (final ParseException e) {
                     throw new InvalidTokenException(token, e);
                 }
+
+                // TODO - do the login here, save the state to the request so we can recover it later.
+
+                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+                if (TomcatSecurityService.class.isInstance(securityService)) {
+                    TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                    final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
+                    Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
+
+                    request.setAttribute("MP_JWT_PRE_LOGIN_STATE", state);
+                }
+
+                // TODO Also check if it is an async request and add a listener to close off the state
 
                 return jsonWebToken;
 

@@ -43,6 +43,7 @@ import javax.json.bind.Jsonb;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -277,15 +278,21 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     }
 
     private T getClaimValue(final String name) {
-        final Bean<?> bean = bm.resolve(bm.getBeans(JsonWebToken.class));
-        JsonWebToken jsonWebToken = null;
-        if (RequestScoped.class.equals(bean.getScope())) {
-            jsonWebToken = JsonWebToken.class.cast(bm.getReference(bean, JsonWebToken.class, null));
-        }
-        if (jsonWebToken == null || !bean.getScope().equals(RequestScoped.class)) {
+        final Bean<?> bean = bm.resolve(bm.getBeans(Principal.class));
+        final Principal principal = Principal.class.cast(bm.getReference(bean, Principal.class, null));
+
+        if (principal == null) {
             logger.warning(String.format("Can't retrieve claim %s. No active principal.", name));
             return null;
         }
+
+        JsonWebToken jsonWebToken = null;
+        if (! JsonWebToken.class.isInstance(principal)) {
+            logger.warning(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
+            return null;
+        }
+
+        jsonWebToken = JsonWebToken.class.cast(principal);
 
         final Optional<T> claimValue = jsonWebToken.claim(name);
         logger.finest(String.format("Found ClaimValue=%s for name=%s", claimValue, name));

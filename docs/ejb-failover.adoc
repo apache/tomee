@@ -1,0 +1,93 @@
+= EJB Client/Server Failover
+:index-group: Discovery and Failover
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+OpenEJB supports stateless failover. Specifically, the ability for an
+EJB client to failover from one server to the next if a request cannot
+be completed. No application state information is communicated between
+the servers, so this functionality should be used only with applications
+that are inherently stateless. A common term for this sort of setup is a
+server farm.
+
+The basic design assumption is that all servers in the same group have
+the same applications deployed and are capable of doing the same job.
+Servers can be brought online and offline while clients are running. As
+members join/leave this information is sent to the client as part of
+normal EJB request/response communication so active clients always have
+the most current information on servers that can process their request
+should communication with a particular server fail.
+
+== Client Behavior
+
+On each request to the server, the client will send the version number
+associated with the list of servers in the cluster it is aware of.
+Initially this version will be zero and the list will be empty. Only
+when the server sees the client has an old list will the server send the
+updated list. This is an important distinction as the list is not
+transmitted back and forth on every request, only on change. If the
+membership of the cluster is stable there is essentially no clustering
+overhead to the protocol -- 8 byte overhead to each request and 1 byte
+on each response -- so you will _not_ see an exponential slowdown in
+response times the more members are added to the cluster. This new list
+takes affect for all proxies that share the same connection.
+
+When a server shuts down, more connections are refused, existing
+connections not in mid-request are closed, any remaining connections are
+closed immediately after completion of the request in progress and
+clients can failover gracefully to the next server in the list. If a
+server crashes requests are retried on the next server in the list (or
+depending on the `ConnectionStrategy`). This failover pattern is
+followed until there are no more servers in the list at which point the
+client attempts a final multicast search (if it was created with a
+`PROVIDER_URL` starting with `multicast://`) before abandoning the
+request and throwing an exception to the caller.
+
+By default, the failover is ordered but random selection is supported.
+The multicast discovery aspect of the client adds a nice randomness to
+the selection of the first server.
+
+== Discovery
+
+Each discoverable service has a URI which is broadcast as a heartbeat to
+other servers in the cluster. This URI advertises the service's type,
+its cluster group, and its location in the format of
+'group:jbake-date: 2018-12-05
+:jbake-type:location'. Say for example
+"cluster1:ejb:ejbd://thehost:4201". The URI is sent out repeatedly in a
+pulse and its presence on the network indicates its availability and its
+absence indicates the service is no longer available.
+
+The sending of this pulse (the heartbeat) can be done via UDP or TCP:
+multicast and "multipoint" respectively. More on that in the following
+section. The rate at which the heartbeat is pulsed to the network can be
+specified via the 'heart_rate' property. The default is 500
+milliseconds. This rate is also used when listening for services on the
+network. If a service goes missing for the duration of 'heart_rate'
+multiplied by 'max_missed_heartbeats', then the service is considered
+dead.
+
+The 'group' property, cluster1 in the example, is used to dissect the
+servers on the network into smaller logical clusters. A given server
+will broadcast all it's services with the group prefixed in the URI, as
+well it will ignore any services it sees broadcast if they do not share
+the same group name.
+
+= Details
+
+Multicast
+
+* link:multicast-discovery.html[Multicast UDP Discovery]
+* link:multipulse-discovery.html[Multipulse UDP Discovery]
+
+Multipoint
+
+* link:multipoint-discovery.html[Multipoint TCP Discovery]
+* link:multipoint-considerations.html[Considerations]
+* link:multipoint-recommendations.html[Recommendations]
+
+Logging
+
+* link:failover-logging.html[Failover Logging Events]

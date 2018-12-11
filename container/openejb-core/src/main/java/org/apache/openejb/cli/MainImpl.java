@@ -156,7 +156,7 @@ public class MainImpl implements Main {
     }
 
     private String[] processSystemProperties(String[] args) {
-        final ArrayList<String> argsList = new ArrayList<String>();
+        final ArrayList<String> argsList = new ArrayList<>();
 
         // We have to pre-screen for openejb.base as it has a direct affect
         // on where we look for the conf/system.properties file which we
@@ -166,8 +166,8 @@ public class MainImpl implements Main {
         // be changed.
         for (final String arg : args) {
             if (arg.indexOf("-Dopenejb.base") != -1) {
-                final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf("="));
-                final String val = arg.substring(arg.indexOf("=") + 1);
+                final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf('='));
+                final String val = arg.substring(arg.indexOf('=') + 1);
 
                 JavaSecurityManagers.setSystemProperty(prop, val);
             }
@@ -188,7 +188,7 @@ public class MainImpl implements Main {
         // Now read in and apply the properties specified on the command line
         for (final String arg : args) {
             final int idx = arg.indexOf("-D");
-            final int eq = arg.indexOf("=");
+            final int eq = arg.indexOf('=');
             if (idx >= 0 && eq > idx) {
                 final String prop = arg.substring(idx + 2, eq);
                 final String val = arg.substring(eq + 1);

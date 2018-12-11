@@ -43,13 +43,13 @@ public class InjectionProcessor<T> {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, InjectionProcessor.class);
     private final Class<? extends T> beanClass;
     private final Collection<Injection> injections;
-    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> properties = new LinkedHashMap<>();
     private final List<Method> postConstructMethods;
     private final List<Method> preDestroyMethods;
     private final Context context;
     private T instance;
     private T suppliedInstance;
-    private final Map<String, Object> bindings = new HashMap<String, Object>();
+    private final Map<String, Object> bindings = new HashMap<>();
 
 
     public InjectionProcessor(final T suppliedInstance, final Collection<Injection> injections, final Context context) {

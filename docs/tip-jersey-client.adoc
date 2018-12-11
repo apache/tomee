@@ -1,0 +1,35 @@
+= Jersey Client
+:index-group: Tips and Tricks
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+If you have an application that uses jersey-client in any way then it
+may fail with an error along the lines of:
+
+[source,properties]
+----
+Caused by: java.lang.ClassNotFoundException: com.sun.jersey.core.util.FeaturesAndProperties
+at org.apache.catalina.loader.WebappClassLoader.loadClass(WebappClassLoader.java)
+at org.apache.catalina.loader.WebappClassLoader.loadClass(WebappClassLoader.java)
+at org.apache.tomee.catalina.LazyStopWebappClassLoader.loadClass(LazyStopWebappClassLoader.java)
+... 34 more
+----
+
+This is due to the fact that the jersey-core.jar contains some classes
+that should not be deployed as part of a javaEE application. For
+example, it contains javax.ws.rs.Path but does not contain
+javax.ws.rs.core.Configurable, so the jar is usually ignored by TomEE.
+
+You could switch to using the http://cxf.apache.org/[Apache CXF Client],
+which is what we would recommend. If you really want to keep Jersey then
+you can use set the following property in your _[TomEE].properties_
+
+[source,properties]
+----
+openejb.api.javax.ws.rs.Path.validation=false
+----
+
+This will then allow Jersey classes to be loaded by TomEE (After a
+restart).

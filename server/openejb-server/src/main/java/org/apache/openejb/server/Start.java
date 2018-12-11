@@ -65,7 +65,7 @@ public class Start {
 
         try {
 
-            final ArrayList<String> cmd = new ArrayList<String>();
+            final ArrayList<String> cmd = new ArrayList<>();
 
             final String s = java.io.File.separator;
 

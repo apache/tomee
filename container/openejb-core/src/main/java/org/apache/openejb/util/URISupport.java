@@ -83,7 +83,7 @@ public class URISupport {
             }
         }
 
-        final List<String> path = new ArrayList<String>();
+        final List<String> path = new ArrayList<>();
         for (int x = pathA.size() - lastMatch; x > 0; x--) {
             path.add("..");
         }
@@ -168,11 +168,11 @@ public class URISupport {
 
     public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
         try {
-            final Map<String, String> rc = new LinkedHashMap<String, String>();
+            final Map<String, String> rc = new LinkedHashMap<>();
             if (uri != null) {
                 final String[] parameters = uri.split("&");
                 for (int i = 0; i < parameters.length; i++) {
-                    final int p = parameters[i].indexOf("=");
+                    final int p = parameters[i].indexOf('=');
                     if (p >= 0) {
                         final String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
                         final String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
@@ -227,15 +227,15 @@ public class URISupport {
         }
 
         int p;
-        final int intialParen = ssp.indexOf("(");
+        final int intialParen = ssp.indexOf('(');
         if (intialParen == 0) {
             rc.host = ssp.substring(0, intialParen);
-            p = rc.host.indexOf("/");
+            p = rc.host.indexOf('/');
             if (p >= 0) {
                 rc.path = rc.host.substring(p);
                 rc.host = rc.host.substring(0, p);
             }
-            p = ssp.lastIndexOf(")");
+            p = ssp.lastIndexOf(')');
             componentString = ssp.substring(intialParen + 1, p);
             params = ssp.substring(p + 1).trim();
 
@@ -250,7 +250,7 @@ public class URISupport {
             rc.components[i] = new URI(components[i].trim());
         }
 
-        p = params.indexOf("?");
+        p = params.indexOf('?');
         if (p >= 0) {
             if (p > 0) {
                 rc.path = stripPrefix(params.substring(0, p), "/");
@@ -265,7 +265,7 @@ public class URISupport {
     }
 
     private static String[] splitComponents(final String str) {
-        final ArrayList<String> l = new ArrayList<String>();
+        final ArrayList<String> l = new ArrayList<>();
 
         int last = 0;
         int depth = 0;

@@ -51,13 +51,12 @@ public class MethodInfoUtil {
      * is reached.  If the method is not found a IllegalStateException is thrown.
      *
      * @param clazz
-     * @param methodName
-     * @param parameterTypes
-     * @return
+     * @param info
+     * @return Method
      * @throws IllegalStateException if the method is not found in this class or any of its parent classes
      */
     public static Method toMethod(Class clazz, final NamedMethodInfo info) {
-        final List<Class> parameterTypes = new ArrayList<Class>();
+        final List<Class> parameterTypes = new ArrayList<>();
 
         if (info.methodParams != null) {
             for (final String paramType : info.methodParams) {
@@ -88,7 +87,7 @@ public class MethodInfoUtil {
     }
 
     public static List<Method> matchingMethods(final Method signature, final Class clazz) {
-        final List<Method> list = new ArrayList<Method>();
+        final List<Method> list = new ArrayList<>();
         METHOD:
         for (final Method method : clazz.getMethods()) {
             if (!method.getName().equals(signature.getName())) {
@@ -139,7 +138,7 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> filterByClass(final MethodInfo mi, final List<Method> methods) {
-        final ArrayList<Method> list = new ArrayList<Method>();
+        final ArrayList<Method> list = new ArrayList<>();
         for (final Method method : methods) {
             final String className = method.getDeclaringClass().getName();
             if (mi.className.equals(className)) {
@@ -171,7 +170,7 @@ public class MethodInfoUtil {
     public static Method getMethod(final Class clazz, final MethodInfo info) {
         final ClassLoader cl = clazz.getClassLoader();
 
-        final List<Class> params = new ArrayList<Class>();
+        final List<Class> params = new ArrayList<>();
         for (final String methodParam : info.methodParams) {
             try {
                 params.add(getClassForParam(methodParam, cl));
@@ -194,7 +193,7 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> filterByName(final Method[] methods, final String methodName) {
-        final List<Method> list = new ArrayList<Method>();
+        final List<Method> list = new ArrayList<>();
         for (final Method method : methods) {
             if (method.getName().equals(methodName)) {
                 list.add(method);
@@ -204,7 +203,7 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> filterByNameAndParams(final Method[] methods, final MethodInfo mi) {
-        final List<Method> list = new ArrayList<Method>();
+        final List<Method> list = new ArrayList<>();
         for (final Method method : methods) {
             if (matches(method, mi)) {
                 list.add(method);
@@ -225,7 +224,7 @@ public class MethodInfoUtil {
      * @return a normalized list of new MethodPermissionInfo objects
      */
     public static List<MethodPermissionInfo> normalizeMethodPermissionInfos(final List<MethodPermissionInfo> infos) {
-        final List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+        final List<MethodPermissionInfo> normalized = new ArrayList<>();
         for (final MethodPermissionInfo oldInfo : infos) {
             for (final MethodInfo methodInfo : oldInfo.methods) {
                 final MethodPermissionInfo newInfo = new MethodPermissionInfo();
@@ -269,7 +268,7 @@ public class MethodInfoUtil {
     }
 
     public static Map<Method, MethodAttributeInfo> resolveAttributes(final List<? extends MethodAttributeInfo> infos, final BeanContext beanContext) {
-        final Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<Method, MethodAttributeInfo>();
+        final Map<Method, MethodAttributeInfo> attributes = new LinkedHashMap<>();
 
         final Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
 
@@ -278,7 +277,7 @@ public class MethodInfoUtil {
 
                 if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
 
-                    final List<Method> methods = new ArrayList<Method>();
+                    final List<Method> methods = new ArrayList<>();
 
                     if (methodInfo.methodIntf == null) {
                         methods.addAll(matchingMethods(methodInfo, wildCardView));
@@ -318,7 +317,7 @@ public class MethodInfoUtil {
     }
 
     public static Map<ViewMethod, MethodAttributeInfo> resolveViewAttributes(final List<? extends MethodAttributeInfo> infos, final BeanContext beanContext) {
-        final Map<ViewMethod, MethodAttributeInfo> attributes = new LinkedHashMap<ViewMethod, MethodAttributeInfo>();
+        final Map<ViewMethod, MethodAttributeInfo> attributes = new LinkedHashMap<>();
 
         final Method[] wildCardView = getWildCardView(beanContext).toArray(new Method[]{});
 
@@ -327,7 +326,7 @@ public class MethodInfoUtil {
 
                 if (methodInfo.ejbName == null || methodInfo.ejbName.equals("*") || methodInfo.ejbName.equals(beanContext.getEjbName())) {
 
-                    final List<Method> methods = new ArrayList<Method>();
+                    final List<Method> methods = new ArrayList<>();
 
                     if (methodInfo.methodIntf == null) {
                         methods.addAll(matchingMethods(methodInfo, wildCardView));
@@ -433,10 +432,9 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> getWildCardView(final BeanContext info) {
-        final List<Method> methods = new ArrayList<Method>();
 
         final List<Method> beanMethods = asList(info.getBeanClass().getMethods());
-        methods.addAll(beanMethods);
+        final List<Method> methods = new ArrayList<>(beanMethods);
 
         if (info.getRemoteInterface() != null) {
             methods.addAll(exclude(beanMethods, info.getRemoteInterface().getMethods()));
@@ -482,7 +480,7 @@ public class MethodInfoUtil {
     }
 
     private static List<Method> exclude(final List<Method> excludes, final Method[] methods) {
-        final ArrayList<Method> list = new ArrayList<Method>();
+        final ArrayList<Method> list = new ArrayList<>();
 
         for (final Method method : methods) {
             if (!matches(excludes, method)) {

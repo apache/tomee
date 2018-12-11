@@ -29,7 +29,7 @@ import java.io.Serializable;
  * skewness = [n / (n -1) (n - 2)] sum[(x_i - mean)^3] / std^3 </p>
  * <p>
  * where n is the number of values, mean is the {@link Mean} and std is the
- * {@link org.apache.commons.math.stat.descriptive.moment.StandardDeviation} </p>
+ * {@link org.apache.commons.math3.stat.descriptive.moment.StandardDeviation} </p>
  * <p>
  * <strong>Note that this implementation is not synchronized.</strong> If
  * multiple threads access an instance of this class concurrently, and at least

@@ -122,8 +122,8 @@ public class OpenEJBNamingContextListener implements LifecycleListener, Property
      * corresponding addition or removal to OpenEJB.
      *
      * @param name     Property name of the change to be processed
-     * @param oldValue The old value (or <code>null</code> if adding)
-     * @param newValue The new value (or <code>null</code> if removing)
+     * @param oldValue The old value (or {@code null} if adding)
+     * @param newValue The new value (or {@code null} if removing)
      */
     private void processGlobalResourcesChange(final String name, final Object oldValue, final Object newValue) {
 

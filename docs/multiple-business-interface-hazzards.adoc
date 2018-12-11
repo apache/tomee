@@ -1,0 +1,209 @@
+= Multiple Business Interface Hazzards
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= UndeclaredThrowableException
+
+When two java interfaces are implemented by a proxy and those two
+interfaces declare the _same method_ but with _different throws clauses_
+some very nasty side effects happen, namely you loose the ability to
+throw any checked exceptions that are not in the throws clause of both
+methods.
+
+[source,java]
+----
+import junit.framework.TestCase;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class ExceptionTest extends TestCase {
+
+    public void test() throws Exception {
+    ClassLoader classLoader = this.getClass().getClassLoader();
+        Class[]
+----
+
+interfaces = new Class[]\{One.class, Two.class};
+
+[source,java]
+----
+    InvocationHandler h = new TestInvocationHandler();
+
+    Object proxy =
+----
+
+java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
+
+[source,java]
+----
+    One one = (One) proxy;
+
+    try {
+        one.run(new CommonException());
+    } catch (CommonException e) {
+        // this will work
+    } catch(UndeclaredThrowableException u) {
+        Throwable t = u.getCause();
+        fail("Undeclared: "+t);
+    } catch(Throwable t){
+        fail("Caught: "+t);
+    }
+
+    try {
+        one.run(new OneException());
+    } catch (OneException e) {
+    } catch(UndeclaredThrowableException u) {
+        Throwable t = u.getCause();
+        fail("Undeclared: "+t); // This will always be the code that
+----
+
+executes } catch(Throwable t)\{ fail("Caught: "+t); }
+
+[source,java]
+----
+    Two two = (Two) proxy;
+    try {
+        two.run(new CommonException());
+    } catch (TwoException e) {
+    } catch(UndeclaredThrowableException u) {
+        Throwable t = u.getCause();
+        fail("Undeclared: "+t); // This will always be the code that
+----
+
+executes } catch(Throwable t)\{ fail("Caught: "+t); }
+
+[source,java]
+----
+    }
+
+    public static class CommonException extends Exception {
+    public CommonException() {
+    }
+    }
+
+    public static interface One {
+    void run(Object o) throws OneException, CommonException;
+    }
+
+    public static class OneException extends Exception {
+    public OneException() {
+    }
+    }
+
+    public static interface Two {
+    void run(Object o) throws TwoException, CommonException;
+    }
+
+    public static class TwoException extends Exception {
+    public TwoException() {
+    }
+    }
+
+    private static class TestInvocationHandler implements InvocationHandler
+----
+
+\{ public Object invoke(Object proxy, Method method, Object[] args)
+throws Throwable \{ throw (Throwable)args[0] ; } } }
+
+= IllegalArgumentException
+
+This one is less of a runtime problem as doing this will cause things to
+fail up front. When two java interfaces are implemented by a proxy and
+those two interfaces declare the _same method_ but with _different
+return types_ the VM proxy code will refuse to create a proxy at all.
+Take this code example:
+
+[source,java]
+----
+import junit.framework.TestCase;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+/**
+ * @version $Rev$ $Date$
+ */
+public class ReturnTest extends TestCase {
+
+    public void test() throws Exception {
+    ClassLoader classLoader = this.getClass().getClassLoader();
+        Class[]
+----
+
+interfaces = new Class[]\{ReturnTest.One.class, ReturnTest.Two.class};
+
+[source,java]
+----
+    InvocationHandler h = new ReturnTest.TestInvocationHandler();
+
+    Object proxy =
+----
+
+java.lang.reflect.Proxy.newProxyInstance(classLoader, interfaces, h);
+
+[source,java]
+----
+    One one = (One) proxy;
+    try {
+        Object object = one.run(new ThingOne());
+    } catch (Throwable t) {
+        fail("Caught: " + t);
+    }
+
+    Two two = (Two) proxy;
+    try {
+        Object object = two.run(new ThingTwo());
+    } catch (Throwable t) {
+        fail("Caught: " + t);
+    }
+
+    }
+
+    public static interface One {
+    ThingOne run(Object o);
+    }
+
+    public static class ThingOne {
+    }
+
+    public static interface Two {
+    ThingTwo run(Object o);
+    }
+
+    public static class ThingTwo {
+    }
+
+    private static class TestInvocationHandler implements InvocationHandler
+----
+
+\{ public Object invoke(Object proxy, Method method, Object[] args)
+throws Throwable \{ return args[0] ; } } }
+
+Running this code will result in the following exception:
+
+[source,properties]
+----
+java.lang.IllegalArgumentException: methods with same signature
+----
+
+run(java.lang.Object) but incompatible return types: [class
+ReturnTestlatexmath:[$ThingOne, class ReturnTest$]ThingTwo] at
+sun.misc.ProxyGenerator.checkReturnTypes(ProxyGenerator.java:669) at
+sun.misc.ProxyGenerator.generateClassFile(ProxyGenerator.java:420) at
+sun.misc.ProxyGenerator.generateProxyClass(ProxyGenerator.java:306) at
+java.lang.reflect.Proxy.getProxyClass(Proxy.java:501) at
+java.lang.reflect.Proxy.newProxyInstance(Proxy.java:581) at
+ReturnTest.test(ReturnTest.java:36) at
+sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) at
+sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+at
+sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+at
+com.intellij.rt.execution.junit2.JUnitStarter.main(JUnitStarter.java:32)

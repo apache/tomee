@@ -75,9 +75,9 @@ public class Tracker {
         this.log.info("Created " + this);
     }
 
-    private final Map<String, Service> registeredServices = new ConcurrentHashMap<String, Service>();
+    private final Map<String, Service> registeredServices = new ConcurrentHashMap<>();
 
-    private final Map<String, ServiceVitals> discoveredServices = new ConcurrentHashMap<String, ServiceVitals>();
+    private final Map<String, ServiceVitals> discoveredServices = new ConcurrentHashMap<>();
     private DiscoveryListener discoveryListener;
 
     public long getHeartRate() {
@@ -98,12 +98,12 @@ public class Tracker {
 
     @Managed
     public Set<String> getServicesRegistered() {
-        return new HashSet<String>(registeredServices.keySet());
+        return new HashSet<>(registeredServices.keySet());
     }
 
     @Managed
     public Set<String> getServicesDiscovered() {
-        return new HashSet<String>(discoveredServices.keySet());
+        return new HashSet<>(discoveredServices.keySet());
     }
 
     public void registerService(final URI serviceUri) throws IOException {
@@ -187,7 +187,7 @@ public class Tracker {
         return debug && log.isDebugEnabled();
     }
 
-    private final Executor executor = new ThreadPoolExecutor(1, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(1), new ThreadFactory() {
+    private final Executor executor = new ThreadPoolExecutor(1, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(1), new ThreadFactory() {
         @Override
         public Thread newThread(final Runnable runable) {
             final Thread t = new Thread(runable, "Discovery Agent Notifier");

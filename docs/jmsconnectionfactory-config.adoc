@@ -1,0 +1,104 @@
+= JmsConnectionFactory Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A JmsConnectionFactory can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<Resource id="myJmsConnectionFactory" type="javax.jms.ConnectionFactory">
+    connectionMaxIdleTime = 15 Minutes
+    connectionMaxWaitTime = 5 seconds
+    poolMaxSize = 10
+    poolMinSize = 0
+    resourceAdapter = Default JMS Resource Adapter
+    transactionSupport = xa
+</Resource>
+----
+
+Alternatively, a JmsConnectionFactory can be declared via properties in
+the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+myJmsConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory
+myJmsConnectionFactory.connectionMaxIdleTime = 15 Minutes
+myJmsConnectionFactory.connectionMaxWaitTime = 5 seconds
+myJmsConnectionFactory.poolMaxSize = 10
+myJmsConnectionFactory.poolMinSize = 0
+myJmsConnectionFactory.resourceAdapter = Default JMS Resource Adapter
+myJmsConnectionFactory.transactionSupport = xa
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared JmsConnectionFactory
+a warning will be logged. If a JmsConnectionFactory is needed by the
+application and one is not declared, TomEE will create one dynamically
+using default settings. Multiple JmsConnectionFactory declarations are
+allowed. # Supported Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+connectionMaxIdleTime
+
+time
+
+15 Minutes
+
+Maximum amount of time a connection can be idle before being reclaimed
+
+connectionMaxWaitTime
+
+time
+
+5 seconds
+
+Maximum amount of time to wait for a connection
+
+poolMaxSize
+
+int
+
+10
+
+Maximum number of physical connection to the ActiveMQ broker
+
+poolMinSize
+
+int
+
+0
+
+Minimum number of physical connection to the ActiveMQ broker
+
+resourceAdapter
+
+String
+
+Default JMS Resource Adapter
+
+transactionSupport
+
+String
+
+xa
+
+Specifies if the connection is enrolled in global transaction allowed
+values: xa, local or none

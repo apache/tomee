@@ -65,7 +65,7 @@ public class FullyInterceptedTest extends TestCase {
     public void testBusinessMethod() throws Exception {
         assert fullyIntercepted != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("DefaultInterceptorOne");
         expected.add("DefaultInterceptorTwo");
         expected.add("ClassLevelInterceptorSuperClassOne");
@@ -85,7 +85,7 @@ public class FullyInterceptedTest extends TestCase {
     public void testMethodWithDefaultInterceptorsExcluded() throws Exception {
         assert fullyIntercepted != null;
 
-        final List<String> expected = new ArrayList<String>();
+        final List<String> expected = new ArrayList<>();
         expected.add("ClassLevelInterceptorSuperClassOne");
         expected.add("ClassLevelInterceptorSuperClassTwo");
         expected.add("ClassLevelInterceptorOne");

@@ -1,0 +1,77 @@
+= Running a standalone OpenEJB server
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= Configuring the OpenEJB Runtime The OpenEJB Eclipse plugin provides
+support for running OpenEJB as a standalone server in Eclipse using WTP.
+
+To setup a server, first of all, you will need to have a copy of OpenEJB
+extracted on your machine. Once you have that, the next step is to set
+up a runtime.
+
+To set up a new runtime, click on Window, Preferences, and select
+Installed Runtimes under the Server category. Click the Add button.
+
+image:http://people.apache.org/~jgallimore/images/server_step_4.jpg[http://people.apache.org/~jgallimore/images/server_step_4.jpg]
+
+Select OpenEJB 3.0.0 from the Apache category, and click next. If you
+choose to 'also create a new server' on this panel, you can add a server
+straight after configuring the runtime.
+
+image:http://people.apache.org/~jgallimore/images/server_step_5.jpg[http://people.apache.org/~jgallimore/images/server_step_5.jpg]
+
+Browse to, or enter the path to your copy of OpenEJB. Click on Finish.
+
+= Configuring the OpenEJB Server Open the Servers view (if it isn't
+already), and right click and select New->Server.
+
+image:http://people.apache.org/~jgallimore/images/server_step_8.jpg[http://people.apache.org/~jgallimore/images/server_step_8.jpg]
+
+Select OpenEJB 3.0.0 from the Apache category, ensure you have the
+OpenEJB runtime selected, and click Next.
+
+image:http://people.apache.org/~jgallimore/images/server_step_9.jpg[http://people.apache.org/~jgallimore/images/server_step_9.jpg]
+
+Select the EJB port for the server, and select Finish.
+
+image:http://people.apache.org/~jgallimore/images/server_step_10.jpg[http://people.apache.org/~jgallimore/images/server_step_10.jpg]
+
+= Deploying a project In order to deploy your project to an OpenEJB
+server in Eclipse, your project must be a Java EE project, with the EJB
+facet enabled. If your project doesn't have the Faceted nature, you can
+use the OpenEJB plugin to add it. Simply select OpenEJB->Add Faceted
+Nature from the menu bar.
+
+image:http://people.apache.org/~jgallimore/images/server_step_1.jpg[http://people.apache.org/~jgallimore/images/server_step_1.jpg]
+
+To add the EJB facet, right click on the project in the navigator, and
+select Properties. Select Project Facets on the left hand side. Click on
+the Modify Project button.
+
+image:http://people.apache.org/~jgallimore/images/server_step_2.jpg[http://people.apache.org/~jgallimore/images/server_step_2.jpg]
+
+Select the EJB Module facet, and the Java Facet. Remember to select your
+OpenEJB runtime too. Click Next.
+
+image:http://people.apache.org/~jgallimore/images/server_step_6.jpg[http://people.apache.org/~jgallimore/images/server_step_6.jpg]
+
+Enter the source folder for the EJBs in your project and click Finish.
+
+image:http://people.apache.org/~jgallimore/images/server_step_6.jpg[http://people.apache.org/~jgallimore/images/server_step_7.jpg]
+
+Now right click on your OpenEJB server in the servers view, and select
+Add and Remove Projects.
+
+image:http://people.apache.org/~jgallimore/images/server_step_11.jpg[http://people.apache.org/~jgallimore/images/server_step_11.jpg]
+
+Add your project to the server, and click Finish.
+
+image:http://people.apache.org/~jgallimore/images/server_step_12.jpg[http://people.apache.org/~jgallimore/images/server_step_12.jpg]
+
+To start the server, Right click on your OpenEJB server, and select
+Start.
+
+image:http://people.apache.org/~jgallimore/images/server_step_13.jpg[http://people.apache.org/~jgallimore/images/server_step_13.jpg]

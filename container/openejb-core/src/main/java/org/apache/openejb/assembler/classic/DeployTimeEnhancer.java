@@ -88,8 +88,8 @@ public class DeployTimeEnhancer {
         }
 
         // find persistence.xml
-        final Map<String, List<String>> classesByPXml = new HashMap<String, List<String>>();
-        final List<URL> usedUrls = new ArrayList<URL>(); // for fake classloader
+        final Map<String, List<String>> classesByPXml = new HashMap<>();
+        final List<URL> usedUrls = new ArrayList<>(); // for fake classloader
         for (final URL url : event.getUrls()) {
             final File file = URLs.toFile(url);
             if (file.isDirectory()) {
@@ -196,7 +196,7 @@ public class DeployTimeEnhancer {
     }
 
     private void feed(final Map<String, List<String>> classesByPXml, final String pXml) {
-        final List<String> paths = new ArrayList<String>();
+        final List<String> paths = new ArrayList<>();
 
         // first add the classes directory where is the persistence.xml
         if (pXml.endsWith(META_INF_PERSISTENCE_XML)) {
@@ -242,7 +242,7 @@ public class DeployTimeEnhancer {
     }
 
     private String[] toFilePaths(final List<String> urls) {
-        final List<String> files = new ArrayList<String>();
+        final List<String> files = new ArrayList<>();
         for (final String url : urls) {
             final File dir = new File(url);
             if (!dir.isDirectory()) {
@@ -275,7 +275,7 @@ public class DeployTimeEnhancer {
     }
 
     private static class JarFileParser extends DefaultHandler {
-        private final List<String> paths = new ArrayList<String>();
+        private final List<String> paths = new ArrayList<>();
         private boolean getIt;
 
         @Override

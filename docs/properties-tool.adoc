@@ -1,0 +1,219 @@
+= Properties Tool
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Properties Command line Tool
+
+To see all configurable properties in use by OpenEJB, using the
+following tool against a running server:
+
+________________________
+./bin/openejb properties
+________________________
+
+The output of this tool takes all overrideable components OpenEJB sees
+and outputs their properties along with the current value. This allows
+you to easily see what is running in your system, what properties are
+available for overriding, and what exact values are for each component.
+OpenEJB has a number of flags that can be passed to it not associated
+with any particular component, these are output as well.
+
+Content from this file can be safely copied as-is into the
+conf/system.properties file or sent to the users list with bug reports.
+These properties may also be applied back into the openejb.xml file by
+pasting the properties without the "." prefix into the respective
+component declarations. The only warning is that any properties of type
+".password" will have their values masked, so make sure you edit them if
+you reapply them back into conf/openejb.xml or conf/system.properties.
+
+= Property Overriding
+
+Any component configured in OpenEJB via the openejb.xml (and some that
+aren't) can be overridden using system properties. The format is:
+
+`<id>.<property-name>=<property-value>`
+
+And this can be done on the command line as follows:
+
+`./bin/openejb -D<id>.<property-name>=<property-value> ...`
+
+Or by adding the property to the conf/system.properties file. Note that
+command line overrides win over overrides in the conf/system.properties
+file.
+
+In an embedded environment, the properties can be added to the Hashtable
+passed into the javax.naming.InitialContext when using the
+LocalInitialContextFactory or also to the System.getProperties() object
+before OpenEJB is embedded (which will be when the first InitialContext
+is created).
+
+At startup, OpenEJB will find the component with the given id and apply
+the new property value before constructing the individual component.
+
+= Example output
+
+[source,properties]
+----
+# Container(id=Default CMP Container)
+# className: org.apache.openejb.core.cmp.CmpContainer
+#
+Default\ CMP\ Container.CmpEngineFactory=org.apache.openejb.core.cmp.jpa.JpaCmpEngineFactory
+Default\ CMP\ Container.Engine=instantdb
+Default\ CMP\ Container.ConnectorName=Default JDBC Database
+
+# Container(id=Default BMP Container)
+# className: org.apache.openejb.core.entity.EntityContainer
+#
+Default\ BMP\ Container.PoolSize=10
+
+# Container(id=Default Stateful Container)
+# className: org.apache.openejb.core.stateful.StatefulContainer
+#
+Default\ Stateful\ Container.BulkPassivate=50
+Default\ Stateful\ Container.Passivator=org.apache.openejb.core.stateful.SimplePassivater
+Default\ Stateful\ Container.TimeOut=20
+Default\ Stateful\ Container.PoolSize=500
+
+# Container(id=Default Stateless Container)
+# className: org.apache.openejb.core.stateless.StatelessContainer
+#
+Default\ Stateless\ Container.PoolSize=10
+Default\ Stateless\ Container.StrictPooling=true
+Default\ Stateless\ Container.TimeOut=0
+
+# Container(id=Default MDB Container)
+# className: org.apache.openejb.core.mdb.MdbContainer
+#
+Default\ MDB\ Container.ResourceAdapter=Default JMS Resource Adapter
+Default\ MDB\ Container.InstanceLimit=10
+Default\ MDB\ Container.MessageListenerInterface=javax.jms.MessageListener
+Default\ MDB\ Container.ActivationSpecClass=org.apache.activemq.ra.ActiveMQActivationSpec
+
+# ConnectionManager(id=Default Local TX ConnectionManager)
+# className: org.apache.openejb.resource.SharedLocalConnectionManager
+#
+
+# Resource(id=Default JMS Resource Adapter)
+# className: org.apache.activemq.ra.ActiveMQResourceAdapter
+#
+Default\ JMS\ Resource\ Adapter.ServerUrl=vm\://localhost?async\=true
+Default\ JMS\ Resource\ Adapter.BrokerXmlConfig=broker\:(tcp\://localhost\:61616)
+Default\ JMS\ Resource\ Adapter.ThreadPoolSize=30
+
+# Resource(id=Default JDBC Database)
+# className: org.apache.openejb.resource.jdbc.BasicManagedDataSource
+#
+Default\ JDBC\ Database.MinIdle=0
+Default\ JDBC\ Database.Password=xxxx
+Default\ JDBC\ Database.JdbcUrl=jdbc\:hsqldb\:file\:hsqldb
+Default\ JDBC\ Database.MaxIdle=20
+Default\ JDBC\ Database.ConnectionProperties=
+Default\ JDBC\ Database.MaxWait=-1
+Default\ JDBC\ Database.TimeBetweenEvictionRunsMillis=-1
+Default\ JDBC\ Database.MaxActive=20
+Default\ JDBC\ Database.DefaultAutoCommit=true
+Default\ JDBC\ Database.AccessToUnderlyingConnectionAllowed=false
+Default\ JDBC\ Database.JdbcDriver=org.hsqldb.jdbcDriver
+Default\ JDBC\ Database.TestWhileIdle=false
+Default\ JDBC\ Database.UserName=sa
+Default\ JDBC\ Database.MaxOpenPreparedStatements=0
+Default\ JDBC\ Database.TestOnBorrow=true
+Default\ JDBC\ Database.PoolPreparedStatements=false
+Default\ JDBC\ Database.ConnectionInterface=javax.sql.DataSource
+Default\ JDBC\ Database.TestOnReturn=false
+Default\ JDBC\ Database.MinEvictableIdleTimeMillis=1800000
+Default\ JDBC\ Database.NumTestsPerEvictionRun=3
+Default\ JDBC\ Database.InitialSize=0
+
+# Resource(id=Default Unmanaged JDBC Database)
+# className: org.apache.openejb.resource.jdbc.BasicDataSource
+#
+Default\ Unmanaged\ JDBC\ Database.MaxWait=-1
+Default\ Unmanaged\ JDBC\ Database.InitialSize=0
+Default\ Unmanaged\ JDBC\ Database.DefaultAutoCommit=true
+Default\ Unmanaged\ JDBC\ Database.ConnectionProperties=
+Default\ Unmanaged\ JDBC\ Database.MaxActive=10
+Default\ Unmanaged\ JDBC\ Database.TestOnBorrow=true
+Default\ Unmanaged\ JDBC\ Database.JdbcUrl=jdbc\:hsqldb\:file\:hsqldb
+Default\ Unmanaged\ JDBC\ Database.TestOnReturn=false
+Default\ Unmanaged\ JDBC\ Database.AccessToUnderlyingConnectionAllowed=false
+Default\ Unmanaged\ JDBC\ Database.Password=xxxx
+Default\ Unmanaged\ JDBC\ Database.MinEvictableIdleTimeMillis=1800000
+Default\ Unmanaged\ JDBC\ Database.PoolPreparedStatements=false
+Default\ Unmanaged\ JDBC\ Database.MaxOpenPreparedStatements=0
+Default\ Unmanaged\ JDBC\ Database.ConnectionInterface=javax.sql.DataSource
+Default\ Unmanaged\ JDBC\ Database.MinIdle=0
+Default\ Unmanaged\ JDBC\ Database.NumTestsPerEvictionRun=3
+Default\ Unmanaged\ JDBC\ Database.TimeBetweenEvictionRunsMillis=-1
+Default\ Unmanaged\ JDBC\ Database.JdbcDriver=org.hsqldb.jdbcDriver
+Default\ Unmanaged\ JDBC\ Database.UserName=sa
+Default\ Unmanaged\ JDBC\ Database.MaxIdle=10
+Default\ Unmanaged\ JDBC\ Database.TestWhileIdle=false
+
+# Resource(id=Default JMS Connection Factory)
+# className: org.apache.activemq.ra.ActiveMQManagedConnectionFactory
+#
+Default\ JMS\ Connection\ Factory.ConnectionInterface=javax.jms.ConnectionFactory, \
+javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory
+Default\ JMS\ Connection\ Factory.ResourceAdapter=Default JMS Resource Adapter
+
+# SecurityService(id=Default Security Service)
+# className: org.apache.openejb.core.security.SecurityServiceImpl
+#
+
+# TransactionManager(id=Default Transaction Manager)
+# className: org.apache.geronimo.transaction.manager.GeronimoTransactionManager
+#
+
+# ServerService(id=httpejbd)
+# className: org.apache.openejb.server.httpd.HttpEjbServer
+#
+httpejbd.port=4204
+httpejbd.name=httpejbd
+httpejbd.disabled=false
+httpejbd.server=org.apache.openejb.server.httpd.HttpEjbServer
+httpejbd.threads=200
+httpejbd.bind=127.0.0.1
+
+# ServerService(id=telnet)
+# className: org.apache.openejb.server.telnet.TelnetServer
+#
+telnet.port=4202
+telnet.name=telnet
+telnet.disabled=false
+telnet.bind=127.0.0.1
+telnet.threads=5
+telnet.server=org.apache.openejb.server.telnet.TelnetServer
+
+# ServerService(id=ejbd)
+# className: org.apache.openejb.server.ejbd.EjbServer
+#
+ejbd.disabled=false
+ejbd.bind=127.0.0.1
+ejbd.server=org.apache.openejb.server.ejbd.EjbServer
+ejbd.port=4201
+ejbd.name=ejbd
+ejbd.threads=200
+
+# ServerService(id=hsql)
+# className: org.apache.openejb.server.hsql.HsqlService
+#
+hsql.port=9001
+hsql.name=hsql
+hsql.disabled=false
+hsql.server=org.apache.openejb.server.hsql.HsqlService
+hsql.bind=127.0.0.1
+
+# ServerService(id=admin)
+# className: org.apache.openejb.server.admin.AdminDaemon
+#
+admin.disabled=false
+admin.bind=127.0.0.1
+admin.only_from=localhost
+admin.port=4200
+admin.threads=1
+admin.name=admin
+admin.server=org.apache.openejb.server.admin.AdminDaemon
+----

@@ -280,7 +280,7 @@ public class DataSourceFactory {
                         final FlushableDataSourceHandler.FlushConfig flushConfig;
                         properties.remove("flushable"); // don't let it wrap the delegate again
 
-                        final Map<String, Object> recipeProps = new HashMap<>(objectRecipe == null ? new HashMap<String, Object>() : objectRecipe.getProperties());
+                        final Map<String, Object> recipeProps = new HashMap<>(objectRecipe == null ? new HashMap<>() : objectRecipe.getProperties());
                         recipeProps.remove("properties");
                         recipeProps.put("OpenEJBResourceClasspath", String.valueOf(useAlternativeDriver));
 

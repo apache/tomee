@@ -432,7 +432,7 @@ public class CheckCallbacks extends ValidationBase {
     }
 
     private List<Method> getMethods(Class clazz, final String methodName) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         while (clazz != null) {
             for (final Method method : clazz.getDeclaredMethods()) {
                 if (method.getName().equals(methodName)) {

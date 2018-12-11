@@ -1,0 +1,55 @@
+= Installing TomEE using the drop-in .war approach
+:index-group: Tips and Tricks
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the
+Apache Software Foundation (ASF) under one or more contributor license
+agreements. See the NOTICE file distributed with this work for
+additional information regarding copyright ownership. The ASF licenses
+this file to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may
+obtain a copy of the License at .
+http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+If you prefer, TomEE can be setup by deploying a .war file into an
+existing Tomcat 7.x installation, as opposed to using the all-in-one
+bundle. This guide provides a set of step-by-step instructions to this
+approach. Please note that TomEE 1.7.x does not recommend Tomcat
+versions less than 7.0.54. Tomcat 8 is not currently supported in the
+released version, but you can check out the developer branch to see
+progress link:dev/source-code.html[here].
+
+* Download the Apache Tomcat 7.0.55 server.
+http://tomcat.apache.org/download-70.cgi
+* Unzip the Tomcat distribution file.
+* Update $CATALINA_HOME/conf/tomcat-users.xml to add a tomee user to
+allow access to the installer page.
++
+[source,xml]
+----
+ <!-- Activate/create these lines to get access to TomEE GUI -->
+ <role rolename="tomee-admin" />
+ <user username="tomee" password="tomee" roles="tomee-admin" />
+----
+* Download the .war file you wish to use - either the
+tomee-webapp-1.7.1.war (for the webprofile installation) or
+tomee-webapp-plus-1.7.1.war (for the plus version).
+* Copy and rename the .war file to $CATALINA_HOME/webapps/tomee.war (the
+.war filename is important).
+* Start Tomcat.
+* Go to the TomEE installer webapp (http://localhost:8080/tomee/) and
+login with the user you added to tomcat-users.xml.
+* Verify the values and click "Confirm".
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/tomee_installer.png[alt
+text]
+
+* Restart Tomcat.
+* Your TomEE installation is now complete!

@@ -60,7 +60,7 @@ public class UrlCache {
     }
 
 
-    private final Map<String, Map<URL, File>> cache = new TreeMap<String, Map<URL, File>>();
+    private final Map<String, Map<URL, File>> cache = new TreeMap<>();
 
     public synchronized URL[] cacheUrls(final String appId, final URL[] urls) {
         if (!antiJarLocking) {
@@ -68,11 +68,11 @@ public class UrlCache {
         }
 
         // the final cached urls
-        final LinkedHashSet<URL> cachedUrls = new LinkedHashSet<URL>();
+        final LinkedHashSet<URL> cachedUrls = new LinkedHashSet<>();
 
         // this stack contains the urls to be processed... when manifest class path entries
         // are added they are added to the top (front) of the stack so manifest order is maintained
-        final LinkedList<URL> locationStack = new LinkedList<URL>(Arrays.asList(urls));
+        final LinkedList<URL> locationStack = new LinkedList<>(Arrays.asList(urls));
         while (!locationStack.isEmpty()) {
             final URL url = locationStack.removeFirst();
 
@@ -202,7 +202,7 @@ public class UrlCache {
 
         // generate a nice cache file name
         final String name = sourceFile.getName();
-        final int dot = name.lastIndexOf(".");
+        final int dot = name.lastIndexOf('.');
         String prefix = name;
         String suffix = "";
         if (dot > 0) {
@@ -246,7 +246,7 @@ public class UrlCache {
     private synchronized Map<URL, File> getAppCache(final String appId) {
         Map<URL, File> urlFileMap = cache.get(appId);
         if (urlFileMap == null) {
-            urlFileMap = new LinkedHashMap<URL, File>();
+            urlFileMap = new LinkedHashMap<>();
             cache.put(appId, urlFileMap);
         }
         return urlFileMap;
@@ -269,7 +269,7 @@ public class UrlCache {
 
             // build the urls...
             // the class-path attribute is space delimited
-            final LinkedList<URL> classPathUrls = new LinkedList<URL>();
+            final LinkedList<URL> classPathUrls = new LinkedList<>();
             for (final StringTokenizer tokenizer = new StringTokenizer(manifestClassPath, " "); tokenizer.hasMoreTokens(); ) {
                 final String entry = tokenizer.nextToken();
                 try {

@@ -216,7 +216,7 @@ public class Logger {
     private static final Computable<String, String> heirarchyResolver = new Computable<String, String>() {
         @Override
         public String compute(final String key) throws InterruptedException {
-            final int index = key.lastIndexOf(".");
+            final int index = key.lastIndexOf('.');
             final String parent = key.substring(0, index);
             if (parent.contains(OPENEJB)) {
                 return parent;
@@ -318,7 +318,7 @@ public class Logger {
 
     private static String packageName(final Class clazz) {
         final String name = clazz.getName();
-        return name.substring(0, name.lastIndexOf("."));
+        return name.substring(0, name.lastIndexOf('.'));
     }
 
     private static Boolean isLog4j;
@@ -329,7 +329,7 @@ public class Logger {
 
             isLog4j = false;
 
-            final List<String> locations = new ArrayList<String>();
+            final List<String> locations = new ArrayList<>();
             {
                 final Properties configFile = log4j(loadLoggingProperties());
 

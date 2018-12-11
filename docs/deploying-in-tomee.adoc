@@ -1,0 +1,73 @@
+:index-group: General Information
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+NOTE: Licensed to the Apache Software Foundation (ASF) under
+one or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information regarding
+copyright ownership. The ASF licenses this file to you under the Apache
+License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+. http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+= Deploying in TomEE
+
+Deploying applications in TomEE is as simple as deploying them in
+Tomcat.
+
+You could deploy your application in Eclipse just like how you would
+deploy with Tomcat. For an example,
+link:tomee-and-eclipse.html[tomee-and-eclipse] shows how to use TomEE
+with Eclipse.
+
+Or you can simply package your application as a standard *WAR* file and
+copy it to the *[TomEE]/webapps* folder, or as an *EAR* file and copy it
+to the *[TomEE]/apps* folder.
+
+Read on to learn more about packaging EJBs in a WAR file.
+
+== Packaging
+
+=== One archive
+
+The basic idea of this approach is that your Servlets and EJBs are
+together in your WAR file as one application.
+
+* No classloader boundaries between Servlets and EJBs
+* EJBs and Servlets can share all third-party libraries (like Spring!)
+* No EAR required.
+* Can put the web.xml and ejb-jar.xml in the same archive (the WAR file)
+* EJBs can see Servlet classes and vice versa
+
+=== Not quite J2EE (But it is Java EE 6)
+
+This is very different than J2EE or Java EE 5 as there are not several
+levels of separation and classloader hierarchy any more. +
+This may take some getting used to and it is important to understand
+that this style of packaging is *not* J2EE compliant. +
+You should not worry though, as it is an accepted feature of Java EE 6.
+
+=== J2EE classloading rules:
+
+* You cannot ever have EJBs and Servlets in the same classloader.
+* Three classloader minimum; a classloader for the ear, one for each
+ejb-jar, and one for each WAR file.
+* Servlets can see EJBs, but EJBs cannot see Servlets.
+
+To pull that off, J2EE has to kill you on packaging: - You cannot have
+EJB classes and Servlet classes in the same archive.
+
+* You need at least three archives to combine Servlets and EJBs; 1 EAR
+containing 1 EJB jar and 1 Servlet WAR.
+* Shared libraries must go in the EAR and be included in a specially
+formatted 'Class-Path' entry in the EAR's MANIFEST file.
+
+Critically speaking, forcing more than one classloader on an application
+is where J2EE "jumps the shark" for a large majority of people's needs.

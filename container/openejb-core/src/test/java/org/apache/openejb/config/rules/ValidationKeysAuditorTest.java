@@ -112,7 +112,7 @@ public class ValidationKeysAuditorTest {
         final String newLine = System.getProperty("line.separator");
         final Set<String> testedKeys = getTestedKeys(visitor.classInfos);
         Set<String> untestedKeys = getUntestedKeys(testedKeys);
-        untestedKeys = new TreeSet<String>(untestedKeys);// sort the keys
+        untestedKeys = new TreeSet<>(untestedKeys);// sort the keys
         prepareConfluenceSummary(untestedKeys, output, newLine);
         prepareConfluenceUntestedKeyList(untestedKeys, output, newLine);
         prepareConfluenceTestedKeysDetailedReport(visitor.classInfos, output, newLine);
@@ -121,7 +121,7 @@ public class ValidationKeysAuditorTest {
     }
 
     private void prepareConfluenceTestedKeysDetailedReport(final HashSet<ClassInfo> classInfos, final StringBuilder output, final String newLine) {
-        final TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
+        final TreeMap<String, TreeSet<String>> info = new TreeMap<>();
         output.append("h2.List of keys which have been tested.").append(newLine);
         output.append("{table-plus:autoNumber=true}").append(newLine);
         output.append("|| Key | Method which tests the key ||").append(newLine);
@@ -131,7 +131,7 @@ public class ValidationKeysAuditorTest {
                 final HashSet<String> keys = methodInfo.keys;
                 for (final String key : keys) {
                     if (!info.containsKey(key)) {
-                        final TreeSet<String> set = new TreeSet<String>();
+                        final TreeSet<String> set = new TreeSet<>();
                         set.add(createConfluenceLink(classInfo.clazz + "." + methodInfo.methud + "()"));
                         info.put(key, set);
                     } else {
@@ -161,7 +161,7 @@ public class ValidationKeysAuditorTest {
 
     private String createConfluenceLink(final String string) {
         String link = "[" + string + " | ";
-        final String temp = string.substring(0, string.lastIndexOf("."));
+        final String temp = string.substring(0, string.lastIndexOf('.'));
         final String location = "https://svn.apache.org/viewvc/openejb/trunk/openejb3/container/openejb-core/src/test/java/" + temp + ".java?revision=HEAD&view=markup ]";
         link = link + location;
         return link;
@@ -192,7 +192,7 @@ public class ValidationKeysAuditorTest {
         final String newLine = System.getProperty("line.separator");
         final Set<String> testedKeys = getTestedKeys(KeysAnnotationVisitor.classInfos);
         Set<String> untestedKeys = getUntestedKeys(testedKeys);
-        untestedKeys = new TreeSet<String>(untestedKeys);// sort the keys
+        untestedKeys = new TreeSet<>(untestedKeys);// sort the keys
         prepareSummary(untestedKeys, output, newLine);
         prepareUntestedKeyList(untestedKeys, output, newLine);
         prepareTestedKeysDetailedReport(KeysAnnotationVisitor.classInfos, output, newLine);
@@ -203,14 +203,14 @@ public class ValidationKeysAuditorTest {
         output.append("================================================================================================").append(newLine);
         output.append("List of all keys tested. Next to each is the the test method which tests the key").append(newLine);
         output.append("================================================================================================").append(newLine);
-        final TreeMap<String, TreeSet<String>> info = new TreeMap<String, TreeSet<String>>();
+        final TreeMap<String, TreeSet<String>> info = new TreeMap<>();
         for (final ClassInfo classInfo : classInfos) {
             final HashSet<MethodInfo> methuds = classInfo.methuds;
             for (final MethodInfo methodInfo : methuds) {
                 final HashSet<String> keys = methodInfo.keys;
                 for (final String key : keys) {
                     if (!info.containsKey(key)) {
-                        final TreeSet<String> set = new TreeSet<String>();
+                        final TreeSet<String> set = new TreeSet<>();
                         set.add(classInfo.clazz + "." + methodInfo.methud + "()");
                         info.put(key, set);
                     } else {
@@ -280,7 +280,7 @@ public class ValidationKeysAuditorTest {
     }
 
     private Set<String> getUntestedKeys(final Set<String> testedKeys) {
-        final Set<String> untestedKeys = new HashSet<String>();
+        final Set<String> untestedKeys = new HashSet<>();
         for (final String key : allKeys) {
             if (!testedKeys.contains(key))
                 untestedKeys.add(key);
@@ -289,7 +289,7 @@ public class ValidationKeysAuditorTest {
     }
 
     private Set<String> getTestedKeys(final HashSet<ClassInfo> classInfos) {
-        final Set<String> testedKeys = new HashSet<String>();
+        final Set<String> testedKeys = new HashSet<>();
         for (final ClassInfo classInfo : classInfos) {
             final HashSet<MethodInfo> methuds = classInfo.methuds;
             for (final MethodInfo methodInfo : methuds) {
@@ -300,9 +300,9 @@ public class ValidationKeysAuditorTest {
     }
 
     private static Set<String> stripPrefixes(final Set<String> allKeys) {
-        final Set<String> keys = new HashSet<String>();
+        final Set<String> keys = new HashSet<>();
         for (String key : allKeys) {
-            key = key.substring(key.indexOf(".") + 1);
+            key = key.substring(key.indexOf('.') + 1);
             if (!keys.contains(key))
                 keys.add(key);
         }

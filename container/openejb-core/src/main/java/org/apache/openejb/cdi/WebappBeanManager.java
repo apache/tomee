@@ -90,8 +90,7 @@ public class WebappBeanManager extends BeanManagerImpl {
 
     @Override
     public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
-        final Set<ObserverMethod<? super T>> set = new HashSet<>();
-        set.addAll(super.resolveObserverMethods(event, metadata));
+        final Set<ObserverMethod<? super T>> set = new HashSet<>(super.resolveObserverMethods(event, metadata));
 
         if (isEvent(event)) {
             final BeanManagerImpl parentBm = getParentBm();

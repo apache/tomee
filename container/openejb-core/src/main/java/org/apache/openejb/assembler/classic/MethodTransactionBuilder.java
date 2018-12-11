@@ -84,7 +84,7 @@ public class MethodTransactionBuilder {
      * @return a normalized list of new MethodTransactionInfo objects
      */
     public static List<MethodTransactionInfo> normalize(final List<MethodTransactionInfo> infos) {
-        final List<MethodTransactionInfo> normalized = new ArrayList<MethodTransactionInfo>();
+        final List<MethodTransactionInfo> normalized = new ArrayList<>();
         for (final MethodTransactionInfo oldInfo : infos) {
             for (final MethodInfo methodInfo : oldInfo.methods) {
                 final MethodTransactionInfo newInfo = new MethodTransactionInfo();

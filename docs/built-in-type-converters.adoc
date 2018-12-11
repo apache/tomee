@@ -1,0 +1,101 @@
+= Built-in Type Converters
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+The following built-in types are supported for
+@Resource injection in EJBs via elements in a META-INF/ejb-jar.xml or
+via plain properties in a META-INF/env-entries.properties file.
+
+EJB 3.0 required types:
+
+* java.lang.Boolean
+* java.lang.Byte
+* java.lang.Character
+* java.lang.Double
+* java.lang.Float
+* java.lang.Integer
+* java.lang.Long
+* java.lang.Short
+* java.lang.String
+
+OpenEJB 3.0 additional types:
+
+* java.lang.Class
+* java.lang.Enum (any subclass of)
+* java.io.File
+* java.math.BigDecimal
+* java.math.BigInteger
+* java.net.Inet4Address
+* java.net.Inet6Address
+* java.net.InetAddress
+* java.net.URI
+* java.net.URL
+* java.util.ArrayList
+* java.util.Date
+* java.util.HashMap
+* java.util.Hashtable
+* java.util.IdentityHashMap
+* java.util.LinkedHashMap
+* java.util.LinkedHashSet
+* java.util.LinkedList
+* java.util.List
+* java.util.Map
+* java.util.Properties
+* java.util.Set
+* java.util.SortedMap
+* java.util.TreeMap
+* java.util.TreeSet
+* java.util.Vector
+* java.util.WeakHashMap
+* java.util.logging.Logger
+* java.util.regex.Pattern
+* javax.management.ObjectName
+* javax.naming.Context
+* org.apache.commons.logging.Log
+* org.apache.log4j.Logger
+
+To use an OpenEJB additional type in xml, simply declare it as
+java.lang.String and it will be converted on the fly to the field/setter
+type used by the bean class. For example:
+
+[source,java]
+----
+package org.superbiz.foo;
+
+import java.util.Date;
+
+@Stateless
+public class MyBean {
+
+    @Resource
+    private Date myDate;
+}
+----
+
+Works with an ejb-jar.xml as follows:
+
+[source,xml]
+----
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0"
+metadata-complete="false">
+  <enterprise-beans>
+    <session>
+      <ejb-name>MyBean</ejb-name>
+      <env-entry>
+  <env-entry-name>org.superbiz.foo.MyBean/myDate</env-entry-name>
+  <env-entry-value>2008-04-19</env-entry-value>
+  <env-entry-type>java.lang.String</env-entry-type>
+      </env-entry>
+    </session>
+  </enterprise-beans>
+</ejb-jar>
+----
+
+Or with an env-entries.properties file as follows:
+
+[source,properties]
+----
+org.superbiz.foo.MyBean/myDate = 2008-04-19
+----

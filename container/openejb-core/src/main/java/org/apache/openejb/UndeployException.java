@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class UndeployException extends OpenEJBException {
 
-    private final List<Throwable> causes = new ArrayList<Throwable>();
+    private final List<Throwable> causes = new ArrayList<>();
 
     public UndeployException() {
     }

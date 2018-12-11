@@ -62,7 +62,7 @@ public final class ProxyEJB {
         private final Object deploymentID;
 
         public Handler(final BeanContext bc) {
-            beanContextRef = new WeakReference<BeanContext>(bc);
+            beanContextRef = new WeakReference<>(bc);
             deploymentID = bc.getDeploymentID();
         }
 

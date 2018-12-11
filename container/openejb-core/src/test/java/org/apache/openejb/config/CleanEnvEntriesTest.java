@@ -88,7 +88,7 @@ public class CleanEnvEntriesTest extends TestCase {
     }
 
     private Map<String, EnvEntryInfo> map(final List<EnvEntryInfo> envEntries) {
-        final Map<String, EnvEntryInfo> map = new HashMap<String, EnvEntryInfo>();
+        final Map<String, EnvEntryInfo> map = new HashMap<>();
         for (final EnvEntryInfo entry : envEntries) {
             map.put(entry.referenceName, entry);
         }

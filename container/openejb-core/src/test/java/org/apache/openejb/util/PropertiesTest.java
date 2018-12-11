@@ -348,7 +348,7 @@ public class PropertiesTest extends TestCase {
 
         final StringBuilder message = new StringBuilder().append("\n");
 
-        final Set<String> keys = new TreeSet<String>();
+        final Set<String> keys = new TreeSet<>();
         keys.addAll(new HashSet(expected.keySet()));
         keys.addAll(new HashSet(actual.keySet()));
         for (final String key : keys) {

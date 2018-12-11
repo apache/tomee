@@ -50,7 +50,7 @@ public abstract class EjbObjectProxyHandler extends BaseEjbProxyHandler {
     static final Map<String, Integer> dispatchTable;
 
     static {
-        dispatchTable = new HashMap<String, Integer>();
+        dispatchTable = new HashMap<>();
         dispatchTable.put("getHandle", 1);
         dispatchTable.put("getPrimaryKey", 2);
         dispatchTable.put("isIdentical", 3);
