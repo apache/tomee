@@ -31,10 +31,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("/weather")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
 public class WeatherService {
+
+    final static int[] RECENT_NEW_YORK_TEMPS = { 46, 45, 50, 46, 45, 27, 30, 48, 55, 54, 45, 41, 45, 43, 46 };
 
     @Inject
     private MetricRegistry registry;
@@ -50,7 +50,6 @@ public class WeatherService {
     public Histogram getTemperatures() {
         Metadata metadata = new Metadata("temperatures", MetricType.HISTOGRAM, "degrees F");
         metadata.setDescription("A histogram of recent New York temperatures.");
-        final int[] RECENT_NEW_YORK_TEMPS = { 46, 45, 50, 46, 45, 27, 30, 48, 55, 54, 45, 41, 45, 43, 46 };
         histogram = registry.histogram(metadata);
         for(int temp : RECENT_NEW_YORK_TEMPS) {
             histogram.update(temp);

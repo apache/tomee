@@ -78,7 +78,7 @@ Denotes if a metric with a certain name can be registered in more than one place
 
 ##### For the histogram status:
 
-    GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status`
+    GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
 
 ##### Reponse:
      
