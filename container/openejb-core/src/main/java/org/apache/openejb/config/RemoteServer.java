@@ -23,9 +23,12 @@ import org.apache.openejb.loader.Options;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.Join;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -43,6 +46,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Locale;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * NOTE: Do not add inner or anonymous classes or a dependency without updating ExecMojo
@@ -357,11 +362,17 @@ public class RemoteServer {
 
                 // kill3UNIXDebug();
                 final ProcessBuilder pb = new ProcessBuilder(args)
-                        .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                        .redirectError(ProcessBuilder.Redirect.INHERIT)
+                        .redirectOutput(Redirect.PIPE)
+                        .redirectErrorStream(true)
                         .directory(home.getAbsoluteFile());
 
                 Process p = pb.start();
+
+                BufferedReader bReader = new BufferedReader(new InputStreamReader(p.getInputStream(), UTF_8));
+                String line;
+                while ((line = bReader.readLine()) != null) {
+                    System.out.println(String.format("Apache TomEE Remote: %s", line));
+                }
 
                 if (START.equals(cmd)) {
                     server.set(p);
