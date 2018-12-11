@@ -364,7 +364,8 @@ public class Options {
     }
 
     /**
-     *
+     * Check possible values of enum and return concatenated string
+     * 
      * @param enumType
      * @return
      */
@@ -373,7 +374,8 @@ public class Options {
     }
 
     /**
-     *
+     * Concatenates the given elements with the delimiter and returns string
+     * 
      * @param delimiter String
      * @param collection Object...
      * @return String
