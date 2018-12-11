@@ -1434,7 +1434,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // a bit weird but just to be consistent if user doesn't lookup directly the resource
             final Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
             try {
-                lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
+                lastContext.rebind(path.substring(path.lastIndexOf('/') + 1, path.length()), value.getValue());
             } catch (final NameAlreadyBoundException nabe) {
                 nabe.printStackTrace();
             }
@@ -2630,7 +2630,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             object = globalContext.lookup(name);
         } catch (final NamingException e) {
             // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
-            final String ctx = name.substring(0, name.lastIndexOf("/"));
+            final String ctx = name.substring(0, name.lastIndexOf('/'));
             final String objName = name.substring(ctx.length() + 1);
             final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
             while (bindings.hasMoreElements()) {

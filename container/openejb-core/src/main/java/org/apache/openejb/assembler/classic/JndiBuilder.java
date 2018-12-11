@@ -203,7 +203,7 @@ public class JndiBuilder {
             format = options.get(JNDINAME_FORMAT, "{deploymentId}{interfaceType.annotationName}");
 
             { // illegal format check
-                final int index = format.indexOf(":");
+                final int index = format.indexOf(':');
                 if (index > -1) {
                     logger.error("Illegal " + JNDINAME_FORMAT + " contains a colon ':'.  Everything before the colon will be removed, '" + format + "' ");
                     format = format.substring(index + 1);

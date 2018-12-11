@@ -170,7 +170,7 @@ public class Agent {
         final RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
         String pid = bean.getName();
         if (pid.contains("@")) {
-            pid = pid.substring(0, pid.indexOf("@"));
+            pid = pid.substring(0, pid.indexOf('@'));
         }
         return pid;
     }

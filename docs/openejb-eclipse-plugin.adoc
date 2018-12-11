@@ -1,5 +1,5 @@
 = OpenEJB Eclipse Plugin
-:index-group: Unrevised
+:index-group: IDE
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published

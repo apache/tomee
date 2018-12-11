@@ -84,7 +84,7 @@ public class PersistenceContextAnnFactory {
             }
 
             String name = persistenceContext.name();
-            if (name == null || name.equals("")) {
+            if (name == null || name.isEmpty()) {
                 name = member == null ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 

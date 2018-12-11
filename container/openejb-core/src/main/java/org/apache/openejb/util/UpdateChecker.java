@@ -74,7 +74,7 @@ public class UpdateChecker {
 
                 final String userInfo = proxyUrl.getUserInfo();
                 if (userInfo != null) {
-                    final int sep = userInfo.indexOf(":");
+                    final int sep = userInfo.indexOf(':');
                     if (sep >= 0) {
                         JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyUser", userInfo.substring(0, sep));
                         JavaSecurityManagers.setSystemProperty(proxyProtocol + ".proxyPassword", userInfo.substring(sep + 1));

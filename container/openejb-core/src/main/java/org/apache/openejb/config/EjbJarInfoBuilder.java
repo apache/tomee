@@ -665,11 +665,11 @@ public class EjbJarInfoBuilder {
         methodInfo.ejbName = method.getEjbName();
         methodInfo.methodIntf = method.getMethodIntf() == null ? null : method.getMethodIntf().toString();
         methodInfo.methodName = method.getMethodName();
-        if (methodInfo.methodName == null || methodInfo.methodName.equals("")) {
+        if (methodInfo.methodName == null || methodInfo.methodName.isEmpty()) {
             methodInfo.methodName = "*";
         }
         methodInfo.className = method.getClassName();
-        if (methodInfo.className == null || methodInfo.className.equals("")) {
+        if (methodInfo.className == null || methodInfo.className.isEmpty()) {
             methodInfo.className = "*";
         }
 

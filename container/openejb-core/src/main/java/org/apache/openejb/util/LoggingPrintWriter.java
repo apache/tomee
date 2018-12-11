@@ -41,7 +41,7 @@ public class LoggingPrintWriter extends PrintWriter {
     }
 
     public void flush() {
-        if (!text.toString().equals("")) {
+        if (!text.toString().isEmpty()) {
             flushLine();
         }
     }
@@ -83,7 +83,7 @@ public class LoggingPrintWriter extends PrintWriter {
     }
 
     public void println() {
-        if (!text.toString().equals("")) {
+        if (!text.toString().isEmpty()) {
             flushLine();
         }
     }

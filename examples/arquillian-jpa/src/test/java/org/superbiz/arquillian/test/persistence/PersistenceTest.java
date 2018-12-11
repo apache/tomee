@@ -16,6 +16,11 @@
  */
 package org.superbiz.arquillian.test.persistence;
 
+import java.util.concurrent.Callable;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import static javax.ejb.TransactionAttributeType.REQUIRES_NEW;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.persistence.ShouldMatchDataSet;
@@ -47,17 +52,44 @@ public class PersistenceTest {
 
     @PersistenceContext
     private EntityManager em;
+    
+    @EJB
+    private Caller transactionalCaller;
 
+    
+    public void seriouslyYouAlreadyForgotOpenEJB_questionMark() throws Exception {
+        
+        final User user = em.find(User.class, 2L);
+        assertNotNull(user);
+        
+        user.setName("OpenEJB"); // @Transactional(TransactionMode.COMMIT) will commit it and datasets/expected-users.yml will check it
+    }
+    
     @Test
     @Transactional(TransactionMode.COMMIT) // default with persistence extension
     @UsingDataSet("datasets/users.yml")
     @ShouldMatchDataSet("datasets/expected-users.yml")
-    public void seriouslyYouAlreadyForgotOpenEJB_questionMark() throws Exception {
+    public void testWithTransaction() throws Exception {
         assertEquals(2, em.createQuery("select count(e) from User e", Number.class).getSingleResult().intValue());
 
-        final User user = em.find(User.class, 2L);
-        assertNotNull(user);
+        transactionalCaller.call(new Callable() {
+            public Object call() throws Exception {
+                seriouslyYouAlreadyForgotOpenEJB_questionMark();
+                return null;
+            }
+        });
+    }
+    
+    public static interface Caller {
+        public <V> V call(Callable<V> callable) throws Exception;
+    }
+    
+    @Stateless
+    @TransactionAttribute(REQUIRES_NEW)
+    public static class TransactionBean implements Caller {
 
-        user.setName("OpenEJB"); // @Transactional(TransactionMode.COMMIT) will commit it and datasets/expected-users.yml will check it
+        public <V> V call(Callable<V> callable) throws Exception {
+            return callable.call();
+        }
     }
 }

@@ -1,5 +1,5 @@
 = Dynamic Datasource
-:index-group: Unrevised
+:index-group: Datasource
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published

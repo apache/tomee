@@ -21,7 +21,7 @@ public class CmpServlet extends HttpServlet {
         final Collection<AppInfo> deployedApplications = assembler.getDeployedApplications();
 
         for (final AppInfo deployedApplication : deployedApplications) {
-            if ("CmpMappingTestIgnoreMe".equals(deployedApplication.appId)) {
+            if ("CmpMappingTest".equals(deployedApplication.appId)) {
                 final String cmpMappingsXml = deployedApplication.cmpMappingsXml;
                 resp.getWriter().write(cmpMappingsXml == null ? "null" : cmpMappingsXml);
             }

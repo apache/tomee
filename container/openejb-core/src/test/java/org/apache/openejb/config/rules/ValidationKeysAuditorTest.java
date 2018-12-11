@@ -161,7 +161,7 @@ public class ValidationKeysAuditorTest {
 
     private String createConfluenceLink(final String string) {
         String link = "[" + string + " | ";
-        final String temp = string.substring(0, string.lastIndexOf("."));
+        final String temp = string.substring(0, string.lastIndexOf('.'));
         final String location = "https://svn.apache.org/viewvc/openejb/trunk/openejb3/container/openejb-core/src/test/java/" + temp + ".java?revision=HEAD&view=markup ]";
         link = link + location;
         return link;
@@ -302,7 +302,7 @@ public class ValidationKeysAuditorTest {
     private static Set<String> stripPrefixes(final Set<String> allKeys) {
         final Set<String> keys = new HashSet<>();
         for (String key : allKeys) {
-            key = key.substring(key.indexOf(".") + 1);
+            key = key.substring(key.indexOf('.') + 1);
             if (!keys.contains(key))
                 keys.add(key);
         }

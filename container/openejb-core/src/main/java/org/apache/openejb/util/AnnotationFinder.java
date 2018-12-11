@@ -230,7 +230,7 @@ public class AnnotationFinder {
     private static List<String> jar(final URL location) throws IOException, URISyntaxException {
         String jarPath = location.getFile();
         if (jarPath.contains("!")) {
-            jarPath = jarPath.substring(0, jarPath.indexOf("!"));
+            jarPath = jarPath.substring(0, jarPath.indexOf('!'));
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
@@ -243,7 +243,11 @@ public class AnnotationFinder {
                 final JarInputStream jarStream = new JarInputStream(in);
                 return jar(jarStream);
             } finally {
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //no-op
+                }
             }
         }
     }
