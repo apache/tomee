@@ -177,6 +177,7 @@ BROKEN, see TOMEE-2140
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-config-example</module>
   </modules>
 
   <dependencies>
