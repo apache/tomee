@@ -54,13 +54,18 @@ import java.util.Properties;
 import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.Files.mkdirs;
 
+
 /**
+ * The type ExecMojo.
  * Creates an executable jar of the application.
  */
 @Mojo(name = "exec", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class ExecMojo extends BuildTomEEMojo {
     private static final String DEFAULT_SCRIPT = "bin/catalina[.sh|.bat]";
 
+    /**
+     * The Exec file.
+     */
     @Parameter(property = "tomee-plugin.exec-file", defaultValue = "${project.build.directory}/${project.build.finalName}-exec.jar")
     protected File execFile;
 
@@ -88,6 +93,12 @@ public class ExecMojo extends BuildTomEEMojo {
     @Parameter
     private List<String> postTasks;
 
+    /**
+     * Perform the Execution
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final boolean realAttach = attach;
