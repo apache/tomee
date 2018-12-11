@@ -56,9 +56,17 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
                 try {
                     final Class<?> clazz = loader.loadClass(apiInterface.trim());
                     interfaceList.add(clazz);
+
                 } catch (NoClassDefFoundError | ClassNotFoundException e) {
+
                     // TODO: log severe error here with guidance
                 }
+            }
+
+            // not sure if we should do that, or simply check if we can't load the classes before
+            // and then skip the proxy creation and set the useWrapper to false.
+            if (interfaceList.isEmpty()) {
+                interfaceList.add(java.security.Principal.class);
             }
 
             proxy = Principal.class.cast(Proxy.newProxyInstance(loader, interfaceList.toArray(new Class[0]), new InvocationHandler() {
