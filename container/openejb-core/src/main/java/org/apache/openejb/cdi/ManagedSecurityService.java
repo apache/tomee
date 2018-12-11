@@ -19,22 +19,24 @@ package org.apache.openejb.cdi;
 
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.Join;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.security.Principal;
 import java.security.PrivilegedActionException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityService {
+
     private final org.apache.webbeans.corespi.security.ManagedSecurityService delegate = new org.apache.webbeans.corespi.security.ManagedSecurityService();
+
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, ManagedSecurityService.class.getName());
 
     private final boolean useWrapper;
     private Principal proxy = null;
@@ -51,6 +53,7 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
                     .getProperty("org.apache.webbeans.component.PrincipalBean.proxyApis", "org.eclipse.microprofile.jwt.JsonWebToken").split(",");
 
             List<Class> interfaceList = new ArrayList<>();
+            List<String> notFoundInterfaceList = new ArrayList<>();
 
             for (final String apiInterface : apiInterfaces) {
                 try {
@@ -58,9 +61,14 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
                     interfaceList.add(clazz);
 
                 } catch (NoClassDefFoundError | ClassNotFoundException e) {
-
-                    // TODO: log severe error here with guidance
+                    notFoundInterfaceList.add(apiInterface);
                 }
+            }
+
+            if (!notFoundInterfaceList.isEmpty()) {
+                logger.info("Some Principal APIs could not be loaded: {0} out of {1} not found",
+                        Join.join(",", notFoundInterfaceList),
+                        Join.join(",", Arrays.asList(apiInterfaces)));
             }
 
             // not sure if we should do that, or simply check if we can't load the classes before
