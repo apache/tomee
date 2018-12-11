@@ -19,7 +19,16 @@ package org.apache.openejb.maven.plugin.cli;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * The class Args is used to parse the supplied attributes.
+ */
 public final class Args {
+    /**
+     * Parse collection.
+     *
+     * @param raw the raw
+     * @return the collection
+     */
     public static Collection<String> parse(final String raw) {
         final Collection<String> result = new LinkedList<>();
 
