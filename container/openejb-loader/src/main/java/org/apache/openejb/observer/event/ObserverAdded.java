@@ -26,10 +26,20 @@ public class ObserverAdded {
 
     private final Object observer;
 
+    /**
+     * Add the provided object to be observable
+     * 
+     * @param observer
+     */
     public ObserverAdded(final Object observer) {
         this.observer = observer;
     }
 
+    /**
+     * Return the observable object
+     * 
+     * @return
+     */
     public Object getObserver() {
         return observer;
     }

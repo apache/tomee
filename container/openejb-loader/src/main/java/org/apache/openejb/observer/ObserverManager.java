@@ -56,7 +56,7 @@ public class ObserverManager {
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
     /**
-     * Add Object to Observer
+     * Add the provided object to be observable
      * 
      * @param observer Object
      * @return boolean
@@ -81,7 +81,7 @@ public class ObserverManager {
     }
 
     /**
-     * Remove Object from Observer
+     * Remove the observable object so this object doesn't have any observers
      * 
      * @param observer Object
      * @return boolean

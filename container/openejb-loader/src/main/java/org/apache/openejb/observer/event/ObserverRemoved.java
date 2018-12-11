@@ -26,10 +26,20 @@ public class ObserverRemoved {
 
     private final Object observer;
 
+    /**
+     * Remove the observable object so this object doesn't have any observers
+     * 
+     * @param observer
+     */
     public ObserverRemoved(final Object observer) {
         this.observer = observer;
     }
 
+    /**
+     * Return the observable object
+     * 
+     * @return
+     */
     public Object getObserver() {
         return observer;
     }
