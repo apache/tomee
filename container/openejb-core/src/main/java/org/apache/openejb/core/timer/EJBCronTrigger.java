@@ -1055,7 +1055,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;
@@ -1082,7 +1082,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;

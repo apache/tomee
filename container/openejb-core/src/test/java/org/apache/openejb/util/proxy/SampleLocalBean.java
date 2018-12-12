@@ -90,7 +90,7 @@ public class SampleLocalBean extends BaseLocalBean {
 
     /* 3h short object */
     public Short add(final Short no1, final Short no2) {
-        return new Short((short) (no1 + no2));
+        return (short) (no1 + no2);
     }
 
     /* 3i long primitive */

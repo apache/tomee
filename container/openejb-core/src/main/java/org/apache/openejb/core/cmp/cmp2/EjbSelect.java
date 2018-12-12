@@ -140,7 +140,7 @@ public class EjbSelect {
         final CmpContainer cmpContainer = (CmpContainer) container;
 
         final Character result = (Character) cmpContainer.select(beanContext, methodSignature, "char", args);
-        return result.charValue();
+        return result;
     }
 
 
@@ -166,7 +166,7 @@ public class EjbSelect {
         final CmpContainer cmpContainer = (CmpContainer) container;
 
         final Boolean result = (Boolean) cmpContainer.select(beanContext, methodSignature, "byte", args);
-        return result.booleanValue();
+        return result;
     }
 
 
