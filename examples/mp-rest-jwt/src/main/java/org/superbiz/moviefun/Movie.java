@@ -16,47 +16,30 @@
  */
 package org.superbiz.moviefun;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@Entity
 @XmlRootElement(name = "movie")
 public class Movie {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
 
+    private int id;
     private String director;
     private String title;
-    private int year;
-    private String genre;
-    private int rating;
-
     public Movie() {
     }
 
-    public Movie(String title, String director, String genre, int rating, int year) {
+    public Movie(int id, String director, String title) {
+        this.id = id;
         this.director = director;
         this.title = title;
-        this.year = year;
-        this.genre = genre;
-        this.rating = rating;
+
     }
 
-    public Movie(String director, String title, int year) {
-        this.director = director;
-        this.title = title;
-        this.year = year;
-    }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -76,27 +59,12 @@ public class Movie {
         this.title = title;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id=" + id +
+                ", director='" + director + '\'' +
+                ", title='" + title + '\'' +
+                '}';
     }
 }
