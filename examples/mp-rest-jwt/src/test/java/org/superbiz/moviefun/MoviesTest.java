@@ -88,7 +88,7 @@ public class MoviesTest {
 
 
         //GET movies (Using token1.json with group of claims: [read-only])
-        //This test should be updated to use token2.json once TOMEE- gets resolved.
+        //This test should be updated to use token2.json once TOMEE-2357 gets resolved.
         Collection<? extends Movie> movies = webClient
                 .reset()
                 .path("/rest/cinema/movies")
