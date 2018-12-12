@@ -1,5 +1,5 @@
 # MP REST JWT
-This is a basic example on how to use MicroProfile JWT in TomEE.
+This is a basic example on how to configure and use MicroProfile JWT in TomEE.
 
 ## Run the tests for different scenarios related with JWT validation
 
@@ -7,7 +7,7 @@ This is a basic example on how to use MicroProfile JWT in TomEE.
 
 ## Configuration in TomEE
 
-The class `MoviesMPJWTConfigurationProvider.java` provide to TomEE figuration for JWT validation.
+The class `MoviesMPJWTConfigurationProvider.java` provides to TomEE the figuration need it for JWT validation.
 
     package org.superbiz.moviefun.rest;
     
@@ -136,9 +136,49 @@ The test cases from this project are builded using Arquillian. The arquillian co
 `src/test/resources/arquillian.xml`
 
 The class `TokenUtils.java` is used during the test to act as an Authorization server who generates `Access Tokens` based
-on the configuration files `privateKey.pem`,`publicKey.pem`,`Token1.json`, and `Token2.json`. 
+on the configuration files `privateKey.pem`,`publicKey.pem`,`Token1.json`, and `Token2.json`.  
+`nimbus-jose-jwt` is the library used for JWT generation during the tests.
 
-`nimbus-jose-jwt` is the library used for JWT generation during the tests¡.
+`Token1.json`
+
+    {
+        "iss": "https://server.example.com",
+        "jti": "a-123",
+        "sub": "24400320",
+        "upn": "jdoe@example.com",
+        "preferred_username": "jdoe",
+        "aud": "s6BhdRkqt3",
+        "exp": 1311281970,
+        "iat": 1311280970,
+        "auth_time": 1311280969,
+        "groups": [
+            "group1",
+            "group2",
+            "crud",
+            "read-only"
+        ]
+    }
+
+
+`Token2.json`
+
+    {
+      "iss": "https://server.example.com",
+      "jti": "a-123",
+      "sub": "24400320",
+      "upn": "alice@example.com",
+      "preferred_username": "alice",
+      "aud": "s6BhdRkqt3",
+      "exp": 1311281970,
+      "iat": 1311280970,
+      "auth_time": 1311280969,
+      "groups": [
+        "read-only"
+      ]
+    }
+
+
+
 
 ## Test Scenarios
 
