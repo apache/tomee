@@ -46,10 +46,10 @@ public class MoviesTest {
     @Deployment(testable = false)
     public static WebArchive createDeployment() {
         final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(Movie.class, MoviesBean.class, MoviesTest.class)
-                .addClasses(MoviesRest.class, ApplicationConfig.class)
-                .addClass(MoviesMPJWTConfigurationProvider.class)
-                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
+                                                .addClasses(Movie.class, MoviesBean.class, MoviesTest.class)
+                                                .addClasses(MoviesRest.class, ApplicationConfig.class)
+                                                .addClass(MoviesMPJWTConfigurationProvider.class)
+                                                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
 
         System.out.println(webArchive.toString(true));
 
@@ -66,8 +66,8 @@ public class MoviesTest {
     public void movieRestTest() throws Exception {
 
         final WebClient webClient = WebClient
-                .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()), singletonList(new LoggingFeature()), null);
-
+                .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
+                        singletonList(new LoggingFeature()), null);
 
 
         //Testing rest endpoint deployment (GET  without security header)
@@ -75,32 +75,57 @@ public class MoviesTest {
         LOGGER.info("responsePayload = " + responsePayload);
         assertTrue(responsePayload.equalsIgnoreCase("ok"));
 
+
         //POST (Using token1.json with group of claims: [CRUD])
-        Movie newMovie = new Movie(1,"David Dobkin","Wedding Crashers");
-        Response response = webClient.reset().path("/rest/cinema/movies").header("Content-Type","application/json").header("Authorization", "Bearer " + token(1)).post(newMovie);
+        Movie newMovie = new Movie(1, "David Dobkin", "Wedding Crashers");
+        Response response = webClient.reset()
+                                     .path("/rest/cinema/movies")
+                                     .header("Content-Type", "application/json")
+                                     .header("Authorization", "Bearer " + token(1))
+                                     .post(newMovie);
         LOGGER.info("responseCode = " + response.getStatus());
         assertTrue(response.getStatus() == 204);
 
 
-
-        //GET movies (Using token2.json with group of claims: [read-only])
-        final Collection<? extends Movie> movies = webClient
+        //GET movies (Using token1.json with group of claims: [read-only])
+        //This test should be updated to use token2.json once TOMEE- gets resolved.
+        Collection<? extends Movie> movies = webClient
                 .reset()
                 .path("/rest/cinema/movies")
-                .header("Content-Type","application/json")
+                .header("Content-Type", "application/json")
                 .header("Authorization", "Bearer " + token(1))
                 .getCollection(Movie.class);
         LOGGER.info(movies.toString());
         assertTrue(movies.size() == 1);
-    }
 
+
+        //Should return a 403 since POST require group of claims: [crud] but Token 2 has only [read-only].
+        Movie secondNewMovie = new Movie(2, "Todd Phillips", "Starsky & Hutch");
+        Response responseWithError = webClient.reset()
+                                              .path("/rest/cinema/movies")
+                                              .header("Content-Type", "application/json")
+                                              .header("Authorization", "Bearer " + token(2))
+                                              .post(secondNewMovie);
+        LOGGER.info("responseCode = " + responseWithError.getStatus());
+        assertTrue(responseWithError.getStatus() == 403);
+
+
+        //Should return a 401 since the header Authorization is not part of the POST request.
+        Response responseWith401Error = webClient.reset()
+                                                 .path("/rest/cinema/movies")
+                                                 .header("Content-Type", "application/json")
+                                                 .post(new Movie());
+        LOGGER.info("responseCode = " + responseWith401Error.getStatus());
+        assertTrue(responseWith401Error.getStatus() == 401);
+
+    }
 
 
     private String token(int token_type) throws Exception {
         HashMap<String, Long> timeClaims = new HashMap<>();
-        if(token_type==1){
+        if (token_type == 1) {
             return TokenUtils.generateTokenString("/Token1.json", null, timeClaims);
-        }else{
+        } else {
             return TokenUtils.generateTokenString("/Token2.json", null, timeClaims);
         }
     }

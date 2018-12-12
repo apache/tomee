@@ -39,35 +39,6 @@ public class MoviesRest {
         return "ok";
     }
 
-    @POST
-    @Path("/movies")
-    @RolesAllowed("crud")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public void addMovie(Movie newMovie) {
-        moviesBean.addMovie(newMovie);
-    }
-
-    @DELETE
-    @Path("/movies/{id}")
-    @RolesAllowed("read-only")
-    public void deleteMovie(@PathParam("id") int id) {
-        moviesBean.deleteMovie(id);
-    }
-
-    @PUT
-    @Path("/movies")
-    public void updateMovie(Movie updatedMovie) {
-        moviesBean.updateMovie(updatedMovie);
-    }
-
-    @GET
-    @Path("/movies/{id}")
-    @RolesAllowed({"read-only","crud"})
-    public Movie getMovie(@PathParam("id") int id) {
-        return moviesBean.getMovie(id);
-    }
-
     @GET
     @Path("/movies")
     @RolesAllowed({"crud", "read-only"})
@@ -75,69 +46,32 @@ public class MoviesRest {
         return moviesBean.getMovies();
     }
 
+    @GET
+    @Path("/movies/{id}")
+    @RolesAllowed({"crud", "read-only"})
+    public Movie getMovie(@PathParam("id") int id) {
+        return moviesBean.getMovie(id);
+    }
 
-//    @Inject
-//    @Claim("raw_token")
-//    private ClaimValue<String> rawToken;
-//
-//    @Inject
-//    @Claim("iss")
-//    private ClaimValue<String> issuer;
-//
-//    @Inject
-//    @Claim("jti")
-//    private ClaimValue<String> jti;
-//
-//    @Inject
-//    private JsonWebToken jwtPrincipal;
-//
-//    @Context
-//    private SecurityContext securityContext;
-//
-//    @GET
-//    @Path("{id}")
-//    public Movie find(@PathParam("id") Long id) {
-//        return service.find(id);
-//    }
-//
-//    @GET
-//    public List<Movie> getMovies(@QueryParam("first") Integer first, @QueryParam("max") Integer max,
-//                                 @QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
-//        return service.getMovies(first, max, field, searchTerm);
-//    }
-//
-//    @POST
-//    @Consumes("application/json")
-//    @RolesAllowed("create")
-//    public Movie addMovie(Movie movie) {
-//        service.addMovie(movie);
-//        return movie;
-//    }
-//
-//    @PUT
-//    @Path("{id}")
-//    @Consumes("application/json")
-//    @RolesAllowed("update")
-//    public Movie editMovie(
-//            @PathParam("id") final long id,
-//            Movie movie
-//    ) {
-//        service.editMovie(movie);
-//        return movie;
-//    }
-//
-//    @DELETE
-//    @Path("{id}")
-//    @RolesAllowed("delete")
-//    public void deleteMovie(@PathParam("id") long id) {
-//        service.deleteMovie(id);
-//    }
-//
-//    @GET
-//    @Path("count")
-//    @Produces(MediaType.TEXT_PLAIN)
-//    public int count(@QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
-//        return service.count(field, searchTerm);
-//    }
+    @POST
+    @Path("/movies")
+    @RolesAllowed("crud")
+    public void addMovie(Movie newMovie) {
+        moviesBean.addMovie(newMovie);
+    }
+
+    @DELETE
+    @Path("/movies/{id}")
+    @RolesAllowed("crud")
+    public void deleteMovie(@PathParam("id") int id) {
+        moviesBean.deleteMovie(id);
+    }
+
+    @PUT
+    @Path("/movies")
+    @RolesAllowed("crud")
+    public void updateMovie(Movie updatedMovie) {
+        moviesBean.updateMovie(updatedMovie);
+    }
 
 }
