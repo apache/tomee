@@ -8,13 +8,10 @@
     "exp": 1311281970,
     "iat": 1311280970,
     "auth_time": 1311280969,
-    "roles": [
-        "Echoer"
-    ],
     "groups": [
-        "Echoer",
-        "Tester",
         "group1",
-        "group2"
+        "group2",
+        "crud",
+        "read-only"
     ]
 }

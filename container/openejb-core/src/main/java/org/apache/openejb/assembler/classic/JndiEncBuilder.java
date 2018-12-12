@@ -265,7 +265,7 @@ public class JndiEncBuilder {
                     obj = new Byte(entry.value);
                 } else if (type == Character.class) {
                     final StringBuilder sb = new StringBuilder(entry.value + " ");
-                    obj = new Character(sb.charAt(0));
+                    obj = sb.charAt(0);
                 } else if (type == URL.class) {
                     obj = new URL(entry.value);
                 } else if (type == Class.class) {
