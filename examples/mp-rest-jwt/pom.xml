@@ -161,33 +161,10 @@
 
   <profiles>
     <profile>
-      <id>arquillian-tomee-embedded</id>
+      <id>arquillian-tomee-remote</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>${tomee.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>tomee-embedded</artifactId>
-          <version>${tomee.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.apache.tomee</groupId>
-          <artifactId>mp-jwt</artifactId>
-          <version>${tomee.version}</version>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>arquillian-tomee-remote</id>
       <dependencies>
         <dependency>
           <groupId>org.apache.tomee</groupId>
@@ -202,6 +179,12 @@
           <type>zip</type>
           <classifier>microprofile</classifier>
           <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>mp-jwt</artifactId>
+          <version>${tomee.version}</version>
+          <scope>provided</scope>
         </dependency>
       </dependencies>
     </profile>
