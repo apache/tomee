@@ -397,7 +397,9 @@ public class RemoteServer {
     }
 
     private void waitFor(final Process p) {
-        System.out.println("wait for process: " + p);
+        if (verbose) {
+            System.out.println("wait for process: " + p);
+        }
         final CountDownLatch latch = new CountDownLatch(1);
         final Thread t = new Thread(new Runnable() {
             @Override
@@ -420,7 +422,9 @@ public class RemoteServer {
         try {
             if (!latch.await(Integer.getInteger("openejb.server.waitFor.seconds", 10), TimeUnit.SECONDS)) {
                 killOnExit(p);
-                System.out.println("Timeout waiting for process: " + p);
+                if (verbose) {
+                    System.out.println("Timeout waiting for process: " + p);
+                }
                 throw new RuntimeException("Timeout waiting for process");
             }
         } catch (final InterruptedException e) {
