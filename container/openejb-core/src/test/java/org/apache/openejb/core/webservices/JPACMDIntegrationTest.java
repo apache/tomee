@@ -208,11 +208,11 @@ public class JPACMDIntegrationTest {
         }
 
         public Integer ejbFindByPrimaryKey(final Integer primaryKey) throws javax.ejb.FinderException {
-            return new Integer(-1);
+            return -1;
         }
 
         public Integer ejbCreateObject(final String name) throws javax.ejb.CreateException {
-            return new Integer(-1);
+            return -1;
         }
 
         public void ejbPostCreateObject(final String name) throws javax.ejb.CreateException {

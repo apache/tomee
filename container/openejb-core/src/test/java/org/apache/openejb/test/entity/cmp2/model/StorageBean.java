@@ -51,7 +51,7 @@ public abstract class StorageBean implements EntityBean {
             final Connection c = ds.getConnection();
             final PreparedStatement ps = c.prepareStatement("UPDATE storage SET blob_column = ? WHERE id = ?");
             ps.setBinaryStream(1, new ByteArrayInputStream(bytes), bytes.length);
-            ps.setInt(2, ((Integer) ctx.getPrimaryKey()).intValue());
+            ps.setInt(2, (Integer) ctx.getPrimaryKey());
             ps.executeUpdate();
             ps.close();
             c.close();
@@ -65,7 +65,7 @@ public abstract class StorageBean implements EntityBean {
             final DataSource ds = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/DefaultDatabase");
             final Connection c = ds.getConnection();
             final PreparedStatement ps = c.prepareStatement("SELECT blob_column FROM storage WHERE id = ?");
-            ps.setInt(1, ((Integer) ctx.getPrimaryKey()).intValue());
+            ps.setInt(1, (Integer) ctx.getPrimaryKey());
             final ResultSet rs = ps.executeQuery();
             rs.next();
             final InputStream is = rs.getBinaryStream(1);

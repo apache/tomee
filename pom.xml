@@ -216,6 +216,8 @@
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
+    <!-- Jackson required by OpenAPI Impl -->
+    <jackson.version>2.9.4</jackson.version>
   </properties>
 
   <build>
