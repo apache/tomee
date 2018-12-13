@@ -267,11 +267,9 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-
             return Optional.ofNullable(appModule.getJarLocation()).orElse(appModule.getModuleId());
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            //return ejbModule.getJarLocation();
             return Optional.ofNullable(appModule.getJarLocation()).orElse(appModule.getModuleId());
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
