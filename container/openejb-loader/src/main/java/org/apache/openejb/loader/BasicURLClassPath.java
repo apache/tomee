@@ -132,12 +132,6 @@ public abstract class BasicURLClassPath implements ClassPath {
         }
     }
 
-    /**
-     * 
-     * @param loader URLClassLoader
-     * @return Object
-     * @throws Exception
-     */
     protected Object getURLClassPath(final URLClassLoader loader) throws Exception {
         final Field ucpField = this.getUcpField();
         if (ucpField == null) {

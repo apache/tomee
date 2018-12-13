@@ -86,7 +86,7 @@ public class ProvisioningResolver {
     }
 
     /**
-     * Remove ArchiveResolver
+     * Remove resolver
      * 
      * @param resolver ArchiveResolver
      */

@@ -458,10 +458,6 @@ public class IO {
         return new ZipInputStream(read);
     }
 
-    /**
-     *
-     * @param closeable Closeable
-     */
     public static void close(final Closeable closeable) {
         if (closeable == null) {
             return;

@@ -86,18 +86,10 @@ public class Options {
         return properties.delegate;
     }
 
-    /**
-     * 
-     * @param logger Log
-     */
     public void setLogger(final Log logger) {
         parent.setLogger(logger);
     }
 
-    /**
-     *
-     * @return Log
-     */
     public Log getLogger() {
         return parent.getLogger();
     }
@@ -582,10 +574,6 @@ public class Options {
         public void info(final String message, final Throwable t) {
         }
 
-        /**
-         *
-         * @param message String
-         */
         @Override
         public void info(final String message) {
         }

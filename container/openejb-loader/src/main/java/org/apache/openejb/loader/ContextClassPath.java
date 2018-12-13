@@ -26,10 +26,6 @@ import java.net.URLClassLoader;
 
 public class ContextClassPath extends BasicURLClassPath {
 
-    /**
-     *
-     * @return the context ClassLoader for this Thread or null
-     */
     @Override
     public ClassLoader getClassLoader() {
         return getContextClassLoader();
