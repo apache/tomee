@@ -41,7 +41,9 @@ public class SimpleServletTest {
                         .http(NetworkUtil.getNextAvailablePort())
                         .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
                         .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp(JarLocation.jarLocation(SimpleServletTest.class))) {
+                .deployPathsAsWebapp(
+                        JarLocation.jarLocation(SimpleServletTest.class),
+                        JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class))) {
 
             assertEquals("ok!", IO.slurp(
                     new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")));
