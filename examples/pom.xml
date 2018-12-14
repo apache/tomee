@@ -108,8 +108,6 @@ BROKEN, see TOMEE-2140
     <module>mp-faulttolerance-retry</module>
     <module>mp-config-example</module>
     <module>mp-rest-client</module>
-    <module>mp-metrics-counted</module>
-    <module>mp-metrics-timed</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
