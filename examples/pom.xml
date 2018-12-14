@@ -102,6 +102,7 @@ BROKEN, see TOMEE-2140
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>mp-rest-jwt</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -119,7 +120,6 @@ BROKEN, see TOMEE-2140
     <module>rest-applicationcomposer</module>
     <module>rest-cdi</module>
     <module>rest-jaas</module>
-    <module>mp-rest-jwt</module>
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
@@ -172,12 +172,6 @@ BROKEN, see TOMEE-2140
     <module>moviefun-rest</module>
     <module>resources-jmx-example</module>
     <module>mp-metrics-counted</module>
-    <module>mp-metrics-timed</module>
-    <module>websocket-tls-basic-auth</module>
-    <module>concurrency-utils</module>
-    <module>mvc-cxf</module>
-    <module>mp-faulttolerance-retry</module>
-    <module>mp-config-example</module>
   </modules>
 
   <dependencies>
@@ -220,11 +214,19 @@ BROKEN, see TOMEE-2140
     <profile>
       <id>java9</id>
       <activation>
-        <jdk>[9,)</jdk>
+        <jdk>9</jdk>
       </activation>
-      <modules>
-        <module>java-modules</module>
-      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
