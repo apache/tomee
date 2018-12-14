@@ -76,6 +76,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -266,10 +267,10 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-            return appModule.getJarLocation();
+            return Optional.ofNullable(appModule.getJarLocation()).orElse(appModule.getModuleId());
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            return ejbModule.getJarLocation();
+            return Optional.ofNullable(appModule.getJarLocation()).orElse(appModule.getModuleId());
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }

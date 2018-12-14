@@ -39,13 +39,18 @@ public class MPJWTSecurityAnnotationsInterceptor implements ContainerRequestFilt
         }
 
         final Set<String> roles = rolesAllowed.get(resourceInfo.getResourceMethod());
+
         if (roles != null && !roles.isEmpty()) {
             final SecurityContext securityContext = requestContext.getSecurityContext();
+            boolean hasAtLeasOneValidRole = false;
             for (String role : roles) {
-                if (!securityContext.isUserInRole(role)) {
-                    forbidden(requestContext);
+                if (securityContext.isUserInRole(role)) {
+                    hasAtLeasOneValidRole = true;
                     break;
                 }
+            }
+            if (!hasAtLeasOneValidRole) {
+                forbidden(requestContext);
             }
         }
 
