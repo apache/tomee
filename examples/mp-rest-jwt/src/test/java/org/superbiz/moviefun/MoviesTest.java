@@ -87,13 +87,12 @@ public class MoviesTest {
         assertTrue(response.getStatus() == 204);
 
 
-        //GET movies (Using token1.json with group of claims: [read-only])
-        //This test should be updated to use token2.json once TOMEE-2357 gets resolved.
+        //GET movies (Using token2.json with group of claims: [read-only])
         Collection<? extends Movie> movies = webClient
                 .reset()
                 .path("/rest/cinema/movies")
                 .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + token(1))
+                .header("Authorization", "Bearer " + token(2))
                 .getCollection(Movie.class);
         LOGGER.info(movies.toString());
         assertTrue(movies.size() == 1);
