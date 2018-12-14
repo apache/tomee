@@ -147,7 +147,8 @@ public class Installers {
             this.begin = begin;
             this.end = end;
         }
-
+        
+        @Override
         public String handleToken(final String token) throws IOException {
             final String result = begin + token + end;
             return result;

@@ -48,7 +48,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 public class CommonsSchemaLoader {
-    private static final Log log = LogFactory.getLog(CommonsSchemaLoader.class);
+    private static final Log LOG = LogFactory.getLog(CommonsSchemaLoader.class);
 
     private final URI wsdlUri;
     private final JarFile moduleFile;
@@ -103,7 +103,7 @@ public class CommonsSchemaLoader {
                     if (importedDef != null) {
                         addImportsFromDefinition(importedDef);
                     } else {
-                        log.warn("Missing definition in import for namespace " + namespaceURI);
+                        LOG.warn("Missing definition in import for namespace " + namespaceURI);
                     }
                 }
             }
@@ -166,7 +166,7 @@ public class CommonsSchemaLoader {
 
     class JarWSDLLocator implements WSDLLocator {
 
-        private final List<InputStream> streams = new ArrayList<InputStream>();
+        private final List<InputStream> streams = new ArrayList<>();
         private final URI wsdlURI;
         private URI latestImportURI;
 
@@ -174,6 +174,7 @@ public class CommonsSchemaLoader {
             this.wsdlURI = wsdlURI;
         }
 
+        @Override
         public InputSource getBaseInputSource() {
             ZipEntry entry = moduleFile.getEntry(wsdlURI.toString());
             if (entry == null) {
@@ -190,10 +191,12 @@ public class CommonsSchemaLoader {
             return new InputSource(wsdlInputStream);
         }
 
+        @Override
         public String getBaseURI() {
             return wsdlURI.toString();
         }
 
+        @Override
         public InputSource getImportInputSource(String parentLocation, String relativeLocation) {
             URI parentURI = URI.create(parentLocation);
             latestImportURI = parentURI.resolve(relativeLocation);
@@ -212,10 +215,12 @@ public class CommonsSchemaLoader {
             return inputSource;
         }
 
+        @Override
         public String getLatestImportURI() {
             return latestImportURI.toString();
         }
 
+        @Override
         public void close() {
             for (InputStream inputStream : streams) {
                 try {

@@ -36,10 +36,10 @@ public class ClientModule extends Module implements DeploymentModule {
     private String mainClass;
     private boolean ejbModuleGenerated;
     private AtomicReference<IAnnotationFinder> finder;
-    private final Set<String> localClients = new HashSet<String>();
-    private final Set<String> remoteClients = new HashSet<String>();
+    private final Set<String> localClients = new HashSet<>();
+    private final Set<String> remoteClients = new HashSet<>();
     private ID id;
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final Set<String> watchedResources = new TreeSet<>();
 
     public ClientModule(final ApplicationClient applicationClient, final ClassLoader classLoader, final String jarLocation, final String mainClass, final String moduleId) {
         this.applicationClient = applicationClient;

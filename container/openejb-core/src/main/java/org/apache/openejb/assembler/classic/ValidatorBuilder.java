@@ -50,8 +50,8 @@ import javax.validation.valueextraction.ValueExtractor;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -96,9 +96,7 @@ public final class ValidatorBuilder {
             for (final PropertyType p : config.getProperty()) {
                 info.propertyTypes.put(p.getName(), p.getValue());
             }
-            for (final String element : config.getConstraintMapping()) {
-                info.constraintMappings.add(element);
-            }
+            info.constraintMappings.addAll(config.getConstraintMapping());
         }
         return info;
     }
@@ -163,7 +161,7 @@ public final class ValidatorBuilder {
             thread.setContextClassLoader(classLoader);
         }
 
-        final Set<ExecutableType> types = new HashSet<>();
+        final Set<ExecutableType> types = EnumSet.noneOf(ExecutableType.class);
         for (final String type : info.validatedTypes) {
             types.add(ExecutableType.valueOf(type));
         }
@@ -293,7 +291,7 @@ public final class ValidatorBuilder {
         it.inject(instance, context);
         it.postConstruct(instance);
 
-        config.releasables.add(new Releasable<T>(context, it, instance));
+        config.releasables.add(new Releasable<>(context, it, instance));
 
         return instance;
     }

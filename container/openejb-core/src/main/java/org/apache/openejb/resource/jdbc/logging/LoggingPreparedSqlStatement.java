@@ -37,7 +37,7 @@ public class LoggingPreparedSqlStatement implements InvocationHandler {
 
     private final PreparedStatement delegate;
     private final String sql;
-    private final List<Parameter> parameters = new ArrayList<Parameter>();
+    private final List<Parameter> parameters = new ArrayList<>();
     private final String[] packages;
     private int parameterIndex;
 

@@ -26,8 +26,8 @@ import java.util.TreeMap;
 
 
 public class LinkResolver<E> {
-    private final Map<URI, E> byFullName = new TreeMap<URI, E>();
-    private final Map<String, Collection<E>> byShortName = new TreeMap<String, Collection<E>>();
+    private final Map<URI, E> byFullName = new TreeMap<>();
+    private final Map<String, Collection<E>> byShortName = new TreeMap<>();
 
     public boolean add(final String modulePackageName, final String name, final E value) {
         return add(URLs.uri(modulePackageName), name, value);
@@ -47,7 +47,7 @@ public class LinkResolver<E> {
         // Short name: name -> List(values)
         Collection<E> values = byShortName.get(name);
         if (values == null) {
-            values = new ArrayList<E>();
+            values = new ArrayList<>();
             byShortName.put(name, values);
         }
         values.add(value);

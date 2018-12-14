@@ -61,7 +61,7 @@ public class StatelessWithAroundInvokeOnlyTest {
         @AroundInvoke
         private Object aroundInvoke(InvocationContext ctx) throws Exception {
             final Integer result = (Integer) ctx.proceed();
-            return Integer.valueOf(-result.intValue());
+            return -result.intValue();
         }
     }
 }

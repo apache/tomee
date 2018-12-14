@@ -1,0 +1,48 @@
+= JPA Usage
+:index-group: JPA
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Things to watch out for
+
+== Critical: Always set jta-data-source and non-jta-data-source
+
+Always set the value of jta-data-source and non-jta-data-source in your
+persistence.xml file. Regardless if targeting your EntityManager usage
+for transaction-type="RESOURCE_LOCAL" or transaction-type="TRANSACTION",
+it's very difficult to guarantee one or the other will be the only one
+needed. Often times the JPA Provider itself will require both internally
+to do various optimizations or other special features.
+
+* The _jta-data-source_ should always have it's OpenEJB-specific
+'_JtaManaged_' property set to '_true_' (this is the default)
+* The _non-jta-data-source_ should always have it's OpenEJB-specific
+'_JtaManaged_' property set to '_false_'.
+
+See link:containers-and-resources.html[Containers and Resources] for how
+to configure 'JtaManaged' and a full list of properties for DataSources.
+
+== Be detach aware
+
+A warning for any new JPA user is by default all objects will detach at
+the end of a transaction. People typically discover this when the go to
+remove or update an object they fetched previously and get an exception
+like "You cannot perform operation delete on detached object".
+
+All ejb methods start a transaction unless a) you
+link:transaction-annotations.html[configure them otherwise] , or b) the
+caller already has a transaction in progress when it calls the bean. If
+you're in a test case or a servlet, it's most likely B that is biting
+you. You're asking an ejb for some persistent objects, it uses the
+EntityManager in the scope of the transaction started around it's method
+and returns some persistent objects, by the time you get them the
+transaction has completed and now the objects are detached.
+
+=== Solutions 1. Call EntityManager.merge(..) inside the bean code to
+reattach your object. 1. Use PersistenceContextType.EXTENDED as in
+'@PersistenceContext(unitName = "movie-unit", type =
+PersistenceContextType.EXTENDED)' for EntityManager refs instead of the
+default of PersistenceContextType.TRANSACTION. 1. If testing, use a
+technique to execute transactions in your test code. That's described
+here in link:unit-testing-transactions.html[Unit testing transactions]

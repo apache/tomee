@@ -46,7 +46,7 @@ public class Instance implements Serializable, Cache.TimeOut {
 
     private boolean inUse;
     private SuspendedTransaction beanTransaction;
-    private final Stack<Transaction> transaction = new Stack<Transaction>();
+    private final Stack<Transaction> transaction = new Stack<>();
     private final LockFactory.StatefulLock lock;
 
     // todo if we keyed by an entity manager factory id we would not have to make this transient and rebuild the index below
@@ -172,7 +172,7 @@ public class Instance implements Serializable, Cache.TimeOut {
             bean = toSerializable(i.bean);
             creationalContext = i.creationalContext;
 
-            interceptors = new HashMap<String, Object>(i.interceptors.size());
+            interceptors = new HashMap<>(i.interceptors.size());
             for (final Map.Entry<String, Object> e : i.interceptors.entrySet()) {
                 if (e.getValue() == i.bean) {
                     // need to use the same wrapped reference or well get two copies.

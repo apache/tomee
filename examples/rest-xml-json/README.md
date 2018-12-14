@@ -1,4 +1,8 @@
-Title: Simple REST
+index-group=Unrevised
+type=page
+status=published
+title=Simple REST
+~~~~~~
 
 Defining a REST service is pretty easy, simply ad @Path annotation to a class then define on methods
 the HTTP method to use (@GET, @POST, ...).
@@ -368,6 +372,3 @@ Which should create output like the following.
     INFO - Stopping network services
     INFO - Stopping server services
     
-
-
-

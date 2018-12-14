@@ -50,7 +50,7 @@ public class ServiceManagerExtender extends ServiceManager {
 
     private final BundleContext bundleContext;
     private BundleTracker tracker;
-    private final Map<Bundle, List<Service>> serverMap = new HashMap<Bundle, List<Service>>();
+    private final Map<Bundle, List<Service>> serverMap = new HashMap<>();
     private Boolean started;
     private volatile boolean stopped = false;
 
@@ -105,7 +105,7 @@ public class ServiceManagerExtender extends ServiceManager {
     }
 
     protected void addedServers(final Bundle bundle, final Map<String, Properties> resources) {
-        final List<Service> services = new ArrayList<Service>();
+        final List<Service> services = new ArrayList<>();
         for (final Map.Entry<String, Properties> entry : resources.entrySet()) {
             services.add(new Service(bundle, entry.getKey(), entry.getValue()));
         }
@@ -225,7 +225,7 @@ public class ServiceManagerExtender extends ServiceManager {
             final String basePath = "/META-INF/" + ServerService.class.getName() + "/";
             final Enumeration<URL> entries = bundle.findEntries(basePath, "*", false);
             if (entries != null) {
-                final Map<String, Properties> resources = new HashMap<String, Properties>();
+                final Map<String, Properties> resources = new HashMap<>();
                 while (entries.hasMoreElements()) {
                     final URL entry = entries.nextElement();
                     final String name = entry.getPath().substring(basePath.length());

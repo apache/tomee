@@ -184,8 +184,8 @@ public class BeanContext extends DeploymentContext {
                 final InterceptorData data = createInterceptorData(i);
                 addCdiMethodInterceptor(entry.getKey(), data);
             }
-            entry.getValue().setEjbInterceptors(new ArrayList<Interceptor<?>>());
-            entry.getValue().setCdiInterceptors(new ArrayList<Interceptor<?>>());
+            entry.getValue().setEjbInterceptors(new ArrayList<>());
+            entry.getValue().setCdiInterceptors(new ArrayList<>());
         }
 
         // handled by OpenEJB now so clean up all duplication from OWB
@@ -211,8 +211,7 @@ public class BeanContext extends DeploymentContext {
         if (timeout != null) {
             final AnnotatedType annotatedType = cdiEjbBean.getAnnotatedType();
             final AnnotationManager annotationManager = getWebBeansContext().getAnnotationManager();
-            final Collection<Annotation> annotations = new HashSet<>();
-            annotations.addAll(annotationManager.getInterceptorAnnotations(annotatedType.getAnnotations()));
+            final Collection<Annotation> annotations = new HashSet<>(annotationManager.getInterceptorAnnotations(annotatedType.getAnnotations()));
             final Set<AnnotatedMethod<?>> methods = annotatedType.getMethods();
             for (final AnnotatedMethod<?> m : methods) {
                 if (timeout.equals(m.getJavaMember())) {
@@ -302,8 +301,8 @@ public class BeanContext extends DeploymentContext {
 
     private boolean destroyed;
     private final Class beanClass;
-    private final List<Class> businessLocals = new ArrayList<Class>();
-    private final List<Class> businessRemotes = new ArrayList<Class>();
+    private final List<Class> businessLocals = new ArrayList<>();
+    private final List<Class> businessRemotes = new ArrayList<>();
     private Class serviceEndpointInterface;
 
     private Method ejbTimeout;
@@ -322,26 +321,26 @@ public class BeanContext extends DeploymentContext {
     private boolean hidden;
 
     //private final Map<Method, TransactionType> methodTransactionType = new HashMap<Method, TransactionType>();
-    private final Map<Method, Method> methodMap = new HashMap<Method, Method>();
-    private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
-    private final Map<String, ViewContext> viewContextMap = new HashMap<String, ViewContext>();
+    private final Map<Method, Method> methodMap = new HashMap<>();
+    private final Map<Method, MethodContext> methodContextMap = new HashMap<>();
+    private final Map<String, ViewContext> viewContextMap = new HashMap<>();
 
     private TransactionPolicyFactory transactionPolicyFactory;
 
-    private final List<InterceptorData> callbackInterceptors = new ArrayList<InterceptorData>();
-    private final List<InterceptorData> beanCallbackInterceptors = new ArrayList<InterceptorData>();
-    private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<InterceptorData>();
-    private final List<InterceptorInstance> systemInterceptors = new ArrayList<InterceptorInstance>();
-    private final List<InterceptorInstance> userInterceptors = new ArrayList<InterceptorInstance>();
-    private final List<Injection> injections = new ArrayList<Injection>();
-    private final Map<Class, InterfaceType> interfaces = new HashMap<Class, InterfaceType>();
-    private final Map<Class, ExceptionType> exceptions = new ConcurrentHashMap<Class, ExceptionType>();
+    private final List<InterceptorData> callbackInterceptors = new ArrayList<>();
+    private final List<InterceptorData> beanCallbackInterceptors = new ArrayList<>();
+    private final Set<InterceptorData> instanceScopedInterceptors = new HashSet<>();
+    private final List<InterceptorInstance> systemInterceptors = new ArrayList<>();
+    private final List<InterceptorInstance> userInterceptors = new ArrayList<>();
+    private final List<Injection> injections = new ArrayList<>();
+    private final Map<Class, InterfaceType> interfaces = new HashMap<>();
+    private final Map<Class, ExceptionType> exceptions = new ConcurrentHashMap<>();
 
     private final boolean localbean;
     private Duration accessTimeout;
 
-    private final Set<Class<?>> asynchronousClasses = new HashSet<Class<?>>();
-    private final Set<String> asynchronousMethodSignatures = new HashSet<String>();
+    private final Set<Class<?>> asynchronousClasses = new HashSet<>();
+    private final Set<String> asynchronousMethodSignatures = new HashSet<>();
     private Class<?> proxyClass;
 
     private Mdb mdb;
@@ -350,12 +349,12 @@ public class BeanContext extends DeploymentContext {
     private Cmp cmp;
     private LegacyView legacyView;
 
-    private final Map<String, String> securityRoleReferences = new HashMap<String, String>();
+    private final Map<String, String> securityRoleReferences = new HashMap<>();
 
     /**
      * TODO: Move to MethodContext
      */
-    private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<Method, Boolean>();
+    private final Map<Method, Boolean> removeExceptionPolicy = new HashMap<>();
 
     public Class getInterface(final InterfaceType interfaceType) {
         switch (interfaceType) {
@@ -395,7 +394,7 @@ public class BeanContext extends DeploymentContext {
             case BUSINESS_LOCAL:
                 return getBusinessLocalInterfaces();
             default:
-                final List<Class> interfaces = new ArrayList<Class>();
+                final List<Class> interfaces = new ArrayList<>();
                 interfaces.add(getInterface(interfaceType));
                 return interfaces;
         }
@@ -690,15 +689,11 @@ public class BeanContext extends DeploymentContext {
             return;
         }
 
-        final ArrayList<Class> classes = new ArrayList<Class>();
+        final ArrayList<Class> classes = new ArrayList<>();
 
-        for (final Class local : businessRemotes) {
-            classes.add(local);
-        }
+        classes.addAll(businessRemotes);
 
-        for (final Class local : businessLocals) {
-            classes.add(local);
-        }
+        classes.addAll(businessLocals);
 
         classes.add(this.beanClass);
 
@@ -943,7 +938,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public BusinessLocalBeanHome getBusinessLocalBeanHome() {
-        final List<Class> interfaces = new ArrayList<Class>();
+        final List<Class> interfaces = new ArrayList<>();
         interfaces.add(this.beanClass);
         return (BusinessLocalBeanHome) EjbHomeProxyHandler.createHomeProxy(this, InterfaceType.BUSINESS_LOCALBEAN_HOME, interfaces, this.beanClass);
     }
@@ -1142,12 +1137,12 @@ public class BeanContext extends DeploymentContext {
     }
 
     public List<InterceptorInstance> getUserAndSystemInterceptors() {
-        final List<InterceptorInstance> interceptors = new ArrayList<InterceptorInstance>(systemInterceptors);
+        final List<InterceptorInstance> interceptors = new ArrayList<>(systemInterceptors);
         interceptors.addAll(userInterceptors);
         return interceptors;
     }
 
-    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<InterceptorData>();
+    private final Set<InterceptorData> cdiInterceptors = new LinkedHashSet<>();
 
     public List<InterceptorData> getCallbackInterceptors() {
         final List<InterceptorData> datas = getInterceptorData();
@@ -1172,7 +1167,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public List<InterceptorData> getCdiInterceptors() {
-        return new ArrayList<InterceptorData>(cdiInterceptors);
+        return new ArrayList<>(cdiInterceptors);
     }
 
     public void setCdiInterceptors(final List<InterceptorData> cdiInterceptors) {
@@ -1186,7 +1181,7 @@ public class BeanContext extends DeploymentContext {
     }
 
     public List<InterceptorData> getInterceptorData() {
-        final List<InterceptorData> datas = new ArrayList<InterceptorData>(getUserAndSystemInterceptors().size());
+        final List<InterceptorData> datas = new ArrayList<>(getUserAndSystemInterceptors().size());
         for (final InterceptorInstance instance : getUserAndSystemInterceptors()) {
             datas.add(instance.getData());
         }
@@ -1365,11 +1360,11 @@ public class BeanContext extends DeploymentContext {
         } else if (BusinessRemoteHome.class.isAssignableFrom(homeInterface)) {
             return getBusinessRemoteInterfaces();
         } else if (EJBLocalHome.class.isAssignableFrom(homeInterface)) {
-            final List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<>();
             classes.add(getLocalInterface());
             return classes;
         } else if (EJBHome.class.isAssignableFrom(homeInterface)) {
-            final List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<>();
             classes.add(getRemoteInterface());
             return classes;
         } else {
@@ -1606,7 +1601,7 @@ public class BeanContext extends DeploymentContext {
                 inject(beanInstance, creationalContext);
             } else {
                 // update target
-                final List<Injection> newInjections = new ArrayList<Injection>();
+                final List<Injection> newInjections = new ArrayList<>();
                 for (final Injection injection : getInjections()) {
                     if (beanClass.equals(injection.getTarget())) {
                         final Injection updated = new Injection(injection.getJndiName(), injection.getName(), proxyClass);
@@ -1625,7 +1620,7 @@ public class BeanContext extends DeploymentContext {
             }
 
             // Create interceptors
-            final Map<String, Object> interceptorInstances = new LinkedHashMap<String, Object>();
+            final Map<String, Object> interceptorInstances = new LinkedHashMap<>();
 
             // Add the stats interceptor instance and other already created interceptor instances
             for (final InterceptorInstance interceptorInstance : this.getUserAndSystemInterceptors()) {
@@ -1752,7 +1747,7 @@ public class BeanContext extends DeploymentContext {
                         // decorators
                         final Object instance = beanInstance;
                         final List<Decorator<?>> decorators = interceptorInfo.getDecorators();
-                        final Map<Decorator<?>, Object> instances = new HashMap<Decorator<?>, Object>();
+                        final Map<Decorator<?>, Object> instances = new HashMap<>();
                         for (int i = decorators.size(); i > 0; i--) {
                             final Decorator<?> decorator = decorators.get(i - 1);
                             CreationalContextImpl cc = (CreationalContextImpl) creationalContext;
@@ -1798,7 +1793,7 @@ public class BeanContext extends DeploymentContext {
 
         synchronized (this) { // concurrentmodificationexception because of annotatedtype internals otherwise
             if (constructorInjectionBean == null) {
-                constructorInjectionBean = new ConstructorInjectionBean<Object>(
+                constructorInjectionBean = new ConstructorInjectionBean<>(
                     webBeansContext, getManagedClass(),
                     webBeansContext.getAnnotatedElementFactory().newAnnotatedType(getManagedClass()));
             }
@@ -1891,7 +1886,7 @@ public class BeanContext extends DeploymentContext {
 
     public class ViewContext {
 
-        private final Map<Method, MethodContext> methodContextMap = new HashMap<Method, MethodContext>();
+        private final Map<Method, MethodContext> methodContextMap = new HashMap<>();
 
         public MethodContext getMethodContext(final Method method) {
             return methodContextMap.get(method);
@@ -1962,15 +1957,15 @@ public class BeanContext extends DeploymentContext {
         private Class cmpImplClass;
         private String abstractSchemaName;
         private Class pkClass;
-        private final Set<String> remoteQueryResults = new TreeSet<String>();
+        private final Set<String> remoteQueryResults = new TreeSet<>();
         private boolean isReentrant;
-        private final Map<Method, Method> postCreateMethodMap = new HashMap<Method, Method>();
+        private final Map<Method, Method> postCreateMethodMap = new HashMap<>();
     }
 
     private static class Mdb {
 
         private String destinationId;
-        private final Map<String, String> activationProperties = new HashMap<String, String>();
+        private final Map<String, String> activationProperties = new HashMap<>();
         private Class mdbInterface;
     }
 
@@ -1978,14 +1973,14 @@ public class BeanContext extends DeploymentContext {
 
         private LockType lockType = LockType.WRITE;
         private boolean loadOnStartup;
-        private final Set<String> dependsOn = new LinkedHashSet<String>();
+        private final Set<String> dependsOn = new LinkedHashSet<>();
     }
 
     private static class Stateful {
 
         private Index<EntityManagerFactory, EntityManagerConfiguration> extendedEntityManagerFactories;
         private Duration statefulTimeout;
-        private final List<Method> removeMethods = new ArrayList<Method>();
+        private final List<Method> removeMethods = new ArrayList<>();
     }
 
     private static class LegacyView {

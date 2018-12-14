@@ -36,7 +36,7 @@ public class ObjectNameBuilder {
     }
 
     public ObjectNameBuilder(final String domain) {
-        map = new LinkedHashMap<String, String>();
+        map = new LinkedHashMap<>();
         this.domain = domain;
     }
 

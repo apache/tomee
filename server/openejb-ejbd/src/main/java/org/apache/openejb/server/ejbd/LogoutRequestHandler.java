@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.server.ejbd;
 
-import org.apache.openejb.client.AuthenticationResponse;
 import org.apache.openejb.client.LogoutRequest;
 import org.apache.openejb.client.LogoutResponse;
 import org.apache.openejb.client.ProtocolMetaData;
@@ -31,8 +30,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 class LogoutRequestHandler extends RequestHandler {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
-    private static final boolean debug = logger.isDebugEnabled();
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("auth"), "org.apache.openejb.server.util.resources");
+    private static final boolean DEBUG = LOGGER.isDebugEnabled();
 
     protected LogoutRequestHandler(final EjbDaemon daemon) {
         super(daemon);
@@ -45,7 +44,7 @@ class LogoutRequestHandler extends RequestHandler {
 
     @Override
     public Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     @Override
@@ -66,9 +65,9 @@ class LogoutRequestHandler extends RequestHandler {
             res.setResponseCode(ResponseCodes.LOGOUT_FAILED);
             res.setDeniedCause(t);
         } finally {
-            if (debug) {
+            if (DEBUG) {
                 try {
-                    logger.debug("LOGOUT REQUEST: " + req + " -- RESPONSE: " + res);
+                    LOGGER.debug("LOGOUT REQUEST: " + req + " -- RESPONSE: " + res);
                 } catch (Exception e) {
                     //Ignore
                 }
@@ -86,10 +85,10 @@ class LogoutRequestHandler extends RequestHandler {
             try {
                 res.writeExternal(out);
             } catch (final Exception e) {
-                logger.fatal("Could not write AuthenticationResponse to output stream", e);
+                LOGGER.fatal("Could not write AuthenticationResponse to output stream", e);
             }
         } else {
-            logger.error("AuthRequestHandler cannot process an instance of: " + response.getClass().getName());
+            LOGGER.error("AuthRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
 }

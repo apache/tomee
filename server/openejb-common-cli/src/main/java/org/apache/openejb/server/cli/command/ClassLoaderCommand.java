@@ -52,7 +52,7 @@ public class ClassLoaderCommand extends AbstractCommand {
     }
 
     protected void dumpClassLoader(final ClassLoader classLoader) {
-        final List<ClassLoader> classLoaders = new ArrayList<ClassLoader>();
+        final List<ClassLoader> classLoaders = new ArrayList<>();
         ClassLoader current = classLoader;
         while (current != null) {
             classLoaders.add(current);

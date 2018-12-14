@@ -48,7 +48,7 @@ public class ProviderGenerator extends Resource {
     public static void main(final String[] args) throws Exception {
         final ProviderManager manager = new ProviderManager(new ServiceJarXmlLoader());
 
-        final Set<String> seen = new HashSet<String>();
+        final Set<String> seen = new HashSet<>();
 
         final List<ServiceProvider> providers = manager.load("org.apache.tomee");
         for (final ServiceProvider provider : providers) {
@@ -443,7 +443,7 @@ public class ProviderGenerator extends Resource {
 
 
         public String apply(final String... args) {
-            final Map<String, String> map = new HashMap<String, String>();
+            final Map<String, String> map = new HashMap<>();
 
             for (int i = 0; i < args.length; i += 2) {
                 final String key = args[i];

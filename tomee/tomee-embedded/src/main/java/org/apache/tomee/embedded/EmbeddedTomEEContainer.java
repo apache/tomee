@@ -47,7 +47,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
     private static final List<String> CONTAINER_NAMES = Arrays.asList(EmbeddedTomEEContainer.class.getName(), "tomee-embedded", "embedded-tomee");
 
     private final Container container = new Container();
-    private final Collection<String> deployedIds = new ArrayList<String>();
+    private final Collection<String> deployedIds = new ArrayList<>();
 
     private EmbeddedTomEEContainer() {
         // no-op
@@ -59,7 +59,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
 
     @Override
     public void close() {
-        final Collection<Exception> errors = new ArrayList<Exception>();
+        final Collection<Exception> errors = new ArrayList<>();
         final EmbeddedTomEEContainer etc = tomEEContainer.get();
         if (null != etc) {
             for (final String id : deployedIds) {
@@ -169,7 +169,7 @@ public final class EmbeddedTomEEContainer extends EJBContainer {
                 } else {
                     SystemInstance.get().getProperties().putAll(properties);
                     final Collection<File> files = etc.container.getConfigurationFactory().getModulesFromClassPath(null, Thread.currentThread().getContextClassLoader());
-                    if (files.size() == 0) {
+                    if (files.isEmpty()) {
                         try {
                             etc.close();
                         } catch (final Exception e) {

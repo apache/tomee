@@ -1,0 +1,236 @@
+= Deployment ID
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= What is a Deployment ID?
+
+Every bean deployed in OpenEJB has a unique deployment-id that
+identifies it within the scope of the entire container system. The
+server and container system refer beans at run-time using the bean's
+deployment id.
+
+== Like ejb-name
+
+This deployment id is much like the element of the ejb-jar.xml , with
+one very important difference. The is only required to be unique within
+the scope of the ejb-jar.xml in the bean's jar. The deployment id is
+required to be unique across all beans and jars in OpenEJB. This is a
+subtle, but important, distinction.
+
+Remember that the EJB specification was designed so that enterprise
+beans could be create, packaged, and sold by vendors (EJB Providers).
+Furthermore, users should be able to buy a packaged set of beans (a jar
+with an ejb-jar.xml in it) and deploy it into an EJB Container without
+modification.
+
+== The ejb-name is not unique
+
+Let's consider this, what happens if two vendors each sell a package
+(jar) that contains a bean with the PurchaseOrder? Both are completely
+different in terms functionality and are different beans in every other
+respect. The EJB spec says, this is fine, ejb-names only have to unique
+within the jar and that jar's ejb-jar.xml file. It's ridiculous to
+expect EJB Providers to call each other up and ask, "Are you already
+using the name 'PurchaseOrder' in your jar?" Remember that the EJB
+specification was designed so that enterprise beans could be create,
+packaged, and sold by vendors (EJB Providers). Furthermore, users should
+be able to buy a packaged set of beans (a jar with an ejb-jar.xml in it)
+and deploy it into an EJB Container without modification. This is all
+fine and dandy, but it still leaves it up to the EJB Container/Server
+providers to settle the difference.
+
+== The deployment-id is unique
+
+OpenEJB solves this with the OpenEJB-specific deployment id. By
+requiring that each bean deployed into OpenEJB has a unique name, we can
+guarantee that we are always referring to the right bean at all times.
+Furthermore, it allows you to deploy different versions of the same
+package several times in the same container system, each time giving the
+beans new deployment ids.
+
+== Using ejb-name as deployment-id anyway
+
+If you're lazy -- as any truly great programmer should be -- and don't
+want to type a deployment id for each bean every time you deploy a jar,
+you can use the -D option of the Deploy Tool. This will throw caution to
+the wind, and automatically assign the bean's ejb-name as the value of
+the bean's OpenEJB deployment id. This leaves up to you to guarantee
+that bean's ejb-name will be unique across all beans and jars in the
+container system. In other words, be very careful with the -D option!
+
+= How is it used?
+
+== In the container system
+
+In the container system, the deployment id is used to index the bean in
+a system-wide registry. This registry is refereed to on every call made
+in the container system. Being able to safely hash and cache bean
+information by id is a must. This stresses the importance of unique ids
+for every bean deployed in OpenEJB.
+
+== In the Local Server
+
+The Local (IntraVM) Server is an integral part of the container system
+and the two are, in many ways, inseparable. The Local Server takes care
+of all bean to bean and client to bean invocations made inside the
+virtual machine. For this reason, it often refered to as the IntraVM
+Server.
+
+For bean to bean communications, the Local Server must create a JNDI
+namespace (JNDI ENC) for each bean as defined by the bean's , , and
+elements of the bean's ejb-jar.xml file. Every bean literally gets its
+very own JNDI namespace. When a bean makes a JNDI call, the Local Server
+intercepts this call and uses the deployment id of the calling bean to
+retrieve that bean's private JNDI namespace from the container system's
+index. The Local Server then carries out the lookup on that bean's
+namespace.
+
+All non-bean clients share one big global namespace. Since non-bean
+clients are not deployed and do not have a deployment descriptor like an
+ejb-jar.xml, the Local Server is unable to taylor a namespace for each
+non-bean client as it can for bean clients. The Local server cannot
+identify non-bean clients as they have no deployment id. All JNDI calls
+made by clients that the Local Server cannot identify go to the public,
+global namespace. The public, global JNDI namespace contains all beans
+and resources in the container system. name.
+
+Each bean is added to the public, global namespace using it's deployment
+id as its JNDI lookup. For example, if a bean had a deployment-id of
+"/my/bean/foo", a non-bean client could lookup that bean as follows.
+
+[source,java]
+----
+...
+Object bean = initialContext.lookup("/my/bean/Foo");
+...
+----
+
+If a bean in the container system made the above JNDI call, the Local
+Server would see the bean's identity (deployment id) hidden in the
+Thread, go get the bean's private JNDI namespace and finish the lookup
+on that. Since all names in bean's JNDI namespace are required start
+with "java:comp/env", the lookup would fail and the bean would receive a
+javax.naming.NameNotFoundException.
+
+In short...
+
+For beans: - Each bean has it's own private, personalized JNDI namespace
+- The names in it are the same names it uses in its ejb-jar.xml - Beans
+can only access their private namespace, period
+
+For non-beans (everyone else): - Non-bean clients share the public,
+global JNDI namespace - The names in it are the deployment ids of all
+the beans - Non-bean clients can only access the one global namespace
+
+== In the Remote Server
+
+The Remote Server has a public, global namespace just as the Local
+Server does. The difference being that the Remote Server only serves
+clients outside the container system and outside the virtual machine.
+So, all clients from the perspective of the Remote Server are non-bean
+clients. As a result, the Remote Server only has the one public, global
+JNDI namespace. Just as in the Local Server, the names in this namespace
+consist of the deployment ids of the beans in the container system.
+
+Just as before, clients can lookup beans from the Remote Server using
+the bean's deployment id. For example, if a bean had a deployment-id of
+"/my/bean/foo", a client could lookup that bean as follows.
+
+[source,java]
+----
+...
+Object bean = initialContext.lookup("/my/bean/Foo");
+...
+----
+
+== In the CORBA Adapter
+
+The CORBA Adapter is separate than the Remote Server. It adapts the
+OpenEJB Container System and the Local Server into OpenORB as an
+embedded library. It provides users of OpenORB the ability to lookup and
+execute beans (EJBs) via the RMI-IIOP protocol. All the EJBHome and
+EJBObject interfaces of beans in OpenEJB are implemented by OpenORB as
+CORBA stubs and ties.
+
+The beans are exported into OpenORB's naming service by deployment id.
+So, just as with the Local Server and Remote Server, clients can lookup
+beans using the bean's deployment id. OpenORB has a JNDI implementation
+of their naming service, so lookups can be done just as before.
+
+[source,java]
+----
+...
+String[] args = ...
+
+// The ORB and Object
+org.omg.CORBA.ORB    orb  = null;
+org.omg.CORBA.Object bean = null.
+
+// The Naming Service and Object Name
+org.omg.CosNaming.NamingContext   context = null;
+org.omg.CosNaming.NameComponent[]    name = null;
+
+// Get the ORB
+orb = org.omg.CORBA.ORB.init( args, null );
+
+// Get the Naming Service
+org.omg.CORBA.Object ref = null;
+ref = orb.resolve_initial_references("NameService");
+context = org.omg.CosNaming.NamingContextHelper.narrow( ref );
+
+// Get the Name as a component
+// Note: the string is the bean's deployment id
+name    = new org.omg.CosNaming.NameComponent[ 1 ];
+name[0] = new org.omg.CosNaming.NameComponent("/my/bean/foo","");
+
+// Finally, get the bean as a CORBA object
+// Equvalent to an InitialContext.lookup("/my/bean/foo");
+bean = context.resolve( name );
+...
+----
+
+= What happens if there is a duplicate deployment ID?
+
+The deployment ID uniquely identifies the bean in the OpenEJB container
+system. Therefore, no two beans can share the same deployment ID.
+
+If a bean attempts to use a deployment ID that is already in use by
+another bean, the second bean and all beans in it's jar will not be
+loaded. In addition, the system will log a warning like the following
+one asking you to redeploy the jar and choose an different deployment ID
+for the bean.
+
+[source,properties]
+----
+WARN : Jar C:\openejb\beans\fooEjbs.jar cannot be loaded.  The Deployment ID "/my/bean/foo" is already in use.  Please redeploy this jar and assign a different deployment ID to the bean with the ejb-name "FooBean".
+----
+
+For example, the acmeEjbs.jar contains a bean with the ejb-name
+"DaffyDuckBean". The disneyEjbs.jar contains contains a bean with the
+ejb-name "DonaldDuckBean".
+
+We deploy the acmeEjbs.jar and give the "DaffyDuckBean" the deployment
+ID of "/my/favorite/duck". Sometime afterwards, we deploy the
+disneyEjbs.jar and assign the "DonaldDuckBean" the deployment ID
+"/my/favorite/duck", having forgotten that we already gave that unique
+ID to the "DaffyDuckBean" in the acmeEjbs.jar.
+
+When the container system is started, the system will begin loading all
+the beans one jar at a time. It will first load the acmeEjbs.jar and
+index each bean by deployment ID. But, when the system reaches the
+disneyEjbs.jar, it will discover that it cannot index the
+"DonaldDuckBean" using the deployment ID "/my/favorite/duck" because
+that index is already taken.
+
+The system cannot load the "DonaldDuckBean" and must also ignore the
+rest of the beans in the disneyEjbs.jar as they may need the
+"DonaldDuckBean" bean to function properly. The disneyEjbs.jar is
+skipped and the following warning is logged.
+
+[source,properties]
+----
+WARN : Jar C:\openejb\beans\disneyEjbs.jar cannot be loaded.  The  Deployment ID "/my/favorite/duck" is already in use.  Please redeploy  this jar and assign a different deployment ID to the bean with the ejb-name "DonaldDuckBean".
+----

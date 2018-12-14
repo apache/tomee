@@ -134,7 +134,7 @@ public class ServiceUtils {
 
 
     public static List<ServiceProvider> getServiceProvidersByServiceType(final String type) throws OpenEJBException {
-        final ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+        final ArrayList<ServiceProvider> providers = new ArrayList<>();
         if (type == null) {
             return providers;
         }
@@ -237,12 +237,12 @@ public class ServiceUtils {
         String providerName = null;
         String serviceName = null;
 
-        if (id.indexOf("#") != -1) {
-            providerName = id.substring(0, id.indexOf("#"));
-            serviceName = id.substring(id.indexOf("#") + 1);
-        } else if (id.indexOf(":") != -1) {
-            providerName = id.substring(0, id.indexOf(":"));
-            serviceName = id.substring(id.indexOf(":") + 1);
+        if (id.indexOf('#') != -1) {
+            providerName = id.substring(0, id.indexOf('#'));
+            serviceName = id.substring(id.indexOf('#') + 1);
+        } else if (id.indexOf(':') != -1) {
+            providerName = id.substring(0, id.indexOf(':'));
+            serviceName = id.substring(id.indexOf(':') + 1);
         } else {
             providerName = currentDefaultProviderUrl(DEFAULT_PROVIDER_URL);
             serviceName = id;

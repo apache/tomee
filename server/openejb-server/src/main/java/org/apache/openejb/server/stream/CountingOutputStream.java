@@ -46,10 +46,12 @@ public class CountingOutputStream extends FilterOutputStream {
         super.write(b, off, len);
     }
 
+    @Override
     public void flush() throws IOException {
         out.flush();
     }
 
+    @Override
     public void close() throws IOException {
         out.close();
     }

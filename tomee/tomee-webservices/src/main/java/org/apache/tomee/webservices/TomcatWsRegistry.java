@@ -400,6 +400,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
     }
 
+    @Override
     public void removeWsContainer(String path, final String moduleId) {
         if (path == null) {
             return;

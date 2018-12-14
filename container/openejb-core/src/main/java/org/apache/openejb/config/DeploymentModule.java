@@ -67,7 +67,7 @@ public interface DeploymentModule {
         /**
          * The intention of this is to hold the extracted and archived versions
          */
-        private final Set<String> locations = new LinkedHashSet<String>();
+        private final Set<String> locations = new LinkedHashSet<>();
 
         public ID(final NamedModule vendorDd, final NamedModule specDd, final String name, final File location, final URI uri, final DeploymentModule module) {
             this.name = name(vendorDd, specDd, uri, location, name, module);

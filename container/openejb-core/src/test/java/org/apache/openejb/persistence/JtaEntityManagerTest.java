@@ -42,7 +42,7 @@ public class JtaEntityManagerTest {
 
         assertTrue(JtaEntityManager.isJPA21(new ReloadableEntityManagerFactory(
                 loader,
-                new EntityManagerFactoryCallable(Jpa21Provider.class.getName(), info, loader, new HashMap<ComparableValidationConfig, ValidatorFactory>(), false),
+                new EntityManagerFactoryCallable(Jpa21Provider.class.getName(), info, loader, new HashMap<>(), false),
                 info)));
     }
 

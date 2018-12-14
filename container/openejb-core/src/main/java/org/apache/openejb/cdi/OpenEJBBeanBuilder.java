@@ -38,7 +38,7 @@ public class OpenEJBBeanBuilder<A> extends EjbBeanBuilder<A, CdiEjbBean<A>> {
 
     @Override
     protected CdiEjbBean<A> createBean(final Class<A> beanClass, final boolean beanEnabled) {
-        return new CdiEjbBean<A>(beanContext, webBeansContext, annotatedType, beanAttributes);
+        return new CdiEjbBean<>(beanContext, webBeansContext, annotatedType, beanAttributes);
     }
 
     @Override

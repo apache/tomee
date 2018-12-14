@@ -377,7 +377,7 @@ public class JtaEntityManager implements EntityManager, Serializable {
 
     private <T> TypedQuery<T> typedProxyIfNoTx(final Method method, final Object... args) {
         if (wrapNoTxQueries && !extended && !isTransactionActive()) {
-            return new JtaTypedQuery<T>(getEntityManager(), this, method, args);
+            return new JtaTypedQuery<>(getEntityManager(), this, method, args);
         }
         return createQuery(TypedQuery.class, getEntityManager(), method, args);
     }

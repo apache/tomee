@@ -24,6 +24,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class XmlSchemaInfo extends InfoObject {
-    public final Map<QName, XmlElementInfo> elements = new LinkedHashMap<QName, XmlElementInfo>();
-    public final Map<QName, XmlTypeInfo> types = new LinkedHashMap<QName, XmlTypeInfo>();
+    public final Map<QName, XmlElementInfo> elements = new LinkedHashMap<>();
+    public final Map<QName, XmlTypeInfo> types = new LinkedHashMap<>();
 }

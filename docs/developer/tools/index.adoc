@@ -1,0 +1,8 @@
+= Build Tools and Plugins
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+- link:maven-plugins.html[Maven Plugins]
+- link:gradle-plugins.html[Gradle Plugin]

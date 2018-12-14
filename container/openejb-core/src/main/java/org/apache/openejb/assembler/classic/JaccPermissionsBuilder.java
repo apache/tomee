@@ -80,7 +80,7 @@ public class JaccPermissionsBuilder {
 
     public PolicyContext build(final EjbJarInfo ejbJar, final HashMap<String, BeanContext> deployments) throws OpenEJBException {
 
-        final List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+        final List<MethodPermissionInfo> normalized = new ArrayList<>();
 
         List<MethodPermissionInfo> perms = ejbJar.methodPermissions;
 
@@ -122,7 +122,7 @@ public class JaccPermissionsBuilder {
 
                 bm.className = method.getDeclaringClass().getName();
                 bm.methodName = method.getName();
-                bm.methodParams = new ArrayList<String>();
+                bm.methodParams = new ArrayList<>();
                 for (final Class<?> type : method.getParameterTypes()) {
                     bm.methodParams.add(type.getName());
                 }

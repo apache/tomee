@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile.jwt.principal;
 
 
+import org.apache.openejb.spi.CallerPrincipal;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import java.util.Optional;
@@ -25,6 +26,7 @@ import java.util.Optional;
  * An abstract CallerPrincipal implementation that provides access to the JWT claims that are required by
  * the microprofile token.
  */
+@CallerPrincipal
 public abstract class JWTCallerPrincipal implements JsonWebToken {
 
     private String name;

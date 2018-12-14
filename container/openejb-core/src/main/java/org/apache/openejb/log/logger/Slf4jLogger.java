@@ -22,18 +22,19 @@ import org.slf4j.spi.LocationAwareLogger;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * <p>
  * java.util.logging.Logger implementation delegating to SLF4J.
  * </p>
  * <p>
- * Methods {@link java.util.logging.Logger#setParent(Logger)}, {@link java.util.logging.Logger#getParent()},
+ * Methods {@link java.util.logging.Logger#doSetParent(Logger)}, {@link java.util.logging.Logger#getParent()},
  * {@link java.util.logging.Logger#setUseParentHandlers(boolean)} and
  * {@link java.util.logging.Logger#getUseParentHandlers()} are not overrriden.
  * </p>
  * <p>
- * Level mapping inspired by {@link org.slf4j.bridge.SLF4JBridgeHandler}:
+ * Level mapping inspired by org.slf4j.bridge.SLF4JBridgeHandler:
  * </p>
  * <p/>
  * <pre>

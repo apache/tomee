@@ -293,7 +293,7 @@ public class Duration {
     }
 
     private static List<String> lowercase(final Enum... units) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         for (final Enum unit : units) {
             list.add(unit.name().toLowerCase());
         }

@@ -90,7 +90,7 @@ public class SampleLocalBean extends BaseLocalBean {
 
     /* 3h short object */
     public Short add(final Short no1, final Short no2) {
-        return new Short((short) (no1 + no2));
+        return (short) (no1 + no2);
     }
 
     /* 3i long primitive */
@@ -347,7 +347,7 @@ public class SampleLocalBean extends BaseLocalBean {
 
     /* 7 test generics */
     public List<ProxyTestObject> reverseList(final List<ProxyTestObject> objectList) {
-        final List<ProxyTestObject> result = new ArrayList<ProxyTestObject>();
+        final List<ProxyTestObject> result = new ArrayList<>();
         for (int i = objectList.size() - 1; i >= 0; i--) {
             result.add(objectList.get(i));
         }

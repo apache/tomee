@@ -84,26 +84,26 @@ public class HeavyweightOperationInfoBuilder {
     //
     // Used to map exception class constructor args
     //
-    private final Map<QName, String> publicTypes = new HashMap<QName, String>();
-    private final Map<String, String> anonymousTypes = new HashMap<String, String>();
+    private final Map<QName, String> publicTypes = new HashMap<>();
+    private final Map<String, String> anonymousTypes = new HashMap<>();
 
     //
     // Track in and out parameter names so we can verify that
     // everything has been mapped and mapped correctly
     //
-    private final Set<String> inParamNames = new HashSet<String>();
-    private final Set<String> outParamNames = new HashSet<String>();
+    private final Set<String> inParamNames = new HashSet<>();
+    private final Set<String> outParamNames = new HashSet<>();
 
     //
     // Track the wrapper elements - used by HeavyweightTypeInfoBuilder
     //
-    private final Set<QName> wrapperElementQNames = new HashSet<QName>();
+    private final Set<QName> wrapperElementQNames = new HashSet<>();
 
     private final String operationName;
     private final JaxRpcOperationInfo.OperationStyle operationStyle;
     private final Message inputMessage;
     private final Message outputMessage;
-    private final Collection<Fault> faults = new ArrayList<Fault>();
+    private final Collection<Fault> faults = new ArrayList<>();
 
     private JaxRpcOperationInfo operationInfo;
 
@@ -197,7 +197,7 @@ public class HeavyweightOperationInfoBuilder {
             XmlElementInfo wraperElement = schemaInfo.elements.get(wrapperName);
             XmlTypeInfo wrapperType = schemaInfo.types.get(wraperElement.xmlType);
 
-            Set<String> expectedOutParams = new HashSet<String>();
+            Set<String> expectedOutParams = new HashSet<>();
             for (XmlElementInfo expectedOutParam : wrapperType.elements.values()) {
                 expectedOutParams.add(expectedOutParam.qname.getLocalPart());
             }
@@ -254,7 +254,7 @@ public class HeavyweightOperationInfoBuilder {
             XmlElementInfo wrapperElement = schemaInfo.elements.get(wrapperName);
             XmlTypeInfo wrapperType = schemaInfo.types.get(wrapperElement.xmlType);
 
-            Set<String> expectedInParams = new HashSet<String>();
+            Set<String> expectedInParams = new HashSet<>();
             for (XmlElementInfo expectedInParam : wrapperType.elements.values()) {
                 expectedInParams.add(expectedInParam.qname.getLocalPart());
             }
@@ -413,9 +413,9 @@ public class HeavyweightOperationInfoBuilder {
         if (mode == Mode.IN) {
             // IN only prarmeters don't have holders
             paramJavaType = paramMapping.getParamType();
-        } else if (rpcHolderClasses.containsKey(paramMapping.getParamType())) {
+        } else if (RPC_HOLDER_CLASSES.containsKey(paramMapping.getParamType())) {
             // This is a standard type with a built in holder class
-            paramJavaType = rpcHolderClasses.get(paramMapping.getParamType());
+            paramJavaType = RPC_HOLDER_CLASSES.get(paramMapping.getParamType());
         } else {
             // holderClass == ${packageName}.holders.${typeName}Holder
             String packageName;
@@ -571,7 +571,7 @@ public class HeavyweightOperationInfoBuilder {
                 throw new OpenEJBException("ConstructorParameterOrder can only be set for complex types, not " + faultTypeInfo.qname);
             }
 
-            Map<String, XmlElementInfo> elements = new HashMap<String, XmlElementInfo>();
+            Map<String, XmlElementInfo> elements = new HashMap<>();
             for (XmlElementInfo element : faultTypeInfo.elements.values()) {
                 elements.put(element.qname.getLocalPart(), element);
             }
@@ -598,7 +598,7 @@ public class HeavyweightOperationInfoBuilder {
                 }
                 // if we don't have a java type yet, check the simple types
                 if (paramJavaType == null) {
-                    paramJavaType = qnameToJavaType.get(paramElementInfo.xmlType);
+                    paramJavaType = QNAME_TO_JAVA_TYPE.get(paramElementInfo.xmlType);
                 }
                 if (paramJavaType == null) {
                     throw new OpenEJBException("No class mapped for element type: " + paramElementInfo.xmlType);
@@ -661,30 +661,30 @@ public class HeavyweightOperationInfoBuilder {
     }
 
     //see jaxrpc 1.1 4.2.1
-    private static final Map<QName, String> qnameToJavaType = new HashMap<QName, String>();
+    private static final Map<QName, String> QNAME_TO_JAVA_TYPE = new HashMap<QName, String>();
 
     static {
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "string"), String.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "integer"), BigInteger.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "int"), int.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "long"), long.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "short"), short.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "decimal"), BigDecimal.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "float"), float.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "double"), double.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "boolean"), boolean.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "byte"), byte.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedInt"), long.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedShort"), int.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedByte"), short.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "QName"), QName.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "dateTime"), Calendar.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "date"), Calendar.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "time"), Calendar.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "anyURI"), URI.class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"), byte[].class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "hexBinary"), byte[].class.getName());
-        qnameToJavaType.put(new QName("http://www.w3.org/2001/XMLSchema", "anySimpleType"), String.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "string"), String.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "integer"), BigInteger.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "int"), int.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "long"), long.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "short"), short.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "decimal"), BigDecimal.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "float"), float.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "double"), double.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "boolean"), boolean.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "byte"), byte.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedInt"), long.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedShort"), int.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "unsignedByte"), short.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "QName"), QName.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "dateTime"), Calendar.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "date"), Calendar.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "time"), Calendar.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "anyURI"), URI.class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "base64Binary"), byte[].class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "hexBinary"), byte[].class.getName());
+        QNAME_TO_JAVA_TYPE.put(new QName("http://www.w3.org/2001/XMLSchema", "anySimpleType"), String.class.getName());
     }
 
 
@@ -700,29 +700,29 @@ public class HeavyweightOperationInfoBuilder {
      */
 
     // standard holder classes by type
-    private static final Map<String, String> rpcHolderClasses = new HashMap<String, String>();
+    private static final Map<String, String> RPC_HOLDER_CLASSES = new HashMap<String, String>();
 
     static {
-        rpcHolderClasses.put(BigDecimal.class.getName(), BigDecimalHolder.class.getName());
-        rpcHolderClasses.put(BigInteger.class.getName(), BigIntegerHolder.class.getName());
-        rpcHolderClasses.put(boolean.class.getName(), BooleanHolder.class.getName());
-        rpcHolderClasses.put(Boolean.class.getName(), BooleanWrapperHolder.class.getName());
-        rpcHolderClasses.put(byte[].class.getName(), ByteArrayHolder.class.getName());
-        rpcHolderClasses.put(byte.class.getName(), ByteHolder.class.getName());
-        rpcHolderClasses.put(Byte.class.getName(), ByteWrapperHolder.class.getName());
-        rpcHolderClasses.put(Calendar.class.getName(), CalendarHolder.class.getName());
-        rpcHolderClasses.put(double.class.getName(), DoubleHolder.class.getName());
-        rpcHolderClasses.put(Double.class.getName(), DoubleWrapperHolder.class.getName());
-        rpcHolderClasses.put(float.class.getName(), FloatHolder.class.getName());
-        rpcHolderClasses.put(Float.class.getName(), FloatWrapperHolder.class.getName());
-        rpcHolderClasses.put(int.class.getName(), IntHolder.class.getName());
-        rpcHolderClasses.put(Integer.class.getName(), IntegerWrapperHolder.class.getName());
-        rpcHolderClasses.put(long.class.getName(), LongHolder.class.getName());
-        rpcHolderClasses.put(Long.class.getName(), LongWrapperHolder.class.getName());
-        rpcHolderClasses.put(Object.class.getName(), ObjectHolder.class.getName());
-        rpcHolderClasses.put(QName.class.getName(), QNameHolder.class.getName());
-        rpcHolderClasses.put(short.class.getName(), ShortHolder.class.getName());
-        rpcHolderClasses.put(Short.class.getName(), ShortWrapperHolder.class.getName());
-        rpcHolderClasses.put(String.class.getName(), StringHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(BigDecimal.class.getName(), BigDecimalHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(BigInteger.class.getName(), BigIntegerHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(boolean.class.getName(), BooleanHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Boolean.class.getName(), BooleanWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(byte[].class.getName(), ByteArrayHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(byte.class.getName(), ByteHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Byte.class.getName(), ByteWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Calendar.class.getName(), CalendarHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(double.class.getName(), DoubleHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Double.class.getName(), DoubleWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(float.class.getName(), FloatHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Float.class.getName(), FloatWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(int.class.getName(), IntHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Integer.class.getName(), IntegerWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(long.class.getName(), LongHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Long.class.getName(), LongWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Object.class.getName(), ObjectHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(QName.class.getName(), QNameHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(short.class.getName(), ShortHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(Short.class.getName(), ShortWrapperHolder.class.getName());
+        RPC_HOLDER_CLASSES.put(String.class.getName(), StringHolder.class.getName());
     }
 }

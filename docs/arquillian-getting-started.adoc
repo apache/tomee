@@ -1,0 +1,41 @@
+= Getting started with Arquillian and TomEE
+:index-group: Arquillian
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+Arquillian is a testing framework on top of JUnit (or TestNG if you
+prefer). It makes it easier to do integration tests in a managed
+environment (JEE environment here after).
+
+We provide an embedded and remote adapter, see
+link:arquillian-available-adapters.html[the available adapters] for more
+details.
+
+In a managed environment it is usually quite difficult to perform unit
+tests, due to the fact that most of the time you have to mock almost the
+entire environment. It is very time consuming and requires complicated
+integration tests that must reflect the production environment as best
+as possible. Unit tests lose their true value.
+
+JEE always got seen as an heavy technology, impossible to test and to
+use in development. OpenEJB always fight against that idea and proved
+that it's really possible.
+
+As David Blevins said: > "Do not blame EJBs (ie. Java EE) because your
+server is not testable."
+
+With latest Java EE specifications (5 and especially 6), it becomes a
+reality. Arquillian typically addresses that area. It is basically a
+framework that aims at helping/managing the server/container in an
+agnostic way. Arquillian is responsible for the lifecycle of the
+container (start, deploy, undeploy, stop, etc).
+
+TomEE community heavily invested on that framework to prove it's really
+useful and can really help testing Java EE application. That's also an
+opportunity to get the most out of TomEE (lightweight, fast,
+feature-rich, etc).
+
+\{info See http://arquillian.org[Arquillian.org] for a great quick-start
+tutorial on Arquillian itself. }

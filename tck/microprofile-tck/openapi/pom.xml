@@ -36,7 +36,6 @@
         <!-- Updated version to fix hanging text -->
         <version>2.22.0</version>
         <configuration>
-          <!-- TODO - Requires the JsonB JAX-RS Provider -->
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.openapi:microprofile-openapi-tck</dependency>
           </dependenciesToScan>
@@ -56,6 +55,44 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>mp-tck-all</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>tomee-plus</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <arquillian.launch>tomee-plus</arquillian.launch>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>tomee-plume</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <arquillian.launch>tomee-plume</arquillian.launch>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>

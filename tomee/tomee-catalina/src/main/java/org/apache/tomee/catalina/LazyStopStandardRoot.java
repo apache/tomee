@@ -230,12 +230,14 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         return delegate.getBaseUrls();
     }
 
+    @Override
     public void setDomain(final String domain) {
         if (isJmxEnabled) {
             JmxEnabled.class.cast(delegate).setDomain(domain);
         }
     }
 
+    @Override
     public String getDomain() {
         if (isJmxEnabled) {
             return JmxEnabled.class.cast(delegate).getDomain();
@@ -243,6 +245,7 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         return null;
     }
 
+    @Override
     public ObjectName getObjectName() {
         if (isJmxEnabled) {
             return JmxEnabled.class.cast(delegate).getObjectName();
@@ -250,24 +253,28 @@ public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
         return null;
     }
 
+    @Override
     public void postDeregister() {
         if (isLifecycleMBeanBase) {
             LifecycleMBeanBase.class.cast(delegate).postDeregister();
         }
     }
 
+    @Override
     public void postRegister(final Boolean registrationDone) {
         if (isLifecycleMBeanBase) {
             LifecycleMBeanBase.class.cast(delegate).postRegister(registrationDone);
         }
     }
 
+    @Override
     public void preDeregister() throws Exception {
         if (isLifecycleMBeanBase) {
             LifecycleMBeanBase.class.cast(delegate).preDeregister();
         }
     }
 
+    @Override
     public ObjectName preRegister(final MBeanServer server, final ObjectName name) throws Exception {
         if (isLifecycleMBeanBase) {
             return LifecycleMBeanBase.class.cast(delegate).preRegister(server, name);

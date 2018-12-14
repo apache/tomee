@@ -1,0 +1,33 @@
+= Migrate from TomEE 1 to TomEE 7
+:jbake-date: 2017-06-17
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+== Breaking changes
+
+- Artifact coordinates changes
+
+GroupId changed from `org.apache.openejb` to `org.apache.tomee`.
+It includes maven plugins which use now `org.apache.tomee.maven` and the `javaee-api`.
+
+Versions of openejb and tomee are now aligned on 7.x and you don't need to use
+4.x and 1.x (or any variant) for openejb and tomee.
+
+- JAX-RS 2 specification refined the sorting of providers. It can have side effects for message body
+readers/writers which don't define their target mediatype properly like Jackson which uses wildcard instead of
+a json related mediatype. To solve it register a custom provider redefining the media type.
+
+Can be as easy as:
+
+[source,java]
+----
+@Provider
+@Consumes("application/json")
+@Produces("application/json")
+public class MyAppJsonProvider extends JacksonJsonProvider {
+}
+----
+
+- JPA and CDI are linked now, enabling JPA to use CDI for its components but CDI can use JPA too...
+to solve issues with hibernate you need to add either as system property or persistence unit `tomee.jpa.factory.lazy = true`.

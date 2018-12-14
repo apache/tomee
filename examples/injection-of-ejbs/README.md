@@ -1,4 +1,8 @@
-Title: Injection Of Ejbs
+index-group=Referencing EJBs
+type=page
+status=published
+title=Injection Of Ejbs
+~~~~~~
 
 This example shows how to use the @EJB annotation on a bean class to refer to other beans.
 

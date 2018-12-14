@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -40,7 +41,8 @@ public class SecurityEJBPropagationTest {
         return ShrinkWrap.create(WebArchive.class, "jaspic-ejb.war")
                 .addClasses(
                         TheAuthConfigProvider.class, TheEJb.class, TheServlet.class, Init.class, TheBean.class,
-                        TheServerAuthConfig.class, TheServerAuthContext.class, TheServerAuthModule.class, TheServerAuthModule.class);
+                        TheServerAuthConfig.class, TheServerAuthContext.class, TheServerAuthModule.class, TheServerAuthModule.class)
+                .addAsWebResource(new File("src/test/resources/test/context.xml"), "META-INF/context.xml");
     }
 
     @ArquillianResource

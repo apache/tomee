@@ -42,7 +42,7 @@ import java.util.Arrays;
  * dataset.  The default value, INFINITE_WINDOW, puts no limit on the size of
  * the dataset.  This value should be used with caution, as the backing store
  * will grow without bound in this case.  For very large datasets,
- * {@link org.apache.commons.math.stat.descriptive.SummaryStatistics}, which does not store the dataset, should be used
+ * {@link org.apache.commons.math3.stat.descriptive.SummaryStatistics}, which does not store the dataset, should be used
  * instead of this class. If <code>windowSize</code> is not INFINITE_WINDOW and
  * more values are added than can be stored in the dataset, new values are
  * added in a "rolling" manner, with new values replacing the "oldest" values
@@ -435,7 +435,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
             try {
                 percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                     new Class[]{Double.TYPE}).invoke(percentileImpl,
-                    new Object[]{Double.valueOf(p)});
+                    new Object[]{p});
             } catch (final NoSuchMethodException e1) { // Setter guard should prevent
                 throw MathRuntimeException.createIllegalArgumentException(
                     UNSUPPORTED_METHOD_MESSAGE,
@@ -619,7 +619,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
         try {
             percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                 new Class[]{Double.TYPE}).invoke(percentileImpl,
-                new Object[]{Double.valueOf(50.0d)});
+                new Object[]{50.0d});
         } catch (final NoSuchMethodException e1) {
             throw MathRuntimeException.createIllegalArgumentException(
                 "percentile implementation {0} does not support setQuantile",

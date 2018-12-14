@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.principal;
 
+import org.apache.openejb.spi.CallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -40,6 +41,7 @@ import java.util.logging.Logger;
  * A default implementation of JWTCallerPrincipal using jose4j
  * Another implementation could use nimbus and another plain JSON-P
  */
+@CallerPrincipal
 public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
 
     private static final Logger logger = Logger.getLogger(DefaultJWTCallerPrincipal.class.getName());

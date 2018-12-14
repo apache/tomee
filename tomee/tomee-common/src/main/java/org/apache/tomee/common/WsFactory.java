@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Properties;
 
 public class WsFactory extends AbstractObjectFactory {
+    
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         // ignore non resource-refs
         if (!(object instanceof ResourceRef)) {
@@ -122,6 +124,7 @@ public class WsFactory extends AbstractObjectFactory {
         return value;
     }
 
+    @Override
     protected String buildJndiName(final Reference reference) throws NamingException {
         throw new UnsupportedOperationException();
     }

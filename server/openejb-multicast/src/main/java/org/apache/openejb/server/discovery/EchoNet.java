@@ -74,7 +74,7 @@ public class EchoNet {
 
     public static class Calc {
         public static void main(String[] args) {
-            Set<Item> set = new HashSet<Item>();
+            Set<Item> set = new HashSet<>();
 
             int x = 150;
 

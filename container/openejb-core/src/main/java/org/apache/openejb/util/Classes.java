@@ -84,7 +84,7 @@ public class Classes {
     }
 
     public static List<String> getSimpleNames(final Class... classes) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         for (final Class aClass : classes) {
             list.add(aClass.getSimpleName());
         }
@@ -103,7 +103,7 @@ public class Classes {
      * @return
      */
     public static List<Class<?>> ancestors(Class clazz) {
-        final ArrayList<Class<?>> ancestors = new ArrayList<Class<?>>();
+        final ArrayList<Class<?>> ancestors = new ArrayList<>();
 
         while (clazz != null && !clazz.equals(Object.class)) {
             ancestors.add(clazz);

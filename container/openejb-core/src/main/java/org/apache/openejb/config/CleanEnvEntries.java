@@ -173,7 +173,7 @@ public class CleanEnvEntries implements DynamicDeployer {
             return;
         }
 
-        final Set<Class> types = new HashSet<Class>();
+        final Set<Class> types = new HashSet<>();
 
         for (final InjectionTarget target : entry.getInjectionTarget()) {
             if (target.getInjectionTargetClass() == null) {

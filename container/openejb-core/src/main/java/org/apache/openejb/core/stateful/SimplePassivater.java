@@ -101,8 +101,8 @@ public class SimplePassivater implements PassivationStrategy {
 
     @Override
     public void passivate(final Map hash) throws SystemException {
-        for (final Object id : hash.keySet()) {
-            passivate(id, hash.get(id));
+        for (final Object o : hash.entrySet()) {
+            passivate(((Map.Entry) o).getKey(), ((Map.Entry) o).getValue());
         }
     }
 

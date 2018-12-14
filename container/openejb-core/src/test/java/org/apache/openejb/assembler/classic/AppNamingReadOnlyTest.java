@@ -87,9 +87,9 @@ public class AppNamingReadOnlyTest extends TestCase {
     	
     	AppContext mockAppContext = new AppContext("appId", SystemInstance.get(),  this.getClass().getClassLoader(), context, context, false);
     	ModuleContext mockModuleContext =  new ModuleContext("moduleId", new URI(""), "uniqueId", mockAppContext, context, this.getClass().getClassLoader());
-    	BeanContext mockBeanContext = new BeanContext("test", context, mockModuleContext, this.getClass(), this.getClass(), new HashMap<String, String>());
+    	BeanContext mockBeanContext = new BeanContext("test", context, mockModuleContext, this.getClass(), this.getClass(), new HashMap<>());
     	
-    	List<BeanContext> beanContextsList = new ArrayList<BeanContext>();
+    	List<BeanContext> beanContextsList = new ArrayList<>();
     	beanContextsList.add(mockBeanContext);
     	
     	return beanContextsList;

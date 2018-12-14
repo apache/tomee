@@ -28,7 +28,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class OpenEjbRunner extends Runner {
     private final Runner delegate;
@@ -54,7 +54,7 @@ public class OpenEjbRunner extends Runner {
         try {
             delegate = getDelegateRunner(testClazz);
         } catch (final Throwable e) {
-            throw new InitializationError(Arrays.asList(e));
+            throw new InitializationError(Collections.singletonList(e));
         }
     }
 

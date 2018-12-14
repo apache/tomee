@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 public abstract class AbstractObjectFactory implements ObjectFactory {
+    @Override
     public Object getObjectInstance(final Object object, final Name name, final Context context, final Hashtable environment) throws Exception {
         final Reference ref = (Reference) object;
 
