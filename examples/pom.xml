@@ -102,6 +102,14 @@ BROKEN, see TOMEE-2140
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>mp-metrics-counted</module>
+    <module>mp-metrics-histogram</module>
+    <module>mp-metrics-timed</module>
+    <module>mp-faulttolerance-retry</module>
+    <module>mp-config-example</module>
+    <module>mp-rest-client</module>
+    <module>mp-metrics-counted</module>
+    <module>mp-metrics-timed</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -171,14 +179,10 @@ BROKEN, see TOMEE-2140
     <module>moviefun</module>
     <module>moviefun-rest</module>
     <module>resources-jmx-example</module>
-    <module>mp-metrics-counted</module>   
-    <module>mp-metrics-timed</module>
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
-    <module>mp-faulttolerance-retry</module>
-    <module>mp-config-example</module>
-    <module>mp-rest-client</module>
+
   </modules>
 
   <dependencies>
