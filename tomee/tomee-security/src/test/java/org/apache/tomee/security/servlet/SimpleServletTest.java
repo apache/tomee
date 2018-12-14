@@ -16,18 +16,12 @@
  */
 package org.apache.tomee.security.servlet;
 
-import org.apache.openejb.jee.WebApp;
-import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.Configuration;
-import org.apache.openejb.testing.EnableServices;
-import org.apache.openejb.testing.Module;
-import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
-import org.junit.BeforeClass;
+import org.apache.tomee.embedded.Configuration;
+import org.apache.tomee.embedded.Container;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,37 +30,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(ApplicationComposer.class)
-@EnableServices("http")
 public class SimpleServletTest {
-    private static int port = -1;
-
-    @BeforeClass
-    public static void beforeClass() {
-        port = NetworkUtil.getNextAvailablePort();
-    }
-
-    @Configuration
-    public Properties props() {
-        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(port)).build();
-    }
-
-    @Module
-    @Classes(TestServlet.class)
-    public WebApp app() {
-        return new WebApp().contextRoot("/servlet");
-    }
-
     @Test
-    public void servlet() throws Exception {
-        assertEquals("ok!", IO.slurp(new URL("http://localhost:" + port + "/servlet/test")));
+    public void testWebApp() throws Exception {
+        try (Container container = new Container(
+                new Configuration()
+                        .http(NetworkUtil.getNextAvailablePort())
+                        .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
+                        .property("openejb.additional.include", "tomee-"))
+                .deployPathsAsWebapp(JarLocation.jarLocation(SimpleServletTest.class))) {
+
+            assertEquals("ok!", IO.slurp(
+                    new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")));
+        }
     }
 
-    @WebServlet(urlPatterns = "/test")
+    @WebServlet(urlPatterns = "/servlet")
     public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
@@ -74,5 +56,4 @@ public class SimpleServletTest {
             resp.getWriter().write("ok!");
         }
     }
-
 }

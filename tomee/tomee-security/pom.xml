@@ -35,16 +35,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-http</artifactId>
+      <artifactId>tomee-embedded</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
