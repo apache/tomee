@@ -31,7 +31,6 @@
       <property name="classifier">microprofile</property>
       <property name="simpleLog">true</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="additionalLibs">mvn:com.github.javafaker:javafaker:0.15</property>
       <property name="dir">target/server</property>
       <property name="appWorkingDir">target/arquillian</property>
     </configuration>
