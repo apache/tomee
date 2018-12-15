@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Simple Hello World example of using link:http://mvc-spec.org[http://mvc-spec.org] together with Ozark-RestEasy Module .
+Simple Hello World example of using link:http://mvc-spec.org[mvc-spec.org] together with Ozark-RestEasy Module .
 
 === Steps to run the example
 
@@ -18,6 +18,6 @@ Open:
 
 ==== Intro of Eclipse Krazo
     
-https://projects.eclipse.org/proposals/eclipse-krazo[https://projects.eclipse.org/proposals/eclipse-krazo] is an implementation of action-based MVC specifiec by MVC 1.0 (JSR-371). 
+https://projects.eclipse.org/proposals/eclipse-krazo[Eclipse-Krazo] is an implementation of action-based MVC specifiec by MVC 1.0 (JSR-371). 
 
 It builds on top of JAX-RS and currently contains support for RESTEasy, Jersey and CXF with a well-defined SPI for other implementations.
