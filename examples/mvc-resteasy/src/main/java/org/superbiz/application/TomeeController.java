@@ -1,9 +1,8 @@
-package org.superbiz.controller;
+package org.superbiz.application;
 
 import javax.inject.Inject;
-import javax.mvc.Models;
 import javax.mvc.Controller;
-import javax.mvc.View;
+import javax.mvc.Models;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -16,8 +15,8 @@ public class TomeeController {
     private Models models;
 
     @GET
-    @View("hello.jsp")
-    public void getHello(@QueryParam("name") String name) {
+    public String getHello(@QueryParam("name") String name) {
         this.models.put("hello", name);
+        return "hello.jsp";
     }
 }

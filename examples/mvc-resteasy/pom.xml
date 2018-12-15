@@ -66,17 +66,6 @@
     </plugins>
   </build>
 
-  <repositories>
-    <repository>
-      <id>apache-m2-snapshot</id>
-      <name>Apache Snapshot Repository</name>
-      <url>https://repository.apache.org/content/groups/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -90,6 +79,13 @@
       <groupId>org.mvc-spec.ozark</groupId>
       <artifactId>ozark-resteasy</artifactId>
       <version>${version.ozark}</version>
+      <scope>runtime</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>javax.mvc</groupId>
+        <artifactId>javax.mvc-api</artifactId>
+        <version>1.0-pfd</version>
     </dependency>
 
     <!-- RestEasy -->
@@ -115,7 +111,7 @@
       <version>${version.arquillian}</version>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${tomee.version}</version>
@@ -125,8 +121,9 @@
       <artifactId>apache-tomee</artifactId>
       <version>${tomee.version}</version>
       <classifier>webprofile</classifier>
+      <scope>test</scope>
       <type>zip</type>
-    </dependency> -->
+    </dependency>
     <dependency>
       <groupId>org.jboss.arquillian.graphene</groupId>
       <artifactId>graphene-webdriver</artifactId>
@@ -140,21 +137,11 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.32</version>
+      <scope>test</scope>
+   </dependency>
   </dependencies>
-
-  <!--
-  This section allows you to configure where to publish libraries for sharing.
-  It is not required and may be deleted.  For more information see:
-  http://maven.apache.org/plugins/maven-deploy-plugin/
-  -->
-  <distributionManagement>
-    <repository>
-      <id>localhost</id>
-      <url>file://${basedir}/target/repo/</url>
-    </repository>
-    <snapshotRepository>
-      <id>localhost</id>
-      <url>file://${basedir}/target/snapshot-repo/</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>
