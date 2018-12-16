@@ -1,7 +1,8 @@
-= Microprofile Config
-:index-group=Unrevised
-:jbake-type=page
-:jbake-status=published
+Microprofile Config
+===================
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: published
 
 This is an example on how to use microprofile config in TomEE.
 
