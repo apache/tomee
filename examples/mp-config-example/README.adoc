@@ -9,7 +9,7 @@ This is an example on how to use microprofile config in TomEE.
 
 [source,bash]
 ----
-    mvn clean install tomee:run 
+mvn clean install tomee:run 
 ----
 
 == API

@@ -38,13 +38,13 @@ The `@AccessTimeout` is simply a convenience wrapper around the `long` and `Time
 
 [source,java,numbered]
 ----
-    import java.util.concurrent.TimeUnit;
-    @Target({METHOD, TYPE})
-    @Retention(RUNTIME)
-    public @interface AccessTimeout {
-        long value();
-        TimeUnit unit() default TimeUnit.MILLISECONDS;
-    }
+import java.util.concurrent.TimeUnit;
+@Target({METHOD, TYPE})
+@Retention(RUNTIME)
+public @interface AccessTimeout {
+    long value();
+    TimeUnit unit() default TimeUnit.MILLISECONDS;
+}
 ----
 
 == Usage
