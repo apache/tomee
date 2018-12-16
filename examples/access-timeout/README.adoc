@@ -74,145 +74,144 @@ Here we have a simple @Singleton bean that has three synchronous methods and one
 
 [source,java,numbered]
 ----
-    @Singleton
-    @Lock(WRITE)
-    public class BusyBee {
+@Singleton
+@Lock(WRITE)
+public class BusyBee {
 
-        @Asynchronous
-        public Future stayBusy(CountDownLatch ready) {
-            ready.countDown();
+    @Asynchronous
+    public Future stayBusy(CountDownLatch ready) {
+        ready.countDown();
 
-            try {
-                new CountDownLatch(1).await();
-            } catch (InterruptedException e) {
-                Thread.interrupted();
-            }
-
-            return null;
+        try {
+            new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
         }
 
-        @AccessTimeout(0)
-        public void doItNow() {
-            // do something
-        }
-
-        @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
-        public void doItSoon() {
-            // do something
-        }
-
-        @AccessTimeout(-1)
-        public void justDoIt() {
-            // do something
-        }
-
+        return null;
     }
+
+    @AccessTimeout(0)
+    public void doItNow() {
+        // do something
+    }
+
+    @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+    public void doItSoon() {
+        // do something
+    }
+
+    @AccessTimeout(-1)
+    public void justDoIt() {
+        // do something
+    }
+}
 ----
 
 The `@Asynchronous` method is not a critical part of `@AccessTimeout`, but serves as a simple way to "lock" the bean for testing purposes.  It allows us to easily test the concurrent behavior of the bean.
 
 [source,java,numbered]
 ----
-    public class BusyBeeTest extends TestCase {
+public class BusyBeeTest extends TestCase {
 
-        public void test() throws Exception {
+    public void test() throws Exception {
 
-            final Context context = EJBContainer.createEJBContainer().getContext();
+        final Context context = EJBContainer.createEJBContainer().getContext();
 
-            final CountDownLatch ready = new CountDownLatch(1);
+        final CountDownLatch ready = new CountDownLatch(1);
 
-            final BusyBee busyBee = (BusyBee) context.lookup("java:global/access-timeout/BusyBee");
+        final BusyBee busyBee = (BusyBee) context.lookup("java:global/access-timeout/BusyBee");
 
-            // This asynchronous method will never exit
-            busyBee.stayBusy(ready);
+        // This asynchronous method will never exit
+        busyBee.stayBusy(ready);
 
-            // Are you working yet little bee?
-            ready.await();
-
-
-            // OK, Bee is busy
+        // Are you working yet little bee?
+        ready.await();
 
 
-            { // Timeout Immediately
-                final long start = System.nanoTime();
+        // OK, Bee is busy
 
-                try {
-                    busyBee.doItNow();
 
-                    fail("The bee should be busy");
-                } catch (Exception e) {
-                    // the bee is still too busy as expected
-                }
+        { // Timeout Immediately
+            final long start = System.nanoTime();
 
-                assertEquals(0, seconds(start));
+            try {
+                busyBee.doItNow();
+
+                fail("The bee should be busy");
+            } catch (Exception e) {
+                // the bee is still too busy as expected
             }
 
-            { // Timeout in 5 seconds
-                final long start = System.nanoTime();
+            assertEquals(0, seconds(start));
+        }
 
-                try {
-                    busyBee.doItSoon();
+        { // Timeout in 5 seconds
+            final long start = System.nanoTime();
 
-                    fail("The bee should be busy");
-                } catch (Exception e) {
-                    // the bee is still too busy as expected
-                }
+            try {
+                busyBee.doItSoon();
 
-                assertEquals(5, seconds(start));
+                fail("The bee should be busy");
+            } catch (Exception e) {
+                // the bee is still too busy as expected
             }
 
-            // This will wait forever, give it a try if you have that long
-            //busyBee.justDoIt();
+            assertEquals(5, seconds(start));
         }
 
-        private long seconds(long start) {
-            return TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
-        }
+        // This will wait forever, give it a try if you have that long
+        //busyBee.justDoIt();
     }
+
+    private long seconds(long start) {
+        return TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
+    }
+}
 ----
 
 == Running
 
 [source,bash]
 ----
-    mvn clean test
+mvn clean test
 ----
 
 === Output
 [source,bash]
 ----
-    -------------------------------------------------------
-     T E S T S
-    -------------------------------------------------------
-    Running org.superbiz.accesstimeout.BusyBeeTest
-    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
-    http://tomee.apache.org/
-    INFO - openejb.home = /Users/dblevins/examples/access-timeout
-    INFO - openejb.base = /Users/dblevins/examples/access-timeout
-    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
-    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
-    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
-    INFO - Found EjbModule in classpath: /Users/dblevins/examples/access-timeout/target/classes
-    INFO - Beginning load: /Users/dblevins/examples/access-timeout/target/classes
-    INFO - Configuring enterprise application: /Users/dblevins/examples/access-timeout
-    INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
-    INFO - Auto-creating a container for bean BusyBee: Container(type=SINGLETON, id=Default Singleton Container)
-    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
-    INFO - Auto-creating a container for bean org.superbiz.accesstimeout.BusyBeeTest: Container(type=MANAGED, id=Default Managed Container)
-    INFO - Enterprise application "/Users/dblevins/examples/access-timeout" loaded.
-    INFO - Assembling app: /Users/dblevins/examples/access-timeout
-    INFO - Jndi(name="java:global/access-timeout/BusyBee!org.superbiz.accesstimeout.BusyBee")
-    INFO - Jndi(name="java:global/access-timeout/BusyBee")
-    INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest!org.superbiz.accesstimeout.BusyBeeTest")
-    INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest")
-    INFO - Created Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
-    INFO - Created Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
-    INFO - Started Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
-    INFO - Started Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
-    INFO - Deployed Application(path=/Users/dblevins/examples/access-timeout)
-    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.071 sec
+-------------------------------------------------------
+    T E S T S
+-------------------------------------------------------
+Running org.superbiz.accesstimeout.BusyBeeTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/access-timeout
+INFO - openejb.base = /Users/dblevins/examples/access-timeout
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/access-timeout/target/classes
+INFO - Beginning load: /Users/dblevins/examples/access-timeout/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/access-timeout
+INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+INFO - Auto-creating a container for bean BusyBee: Container(type=SINGLETON, id=Default Singleton Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.accesstimeout.BusyBeeTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Enterprise application "/Users/dblevins/examples/access-timeout" loaded.
+INFO - Assembling app: /Users/dblevins/examples/access-timeout
+INFO - Jndi(name="java:global/access-timeout/BusyBee!org.superbiz.accesstimeout.BusyBee")
+INFO - Jndi(name="java:global/access-timeout/BusyBee")
+INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest!org.superbiz.accesstimeout.BusyBeeTest")
+INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest")
+INFO - Created Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
+INFO - Created Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
+INFO - Started Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/access-timeout)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.071 sec
 
-    Results :
+Results :
 
-    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----

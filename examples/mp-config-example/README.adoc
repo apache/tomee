@@ -38,30 +38,30 @@ Each individual property can be injected directly
 
 [source,java,numbered]
 ----
-     @Inject
-     @ConfigProperty(name = "java.runtime.version")
-     private String javaVersion;
+@Inject
+@ConfigProperty(name = "java.runtime.version")
+private String javaVersion;
 ----
 
 You can also set a default value for it, case the config does not match the property in the context it will use the default value
 
 [source,java,numbered]
 ----
-    @Inject
-    @ConfigProperty(name = "defaultProperty", defaultValue = "ALOHA")
-    private String defaultProperty;
+@Inject
+@ConfigProperty(name = "defaultProperty", defaultValue = "ALOHA")
+private String defaultProperty;
 ----
 
 The config object can also be injected. Then use the getValue() method to retrieve the individual property.
 
 [source,java,numbered]
 ----    
-    @Inject
-    private Config config;
-    
-    @GET
-    @Path("javaVersion")
-    public String getJavaVersionPropertyFromSystemProperties() {
-        return config.getValue("java.runtime.version", String.class);
-    }
+@Inject
+private Config config;
+
+@GET
+@Path("javaVersion")
+public String getJavaVersionPropertyFromSystemProperties() {
+    return config.getValue("java.runtime.version", String.class);
+}
 ----
