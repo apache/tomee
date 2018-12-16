@@ -38,6 +38,6 @@ public class BooleanAdapter extends XmlAdapter<String, Boolean> {
         if (value == null) {
             return null;
         }
-        return (value.booleanValue()) ? "true" : "false";
+        return (value) ? "true" : "false";
     }
 }

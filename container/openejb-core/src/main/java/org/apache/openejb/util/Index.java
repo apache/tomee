@@ -45,7 +45,7 @@ public class Index<K, V> extends AbstractMap<K, V> {
         int i = 0;
         for (final Entry<K, V> entry : map.entrySet()) {
             entries[i] = new IndexEntry<>(entry);
-            keyIndicies.put(entry.getKey(), new Integer(i));
+            keyIndicies.put(entry.getKey(), i);
             i++;
         }
 
@@ -58,7 +58,7 @@ public class Index<K, V> extends AbstractMap<K, V> {
         for (int i = 0; i < keys.size(); i++) {
             final K key = keys.get(i);
             entries[i] = new IndexEntry<>(key, null);
-            keyIndicies.put(key, new Integer(i));
+            keyIndicies.put(key, i);
         }
 
         entrySet = new IndexEntrySet();
@@ -70,7 +70,7 @@ public class Index<K, V> extends AbstractMap<K, V> {
         for (int i = 0; i < keys.length; i++) {
             final K key = keys[i];
             entries[i] = new IndexEntry<>(key, null);
-            keyIndicies.put(key, new Integer(i));
+            keyIndicies.put(key, i);
         }
 
         entrySet = new IndexEntrySet();
