@@ -1,9 +1,7 @@
-@AccessTimeout Annotation
-=========================
+= @AccessTimeout Annotation
 :index-group: EJB
 :jbake-type: page
 :jbake-status: published
-
 
 Before taking a look at `@AccessTimeout`, it might help to see when a caller might have to "wait"
 
