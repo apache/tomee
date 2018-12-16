@@ -9,7 +9,7 @@ The __ element is used to configure a _javax.sql.DataSource_. It is also
 used to configure other resources like Timers, Topics, Queues. We will
 see some examples of using to configure a DataSource.
 
-The element is designed after @Resource annotation and has similar
+The element is designed after `@Resource` annotation and has similar
 attributes.
 
 For example, this annotation in your bean:
@@ -109,7 +109,7 @@ reference name matches a Resource in your openejb.xml, that's the one
 you get_.  Essentially, the rules for mapping are as follows.
 
 [arabic]
-. Name Attribute Match - @Resource with a name attribute matching the
+. Name Attribute Match - `@Resource` with a name attribute matching the
 resource name gets that resource injected
 . Injected Name Match - variable name matching the resource name gets
 that resource injected

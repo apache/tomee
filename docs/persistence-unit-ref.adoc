@@ -5,7 +5,7 @@
 :jbake-status: published
 
 Both lookup and injection of an
-EntityManagerFactory can be configured via the @PersistenceUnit
+EntityManagerFactory can be configured via the `@PersistenceUnit`
 annotation or in xml. Annotations and xml have equal function in both
 lookup and injection.
 
@@ -40,7 +40,7 @@ public class MyBean implements MyInterface {
 
 == Via xml
 
-The above @PersistenceUnit annotation usage is 100% equivalent to the
+The above `@PersistenceUnit` annotation usage is 100% equivalent to the
 following xml.
 
 [source,xml]
@@ -82,7 +82,7 @@ public class MyBean implements MyInterface {
 
 = Via xml
 
-The above @PersistenceUnit annotation usage is 100% equivalent to the
+The above `@PersistenceUnit` annotation usage is 100% equivalent to the
 following xml.
 
 [source,xml]

@@ -61,7 +61,7 @@ org.acme.superfun
 ejbName
 
 The ejb-name as specified in xml or via the 'name' attribute in an
-@Stateful, @Stateless, or @MessageDriven annotation
+@Stateful, `@Stateless`, or `@MessageDriven` annotation
 
 deploymentId
 
@@ -74,7 +74,7 @@ see interfaceType.annotationName
 
 interfaceType.annotationName
 
-Following the EJB 3 annotations @RemoteHome, @LocalHome, @Remote and
+Following the EJB 3 annotations `@RemoteHome`, `@LocalHome`, `@Remote` and
 @Local RemoteHome (EJB 2 EJBHome) LocalHome (EJB 2 EJBLocalHome) Remote
 (EJB 3 Business Remote) Local (EJB 3 Business Local) Endpoint (EJB
 webservice endpoint)

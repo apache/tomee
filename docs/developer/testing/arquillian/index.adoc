@@ -47,7 +47,7 @@ NOTE: all configurations have defaults
 |Name|Description
 |properties|container properties, as in conf/system.properties (not in xml format)
 |preloadClasses|some class to load (ie enforce static block initialization)
-|startDefaultScopes|should CDI default scopes be started (includes @RequestScoped)
+|startDefaultScopes|should CDI default scopes be started (includes `@RequestScoped`)
 |singleDeploymentByArchiveName |names of archives (or true for all) to dploy a single time
 |===
 

@@ -10,7 +10,7 @@ type="javax.naming.InitialContext" and it worked (mostly). ##
 Referencing a bean in another jar (with annotations)
 
 When using annotations to reference a bean from another ejb in your ear
-you have to supplement the @EJB reference with a small chunk of xml in
+you have to supplement the `@EJB` reference with a small chunk of xml in
 the ejb-jar.xml of the referring bean.
 
 So in ejb app A colorsApp.jar you have this bean:
@@ -80,7 +80,7 @@ public class OrangeBean implements OrangeRemote {
 }
 ----
 
-Then in ejb app B shapesApp.jar -- note there is no @EJB annotation:
+Then in ejb app B shapesApp.jar -- note there is no `@EJB` annotation:
 
 [source,java]
 ----
