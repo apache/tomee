@@ -6,6 +6,7 @@ target
 *.ipr
 *.iml
 *.log
+*.vscode
 *~
 quick.bat
 /tomee/tomee-plume-webapp/overlays/
