@@ -12,6 +12,10 @@ import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -46,8 +50,21 @@ public class ThreadFactoryServiceTest {
     @Test
     public void asyncTask() throws InterruptedException {
 
-        factoryService.asyncTask(1);
+        final Thread thread = factoryService.asyncTask(1);
+        assertTrue(thread.isAlive());
+
         LOGGER.info("Do something else");
         TimeUnit.MILLISECONDS.sleep(200);
+
+        assertFalse(thread.isAlive());
+    }
+
+    @Test
+    public void asyncHangingTask() throws InterruptedException {
+
+        final Thread thread = factoryService.asyncHangingTask(1);
+        LOGGER.info("Do something else");
+        TimeUnit.MILLISECONDS.sleep(200);
+        assertFalse(thread.isAlive());
     }
 }

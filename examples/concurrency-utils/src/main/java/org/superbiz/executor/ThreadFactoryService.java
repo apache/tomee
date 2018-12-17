@@ -32,11 +32,26 @@ public class ThreadFactoryService {
     @Resource
     private ManagedThreadFactory factory;
 
-    public void asyncTask(final int value) {
+    public Thread asyncTask(final int value) {
         LOGGER.info("Create asyncTask");
         final Thread thread = factory.newThread(longRunnableTask(value, 100, null));
         thread.setName("pretty asyncTask");
         thread.start();
+        return thread;
+    }
+
+    public Thread asyncHangingTask(final int value) throws InterruptedException {
+        LOGGER.info("Create asyncTask");
+        final Thread thread = factory.newThread(longRunnableTask(value, 1000000, null));
+        thread.setName("pretty asyncTask");
+        thread.start();
+        TimeUnit.MILLISECONDS.sleep(50);
+        if (thread.isAlive()) {
+            // This will cause any wait in the thread to resume.
+            // This will call the InterruptedException block in the longRunnableTask method.
+            thread.interrupt();
+        }
+        return thread;
     }
 
     /**
