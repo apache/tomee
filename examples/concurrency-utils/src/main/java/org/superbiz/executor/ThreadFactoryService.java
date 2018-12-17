@@ -32,6 +32,12 @@ public class ThreadFactoryService {
     @Resource
     private ManagedThreadFactory factory;
 
+    /**
+     * Happy path.
+     *
+     * @param value to compute
+     * @return The thread we created
+     */
     public Thread asyncTask(final int value) {
         LOGGER.info("Create asyncTask");
         final Thread thread = factory.newThread(longRunnableTask(value, 100, null));
@@ -40,6 +46,13 @@ public class ThreadFactoryService {
         return thread;
     }
 
+    /**
+     * Example where we have to stop a thread.
+     *
+     * @param value
+     * @return The thread we created
+     * @throws InterruptedException
+     */
     public Thread asyncHangingTask(final int value) throws InterruptedException {
         LOGGER.info("Create asyncTask");
         final Thread thread = factory.newThread(longRunnableTask(value, 1000000, null));
@@ -55,6 +68,7 @@ public class ThreadFactoryService {
     }
 
     /**
+     * TODO create a proper runnable class were we store the result and we check periodically if we need to stop the execution.
      * Will simulate a long running operation
      *
      * @param value          The value to compute
