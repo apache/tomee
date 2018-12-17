@@ -34,12 +34,20 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 
+
 /**
+ * The type ListEjbMojo.
  * Highly inspired from openejb command helper but with some different data.
  * List deployed EJB in a running TomEE.
  */
 @Mojo(name = "list")
 public class ListEjbMojo extends AbstractCommandMojo {
+    /**
+     * List the EJBs
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Deployer deployer = (Deployer) lookup("openejb/DeployerBusinessRemote");
@@ -86,6 +94,11 @@ public class ListEjbMojo extends AbstractCommandMojo {
     private static class LogPrinterStream extends PrintStream {
         private Log logger;
 
+        /**
+         * Instantiates a new Log printer stream.
+         *
+         * @param log the log
+         */
         public LogPrinterStream(final Log log) {
             super(new NullOuputStream());
             logger = log;

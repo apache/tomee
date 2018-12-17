@@ -17,11 +17,25 @@
 
 package org.apache.openejb.maven.plugin;
 
+/**
+ * The type TomEEException to be use in the plugin.
+ */
 public class TomEEException extends RuntimeException {
+    /**
+     * Instantiates a new TomEE exception.
+     *
+     * @param s the s
+     */
     public TomEEException(final String s) {
         super(s);
     }
 
+    /**
+     * Instantiates a new TomEE exception.
+     *
+     * @param message the message
+     * @param e       the e
+     */
     public TomEEException(final String message, final Exception e) {
         super(message, e);
     }
