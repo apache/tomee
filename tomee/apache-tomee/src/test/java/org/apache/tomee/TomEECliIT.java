@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 
@@ -65,11 +66,33 @@ public class TomEECliIT {
             fail("Failed to find Tomcat directory required for this test - Ensure you have run at least the maven phase: mvn process-resources");
         }
 
+        final File libDir = new File(tomee.getAbsolutePath() + File.separator + "lib");
+        final String[] openejbCore = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("openejb-core");
+            }
+        });
+
+        final String[] commonsCli = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("commons-cli");
+            }
+        });
+
+        final String[] commonsLang = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("commons-lang");
+            }
+        });
+
         final ProcessBuilder builder = new ProcessBuilder()
             .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "openejb-core-8.0.0-SNAPSHOT.jar" + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar" + File.pathSeparator +
-                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-lang3-3.8.1.jar",
+                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + openejbCore[0] + File.pathSeparator +
+                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsCli[0] + File.pathSeparator +
+                            tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsLang[0],
                     "org.apache.openejb.cli.Bootstrap", "classloadertest");
 
         final Process start = builder.start();
@@ -159,12 +182,34 @@ public class TomEECliIT {
             fail("Failed to find Tomcat directory required for this test - Ensure you have run at least the maven phase: mvn process-resources");
         }
 
+        final File libDir = new File(tomee.getAbsolutePath() + File.separator + "lib");
+        final String[] openejbCore = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("openejb-core");
+            }
+        });
+
+        final String[] commonsCli = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("commons-cli");
+            }
+        });
+
+        final String[] commonsLang = libDir.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith("commons-lang");
+            }
+        });
+
         final ProcessBuilder builder = new ProcessBuilder()
                 .command("java", "-cp", jar.getAbsolutePath() + File.pathSeparator +
                                 jar2.getAbsolutePath() + File.pathSeparator +
-                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "openejb-core-8.0.0-SNAPSHOT.jar" + File.pathSeparator +
-                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-cli-1.2.jar" + File.pathSeparator +
-                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + "commons-lang3-3.8.1.jar",
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + openejbCore[0] + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsCli[0] + File.pathSeparator +
+                                tomee.getAbsolutePath() + File.separator + "lib" + File.separator + commonsLang[0],
                         "org.apache.openejb.cli.Bootstrap", "classloadertest2");
 
         final Process start = builder.start();
