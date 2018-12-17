@@ -100,7 +100,7 @@ public class Strings {
     }
 
     public static String replaceNullOrBlankStringWithNonBreakingSpace(final String stringToCheckForNull) {
-        if (stringToCheckForNull == null || stringToCheckForNull.equals("")) {
+        if (stringToCheckForNull == null || stringToCheckForNull.isEmpty()) {
             return "&nbsp;";
         } else {
             return stringToCheckForNull;

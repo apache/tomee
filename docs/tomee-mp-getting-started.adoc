@@ -1,0 +1,103 @@
+= TomEE Maven Plugin
+:index-group: TomEE Maven Plugin
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Add The TomEE Maven Plugin To An Existing Project
+
+If you already have a maven project set up then just add the plugin as
+described link:maven/index.html[here]
+
+You will likely need the full Java EE API added to your pom file:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.openejb</groupId>
+  <artifactId>javaee-api</artifactId>
+  <version>6.0-6</version>
+  <scope>provided</scope>
+</dependency>
+----
+
+The simplest path is to allow Maven to create an example project for
+you. Even if you have an existing project you can always use the
+template as a reference.
+
+== Generate a Basic TomEE-Project With Maven
+
+TomEE provides a maven-archetype for generating a template project. This
+template project is preconfigured with `javaee-api` (scope provided) and
+with the link:maven/index.html[`tomee-maven-plugin`] for starting the
+application with TomEE.
+
+For example, if current version of the archetype is '1.7.1', then the
+required command to generate an application would be:
+
+[source,bash]
+----
+mvn archetype:generate -DarchetypeGroupId=org.apache.openejb.maven -DarchetypeArtifactId=tomee-webapp-archetype -DarchetypeVersion=1.7.1
+----
+
+The first time you run this command maven downloads the archetype and
+some parts related to it. Afterwards you see a prompt which allows you
+to specify the groupId, artifactId, version and package of your
+application. If you are using 'tomee' as groupId, 'tomee-demo' as
+artifactId, '1.0' as version and 'myapp' as package, your console should
+show something like:
+
+[source,properties]
+----
+Define value for property 'groupId': : tomee     
+Define value for property 'artifactId': : tomee-demo
+Define value for property 'version':  1.0-SNAPSHOT: : 1.0
+Define value for property 'package':  tomee: : myapp
+Confirm properties configuration:
+groupId: tomee
+artifactId: tomee-demo
+version: 1.0
+package: myapp
+...
+[INFO] BUILD SUCCESS
+...
+----
+
+Afterwards you see a new folder with the name you used for the
+artifactId (in the previous example 'tomee-demo'). For starting the
+application you have to change the current directory to the directory of
+the generated application:
+
+[source,bash]
+----
+cd tomee-demo
+----
+
+== Starting a TomEE-Project with Maven
+
+With using the archetype everything you need is in place already. So you
+just have to start TomEE with:
+
+[source,bash]
+----
+mvn package tomee:run
+----
+
+The first time you run this command takes a bit longer, because maven
+has to download e.g. TomEE. Once those parts are downloaded, starting
+maven, deploying and starting the generated application takes less than
+10s (depending on your computer).
+
+== Accessing a running application
+
+The application gets deployed to `target/apache-tomee/webapps`. If
+everything worked correctly, you should see a directory ('ROOT') as well
+as a web-archive ('ROOT.war'). The context-paths of the deployed
+application is ROOT. In our example the generated application contains a
+servlet mapped to '/index'. So you can access it via:
+
+[source,properties]
+----
+http://localhost:8080/index
+----

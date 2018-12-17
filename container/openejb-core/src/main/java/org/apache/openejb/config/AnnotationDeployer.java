@@ -3127,7 +3127,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(Arrays.asList(beanClass)) : Classes.ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(Collections.singletonList(beanClass)) : Classes.ancestors(beanClass);
 
             for (final Class<?> clazz : classes) {
 
@@ -3151,7 +3151,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         final String className = webService.endpointInterface();
 
-                        if (!className.equals("")) {
+                        if (!className.isEmpty()) {
                             sessionBean.setServiceEndpoint(className);
                         } else {
                             sessionBean.setServiceEndpoint(defaultEndpoint.getName());
@@ -3816,7 +3816,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final InitMethod initMethod = new InitMethod(method.get());
 
                     final Init init = method.getAnnotation(Init.class);
-                    if (init.value() != null && !init.value().equals("")) {
+                    if (init.value() != null && !init.value().isEmpty()) {
                         initMethod.setCreateMethod(init.value());
                     }
 
@@ -4119,7 +4119,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final String name = consumer.getJndiConsumerName();
             if (member == null) {
                 boolean shouldReturn = false;
-                if (ejb.name().equals("")) {
+                if (ejb.name().isEmpty()) {
                     fail(name, "ejbAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
@@ -4209,21 +4209,21 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Set the ejb-link, if any
             String ejbName = ejb.beanName();
-            if (ejbName.equals("")) {
+            if (ejbName.isEmpty()) {
                 ejbName = null;
             }
             ejbRef.setEjbLink(ejbName);
 
             // Set the mappedName, if any
             String mappedName = ejb.mappedName();
-            if (mappedName.equals("")) {
+            if (mappedName.isEmpty()) {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
 
             // Set lookup name, if any
             String lookupName = getLookupName(ejb);
-            if (lookupName.equals("")) {
+            if (lookupName.isEmpty()) {
                 lookupName = null;
             }
             ejbRef.setLookupName(lookupName);
@@ -4347,7 +4347,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Get the ref-name
             String refName = resource.name();
-            if (refName.equals("")) {
+            if (refName.isEmpty()) {
                 refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
@@ -4399,7 +4399,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                      * Add an env-entry via @Resource if 'lookup' attribute is set.
                      */
                     final String lookupName = getLookupName(resource);
-                    if (!lookupName.equals("")) {
+                    if (!lookupName.isEmpty()) {
                         final EnvEntry envEntry = new EnvEntry();
                         envEntry.setName(refName);
                         consumer.getEnvEntry().add(envEntry);
@@ -4480,14 +4480,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // Override the mapped name if not set
-            if (reference.getMappedName() == null && !resource.mappedName().equals("")) {
+            if (reference.getMappedName() == null && !resource.mappedName().isEmpty()) {
                 reference.setMappedName(resource.mappedName());
             }
 
             // Override the lookup name if not set
             if (reference.getLookupName() == null) {
                 final String lookupName = getLookupName(resource);
-                if (!lookupName.equals("")) {
+                if (!lookupName.isEmpty()) {
                     reference.setLookupName(lookupName);
                 }
             }
@@ -4606,7 +4606,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().equals("")) {
+            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().isEmpty()) {
                 persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
             }
         }
@@ -4903,7 +4903,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ServiceRef serviceRef;
 
             String refName = webService.name();
-            if (refName.equals("")) {
+            if (refName.isEmpty()) {
                 if (member == null) {
                     //TODO fail
                     return;
@@ -4964,7 +4964,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // Set the mappedName
             if (serviceRef.getMappedName() == null) {
                 String mappedName = webService.mappedName();
-                if (mappedName.equals("")) {
+                if (mappedName.isEmpty()) {
                     mappedName = null;
                 }
                 serviceRef.setMappedName(mappedName);
@@ -4973,7 +4973,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // wsdl file
             if (serviceRef.getWsdlFile() == null) {
                 final String wsdlLocation = webService.wsdlLocation();
-                if (!wsdlLocation.equals("")) {
+                if (!wsdlLocation.isEmpty()) {
                     serviceRef.setWsdlFile(wsdlLocation);
                 }
             }
@@ -5722,9 +5722,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } else if (clazz.isInterface()) {
                 final Class api = clazz;
-                final List<Class> impl = finder.findImplementations(api);
+                final List impl = finder.findImplementations((Class<?>)api);
                 if (impl != null && impl.size() == 1) { // single impl so that's the service
-                    final Class implClass = impl.iterator().next();
+                    final Class implClass = (Class) impl.iterator().next();
                     final String name = implClass.getName();
                     if (!isEJB(implClass)) {
                         classes.add(name);

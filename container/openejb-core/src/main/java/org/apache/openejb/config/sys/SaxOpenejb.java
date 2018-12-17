@@ -19,6 +19,8 @@ package org.apache.openejb.config.sys;
 
 import org.apache.openejb.config.SystemProperty;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Saxs;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -44,6 +46,8 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 class SaxOpenejb extends StackHandler {
+
+    public static Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.config");
 
     public static final String HOME_VAR = "$home";
     private final Openejb openejb = new Openejb();
@@ -135,9 +139,18 @@ class SaxOpenejb extends StackHandler {
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
             deployments.setDir(attributes.getValue("dir"));
-            deployments.setFile(attributes.getValue("jar"));
-            deployments.setFile(attributes.getValue("file"));
-            deployments.setAutoDeploy("true".equals(attributes.getValue("autoDeploy")));
+
+            String jar = attributes.getValue("jar");
+            String file = attributes.getValue("file");
+
+            if (jar != null && jar.length() > 0 && file != null && file.length() > 0) {
+                logger.warning("configureApplication.ambiguousDeploymentJarFile", file);
+            }
+            deployments.setFile(jar);
+            if (file != null && file.length() > 0) {
+                deployments.setFile(file);
+            }
+            deployments.setAutoDeploy("true".equalsIgnoreCase(attributes.getValue("autoDeploy")));
             checkAttributes(attributes, "dir", "jar", "file", "autoDeploy");
         }
 

@@ -1,0 +1,238 @@
+= Functional testing with OpenEJB, Jetty and Selenium
+:index-group: Testing Techniques
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+Obviously, OpenEJB is
+great for unit testing EJBs, but I wondered whether I might also be able
+to use this embedded functionality to functionally test my application.
+You can use tools like Selenium, or HtmlUnit to run functional tests as
+if the user were sat at their browser typing text, and clicking links
+and buttons. This however means you have to have your app running on
+your app server, and you need to have consistent test data - otherwise a
+test might pass on one developers machine, but fail on another. Here's
+one approach that you could take to completely deploy your webapp within
+a test, and functionally test it with a tool like Selenium. There's also
+some sample code demonstrating this, available
+http://people.apache.org/~jgallimore/PersonApp.zip[here] .
+
+== Creating an embedded server
+
+I created a class to start my embedded OpenEJB and Jetty instances and
+configure them to see the EJB and WAR modules of my application:
+
+[source,java]
+----
+public class EmbeddedServer {
+    private static EmbeddedServer instance = new EmbeddedServer();
+    private Server server;
+
+    private EmbeddedServer() {
+        try {
+            // initialize OpenEJB & add some test data
+            Properties properties = new Properties();
+            properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+            InitialContext ic = new InitialContext(properties);
+            PeopleFacade facade = (PeopleFacade) ic.lookup("PeopleFacadeEJBRemote");
+            new TestFixture(facade).addTestData();
+
+            // setup web app
+            WebAppContext context = new WebAppContext();
+            context.setWar(computeWarPath());
+            InitialContext initialContext = setupJndi(context);
+
+            // start the server
+            context.setServletHandler(new EmbeddedServerServletHandler(initialContext));
+            context.setContextPath("/");
+            server = new Server(9091);
+            server.addHandler(context);
+
+            server.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private InitialContext setupJndi(WebAppContext context) throws NamingException {
+        // setup local JNDI
+        InitialContext initialContext = new InitialContext();
+        WebApp webApp = getWebApp(context);
+        Collection<EjbRef> refs = webApp.getEjbRef();
+        for (EjbRef ref : refs) {
+            String ejbLink = ref.getEjbLink();
+
+            // get enterprise bean info
+            EnterpriseBeanInfo beanInfo = new EJBHelper().getEJBInfo(ejbLink);
+            if (beanInfo.jndiNames != null && beanInfo.jndiNames.size() > 0) {
+            String jndiName = "java:openejb/ejb/" + beanInfo.jndiNames.get(0);
+            initialContext.bind("java:comp/env/" + ref.getEjbRefName(), new LinkRef(jndiName));
+            }
+        }
+        return initialContext;
+    }
+
+    private String computeWarPath() {
+        String currentPath = new File(".").getAbsolutePath();
+        String warPath;
+
+            String[]  pathParts = currentPath.split("(\\\\|/)+");
+
+        int webPart = Arrays.asList(pathParts).indexOf("PersonWEB");
+        if (webPart == -1) {
+            warPath = "PersonWEB/src/main/webapp";
+        } else {
+            StringBuffer buffer = new StringBuffer();
+
+            for (int i = 0; i < webPart; i++) {
+                    buffer.append(pathParts[i]);
+            buffer.append(File.separator);
+            }
+
+            buffer.append("PersonWEB/src/main/webapp");
+            warPath = buffer.toString();
+        }
+        return warPath;
+    }
+
+    public static EmbeddedServer getInstance() {
+        return instance;
+    }
+
+    public Server getServer() {
+        return server;
+    }
+
+    public static void main(String[]  args) {
+        try {
+            EmbeddedServer.getInstance().getServer().join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private WebApp getWebApp(WebAppContext context) {
+        WebApp webApp = null;
+
+        try {
+            FileInputStream is = new FileInputStream(new File(context.getWar() + "/WEB-INF/web.xml").getAbsolutePath());
+            webApp = (WebApp) JaxbJavaee.unmarshal(WebApp.class, is);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return webApp;
+    }
+} 
+----
+
+This class sets up an embedded instance of Jetty, running on port 9091.
+You'll notice the setupJndi() method. This looks through the ejb-ref
+entries in web.xml (which we deserialize using the openejb-jee library),
+and adds relevant LinkRefs to the JNDI tree, so you can lookup beans
+using the java:comp/env/bean format. I've added a main() method here for
+convenience, so you can run this straight from an IDE, and record tests
+using tools like the Selenium Firefox plugin.
+
+== Supporting @EJB Dependency injection
+
+In the last code sample, we also set up a custom ServletHandler in Jetty
+- this is to perform dependency injection. The custom ServletHandler
+looks like this:
+
+[source,java]
+----
+public class EmbeddedServerServletHandler extends ServletHandler {
+    private InitialContext initialContext;
+
+    public EmbeddedServerServletHandler(InitialContext initialContext) {
+        this.initialContext = initialContext;
+    }
+
+    public Servlet customizeServlet(Servlet servlet) throws Exception {
+        Class<? extends Servlet> servletClass = servlet.getClass();
+        Field[] declaredFields = servletClass.getDeclaredFields();
+
+        for (Field declaredField : declaredFields) {
+            Annotation[] annotations = declaredField.getAnnotations();
+
+            for (Annotation annotation : annotations) {
+                if (EJB.class.equals(annotation.annotationType())) {
+                    // inject into this field
+                    Class<?> fieldType = declaredField.getType();
+                    EnterpriseBeanInfo beanInfo = getBeanFor(fieldType);
+                    if (beanInfo == null) {
+                    continue;
+                    }
+
+                    String jndiName = "java:openejb/ejb/" + beanInfo.jndiNames.get(0);
+                    Object o = initialContext.lookup(jndiName);
+
+                    declaredField.setAccessible(true);
+                    declaredField.set(servlet, o);
+                }
+            }
+        }
+
+        return super.customizeServlet(servlet);
+    }
+
+    private EnterpriseBeanInfo getBeanFor(Class<?> fieldType) {
+        return new EJBHelper().getBeanInfo(fieldType);
+    }
+} 
+----
+
+This looks up deployed beans that match the field type, and uses
+reflection to set the field.
+
+== Writing a Functional test
+
+We can now write a functional test. I use a base abstract class to make
+sure the Embedded server is running, and start Selenium:
+
+[source,java]
+----
+public abstract class FunctionalTestCase extends TestCase {
+    protected DefaultSelenium selenium;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        EmbeddedServer.getInstance();
+        selenium = new DefaultSelenium("localhost", 4444, "*iexplore", "http://localhost:9091/");
+        selenium.start();
+    }
+
+    protected void tearDown() throws Exception {
+        selenium.stop();
+    }
+}
+----
+
+and I can then I write a test like this:
+
+[source,java]
+----
+public class AddPersonTest extends FunctionalTestCase {
+    public void testShouldAddAPerson() throws Exception {
+        selenium.open("/People");
+        selenium.type("firstname", "Jonathan");
+        selenium.type("lastname", "Gallimore");
+        selenium.click("//input[@name='add' and @value='Add']");
+        selenium.waitForPageToLoad("30000");
+        selenium.type("filter", "gallimore");
+        selenium.click("submit");
+        selenium.waitForPageToLoad("30000");
+        assertEquals(1, selenium.getXpathCount("//div[@id='people']/ul/li").intValue());
+        assertEquals("Jonathan Gallimore", selenium.getText("//div[@id='people']/ul/li[1]"));
+    }
+} 
+----
+
+== Sample code
+
+I've made a sample project which demonstrates this, source is available
+http://people.apache.org/~jgallimore/PersonApp.zip[here] . You'll need
+Maven to build it, and you can build it and run the tests by running
+'mvn clean install'. If want to run the tests from your IDE, you'll need
+to have a Selenium server running, which you can do by running 'mvn
+selenium:start-server'.

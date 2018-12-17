@@ -285,8 +285,7 @@ public class StatelessInvocationStatsTest {
             expectedOperations.add(new MBeanOperationInfo(s + ".values", "", new MBeanParameterInfo[0], "[D", MBeanOperationInfo.UNKNOWN));
         }
 
-        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<>();
-        actualOperations1.addAll(Arrays.asList(beanInfo.getOperations()));
+        final List<MBeanOperationInfo> actualOperations1 = new ArrayList<>(Arrays.asList(beanInfo.getOperations()));
 
         //Verify invocation operation information and remove bean.
         Assert.assertEquals(expectedOperations, actualOperations1);

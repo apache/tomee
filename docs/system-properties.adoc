@@ -1,0 +1,71 @@
+= System Properties
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+You can find a list of properties link:properties-listing.html[here].
+But read on to understand how these can be used.
+
+== Overriding openejb.xml
+
+Anything in the openejb.xml file can be overridden via system properties
+of the format:
+
+`-D<id>.<property-name>=<property-value>`
+
+..where id is the value in the config file for example:
+
+[source,xml]
+----
+<Connector id="mysql"> 
+    JdbcDriver com.mysql.jdbc.Driver 
+    JdbcUrl jdbc:mysql://localhost/test 
+    UserName test 
+</Connector> 
+----
+
+Could be overridden as follows via system properties on the command
+line:
+
+______________________________________________________________________________________________________________________________
+./bin/openejb start -Dmysql.JdbcDriver=com.mysql.jdbc.Driver
+-Dmysql.JdbcUrl=jdbc:mysql://localhost/test -Dmysql.UserName=test
+______________________________________________________________________________________________________________________________
+
+== Overriding Server Services
+
+Any server service installed into OpenEJB can be overridden in the same
+fashion as things in the openejb.xml file.
+
+For example, when OpenEJB starts it prints out the following:
+
+[source,java]
+----
+  ** Starting Services **
+  NAME             IP          PORT  
+  httpejbd         0.0.0.0         4204  
+  telnet           0.0.0.0         4202  
+  ejbd             0.0.0.0         4201  
+  hsql             0.0.0.0         9001  
+  activemq         127.0.0.1       4206  
+  derbynet         0.0.0.0         4205  
+  admin thread         0.0.0.0         4200  
+----
+
+Each of those has the same standard xinet.d-like properties which can
+also be configured as such:
+
+`-D<id>.<property-name>=<property-value>`
+
+... where 'id' is the name of the server service and 'property-name' is
+one of the following: bind, port, threads, disabled, only_from.
+
+So to set the address and port the ejbd service will bind to, simply
+specify this on the command line:
+
+[source,properties]
+----
+./bin/openejb start -Dejbd.bind=192.168.1.12 -Dejbd.port=9988
+----

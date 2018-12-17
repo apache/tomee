@@ -1,0 +1,121 @@
+= Configuring Logging in Tests
+:index-group: Testing Techniques
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= embedded.logging.properties
+
+When in embedded mode OpenEJB uses an embedded.logging.properties file
+packed in our openejb-core jar which use to configure the logging. This
+logging configuration is a bit lighter than the conf/logging.properties
+file created in a full standalone OpenEJB setup.
+
+When searching for any config file in the classpath, multiple files with
+the same name may exist. OpenEJB will always attempt to favor the one
+closest to the openejb.base variable. This variable is set by default to
+the current directory where your vm is executing, which is more than
+likely the directory of your current module. So simply adding a file
+named embedded.logging.properties to your module may be all that you
+need to specify a new logging configuration for your tests.
+
+Alternatively, you can set "openejb.logger.external" to "true" as a
+system property (will not work as an InitialContext property). Then
+OpenEJB will not attempt to configure logging at all and you can
+configure logging with Log4j directly using any of its APIs; xml,
+properties, or code.
+
+There are a couple good reasons for _not_ replacing the
+embedded.logging.properties file.
+
+[arabic]
+. If you want to just change 5% of the logging settings, why take
+control over the other 95% as well.
+. We do occasionally add new logging categories. If you are not
+replacing the embedded.logging.properties you will pick these up
+automatically when you upgrade.
+
+= Overriding (recommended)
+
+As mentioned in link:embedded-configuration.html[Embedded Configuration]
+much can be done with simple overriding. The default
+embedded.logging.properties is quite good and there is really no need to
+replace it completely if all you want to do is tweak a few values.
+
+You can also put logging tweaks right in your InitialContext properties
+like so:
+
+[source,java]
+----
+Properties p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+
+p.put("log4j.rootLogger", "fatal,C");
+p.put("log4j.category.OpenEJB", "warn");
+p.put("log4j.category.OpenEJB.options", "info");
+p.put("log4j.category.OpenEJB.server", "info");
+p.put("log4j.category.OpenEJB.startup", "info");
+p.put("log4j.category.OpenEJB.startup.service", "warn");
+p.put("log4j.category.OpenEJB.startup.config", "info");
+p.put("log4j.category.OpenEJB.hsql", "info");
+p.put("log4j.category.CORBA-Adapter", "info");
+p.put("log4j.category.Transaction", "warn");
+p.put("log4j.category.org.apache.activemq", "error");
+p.put("log4j.category.org.apache.geronimo", "error");
+p.put("log4j.category.openjpa", "error");
+p.put("log4j.appender.C", "org.apache.log4j.ConsoleAppender");
+p.put("log4j.appender.C.layout", "org.apache.log4j.SimpleLayout");
+
+Context context = new InitialContext(p);
+----
+
+Essentially, everything starting with "log4j." gets applied as overrides
+on top of the embedded.logging.properties we find in the classpath. This
+makes it possible to easily tweak the log levels while debugging a
+particular test.
+
+Note, that InitialContext properties can also be supplied in a
+jndi.properties file in the classpath or via system properties. The
+overriding order is as follows: 1 = highest, 4 = lowest.
+
+[arabic]
+. InitialContext properties
+. jndi.properties in classpath
+. system propertes
+. embedded.logging.properties in classpath
+
+By default there are no logging settings in 1-3, so #4 is the only
+source of logging information.
+
+= Default embedded.logging.properties contents
+
+For your purposes, here are the contents of the default
+embedded.logging.properties file contained in OpenEJB 3.1.1
+
+[source,properties]
+----
+log4j.rootLogger           = fatal,C
+log4j.category.OpenEJB         = warn
+log4j.category.OpenEJB.server      = info
+log4j.category.OpenEJB.startup     = info
+log4j.category.OpenEJB.startup.service = warn
+log4j.category.OpenEJB.startup.config = info
+log4j.category.OpenEJB.hsql    = info
+log4j.category.CORBA-Adapter       = info
+log4j.category.Transaction     = warn
+log4j.category.org.apache.activemq = error
+log4j.category.org.apache.geronimo = error
+log4j.category.openjpa         = error
+
+log4j.appender.C           = org.apache.log4j.ConsoleAppender
+log4j.appender.C.layout        = org.apache.log4j.SimpleLayout
+----
+
+Here is that file's location in svn as well as all of the previous
+versions. Future versions will follow the same pattern.
+
+* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.1.1/container/openejb-core/src/main/resources/embedded.logging.properties
+* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.1/container/openejb-core/src/main/resources/embedded.logging.properties
+* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0/container/openejb-core/src/main/resources/embedded.logging.properties
+* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-2/container/openejb-core/src/main/resources/embedded.logging.properties
+* http://svn.apache.org/repos/asf/openejb/tags/openejb-3.0-beta-1/container/openejb-core/src/main/resources/embedded.logging.properties

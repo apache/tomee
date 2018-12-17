@@ -240,9 +240,7 @@ public class ReferencesTest extends TestCase {
         public Bean(final String name, final String... refs) {
             this.name = name;
             this.refs = new LinkedHashSet<>(refs.length);
-            for (final String s : refs) {
-                this.refs.add(s);
-            }
+            this.refs.addAll(Arrays.asList(refs));
         }
 
         public String toString() {

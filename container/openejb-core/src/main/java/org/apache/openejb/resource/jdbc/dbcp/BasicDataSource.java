@@ -153,7 +153,7 @@ public class BasicDataSource extends org.apache.commons.dbcp2.BasicDataSource im
     }
 
     public synchronized void setDefaultTransactionIsolation(final String s) {
-        if (s == null || s.equals("")) {
+        if (s == null || s.isEmpty()) {
             return;
         }
         final int level = IsolationLevels.getIsolationLevel(s);

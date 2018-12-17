@@ -162,7 +162,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         expr = expr.replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
 
 
-        if (expr.length() > 1 && expr.indexOf(",") > 0) {
+        if (expr.length() > 1 && expr.indexOf(',') > 0) {
 
             final String[] expressions = expr.split(",");
 
@@ -971,9 +971,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         private TreeSet<Integer> getNewValuesFromDynamicExpressions(final Calendar calendar) {
 
-            final TreeSet<Integer> newValues = new TreeSet<>();
-
-            newValues.addAll(values);
+            final TreeSet<Integer> newValues = new TreeSet<>(values);
 
             for (final RangeExpression weekDayRangeExpression : weekDayRangeExpressions) {
 
@@ -1057,7 +1055,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;
@@ -1084,7 +1082,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;

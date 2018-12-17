@@ -1,0 +1,153 @@
+= Deployments
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= The 'Deployments' element in openejb.xml
+
+== A single jar
+
+To include a single jar by name, just declare a 'Deployments' element
+with a 'jar' attribute pointing to the jar file on the file system.
+
+[source,xml]
+----
+<openejb>
+...
+<Deployments jar="c:\my\app\superEjbs.jar" />
+<Deployments jar="c:\someplace\purchasing.jar" />
+<Deployments jar="timeTrack.jar" />
+</openejb>
+----
+
+The last element in the example uses a relative path to point to the ejb
+jar. This path will be resolved relative to the openejb.base property.
+So, for example, of the value of openejb.base was 'c:' then OpenEJB
+would look for the jar 'c:.jar'. See the [OPENEJB:Configuration] guide
+for more details.
+
+== A directory of jars
+
+To point to a directory that contains several jar files that OpenEJB
+should load, simply declare a 'Deployments' element with a 'dir'
+attribute pointing to the directory containing the jar files.
+
+[source,xml]
+----
+<openejb>
+...
+
+<Deployments dir="c:\my\app\beans\" />
+<Deployments dir="c:\crimestopper\lib" />
+<Deployments dir="ejbs" />
+<Deployments dir="beans" />
+</openejb>
+----
+
+The directories listed will be searched for jars containing
+'META-INF/ejb-jar.xml' files and will be added to the list of jars to
+load if they do. Better said, it's completely safe to point to a
+directory containing a mix of ejbs and regular jar files. OpenEJB will
+simply skip over jars that do contain the required
+'META-INF/ejb-jar.xml' file.
+
+The last Deployments element declares a 'beans' directory relative to
+openejb.base for holding ejb jars. This declaration is simply convention
+and not required.
+
+== An unpacked jar
+
+As of 1.0 beta1, OpenEJB supports unpacked ejb jars. Simply meaning that
+you don't need to pack your ejb's into a jar file in order to use them
+in OpenEJB. You still need to follow the ejb jar layout and include an
+"META-INF/ejb-jar.xml" in the directory that contains your ejbs.
+
+For example, if you have a directory structure like this:
+
+[source,java]
+----
+> C:\myapp\
+> C:\myapp\acmeEjbs\
+> C:\myapp\acmeEjbs\META-INF\ejb-jar.xml
+> C:\myapp\acmeEjbs\org\acme\Foo.class
+> C:\myapp\acmeEjbs\org\acme\FooBean.class
+> C:\myapp\acmeEjbs\org\acme\FooHome.class
+> C:\myapp\acmeEjbs\org\acme\Bar.class
+> C:\myapp\acmeEjbs\org\acme\BarBean.class
+> C:\myapp\acmeEjbs\org\acme\BarHome.class
+----
+
+Then you would delcare a 'Deployments' element with the 'dir' attribute
+set to 'C:' as shown below.
+
+[source,xml]
+----
+<openejb>
+...
+
+<Deployments dir="c:\myapp\acmeEjbs" />
+</openejb>
+----
+
+Note that this syntax is the same as the directory syntax above. If
+OpenEJB finds a META-INF directory with an 'ejb-jar.xml' fine inside,
+then OpenEJB will treat the directory as an unpacked ejb jar. Otherwise
+OpenEJB will look for ejb jar files to load as detailed in the above
+section.
+
+== Log file
+
+When trying to figure out if your ejbs were loaded, the openejb.log file
+is an incredible asset.
+
+If your ejbs were loaded successfully you should see entries like the
+following (1.x and higher only):
+
+[source,properties]
+----
+INFO :  Loaded EJBs from
+/usr/local/openejb-1.0-beta1/beans/openejb-itests-beans.jar
+INFO :  Loaded EJBs from
+/usr/local/openejb-1.0-beta1/beans/openejb-webadmin-clienttools.jar
+----
+
+If your ejbs failed to load, you will see an entry similar to the
+following.
+
+[source,properties]
+----
+WARN :  Jar not loaded. /usr/local/openejb-1.0-beta1/beans/helloworld.jar.
+Jar failed validation.  Use the validation tool for more details
+----
+
+Additionally, all the successfully loaded ejbs are individually listed
+in the log file at startup. The Deployment ID listed is the JNDI name
+used to lookup the ejb from a client of the Local or Remote Servers. The
+beans listed below are from our test suite.
+
+[source,properties]
+----
+DEBUG:  Deployments   : 19
+DEBUG:  Type        Deployment ID
+DEBUG:     CMP_ENTITY  client/tests/entity/cmp/RMI-over-IIOP/EJBHome
+DEBUG:     STATEFUL    client/tests/stateful/EncBean
+DEBUG:     STATELESS   client/tests/stateless/BeanManagedBasicStatelessHome
+DEBUG:     STATEFUL    client/tests/stateful/BasicStatefulHome
+DEBUG:     STATELESS   client/tests/stateless/EncBean
+DEBUG:     STATEFUL   client/tests/stateful/BeanManagedTransactionTests/EJBHome
+DEBUG:     BMP_ENTITY  client/tests/entity/bmp/RMI-over-IIOP/EJBHome
+DEBUG:     STATEFUL    client/tests/stateful/RMI-over-IIOP/EJBHome
+DEBUG:     STATELESS  client/tests/stateless/BeanManagedTransactionTests/EJBHome
+DEBUG:     BMP_ENTITY client/tests/entity/bmp/allowed_operations/EntityHome
+DEBUG:     CMP_ENTITY  client/tests/entity/cmp/EncBean
+DEBUG:     STATEFUL    client/tests/stateful/BeanManagedBasicStatefulHome
+DEBUG:     BMP_ENTITY  client/tests/entity/bmp/BasicBmpHome
+DEBUG:     STATELESS   client/tests/stateless/BasicStatelessHome
+DEBUG:     CMP_ENTITY  client/tests/entity/cmp/BasicCmpHome
+DEBUG:     STATELESS   client/tools/DatabaseHome
+DEBUG:     CMP_ENTITY client/tests/entity/cmp/allowed_operations/EntityHome
+DEBUG:     BMP_ENTITY  client/tests/entity/bmp/EncBean
+DEBUG:     STATELESS   client/tests/stateless/RMI-over-IIOP/EJBHome
+----

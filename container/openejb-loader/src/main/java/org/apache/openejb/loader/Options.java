@@ -112,7 +112,7 @@ public class Options {
 
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.get(property, defaultValue);
         }
 
@@ -131,7 +131,7 @@ public class Options {
     public int get(final String property, final int defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.get(property, defaultValue);
         }
 
@@ -146,7 +146,7 @@ public class Options {
     public long get(final String property, final long defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.get(property, defaultValue);
         }
 
@@ -161,7 +161,7 @@ public class Options {
     public boolean get(final String property, final boolean defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.get(property, defaultValue);
         }
 
@@ -192,7 +192,7 @@ public class Options {
     public <T extends Enum<T>> T get(final String property, final T defaultValue) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.get(property, defaultValue);
         }
 
@@ -234,7 +234,7 @@ public class Options {
     protected <T extends Enum<T>> Set<T> getAll(final String property, final Set<T> defaultValue, final Class<T> enumType) {
         final String value = properties.getProperty(property);
 
-        if (value == null || value.equals("")) {
+        if (value == null || value.isEmpty()) {
             return parent.getAll(property, defaultValue, enumType);
         }
 

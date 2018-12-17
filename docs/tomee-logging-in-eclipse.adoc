@@ -1,0 +1,19 @@
+= How to use JULI for TomEE in WTP?
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+It seems that WTP doesn't manage correctly Tomcat logging configuration
+(which needs to be done through system properties). A quick workaround
+is to add these properties manually:
+
+[source,properties]
+----
+-Djava.util.logging.config.file="<tomee>/conf/logging.properties"
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+----
+
+More information on:
+http://wiki.eclipse.org/WTP_Tomcat_FAQ#How_do_I_enable_the_JULI_logging_in_a_Tomcat_5.5_Server_instance.3F

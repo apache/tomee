@@ -1,0 +1,31 @@
+= Common Errors
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+<a name="CommonErrors-Cannotfindcontainer"FOO"forbean"BAR""> # Cannot
+find container "FOO" for bean "BAR"
+
+When a bean gets deployed in OpenEJB, it gets associated with a
+particular container. Subsequently, that container may not be configured
+in that instance of the server. When the server loads the Jar with the
+deployed beans, it places beans in the containers that the beans were
+configured with. Here, the bean BAR wants to go into the container FOO,
+which is not currently configured.
+
+This message is displayed when the server is starting up. <a
+name="CommonErrors-Cannotfindbean"FOO"referencedbybean"BAR"."> # Cannot
+find bean "FOO" referenced by bean "BAR".
+
+When a bean gets deployed in OpenEJB, it may contain references to other
+beans. Subsequently, those beans may not be configured in that instance
+of the server. When the server loads the Jar with the deployed beans, it
+stores those references to those beans. Here, the bean BAR references
+FOO, which is not currently configured in the JNDI namespace.
+
+This message is displayed when the server is starting up.
+
+This message is usally the result of a deployment descriptor that has
+been created by hand.

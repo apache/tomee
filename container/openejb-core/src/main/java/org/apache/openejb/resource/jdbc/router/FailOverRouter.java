@@ -124,7 +124,7 @@ public class FailOverRouter extends AbstractRouter {
                     public Collection<DataSourceHolder> prepare(final Collection<DataSourceHolder> list) {
                         final int step;
                         if (strategy.contains("%")) {
-                            step = Math.max(1, Integer.parseInt(strategy.substring(strategy.lastIndexOf("%") + 1)));
+                            step = Math.max(1, Integer.parseInt(strategy.substring(strategy.lastIndexOf('%') + 1)));
                         } else {
                             step = 1;
                         }

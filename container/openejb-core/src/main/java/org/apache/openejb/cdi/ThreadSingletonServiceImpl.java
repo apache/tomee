@@ -124,6 +124,8 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.put(ContextsService.class.getName(), CdiAppContextsService.class.getName());
         properties.put(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
         properties.put(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
+        properties.put("org.apache.webbeans.component.PrincipalBean.proxy", "false");
+
 
         // NOTE: ensure user can extend/override all the services = set it only if not present in properties, see WebBeansContext#getService()
         final Map<Class<?>, Object> services = new HashMap<>();

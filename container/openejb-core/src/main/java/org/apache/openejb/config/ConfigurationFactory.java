@@ -1711,15 +1711,11 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
-            for (final ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
-                containers.add(containerInfo);
-            }
+            containers.addAll(runningConfig.containerSystem.containers);
         }
 
         if (sys != null) {
-            for (final ContainerInfo containerInfo : sys.containerSystem.containers) {
-                containers.add(containerInfo);
-            }
+            containers.addAll(sys.containerSystem.containers);
         }
         return containers;
     }

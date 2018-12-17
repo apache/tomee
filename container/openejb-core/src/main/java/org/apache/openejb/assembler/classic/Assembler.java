@@ -611,10 +611,9 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             containerInfos.add(serviceInfo);
         }
 
-        final Set<String> apps = appContainers.keySet();
-        for (final String app : apps) {
-            final List<ContainerInfo> containerInfos = appContainers.get(app);
-            final ClassLoader classLoader = appClassLoaders.get(app);
+        for (final Entry<String, List<ContainerInfo>> stringListEntry : appContainers.entrySet()) {
+            final List<ContainerInfo> containerInfos = stringListEntry.getValue();
+            final ClassLoader classLoader = appClassLoaders.get(stringListEntry.getKey());
 
             final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
 
@@ -1416,18 +1415,10 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final List<CommonInfoObject> vfs = new ArrayList<>(
             appInfo.clients.size() + appInfo.connectors.size() +
                 appInfo.ejbJars.size() + appInfo.webApps.size());
-        for (final ClientInfo clientInfo : appInfo.clients) {
-            vfs.add(clientInfo);
-        }
-        for (final ConnectorInfo connectorInfo : appInfo.connectors) {
-            vfs.add(connectorInfo);
-        }
-        for (final EjbJarInfo ejbJarInfo : appInfo.ejbJars) {
-            vfs.add(ejbJarInfo);
-        }
-        for (final WebAppInfo webAppInfo : appInfo.webApps) {
-            vfs.add(webAppInfo);
-        }
+        vfs.addAll(appInfo.clients);
+        vfs.addAll(appInfo.connectors);
+        vfs.addAll(appInfo.ejbJars);
+        vfs.addAll(appInfo.webApps);
         return vfs;
     }
 
@@ -1443,7 +1434,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // a bit weird but just to be consistent if user doesn't lookup directly the resource
             final Context lastContext = Contexts.createSubcontexts(containerSystemContext, path);
             try {
-                lastContext.rebind(path.substring(path.lastIndexOf("/") + 1, path.length()), value.getValue());
+                lastContext.rebind(path.substring(path.lastIndexOf('/') + 1, path.length()), value.getValue());
             } catch (final NameAlreadyBoundException nabe) {
                 nabe.printStackTrace();
             }
@@ -2422,12 +2413,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             final List<String> clientIds = new ArrayList<>();
             for (final ClientInfo clientInfo : appInfo.clients) {
                 clientIds.add(clientInfo.moduleId);
-                for (final String className : clientInfo.localClients) {
-                    clientIds.add(className);
-                }
-                for (final String className : clientInfo.remoteClients) {
-                    clientIds.add(className);
-                }
+                clientIds.addAll(clientInfo.localClients);
+                clientIds.addAll(clientInfo.remoteClients);
             }
 
             for (final WebContext webContext : appContext.getWebContexts()) {
@@ -2643,7 +2630,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             object = globalContext.lookup(name);
         } catch (final NamingException e) {
             // if we catch a NamingException, check to see if the resource is a LaztObjectReference that has not been initialized correctly
-            final String ctx = name.substring(0, name.lastIndexOf("/"));
+            final String ctx = name.substring(0, name.lastIndexOf('/'));
             final String objName = name.substring(ctx.length() + 1);
             final NamingEnumeration<Binding> bindings = globalContext.listBindings(ctx);
             while (bindings.hasMoreElements()) {

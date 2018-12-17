@@ -1,0 +1,101 @@
+= Clients
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Local Client (embedded container)
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----
+
+== Local Client (non-default realm name)
+
+== Login configuration file (conf/login.config)
+
+[source,java]
+----
+PropertiesLogin {
+    org.apache.openejb.core.security.jaas.PropertiesLoginModule required
+    Debug=true
+    UsersFile="users.properties"
+    GroupsFile="groups.properties";
+};
+MyApp {
+    org.apache.openejb.core.security.jaas.SQLLoginModule required
+    dataSourceName="MyDataSource"
+    userSelect="SELECT username, password FROM users WHERE username=?"
+    groupSelect="SELECT username, grp FROM users WHERE username=?";
+};
+----
+
+== Code
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
+p.put("openejb.authentication.realmName", "MyApp");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----
+
+== Remote Client (openejb standalone)
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put("java.naming.provider.url", "ejbd://localhost:4201");
+// user and pass optional
+p.put("java.naming.security.principal", "myuser");
+p.put("java.naming.security.credentials", "mypass");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----
+
+== Remote Client with HTTP (openejb standalone)
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put("java.naming.provider.url", "http://localhost:4204/ejb");
+// user and pass optional
+p.put("java.naming.security.principal", "myuser");
+p.put("java.naming.security.credentials", "mypass");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----
+
+== Remote Client with HTTP (in TomEE)
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put("java.naming.provider.url", "http://127.0.0.1:8080/tomee/ejb");
+// user and pass optional
+p.put("java.naming.security.principal", "myuser");
+p.put("java.naming.security.credentials", "mypass");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----
+
+== Remote Client using @EJB Injection see here: ejb-refs

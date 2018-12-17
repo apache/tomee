@@ -4,7 +4,7 @@
 :jbake-status: published
 :jbake-tomeepdf:
 
-==== Why my ActiveMQ/JMS MDB is not scaling as expected?
+== Why my ActiveMQ/JMS MDB is not scaling as expected?
 
 There are multiple configurations points to ensure you scale as much as you want.
 
@@ -61,7 +61,7 @@ public static class MyMdb implements MessageListener {
 </Resource>
 ----
 
-==== Slow Message Consumption
+== Slow Message Consumption
 
 If you find you have a slow consumption of messages there are several options to have a look (activemq website explains it very well)
 but one very impacting option can be the prefetch size.

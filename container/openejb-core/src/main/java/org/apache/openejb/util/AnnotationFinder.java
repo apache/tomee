@@ -36,7 +36,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -109,7 +108,7 @@ public class AnnotationFinder {
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final URL url) {
-        this(classLoader, Arrays.asList(url));
+        this(classLoader, Collections.singletonList(url));
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
@@ -231,7 +230,7 @@ public class AnnotationFinder {
     private static List<String> jar(final URL location) throws IOException, URISyntaxException {
         String jarPath = location.getFile();
         if (jarPath.contains("!")) {
-            jarPath = jarPath.substring(0, jarPath.indexOf("!"));
+            jarPath = jarPath.substring(0, jarPath.indexOf('!'));
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
@@ -244,7 +243,11 @@ public class AnnotationFinder {
                 final JarInputStream jarStream = new JarInputStream(in);
                 return jar(jarStream);
             } finally {
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //no-op
+                }
             }
         }
     }
