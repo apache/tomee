@@ -89,17 +89,17 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     // A specific set of fields that get marked as transient in the superclass mappings 
     private static final Set<String> ENHANCED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
-        "pcInheritedFieldCount",
-        "pcFieldNames",
-        "pcFieldTypes",
-        "pcFieldFlags",
-        "pcPCSuperclass",
-        "pcStateManager",
-        "class$Ljava$lang$String",
-        "class$Ljava$lang$Integer",
-        "class$Lcom$sun$ts$tests$common$ejb$wrappers$CMP11Wrapper",
-        "pcDetachedState",
-        "serialVersionUID"
+            "pcInheritedFieldCount",
+            "pcFieldNames",
+            "pcFieldTypes",
+            "pcFieldFlags",
+            "pcPCSuperclass",
+            "pcStateManager",
+            "class$Ljava$lang$String",
+            "class$Ljava$lang$Integer",
+            "class$Lcom$sun$ts$tests$common$ejb$wrappers$CMP11Wrapper",
+            "pcDetachedState",
+            "serialVersionUID"
     )));
 
     public static EntityMappings readEntityMappings(final String location) {
@@ -143,7 +143,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
-        final Set<String> definedMappedClasses = new HashSet<>();
+        final Set<String> definedMappedClasses = new HashSet<String>();
 
         // check for an existing "cmp" persistence unit, and look at existing mappings
         final PersistenceUnit cmpPersistenceUnit = findCmpPersistenceUnit(appModule);
@@ -202,7 +202,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
             for (final Entity entity : cmpMappings.getEntity()) {
-                if (! persistenceUnit.getClazz().contains(entity.getClazz())) {
+                if (!persistenceUnit.getClazz().contains(entity.getClazz())) {
                     persistenceUnit.getClazz().add(entity.getClazz());
                 }
             }
@@ -266,10 +266,10 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-            return appModule.getJarLocation();
+            return appModule.getJarLocation() == null ? appModule.getModuleId() : appModule.getJarLocation();
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            return ejbModule.getJarLocation();
+            return appModule.getJarLocation() == null ? appModule.getModuleId() : appModule.getJarLocation();
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }
@@ -330,12 +330,12 @@ public class CmpJpaConversion implements DynamicDeployer {
         // left not found?
         if (leftEntity == null) {
             throw new OpenEJBException("Role source " + leftEjbName + " defined in relationship role " +
-                relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
+                    relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
         }
         // right not found?
         if (rightEntity == null) {
             throw new OpenEJBException("Role source " + rightEjbName + " defined in relationship role " +
-                relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
+                    relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
         }
 
         final Attributes rightAttributes = rightEntity.getAttributes();
@@ -486,7 +486,8 @@ public class CmpJpaConversion implements DynamicDeployer {
     /**
      * Generate the CMP mapping data for an individual
      * EntityBean.
-     *  @param ejbModule      The module containing the bean.
+     *
+     * @param ejbModule      The module containing the bean.
      * @param ignoreClasses
      * @param entityMappings The accumulated set of entity mappings.
      * @param bean           The been we're generating the mapping for.

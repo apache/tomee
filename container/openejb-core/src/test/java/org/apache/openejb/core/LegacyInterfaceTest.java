@@ -34,6 +34,13 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.Column;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.NamedQuery;
 import org.junit.AfterClass;
 
 import javax.ejb.CreateException;
