@@ -12,7 +12,7 @@ The value of the parameters supplied to `@AccessTimeout` have a dramatic affect 
 where `-1` and `0` have signifcantly different meanings.  One means "wait forever", the other means "never wait".  Only a lucky few can remember which is which on a daily basis.
 For the rest of us it is a constant source of bugs.
 
-[red underline] Meta-Annotations to the rescue!
+TIP: Meta-Annotations to the rescue!
 
 == *_Creating the Meta-Annotations_*
 
