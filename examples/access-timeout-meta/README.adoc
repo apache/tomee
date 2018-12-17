@@ -139,7 +139,7 @@ to clearly reflect the contents of each meta-annotation (`@AccessTimeout(-1)` an
 The **cons** of this approach is that should you want to change the configuration of the application by only changing the meta-annotations -- this is one of the potential benefits
 of meta-annotations -- but this may change the meaning of the annotation.  Certainly, the `@AwaitNever` meta-annotation can have no other value than `0` if it is to live up to its name.
 
-## Operation names [.small]describing the code#
+## Operation names [.small]#describing the code#
 
 The alternate approach is to name your meta-annotations after the **operations** they apply to.  In short, to describe the code itself and not the configuration.  So, names like
 `@OrderCheckTimeout` or `@TwitterUpdateTimeout`.  These names are configuration-change-proof.  They would not change if the configuration changes and in fact they can facilitate
