@@ -24,7 +24,7 @@ then be centralized in the `api` package and changes to timeout values will be l
 An interesting side-effect of this approach is that if the `api` package where the meta-annotation definitions exist is kept in a separate jar as well, then one can effectively
 change the configuration of an entire application by simply replacing the `api` jar.
 
-=== @Metatype <small>The "root" Meta-Annotation</small>
+=== @Metatype [.small]The "root" Meta-Annotation
 
 As with all meta-annotation usage, you first need to create your own "root" meta-annotation.  This is as easy as creating an annotation
 named `Metatype` that is annotated with itself and has `ElementType.ANNOTATION_TYPE` as its target.
