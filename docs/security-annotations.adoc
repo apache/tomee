@@ -90,7 +90,7 @@ public class OpenSourceProjectBean implements Project {
 
 == DeclareRoles
 
-You need to update the @DeclareRoles when referencing roles via
+You need to update the `@DeclareRoles` when referencing roles via
 isCallerInRole(roleName).
 
 [source,java]
@@ -178,7 +178,7 @@ public class OpenSourceProjectBean implements Project {
 
 == PermitAll
 
-When annotating a bean class with @RolesAllowed, the @PermitAll
+When annotating a bean class with `@RolesAllowed`, the `@PermitAll`
 annotation becomes very useful on individual methods to open them back
 up again.
 
@@ -213,7 +213,7 @@ public class OpenSourceProjectBean implements Project {
 
 == DenyAll
 
-The @DenyAll annotation can be used to restrict business interface
+The `@DenyAll` annotation can be used to restrict business interface
 access from anyone, logged in or not. The method is still invokable from
 within the bean class itself.
 
@@ -257,7 +257,7 @@ public class OpenSourceProjectBean implements Project {
 Generally, security restrictions cannot be made on AroundInvoke methods
 and most callbacks.
 
-The following usages of @RolesAllowed have no effect.
+The following usages of `@RolesAllowed` have no effect.
 
 [source,java]
 ----

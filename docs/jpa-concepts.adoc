@@ -34,7 +34,7 @@ tracking...
 * You *must* use the *EntityManagerFactory* to get an EntityManager
 * The resulting *EntityManager* instance *is* a PersistenceContext/Cache
 * An *EntityManagerFactory* can be injected via the *@PersistenceUnit*
-annotation only (not @PersistenceContext)
+annotation only (not `@PersistenceContext`)
 * You are *not* allowed to use @PersistenceContext to refer to a unit of
 type RESOURCE_LOCAL
 * You *must* use the *EntityTransaction* API to begin/commit around
@@ -52,7 +52,7 @@ EntityManager (PersistenceContext/Cache) creating and tracking...
 * You *cannot* use the *EntityManagerFactory* to get an EntityManager
 * You can only get an *EntityManager* supplied by the *container*
 * An *EntityManager* can be injected via the *@PersistenceContext*
-annotation only (not @PersistenceUnit)
+annotation only (not `@PersistenceUnit`)
 * You are *not* allowed to use @PersistenceUnit to refer to a unit of
 type JTA
 * The *EntityManager* given by the container is a *reference* to the

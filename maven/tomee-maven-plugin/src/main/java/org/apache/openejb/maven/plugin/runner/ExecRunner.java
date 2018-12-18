@@ -38,9 +38,18 @@ import java.util.Properties;
 
 import static java.util.Arrays.asList;
 
+/**
+ * The type Exec runner with the main function to run the plugin.
+ */
 public class ExecRunner {
     private static final String SH_BAT_AUTO = "[.sh|.bat]";
 
+    /**
+     * Main function to run the plugin.
+     *
+     * @param rawArgs the raw args
+     * @throws Exception the exception
+     */
     public static void main(final String[] rawArgs) throws Exception {
         final String[] args;
         if (rawArgs == null || rawArgs.length == 0) {

@@ -36,7 +36,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * The Jar patcher.
+ */
 public class JarPatcher {
+    /**
+     * Patch.
+     *
+     * @param stream the stream
+     * @param tmp    the tmp
+     * @param key    the key
+     * @param value  the value
+     */
     public void patch(final PrintStream stream, final File tmp, final File key, final List<Item> value) {
         stream.println("  " + key);
         if (key.isDirectory()) {

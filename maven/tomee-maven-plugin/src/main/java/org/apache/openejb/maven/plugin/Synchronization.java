@@ -22,40 +22,83 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Synchronization to sunc the files and directories.
+ */
 public class Synchronization extends AbstractSynchronizable {
     private File resourcesDir;
     private File binariesDir;
     private File targetBinariesDir;
     private File targetResourcesDir;
 
+    /**
+     * Gets resources dir.
+     *
+     * @return the resources dir
+     */
     public File getResourcesDir() {
         return resourcesDir;
     }
 
+    /**
+     * Sets resources dir.
+     *
+     * @param resourcesDir the resources dir
+     */
     public void setResourcesDir(final File resourcesDir) {
         this.resourcesDir = resourcesDir;
     }
 
+    /**
+     * Gets binaries dir.
+     *
+     * @return the binaries dir
+     */
     public File getBinariesDir() {
         return binariesDir;
     }
 
+    /**
+     * Sets binaries dir.
+     *
+     * @param binariesDir the binaries dir
+     */
     public void setBinariesDir(final File binariesDir) {
         this.binariesDir = binariesDir;
     }
 
+    /**
+     * Gets target binaries dir.
+     *
+     * @return the target binaries dir
+     */
     public File getTargetBinariesDir() {
         return targetBinariesDir;
     }
 
+    /**
+     * Sets target binaries dir.
+     *
+     * @param targetBinariesDir the target binaries dir
+     */
     public void setTargetBinariesDir(final File targetBinariesDir) {
         this.targetBinariesDir = targetBinariesDir;
     }
 
+    /**
+     * Gets target resources dir.
+     *
+     * @return the target resources dir
+     */
     public File getTargetResourcesDir() {
         return targetResourcesDir;
     }
 
+    /**
+     * Sets target resources dir.
+     *
+     * @param targetResourcesDir the target resources dir
+     */
     public void setTargetResourcesDir(final File targetResourcesDir) {
         this.targetResourcesDir = targetResourcesDir;
     }

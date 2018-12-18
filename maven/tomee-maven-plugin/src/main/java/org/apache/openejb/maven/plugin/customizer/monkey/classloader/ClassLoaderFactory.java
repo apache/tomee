@@ -26,7 +26,17 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * The type Class loader factory is used to load classes drom the supplied *.jar and *.zip
+ */
 public class ClassLoaderFactory {
+
+    /**
+     * Create class loader.
+     *
+     * @param libFolder the lib folder
+     * @return the class loader
+     */
     public ClassLoader create(final File libFolder) {
         final Collection<URL> urls = new ArrayList<URL>();
         final File[] children = libFolder.listFiles(new FilenameFilter() {
@@ -63,6 +73,11 @@ public class ClassLoaderFactory {
         });
     }
 
+    /**
+     * Release.
+     *
+     * @param loader the loader
+     */
     public void release(final ClassLoader loader) {
         if (Closeable.class.isInstance(loader)) { // release files to be able to delete them later
             try {

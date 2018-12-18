@@ -19,7 +19,13 @@ package org.apache.openejb.maven.plugin;
 
 import org.apache.maven.plugins.annotations.Parameter;
 
+/**
+ * The type AbstractDeployMojo.
+ */
 public abstract class AbstractDeployMojo extends AbstractCommandMojo {
+    /**
+     * The Path.
+     */
     @Parameter(property = "tomee-plugin.archive", required = true)
     protected String path;
 }
