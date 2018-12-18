@@ -3,10 +3,9 @@ package org.superbiz.executor;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.enterprise.context.RequestScoped;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import static java.util.Objects.nonNull;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -38,12 +37,18 @@ public class ThreadFactoryService {
      * @param value to compute
      * @return The thread we created
      */
-    public Thread asyncTask(final int value) {
+    public int asyncTask(final int value) throws InterruptedException {
         LOGGER.info("Create asyncTask");
-        final Thread thread = factory.newThread(longRunnableTask(value, 100, null));
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(value, 1000000, countDownLatch);
+
+        final Thread thread = factory.newThread(longTask);
         thread.setName("pretty asyncTask");
         thread.start();
-        return thread;
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
+
+        return longTask.getResult();
     }
 
     /**
@@ -53,37 +58,45 @@ public class ThreadFactoryService {
      * @return The thread we created
      * @throws InterruptedException
      */
-    public Thread asyncHangingTask(final int value) throws InterruptedException {
-        LOGGER.info("Create asyncTask");
-        final Thread thread = factory.newThread(longRunnableTask(value, 1000000, null));
-        thread.setName("pretty asyncTask");
+    public int asyncHangingTask(final int value) throws InterruptedException {
+        LOGGER.info("Create asyncHangingTask");
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(value, 1000000, countDownLatch);
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncHangingTask");
         thread.start();
-        TimeUnit.MILLISECONDS.sleep(50);
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
+
         if (thread.isAlive()) {
             // This will cause any wait in the thread to resume.
             // This will call the InterruptedException block in the longRunnableTask method.
             thread.interrupt();
         }
-        return thread;
+        return longTask.getResult();
     }
 
-    /**
-     * TODO create a proper runnable class were we store the result and we check periodically if we need to stop the execution.
-     * Will simulate a long running operation
-     *
-     * @param value          The value to compute
-     * @param taskDurationMs the time length of the operation
-     * @param errorMessage   If not null an exception with be thrown with this message
-     * @return a {@link Runnable}
-     */
-    private Runnable longRunnableTask(final int value,
-                                      final int taskDurationMs,
-                                      final String errorMessage) {
-        return () -> {
-            if (nonNull(errorMessage)) {
-                LOGGER.severe("Exception will be thrown");
-                throw new RuntimeException(errorMessage);
-            }
+    public static class LongTask implements Runnable {
+        private final int value;
+        private final long taskDurationMs;
+        private final CountDownLatch countDownLatch;
+        private int result;
+
+        public LongTask(final int value,
+                        final long taskDurationMs,
+                        final CountDownLatch countDownLatch) {
+            this.value = value;
+            this.taskDurationMs = taskDurationMs;
+            this.countDownLatch = countDownLatch;
+        }
+
+        public int getResult() {
+            return result;
+        }
+
+        @Override
+        public void run() {
             try {
                 // Simulate a long processing task using TimeUnit to sleep.
                 TimeUnit.MILLISECONDS.sleep(taskDurationMs);
@@ -91,10 +104,10 @@ public class ThreadFactoryService {
                 throw new RuntimeException("Problem while waiting");
             }
 
-            Integer result = value + 1;
+            result = value + 1;
             LOGGER.info("longRunnableTask complete. Value is " + result);
-            // Cannot return result with a Runnable.
-        };
+            countDownLatch.countDown();
+            // Cannot return result with a Runnable. Must store and access it later.
+        }
     }
-
 }
