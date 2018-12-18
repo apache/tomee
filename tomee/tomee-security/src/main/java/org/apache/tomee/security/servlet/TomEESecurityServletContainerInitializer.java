@@ -18,7 +18,9 @@ package org.apache.tomee.security.servlet;
 
 import org.apache.tomee.security.provider.TomEESecurityAuthConfigProvider;
 
+import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.message.config.AuthConfigFactory;
+import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -27,8 +29,10 @@ import java.util.Set;
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
-        AuthConfigFactory.getFactory()
-                         .registerConfigProvider(new TomEESecurityAuthConfigProvider(), null, null,
-                                                 "TomEE Security JSR-375");
+        if (CDI.current().select(HttpAuthenticationMechanism.class).isResolvable()) {
+            AuthConfigFactory.getFactory()
+                             .registerConfigProvider(new TomEESecurityAuthConfigProvider(), null, null,
+                                                     "TomEE Security JSR-375");
+        }
     }
 }
