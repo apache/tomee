@@ -10,7 +10,7 @@ steps or rely on special build tools or IDEs and is about the most
 stripped down you can get.
 
 _See the link:examples.html[Examples] page for a full list of examples
-that range from [@Stateles|Simple Stateless Example] and
+that range from [`@Stateles`|Simple Stateless Example] and
 [@Stateful|Simple Stateful Example] beans, to [Dependency
 Injection|Injection of env-entry Example] , JDBC [DataSources|Injection
 of DataSource Example] , JPA [EntityManagers|Injection of EntityManager

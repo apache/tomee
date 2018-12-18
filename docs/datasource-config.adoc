@@ -492,7 +492,7 @@ Note: in this case for Oracle for instance you'll define UserName for
 the pool and User for the datasource which can look weird if you don't
 know properties are used for 2 instances (pool and datasource).
 
-Note: this solution uses the same logic than @DataSourceDefinition
+Note: this solution uses the same logic than `@DataSourceDefinition`
 factory mecanism.
 
 === Two resources definition

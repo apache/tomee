@@ -40,7 +40,7 @@ against the same data. Everything is ultimately JPA in the end.
 
 == Extended Dependency Injection
 
-Dependency Injection in EJB 3.0 via @Resource is largely limited to
+Dependency Injection in EJB 3.0 via `@Resource` is largely limited to
 objects provided by the container, such as DataSources, JMS Topics and
 Queues. It is possible for you to supply your own configuration
 information for injection, but standard rules allow for only data of
@@ -79,7 +79,7 @@ Integer, etc. This is a very big burden as each env-entry is going to
 cost you 5 lines of xml and the complication of having to figure out how
 to add you bean declaration in xml as an override of an existing bean
 and not accidentally as a new bean. All this can be very painful when
-all you want is to supply the value of a few @Resource String fields in
+all you want is to supply the value of a few `@Resource` String fields in
 you bean class.
 
 To fix this, OpenEJB supports the idea of a
@@ -124,7 +124,7 @@ failures.
 As usual validation failures (non-compliant issues with your
 application) are printed out in complier-style "all-at-once" output
 allowing you to see and fix all your issues in one go. For example, if
-you have 10 @PersistenceContext annotations that reference an invalid
+you have 10 `@PersistenceContext` annotations that reference an invalid
 persistence unit, you get all 10 errors on the _first_ deploy rather
 than one failure on the first deploy with 9 more failed deployments to
 go.

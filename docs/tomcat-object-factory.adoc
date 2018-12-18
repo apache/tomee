@@ -9,7 +9,7 @@ http://www.onjava.com/pub/a/onjava/2003/02/12/ejb_tomcat.html[OnJava
 article "OpenEJB: EJB for Tomcat"] is no longer required._
 
 As of OpenEJB 3.0 references from Servlets to EJBs happen automatically
-with usage of the [@EJB
+with usage of the [`@EJB`
 annotation](openejbx30:injection-of-other-ejbs-example.html) in the
 Servlet, Filter or Listener or with the or declared in the web.xml.
 
