@@ -9,11 +9,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 
 /**
@@ -35,8 +33,6 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Arquillian.class)
 public class ThreadFactoryServiceTest {
 
-    private static final Logger LOGGER = Logger.getLogger(ThreadFactoryServiceTest.class.getSimpleName());
-
     @Inject
     private ThreadFactoryService factoryService;
 
@@ -49,22 +45,13 @@ public class ThreadFactoryServiceTest {
 
     @Test
     public void asyncTask() throws InterruptedException {
-
-        final Thread thread = factoryService.asyncTask(1);
-        assertTrue(thread.isAlive());
-
-        LOGGER.info("Do something else");
-        TimeUnit.MILLISECONDS.sleep(200);
-
-        assertFalse(thread.isAlive());
+        //task was completed
+        assertEquals(2, factoryService.asyncTask(1));
     }
 
     @Test
     public void asyncHangingTask() throws InterruptedException {
-
-        final Thread thread = factoryService.asyncHangingTask(1);
-        LOGGER.info("Do something else");
-        TimeUnit.MILLISECONDS.sleep(200);
-        assertFalse(thread.isAlive());
+        // task was interrupted and operation was not completed.
+        assertEquals(1, factoryService.asyncHangingTask(1));
     }
 }
