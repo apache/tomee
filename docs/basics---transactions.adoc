@@ -37,7 +37,7 @@ same transaction as the calling bean.
 
 You can configure your beans in a variety of ways. Generally speaking, a
 transaction is started when a method is called, but can be configured
-using @TransactionAttribute(value = TransactionAttributeType.X), where X
+using `@TransactionAttribute`(value = TransactionAttributeType.X), where X
 is one of...
 
 [arabic]

@@ -42,7 +42,7 @@ public class WidgetBean implements Widget {
 }
 ----
 
-The @EJB, @Resource, @PersistenceUnit, and @PersistenceContext
+The `@EJB`, `@Resource`, `@PersistenceUnit`, and `@PersistenceContext`
 annotations can be placed at the class-level instead such as:
 
 [source,java]

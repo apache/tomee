@@ -39,27 +39,47 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 /**
+ * The type BuildTomEEMojo.
+ *
  * Create but not run a TomEE.
  */
 @Mojo(name = "build", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)
 public class BuildTomEEMojo extends AbstractTomEEMojo {
+    /**
+     * The Zip.
+     */
     @Deprecated
     @Parameter(property = "tomee-plugin.zip", defaultValue = "true")
     protected boolean zip;
 
+    /**
+     * The Attach.
+     */
     @Parameter(property = "tomee-plugin.attach", defaultValue = "true")
     protected boolean attach;
 
+    /**
+     * The Zip file.
+     */
     @Deprecated
     @Parameter(property = "tomee-plugin.zip-file", defaultValue = "${project.build.directory}/${project.build.finalName}.zip")
     protected File zipFile;
 
+    /**
+     * The Base.
+     */
     @Parameter(property = "tomee-plugin.output-base", defaultValue = "${project.build.directory}/${project.build.finalName}")
     protected File base;
 
+    /**
+     * The Project helper.
+     */
     @Component
     protected MavenProjectHelper projectHelper;
 
+    /**
+     * The Classifier.
+     */
     @Parameter(property = "tomee-plugin.classifier")
     protected String classifier = null;
 

@@ -66,16 +66,16 @@ you call _listen_ to get your answer.
 
 \{snippet:id=code|url=openejb3/examples/telephone-stateful/src/main/java/org/superbiz/telephone/Telephone.java|lang=java}
 
-{title= EJB3 Notes} The bean class uses the annotation _@Remote_ but
+{title= EJB3 Notes} The bean class uses the annotation _`@Remote_` but
 does not specify a list of interfaces as is normally required. Per EJB3
 rules, if the bean implements exactly _one business interface_ it may
-use @Remote with no other values and that business interface is then
+use `@Remote` with no other values and that business interface is then
 implied to be a remote business interface. The same rule applies to
-identical usage of @Local.
+identical usage of `@Local`.
 
 The critical thing to know is that if you add another interface the
-rules change and require that you specify both interfaces in the @Remote
-annotation as in @Remote(\{Telephone.class, SecondInterface.class}).
+rules change and require that you specify both interfaces in the `@Remote`
+annotation as in `@Remote`(\{Telephone.class, SecondInterface.class}).
 \{tip}
 
 = Embedding

@@ -21,6 +21,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
+ * The type StartTomEEMojo.
  * Start and forget TomEE.
  */
 @Mojo(name = "start", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)

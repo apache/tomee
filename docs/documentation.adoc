@@ -57,7 +57,7 @@ link:alternate-descriptors.html[Alternate Descriptors] +
 link:unit-testing-transactions.html[Unit Testing Transactions] +
 link:testcase-with-testbean-inner-class.html[TestCase with TestBean
 inner-class] +
-[TestCase Injection (@LocalClient)](local-client-injection.html) +
+[TestCase Injection (`@LocalClient`)](local-client-injection.html) +
 } } \{row
 
 \{span-one-third ###Discovery and Failover

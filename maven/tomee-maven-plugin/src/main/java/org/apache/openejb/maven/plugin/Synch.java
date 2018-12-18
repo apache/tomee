@@ -20,22 +20,46 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The type Synch for setting up the sources.
+ */
 public class Synch extends AbstractSynchronizable {
+
     private File source;
     private File target;
 
+    /**
+     * Gets source.
+     *
+     * @return the source
+     */
     public File getSource() {
         return source;
     }
 
+    /**
+     * Sets source.
+     *
+     * @param source the source
+     */
     public void setSource(final File source) {
         this.source = source;
     }
 
+    /**
+     * Gets target.
+     *
+     * @return the target
+     */
     public File getTarget() {
         return target;
     }
 
+    /**
+     * Sets target.
+     *
+     * @param target the target
+     */
     public void setTarget(final File target) {
         this.target = target;
     }
