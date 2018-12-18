@@ -369,6 +369,11 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.6.2</version>
         </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>4.0.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -656,6 +661,53 @@
     </profile>
 
     <profile>
+      <id>owasp-report</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>owasp-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <failBuildOnCVSS>8.0</failBuildOnCVSS>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>rat</id>
       <modules>
         <module>itests</module>
@@ -686,7 +738,7 @@
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
                 <exclude>**/target/**/*</exclude>
-		            <exclude>**/js/livereload.js</exclude>
+                <exclude>**/js/livereload.js</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -1727,8 +1779,8 @@
         <version>1.2.5</version>
         <exclusions>
           <exclusion>
-              <groupId>xalan</groupId>
-              <artifactId>xalan</artifactId>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1742,4 +1794,3 @@
     </site>
   </distributionManagement>
 </project>
-
