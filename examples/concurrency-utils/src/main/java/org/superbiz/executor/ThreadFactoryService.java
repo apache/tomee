@@ -77,6 +77,9 @@ public class ThreadFactoryService {
         return longTask.getResult();
     }
 
+    /**
+     * Runnable rung task simulating a lengthy operation
+     */
     public static class LongTask implements Runnable {
         private final int value;
         private final long taskDurationMs;
