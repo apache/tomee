@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.PersistenceModule;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.CmpField;
 import org.apache.openejb.jee.ContainerTransaction;
@@ -34,6 +35,16 @@ import org.apache.openejb.jee.Query;
 import org.apache.openejb.jee.QueryMethod;
 import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.jee.TransAttribute;
+import org.apache.openejb.jee.jpa.Attributes;
+import org.apache.openejb.jee.jpa.Basic;
+import org.apache.openejb.jee.jpa.Column;
+import org.apache.openejb.jee.jpa.Entity;
+import org.apache.openejb.jee.jpa.EntityMappings;
+import org.apache.openejb.jee.jpa.Id;
+import org.apache.openejb.jee.jpa.NamedQuery;
+import org.apache.openejb.jee.jpa.unit.Persistence;
+import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
+import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.junit.AfterClass;
 
 import javax.ejb.CreateException;
@@ -138,6 +149,142 @@ public class LegacyInterfaceTest extends TestCase {
         module.getEjbModules().add(new EjbModule(ejbJar));
         assembler.createApplication(config.configureApplication(module));
 
+    }
+
+    public void testCustomCmpMappings() throws Exception {
+
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        final EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new SingletonBean(MySingletonBean.class));
+        ejbJar.addEnterpriseBean(new EntityBean(MyBmpBean.class, PersistenceType.BEAN));
+
+        final EntityBean cmp = ejbJar.addEnterpriseBean(new EntityBean(MyCmpBean.class, PersistenceType.CONTAINER));
+        cmp.setPrimKeyClass(Integer.class.getName());
+        cmp.setPrimkeyField("id");
+        cmp.getCmpField().add(new CmpField("id"));
+        cmp.getCmpField().add(new CmpField("name"));
+        final Query query = new Query();
+        query.setQueryMethod(new QueryMethod("findByPrimaryKey", Integer.class.getName()));
+        query.setEjbQl("SELECT OBJECT(DL) FROM License DL");
+        cmp.getQuery().add(query);
+        final List<ContainerTransaction> transactions = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MyBmpBean", "*"));
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MyCmpBean", "*"));
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MySingletonBean", "*"));
+
+        final File f = new File("test").getAbsoluteFile();
+        if (!f.exists() && !f.mkdirs()) {
+            throw new Exception("Failed to create test directory: " + f);
+        }
+
+        final EntityMappings entityMappings = new EntityMappings();
+
+        final Entity entity = new Entity();
+        entity.setClazz("openejb.org.apache.openejb.core.MyCmpBean");
+        entity.setName("MyCmpBean");
+        entity.setDescription("MyCmpBean");
+        entity.setAttributes(new Attributes());
+
+        final NamedQuery namedQuery = new NamedQuery();
+        namedQuery.setQuery("SELECT OBJECT(DL) FROM License DL");
+        entity.getNamedQuery().add(namedQuery);
+
+        final Id id = new Id();
+        id.setName("id");
+        entity.getAttributes().getId().add(id);
+
+        final Basic basic = new Basic();
+        basic.setName("name");
+        final Column column = new Column();
+        column.setName("wNAME");
+        column.setLength(300);
+        basic.setColumn(column);
+        entity.getAttributes().getBasic().add(basic);
+
+        entityMappings.getEntity().add(entity);
+
+        final AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+        ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entityMappings);
+        module.getEjbModules().add(ejbModule);
+
+        assertNull(module.getCmpMappings());
+        assembler.createApplication(config.configureApplication(module));
+        assertNotNull(module.getCmpMappings());
+        final List<Basic> basicList = module.getCmpMappings().getEntityMap().get("openejb.org.apache.openejb.core.MyCmpBean").getAttributes().getBasic();
+        assertEquals(1, basicList.size());
+        assertEquals(300, basicList.get(0).getColumn().getLength().intValue());
+        assertEquals("wNAME", basicList.get(0).getColumn().getName());
+    }
+
+    public void testCustomCmpMappingsWithMappingFileDefinedInPersistenceXml() throws Exception {
+
+        System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+
+        final ConfigurationFactory config = new ConfigurationFactory();
+        final Assembler assembler = new Assembler();
+
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        final EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new SingletonBean(MySingletonBean.class));
+        ejbJar.addEnterpriseBean(new EntityBean(MyBmpBean.class, PersistenceType.BEAN));
+
+        final EntityBean cmp = ejbJar.addEnterpriseBean(new EntityBean(MyCmpBean.class, PersistenceType.CONTAINER));
+        cmp.setPrimKeyClass(Integer.class.getName());
+        cmp.setPrimkeyField("id");
+        cmp.getCmpField().add(new CmpField("id"));
+        cmp.getCmpField().add(new CmpField("name"));
+        final Query query = new Query();
+        query.setQueryMethod(new QueryMethod("findByPrimaryKey", Integer.class.getName()));
+        query.setEjbQl("SELECT OBJECT(DL) FROM License DL");
+        cmp.getQuery().add(query);
+        final List<ContainerTransaction> transactions = ejbJar.getAssemblyDescriptor().getContainerTransaction();
+
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MyBmpBean", "*"));
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MyCmpBean", "*"));
+        transactions.add(new ContainerTransaction(TransAttribute.SUPPORTS, null, "MySingletonBean", "*"));
+
+        final File f = new File("test").getAbsoluteFile();
+        if (!f.exists() && !f.mkdirs()) {
+            throw new Exception("Failed to create test directory: " + f);
+        }
+
+        final AppModule module = new AppModule(this.getClass().getClassLoader(), f.getAbsolutePath());
+        final EjbModule ejbModule = new EjbModule(ejbJar);
+
+        Persistence persistence = new Persistence();
+        PersistenceUnit pu = persistence.addPersistenceUnit("cmp");
+        pu.setTransactionType(TransactionType.JTA);
+        pu.setJtaDataSource("fake");
+        pu.setNonJtaDataSource("fake");
+        pu.getMappingFile().add("test-orm.xml");
+        pu.getClazz().add("openejb.org.apache.openejb.core.MyCmpBean");
+        module.addPersistenceModule(new PersistenceModule("pu", persistence));
+
+        module.getEjbModules().add(ejbModule);
+
+        assertNull(module.getCmpMappings());
+        assembler.createApplication(config.configureApplication(module));
+        assertNotNull(module.getCmpMappings());
+
+        // no mapping should be automatically generated
+        assertTrue(module.getCmpMappings().getEntityMap().isEmpty());
+
+        // pu should not be modified, no duplicate classes
+        assertEquals(1, pu.getClazz().size());
+        assertEquals("openejb.org.apache.openejb.core.MyCmpBean", pu.getClazz().get(0));
+        assertEquals(1, pu.getMappingFile().size());
+        assertEquals("test-orm.xml", pu.getMappingFile().get(0));
     }
 
     @LocalHome(MyLocalHome.class)
