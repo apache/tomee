@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.superbiz</groupId>
+  <artifactId>mp-rest-jwt-public-key</artifactId>
+  <version>8.0.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>OpenEJB :: Examples :: MP REST JWT Public Key</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+    <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
+    <mp-jwt.version>1.1</mp-jwt.version>
+  </properties>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <finalName>bookstore</finalName>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.18.1</version>
+        <configuration>
+          <reuseForks>false</reuseForks>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.5.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>${tomee.version}</version>
+        <configuration>
+          <tomeeClassifier>microprofile</tomeeClassifier>
+          <args>-Xmx512m -XX:PermSize=256m</args>
+          <config>${project.basedir}/src/main/tomee/</config>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Override dependency resolver with test version. This must go *BEFORE*
+        the Arquillian BOM. -->
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${version.shrinkwrap.resolver}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <!-- Now pull in our server-based unit testing framework -->
+      <dependency>
+        <groupId>org.jboss.arquillian</groupId>
+        <artifactId>arquillian-bom</artifactId>
+        <version>1.0.3.Final</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${mp-jwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>4.23</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--
+    The <scope>test</scope> guarantees that non of your runtime
+    code is dependent on any OpenEJB classes.
+    -->
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf-rs</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${tomee.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.arquillian.junit</groupId>
+      <artifactId>arquillian-junit-container</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-depchain</artifactId>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>arquillian-tomee-remote</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>arquillian-tomee-remote</artifactId>
+          <version>${tomee.version}</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>apache-tomee</artifactId>
+          <version>${tomee.version}</version>
+          <type>zip</type>
+          <classifier>microprofile</classifier>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>mp-jwt</artifactId>
+          <version>${tomee.version}</version>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
+  <!--
+  This section allows you to configure where to publish libraries for sharing.
+  It is not required and may be deleted.  For more information see:
+  http://maven.apache.org/plugins/maven-deploy-plugin/
+  -->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>
