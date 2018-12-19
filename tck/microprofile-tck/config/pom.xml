@@ -45,6 +45,14 @@
             <MY_STRING_PROPERTY>woohoo</MY_STRING_PROPERTY>
           </environmentVariables>
         </configuration>
+        <executions>
+          <execution>
+            <id>tomee-microprofile</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
