@@ -93,17 +93,6 @@
                   </systemPropertyVariables>
                 </configuration>
               </execution>
-              <execution>
-                <id>tomee-plume</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <systemPropertyVariables>
-                    <arquillian.launch>tomee-plume</arquillian.launch>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
         </plugins>
