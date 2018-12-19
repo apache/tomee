@@ -35,9 +35,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <dependenciesToScan>
-            <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
-          </dependenciesToScan>
           <environmentVariables>
             <my_int_property>45</my_int_property>
             <MY_BOOLEAN_PROPERTY>true</MY_BOOLEAN_PROPERTY>
@@ -51,38 +48,30 @@
             <goals>
               <goal>test</goal>
             </goals>
+            <configuration>
+              <dependenciesToScan>
+                <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
+              </dependenciesToScan>
+            </configuration>
+          </execution>
+          <execution>
+            <id>tomee-plus</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <dependenciesToScan>
+                <dependency>org.eclipse.microprofile.config:microprofile-config-tck</dependency>
+              </dependenciesToScan>
+              <systemPropertyVariables>
+                <arquillian.launch>tomee-plus</arquillian.launch>
+              </systemPropertyVariables>
+            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>mp-tck-all</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>tomee-plus</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <systemPropertyVariables>
-                    <arquillian.launch>tomee-plus</arquillian.launch>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
   <dependencies>
     <dependency>
