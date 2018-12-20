@@ -43,6 +43,7 @@ public class ThreadFactoryServiceTest {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
+    //TODO failing to load due to missing DeployerBusinessRemote
     @Test
     public void asyncTask() throws InterruptedException {
         //task was completed
