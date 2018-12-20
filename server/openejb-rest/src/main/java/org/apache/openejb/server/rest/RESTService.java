@@ -256,10 +256,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
                 }
 
+                /*
                 boolean isMicroProfileOnlyEndpoints =
                         webApp.restClass.stream().allMatch(name -> name.startsWith("org.apache.geronimo.microprofile"));
+                */
 
-                if (webApp.restApplications.isEmpty() && !isMicroProfileOnlyEndpoints) {
+                if (webApp.restApplications.isEmpty() /*&& !isMicroProfileOnlyEndpoints*/) {
                     final Application application = new InternalApplication(null);
                     for (final String clazz : webApp.restClass) {
                         try {
