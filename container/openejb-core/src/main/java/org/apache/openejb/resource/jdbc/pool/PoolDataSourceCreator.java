@@ -42,13 +42,7 @@ public abstract class PoolDataSourceCreator implements DataSourceCreator {
 
     protected void cleanProperty(final Object ds, final String name) {
         final Map<String, Object> unsetProperties = recipes.get(ds).getUnsetProperties();
-        final Iterator<Map.Entry<String, Object>> iterator = unsetProperties.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<String, Object> entry = iterator.next();
-            if (entry.getKey().equalsIgnoreCase(name)) {
-                iterator.remove();
-            }
-        }
+        unsetProperties.entrySet().removeIf(entry -> entry.getKey().equalsIgnoreCase(name));
     }
 
     @Override

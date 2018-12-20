@@ -1532,13 +1532,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         // find the nested jar files
         final HashMap<String, URL> rarLibs = new HashMap<>();
         scanDir(rarFile, rarLibs, "");
-        for (final Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext(); ) {
-            // remove all non jars from the rarLibs
-            final Map.Entry<String, URL> fileEntry = iterator.next();
-            if (!fileEntry.getKey().endsWith(".jar")) {
-                iterator.remove();
-            }
-        }
+        // remove all non jars from the rarLibs
+        rarLibs.entrySet().removeIf(fileEntry -> !fileEntry.getKey().endsWith(".jar"));
 
         // create the class loader
         final List<URL> classPath = new ArrayList<>(rarLibs.values());

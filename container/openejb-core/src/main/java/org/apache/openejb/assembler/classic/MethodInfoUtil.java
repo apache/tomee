@@ -468,13 +468,7 @@ public class MethodInfoUtil {
         }
 
         // Remove methods that cannot be controlled by the user
-        final Iterator<Method> iterator = methods.iterator();
-        while (iterator.hasNext()) {
-            final Method method = iterator.next();
-            if (containerMethod(method)) {
-                iterator.remove();
-            }
-        }
+        methods.removeIf(MethodInfoUtil::containerMethod);
 
         return methods;
     }

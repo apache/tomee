@@ -155,12 +155,7 @@ public class NewLoaderLogic {
                 "sun.reflect."
             );
 
-            final Iterator<String> classes = callers.iterator();
-            while (classes.hasNext()) {
-                if (unwanted.accept(classes.next())) {
-                    classes.remove();
-                }
-            }
+            callers.removeIf(unwanted::accept);
         }
 
         return callers;
@@ -221,13 +216,7 @@ public class NewLoaderLogic {
         getExclusions(); // force init
 
         final List<URL> urls = urlSet.getUrls();
-        final Iterator<URL> iterator = urls.iterator();
-        while (iterator.hasNext()) {
-            final URL url = iterator.next();
-            if (skip(url, includeFilter, excludeFilter)) {
-                iterator.remove();
-            }
-        }
+        urls.removeIf(url -> skip(url, includeFilter, excludeFilter));
 
         return new UrlSet(urls);
     }
@@ -332,12 +321,7 @@ public class NewLoaderLogic {
         if (ADDITIONAL_INCLUDE != null) { // include = not excluded
             for (final String rawInclude : ADDITIONAL_INCLUDE.split("[ \t\n\n]*,[ \t\n\n]*")) {
                 final String include = rawInclude.trim();
-                final Iterator<String> excluded = excludes.iterator();
-                while (excluded.hasNext()) {
-                    if (excluded.next().startsWith(include)) {
-                        excluded.remove();
-                    }
-                }
+                excludes.removeIf(s -> s.startsWith(include));
             }
         }
 
