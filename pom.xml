@@ -92,7 +92,6 @@
   </scm>
 
   <properties>
-    <doclint>none</doclint>
 
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -216,8 +215,14 @@
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
+    
     <!-- Jackson required by OpenAPI Impl -->
     <jackson.version>2.9.4</jackson.version>
+    
+    <!-- Javadoc & Asciidoclet -->
+    <javadoc.version>3.0.1</javadoc.version>
+    <asciidoclet.version>1.5.0</asciidoclet.version>
+    
   </properties>
 
   <build>
@@ -368,6 +373,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.6.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>4.0.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -656,6 +666,53 @@
     </profile>
 
     <profile>
+      <id>owasp-report</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>owasp-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <failBuildOnCVSS>8.0</failBuildOnCVSS>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>rat</id>
       <modules>
         <module>itests</module>
@@ -686,7 +743,7 @@
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
                 <exclude>**/target/**/*</exclude>
-		            <exclude>**/js/livereload.js</exclude>
+                <exclude>**/js/livereload.js</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -705,6 +762,38 @@
                 <exclude>**/.*/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
               </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>javadoc</id>
+      <modules>
+        <module>container</module>
+        <module>server</module>
+        <module>utils</module>
+        <module>tomee</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${javadoc.version}</version>
+            <configuration>
+              <doclet>org.asciidoctor.Asciidoclet</doclet>
+              <docletArtifact>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoclet</artifactId>
+                <version>${asciidoclet.version}</version>
+              </docletArtifact>
+              <additionalOptions>
+                <additionalOption>--base-dir ${basedir}</additionalOption>
+                <additionalOption>--attribute "name=${project.name}"</additionalOption>
+                <additionalOption>--attribute "version=${project.version}"</additionalOption>
+              </additionalOptions>
+              <doclint>none</doclint> <!-- Doclint is enabled by default in java 8+, this conf is needed disable it till a rewrite of javadoc is done (https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#format)-->
             </configuration>
           </plugin>
         </plugins>
@@ -1727,8 +1816,8 @@
         <version>1.2.5</version>
         <exclusions>
           <exclusion>
-              <groupId>xalan</groupId>
-              <artifactId>xalan</artifactId>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1742,4 +1831,3 @@
     </site>
   </distributionManagement>
 </project>
-

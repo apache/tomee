@@ -18,8 +18,8 @@ Internally, we bind each EJB proxy under essentially a hardcoded and
 predictable format and then again using the user supplied format.  So
 there are at minimum two JNDI trees with every EJB proxy.  It used to be
 two at least.  Now we have quite a few because of Java EE 6 global JNDI
-and the support we added for @LocalClient and allowing the same
-interface to be used as both @Local and @Remote.
+and the support we added for `@LocalClient` and allowing the same
+interface to be used as both `@Local` and `@Remote`.
 
 Basically we have:
 

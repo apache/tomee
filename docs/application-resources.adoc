@@ -335,11 +335,11 @@ public class Factory {
 === @PostConstruct / @PreDestroy
 
 As an alternative to using a factory method or a constructor, you can
-use @PostConstruct and @PreDestroy methods within your resource class
+use `@PostConstruct` and `@PreDestroy` methods within your resource class
 (note that you cannot use this within a different factory class) to
 manage any additional creation or cleanup activities. TomEE will
 automatically call these methods when the application is started and
-destroyed. Using @PostConstruct will effectively force a lazily loaded
+destroyed. Using `@PostConstruct` will effectively force a lazily loaded
 resource to be instantiated when the application is starting - in the
 same way that the `InitializeAfterDeployment` property does.
 

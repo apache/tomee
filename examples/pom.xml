@@ -179,6 +179,7 @@ BROKEN, see TOMEE-2140
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
+    <module>mp-rest-client</module>
     <module>mp-custom-healthcheck</module>
   </modules>
 

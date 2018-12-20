@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * The type UnDeployMojo.
  * Simply undeploy an application in a running TomEE
  */
 @Mojo(name = "undeploy")
