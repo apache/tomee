@@ -115,12 +115,7 @@ public class ManagedExecutorServiceTest {
 
         public boolean submitRunnable() {
             final CountDownLatch done = new CountDownLatch(1);
-            es.submit(new Runnable() {
-                @Override
-                public void run() {
-                    done.countDown();
-                }
-            });
+            es.submit(done::countDown);
             try {
                 done.await();
             } catch (final InterruptedException e) {
