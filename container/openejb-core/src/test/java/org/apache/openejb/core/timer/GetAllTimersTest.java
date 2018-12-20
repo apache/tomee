@@ -77,7 +77,7 @@ public class GetAllTimersTest {
     }
 
     private void checkList(final Collection<Timer> in) {
-        final List<Timer> list = new ArrayList<>(in); Collections.sort(list, new Comparator<Timer>() {
+        final List<Timer> list = new ArrayList<>(in); list.sort(new Comparator<Timer>() {
             @Override
             public int compare(final Timer o1, final Timer o2) {
                 return o1.getInfo().toString().compareTo(o2.getInfo().toString());

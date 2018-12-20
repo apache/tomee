@@ -81,7 +81,7 @@ public class ConfUtils {
         }
 
         // Sort so that the URL closest to openejb.base is first
-        Collections.sort(urls, new UrlComparator(SystemInstance.get().getBase().getDirectory()));
+        urls.sort(new UrlComparator(SystemInstance.get().getBase().getDirectory()));
 
         return urls.get(0);
     }

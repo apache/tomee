@@ -62,7 +62,7 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
 
         final ArrayList<InterceptorBindingInfo> actual = new ArrayList<>(expected);
         Collections.shuffle(actual);
-        Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
+        actual.sort(new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
             final InterceptorBindingInfo a = actual.get(i);
@@ -127,7 +127,7 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
         info.interceptorOrder.add("TotalOrderingDefaultInterceptor");
         actual.set(0, info);
 
-        Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
+        actual.sort(new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
             final InterceptorBindingInfo a = actual.get(i);

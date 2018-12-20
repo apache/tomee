@@ -148,7 +148,7 @@ public class CheckClassLoading extends ValidationBase {
             }
         }
 
-        Collections.sort(diff, DiffItemComparator.getInstance());
+        diff.sort(DiffItemComparator.getInstance());
         return diff;
     }
 

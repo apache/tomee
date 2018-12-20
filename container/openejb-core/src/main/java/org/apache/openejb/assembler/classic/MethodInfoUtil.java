@@ -238,7 +238,7 @@ public class MethodInfoUtil {
             }
         }
 
-        Collections.sort(normalized, new MethodPermissionComparator());
+        normalized.sort(new MethodPermissionComparator());
 
         return normalized;
     }
