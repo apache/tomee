@@ -112,8 +112,8 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
         final StackTraceElement[] stack = getStackTrace();
-        for (int i = 0; i < stack.length; i++) {
-            err.println("\tat " + stack[i]);
+        for (StackTraceElement stackTraceElement : stack) {
+            err.println("\tat " + stackTraceElement);
         }
 
         StackTraceElement[] parentStack = stack;
@@ -146,8 +146,8 @@ public class TransactionRolledbackException extends javax.transaction.Transactio
         // Don't use getStackTrace() as it calls clone()
         // Get stackTrace, in case stackTrace is reassigned
         final StackTraceElement[] stack = getStackTrace();
-        for (int i = 0; i < stack.length; i++) {
-            err.println("\tat " + stack[i]);
+        for (StackTraceElement stackTraceElement : stack) {
+            err.println("\tat " + stackTraceElement);
         }
 
         StackTraceElement[] parentStack = stack;
