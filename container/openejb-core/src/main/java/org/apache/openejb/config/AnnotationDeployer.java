@@ -5191,11 +5191,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final Map<String, List<MethodAttribute>> declarations = new HashMap<>();
                 final List<ConcurrentMethod> methods = bean.getConcurrentMethod();
                 for (final ConcurrentMethod method : methods) {
-                    List<MethodAttribute> list = declarations.get(method.getMethod().getMethodName());
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        declarations.put(method.getMethod().getMethodName(), list);
-                    }
+                    List<MethodAttribute> list = declarations.computeIfAbsent(method.getMethod().getMethodName(), k -> new ArrayList<>());
                     list.add(new MethodAttribute(null, bean.getEjbName(), method.getMethod()));
                 }
                 return declarations;
@@ -5810,11 +5806,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            Set<String> list = classes.get(url);
-            if (list == null) {
-                list = new HashSet<>();
-                classes.put(url, list);
-            }
+            Set<String> list = classes.computeIfAbsent(url, k -> new HashSet<>());
 
             // saving class url
             // first try the file approach (if the same class is in several classloaders it avoids weird errors)

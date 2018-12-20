@@ -602,11 +602,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Map<String, List<ContainerInfo>> appContainers = new HashMap<>();
 
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
-            List<ContainerInfo> containerInfos = appContainers.get(serviceInfo.originAppName);
-            if (containerInfos == null) {
-                containerInfos = new ArrayList<>();
-                appContainers.put(serviceInfo.originAppName, containerInfos);
-            }
+            List<ContainerInfo> containerInfos = appContainers.computeIfAbsent(serviceInfo.originAppName, k -> new ArrayList<>());
 
             containerInfos.add(serviceInfo);
         }
@@ -3783,11 +3779,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 instrumentation.addTransformer(classFileTransformer);
 
                 if (unitId != null) {
-                    List<ClassFileTransformer> transformers = this.transformers.get(unitId);
-                    if (transformers == null) {
-                        transformers = new ArrayList<>(1);
-                        this.transformers.put(unitId, transformers);
-                    }
+                    List<ClassFileTransformer> transformers = this.transformers.computeIfAbsent(unitId, k -> new ArrayList<>(1));
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {
