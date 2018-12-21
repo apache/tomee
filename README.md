@@ -85,6 +85,8 @@ then you can use the following build options
     
 ### Full build
 
+This will run all the tests. We have thousands of tests and you should go out to grab a bite in the meantime. 
+
     mvn clean install
     
 
@@ -98,6 +100,8 @@ Full build that execute arquillian test on all TomEE distributions:
     mvn clean install -Pall-adapters
     
 ### Partial build    
+
+This will only build a module and the modules using it as a dependency. 
 
 To build just TomEE distribution execute:
 
