@@ -28,9 +28,11 @@
 [![GitHub forks](https://img.shields.io/github/forks/apache/tomee.svg?style=social&label=Fork)](https://github.com/apache/tomee/tomee/fork) 
 [![GitHub stars](https://img.shields.io/github/stars/apache/tomee.svg?style=social&label=Star)](https://github.com/apache/tomee) 
 
-#<img src="http://tomee.apache.org/img/logo-active.png">  Apache TomEE 
+# Apache TomEE
 
-Apache TomEE is a lightweight, yet powerful, JavaEE Application server with feature rich tooling.
+
+<img src="http://tomee.apache.org/img/logo-active.png">  Apache TomEE 
+is a lightweight, yet powerful, JavaEE Application server with feature rich tooling.
 
 Is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE = TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile compliant application server.
 
