@@ -166,6 +166,7 @@
     -->
 
     <!-- MicroProfile -->
+    <!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-common</artifactId>
@@ -262,7 +263,6 @@
       <version>${microprofile.openapi.impl.version}</version>
     </dependency>
 
-    <!-- Jackson required by OpenAPI Impl -->
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
@@ -298,6 +298,7 @@
       <artifactId>opentracing-api</artifactId>
       <version>${opentracing.api}</version>
     </dependency>
+    -->
   </dependencies>
 
   <build>

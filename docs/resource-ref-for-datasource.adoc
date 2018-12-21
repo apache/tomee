@@ -35,7 +35,7 @@ public class MyDataSourceRefBean implements MyBeanInterface {
 
 == Via xml
 
-The above @Resource annotation usage is 100% equivalent to the following
+The above `@Resource` annotation usage is 100% equivalent to the following
 xml.
 
 [source,xml]

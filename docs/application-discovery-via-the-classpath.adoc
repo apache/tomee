@@ -32,7 +32,7 @@ complicate builds.
 
 If you do not like the idea of having the ejb-jar.xml in your app or an
 openejb.xml, we can search the classpath for annotated beans
-(@Stateless, @Stateful, @MessageDriven) and load them automatically just
+(`@Stateless`, `@Stateful`, `@MessageDriven`) and load them automatically just
 as if they contained an ejb-jar.xml.
 
 This form of searching, however, is very expensive as it involves

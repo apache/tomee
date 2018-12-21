@@ -161,7 +161,7 @@ the ApplicationComposer:
 @RunWith(ApplicationComposer.class) public class MyTest \{ // ... }
 * using `ApplicationComposerRule` rule:
 +
-public class MyTest \{ @Rule // or @ClassRule if you want the
+public class MyTest \{ `@Rule` // or `@ClassRule` if you want the
 container/application lifecycle be bound to the class and not test
 methods public final ApplicationComposerRule rule = new
 ApplicationComposerRule(this); }

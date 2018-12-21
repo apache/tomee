@@ -8,10 +8,10 @@
 _Also see link:testing-transactions-example.html[Testing Transactions]
 for an example of how to use and test EJB transaction attributes_
 
-The _javax.ejb.TransactionAttribute_ annotation (@TransactionAttribute)
+The _javax.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)
 can be applied to a bean class or it's methods.
 
-Usage of the @TransactionAttribute requires you to specify one of six
+Usage of the `@TransactionAttribute` requires you to specify one of six
 different transaction attribute types defined via the
 javax.ejb.TransactionAttributeType enum.
 
@@ -190,7 +190,7 @@ public static class MyBean implements MyBusinessInterface {
 Generally, transaction annotationss cannot be made on AroundInvoke
 methods and most callbacks.
 
-The following usages of @TransactionAttribute have no effect.
+The following usages of `@TransactionAttribute` have no effect.
 
 [source,java]
 ----
