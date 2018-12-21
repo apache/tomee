@@ -29,6 +29,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+        org.apache.cxf.binding.soap.messageFactoryClassName=com.sun.xml.messaging.saaj.soap.MessageFactoryImpl
       </property>
     </configuration>
   </container>
@@ -43,6 +44,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        org.apache.cxf.binding.soap.messageFactoryClassName=com.sun.xml.messaging.saaj.soap.MessageFactoryImpl
       </property>
     </configuration>
   </container>
@@ -72,6 +74,7 @@
         My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.
+        org.apache.cxf.binding.soap.messageFactoryClassName=com.sun.xml.messaging.saaj.soap.MessageFactoryImpl
       </property>
     </configuration>
   </container>
