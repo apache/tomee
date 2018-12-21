@@ -177,6 +177,7 @@
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
     <module>mp-rest-client</module>
+    <module>mvc-resteasy</module>
   </modules>
 
   <dependencies>
