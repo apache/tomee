@@ -104,7 +104,7 @@ If you need a more advanced use case and modify the structure of the json (wrapp
 you will likely need Reader/Writer or a Codec.
 
 Then once your converter developed you can either register globally on the MapperBuilder or simply decorate
-the field you want to convert with @JohnzonConverter:
+the field you want to convert with `@JohnzonConverter`:
 
 [source,java]
 ----
@@ -202,4 +202,4 @@ TomEE uses by default Johnzon as JAX-RS provider for versions 7.x. If you want h
 ----
 
 Note: as you can see you mainly just need to define a service with the id johnzon (same as in openejb-jar.xml)
-and you can reference other instances using $id for services and @id for resources.
+and you can reference other instances using $id for services and `@id` for resources.

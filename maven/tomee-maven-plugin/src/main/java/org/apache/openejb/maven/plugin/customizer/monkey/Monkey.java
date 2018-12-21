@@ -35,18 +35,26 @@ import java.util.Properties;
 /**
  * A customizer (see tomee-maven-plugin) allowing to take current project binaries (target/classes)
  * and merge them in tomee for patch cases.
- *
+ * <p>
  * Note: for now it needs to overlap with [tomee]/lib/*.jar.
- *
+ * <p>
  * Jar will get patched and renamed with tomee-monkey-[date] suffix.
  */
 public class Monkey implements Runnable {
+    /**
+     * The constant MONKEY_CONFIGURATION_FILE.
+     */
     public static final String MONKEY_CONFIGURATION_FILE = "tomee-monkey.properties";
     private final File base;
     private final File classes;
     private final File tempFolder;
     private final Properties configuration;
 
+    /**
+     * Instantiates a new Monkey.
+     *
+     * @param base the base
+     */
     public Monkey(final File base) {
         this.base = base;
         final File target = new PatchFolderFinder().findTarget(base);

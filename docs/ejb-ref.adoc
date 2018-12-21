@@ -35,7 +35,7 @@ public class MyEjbRemoteRefBean implements MyBeanInterface {
 
 = Via xml
 
-The above @EJB annotation usage is 100% equivalent to the following xml.
+The above `@EJB` annotation usage is 100% equivalent to the following xml.
 
 [source,xml]
 ----

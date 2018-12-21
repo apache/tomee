@@ -26,7 +26,7 @@ http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/sr
 
 @Stateless
 
-Shows the use of @Resource to have Spring beans injected. Specifically,
+Shows the use of `@Resource` to have Spring beans injected. Specifically,
 the _Theaters_ Spring bean
 
 http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/Theaters.java[Theaters]
@@ -96,10 +96,10 @@ And finally our Spring beans.
 {title= Don't forget}
 \{snippet:id=annotations|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
 It allows various annotations to be detected in bean classes: Spring's
-@Required and @Autowired, as well as JSR 250's @PostConstruct,
-@PreDestroy and @Resource (if available), JAX-WS's @WebServiceRef (if
-available), EJB3's @EJB (if available), and JPA's @PersistenceContext
-and @PersistenceUnit (if available). Alternatively, you may choose to
+@Required and `@Autowired`, as well as JSR 250's `@PostConstruct`,
+@PreDestroy and `@Resource` (if available), JAX-WS's `@WebServiceRef` (if
+available), EJB3's `@EJB` (if available), and JPA's `@PersistenceContext`
+and `@PersistenceUnit` (if available). Alternatively, you may choose to
 activate the individual BeanPostProcessors for those annotations.
 \{note}
 
