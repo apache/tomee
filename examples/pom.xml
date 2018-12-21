@@ -180,6 +180,7 @@ BROKEN, see TOMEE-2140
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
     <module>mp-rest-client</module>
+    <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>
   </modules>
 
