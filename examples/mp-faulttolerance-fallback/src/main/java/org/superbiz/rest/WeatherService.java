@@ -24,12 +24,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 
 @Path("/weather")
@@ -37,7 +35,7 @@ import javax.ws.rs.core.Response;
 @RequestScoped
 public class WeatherService {
 
-    private static Logger logger = Logger.getLogger(WeatherService.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WeatherService.class.getName());
 
     @GET
     @Path("/day/status")
@@ -56,7 +54,7 @@ public class WeatherService {
     }
 
     public String fallbackForWeekStatus() {
-        logger.log(Level.SEVERE, "Fallback was triggered due a fail");
+        LOGGER.log(Level.SEVERE, "Fallback was triggered due a fail");
         return "Hi, week will be mostly sunny!";
     }
 }

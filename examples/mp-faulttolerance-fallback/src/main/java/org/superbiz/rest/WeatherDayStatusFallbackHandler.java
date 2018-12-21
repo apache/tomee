@@ -24,11 +24,11 @@ import java.util.logging.Logger;
 
 public class WeatherDayStatusFallbackHandler implements FallbackHandler<String> {
 
-    private static Logger logger = Logger.getLogger(WeatherDayStatusFallbackHandler.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(WeatherDayStatusFallbackHandler.class.getName());
 
     @Override
     public String handle(ExecutionContext executionContext) {
-        logger.log(Level.SEVERE, "Fallback was triggered due a fail");
+        LOGGER.log(Level.SEVERE, "Fallback was triggered due a fail");
         return "Hi, today is a sunny day!";
     }
 }
