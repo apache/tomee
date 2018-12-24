@@ -16,20 +16,25 @@
  */
 package org.apache.tomee.security.servlet;
 
-import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
+import org.apache.tomee.security.client.BasicAuthFilter;
 import org.junit.Test;
 
+import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.HttpConstraint;
+import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,12 +50,18 @@ public class SimpleServletTest {
                         JarLocation.jarLocation(SimpleServletTest.class),
                         JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class))) {
 
-            assertEquals("ok!", IO.slurp(
-                    new URL("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")));
+            final Client client = ClientBuilder.newBuilder().register(new BasicAuthFilter()).build();
+            final Response response =
+                    client.target("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")
+                          .request()
+                          .get();
+            assertEquals(200, response.getStatus());
         }
     }
 
     @WebServlet(urlPatterns = "/servlet")
+    @ServletSecurity(@HttpConstraint(rolesAllowed = "role"))
+    @BasicAuthenticationMechanismDefinition
     public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
