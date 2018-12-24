@@ -28,9 +28,9 @@ import javax.security.enterprise.credential.BasicAuthenticationCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 @ApplicationScoped
 public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism {
@@ -49,7 +49,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         try {
             final CredentialValidationResult result =
-                    identityStoreHandler.validate(new BasicAuthenticationCredential(HttpHeaders.AUTHORIZATION));
+                    identityStoreHandler.validate(new BasicAuthenticationCredential(request.getHeader(AUTHORIZATION)));
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
