@@ -16,12 +16,19 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
+import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
 import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.BeanAttributes;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
@@ -39,7 +46,18 @@ public class TomEESecurityExtension implements Extension {
         }
     }
 
-    void registerAuthenticationMechanism(@Observes final AfterBeanDiscovery afterBeanDiscovery) {
+    void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery beforeBeanDiscovery,
+                                    final BeanManager beanManager) {
+        if (basicAuthentication.isEmpty()) {
+            beforeBeanDiscovery.addAnnotatedType(
+                    beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
+            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
+            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
+        }
+    }
+
+    void registerAuthenticationMechanism(@Observes final AfterBeanDiscovery afterBeanDiscovery,
+                                         final BeanManager beanManager) {
         if (!basicAuthentication.isEmpty()) {
             afterBeanDiscovery.addBean()
                .id(BasicAuthenticationMechanism.class.getName())
@@ -47,7 +65,15 @@ public class TomEESecurityExtension implements Extension {
                .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
                .scope(ApplicationScoped.class)
-               .createWith(creationalContext -> new BasicAuthenticationMechanism());
+               .createWith((CreationalContext<BasicAuthenticationMechanism> creationalContext) -> {
+                   AnnotatedType<BasicAuthenticationMechanism> annotatedType =
+                           beanManager.createAnnotatedType(BasicAuthenticationMechanism.class);
+                   BeanAttributes<BasicAuthenticationMechanism> beanAttributes =
+                           beanManager.createBeanAttributes(annotatedType);
+                   return beanManager.createBean(beanAttributes, BasicAuthenticationMechanism.class,
+                                                 beanManager.getInjectionTargetFactory(annotatedType))
+                                     .create(creationalContext);
+               });
         }
     }
 }
