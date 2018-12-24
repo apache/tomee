@@ -5,6 +5,7 @@ import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.enterprise.context.RequestScoped;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 
 /**
@@ -34,47 +35,34 @@ public class ThreadFactoryService {
     /**
      * Happy path.
      *
-     * @param value to compute
-     * @return The thread we created
+     * @param longTask to compute
      */
-    public int asyncTask(final int value) throws InterruptedException {
+    public void asyncTask(final LongTask longTask) throws InterruptedException {
         LOGGER.info("Create asyncTask");
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        final LongTask longTask = new LongTask(value, 1000000, countDownLatch);
 
         final Thread thread = factory.newThread(longTask);
         thread.setName("pretty asyncTask");
         thread.start();
-
-        countDownLatch.await(200, TimeUnit.MILLISECONDS);
-
-        return longTask.getResult();
     }
 
     /**
      * Example where we have to stop a thread.
      *
-     * @param value
-     * @return The thread we created
+     * @param longTask
      * @throws InterruptedException
      */
-    public int asyncHangingTask(final int value) throws InterruptedException {
+    public void asyncHangingTask(final Runnable longTask) {
         LOGGER.info("Create asyncHangingTask");
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        final LongTask longTask = new LongTask(value, 1000000, countDownLatch);
 
         final Thread thread = factory.newThread(longTask);
         thread.setName("pretty asyncHangingTask");
         thread.start();
-
-        countDownLatch.await(200, TimeUnit.MILLISECONDS);
 
         if (thread.isAlive()) {
             // This will cause any wait in the thread to resume.
             // This will call the InterruptedException block in the longRunnableTask method.
             thread.interrupt();
         }
-        return longTask.getResult();
     }
 
     /**
@@ -85,6 +73,7 @@ public class ThreadFactoryService {
         private final long taskDurationMs;
         private final CountDownLatch countDownLatch;
         private int result;
+        private AtomicBoolean isTerminated = new AtomicBoolean(false);
 
         public LongTask(final int value,
                         final long taskDurationMs,
@@ -98,12 +87,17 @@ public class ThreadFactoryService {
             return result;
         }
 
+        public boolean getIsTerminated() {
+            return isTerminated.get();
+        }
+
         @Override
         public void run() {
             try {
                 // Simulate a long processing task using TimeUnit to sleep.
                 TimeUnit.MILLISECONDS.sleep(taskDurationMs);
             } catch (InterruptedException e) {
+                isTerminated.set(false);
                 throw new RuntimeException("Problem while waiting");
             }
 
