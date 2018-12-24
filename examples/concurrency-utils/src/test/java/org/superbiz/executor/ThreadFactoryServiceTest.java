@@ -7,11 +7,15 @@ import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.superbiz.executor.ThreadFactoryService.LongTask;
 
 import javax.inject.Inject;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -33,6 +37,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Arquillian.class)
 public class ThreadFactoryServiceTest {
 
+    private static final Logger LOGGER = Logger.getLogger(ThreadFactoryServiceTest.class.getSimpleName());
+
     @Inject
     private ThreadFactoryService factoryService;
 
@@ -43,16 +49,32 @@ public class ThreadFactoryServiceTest {
                 .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
 
-    //TODO failing to load due to missing DeployerBusinessRemote
     @Test
     public void asyncTask() throws InterruptedException {
-        //task was completed
-        assertEquals(2, factoryService.asyncTask(1));
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 50, countDownLatch);
+        factoryService.asyncTask(longTask);
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS); // With the countdown latch we don't block unnecessarily.
+        LOGGER.info("task was completed");
+
+        assertEquals(2, longTask.getResult());
     }
 
     @Test
     public void asyncHangingTask() throws InterruptedException {
-        // task was interrupted and operation was not completed.
-        assertEquals(1, factoryService.asyncHangingTask(1));
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 1000000, countDownLatch);
+
+        try {
+            factoryService.asyncHangingTask(longTask);
+        } catch (RuntimeException e) {
+            //
+        }
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
+        LOGGER.info("task was interrupted and operation was not completed.");
+
+//        assertTrue(longTask.getIsTerminated());
+        assertEquals(1, longTask.getResult());
     }
 }
