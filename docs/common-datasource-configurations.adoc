@@ -1,0 +1,123 @@
+= Common DataSource Configurations
+:index-group: Datasource
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+See the link:datasource-config.html[DataSource Configuration] for
+details on all configuration options for DataSources.
+
+== HSQLDB
+
+The drivers are included with OpenEJB 3.0 and HSQLDB is the default
+database.
+
+[source,xml]
+----
+<Resource id="HSQLDB Database" type="DataSource">
+    JdbcDriver org.hsqldb.jdbcDriver
+    JdbcUrl jdbc:hsqldb:file:hsqldb
+    UserName sa
+    Password
+</Resource>
+----
+
+== Derby (Embedded)
+
+[source,xml]
+----
+<Resource id="Derby Database" type="DataSource">
+    #Embedded Derby example
+
+    JdbcDriver org.apache.derby.jdbc.EmbeddedDriver
+    JdbcUrl jdbc:derby:derbyDB;create=true
+    UserName admin
+    Password pass
+</Resource>
+----
+
+== MySQL
+
+[source,xml]
+----
+<Resource id="MySQL Database" type="DataSource">
+    #  MySQL example
+    #
+    #  This connector will not work until you download the driver at:
+    #  http://www.mysql.com/downloads/api-jdbc-stable.html
+
+    JdbcDriver  com.mysql.jdbc.Driver
+    JdbcUrl jdbc:mysql://localhost/test
+    UserName    test
+</Resource>
+----
+
+== Oracle
+
+[source,xml]
+----
+<Resource id="Oracle Database" type="DataSource">
+    #  Oracle example
+    #
+    #  This connector will not work until you download the driver at:
+    #  http://otn.oracle.com/software/tech/java/sqlj_jdbc/content.html
+    JdbcDriver  oracle.jdbc.OracleDriver
+    JdbcUrl jdbc:oracle:thin:@localhost:1521:orcl
+    UserName    scott
+    Password    tiger
+</Resource>
+----
+
+== OracleXA
+
+[source,xml]
+----
+<Resource id="OracleXA Database" type="DataSource">
+    #  OracleXA example
+    #
+    #  This connector will not work until you download the driver at:
+    #  http://otn.oracle.com/software/tech/java/sqlj_jdbc/content.html
+    JdbcDriver  oracle.jdbc.xa.client.OracleXADataSource
+    JdbcUrl jdbc:oracle:thin:@localhost:1521:orcl
+    UserName    scott
+    Password    tiger
+</Resource>
+----
+
+== PosgreSQL
+
+[source,xml]
+----
+<Resource id="PostgreSQL Database" type="DataSource">
+    #  PostgreSQL example
+    #
+    #  This connector will not work until you download the driver at:
+    #  http://jdbc.postgresql.org/download.html
+    JdbcDriver   org.postgresql.Driver
+    JdbcUrl  jdbc:postgresql://localhost/test
+    UserName     postgres
+    Password     pass
+</Resource>
+----
+
+== InstantDB
+
+[source,xml]
+----
+<Resource id="InstantDB Database" type="DataSource">
+    #  InstantDB example
+    #
+    JdbcDriver   org.enhydra.instantdb.jdbc.idbDriver
+    JdbcUrl  jdbc:idb:conf/instantdb.properties
+    UserName     Admin
+    Password     pass
+</Resource>
+----
+
+Internally, from TomEE 1.5.0, JDBC pools are managed via Tomcat-pool.
+You can still switch back to Apache Commons DBCP by adding the following
+property: DataSourceCreator dbcp. To get the full list of available
+configuration properties, have a look to
+http://commons.apache.org/dbcp/configuration.html[Apache Commons DBCP
+configuration].

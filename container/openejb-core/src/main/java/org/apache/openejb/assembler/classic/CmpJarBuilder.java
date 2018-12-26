@@ -46,7 +46,7 @@ public class CmpJarBuilder {
     private final ClassLoader tempClassLoader;
 
     private File jarFile;
-    private final Set<String> entries = new TreeSet<String>();
+    private final Set<String> entries = new TreeSet<>();
     private final AppInfo appInfo;
 
     public CmpJarBuilder(final AppInfo appInfo, final ClassLoader classLoader) {

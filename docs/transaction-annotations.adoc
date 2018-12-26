@@ -1,0 +1,230 @@
+= Transaction Annotations
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+_Also see link:testing-transactions-example.html[Testing Transactions]
+for an example of how to use and test EJB transaction attributes_
+
+The _javax.ejb.TransactionAttribute_ annotation (`@TransactionAttribute`)
+can be applied to a bean class or it's methods.
+
+Usage of the `@TransactionAttribute` requires you to specify one of six
+different transaction attribute types defined via the
+javax.ejb.TransactionAttributeType enum.
+
+* TransactionAttributeType._MANDATORY_
+* TransactionAttributeType._REQUIRED_
+* TransactionAttributeType._REQUIRES_NEW_
+* TransactionAttributeType._SUPPORTS_
+* TransactionAttributeType._NOT_SUPPORTED_
+* TransactionAttributeType._NEVER_
+
+Per EJB 3.0 the default transaction attribute for all EJB 3.0
+applications is _REQUIRED_. The default transaction attribute for EJB
+2.1, 2.0 and 1.1 applications is vendor specific. In OpenEJB EJB 2.1,
+2.0 and 1.1 applications also use _REQUIRED_ as the default.
+
+== Attribute Types summary
+
+A simplistic way to visualize the transaction attributes is as follows.
+
+Failing
+
+Correcting
+
+No Change
+
+Transacted
+
+MANDATORY
+
+REQUIRED, REQUIRES_NEW
+
+SUPPORTS
+
+Not Transacted
+
+NEVER
+
+NOT_SUPPORTED
+
+SUPPORTS
+
+The "_Transacted_" and "_Not Transacted_" categories represent the
+container guarantee, i.e. if the bean method will or will not be invoked
+in a transaction. The "_Failing_", "_Correcting_", and "_No Change_"
+categories represent the action take by the container to achieve that
+guarantee.
+
+For example, _Never_ and _Mandatory_ are categorized as "_Failing_" and
+will cause the container to throw an exception to the caller if there is
+(Tx Never) or is not (Tx Mandatory) a transaction in progress when the
+method is called. The attributes _Required_, _RequiresNew_, and
+_NotSupported_ are categorized as "_Correcting_" as they will cause the
+container to adjust the transactional state automatically as needed to
+match the desired state, rather than blocking the invocation by throwing
+an exception.
+
+=== Detailed description of each Attribute
+
+==== MANDATORY
+
+A _MANDATORY_ method is guaranteed to always be executed in a
+transaction. However, it's the caller's job to take care of suppling the
+transaction. If the caller attempts to invoke the method _outside_ of a
+transaction, then the container will block the call and throw them an
+_exception_.
+
+==== REQUIRED
+
+A _REQUIRED_ method is guaranteed to always be executed in a
+transaction. If the caller attempts to invoke the method _outside_ of a
+transaction, the container will _start_ a transaction, execute the
+method, then _commit_ the transaction.
+
+==== REQUIRES_NEW
+
+A _REQUIRES_NEW_ method is guaranteed to always be executed in a
+transaction. If the caller attempts to invoke the method _inside or
+outside_ of a transaction, the container will still _start_ a
+transaction, execute the method, then _commit_ the transaction. Any
+transaction the caller may have in progress will be _suspended_ before
+the method execution then _resumed_ afterward.
+
+==== NEVER
+
+A _NEVER_ method is guaranteed to never be executed in a transaction.
+However, it's the caller's job to ensure there is no transaction. If the
+caller attempts to invoke the method _inside_ of a transaction, then the
+container will block the call and throw them an _exception_.
+
+==== NOT_SUPPORTED
+
+A _NOT_SUPPORTED_ method is guaranteed to never be executed in a
+transaction. If the caller attempts to invoke the method _inside_ of a
+transaction, the container will _suspend_ the caller's transaction,
+execute the method, then _resume_ the caller's transaction.
+
+==== SUPPORTS
+
+A _SUPPORTS_ method is guaranteed to adopt the exact transactional state
+of the caller. These methods can be invoked by caller's _inside or
+outside_ of a transaction. The container will do nothing to change that
+state.
+
+== On Methods
+
+[source,java]
+----
+@Stateless
+public static class MyBean implements MyBusinessInterface {
+
+    @TransactionAttribute(TransactionAttributeType.MANDATORY)
+    public String codeRed(String s) {
+    return s;
+    }
+
+    public String codeBlue(String s) {
+    return s;
+    }
+}
+----
+
+* _codeRed_ will be invoked with the attribute of _MANDATORY_
+* _codeBlue_ will be invoked with the default attribute of _REQUIRED_
+
+== On Classes
+
+[source,java]
+----
+@Stateless
+@TransactionAttribute(TransactionAttributeType.MANDATORY)
+public static class MyBean implements MyBusinessInterface {
+
+    public String codeRed(String s) {
+    return s;
+    }
+
+    public String codeBlue(String s) {
+    return s;
+    }
+}
+----
+
+* _codeRed_ and _codeBlue_ will be invoked with the attribute of
+_MANDATORY_
+
+== Mixed on classes and methods
+
+[source,java]
+----
+@Stateless
+@TransactionAttribute(TransactionAttributeType.SUPPORTS)
+public static class MyBean implements MyBusinessInterface {
+
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public String codeRed(String s) {
+    return s;
+    }
+
+    public String codeBlue(String s) {
+    return s;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public String codeGreen(String s) {
+    return s;
+    }
+}
+----
+
+* _codeRed_ will be invoked with the attribute of _NEVER_
+* _codeBlue_ will be invoked with the attribute of _SUPPORTS_
+* _codeGreen_ will be invoked with the attribute of _REQUIRED_
+
+= Illegal Usage
+
+Generally, transaction annotationss cannot be made on AroundInvoke
+methods and most callbacks.
+
+The following usages of `@TransactionAttribute` have no effect.
+
+[source,java]
+----
+@Stateful
+public class MyStatefulBean implements  MyBusinessInterface  {
+
+    @PostConstruct
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void constructed(){
+
+    }
+
+    @PreDestroy
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void destroy(){
+
+    }
+
+    @AroundInvoke
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+    return invocationContext.proceed();
+    }
+
+    @PostActivate
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void activated(){
+
+    }
+
+    @PrePassivate
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void passivate(){
+
+    }
+}
+----

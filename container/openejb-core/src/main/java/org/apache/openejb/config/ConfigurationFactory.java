@@ -335,7 +335,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public static List<HandlerChainInfo> toHandlerChainInfo(final HandlerChains chains) {
-        final List<HandlerChainInfo> handlerChains = new ArrayList<HandlerChainInfo>();
+        final List<HandlerChainInfo> handlerChains = new ArrayList<>();
         if (chains == null) {
             return handlerChains;
         }
@@ -408,7 +408,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public static class Chain implements DynamicDeployer {
 
-        private final List<DynamicDeployer> chain = new ArrayList<DynamicDeployer>();
+        private final List<DynamicDeployer> chain = new ArrayList<>();
 
         public boolean add(final DynamicDeployer o) {
             return chain.add(o);
@@ -636,7 +636,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     private List<File> getDeclaredApps() {
         // make a copy of the list because we update it
-        final List<Deployments> deployments = new ArrayList<Deployments>();
+        final List<Deployments> deployments = new ArrayList<>();
 
         if (openejb != null) {
             deployments.addAll(openejb.getDeployments());
@@ -666,9 +666,9 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final FileUtils base = SystemInstance.get().getBase();
 
-        final List<Deployments> autoDeploy = new ArrayList<Deployments>();
+        final List<Deployments> autoDeploy = new ArrayList<>();
 
-        final List<File> declaredAppsUrls = new ArrayList<File>();
+        final List<File> declaredAppsUrls = new ArrayList<>();
 
         for (final Deployments deployment : deployments) {
             try {
@@ -704,7 +704,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
         final List<URL> classpathAppsUrls = DeploymentsResolver.loadFromClasspath(classLoader);
 
-        final ArrayList<File> jarFiles = new ArrayList<File>();
+        final ArrayList<File> jarFiles = new ArrayList<>();
         for (final URL path : classpathAppsUrls) {
             final File file = URLs.toFile(path);
 
@@ -994,8 +994,8 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     public AppInfo configureApplication(final AppModule appModule) throws OpenEJBException {
         try {
-            final Collection<Class<?>> extensions = new HashSet<Class<?>>();
-            final Collection<String> notLoaded = new HashSet<String>();
+            final Collection<Class<?>> extensions = new HashSet<>();
+            final Collection<String> notLoaded = new HashSet<>();
 
             final List<URL> libs = appModule.getAdditionalLibraries();
             if (libs != null && libs.size() > 0) {
@@ -1312,7 +1312,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (provider == null) {
             final List<ServiceProvider> providers = ServiceUtils.getServiceProvidersByServiceType(providerType);
             final StringBuilder sb = new StringBuilder();
-            final List<String> types = new ArrayList<String>();
+            final List<String> types = new ArrayList<>();
             for (final ServiceProvider p : providers) {
                 for (final String type : p.getTypes()) {
                     if (types.contains(type)) {
@@ -1600,7 +1600,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     public List<String> getResourceIds(final String type, Properties required) {
-        final List<String> resourceIds = new ArrayList<String>();
+        final List<String> resourceIds = new ArrayList<>();
 
         if (required == null) {
             required = new Properties();
@@ -1631,7 +1631,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
             // the above sys instance
             if (openejb != null) {
                 for (final Resource resource : openejb.getResource()) {
-                    final ArrayList<String> types = new ArrayList<String>();
+                    final ArrayList<String> types = new ArrayList<>();
                     if (resource.getType() != null) {
                         types.add(resource.getType());
                     }
@@ -1680,7 +1680,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     protected List<String> getContainerIds() {
-        final List<String> containerIds = new ArrayList<String>();
+        final List<String> containerIds = new ArrayList<>();
 
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
@@ -1707,19 +1707,15 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
     }
 
     protected List<ContainerInfo> getContainerInfos() {
-        final List<ContainerInfo> containers = new ArrayList<ContainerInfo>();
+        final List<ContainerInfo> containers = new ArrayList<>();
 
         final OpenEjbConfiguration runningConfig = getRunningConfig();
         if (runningConfig != null) {
-            for (final ContainerInfo containerInfo : runningConfig.containerSystem.containers) {
-                containers.add(containerInfo);
-            }
+            containers.addAll(runningConfig.containerSystem.containers);
         }
 
         if (sys != null) {
-            for (final ContainerInfo containerInfo : sys.containerSystem.containers) {
-                containers.add(containerInfo);
-            }
+            containers.addAll(sys.containerSystem.containers);
         }
         return containers;
     }

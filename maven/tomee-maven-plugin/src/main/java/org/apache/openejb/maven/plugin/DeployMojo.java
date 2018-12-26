@@ -33,17 +33,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+
 /**
+ * The type DeployMojo.
  * Simply deploy an application in a running TomEE
  */
 @Mojo(name = "deploy")
 public class DeployMojo extends AbstractDeployMojo {
+    /**
+     * The System variables.
+     */
     @Parameter
     protected Map<String, String> systemVariables = new HashMap<String, String>();
 
     @Parameter(property = "tomee-plugin.binary", defaultValue = "false")
     private boolean useBinaries;
 
+    /**
+     * Perform the deploy
+     *
+     * @throws MojoExecutionException
+     * @throws MojoFailureException
+     */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Deployer deployer = (Deployer) lookup("openejb/DeployerBusinessRemote");

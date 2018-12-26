@@ -43,9 +43,9 @@ import java.util.concurrent.Callable;
 
 public class TomcatSecurityService extends AbstractSecurityService {
     private static final boolean ONLY_DEFAULT_REALM = "true".equals(SystemInstance.get().getProperty("tomee.realm.only-default", "false"));
-    protected static final ThreadLocal<LinkedList<Subject>> runAsStack = new ThreadLocal<LinkedList<Subject>>() {
+    protected static final ThreadLocal<LinkedList<Subject>> RUN_AS_STACK = new ThreadLocal<LinkedList<Subject>>() {
         protected LinkedList<Subject> initialValue() {
-            return new LinkedList<Subject>();
+            return new LinkedList<>();
         }
     };
 
@@ -119,13 +119,18 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     private Subject createSubject(final Realm realm, final Principal principal) {
-        final Set<Principal> principals = new HashSet<Principal>();
-        principals.add(new TomcatUser(realm, principal));
+        final Set<Principal> principals = new HashSet<>();
+        if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
+            principals.add(principal);
+        } else {
+            principals.add(new TomcatUser(realm, principal));
+        }
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
 
+    @Override
     public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
-        final Set<String> roles = new LinkedHashSet<String>(logicalRoles.size());
+        final Set<String> roles = new LinkedHashSet<>(logicalRoles.size());
         for (final String logicalRole : logicalRoles) {
             for (final Principal principal : principals) {
                 if (principal instanceof TomcatUser) {
@@ -175,12 +180,13 @@ public class TomcatSecurityService extends AbstractSecurityService {
 
         if (runAs != null) {
             final Subject runAsSubject = createRunAsSubject(runAs);
-            runAsStack.get().addFirst(runAsSubject);
+            RUN_AS_STACK.get().addFirst(runAsSubject);
         }
 
         return webAppState;
     }
 
+    @Override
     public void onLogout(final HttpServletRequest request) {
         final Request state = OpenEJBSecurityListener.requests.get();
         final Object webappState = state == null ? null : state.getNote(TomEERealm.SECURITY_NOTE);
@@ -201,18 +207,19 @@ public class TomcatSecurityService extends AbstractSecurityService {
             }
 
             if (webAppState.hadRunAs) {
-                runAsStack.get().removeFirst();
+                RUN_AS_STACK.get().removeFirst();
             }
         }
     }
 
+    @Override
     public Subject getRunAsSubject(final BeanContext callingBeanContext) {
         final Subject runAsSubject = super.getRunAsSubject(callingBeanContext);
         if (runAsSubject != null) {
             return runAsSubject;
         }
 
-        final LinkedList<Subject> stack = runAsStack.get();
+        final LinkedList<Subject> stack = RUN_AS_STACK.get();
         if (stack.isEmpty()) {
             return null;
         }
@@ -225,7 +232,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return null;
         }
 
-        final Set<Principal> principals = new HashSet<Principal>();
+        final Set<Principal> principals = new HashSet<>();
         principals.add(new RunAsRole(role));
         return new Subject(true, principals, new HashSet(), new HashSet());
     }
@@ -255,14 +262,17 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return tomcatPrincipal;
         }
 
+        @Override
         public String getName() {
             return tomcatPrincipal.getName();
         }
 
+        @Override
         public String toString() {
             return "[TomcatUser: " + tomcatPrincipal + "]";
         }
 
+        @Override
         public boolean equals(final Object o) {
             if (this == o) {
                 return true;
@@ -276,6 +286,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return realm.equals(that.realm) && tomcatPrincipal.equals(that.tomcatPrincipal);
         }
 
+        @Override
         public int hashCode() {
             int result;
             result = realm.hashCode();
@@ -294,14 +305,17 @@ public class TomcatSecurityService extends AbstractSecurityService {
             this.name = name;
         }
 
+        @Override
         public String getName() {
             return name;
         }
 
+        @Override
         public String toString() {
             return "[RunAsRole: " + name + "]";
         }
 
+        @Override
         public boolean equals(final Object o) {
             if (this == o) {
                 return true;
@@ -315,6 +329,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
             return name.equals(runAsRole.name);
         }
 
+        @Override
         public int hashCode() {
             return name.hashCode();
         }

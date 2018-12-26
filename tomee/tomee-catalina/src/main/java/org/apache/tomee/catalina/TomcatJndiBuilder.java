@@ -96,7 +96,7 @@ public class TomcatJndiBuilder {
     private final Collection<Injection> injections;
     private final boolean replaceEntry;
     private boolean useCrossClassLoaderRef = true;
-    private NamingContextListener namingContextListener;
+    private final NamingContextListener namingContextListener;
 
     public TomcatJndiBuilder(final StandardContext standardContext, final WebAppInfo webAppInfo, final Collection<Injection> injections) {
         this.injections = injections;
@@ -783,7 +783,7 @@ public class TomcatJndiBuilder {
 
             // add port refs
             if (!ref.portRefs.isEmpty()) {
-                final List<PortRefData> portRefs = new ArrayList<PortRefData>(ref.portRefs.size());
+                final List<PortRefData> portRefs = new ArrayList<>(ref.portRefs.size());
                 for (final PortRefInfo portRefInfo : ref.portRefs) {
                     final PortRefData portRef = new PortRefData();
                     portRef.setQName(portRefInfo.qname);
@@ -906,6 +906,7 @@ public class TomcatJndiBuilder {
             this.contextResource = contextResource;
         }
 
+        @Override
         public void setProperty(final String name, final Object value) {
             contextResource.setProperty(name, value);
         }

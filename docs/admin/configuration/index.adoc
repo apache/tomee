@@ -1,0 +1,24 @@
+= Server Configuration
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+== Container
+
+TomEE specific configuration (ie not inherited one from Tomcat) is based on properties. Therefore
+you can fully configure TomEE using properties in `conf/system.properties`.
+However for convenience it also provides a hybrid XML alternative a.k.a. `conf/tomee.xml`.
+
+- link:server.html[Server Configuration: Properties].
+- link:resources.html[Resources]
+- link:containers.html[Containers]
+
+== Application
+
+Some settings can be specific to applications, these ones are also properties based and
+are read in `WEB-INF/application.properties`. When you can't use `tomee.xml` to configure
+resources you can use `WEB-INF/resources.xml` which inherit from `tomee.xml` its syntax
+but binds the resources to the application and reuses the application classloader.
+
+More about link:application.html[Container Configuration].

@@ -40,12 +40,12 @@ public class Index<K, V> extends AbstractMap<K, V> {
 
     public Index(final Map<K, V> map) {
         entries = new IndexEntry[map.size()];
-        keyIndicies = new LinkedHashMap<K, Integer>(map.size());
+        keyIndicies = new LinkedHashMap<>(map.size());
 
         int i = 0;
         for (final Entry<K, V> entry : map.entrySet()) {
-            entries[i] = new IndexEntry<K, V>(entry);
-            keyIndicies.put(entry.getKey(), new Integer(i));
+            entries[i] = new IndexEntry<>(entry);
+            keyIndicies.put(entry.getKey(), i);
             i++;
         }
 
@@ -54,11 +54,11 @@ public class Index<K, V> extends AbstractMap<K, V> {
 
     public Index(final List<K> keys) {
         entries = new IndexEntry[keys.size()];
-        keyIndicies = new LinkedHashMap<K, Integer>(keys.size());
+        keyIndicies = new LinkedHashMap<>(keys.size());
         for (int i = 0; i < keys.size(); i++) {
             final K key = keys.get(i);
-            entries[i] = new IndexEntry<K, V>(key, null);
-            keyIndicies.put(key, new Integer(i));
+            entries[i] = new IndexEntry<>(key, null);
+            keyIndicies.put(key, i);
         }
 
         entrySet = new IndexEntrySet();
@@ -66,11 +66,11 @@ public class Index<K, V> extends AbstractMap<K, V> {
 
     public Index(final K[] keys) {
         entries = new IndexEntry[keys.length];
-        keyIndicies = new LinkedHashMap<K, Integer>(keys.length);
+        keyIndicies = new LinkedHashMap<>(keys.length);
         for (int i = 0; i < keys.length; i++) {
             final K key = keys[i];
-            entries[i] = new IndexEntry<K, V>(key, null);
-            keyIndicies.put(key, new Integer(i));
+            entries[i] = new IndexEntry<>(key, null);
+            keyIndicies.put(key, i);
         }
 
         entrySet = new IndexEntrySet();
@@ -78,7 +78,7 @@ public class Index<K, V> extends AbstractMap<K, V> {
 
     public List<V> values() {
         if (indexValueList == null) {
-            indexValueList = new IndexValueList<V>();
+            indexValueList = new IndexValueList<>();
         }
         return indexValueList;
     }
@@ -147,18 +147,18 @@ public class Index<K, V> extends AbstractMap<K, V> {
     }
 
     public Iterator<V> iterator() {
-        return new IndexIterator<V>();
+        return new IndexIterator<>();
     }
 
     public ListIterator<V> listIterator() {
-        return new IndexListIterator<V>(0);
+        return new IndexListIterator<>(0);
     }
 
     public ListIterator<V> listIterator(final int index) {
         if (index < 0 || index >= entries.length) {
             throw new IndexOutOfBoundsException(String.valueOf(index));
         }
-        return new IndexListIterator<V>(index);
+        return new IndexListIterator<>(index);
     }
 
     public Object[] toArray() {

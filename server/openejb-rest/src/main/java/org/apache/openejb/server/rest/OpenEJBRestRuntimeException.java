@@ -21,7 +21,7 @@ public class OpenEJBRestRuntimeException extends RuntimeException {
         super(message);
     }
 
-    public OpenEJBRestRuntimeException(String message, Throwable cause) {
+    public OpenEJBRestRuntimeException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

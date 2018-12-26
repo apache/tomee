@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<ejb-jar>
+    <enterprise-beans>
+        <session>
+            <ejb-name>FinderTestHome</ejb-name>
+            <local-home>org.apache.openejb.arquillian.tests.bmp.local.FinderTestHome</local-home>
+            <local>org.apache.openejb.arquillian.tests.bmp.local.FinderTest</local>
+            <ejb-class>org.apache.openejb.arquillian.tests.bmp.local.FinderTestBean</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+            <ejb-local-ref>
+                <ejb-ref-name>ejb/LittleFinderHome</ejb-ref-name>
+                <ejb-ref-type>Entity</ejb-ref-type>
+                <local-home>org.apache.openejb.arquillian.tests.bmp.local.LittleFinderHome</local-home>
+                <local>org.apache.openejb.arquillian.tests.bmp.local.LittleFinder</local>
+                <ejb-link>LittleFinderHome</ejb-link>
+            </ejb-local-ref>
+            <ejb-local-ref>
+                <ejb-ref-name>ejb/BigFinderHome</ejb-ref-name>
+                <ejb-ref-type>Entity</ejb-ref-type>
+                <local-home>org.apache.openejb.arquillian.tests.bmp.local.BigFinderHome</local-home>
+                <local>org.apache.openejb.arquillian.tests.bmp.local.BigFinder</local>
+                <ejb-link>BigFinderHome</ejb-link>
+            </ejb-local-ref>
+        </session>
+        <entity>
+            <description>LittleFinder</description>
+            <ejb-name>LittleFinderHome</ejb-name>
+            <local-home>org.apache.openejb.arquillian.tests.bmp.local.LittleFinderHome</local-home>
+            <local>org.apache.openejb.arquillian.tests.bmp.local.LittleFinder</local>
+            <ejb-class>org.apache.openejb.arquillian.tests.bmp.local.LittleFinderBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>org.apache.openejb.arquillian.tests.bmp.local.LittleFinderPK</prim-key-class>
+            <reentrant>False</reentrant>
+        </entity>
+        <entity>
+            <description>BigFinder</description>
+            <ejb-name>BigFinderHome</ejb-name>
+            <local-home>org.apache.openejb.arquillian.tests.bmp.local.BigFinderHome</local-home>
+            <local>org.apache.openejb.arquillian.tests.bmp.local.BigFinder</local>
+            <ejb-class>org.apache.openejb.arquillian.tests.bmp.local.BigFinderBean</ejb-class>
+            <persistence-type>Bean</persistence-type>
+            <prim-key-class>org.apache.openejb.arquillian.tests.bmp.local.BigFinderPK</prim-key-class>
+            <reentrant>False</reentrant>
+        </entity>
+    </enterprise-beans>
+</ejb-jar>
+

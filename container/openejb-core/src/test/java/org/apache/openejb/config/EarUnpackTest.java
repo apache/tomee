@@ -41,7 +41,7 @@ public class EarUnpackTest extends TestCase {
         final File ear = new File(appsDir, "colors.ear");
 
         { // First Version of the EAR
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("orange.jar", Archives.jarArchive(Orange.class));
             Archives.jarArchive(ear, contents);
 
@@ -51,7 +51,7 @@ public class EarUnpackTest extends TestCase {
         }
 
         { // First Version of the EAR
-            final Map<String, Object> contents = new HashMap<String, Object>();
+            final Map<String, Object> contents = new HashMap<>();
             contents.put("yellow.jar", Archives.jarArchive(Yellow.class));
             Archives.jarArchive(ear, contents);
 

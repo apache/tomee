@@ -109,10 +109,10 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         }
     }
 
-    private final Map<WebAppInfo, DeployedWebObjects> servletDeploymentInfo = new HashMap<WebAppInfo, DeployedWebObjects>();
-    private final Map<WebAppInfo, List<Object>> listeners = new HashMap<WebAppInfo, List<Object>>();
-    private final Map<WebAppInfo, ServletContextEvent> servletContextEvents = new HashMap<WebAppInfo, ServletContextEvent>();
-    private final Map<String, ClassLoader> loaderByWebContext = new HashMap<String, ClassLoader>();
+    private final Map<WebAppInfo, DeployedWebObjects> servletDeploymentInfo = new HashMap<>();
+    private final Map<WebAppInfo, List<Object>> listeners = new HashMap<>();
+    private final Map<WebAppInfo, ServletContextEvent> servletContextEvents = new HashMap<>();
+    private final Map<String, ClassLoader> loaderByWebContext = new HashMap<>();
 
     public void setClassLoader(final String id, final ClassLoader loader) {
         loaderByWebContext.put(id, loader);
@@ -137,13 +137,13 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 classLoader = appClassLoader;
             }
 
-            final Set<Injection> injections = new HashSet<Injection>(appContext.getInjections());
+            final Set<Injection> injections = new HashSet<>(appContext.getInjections());
             injections.addAll(new InjectionBuilder(classLoader).buildInjections(webAppInfo.jndiEnc));
 
             final List<BeanContext> beanContexts;
             if (!appInfo.webAppAlone) { // add module bindings in app
                 final Assembler assembler = SystemInstance.get().getComponent(Assembler.class);
-                beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<BeanContext>(), webAppInfo.moduleId);
+                beanContexts = assembler.initEjbs(classLoader, appInfo, appContext, injections, new ArrayList<>(), webAppInfo.moduleId);
                 appContext.getBeanContexts().addAll(beanContexts);
             } else {
                 beanContexts = null;
@@ -195,7 +195,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
                 List<Object> list = listeners.get(webAppInfo);
                 if (list == null) {
-                    list = new ArrayList<Object>();
+                    list = new ArrayList<>();
                     listeners.put(webAppInfo, list);
                 }
                 list.add(instance);
@@ -218,7 +218,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
 
                         List<Object> list = listeners.get(webAppInfo);
                         if (list == null) {
-                            list = new ArrayList<Object>();
+                            list = new ArrayList<>();
                             listeners.put(webAppInfo, list);
                         }
                         list.add(instance);
@@ -293,7 +293,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                 }
             }
 
-            final Map<String, PortInfo> ports = new TreeMap<String, PortInfo>();
+            final Map<String, PortInfo> ports = new TreeMap<>();
             for (final PortInfo port : webAppInfo.portInfos) {
                 ports.put(port.serviceLink, port);
             }
@@ -432,7 +432,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
         try { // in WEB-INF/classes
             return loader.loadClass(className(classname));
         } catch (final ClassNotFoundException cnfe) { // in a dependency (jar)
-            return loader.loadClass(className(path.substring(path.indexOf("!") + 2)));
+            return loader.loadClass(className(path.substring(path.indexOf('!') + 2)));
         }
     }
 
@@ -491,8 +491,8 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
     }
 
     private static class DeployedWebObjects {
-        public List<String> mappings = new ArrayList<String>();
-        public List<String> filterMappings = new ArrayList<String>();
+        public List<String> mappings = new ArrayList<>();
+        public List<String> filterMappings = new ArrayList<>();
         public WebContext webContext;
     }
 

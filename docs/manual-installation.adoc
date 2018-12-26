@@ -1,0 +1,148 @@
+= Manual Installation
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Overview
+
+The manual installation process is significantly harder then the
+link:tomcat.html[automatic installation] which we normally recommend. In
+this installation process you will do the following:
+
+[arabic]
+. Install openejb.war
+. Download openejb.war from the
+http://tomee.apache.org/downloads.html[download page]
+. Make webapps/openejb directory
+. Change to new webapps/openejb directory
+. Unpack the openejb.war file in the new directory
+. Add the OpenEJB listener the conf/server.xml file
+. Update the non-compliant Tomcat annotations-api.jar
+. Add the OpenEJB JavaAgent to the bin/catalina.bat or bin/catalina.bat
+script
+
+== Install openejb.war
+
+Once Tomcat has been link:tomcat-installation.html[installed] , the
+OpenEJB plugin for Tomcat can be installed. The war can be obtained from
+the http://tomee.apache.org/downloads.html[download page]
+
+The commands in this example are executed from within the Tomcat
+installation directory.
+
+== Unpack OpenEJB Tomcat plugin in Tomcat webapps directory
+
+Be careful, this is the most error prone step. A web application does
+not contain a root directory, so if you unpack it in the wrong
+directory, it is difficult to undo. Please, follow this step closely,
+and most importantly make sure you execute the unpack command from
+within the new webapps/openejb directory
+
+Due to the structure of war files, you must create a new directory for
+OpenEJB, change to the new directory and execute the unpack command from
+within the new directory. If you get this wrong, it is difficult to
+undo, so follow the steps closely.
+
+== Add the OpenEJB listener to Tomcat
+
+All Tomcat listener classes must be available in the Tomcat common class
+loader, so the openejb-loader jar must be copied into the Tomcat lib
+directory.
+
+[source,java]
+----
+    C:\apache-tomcat-6.0.14>copy webapps\openejb\lib\openejb-loader-3.0.0-SNAPSHOT.jar lib\openejb-loader.jar
+    1 file(s) copied.
+
+    apache-tomcat-6.0.14$ cp webapps/openejb/lib/openejb-loader-*.jar lib/openejb-loader.jar
+----
+
+Add the following
+`<Listener className="org.apache.openejb.loader.OpenEJBListener" />` to
+your conf/server.xml file to load the OpenEJB listener:
+
+The snippet is shown below
+
+[source,xml]
+----
+<!-- Note:  A "Server" is not itself a "Container", so you may not
+define subcomponents such as "Valves" at this
+level.
+Documentation at /docs/config/server.html
+ -->
+
+<Server port="8005" shutdown="SHUTDOWN">
+<!-- OpenEJB plugin for tomcat -->
+<Listener
+className="org.apache.openejb.loader.OpenEJBListener" />
+
+<!--APR library loader. Documentation at /docs/apr.html -->    
+<Listener
+className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
+----
+
+== Update the Tomcat annotations-api.jar file
+
+Tomcat contains an old non-compliant version of the javax.annotation
+classes and these invalid classes must be updated so OpenEJB can process
+annotations. Simply, replace the annotations-api.jar in the Tomcat lib
+directory with the updated annotations-api.jar in the OpenEJB war.
+
+== Add OpenEJB javaagent to Tomcat startup
+
+OpenJPA, the Java Persistence implementation used by OpenEJB, currently
+must enhanced persistence classes to function properly, and this
+requires the installation of a javaagent into the Tomcat startup
+process.
+
+First, copy the OpenEJB JavaAgent jar into the lib directory.
+
+Simply, add the snippet marked below in bin/catalina.bat (Windows) or
+bin/catalina.sh (Unix) file to enable the OpenEJB javaagent:
+
+[source,properties]
+----
+if not exist "%CATALINA_BASE%\conf\logging.properties" goto noJuli
+set JAVA_OPTS=%JAVA_OPTS%
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+-Djava.util.logging.config.file="%CATALINA_BASE%\conf\logging.properties"
+:noJuli
+
+ # Start of Snippet to add
+ rem Add OpenEJB javaagent if not exist
+ "%CATALINA_BASE%\webapps\openejb\lib\openejb-javaagent.jar" goto
+ noOpenEJBJavaagent set
+ JAVA_OPTS="-javaagent:%CATALINA_BASE%\webapps\openejb\lib\openejb-javaagent.jar"
+ %JAVA_OPTS% :noOpenEJBJavaagent
+ # End of Snippet to add
+
+
+rem ----- Execute The Requested Command
+---------------------------------------
+echo Using CATALINA_BASE:   %CATALINA_BASE%
+echo Using CATALINA_HOME:   %CATALINA_HOME%
+
+
+
+# Set juli LogManager if it is present
+if [OPENEJB: -r "$CATALINA_BASE"/conf/logging.properties ](openejb:--r-"$catalina_base"/conf/logging.properties-.html)
+; then
+JAVA_OPTS="$JAVA_OPTS
+"-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+"-Djava.util.logging.config.file="$CATALINA_BASE/conf/logging.properties"
+fi
+
+ #Start of Snippet to add
+ if [OPENEJB: -r "$CATALINA_BASE"/webapps/lib/openejb-javaagent.jar ](openejb:--r-"$catalina_base"/webapps/lib/openejb-javaagent.jar-.html)
+; then
+JAVA_OPTS=""-javaagent:$CATALINA_BASE/lib/openejb-javaagent.jar"
+$JAVA_OPTS"
+fi
+#End of Snippet to add
+----
+
+== Note: The example above is an excerpt from the middle of the
+bin/catalina.sh file. Search for the this section and add the snippet
+shown

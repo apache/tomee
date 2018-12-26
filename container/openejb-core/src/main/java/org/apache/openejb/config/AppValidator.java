@@ -63,7 +63,7 @@ public class AppValidator {
     private boolean printWarnings = true;
     private boolean printCount;
 
-    private final List<ValidationResults> sets = new ArrayList<ValidationResults>();
+    private final List<ValidationResults> sets = new ArrayList<>();
     private ValidationBase[] additionalValidators;
 
     /*------------------------------------------------------*/

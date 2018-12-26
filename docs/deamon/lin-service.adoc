@@ -1,0 +1,24 @@
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= Installing
+TomEE as a Windows® Service
+
+The different architecture exe's are as follows (so always use the one
+that matches your system):
+
+TomEE.amd64.exe = 64bit OS TomEE.ia64.exe = Itanium OS TomEE.x86.exe =
+32bit OS
+
+The only difference to Tomcat is that they ship with 'like named'
+binaries, but in sub-directories - Or offer separate downloads for your
+OS. We just modified the batch files to detect your arch-type and use
+the correct binaries. Everything is all in the 'bin' directory so we
+only have a one zip fits all approach.
+
+Definitive documentation can be found here:
+
+http://commons.apache.org/proper/commons-daemon/procrun.html

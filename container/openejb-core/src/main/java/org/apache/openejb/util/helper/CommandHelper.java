@@ -25,7 +25,7 @@ import org.apache.openejb.table.Line;
 import org.apache.openejb.table.Lines;
 import org.apache.openejb.util.JavaSecurityManagers;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public final class CommandHelper {
     private CommandHelper() {
@@ -69,14 +69,14 @@ public final class CommandHelper {
             if (!empty) {
                 sb.append(", ");
             }
-            sb.append("Local").append(Arrays.asList(bc.getBusinessLocalInterfaces()));
+            sb.append("Local").append(Collections.singletonList(bc.getBusinessLocalInterfaces()));
             empty = false;
         }
         if (bc.getBusinessRemoteInterface() != null) {
             if (!empty) {
                 sb.append(", ");
             }
-            sb.append("Remote").append(Arrays.asList(bc.getBusinessRemoteInterfaces()));
+            sb.append("Remote").append(Collections.singletonList(bc.getBusinessRemoteInterfaces()));
         }
         return sb.toString();
     }

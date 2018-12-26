@@ -53,6 +53,12 @@ public class AxisServiceReference extends Reference {
         this.classLoader = classLoader;
     }
 
+    /**
+     *
+     * @return Object
+     * @throws NamingException
+     */
+    @Override
     public Object getObject() throws NamingException {
         Object serviceInstance = createServiceInterfaceProxy(serviceInterfaceClassName, seiPortNameToFactoryMap, seiClassNameToFactoryMap, classLoader);
         return serviceInstance;

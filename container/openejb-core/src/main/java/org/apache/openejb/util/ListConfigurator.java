@@ -40,7 +40,7 @@ public final class ListConfigurator {
             return null;
         }
 
-        final List<T> list = new ArrayList<T>();
+        final List<T> list = new ArrayList<>();
         final String[] split = features.trim().split(",");
         for (final String feature : split) {
             if (feature == null || feature.trim().isEmpty()) {

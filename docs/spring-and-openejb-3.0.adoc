@@ -1,0 +1,234 @@
+= Spring and OpenEJB 3.0
+:index-group: Spring
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+\{note}OpenEJB 3.1 and later users should refer to the [Spring]
+page.\{note} # Bootstrapping OpenEJB in Spring
+
+If you wish to use OpenEJB inside Spring you can do so pretty easily.
+Include OpenEJB and its dependencies in your classpath as you would in a
+plain embedded scenario then add a custom factory like the following:
+
+[source,java]
+----
+public class OpenEjbFactoryBean implements org.springframework.beans.factory.FactoryBean {
+
+    private Properties properties = new Properties();
+
+    public OpenEjbFactoryBean() {
+        properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+    }
+
+    public Properties getJndiEnvironment() {
+        return properties;
+    }
+
+    public void setJndiEnvironment(Properties properties) {
+        this.properties.putAll(properties);
+    }
+
+    public Object getObject() {
+        try {
+            return new InitialContext(properties);
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Class getObjectType(){
+        return Context.class;
+    }
+
+    boolean isSingleton() {
+        return true;
+    }
+}
+----
+
+And include that at the top of your spring xml file as follows:
+
+[source,xml]
+----
+<bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
+  <property name="jndiEnvironment">
+    <props>
+      <prop key="myDs">new://Resource?type=DataSource</prop>
+      <prop key="myDs.JdbcDriver">com.mysql.jdbc.Driver</prop>
+      <prop key="myDs.JdbcUrl">jdbc:mysql://localhost/midastest?createDatabaseIfNotExist=true</prop>
+      <prop key="myDs.UserName">root</prop>
+      <prop key="myDs.Password"></prop>
+    </props>
+  </property>
+</bean>
+----
+
+The value of is meant to be illustrative of the kinds of properties you
+can pass into OpenEJB. It's possible to create any number of
+datasources, topics, queues, containers and more this way.
+
+Just as with Unit Testing, OpenEJB will find and automatically deploy
+all the EJB beans it [finds in the classpath|Application discovery via
+the classpath]. You can then expose any of these things to other Spring
+components with custom factory beans.
+
+== Injecting OpenEJB-created resources into Spring components
+
+If you want to have any of the Topics, Queues, DataSources,
+EntityManagers or more that OpenEJB creates injected into components
+that Spring creates, here's one technique....
+
+Let's say you have a persistence unit called "_OrangeUnit_" declared in
+a persistence.xml file. One way to get the related _EntityManager_
+created by OpenEJB is to do as follows. Create an `@Stateless` bean with
+an `@PersistenceContext` ref in it, then use a factory bean to look it up,
+pull the EntityManager out and return it
+
+OrangeUnitBean.java
+
+[source,java]
+----
+/*
+ * OpenEJB will automatically find this bean.  Just put it in the same jar
+ * that your META-INF/persistence.xml file is located in and make sure that
+ * that same jar file also has a META-INF/ejb-jar.xml file.  The ejb-jar.xml
+ * need only contain the text "<ejb-jar/>" at minimum.
+ */
+@Stateless
+public class OrangeUnitBean implements OrangeUnitLocal {
+
+    @PersistenceContext(unitName="OrangeUnit")
+    private EntityManager entityManager;
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+}
+----
+
+OrangeUnitLocal.java
+
+[source,java]
+----
+/**
+ * The local interface for the OrangeUnitBean
+ */
+public interface OrangeUnitLocal {
+   public EntityManager getEntityManager();
+}
+----
+
+OrangeUnitFactoryBean.java
+
+[source,java]
+----
+/**
+ * This factory bean will lookup the OrangeUnitBean using the javax.naming.Context
+ * that is created via the OpenEjbFactoryBean above.  It will simply grab the EntityManager
+ * from that bean and hand it over to Spring.  Anyone in Spring-land can then easily get
+ * a reference to the EntityManager by simply referencing this factory bean.
+ */
+public class OrangeUnitFactoryBean implements org.springframework.beans.factory.FactoryBean {
+    private Context context;
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public Object getObject() {
+        try {
+            ResourceLocal bean = (ResourceLocal) context.lookup("OrangeUnitBeanLocal");
+            return bean.getEntityManager();
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Class getObjectType(){
+        return EntityManager.class;
+    }
+
+    boolean isSingleton() {
+        return true;
+    }
+}
+----
+
+The factory bean would then be declared in your spring xml file as
+follows:
+
+[source,xml]
+----
+<bean id="OrangeUnit" class="org.acme.OrangeUnitFactoryBean">
+  <property name="context" ref="OpenEjbContext">
+</bean>
+----
+
+The EntityManager can then easily be consumed by a spring bean.
+
+[source,java]
+----
+public class SomePojo {
+
+    private EntityManager entityManager;
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    ...
+}
+----
+
+In the spring xml
+
+[source,xml]
+----
+<bean id="SomePojo" class="org.acme.SomePojo">
+  <property name="entityManager" ref="OrangeUnit">
+</bean>
+----
+
+Here's what all three declarations would look like together in your
+spring xml:
+
+Spring bean definitions combined
+
+[source,xml]
+----
+<bean id="OpenEjbContext" class="org.acme.OpenEjbFactoryBean">
+  <property name="jndiEnvironment">
+    <props>
+      <prop key="myDs">new://Resource?type=DataSource</prop>
+      <prop key="myDs.JdbcDriver">com.mysql.jdbc.Driver</prop>
+      <prop key="myDs.JdbcUrl">jdbc:mysql://localhost/midastest?createDatabaseIfNotExist=true</prop>
+      <prop key="myDs.UserName">root</prop>
+      <prop key="myDs.Password"></prop>
+    </props>
+  </property>
+</bean>
+
+<bean id="OrangeUnit" class="org.acme.OrangeUnitFactoryBean">
+  <property name="context" ref="OpenEjbContext">
+</bean>
+
+<bean id="SomePojo" class="org.acme.SomePojo">
+  <property name="entityManager" ref="OrangeUnit">
+</bean>
+----
+
+{title= Some more useful info.} Here is a bunch of links suggested
+by a user. If anybody has time to go through them and write a doc, that
+would be great. These links explain how to make available spring
+components to openejb
+http://twasink.net/blog/archives/2007/01/using_spring_wi.html
+http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/ejb/interceptor/SpringBeanAutowiringInterceptor.html
+http://wiki.netbeans.org/MavenSpringEJBsOnGlassfish
+
+\{info}

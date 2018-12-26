@@ -127,7 +127,7 @@ public class MultivaluedMapWithCaseInsensitiveKeySet<V> implements MultivaluedMa
     }
 
     private static Set<String> getInsensitiveKeySet(final Set<String> values) {
-        final Set<String> set = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+        final Set<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
         set.addAll(values);
         return set;
     }

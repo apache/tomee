@@ -69,7 +69,7 @@ public class EntityContainer implements RpcContainer {
 
     private final EntityInstanceManager instanceManager;
 
-    private final Map<String, BeanContext> deploymentRegistry = new HashMap<String, BeanContext>();
+    private final Map<String, BeanContext> deploymentRegistry = new HashMap<>();
 
     private final Object containerID;
 
@@ -387,7 +387,7 @@ public class EntityContainer implements RpcContainer {
         */
         if (returnValue instanceof Collection) {
             final Iterator keys = ((Collection) returnValue).iterator();
-            final Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
+            final Vector<ProxyInfo> proxies = new Vector<>();
             while (keys.hasNext()) {
                 final Object primaryKey = keys.next();
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));
@@ -395,7 +395,7 @@ public class EntityContainer implements RpcContainer {
             returnValue = proxies;
         } else if (returnValue instanceof Enumeration) {
             final Enumeration keys = (Enumeration) returnValue;
-            final Vector<ProxyInfo> proxies = new Vector<ProxyInfo>();
+            final Vector<ProxyInfo> proxies = new Vector<>();
             while (keys.hasMoreElements()) {
                 final Object primaryKey = keys.nextElement();
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));

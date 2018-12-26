@@ -68,7 +68,7 @@ public class JpaCmpEngine implements CmpEngine {
      */
     private final ThreadLocal<Set<EntityBean>> creating = new ThreadLocal<Set<EntityBean>>() {
         protected Set<EntityBean> initialValue() {
-            return new HashSet<EntityBean>();
+            return new HashSet<>();
         }
     };
 

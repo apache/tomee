@@ -90,6 +90,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     /**
      * {@inheritDoc}
      */
+    @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         final Object source = event.getSource();
         if (source instanceof StandardContext) {
@@ -337,6 +338,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
     /**
      * {@inheritDoc}
      */
+    @Override
     public void propertyChange(final PropertyChangeEvent event) {
         if ("service".equals(event.getPropertyName())) {
             final Object oldValue = event.getOldValue();
@@ -418,6 +420,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             this.listener = listener;
         }
 
+        @Override
         public Object put(final Object key, final Object value) {
             final Object oldValue = super.put(key, value);
             final PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, null, value);
@@ -425,6 +428,7 @@ public class GlobalListenerSupport implements PropertyChangeListener, LifecycleL
             return oldValue;
         }
 
+        @Override
         public Object remove(final Object key) {
             final Object value = super.remove(key);
             final PropertyChangeEvent event = new PropertyChangeEvent(source, propertyName, value, null);

@@ -1,0 +1,28 @@
+= ServicePool and Services
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+OpenEJB and TomEE services using ServicePool as wrapper - for instance
+ejbd service or all services not implementing SelfManaging interface -
+support some additional configuration due to the pooling. Here is the
+list of the additional properties (either configure them in the service
+configuration file in conf/conf.d/$\{service}.properties or in
+conf/system.properties prefixing them by “\{service}.”).
+
+Basically using ServicePool the service is associated to a
+ThreadPoolExecutor and this one is configured with these properties (see
+ThreadPoolExecutor constructor for the detail):
+
+* threadsCore (default 10)
+* threads (default 150)
+* queue (default threadCore-1)
+* block (default true)
+* keepAliveTime (default 60000)
+
+Additionally you can force the socket to be closed after each request
+(this is an advanced setting, use it with caution):
+
+* forceSocketClose (default true)

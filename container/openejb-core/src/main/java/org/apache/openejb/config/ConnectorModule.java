@@ -35,8 +35,8 @@ public class ConnectorModule extends Module implements DeploymentModule {
     private final ValidationContext validation;
 
     private Connector connector;
-    private final List<URL> libraries = new ArrayList<URL>();
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final List<URL> libraries = new ArrayList<>();
+    private final Set<String> watchedResources = new TreeSet<>();
 
     private final ID id;
 

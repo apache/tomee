@@ -1,0 +1,93 @@
+= JAAS and TomEE
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Purpose
+
+You want to use JAAS in TomEE with custom (or OpenEJB) LoginModules.
+
+== Solution
+
+TomEE tries to keep as possible as it is Tomcat so simply configure your
+JAAS LoginModule as in Tomcat.
+
+Note: only the first one will be used.
+
+== Configuration
+
+Add to your `CATALINA_OPTS` the `java.security.auth.login.config` system
+property:
+
+[source,properties]
+----
+-Djava.security.auth.login.config=$CATALINA_BASE/conf/login.config
+----
+
+Configure your realm in server.xml file
+
+[source,xml]
+----
+<?xml version='1.0' encoding='utf-8'?>
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.tomee.loader.OpenEJBListener" />
+  <Listener className="org.apache.catalina.security.SecurityListener" />
+
+  <Service name="Catalina">
+    <Connector port="8080" protocol="HTTP/1.1" 
+               connectionTimeout="20000" 
+               redirectPort="8443" />
+    <Connector port="8009" protocol="AJP/1.3" redirectPort="8443" />
+    <Engine name="Catalina" defaultHost="localhost">
+      <!-- here is the magic -->
+      <Realm className="org.apache.catalina.realm.JAASRealm" appName="PropertiesLogin"
+             userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+             roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal">
+      </Realm>
+
+      <Host name="localhost"  appBase="webapps"
+            unpackWARs="true" autoDeploy="true" />
+    </Engine>
+  </Service>
+</Server>
+----
+
+Configure your `login.config` file
+
+[source,java]
+----
+PropertiesLogin {
+    org.apache.openejb.core.security.jaas.PropertiesLoginModule required
+    Debug=false
+    UsersFile="users.properties"
+    GroupsFile="groups.properties";
+};
+----
+
+Configure your login module specifically (`users.properties` for
+snippets of this page for instance).
+
+Place `users.properties` and `groups.properties` files in
+`$CATALINA_BASE/conf/` folder. `users.properties` file contains user
+name and associated password entries, ex.:
+
+[source,properties]
+----
+me=password
+tomee=tomee
+----
+
+`groups.properties` file specifies groups and their users, ex.:
+
+[source,properties]
+----
+my-role=me
+manager-gui=tomee,me
+tomee-admin=tomee
+----
+
+*NOTE*: `users.properties` and `groups.properties` file names and file
+location are fixed. If other names are used, the files must be placed in
+`%CATALINA_BASE/lib/` folder instead.

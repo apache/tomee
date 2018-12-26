@@ -62,16 +62,19 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         return !context.hasFailures() && !context.hasErrors();
     }
 
+    @Override
     protected void begin() {
-        operationNames = new ArrayList<String>();
+        operationNames = new ArrayList<>();
     }
 
+    @Override
     protected void visit(Definition definition) {
         if (definition.getServices().values().size() != 1) {
             context.addFailure(new ValidationFailure("A lightweight RPC/Encoded service must contain only one Service"));
         }
     }
 
+    @Override
     protected void visit(Output output) {
         Map outputParts = output.getMessage().getParts();
         if (outputParts.size() != 0 && outputParts.size() != 1) {
@@ -80,12 +83,14 @@ public class LightWeightMappingValidator extends WsdlVisitor {
 
     }
 
+    @Override
     protected void visit(Operation operation) {
         if (!operationNames.add(operation.getName())) {
             context.addFailure(new ValidationFailure("No two operations can have the same name: " + operation.getName()));
         }
     }
 
+    @Override
     protected void visit(Fault fault) {
         Part message = fault.getMessage().getPart("message");
         if (message == null) {
@@ -96,6 +101,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
     }
 
 
+    @Override
     protected void visit(BindingInput bindingInput) {
         SOAPBody body = getSOAPBody(bindingInput.getExtensibilityElements());
         String encoding = body.getUse();
@@ -104,6 +110,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         }
     }
 
+    @Override
     protected void visit(BindingOutput bindingOutput) {
         SOAPBody body = getSOAPBody(bindingOutput.getExtensibilityElements());
         String encoding = body.getUse();
@@ -112,6 +119,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         }
     }
 
+    @Override
     protected void visit(BindingFault bindingFault) {
         SOAPBody body = getSOAPBody(bindingFault.getExtensibilityElements());
         String encoding = body.getUse();
@@ -120,6 +128,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         }
     }
 
+    @Override
     protected void visit(Binding binding) {
         SOAPBinding soapBinding = getSOAPBinding(binding);
         if (soapBinding == null || soapBinding.getStyle() == null || !soapBinding.getStyle().equals("rpc")) {
@@ -127,6 +136,7 @@ public class LightWeightMappingValidator extends WsdlVisitor {
         }
     }
 
+    @Override
     protected void visit(Service service) {
         if (service.getPorts().values().size() != 1) {
             context.addFailure(new ValidationFailure("A lightweight RPC/Encoded service must contain only one Port"));

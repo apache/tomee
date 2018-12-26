@@ -57,6 +57,7 @@ public class ExactIPv6AddressPermission implements IPAddressPermission {
         }
     }
 
+    @Override
     public boolean implies(InetAddress address) {
         if (false == address instanceof Inet6Address) {
             return false;

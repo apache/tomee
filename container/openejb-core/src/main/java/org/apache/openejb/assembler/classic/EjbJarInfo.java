@@ -45,19 +45,19 @@ public class EjbJarInfo extends CommonInfoObject {
     })
     public final List<EnterpriseBeanInfo> enterpriseBeans = new ArrayList<EnterpriseBeanInfo>();
 
-    public final List<SecurityRoleInfo> securityRoles = new ArrayList<SecurityRoleInfo>();
-    public final List<MethodPermissionInfo> methodPermissions = new ArrayList<MethodPermissionInfo>();
-    public final List<MethodTransactionInfo> methodTransactions = new ArrayList<MethodTransactionInfo>();
-    public final List<MethodConcurrencyInfo> methodConcurrency = new ArrayList<MethodConcurrencyInfo>();
-    public final List<InterceptorInfo> interceptors = new ArrayList<InterceptorInfo>();
-    public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<InterceptorBindingInfo>();
-    public final List<MethodInfo> excludeList = new ArrayList<MethodInfo>();
-    public final List<ApplicationExceptionInfo> applicationException = new ArrayList<ApplicationExceptionInfo>();
-    public final List<PortInfo> portInfos = new ArrayList<PortInfo>();
-    public final Set<String> watchedResources = new TreeSet<String>();
+    public final List<SecurityRoleInfo> securityRoles = new ArrayList<>();
+    public final List<MethodPermissionInfo> methodPermissions = new ArrayList<>();
+    public final List<MethodTransactionInfo> methodTransactions = new ArrayList<>();
+    public final List<MethodConcurrencyInfo> methodConcurrency = new ArrayList<>();
+    public final List<InterceptorInfo> interceptors = new ArrayList<>();
+    public final List<InterceptorBindingInfo> interceptorBindings = new ArrayList<>();
+    public final List<MethodInfo> excludeList = new ArrayList<>();
+    public final List<ApplicationExceptionInfo> applicationException = new ArrayList<>();
+    public final List<PortInfo> portInfos = new ArrayList<>();
+    public final Set<String> watchedResources = new TreeSet<>();
     public final JndiEncInfo moduleJndiEnc = new JndiEncInfo();
 
     public BeansInfo beans;
-    public Set<String> mbeans = new TreeSet<String>();
-    public final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<IdPropertiesInfo>();
+    public Set<String> mbeans = new TreeSet<>();
+    public final List<IdPropertiesInfo> pojoConfigurations = new ArrayList<>();
 }

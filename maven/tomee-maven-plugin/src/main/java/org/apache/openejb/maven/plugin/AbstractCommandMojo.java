@@ -24,6 +24,9 @@ import javax.naming.InitialContext;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * The type AbstractCommandMojo.
+ */
 public abstract class AbstractCommandMojo extends AbstractAddressMojo {
     /**
      * Where is deployed ejbd endpoint relatively to root (/tomee/ejb typically).
@@ -43,6 +46,12 @@ public abstract class AbstractCommandMojo extends AbstractAddressMojo {
     @Parameter
     protected Map<String, String> lookupVariables;
 
+    /**
+     * Lookup object.
+     *
+     * @param name the name
+     * @return the object
+     */
     protected Object lookup(final String name) {
         if (tomeeHttpPort == null && tomeeHttpsPort == null) {
             tomeeHttpPort = "8080";

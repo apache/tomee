@@ -43,7 +43,7 @@ public class WsServlet implements Servlet {
     public static final String WEBSERVICE_CONTAINER = WsServlet.class.getName() + "@WebServiceContainer";
 
     private static final DefaultContext DEFAULT_CONTEXT = new DefaultContext();
-    private static final ThreadLocal<ServletEndpointContext> endpointContext = new ThreadLocal<ServletEndpointContext>();
+    private static final ThreadLocal<ServletEndpointContext> ENDPOINT_CONTENT = new ThreadLocal<>();
 
     private ServletConfig config;
     private Object pojo;
@@ -71,20 +71,23 @@ public class WsServlet implements Servlet {
         getService();
     }
 
+    @Override
     public ServletConfig getServletConfig() {
         return config;
     }
 
+    @Override
     public String getServletInfo() {
         return "Webservice Servlet " + getService();
     }
 
+    @Override
     public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
         HttpListener service = getService();
         if (service == null) throw new ServletException("WebServiceContainer has not been set");
 
         ServletEndpointContext context = getContext();
-        endpointContext.set(new InvocationContext((HttpServletRequest) req));
+        ENDPOINT_CONTENT.set(new InvocationContext((HttpServletRequest) req));
         try {
             res.setContentType("text/xml");
             HttpRequest httpRequest = new ServletRequestAdapter((HttpServletRequest) req, (HttpServletResponse) res, config.getServletContext());
@@ -102,10 +105,11 @@ public class WsServlet implements Servlet {
                 throw new ServletException("Error processing webservice request", e);
             }
         } finally {
-            endpointContext.set(context);
+            ENDPOINT_CONTENT.set(context);
         }
     }
 
+    @Override
     public void destroy() {
         if (pojo instanceof ServiceLifecycle) {
             ((ServiceLifecycle) pojo).destroy();
@@ -141,7 +145,7 @@ public class WsServlet implements Servlet {
     }
 
     private static ServletEndpointContext getContext() {
-        ServletEndpointContext context = endpointContext.get();
+        ServletEndpointContext context = ENDPOINT_CONTENT.get();
         return context != null ? context : DEFAULT_CONTEXT;
     }
 
@@ -152,22 +156,27 @@ public class WsServlet implements Servlet {
             this.servletContext = servletContext;
         }
 
+        @Override
         public MessageContext getMessageContext() {
             return getContext().getMessageContext();
         }
 
+        @Override
         public Principal getUserPrincipal() {
             return getContext().getUserPrincipal();
         }
 
+        @Override
         public HttpSession getHttpSession() {
             return getContext().getHttpSession();
         }
 
+        @Override
         public ServletContext getServletContext() {
             return servletContext;
         }
 
+        @Override
         public boolean isUserInRole(String s) {
             return getContext().isUserInRole(s);
         }
@@ -181,22 +190,27 @@ public class WsServlet implements Servlet {
             this.request = request;
         }
 
+        @Override
         public MessageContext getMessageContext() {
             return (MessageContext) request.getAttribute(WsConstants.MESSAGE_CONTEXT);
         }
 
+        @Override
         public Principal getUserPrincipal() {
             return request.getUserPrincipal();
         }
 
+        @Override
         public HttpSession getHttpSession() {
             return request.getSession();
         }
 
+        @Override
         public ServletContext getServletContext() {
             throw new IllegalAccessError("InstanceContext should never delegate this method.");
         }
 
+        @Override
         public boolean isUserInRole(String s) {
             return request.isUserInRole(s);
         }
@@ -204,22 +218,27 @@ public class WsServlet implements Servlet {
 
     private static class DefaultContext implements ServletEndpointContext {
 
+        @Override
         public MessageContext getMessageContext() {
             throw new IllegalStateException("Method cannot be called outside a request context");
         }
 
+        @Override
         public Principal getUserPrincipal() {
             throw new IllegalStateException("Method cannot be called outside a request context");
         }
 
+        @Override
         public HttpSession getHttpSession() {
             throw new javax.xml.rpc.JAXRPCException("Method cannot be called outside an http request context");
         }
 
+        @Override
         public ServletContext getServletContext() {
             throw new IllegalAccessError("InstanceContext should never delegate this method.");
         }
 
+        @Override
         public boolean isUserInRole(String s) {
             throw new IllegalStateException("Method cannot be called outside a request context");
         }

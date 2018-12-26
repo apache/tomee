@@ -122,6 +122,12 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
       <version>${microprofile.rest-client.impl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.json</groupId>
+          <artifactId>javax.json-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -140,13 +146,13 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.9.4</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.4</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -170,7 +176,7 @@
     <dependency>
       <groupId>io.opentracing</groupId>
       <artifactId>opentracing-api</artifactId>
-      <version>0.31.0</version>
+      <version>${opentracing.api}</version>
     </dependency>
   </dependencies>
 

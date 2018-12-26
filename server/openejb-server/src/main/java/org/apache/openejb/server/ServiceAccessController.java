@@ -80,7 +80,7 @@ public class ServiceAccessController extends ServerServiceFilter implements Unwr
     }
 
     private void parseAdminIPs(final Properties props) throws ServiceException {
-        final LinkedList<IPAddressPermission> permissions = new LinkedList<IPAddressPermission>();
+        final LinkedList<IPAddressPermission> permissions = new LinkedList<>();
 
         final String ipString = props.getProperty("only_from");
 
@@ -136,7 +136,7 @@ public class ServiceAccessController extends ServerServiceFilter implements Unwr
 
         @Managed
         public List<String> getHostPermissions() {
-            final List<String> list = new ArrayList<String>();
+            final List<String> list = new ArrayList<>();
             for (final IPAddressPermission hostPermission : hostPermissions) {
                 list.add(hostPermission.toString());
             }

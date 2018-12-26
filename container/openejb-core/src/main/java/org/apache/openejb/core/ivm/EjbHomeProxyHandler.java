@@ -71,7 +71,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
 
     public EjbHomeProxyHandler(final BeanContext beanContext, final InterfaceType interfaceType, final List<Class> interfaces, final Class mainInterface) {
         super(beanContext, null, interfaceType, interfaces, mainInterface);
-        dispatchTable = new HashMap<String, MethodType>();
+        dispatchTable = new HashMap<>();
         dispatchTable.put("create", MethodType.CREATE);
         dispatchTable.put("getEJBMetaData", MethodType.META_DATA);
         dispatchTable.put("getHomeHandle", MethodType.HOME_HANDLE);
@@ -129,7 +129,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
         try {
             final EjbHomeProxyHandler handler = createHomeHandler(beanContext, interfaceType, objectInterfaces, mainInterface);
 
-            final List<Class> proxyInterfaces = new ArrayList<Class>(2);
+            final List<Class> proxyInterfaces = new ArrayList<>(2);
 
             final Class homeInterface = beanContext.getInterface(interfaceType);
             proxyInterfaces.add(homeInterface);
@@ -157,7 +157,7 @@ public abstract class EjbHomeProxyHandler extends BaseEjbProxyHandler {
                 && !getBeanContext().isDynamicallyImplemented()) {
                 return LocalBeanProxyFactory.constructProxy(handler.getBeanContext().get(BeanContext.ProxyClass.class).getProxy(), handler);
             } else {
-                final List<Class> proxyInterfaces = new ArrayList<Class>(handler.getInterfaces().size() + 2);
+                final List<Class> proxyInterfaces = new ArrayList<>(handler.getInterfaces().size() + 2);
                 proxyInterfaces.addAll(handler.getInterfaces());
                 proxyInterfaces.add(Serializable.class);
                 proxyInterfaces.add(IntraVmProxy.class);

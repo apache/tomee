@@ -31,10 +31,12 @@ public class GenericServiceEndpointWrapper implements Stub {
         this.genericServiceEndpoint = genericServiceEndpoint;
     }
 
+    @Override
     public void _setProperty(String s, Object o) {
         genericServiceEndpoint._setProperty(s, o);
     }
 
+    @Override
     public Object _getProperty(String s) {
         return genericServiceEndpoint._getProperty(s);
     }
@@ -43,6 +45,7 @@ public class GenericServiceEndpointWrapper implements Stub {
         return genericServiceEndpoint.removeProperty(s);
     }
 
+    @Override
     public Iterator _getPropertyNames() {
         return genericServiceEndpoint._getPropertyNames();
     }

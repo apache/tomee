@@ -1,0 +1,102 @@
+= TomEE/OpenEJB provisioning
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Summary
+
+Provioning is about the way to get binaries or information. It is the
+answer to how do i get my application, my webapp, my configuration.
+
+TomEE and OpenEJB brings some help about it allowing you to point out
+some resources instead of providing it directly.
+
+This indirection is clearly very useful to industrialize your software
+or simply to cloudify it.
+
+== A word about this page
+
+This page will not explain you how to deploy an application or how to
+enhance your container. It will simply explain you how which kind of
+urls are supported for such features.
+
+These feature are explained in other places.
+
+== Supported provionings
+
+=== file
+
+This is the default and well know provisioning. Simply give a file path
+the container is able to access through its filesystem.
+
+Example:
+
+[source,java]
+----
+/MIDDLE/foo/bar/my-local-file.jar
+----
+
+=== Http/https
+
+Here you give an url to access the desired file. Proxies used are the
+JVM ones.
+
+Example:
+
+[source,properties]
+----
+http://atos.net/foo/bar/my-http-file.jar 
+----
+
+=== Maven
+
+==== Usage
+
+Probably the most fun but very useful for cloud deployments: maven. Use
+maven informations to deploy your application.
+
+The location should follow:
+
+[source,properties]
+----
+mvn:groupId/artifactId[/[version]/[type]]
+----
+
+or
+
+[source,properties]
+----
+mvn:groupId:artifactId[:[version]:[type]]
+----
+
+Note: classifier are supported (through version field)
+
+For instance you can use:
+
+[source,properties]
+----
+mvn:net.atos.xa/my-application/1.0.0/war
+----
+
+==== Installation
+
+The maven url parsing is not included by default in OpenEJB/TomEE
+bundle. It needs to be installed.
+
+If you are using an embedded application and maven simply add
+org.apache.openejb:openejb-provisionning:VERSION dependency.
+
+If you are using TomEE you have to extract the
+org.apache.openejb:openejb-provisionning zip in the same classloader
+than tomee (webapps/tomee/lib for instance, for other places please have
+a look to other tip pages).
+
+Another way to install it with tomee is to edit or create the file
+/conf/provisioning.properties and add the line:
+
+[source,properties]
+----
+zip=http://repo1.maven.org/maven2/org/apache/openejb/openejb-provisionning/<version>/openejb-provisionning-<version>.zip
+----

@@ -39,7 +39,7 @@ public class DeploymentLoaderTest extends TestCase {
          * - META-INF/persistence.xml
          * - META-INF/test.env-entry.properties
          */
-        final Map<String, URL> original = new HashMap<String, URL>();
+        final Map<String, URL> original = new HashMap<>();
         original.put("ejb-jar.xml", new File("META-INF/ejb-jar.xml").toURI().toURL());
         original.put("test.ejb-jar.xml", new File("META-INF/test.ejb-jar.xml").toURI().toURL());
         original.put("footest.ejb-jar.xml", new File("META-INF/footest.ejb-jar.xml").toURI().toURL());
@@ -49,7 +49,7 @@ public class DeploymentLoaderTest extends TestCase {
 
         SystemInstance.get().setProperty("openejb.altdd.prefix", "footest, test");
 
-        final Map<String, URL> processed = new HashMap<String, URL>(original);
+        final Map<String, URL> processed = new HashMap<>(original);
         DeploymentLoader.altDDSources(processed, false);
 
         // an item that existed and should have been replaced

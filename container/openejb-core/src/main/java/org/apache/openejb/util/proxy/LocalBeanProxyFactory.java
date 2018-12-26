@@ -174,7 +174,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         cw.visitField(ACC_FINAL + ACC_PRIVATE, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
         cw.visitField(ACC_FINAL + ACC_PRIVATE, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
 
-        final Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        final Map<String, List<Method>> methodMap = new HashMap<>();
 
         getNonPrivateMethods(classToProxy, methodMap);
 
@@ -220,7 +220,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 List<Method> methods = methodMap.get(method.getName());
                 if (methods == null) {
-                    methods = new ArrayList<Method>();
+                    methods = new ArrayList<>();
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {
@@ -676,7 +676,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 String className = parameterType.getCanonicalName();
 
                 if (parameterType.isMemberClass()) {
-                    final int lastDot = className.lastIndexOf(".");
+                    final int lastDot = className.lastIndexOf('.');
                     className = className.substring(0, lastDot) + "$" + className.substring(lastDot + 1);
                 }
 

@@ -57,6 +57,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -255,7 +256,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
                 }
 
-                if (webApp.restApplications.isEmpty()) {
+                /*
+                boolean isMicroProfileOnlyEndpoints =
+                        webApp.restClass.stream().allMatch(name -> name.startsWith("org.apache.geronimo.microprofile"));
+                */
+
+                if (webApp.restApplications.isEmpty() /*&& !isMicroProfileOnlyEndpoints*/) {
                     final Application application = new InternalApplication(null);
                     for (final String clazz : webApp.restClass) {
                         try {
@@ -302,7 +308,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    private void addAppProvidersIfNeeded(AppInfo appInfo, WebAppInfo webApp, ClassLoader classLoader, Collection<Object> additionalProviders) {
+    private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
         if (useDiscoveredProviders(appInfo)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
@@ -567,6 +573,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 WriterInterceptor.class.isAssignableFrom(clazz) ||
                 ParamConverterProvider.class.isAssignableFrom(clazz) ||
                 ContextResolver.class.isAssignableFrom(clazz) ||
+                Feature.class.isAssignableFrom(clazz) ||
                 new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
     }
 

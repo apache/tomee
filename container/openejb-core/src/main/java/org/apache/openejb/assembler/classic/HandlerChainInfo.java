@@ -24,6 +24,6 @@ import java.util.List;
 public class HandlerChainInfo extends InfoObject {
     public QName serviceNamePattern;
     public QName portNamePattern;
-    public final List<String> protocolBindings = new ArrayList<String>();
-    public final List<HandlerInfo> handlers = new ArrayList<HandlerInfo>();
+    public final List<String> protocolBindings = new ArrayList<>();
+    public final List<HandlerInfo> handlers = new ArrayList<>();
 }

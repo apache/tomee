@@ -1,6 +1,14 @@
-Title: Persistence Fragment
+index-group=Unrevised
+type=page
+status=published
+title=Persistence Fragment
+~~~~~~
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+The JPA provides Java developers with an object/relational mapping facility for managing relational data in Java applications.
+
+@Entity define the entity class that you want to convert into a table in a database.
+@Id define the main key of the table.
+@GeneratedValue provides for the specification of generation strategies for the values of primary keys.
 
 ## Movie
 

@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -60,15 +61,15 @@ public class SaxAppCtxConfig {
         private static final Collection<String> IMPORT_ALIASES = Arrays.asList("import", "include");
         private static final Collection<String> APPLICATION_ALIASES = Arrays.asList("appcontext", "app-context", "application");
         private static final Collection<String> POJOS_ALIASES = Arrays.asList("pojocontexts", "pojo-contexts", "pojos");
-        private static final Collection<String> POJO_ALIASES = Arrays.asList("pojo");
+        private static final Collection<String> POJO_ALIASES = Collections.singletonList("pojo");
         private static final Collection<String> BEAN_CONTEXTS_ALIASES = Arrays.asList("beancontexts", "bean-contexts", "ejbs");
         private static final Collection<String> WEBAPP_ALIASES = Arrays.asList("webapps", "webcontexts", "web-contexts", "wars");
         private static final Collection<String> MODULE_ALIASES = Arrays.asList("modulecontext", "module");
         private static final Collection<String> BEAN_CONTEXT_ALIASES = Arrays.asList("ejb", "beancontext", "bean-context");
         private static final Collection<String> CONFIGURATION_ALIASES = Arrays.asList("configuration", "properties", "settings");
-        private static final Collection<String> RESOURCES_ALIASES = Arrays.asList("resources");
-        private static final Collection<String> SERVICE_ALIASES = Arrays.asList("service");
-        private static final Collection<String> RESOURCE_ALIASES = Arrays.asList("resource");
+        private static final Collection<String> RESOURCES_ALIASES = Collections.singletonList("resources");
+        private static final Collection<String> SERVICE_ALIASES = Collections.singletonList("service");
+        private static final Collection<String> RESOURCE_ALIASES = Collections.singletonList("resource");
         private static final Collection<String> ENV_ENTRIES_ALIASES = Arrays.asList("enventries", "env-entries");
         private static final Collection<String> ENV_ENTRY_ALIASES = Arrays.asList("enventry", "env-entry");
 
@@ -222,7 +223,7 @@ public class SaxAppCtxConfig {
         }
 
         private class Pojos extends DefaultHandler {
-            protected final List<PojoConfig> genericConfigs = new ArrayList<PojoConfig>();
+            protected final List<PojoConfig> genericConfigs = new ArrayList<>();
 
             protected final Collection<String> aliases;
 
@@ -292,7 +293,7 @@ public class SaxAppCtxConfig {
             }
 
             protected Collection<Properties> propertiesForModule(final String id) {
-                final Collection<Properties> props = new ArrayList<Properties>();
+                final Collection<Properties> props = new ArrayList<>();
                 for (final DeploymentModule m : module.getDeploymentModule()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());
@@ -309,7 +310,7 @@ public class SaxAppCtxConfig {
 
             @Override
             protected Collection<Properties> propertiesForModule(final String id) {
-                final Collection<Properties> props = new ArrayList<Properties>();
+                final Collection<Properties> props = new ArrayList<>();
                 for (final WebModule m : module.getWebModules()) {
                     if (acceptModule(id, m)) {
                         props.add(m.getProperties());

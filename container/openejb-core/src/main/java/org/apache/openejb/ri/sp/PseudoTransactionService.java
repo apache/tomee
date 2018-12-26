@@ -43,7 +43,7 @@ import java.util.Properties;
  */
 public class PseudoTransactionService implements TransactionService, TransactionManager, TransactionSynchronizationRegistry {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.core.cmp");
-    private final ThreadLocal<MyTransaction> threadTransaction = new ThreadLocal<MyTransaction>();
+    private final ThreadLocal<MyTransaction> threadTransaction = new ThreadLocal<>();
 
     public void init(final Properties props) {
     }
@@ -185,9 +185,9 @@ public class PseudoTransactionService implements TransactionService, Transaction
     }
 
     public class MyTransaction implements Transaction {
-        private final List<Synchronization> registeredSynchronizations = Collections.synchronizedList(new ArrayList<Synchronization>());
-        private final List<XAResource> xaResources = Collections.synchronizedList(new ArrayList<XAResource>());
-        private final Map<Object, Object> resources = new HashMap<Object, Object>();
+        private final List<Synchronization> registeredSynchronizations = Collections.synchronizedList(new ArrayList<>());
+        private final List<XAResource> xaResources = Collections.synchronizedList(new ArrayList<>());
+        private final Map<Object, Object> resources = new HashMap<>();
         private int status = Status.STATUS_ACTIVE;
 
         public boolean delistResource(final XAResource xaRes, final int flag) {
@@ -270,13 +270,13 @@ public class PseudoTransactionService implements TransactionService, Transaction
         }
 
         private void doBeforeCompletion() {
-            for (final Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
+            for (final Synchronization sync : new ArrayList<>(registeredSynchronizations)) {
                 sync.beforeCompletion();
             }
         }
 
         private void doAfterCompletion(final int status) {
-            for (final Synchronization sync : new ArrayList<Synchronization>(registeredSynchronizations)) {
+            for (final Synchronization sync : new ArrayList<>(registeredSynchronizations)) {
                 try {
                     sync.afterCompletion(status);
                 } catch (final RuntimeException e) {
@@ -286,7 +286,7 @@ public class PseudoTransactionService implements TransactionService, Transaction
         }
 
         private void doXAResources(final int status) {
-            for (final XAResource xaRes : new ArrayList<XAResource>(xaResources)) {
+            for (final XAResource xaRes : new ArrayList<>(xaResources)) {
                 if (status == Status.STATUS_COMMITTED) {
                     try {
                         xaRes.commit(null, true);

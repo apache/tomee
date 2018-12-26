@@ -1,0 +1,141 @@
+= How to Setup TomEE in production
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+
+
+You can use TomEE as described on link:../../admin/directory-structure.html[Directory Structure] page but in production it is better to
+split TomEE and application binaries and configuration.
+
+Idea is to have this kind of layout (the root is the one you prefer):
+
+ifndef::backend-pdf[]
+
+[#filetree.col-md-4]
+[{
+    label: '/some/path',
+    description: 'any location on your file system',
+    children: [
+        {
+            label: 'tomee',
+            description: 'all tomee binaries will be there, note: you often do the same for the JVM versions you have',
+            children: [
+                {
+                    label: 'tomee-1.7.1',
+                    description: 'a particular tomee version (just unzip it there)',
+                    children: [
+                        { label: 'bin', description: 'the startup binaries/scripts' },
+                        { label: 'conf', description: 'default shared configuration for this version, can be overwritten by instance' },
+                        { label: 'lib', description: 'the binaries' }
+                    ]
+                },
+                {
+                    label: 'tomee-1.7.2',
+                    description: 'a particular tomee version (just unzip it there)',
+                    children: [
+                        { label: 'bin', description: 'the startup binaries/scripts' },
+                        { label: 'conf', description: 'default shared configuration for this version, can be overwritten by instance' },
+                        { label: 'lib', description: 'the binaries' }
+                    ]
+                },
+                {
+                    label: 'tomee-7.0.0-M3',
+                    description: 'a particular tomee version (just unzip it there)',
+                    children: [
+                        { label: 'bin', description: 'the startup binaries/scripts' },
+                        { label: 'conf', description: 'default shared configuration for this version, can be overwritten by instance' },
+                        { label: 'lib', description: 'the binaries' }
+                    ]
+                }
+            ]
+        },
+        {
+            label: 'applications',
+            description: 'all applications',
+            children: [
+                {
+                    label: 'application1',
+                    description: 'any application instance (ie configuration + binaries)',
+                    children: [
+                        { label: 'bin', description: 'provide scripts for this instance (see under that file layout)' },
+                        { label: 'conf', description: 'the instance configuration, typically what is in tomee/conf when used in standalone' },
+                        { label: 'lib', description: 'some additional binaries like JDBC drivers' },
+                        { label: 'logs', description: 'instances logs location' },
+                        { label: 'work', description: 'dedicated work directory' },
+                        { label: 'temp', description: 'instance temporary folder' },
+                        { label: 'webapps', description: 'instance webapp folder' }
+                    ]
+                },
+                {
+                    label: 'application2',
+                    description: 'any application instance (ie configuration + binaries)',
+                    children: [
+                        { label: 'bin', description: 'provide scripts for this instance (see under that file layout)' },
+                        { label: 'conf', description: 'the instance configuration, typically what is in tomee/conf when used in standalone' },
+                        { label: 'lib', description: 'some additional binaries like JDBC drivers' },
+                        { label: 'logs', description: 'instances logs location' },
+                        { label: 'work', description: 'dedicated work directory' },
+                        { label: 'temp', description: 'instance temporary folder' },
+                        { label: 'webapps', description: 'instance webapp folder' }
+                    ]
+                }
+            ]
+        }
+    ]
+}]
+
+
+[#filetreedetail.col-md-8.bs-callout.bs-callout-primary]
+Click on a tree node or open a folder to see the detail there.
+
+[.clearfix]
+&nbsp;
+
+endif::[]
+
+== Instance scripts
+
+The idea for instances (applications) scripts is to simply delegate to tomcat ones but customizing the JVM and TomEE versions.
+
+Customizing the version (and locations) is done in `bin/setenv.sh` of instances.
+
+Here are an example for the common scripts (of course you can write helper version like restart etc).
+
+=== setenv.sh
+
+[source,bash]
+----
+#! /bin/sh
+
+# which java
+export JAVA_HOME="/some/path/java/jdk-8u60"
+# which tomee
+export CATALINA_HOME="/some/path/tomee/tomee-7.0.0-M3"
+# where is the application - to let tomcat/tomee finds the configuration
+export CATALINA_BASE="/some/path/application1/"
+# to let tomee be able to kill the instance if shutdown doesn't work (see shutdown script)
+export CATALINA_PID="/some/path/application1/work/tomee.pid"
+----
+
+=== startup
+
+[source,bash]
+----
+#! /bin/bash
+
+proc_script_base="`cd $(dirname $0) && cd .. && pwd`"
+source "$proc_script_base/bin/setenv.sh"
+nohup "$CATALINA_HOME/bin/startup.sh" "$@" > $proc_script_base/logs/nohup.log &
+----
+
+=== shutdown
+
+[source,bash]
+----
+#! /bin/bash
+
+proc_script_base="`cd $(dirname $0) && cd .. && pwd`"
+source "$proc_script_base/bin/setenv.sh"
+# we support parameters like timeout and force, typically we would call it this way: ./shutdown 1200 -force
+"$CATALINA_HOME/bin/shutdown.sh" "$@"
+----

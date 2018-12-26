@@ -49,7 +49,7 @@ public class ClearEmptyMappedName implements DynamicDeployer {
             return;
         }
 
-        final List<JndiReference> refs = new ArrayList<JndiReference>();
+        final List<JndiReference> refs = new ArrayList<>();
         refs.addAll(consumer.getEjbLocalRef());
         refs.addAll(consumer.getEjbRef());
         refs.addAll(consumer.getEnvEntry());

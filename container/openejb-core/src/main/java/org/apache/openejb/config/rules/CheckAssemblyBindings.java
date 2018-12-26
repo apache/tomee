@@ -94,16 +94,16 @@ public class CheckAssemblyBindings extends ValidationBase {
         final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
         final Interceptor[] interceptorsArray = ejbModule.getEjbJar().getInterceptors();
         final List<Interceptor> interceptors = Arrays.asList(interceptorsArray);
-        final Set<String> interceptorClassNames = new HashSet<String>(interceptors.size());
+        final Set<String> interceptorClassNames = new HashSet<>(interceptors.size());
         for (final Interceptor interceptor : interceptors) {
             interceptorClassNames.add(interceptor.getInterceptorClass());
         }
-        final Set<String> interceptorClassNamesUsedInBindings = new HashSet<String>();
+        final Set<String> interceptorClassNamesUsedInBindings = new HashSet<>();
         for (final InterceptorBinding binding : assembly.getInterceptorBinding()) {
             final List<String> interceptorClass = binding.getInterceptorClass();
             interceptorClassNamesUsedInBindings.addAll(interceptorClass);
         }
-        final Set<String> unusedInterceptors = new HashSet<String>();
+        final Set<String> unusedInterceptors = new HashSet<>();
         for (final String clazz : interceptorClassNames) {
             if (!interceptorClassNamesUsedInBindings.contains(clazz)) {
                 unusedInterceptors.add(clazz);

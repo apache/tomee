@@ -153,7 +153,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         Files.dir(dir);
         Files.notHidden(dir);
 
-        final Map<String, File> files = new LinkedHashMap<String, File>();
+        final Map<String, File> files = new LinkedHashMap<>();
         final File[] list = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File f) {
@@ -298,7 +298,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
                         CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
                         CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
-                final List<String> list = new ArrayList<String>();
+                final List<String> list = new ArrayList<>();
                 for (final URL url : searchResult.urls) {
                     list.add(url.toExternalForm());
                 }

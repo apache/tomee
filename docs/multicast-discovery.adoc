@@ -1,0 +1,93 @@
+= Multicast (UDP) Discovery
+:index-group: Discovery and Failover
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+Multicast is the preferred way to broadcast the heartbeat on the
+network. The simple technique of broadcasting a non-changing service URI
+on the network has specific advantages to multicast. The URI itself is
+essentially stateless and there is no "i'm alive" URI or an "i'm dead"
+URI.
+
+In this way the issues with UDP being unordered and unreliable melt away
+as state is no longer a concern and packet sizes are always small.
+Complicated libraries that ride atop UDP and attempt to offer
+reliability (retransmission) and ordering on UDP can be avoided. As well
+the advantages UDP has over TCP are retained as there are no java layers
+attempting to force UDP communication to be more TCP-like. The simple
+design means UDP/Multicast is only used for discovery and from there on
+out critical information is transmitted over TCP/IP which is obviously
+going to do a better job at ensuring reliability and ordering.
+
+== Server Configuration
+
+When you boot the server there should be a `conf/multicast.properties`
+file containing:
+
+[source,properties]
+----
+server      = org.apache.openejb.server.discovery.MulticastDiscoveryAgent
+bind        = 239.255.2.3
+port        = 6142
+disabled    = true
+group       = default
+----
+
+Just need to enable that by setting `disabled=false`. All of the above
+settings except `server` can be changed. The `port` and `bind` must be
+valid for general multicast/udp network communication.
+
+The `group` setting can be changed to further group servers that may use
+the same multicast channel. As shown below the client also has a `group`
+setting which can be used to select an appropriate server from the
+multicast channel.
+
+== Multicast Client
+
+The multicast functionality is not just for servers to find each other
+in a cluster, it can also be used for EJB clients to discover a server.
+A special `multicast://` URL can be used in the `InitialContext`
+properties to signify that multicast should be used to seed the
+connection process. Such as:
+
+[source,java]
+----
+Properties p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY,
+"org.apache.openejb.client.RemoteInitialContextFactory");
+p.put(Context.PROVIDER_URL, "multicast://239.255.2.3:6142?group=default");
+InitialContext remoteContext = new InitialContext(p);
+----
+
+The URL has optional query parameters such as `schemes` and `group` and
+`timeout` which allow you to zero in on a particular type of service of
+a particular cluster group as well as set how long you are willing to
+wait in the discovery process till finally giving up. The first matching
+service that it sees "flowing" around on the UDP stream is the one it
+picks and sticks to for that and subsequent requests, ensuring UDP is
+only used when there are no other servers to talk to.
+
+Note that EJB clients do not need to use multicast to find a server. If
+the client knows the URL of a server in the cluster, it may use it and
+connect directly to that server, at which point that server will share
+the full list of its peers.
+
+== Multicast Servers with TCP Clients
+
+Note that clients do not need to use multicast to communicate with
+servers. Servers can use multicast to discover each other, but clients
+are still free to connect to servers in the network using the server's
+TCP address.
+
+[source,java]
+----
+Properties p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY,  "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put(Context.PROVIDER_URL, "ejbd://192.168.1.30:4201");
+InitialContext remoteContext = new InitialContext(p);
+----
+
+When the client connects, the server will send the URLs of all the
+servers in the group and failover will take place normally.

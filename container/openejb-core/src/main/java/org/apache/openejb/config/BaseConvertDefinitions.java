@@ -34,7 +34,7 @@ public abstract class BaseConvertDefinitions implements DynamicDeployer {
 
     protected List<JndiConsumer> collectConsumers(final AppModule appModule) {
 
-        final List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
+        final List<JndiConsumer> jndiConsumers = new ArrayList<>();
 
         for (final ClientModule module : appModule.getClientModules()) {
             final JndiConsumer consumer = module.getApplicationClient();

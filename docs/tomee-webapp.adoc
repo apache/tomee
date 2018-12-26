@@ -1,0 +1,75 @@
+= About the 'tomee' webapp
+:index-group: General Information
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software
+Foundation (ASF) under one or more contributor license agreements. See
+the NOTICE file distributed with this work for additional information
+regarding copyright ownership. The ASF licenses this file to you under
+the Apache License, Version 2.0 (the "License"); you may not use this
+file except in compliance with the License. You may obtain a copy of the
+License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless
+required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+OR CONDITIONS OF ANY KIND, either express or implied. See the License
+for the specific language governing permissions and limitations under
+the License.
+
+There are two forms of the `tomee` webapp to consider:
+
+* from an *tomee-1.x.x.war* that has been downloaded and added to a
+Tomcat 7 install. This `tomee` webapp will contain all the necessary
+libraries to add the missing Java EE functionality to Tomcat as well as
+a small console.
+* from an *apache-tomee-1.x.x.zip*. The `tomee` webapp shipped inside a
+TomEE zip or tar is the same webapp as above, but with the libraries
+moved into the `<tomcat-home>/lib/` directory
+
+The only real difference between a "Tomcat with drop-in tomee.war" and a
+"TomEE" install is where the additional libraries live.
+
+== Deleting from plain Tomcat
+
+Deleting the `tomee` webapp from a plain Tomcat install will effectively
+uninstall TomEE from Tomcat.
+
+== Deleting from TomEE
+
+Deleting the `tomee` webapp from a TomEE install is safe as the needed
+libraries have been moved into `<tomcat-home>/lib/`
+
+The only loss of functionality would be the ability to remotely execute
+EJBs over HTTP. However this can easily be added to a different webapp
+like so:
+
+[source,xml]
+----
+<servlet>
+  <servlet-name>ServerServlet</servlet-name>
+  <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+</servlet>
+ 
+<servlet-mapping>
+  <servlet-name>ServerServlet</servlet-name>
+  <url-pattern>/myejbs/*</url-pattern>
+</servlet-mapping>
+----
+
+Then you can create an `InitialContext` that points to that webapp like
+so:
+
+[source,java]
+----
+Properties p = new Properties();
+p.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
+p.put("java.naming.provider.url", "http://127.0.0.1:8080/mywebapp/myejbs");
+// user and pass optional
+p.put("java.naming.security.principal", "myuser");
+p.put("java.naming.security.credentials", "mypass");
+
+InitialContext ctx = new InitialContext(p);
+
+MyBean myBean = (MyBean) ctx.lookup("MyBeanRemote");
+----

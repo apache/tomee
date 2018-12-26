@@ -49,8 +49,8 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
      * <p/>
      * Adds x and y and returns the result.
      *
-     * @param one
-     * @param two
+     * @param x
+     * @param y
      * @return x + y
      * @see BasicBmp2DataSourcesHome#sum
      */

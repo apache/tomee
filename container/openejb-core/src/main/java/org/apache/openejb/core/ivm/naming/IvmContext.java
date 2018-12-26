@@ -72,7 +72,7 @@ public class IvmContext implements Context, Serializable {
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
     boolean readOnly;
-    Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
+    Map<String, Object> fastCache = new ConcurrentHashMap<>();
     static final String JNDI_EXCEPTION_ON_FAILED_WRITE = "openejb.jndiExceptionOnFailedWrite";
     public NameNode mynode;
 
@@ -109,12 +109,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Object lookup(final String compositName) throws NamingException {
-        if (compositName.equals("")) {
+        if (compositName.isEmpty()) {
             return this;
         }
 
         final String compoundName;
-        final int index = compositName.indexOf(":");
+        final int index = compositName.indexOf(':');
         if (index > -1) {
 
             final String prefix = compositName.substring(0, index);
@@ -215,7 +215,7 @@ public class IvmContext implements Context, Serializable {
 
     public static ObjectFactory[] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
-            final Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
+            final Set<ObjectFactory> factories = new HashSet<>();
             final String urlPackagePrefixes = getUrlPackagePrefixes();
             if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
@@ -307,7 +307,7 @@ public class IvmContext implements Context, Serializable {
         if(checkReadOnly()) {
             return;
         }
-        final int indx = name.indexOf(":");
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -348,7 +348,7 @@ public class IvmContext implements Context, Serializable {
         if(checkReadOnly()) {
             return;
         }
-        final int indx = name.indexOf(":");
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -422,7 +422,7 @@ public class IvmContext implements Context, Serializable {
             //TODO: null is fine if there is a one time - 10 calls will log a single time - log line (warning?)
             return null;
         }
-        final int indx = name.indexOf(":");
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
           The ':' character will be in the path if its an absolute path name starting with the schema
@@ -471,7 +471,7 @@ public class IvmContext implements Context, Serializable {
 
     public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         if (myEnv == null) {
-            myEnv = new Hashtable<String, Object>(5);
+            myEnv = new Hashtable<>(5);
         }
         return myEnv.put(propName, propVal);
     }

@@ -1,0 +1,107 @@
+= TomEE and NetBeans
+:index-group: IDE
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software Foundation (ASF) under
+one or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information regarding
+copyright ownership. The ASF licenses this file to you under the Apache
+License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+. http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+There is some great information over at
+https://blogs.oracle.com/geertjan/entry/tomee_apache_cxf_and_maven[Geertjan's
+Blog] on how to hit the ground running with Netbeans, CXF and Maven.
+Geertjan is a Netbeans evangelist and has an incredible insight into
+everything Netbeans.
+
+*WORKAROUND*: There is a known issue with Netbeans 8 and TomEE detection
+that currently requires the following workaround:
+
+Netbeans 8 has a bug in which it fails to find the
+*tomee-common-[version].jar* in the *[TomEE]/lib* directory. The
+solution is to simply rename the jar file to an older version.
+
+For example, you have *[TomEE]/lib/tomee-common-1.6.0.2.jar* or
+*[TomEE]/lib/tomee-common-1.7.1.jar*. Rename these files to
+*[TomEE]/lib/tomee-common-1.6.0.jar*
+
+This should resolve the detection issue and will not break your
+installation - Be sure to document the change for yourself as a
+reminder.
+
+== Quickstart Check out this video on
+https://www.youtube.com/watch?v=HISV7eagogI[How to Consume REST in a
+Java Client]
+
+You can download Netbeans 8 here:
+https://netbeans.org/community/releases/80/
+
+Here is a quick run through on how to set up TomEE. We will use one of
+the existing examples for this demo. Let's import it.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_01.png[Subversion
+Checkout]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_02.png[Subversion
+URL]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_03.png[Local
+Project]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_04.png[alt
+text]
+
+Click 'Open Project'.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_05.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_06.png[alt
+text]
+
+It's time to add our local TomEE server. Click 'Tools' and then
+'Servers'.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_07.png[alt
+text]
+
+Select 'Apache Tomcat'.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_08.png[alt
+text]
+
+Select your local TomEE directory.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_09.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_10.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_11.png[alt
+text]
+
+It's time to run it. Click the play button.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_12.png[alt
+text]
+
+Select 'Apache Tomcat'.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_13.png[alt
+text]
+
+Give it some time. It's building your application.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_14.png[alt
+text]
+
+Done. Your server is up and running.
+
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_15.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/netbeans_integration/windows8_16.png[alt
+text]

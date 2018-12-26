@@ -1,0 +1,20 @@
+= Application Composer
+
+Here is the subdomain dedicated to the Application Composer.
+
+If you don't know at all what ApplicationComposer means,
+link:history.html[History] page will explain you where does it come from
+and what it can be used to today.
+
+If you are already familiar with ApplicationComposer concept and are
+just looking for a sample, link:getting-started.html[Getting Started] is
+designed for you.
+
+Finally if you already use ApplicationComposer and just desire to go
+further, link:advanced.html[Advanced] page is the one you need to look!
+
+Children:
+
+* link:history.html[History]
+* link:getting-started.html[Getting Started]
+* link:advanced.html[Advanced]

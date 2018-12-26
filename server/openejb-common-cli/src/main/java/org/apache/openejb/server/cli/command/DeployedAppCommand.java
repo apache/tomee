@@ -30,7 +30,7 @@ public class DeployedAppCommand extends PathCommand {
     @Override
     public void execute(final String cmd) {
         streamManager.writeOut("Deployed applications:");
-        final List<AppContext> apps = new ArrayList<AppContext>(SystemInstance.get()
+        final List<AppContext> apps = new ArrayList<>(SystemInstance.get()
             .getComponent(ContainerSystem.class).getAppContexts());
         Collections.sort(apps, new AppContextComparable());
         for (AppContext appContext : apps) {

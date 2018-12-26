@@ -163,6 +163,141 @@
       <scope>runtime</scope>
     </dependency>
     -->
+
+    <!-- MicroProfile -->
+    <!--
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mp-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.config</groupId>
+      <artifactId>microprofile-config-api</artifactId>
+      <version>${microprofile.config.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.config</groupId>
+      <artifactId>geronimo-config-impl</artifactId>
+      <version>${microprofile.config.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${microprofile.jwt.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mp-jwt</artifactId>
+      <version>${microprofile.jwt.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.fault-tolerance</groupId>
+      <artifactId>microprofile-fault-tolerance-api</artifactId>
+      <version>${microprofile.fault-tolerance.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.safeguard</groupId>
+      <artifactId>safeguard-impl</artifactId>
+      <version>${microprofile.fault-tolerance.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.health</groupId>
+      <artifactId>microprofile-health-api</artifactId>
+      <version>${microprofile.health.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-health</artifactId>
+      <version>${microprofile.health.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.metrics</groupId>
+      <artifactId>microprofile-metrics-api</artifactId>
+      <version>${microprofile.metrics.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-metrics</artifactId>
+      <version>${microprofile.metrics.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.rest.client</groupId>
+      <artifactId>microprofile-rest-client-api</artifactId>
+      <version>${microprofile.rest-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-mp-client</artifactId>
+      <version>${microprofile.rest-client.impl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.json</groupId>
+          <artifactId>javax.json-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.openapi</groupId>
+      <artifactId>microprofile-openapi-api</artifactId>
+      <version>${microprofile.openapi.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-openapi-impl</artifactId>
+      <version>${microprofile.openapi.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.microprofile.opentracing</groupId>
+      <artifactId>microprofile-opentracing-api</artifactId>
+      <version>${microprofile.opentracing.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-atinject_1.0_spec</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo</groupId>
+      <artifactId>geronimo-opentracing</artifactId>
+      <version>${microprofile.opentracing.impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.opentracing</groupId>
+      <artifactId>opentracing-api</artifactId>
+      <version>${opentracing.api}</version>
+    </dependency>
+    -->
   </dependencies>
 
   <build>

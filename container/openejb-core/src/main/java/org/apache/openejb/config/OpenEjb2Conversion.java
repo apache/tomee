@@ -185,7 +185,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
                 deployment.getJndi().add(new org.apache.openejb.jee.oejb3.Jndi(jndi.getName(), jndi.getInterface()));
             }
 
-            final Set<String> ejbLinks = new TreeSet<String>();
+            final Set<String> ejbLinks = new TreeSet<>();
             for (final EjbLink ejbLink : deployment.getEjbLink()) {
                 ejbLinks.add(ejbLink.getEjbRefName());
             }
@@ -246,7 +246,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
     }
 
     public final void convertMdbConfigs(final EjbJar ejbJar, final OpenejbJarType openejbJarType) {
-        final Map<String, MessageDrivenBean> mdbs = new TreeMap<String, MessageDrivenBean>();
+        final Map<String, MessageDrivenBean> mdbs = new TreeMap<>();
         for (final EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
             if (!(enterpriseBean instanceof MessageDrivenBean)) {
                 continue;
@@ -281,7 +281,7 @@ public class OpenEjb2Conversion implements DynamicDeployer {
     }
 
     public final void mergeEntityMappings(final String moduleId, final EntityMappings entityMappings, final OpenejbJar openejbJar, final OpenejbJarType openejbJarType) {
-        final Map<String, EntityData> entities = new TreeMap<String, EntityData>();
+        final Map<String, EntityData> entities = new TreeMap<>();
         if (entityMappings != null) {
             for (final Entity entity : entityMappings.getEntity()) {
                 try {
@@ -537,8 +537,8 @@ public class OpenEjb2Conversion implements DynamicDeployer {
     private static class EntityData {
 
         private final Entity entity;
-        private final Map<String, Field> fields = new TreeMap<String, Field>();
-        private final Map<String, RelationField> relations = new TreeMap<String, RelationField>();
+        private final Map<String, Field> fields = new TreeMap<>();
+        private final Map<String, RelationField> relations = new TreeMap<>();
 
         public EntityData(final Entity e) {
 

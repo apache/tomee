@@ -62,7 +62,7 @@ public class GeneratedClientModules {
      */
     public static class Prune implements DynamicDeployer {
         public AppModule deploy(final AppModule appModule) throws OpenEJBException {
-            final List<ClientModule> clientModules = new ArrayList<ClientModule>(appModule.getClientModules());
+            final List<ClientModule> clientModules = new ArrayList<>(appModule.getClientModules());
 
             for (final ClientModule clientModule : clientModules) {
                 // we automatically add a ClientModule to every EjbModule

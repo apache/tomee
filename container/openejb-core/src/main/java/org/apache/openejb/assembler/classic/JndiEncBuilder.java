@@ -193,7 +193,7 @@ public class JndiEncBuilder {
     }
 
     public Map<String, Object> buildMap(final JndiScope scope) throws OpenEJBException {
-        final Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
+        final Map<String, Object> bindings = new TreeMap<>(); // let it be sorted for real binding
 
         // get JtaEntityManagerRegistry
         final JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
@@ -265,7 +265,7 @@ public class JndiEncBuilder {
                     obj = new Byte(entry.value);
                 } else if (type == Character.class) {
                     final StringBuilder sb = new StringBuilder(entry.value + " ");
-                    obj = new Character(sb.charAt(0));
+                    obj = sb.charAt(0);
                 } else if (type == URL.class) {
                     obj = new URL(entry.value);
                 } else if (type == Class.class) {
@@ -484,7 +484,7 @@ public class JndiEncBuilder {
             }
 
             // port refs
-            final List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
+            final List<PortRefData> portRefs = new ArrayList<>(referenceInfo.portRefs.size());
             for (final PortRefInfo portRefInfo : referenceInfo.portRefs) {
                 final PortRefData portRef = new PortRefData();
                 portRef.setQName(portRefInfo.qname);

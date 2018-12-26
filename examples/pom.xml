@@ -41,10 +41,7 @@
     <module>application-composer</module>
     <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
-<!--
-BROKEN, see TOMEE-2140
     <module>arquillian-jpa</module>
--->
     <module>async-methods</module>
     <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
@@ -102,6 +99,14 @@ BROKEN, see TOMEE-2140
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>mp-config-example</module>
+    <module>mp-faulttolerance-fallback</module>
+    <module>mp-faulttolerance-retry</module>
+    <module>mp-metrics-counted</module>
+    <module>mp-metrics-histogram</module>
+    <module>mp-metrics-timed</module>
+    <module>mp-metrics-gauge</module>
+    <module>mp-rest-jwt</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -119,7 +124,6 @@ BROKEN, see TOMEE-2140
     <module>rest-applicationcomposer</module>
     <module>rest-cdi</module>
     <module>rest-jaas</module>
-    <module>rest-mp-jwt</module>
     <module>rest-on-ejb</module>
     <module>rest-example</module>
     <module>rest-example-with-application</module>
@@ -171,10 +175,12 @@ BROKEN, see TOMEE-2140
     <module>moviefun</module>
     <module>moviefun-rest</module>
     <module>resources-jmx-example</module>
-    <module>mp-metrics-counted</module>
-    <module>mp-metrics-timed</module>
     <module>websocket-tls-basic-auth</module>
-    <module>mp-metrics-gauge</module>
+    <module>concurrency-utils</module>
+    <module>mvc-cxf</module>
+    <module>mp-rest-client</module>
+    <module>mvc-resteasy</module>
+    <module>mp-custom-healthcheck</module>
   </modules>
 
   <dependencies>
