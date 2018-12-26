@@ -3,10 +3,10 @@ package org.superbiz.executor;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedThreadFactory;
 import javax.enterprise.context.RequestScoped;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
-
-import static java.util.Objects.nonNull;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,40 +32,82 @@ public class ThreadFactoryService {
     @Resource
     private ManagedThreadFactory factory;
 
-    public void asyncTask(final int value) {
+    /**
+     * Happy path.
+     *
+     * @param longTask to compute
+     */
+    public void asyncTask(final LongTask longTask) throws InterruptedException {
         LOGGER.info("Create asyncTask");
-        final Thread thread = factory.newThread(longRunnableTask(value, 100, null));
+
+        final Thread thread = factory.newThread(longTask);
         thread.setName("pretty asyncTask");
         thread.start();
     }
 
     /**
-     * Will simulate a long running operation
+     * Example where we have to stop a thread.
      *
-     * @param value          The value to compute
-     * @param taskDurationMs the time length of the operation
-     * @param errorMessage   If not null an exception with be thrown with this message
-     * @return a {@link Runnable}
+     * @param longTask
+     * @throws InterruptedException
      */
-    private Runnable longRunnableTask(final int value,
-                                      final int taskDurationMs,
-                                      final String errorMessage) {
-        return () -> {
-            if (nonNull(errorMessage)) {
-                LOGGER.severe("Exception will be thrown");
-                throw new RuntimeException(errorMessage);
-            }
+    public void asyncHangingTask(final Runnable longTask) {
+        LOGGER.info("Create asyncHangingTask");
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncHangingTask");
+        thread.start();
+
+        if (thread.isAlive()) {
+            // This will cause any wait in the thread to resume.
+            // This will call the InterruptedException block in the longRunnableTask method.
+            thread.interrupt();
+        }
+    }
+
+    /**
+     * Runnable rung task simulating a lengthy operation.
+     * In the other test classes we use anonymous classes.
+     * It's useful to have a "real" class in this case to be able to access the result of the operation.
+     */
+    public static class LongTask implements Runnable {
+        private final int value;
+        private final long taskDurationMs;
+        private final CountDownLatch countDownLatch;
+        private int result;
+        private AtomicBoolean isTerminated = new AtomicBoolean(false);
+
+        public LongTask(final int value,
+                        final long taskDurationMs,
+                        final CountDownLatch countDownLatch) {
+            this.value = value;
+            this.taskDurationMs = taskDurationMs;
+            this.countDownLatch = countDownLatch;
+        }
+
+        public int getResult() {
+            return result;
+        }
+
+        public boolean getIsTerminated() {
+            return isTerminated.get();
+        }
+
+        @Override
+        public void run() {
             try {
                 // Simulate a long processing task using TimeUnit to sleep.
                 TimeUnit.MILLISECONDS.sleep(taskDurationMs);
             } catch (InterruptedException e) {
+                isTerminated.set(true);
+                countDownLatch.countDown();
                 throw new RuntimeException("Problem while waiting");
             }
 
-            Integer result = value + 1;
+            result = value + 1;
             LOGGER.info("longRunnableTask complete. Value is " + result);
-            // Cannot return result with a Runnable.
-        };
+            countDownLatch.countDown();
+            // Cannot return result with a Runnable. Must store and access it later.
+        }
     }
-
 }

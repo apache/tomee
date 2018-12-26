@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -75,9 +76,10 @@ public class ManagedScheduledServiceTest {
      */
     @Test
     public void periodicFixedDelayTask() throws InterruptedException {
-        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, null);
+        final CountDownLatch countDownLatch = new CountDownLatch(4); // execute 4 times
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, null, countDownLatch);
         LOGGER.info("Do some other work while we wait for the tasks");
-        TimeUnit.MILLISECONDS.sleep(500);
+        countDownLatch.await(500, TimeUnit.MILLISECONDS);
         if (!scheduledFuture.isCancelled()) {
             scheduledFuture.cancel(true);
             LOGGER.info("task stopped");
@@ -107,10 +109,11 @@ public class ManagedScheduledServiceTest {
      */
     @Test
     public void periodicFixedDelayTaskWithException() {
-        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, "Planned exception");
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, "Planned exception", countDownLatch);
 
         try {
-            TimeUnit.MILLISECONDS.sleep(500);
+            countDownLatch.await(200, TimeUnit.MILLISECONDS);
             // please note that this thread will pause here until an exception is thrown.
             // The scheduler uses a Runnable that will never return a result.
             scheduledFuture.get(200, TimeUnit.MILLISECONDS);
