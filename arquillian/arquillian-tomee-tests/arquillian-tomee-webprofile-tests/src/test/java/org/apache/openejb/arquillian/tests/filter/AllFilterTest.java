@@ -49,7 +49,6 @@ public class AllFilterTest {
             .addAsWebInfResource(new StringAsset(port), "classes/port.conf") // for remote case
             .addAsWebInfResource(new StringAsset(Descriptors.create(WebAppDescriptor.class)
                 .version(WebAppVersionType._2_5)
-                .metadataComplete(true)
                 .createFilter()
                     .filterName("My")
                     .filterClass(MyFilter.class.getName())
