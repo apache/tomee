@@ -16,6 +16,9 @@
  */
 package org.apache.tomee.security.provider;
 
+import org.apache.tomee.security.cdi.TomEESecurityServletAuthenticationMechanismMapper;
+
+import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
@@ -23,7 +26,14 @@ import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.MessagePolicy;
 import javax.security.auth.message.module.ServerAuthModule;
+import javax.security.enterprise.AuthenticationException;
+import javax.security.enterprise.AuthenticationStatus;
+import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
+import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+
+import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
 
 public class TomEESecurityServerAuthModule implements ServerAuthModule {
     @Override
@@ -52,6 +62,45 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
     public AuthStatus validateRequest(final MessageInfo messageInfo, final Subject clientSubject,
                                       final Subject serviceSubject)
             throws AuthException {
-        return AuthStatus.SUCCESS;
+
+        final HttpMessageContext httpMessageContext = httpMessageContext(messageInfo, clientSubject, serviceSubject);
+
+        final HttpServletRequest request = httpMessageContext.getRequest();
+        final String servletName = request.getHttpServletMapping().getServletName();
+        final HttpAuthenticationMechanism authenticationMechanism =
+                CDI.current()
+                   .select(TomEESecurityServletAuthenticationMechanismMapper.class)
+                   .get()
+                   .getCurrentAuthenticationMechanism(servletName);
+
+        final AuthenticationStatus authenticationStatus;
+        try {
+            authenticationStatus =
+                    authenticationMechanism.validateRequest(httpMessageContext.getRequest(),
+                                                            httpMessageContext.getResponse(),
+                                                            httpMessageContext);
+
+
+        } catch (final AuthenticationException e) {
+            final AuthException authException = new AuthException(e.getMessage());
+            authException.initCause(e);
+            throw authException;
+        }
+
+        return mapToAuthStatus(authenticationStatus);
+    }
+
+    private AuthStatus mapToAuthStatus(final AuthenticationStatus authenticationStatus) {
+        switch (authenticationStatus) {
+            case SUCCESS:
+            case NOT_DONE:
+                return AuthStatus.SUCCESS;
+            case SEND_FAILURE:
+                return AuthStatus.SEND_FAILURE;
+            case SEND_CONTINUE:
+                return AuthStatus.SEND_CONTINUE;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 }
