@@ -25,6 +25,7 @@ import org.apache.tomee.loader.TomcatHelper;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
@@ -44,11 +45,17 @@ public class TomEEDefaultIdentityStore implements IdentityStore {
         userDatabase = (UserDatabase) server.getGlobalNamingContext().lookup(userDataBaseResource.getName());
     }
 
-    public CredentialValidationResult validate(final UsernamePasswordCredential credential) {
-        return Optional.ofNullable(userDatabase.findUser(credential.getCaller()))
-                       .filter(user -> user.getPassword().equals(credential.getPasswordAsString()))
-                       .map(user -> new CredentialValidationResult(user.getUsername(), getUserRoles(user)))
-                       .orElse(CredentialValidationResult.INVALID_RESULT);
+    @Override
+    public CredentialValidationResult validate(final Credential credential) {
+        if (credential instanceof UsernamePasswordCredential) {
+            final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+            return Optional.ofNullable(userDatabase.findUser(usernamePasswordCredential.getCaller()))
+                           .filter(user -> user.getPassword().equals(usernamePasswordCredential.getPasswordAsString()))
+                           .map(user -> new CredentialValidationResult(user.getUsername(), getUserRoles(user)))
+                           .orElse(CredentialValidationResult.INVALID_RESULT);
+        }
+
+        return CredentialValidationResult.NOT_VALIDATED_RESULT;
     }
 
     @Override
