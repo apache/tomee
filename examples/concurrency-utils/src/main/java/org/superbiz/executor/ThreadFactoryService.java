@@ -66,7 +66,9 @@ public class ThreadFactoryService {
     }
 
     /**
-     * Runnable rung task simulating a lengthy operation
+     * Runnable rung task simulating a lengthy operation.
+     * In the other test classes we use anonymous classes.
+     * It's useful to have a "real" class in this case to be able to access the result of the operation.
      */
     public static class LongTask implements Runnable {
         private final int value;
