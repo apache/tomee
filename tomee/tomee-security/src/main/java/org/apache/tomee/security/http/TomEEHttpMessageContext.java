@@ -19,8 +19,12 @@ package org.apache.tomee.security.http;
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.message.MessageInfo;
+import javax.security.auth.message.callback.CallerPrincipalCallback;
+import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
@@ -38,22 +42,28 @@ import static javax.security.enterprise.identitystore.CredentialValidationResult
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 public class TomEEHttpMessageContext implements HttpMessageContext {
+    private final CallbackHandler handler;
     private final MessageInfo messageInfo;
     private final Subject clientSubject;
     private final Subject serviceSubject;
 
-    private TomEEHttpMessageContext(final MessageInfo messageInfo,
-                                    final Subject clientSubject,
-                                    final Subject serviceSubject) {
+    private TomEEHttpMessageContext(
+            final CallbackHandler handler,
+            final MessageInfo messageInfo,
+            final Subject clientSubject,
+            final Subject serviceSubject) {
+        this.handler = handler;
         this.messageInfo = messageInfo;
         this.clientSubject = clientSubject;
         this.serviceSubject = serviceSubject;
     }
 
-    public static TomEEHttpMessageContext httpMessageContext(final MessageInfo messageInfo,
-                                                             final Subject clientSubject,
-                                                             final Subject serviceSubject) {
-        return new TomEEHttpMessageContext(messageInfo, clientSubject, serviceSubject);
+    public static TomEEHttpMessageContext httpMessageContext(
+            final CallbackHandler handler,
+            final MessageInfo messageInfo,
+            final Subject clientSubject,
+            final Subject serviceSubject) {
+        return new TomEEHttpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
     }
 
     @Override
@@ -88,17 +98,17 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public CallbackHandler getHandler() {
-        return null;
+        return handler;
     }
 
     @Override
     public MessageInfo getMessageInfo() {
-        return null;
+        return messageInfo;
     }
 
     @Override
     public Subject getClientSubject() {
-        return null;
+        return clientSubject;
     }
 
     @Override
@@ -159,7 +169,15 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationStatus notifyContainerAboutLogin(final Principal principal, final Set<String> groups) {
-        // Needs more stuff in here.
+
+        try {
+            handler.handle(new Callback[] {
+                    new CallerPrincipalCallback(clientSubject, principal),
+                    new GroupPrincipalCallback(clientSubject, groups.toArray(new String[groups.size()]))
+            });
+        } catch (IOException | UnsupportedCallbackException e) {
+            e.printStackTrace();
+        }
 
         return SUCCESS;
     }

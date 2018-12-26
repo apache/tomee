@@ -17,6 +17,7 @@
 package org.apache.tomee.security.provider;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
@@ -25,9 +26,9 @@ import javax.security.auth.message.config.ServerAuthContext;
 public class TomEESecurityServerAuthContext implements ServerAuthContext {
     private TomEESecurityServerAuthModule serverAuthModule;
 
-    public TomEESecurityServerAuthContext() throws AuthException {
+    public TomEESecurityServerAuthContext(final CallbackHandler handler) throws AuthException {
         this.serverAuthModule = new TomEESecurityServerAuthModule();
-        this.serverAuthModule.initialize(null, null, null, null);
+        this.serverAuthModule.initialize(null, null, handler, null);
     }
 
     @Override

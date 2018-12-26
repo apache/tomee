@@ -34,7 +34,7 @@ public class TomEESecurityAuthConfigProvider implements AuthConfigProvider {
     public ServerAuthConfig getServerAuthConfig(final String layer, final String appContext,
                                                 final CallbackHandler handler)
             throws AuthException, SecurityException {
-        return new TomEESecurityServerAuthConfig();
+        return new TomEESecurityServerAuthConfig(layer, appContext, handler);
     }
 
     @Override

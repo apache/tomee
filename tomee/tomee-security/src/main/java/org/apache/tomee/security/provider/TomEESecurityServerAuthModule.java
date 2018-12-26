@@ -36,6 +36,8 @@ import java.util.Map;
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
 
 public class TomEESecurityServerAuthModule implements ServerAuthModule {
+    private CallbackHandler handler;
+
     @Override
     public Class[] getSupportedMessageTypes() {
         return new Class[0];
@@ -45,7 +47,7 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
     public void initialize(final MessagePolicy requestPolicy, final MessagePolicy responsePolicy,
                            final CallbackHandler handler,
                            final Map options) throws AuthException {
-
+        this.handler = handler;
     }
 
     @Override
@@ -63,7 +65,8 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
                                       final Subject serviceSubject)
             throws AuthException {
 
-        final HttpMessageContext httpMessageContext = httpMessageContext(messageInfo, clientSubject, serviceSubject);
+        final HttpMessageContext httpMessageContext =
+                httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
 
         final HttpServletRequest request = httpMessageContext.getRequest();
         final String servletName = request.getHttpServletMapping().getServletName();

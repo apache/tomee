@@ -17,6 +17,7 @@
 package org.apache.tomee.security.provider;
 
 import javax.security.auth.Subject;
+import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthConfig;
@@ -24,16 +25,26 @@ import javax.security.auth.message.config.ServerAuthContext;
 import java.util.Map;
 
 public class TomEESecurityServerAuthConfig implements ServerAuthConfig {
+    private String layer;
+    private String appContext;
+    private CallbackHandler handler;
+
+    public TomEESecurityServerAuthConfig(final String layer, final String appContext, final CallbackHandler handler) {
+        this.layer = layer;
+        this.appContext = appContext;
+        this.handler = handler;
+    }
+
     @Override
     public ServerAuthContext getAuthContext(final String authContextID, final Subject serviceSubject,
                                             final Map properties)
             throws AuthException {
-        return new TomEESecurityServerAuthContext();
+        return new TomEESecurityServerAuthContext(handler);
     }
 
     @Override
     public String getAppContext() {
-        return null;
+        return appContext;
     }
 
     @Override
@@ -43,7 +54,7 @@ public class TomEESecurityServerAuthConfig implements ServerAuthConfig {
 
     @Override
     public String getMessageLayer() {
-        return null;
+        return layer;
     }
 
     @Override
