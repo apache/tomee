@@ -43,6 +43,7 @@ public class SimpleServletTest {
     public void testWebApp() throws Exception {
         try (Container container = new Container(
                 new Configuration()
+                        .conf("conf")
                         .http(NetworkUtil.getNextAvailablePort())
                         .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
                         .property("openejb.additional.include", "tomee-"))
@@ -60,7 +61,7 @@ public class SimpleServletTest {
     }
 
     @WebServlet(urlPatterns = "/servlet")
-    @ServletSecurity(@HttpConstraint(rolesAllowed = "role"))
+    @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
     @BasicAuthenticationMechanismDefinition
     public static class TestServlet extends HttpServlet {
         @Override
