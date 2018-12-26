@@ -1,6 +1,7 @@
 index-group=Unrevised
 type=page
 status=published
+title=Microprofile Rest JWT
 ~~~~~~
 # MP REST JWT
 This is a basic example on how to configure and use MicroProfile JWT in TomEE.

@@ -1,3 +1,9 @@
+index-group=Unrevised
+type=page
+status=published
+title=Microprofile Rest Client
+~~~~~~
+
 # Microprofile Rest client
 This is a basic example on how to configure and use MicroProfile Rest Client in TomEE.
 

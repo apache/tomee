@@ -1,6 +1,7 @@
 index-group=CDI
 type=page
 status=published
+title=Simple CDI Interceptor
 ~~~~~~
 #Simple CDI Interceptor
 

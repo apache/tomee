@@ -1,6 +1,7 @@
 index-group=Unrevised
 type=page
 status=published
+title=Microprofile Fault Tolerance Retry
 ~~~~~~
 # Microprofile Fault Tolerance - Retry policy
 This is an example of how to use Microprofile @Retry in TomEE.
