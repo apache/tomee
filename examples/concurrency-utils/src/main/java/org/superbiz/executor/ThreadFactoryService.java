@@ -97,7 +97,8 @@ public class ThreadFactoryService {
                 // Simulate a long processing task using TimeUnit to sleep.
                 TimeUnit.MILLISECONDS.sleep(taskDurationMs);
             } catch (InterruptedException e) {
-                isTerminated.set(false);
+                isTerminated.set(true);
+                countDownLatch.countDown();
                 throw new RuntimeException("Problem while waiting");
             }
 
