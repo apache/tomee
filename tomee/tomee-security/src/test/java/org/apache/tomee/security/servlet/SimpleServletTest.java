@@ -16,10 +16,6 @@
  */
 package org.apache.tomee.security.servlet;
 
-import org.apache.openejb.loader.JarLocation;
-import org.apache.openejb.util.NetworkUtil;
-import org.apache.tomee.embedded.Configuration;
-import org.apache.tomee.embedded.Container;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -34,26 +30,15 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class SimpleServletTest {
+public class SimpleServletTest extends AbstractTomEESecurityTest {
     @Test
     public void testWebApp() throws Exception {
-        try (Container container = new Container(
-                new Configuration()
-                        .conf("conf")
-                        .http(NetworkUtil.getNextAvailablePort())
-                        .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
-                        .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp(
-                        JarLocation.jarLocation(SimpleServletTest.class),
-                        JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class))) {
-
-            final Client client = ClientBuilder.newBuilder().build();
-            final Response response =
-                    client.target("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")
-                          .request()
-                          .get();
-            assertEquals(200, response.getStatus());
-        }
+        final Client client = ClientBuilder.newBuilder().build();
+        final Response response =
+                client.target("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")
+                      .request()
+                      .get();
+        assertEquals(200, response.getStatus());
     }
 
     @WebServlet(urlPatterns = "/servlet")

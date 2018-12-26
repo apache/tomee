@@ -16,10 +16,6 @@
  */
 package org.apache.tomee.security.servlet;
 
-import org.apache.openejb.loader.JarLocation;
-import org.apache.openejb.util.NetworkUtil;
-import org.apache.tomee.embedded.Configuration;
-import org.apache.tomee.embedded.Container;
 import org.apache.tomee.security.client.BasicAuthFilter;
 import org.junit.Test;
 
@@ -36,31 +32,24 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class BasicAuthServletTest {
+public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @Test
-    public void testWebApp() throws Exception {
-        try (Container container = new Container(
-                new Configuration()
-                        .conf("conf")
-                        .http(NetworkUtil.getNextAvailablePort())
-                        .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
-                        .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp(
-                        JarLocation.jarLocation(SimpleServletTest.class),
-                        JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class))) {
+    public void authenticate() throws Exception {
+        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        assertEquals(200, ClientBuilder.newBuilder().register(new BasicAuthFilter()).build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getStatus());
+    }
 
-            final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+    @Test
+    public void missingAuthorizationHeader() throws Exception {
+        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
 
-            assertEquals(401, ClientBuilder.newBuilder().build()
-                                           .target(servlet)
-                                           .request()
-                                           .get().getStatus());
-
-            assertEquals(200, ClientBuilder.newBuilder().register(new BasicAuthFilter()).build()
-                                   .target(servlet)
-                                   .request()
-                                   .get().getStatus());
-        }
+        assertEquals(401, ClientBuilder.newBuilder().build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getStatus());
     }
 
     @WebServlet(urlPatterns = "/basic")
