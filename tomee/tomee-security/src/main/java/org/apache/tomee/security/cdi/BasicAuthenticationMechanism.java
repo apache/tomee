@@ -49,7 +49,7 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         try {
             final CredentialValidationResult result =
-                    identityStoreHandler.validate(new BasicAuthenticationCredential(request.getHeader(AUTHORIZATION)));
+                    identityStoreHandler.validate(parseAuthenticationHeader(request.getHeader(AUTHORIZATION)));
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
@@ -76,5 +76,11 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                              final HttpServletResponse response,
                              final HttpMessageContext httpMessageContext) {
 
+    }
+
+    private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {
+        return !authenticationHeader.isEmpty() && authenticationHeader.startsWith("Basic ") ?
+               new BasicAuthenticationCredential(authenticationHeader.substring(6)) :
+               new BasicAuthenticationCredential(null);
     }
 }
