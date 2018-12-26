@@ -28,6 +28,7 @@ import javax.security.enterprise.credential.BasicAuthenticationCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -79,8 +80,11 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
     }
 
     private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {
-        return !authenticationHeader.isEmpty() && authenticationHeader.startsWith("Basic ") ?
-               new BasicAuthenticationCredential(authenticationHeader.substring(6)) :
-               new BasicAuthenticationCredential(null);
+        return Optional.ofNullable(authenticationHeader)
+                       .filter(header -> !header.isEmpty())
+                       .filter(header -> header.startsWith("Basic "))
+                       .map(header -> header.substring(6))
+                       .map(BasicAuthenticationCredential::new)
+                       .orElseGet(() -> new BasicAuthenticationCredential(""));
     }
 }
