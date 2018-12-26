@@ -4,7 +4,7 @@ status=published
 title=JAX-WS @WebService example
 ~~~~~~
 
-Creating Web Services with JAX-WS is quite easy.  Little has to be done aside from annotating a class with `@WebService`.  Thie example shows the use of CDI with webservice annotation. The web.xml expose the webservice servlet at the address http://${host}:${port}/pojo-webservice?wsdl. To run the sample you can use the tomee maven plugin, mvn tomee:run.
+Creating Web Services with JAX-WS is quite easy.  Little has to be done aside from annotating a class with `@WebService`.  Thie example shows the use of CDI with webservice annotation. The web.xml expose the webservice servlet at the address http://${host}:${port}/pojo-webservice?wsdl. To run the sample you can use the tomee maven plugin, mvn tomee:run. 
 
 ## web.xml
 
