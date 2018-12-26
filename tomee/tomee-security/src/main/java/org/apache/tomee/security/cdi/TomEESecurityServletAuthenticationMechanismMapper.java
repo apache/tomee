@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.servlet.ServletContext;
@@ -30,6 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @ApplicationScoped
 public class TomEESecurityServletAuthenticationMechanismMapper {
     private final Map<String, HttpAuthenticationMechanism> servletAuthenticationMapper = new ConcurrentHashMap<>();
+
+    @Inject
+    private DefaultAuthenticationMechanism defaultAuthenticationMechanism;
 
     public void init(@Observes @Initialized(ApplicationScoped.class) final ServletContext context) {
         final Map<String, ? extends ServletRegistration> servletRegistrations = context.getServletRegistrations();
@@ -47,6 +51,6 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
     }
 
     public HttpAuthenticationMechanism getCurrentAuthenticationMechanism(final String servletName) {
-        return servletAuthenticationMapper.get(servletName);
+        return servletAuthenticationMapper.getOrDefault(servletName, defaultAuthenticationMechanism);
     }
 }

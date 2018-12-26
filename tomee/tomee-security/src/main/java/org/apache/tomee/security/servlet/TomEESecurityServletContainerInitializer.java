@@ -16,23 +16,27 @@
  */
 package org.apache.tomee.security.servlet;
 
+import org.apache.tomee.security.cdi.TomEESecurityExtension;
 import org.apache.tomee.security.provider.TomEESecurityAuthConfigProvider;
 
 import javax.enterprise.inject.spi.CDI;
+import javax.inject.Inject;
 import javax.security.auth.message.config.AuthConfigFactory;
-import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.util.Optional;
 import java.util.Set;
 
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
-        if (CDI.current().select(HttpAuthenticationMechanism.class).isResolvable()) {
-            AuthConfigFactory.getFactory()
-                             .registerConfigProvider(new TomEESecurityAuthConfigProvider(), null, null,
-                                                     "TomEE Security JSR-375");
-        }
+        Optional.ofNullable(CDI.current().getBeanManager().getExtension(TomEESecurityExtension.class))
+                .map(TomEESecurityExtension::hasAuthenticationMechanisms)
+                .filter(has -> has.equals(true))
+                .ifPresent(has -> AuthConfigFactory.getFactory()
+                                                   .registerConfigProvider(new TomEESecurityAuthConfigProvider(),
+                                                                           null, null,
+                                                                           "TomEE Security JSR-375"));
     }
 }

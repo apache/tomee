@@ -49,6 +49,7 @@ public class TomEESecurityExtension implements Extension {
     void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery beforeBeanDiscovery,
                                     final BeanManager beanManager) {
         if (basicAuthentication.isEmpty()) {
+            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
             beforeBeanDiscovery.addAnnotatedType(
                     beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
             beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
@@ -75,5 +76,9 @@ public class TomEESecurityExtension implements Extension {
                                      .create(creationalContext);
                });
         }
+    }
+
+    public boolean hasAuthenticationMechanisms() {
+        return !basicAuthentication.isEmpty();
     }
 }
