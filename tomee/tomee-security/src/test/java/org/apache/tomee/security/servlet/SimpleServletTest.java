@@ -20,13 +20,9 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
-import org.apache.tomee.security.client.BasicAuthFilter;
 import org.junit.Test;
 
-import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.HttpConstraint;
-import javax.servlet.annotation.ServletSecurity;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +47,7 @@ public class SimpleServletTest {
                         JarLocation.jarLocation(SimpleServletTest.class),
                         JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class))) {
 
-            final Client client = ClientBuilder.newBuilder().register(new BasicAuthFilter()).build();
+            final Client client = ClientBuilder.newBuilder().build();
             final Response response =
                     client.target("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")
                           .request()
@@ -61,8 +57,6 @@ public class SimpleServletTest {
     }
 
     @WebServlet(urlPatterns = "/servlet")
-    @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
-    @BasicAuthenticationMechanismDefinition
     public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)

@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Set;
 
+import static javax.security.enterprise.AuthenticationStatus.NOT_DONE;
 import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
@@ -193,7 +194,7 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationStatus doNothing() {
-        return null;
+        return NOT_DONE;
     }
 
     @Override
