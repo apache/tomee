@@ -1,3 +1,9 @@
+index-group=Microprofile
+type=page
+status=published
+title=Microprofile Metrics Gauge
+
+~~~~~~
 # MicroProfile Metrics
 This is an example on how to use MicroProfile metrics in TomEE.
 
