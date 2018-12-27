@@ -19,7 +19,7 @@ then retrieved through another endpoint.
 
 == Request
 
-GET http://localhost:8080/cdi-session-scope-8.0.0-SNAPSHOT/set-name?name=Puneeth
+GET http://localhost:8080/cdi-session-scope/set-name?name=Puneeth
 
 == Response
 
@@ -27,7 +27,7 @@ done, go to /name servlet
 
 == Request
 
-GET http://localhost:8080/cdi-session-scope-8.0.0-SNAPSHOT/name
+GET http://localhost:8080/cdi-session-scope/name
 
 == Response
 
