@@ -3,7 +3,6 @@ type=page
 status=published
 title=CDI Alternative and Stereotypes
 ~~~~~~
-# Introduction
 
 CDI is a revolution for the Java EE world. This specification is the best one to avoid coupling between classes.
 
