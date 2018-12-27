@@ -21,6 +21,7 @@ import java.net.URLClassLoader;
 import static java.lang.ClassLoader.getSystemClassLoader;
 
 public class ClassPathFactory {
+
     @SuppressWarnings("checkstyle:needbraces")
     public static ClassPath createClassPath(final String name) {
         if (name.equalsIgnoreCase("tomcat")) return new TomcatClassPath();

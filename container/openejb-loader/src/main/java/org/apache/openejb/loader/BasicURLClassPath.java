@@ -27,6 +27,7 @@ import java.security.PrivilegedAction;
 import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
+
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
@@ -151,6 +152,11 @@ public abstract class BasicURLClassPath implements ClassPath {
             super(new URL[0], parent);
         }
 
+        /**
+         * URLs to be added to the URL list for searching classes and resources
+         * 
+         * @param url the URL to be added to the URLs list
+         */
         public void add(final URL url) {
             super.addURL(url);
         }

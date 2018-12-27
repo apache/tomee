@@ -111,14 +111,6 @@ public class IO {
         return readProperties(read(resource), properties);
     }
 
-    /**
-     * Reads and closes the input stream
-     *
-     * @param in         InputStream
-     * @param properties Properties
-     * @return Properties
-     * @throws IOException
-     */
     public static Properties readProperties(final InputStream in, final Properties properties) throws IOException {
         if (in == null) {
             throw new NullPointerException("InputStream is null");
@@ -159,7 +151,6 @@ public class IO {
             return slurp(is);
         }
     }
-
 
     public static String slurp(final URL url) throws IOException {
         return slurp(url.openStream());
@@ -221,7 +212,7 @@ public class IO {
         if (destDir.getCanonicalPath().startsWith(srcDir.getCanonicalPath())) {
             final File[] srcFiles = srcDir.listFiles();
             if (srcFiles != null && srcFiles.length > 0) {
-                exclusionList = new ArrayList<String>(srcFiles.length);
+                exclusionList = new ArrayList<>(srcFiles.length);
                 for (final File srcFile : srcFiles) {
                     final File copiedFile = new File(destDir, srcFile.getName());
                     exclusionList.add(copiedFile.getCanonicalPath());
@@ -346,7 +337,7 @@ public class IO {
             return false;
         }
         if (!file.delete()) {
-            Logger.getLogger(IO.class.getName()).log(Level.WARNING, "Delete failed on: " + file.getAbsolutePath());
+            Logger.getLogger(IO.class.getName()).log(Level.WARNING, "Delete failed on: {0}", file.getAbsolutePath());
             return false;
         }
 
