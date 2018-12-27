@@ -14,7 +14,7 @@ TomEE is supported by the main IDEs in the market:
 
 Be the first to write this part!
 
-== Idea
+== IntelliJ IDEA
 
 Be the first to write this part!
 
