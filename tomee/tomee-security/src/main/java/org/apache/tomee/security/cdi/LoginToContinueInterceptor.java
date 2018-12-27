@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.http.LoginToContinueMechanism;
+
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -42,21 +44,22 @@ public class LoginToContinueInterceptor {
                     HttpServletResponse.class,
                     HttpMessageContext.class
             })) {
-            return validateRequest((HttpMessageContext) invocationContext.getParameters()[2]);
+            return validateRequest(invocationContext);
         }
 
         return invocationContext.proceed();
     }
 
-    private AuthenticationStatus validateRequest(final HttpMessageContext httpMessageContext)
+    private AuthenticationStatus validateRequest(final InvocationContext invocationContext)
             throws AuthenticationException {
 
+        final HttpMessageContext httpMessageContext = (HttpMessageContext) invocationContext.getParameters()[2];
         clearStaleState(httpMessageContext);
 
         if (httpMessageContext.getAuthParameters().isNewAuthentication()) {
             return processCallerInitiatedAuthentication(httpMessageContext);
         } else {
-            return processContainerInitiatedAuthentication(httpMessageContext);
+            return processContainerInitiatedAuthentication(invocationContext, httpMessageContext);
         }
     }
 
@@ -64,14 +67,23 @@ public class LoginToContinueInterceptor {
 
     }
 
-    private AuthenticationStatus processCallerInitiatedAuthentication(final HttpMessageContext httpMessageContext) {
+    private AuthenticationStatus processCallerInitiatedAuthentication(
+            final HttpMessageContext httpMessageContext) {
         return null;
     }
 
-    private AuthenticationStatus processContainerInitiatedAuthentication(final HttpMessageContext httpMessageContext) {
+    private AuthenticationStatus processContainerInitiatedAuthentication(
+            final InvocationContext invocationContext,
+            final HttpMessageContext httpMessageContext) {
 
         if (isOnInitialProtectedURL(httpMessageContext)) {
-            return null;
+            final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
+
+            if (loginToContinue.useForwardToLogin()) {
+                return httpMessageContext.forward(loginToContinue.loginPage());
+            } else {
+                return httpMessageContext.redirect(loginToContinue.loginPage());
+            }
         }
 
         if (isOnOnLoginPostback(httpMessageContext)) {
@@ -86,7 +98,7 @@ public class LoginToContinueInterceptor {
     }
 
     private boolean isOnInitialProtectedURL(final HttpMessageContext httpMessageContext) {
-        return false;
+        return httpMessageContext.isProtected();
     }
 
     private boolean isOnOnLoginPostback(final HttpMessageContext httpMessageContext) {
@@ -95,5 +107,13 @@ public class LoginToContinueInterceptor {
 
     private boolean isOnOriginalURLAfterAuthenticate(final HttpMessageContext httpMessageContext) {
         return false;
+    }
+
+    private LoginToContinue getLoginToContinue(final InvocationContext invocationContext) {
+        if (invocationContext.getTarget() instanceof LoginToContinueMechanism) {
+            return ((LoginToContinueMechanism) invocationContext.getTarget()).getLoginToContinue();
+        }
+
+        throw new IllegalArgumentException();
     }
 }

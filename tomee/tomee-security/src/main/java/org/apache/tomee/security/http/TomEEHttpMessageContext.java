@@ -30,6 +30,7 @@ import javax.security.enterprise.CallerPrincipal;
 import javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,6 +38,7 @@ import java.security.Principal;
 import java.util.Set;
 
 import static javax.security.enterprise.AuthenticationStatus.NOT_DONE;
+import static javax.security.enterprise.AuthenticationStatus.SEND_CONTINUE;
 import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
@@ -94,7 +96,7 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationParameters getAuthParameters() {
-        return null;
+        return new AuthenticationParameters();
     }
 
     @Override
@@ -140,12 +142,24 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationStatus redirect(final String location) {
-        return null;
+        try {
+            getResponse().sendRedirect(location);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+
+        return SEND_CONTINUE;
     }
 
     @Override
     public AuthenticationStatus forward(final String path) {
-        return null;
+        try {
+            getRequest().getRequestDispatcher(path).forward(getRequest(), getResponse());
+        } catch (final ServletException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return SEND_CONTINUE;
     }
 
     @Override
