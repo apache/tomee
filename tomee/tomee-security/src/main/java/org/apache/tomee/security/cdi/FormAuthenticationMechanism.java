@@ -16,7 +16,10 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.http.LoginToContinueMechanism;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
@@ -24,10 +27,14 @@ import javax.security.enterprise.authentication.mechanism.http.HttpMessageContex
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.function.Supplier;
 
 @ApplicationScoped
 @LoginToContinue
-public class FormAuthenticationMechanism implements HttpAuthenticationMechanism {
+public class FormAuthenticationMechanism implements HttpAuthenticationMechanism, LoginToContinueMechanism {
+    @Inject
+    private Supplier<LoginToContinue> loginToContinue;
+
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response,
                                                 final HttpMessageContext httpMessageContext)
@@ -46,5 +53,9 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism 
     public void cleanSubject(final HttpServletRequest request, final HttpServletResponse response,
                              final HttpMessageContext httpMessageContext) {
         throw new UnsupportedOperationException();
+    }
+
+    public LoginToContinue getLoginToContinue() {
+        return loginToContinue.get();
     }
 }

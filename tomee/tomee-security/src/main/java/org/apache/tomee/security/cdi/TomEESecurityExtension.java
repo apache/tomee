@@ -32,11 +32,14 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
+import javax.enterprise.util.TypeLiteral;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
+import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class TomEESecurityExtension implements Extension {
     private final Set<AnnotatedType> basicAuthentication = new HashSet<>();
@@ -90,7 +93,18 @@ public class TomEESecurityExtension implements Extension {
                     });
         }
 
+        // TODO - Support multiple here
         if (!formAuthentication.isEmpty()) {
+            afterBeanDiscovery
+                    .addBean()
+                    .id(Supplier.class.getName() + "#" + LoginToContinue.class.getName())
+                    .beanClass(Supplier.class)
+                    .addType(Object.class)
+                    .addType(new TypeLiteral<Supplier<LoginToContinue>>() {})
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith(creationalContext -> createLoginToContinueSupplier());
+
             afterBeanDiscovery
                     .addBean()
                     .id(FormAuthenticationMechanism.class.getName())
@@ -113,5 +127,12 @@ public class TomEESecurityExtension implements Extension {
 
     public boolean hasAuthenticationMechanisms() {
         return !basicAuthentication.isEmpty();
+    }
+
+    private Supplier<LoginToContinue> createLoginToContinueSupplier() {
+        return () -> formAuthentication.iterator()
+                               .next()
+                               .getAnnotation(FormAuthenticationMechanismDefinition.class)
+                               .loginToContinue();
     }
 }
