@@ -36,7 +36,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {
         final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
-        assertEquals(200, ClientBuilder.newBuilder().register(new BasicAuthFilter()).build()
+        assertEquals(200, ClientBuilder.newBuilder().register(new BasicAuthFilter("tomcat", "tomcat")).build()
                                        .target(servlet)
                                        .request()
                                        .get().getStatus());
@@ -45,8 +45,34 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void missingAuthorizationHeader() throws Exception {
         final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
-
         assertEquals(401, ClientBuilder.newBuilder().build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getStatus());
+    }
+
+    @Test
+    public void noUser() throws Exception {
+        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        assertEquals(401, ClientBuilder.newBuilder().register(new BasicAuthFilter("unknown", "tomcat")).build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getStatus());
+    }
+
+    @Test
+    public void wrongPassword() throws Exception {
+        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        assertEquals(401, ClientBuilder.newBuilder().register(new BasicAuthFilter("tomcat", "wrong")).build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getStatus());
+    }
+
+    @Test
+    public void missingRole() throws Exception {
+        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        assertEquals(403, ClientBuilder.newBuilder().register(new BasicAuthFilter("user", "user")).build()
                                        .target(servlet)
                                        .request()
                                        .get().getStatus());

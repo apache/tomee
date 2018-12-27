@@ -24,12 +24,18 @@ import java.util.Base64;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 public class BasicAuthFilter implements ClientRequestFilter {
-    @Override
-    public void filter(final ClientRequestContext requestContext) throws IOException {
-        requestContext.getHeaders().add(AUTHORIZATION, basicAuth("tomcat", "tomcat"));
+    private final String username;
+    private final String password;
+
+    public BasicAuthFilter(final String username, final String password) {
+        this.username = username;
+        this.password = password;
     }
 
-    private String basicAuth(final String username, final String password) {
-        return "Basic " + new String(Base64.getEncoder().encode((username + ":" + password).getBytes()));
+    @Override
+    public void filter(final ClientRequestContext requestContext) throws IOException {
+        requestContext.getHeaders()
+                      .add(AUTHORIZATION,
+                           "Basic " + new String(Base64.getEncoder().encode((username + ":" + password).getBytes())));
     }
 }

@@ -16,4 +16,5 @@
   -->
 <tomcat-users>
   <user name="tomcat" password="tomcat" roles="tomcat"/>
+  <user name="user" password="user" roles="user"/>
 </tomcat-users>
