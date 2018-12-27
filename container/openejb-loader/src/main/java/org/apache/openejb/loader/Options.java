@@ -94,23 +94,10 @@ public class Options {
         return parent.getLogger();
     }
 
-    /**
-     * Method to check if properties contains the specified String property
-     * 
-     * @param property String
-     * @return boolean
-     */
     public boolean has(final String property) {
         return properties.containsKey(property) || parent.has(property);
     }
 
-    /**
-     * Return property by the specified String property
-     * 
-     * @param property String
-     * @param defaultValue String
-     * @return String
-     */
     public String get(final String property, final String defaultValue) {
         final String value = properties.getProperty(property);
 
@@ -355,23 +342,10 @@ public class Options {
         return possibleValues(enumType);
     }
 
-    /**
-     * Check possible values of enum and return concatenated string
-     * 
-     * @param enumType
-     * @return
-     */
     protected static String possibleValues(final Class<? extends Enum> enumType) {
         return join(", ", lowercase(enumType.getEnumConstants()));
     }
 
-    /**
-     * Concatenates the given elements with the delimiter and returns string
-     * 
-     * @param delimiter String
-     * @param collection Object...
-     * @return String
-     */
     public static String join(final String delimiter, final Object... collection) {
         final StringBuilder sb = new StringBuilder();
         for (final Object obj : collection) {

@@ -58,14 +58,6 @@ public class FileUtils {
         }
     }
 
-    /**
-     * Returns the cannonical pathname
-     * 
-     * 
-     * @param path String
-     * @return File
-     * @throws IOException if an I/O error occurs
-     */
     public File getDirectory(final String path) throws IOException {
         return getDirectory(path, false);
     }
@@ -79,14 +71,6 @@ public class FileUtils {
         return this.getDirectory().equals(that.getDirectory());
     }
 
-    /**
-     * Returns canonical form of the specified path
-     * 
-     * @param path String
-     * @param create boolean 
-     * @return File
-     * @throws IOException if an I/O error occurs 
-     */
     public File getDirectory(final String path, final boolean create) throws IOException {
         File dir = new File(home, path);
         dir = dir.getCanonicalFile();
@@ -115,25 +99,10 @@ public class FileUtils {
         this.home = dir;
     }
 
-    /**
-     * Returns File at specified path String
-     * 
-     * @param path String
-     * @return File
-     * @throws IOException
-     */
     public File getFile(final String path) throws IOException {
         return getFile(path, true);
     }
 
-    /**
-     * Returns File at specified path String
-     * 
-     * @param path String
-     * @param validate boolean
-     * @return File
-     * @throws IOException if and I/O error occurs
-     */
     public File getFile(final String path, final boolean validate) throws IOException {
         File file = new File(path);
 
@@ -150,15 +119,6 @@ public class FileUtils {
         return file;
     }
 
-    /**
-     * Creates Temp Directory
-     * 
-     * Throws IOException if directory doesn't exists and if it fails to create directories
-     * 
-     * @param pathPrefix path prefix 
-     * @return File File 
-     * @throws IOException
-     */
     public static File createTempDirectory(final String pathPrefix) throws IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
 
@@ -172,14 +132,6 @@ public class FileUtils {
         throw new IOException("Cannot create temporary directory at: " + pathPrefix);
     }
 
-    /**
-     * Creates Temp Directory 
-     * 
-     * Throws IOException if directory doesn't exists and if it fails to create directories
-     * 
-     * @return File File
-     * @throws IOException
-     */
     public static File createTempDirectory() throws IOException {
         final String prefix = System.getProperty("java.io.tmpdir", File.separator + "tmp") + File.separator + "openejb";
         return createTempDirectory(prefix);

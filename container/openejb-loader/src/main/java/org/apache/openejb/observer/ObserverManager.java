@@ -55,12 +55,6 @@ public class ObserverManager {
     private final Set<Observer> observers = new LinkedHashSet<>();
     private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
-    /**
-     * Add the provided object to be observable
-     * 
-     * @param observer Object
-     * @return boolean
-     */
     public boolean addObserver(final Object observer) {
         if (observer == null) {
             throw new IllegalArgumentException("observer cannot be null");
@@ -80,12 +74,6 @@ public class ObserverManager {
         }
     }
 
-    /**
-     * Remove the observable object so this object doesn't have any observers
-     * 
-     * @param observer Object
-     * @return boolean
-     */
     public boolean removeObserver(final Object observer) {
         if (observer == null) {
             throw new IllegalArgumentException("listener cannot be null");

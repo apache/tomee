@@ -74,32 +74,16 @@ public class ProvisioningResolver {
         }
     }
 
-    /**
-     * Add ArchiveResolver to resolvers
-     * 
-     * @param resolver ArchiveResolver
-     */
     public void addResolver(final ArchiveResolver resolver) {
         if (resolvers.put(resolver.prefix(), resolver) != null) {
             Logger.getLogger(ProvisioningResolver.class.getName()).warning("Overriding resolver " + resolver.prefix() + " with " + resolver);
         }
     }
 
-    /**
-     * Remove resolver
-     * 
-     * @param resolver ArchiveResolver
-     */
     public void removeResolver(final ArchiveResolver resolver) {
         resolvers.remove(resolver.prefix());
     }
 
-    /**
-     * Real path location of the specified location
-     * 
-     * @param rawLocation String
-     * @return
-     */
     public Set<String> realLocation(final String rawLocation) {
         // if direct file path then use it
         final File file = new File(rawLocation);
@@ -192,11 +176,6 @@ public class ProvisioningResolver {
         return System.getProperty(OPENEJB_DEPLOYER_CACHE_FOLDER, TEMP_DIR);
     }
 
-    /**
-     * Cache the specified String pathname
-     * @param path String
-     * @return File
-     */
     public static File cacheFile(final String path) {
         final String cache = cache();
         if (new File(cache).isAbsolute()) {

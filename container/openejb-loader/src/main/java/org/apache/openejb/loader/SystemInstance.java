@@ -134,22 +134,10 @@ public final class SystemInstance {
         return observerManager.fireEvent(event);
     }
 
-    /**
-     * Add the specified Object to Observer
-     * 
-     * @param observer Object
-     * @return boolean
-     */
     public boolean addObserver(final Object observer) {
         return observerManager.addObserver(observer);
     }
 
-    /**
-     * Remove the specified Object from Observer
-     * 
-     * @param observer Object
-     * @return boolean
-     */
     public boolean removeObserver(final Object observer) {
         return observerManager.removeObserver(observer);
     }
@@ -167,24 +155,10 @@ public final class SystemInstance {
         return internalProperties;
     }
 
-    /**
-     * Return the property by the specified String key
-     * 
-     * @param key String
-     * @return String
-     */
     public String getProperty(final String key) {
         return internalProperties.getProperty(key);
     }
 
-    /**
-     * Return the property by the specified String key
-     * if the key is not found the default value will be returned
-     * 
-     * @param key String
-     * @param defaultValue String
-     * @return String
-     */
     public String getProperty(final String key, final String defaultValue) {
         return internalProperties.getProperty(key, defaultValue);
     }
@@ -340,12 +314,6 @@ public final class SystemInstance {
         addSystemProperties(file);
     }
 
-    /**
-     * Returns the conf by the specified pathname
-     * 
-     * @param subPath String
-     * @return File
-     */
     public File getConf(final String subPath) {
 
         File conf = null;

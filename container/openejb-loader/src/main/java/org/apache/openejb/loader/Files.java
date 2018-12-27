@@ -46,12 +46,6 @@ public class Files {
     private static final Map<String, MessageDigest> DIGESTS = new HashMap<>();
     private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
-    /**
-     * Returns the absolute path of the File Object
-     * 
-     * @param parts String...
-     * @return File
-     */
     public static File path(final String... parts) {
         File dir = null;
         for (final String part : parts) {
@@ -65,13 +59,6 @@ public class Files {
         return null != dir ? dir.getAbsoluteFile() : dir;
     }
 
-    /**
-     * Returns the absolute path of the File Object
-     * 
-     * @param dir File
-     * @param parts String...
-     * @return File
-     */
     public static File path(final File dir, final String... parts) {
         File base = dir;
         int idx = 0;
@@ -90,35 +77,14 @@ public class Files {
         return base.getAbsoluteFile();
     }
 
-    /**
-     * Returns a List of pathnames for File Objects
-     * 
-     * @param dir File
-     * @param regex String
-     * @return List of Files
-     */
     public static List<File> collect(final File dir, final String regex) {
         return collect(dir, Pattern.compile(regex));
     }
 
-    /**
-     * Returns a List of pathnames for File Objects
-     * 
-     * @param dir File
-     * @param pattern Pattern
-     * @return List of Files
-     */
     public static List<File> collect(final File dir, final Pattern pattern) {
         return collect(dir, new PatternFileFilter(pattern));
     }
 
-    /**
-     * Returns a List of pathnames for File Objects
-     * 
-     * @param dir File
-     * @param filter FileFilter
-     * @return List of Files
-     */
     public static List<File> collect(final File dir, final FileFilter filter) {
         final List<File> accepted = new ArrayList<>();
         if (filter.accept(dir)) {
@@ -135,14 +101,6 @@ public class Files {
         return accepted;
     }
 
-    /**
-     * Method to check if the file or direcotory exists
-     * 
-     * @param file File
-     * @param s String
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File exists(final File file, final String s) {
         if (!file.exists()) {
             throw new FileDoesNotExistException(s + " does not exist: " + file.getAbsolutePath());
@@ -150,13 +108,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if the file or direcotory exists
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File exists(final File file) {
         if (!file.exists()) {
             throw new FileDoesNotExistException("Does not exist: " + file.getAbsolutePath());
@@ -164,13 +115,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if it is a directory
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File dir(final File file) {
         if (!file.isDirectory()) {
             throw new FileRuntimeException("Not a directory: " + file.getAbsolutePath());
@@ -179,14 +123,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to create a file
-     * 
-     * @param file File
-     * @return File
-     * @throws IOException if an I/O error occurs
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File touch(final File file) throws IOException {
         if (!file.createNewFile()) {
             throw new FileRuntimeException("Cannot create file: " + file.getAbsolutePath());
@@ -194,13 +130,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if the specified File Object is a File
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File file(final File file) {
         exists(file);
         if (!file.isFile()) {
@@ -209,13 +138,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if File Object is hidden
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File notHidden(final File file) {
         exists(file);
         if (file.isHidden()) {
@@ -224,13 +146,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if File Object is writeable
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File writable(final File file) {
         if (!file.canWrite()) {
             throw new FileRuntimeException("Not writable: " + file.getAbsolutePath());
@@ -238,13 +153,6 @@ public class Files {
         return file;
     }
 
-    /**
-     * Method to check if File Object is readable
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File readable(final File file) {
         if (!file.canRead()) {
             throw new FileRuntimeException("Not readable: " + file.getAbsolutePath());
@@ -252,23 +160,10 @@ public class Files {
         return file;
     }
 
-    /**
-     * File Object is readble
-     * 
-     * @param file File
-     * @return File
-     */
     public static File readableFile(final File file) {
         return readable(file(file));
     }
 
-    /**
-     * Create directory by the specified path
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException if it fails to create directory
-     */
     public static File mkdir(final File file) {
         if (file.exists()) {
             return file;
@@ -289,23 +184,10 @@ public class Files {
         }
     }
 
-    /**
-     * Create directory by the specified parent pathname and child pathname
-     * 
-     * @param file file
-     * @param name String
-     * @return File
-     */
     public static File mkdir(final File file, final String name) {
         return mkdir(new File(file, name));
     }
 
-    /**
-     * Method to create tmp directory
-     * 
-     * @return File
-     * @Throws IOException if an I/O error occurs
-     */
     public static File tmpdir() {
         try {
             File file;
@@ -340,24 +222,11 @@ public class Files {
         }
     }
 
-    /**
-     * Create parent pathname by the specified pathname
-     * 
-     * @param file File
-     * @return File 
-     */
     public static File mkparent(final File file) {
         mkdirs(file.getParentFile());
         return file;
     }
 
-    /**
-     * Create directories by the specified pathname
-     * 
-     * @param file File
-     * @return File
-     * @Throws FileRuntimeException on failure at any point
-     */
     public static File mkdirs(final File file) {
 
         if (!file.exists()) {
@@ -393,21 +262,11 @@ public class Files {
         }
     }
 
-    /**
-     * Delete File Object when exit
-     * 
-     * @param file File
-     */
     public static void deleteOnExit(final File file) {
         DELETE.add(file.getAbsolutePath());
         flagForDeleteOnExit(file);
     }
 
-    /**
-     * Delete File Objects when exit
-     * 
-     * @param file File
-     */
     public static void flagForDeleteOnExit(final File file) {
         if (file.exists()) {
             if (file.isDirectory()) {

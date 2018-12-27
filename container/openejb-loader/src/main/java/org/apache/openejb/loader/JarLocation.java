@@ -30,23 +30,10 @@ public class JarLocation {
         return jarLocation(JarLocation.class);
     }
 
-    /**
-     * Return jar from the specified resource name
-     * 
-     * @param resourceName String
-     * @return File
-     */
     public static File jarFromResource(final String resourceName) {
         return jarFromResource(Thread.currentThread().getContextClassLoader(), resourceName);
     }
 
-    /**
-     * Return jar from the specified resource name
-     * 
-     * @param loader ClassLoader
-     * @param resourceName String
-     * @return File
-     */
     public static File jarFromResource(final ClassLoader loader, final String resourceName) {
         try {
             URL url = loader.getResource(resourceName);
@@ -81,12 +68,6 @@ public class JarLocation {
         }
     }
 
-    /**
-     * Return jar location
-     * 
-     * @param clazz Class
-     * @return File
-     */
     public static File jarLocation(final Class clazz) {
         try {
             final String classFileName = clazz.getName().replace(".", "/") + ".class";

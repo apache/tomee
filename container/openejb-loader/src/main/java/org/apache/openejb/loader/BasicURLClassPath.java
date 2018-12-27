@@ -28,11 +28,6 @@ import java.util.Locale;
 
 public abstract class BasicURLClassPath implements ClassPath {
 
-    /**
-     * Returns the context ClassLoader for this Thread or null
-     * 
-     * @return ClassLoader ClassLoader
-     */
     public static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
             @Override
@@ -45,14 +40,6 @@ public abstract class BasicURLClassPath implements ClassPath {
     private Field ucpField;
     private boolean ucpFieldErrorLogged;
 
-    /**
-     * Add Jar to the URLClassPath
-     * 
-     * Throws Exception if fails any
-     * @param jar URL
-     * @param loader URLClassLoader
-     * @throws Exception
-     */
     protected void addJarToPath(final URL jar, final URLClassLoader loader) throws Exception {
         final Object cp = getURLClassPath(loader);
         if (cp == null && CustomizableURLClassLoader.class.isInstance(loader)) {
@@ -81,13 +68,6 @@ public abstract class BasicURLClassPath implements ClassPath {
         });
     }
 
-    /**
-     * Adds Jars to the URLClassPath
-     * 
-     * @param dir File
-     * @param loader URLClassLoader
-     * @throws Exception
-     */
     protected synchronized void addJarsToPath(final File dir, final URLClassLoader loader) throws Exception {
         if (dir == null || !dir.exists()) {
             return;

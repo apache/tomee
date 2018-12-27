@@ -31,12 +31,6 @@ public class ContextClassPath extends BasicURLClassPath {
         return getContextClassLoader();
     }
 
-    /**
-     * Add Jars to URLClassPath
-     * 
-     * @param dir File
-     * @throws Exception
-     */
     @Override
     public void addJarsToPath(final File dir) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();
@@ -46,12 +40,6 @@ public class ContextClassPath extends BasicURLClassPath {
         }
     }
 
-    /**
-     * Add Jar to URLClassPath
-     * 
-     * @param jar URL
-     * @throws Exception
-     */
     @Override
     public void addJarToPath(final URL jar) throws Exception {
         final ClassLoader contextClassLoader = getContextClassLoader();
