@@ -50,12 +50,7 @@ public class PersistenceUnitLinkResolver extends UniqueDefaultLinkResolver<Persi
 
         final WebModule war = extractWebApp(moduleUri);
         if (war != null) { // keep only values related to this war
-            final Iterator<PersistenceUnit> it = values.iterator();
-            while (it.hasNext()) {
-                if (!isIn(it.next(), war)) {
-                    it.remove();
-                }
-            }
+            values.removeIf(persistenceUnit -> !isIn(persistenceUnit, war));
             return values;
         }
 

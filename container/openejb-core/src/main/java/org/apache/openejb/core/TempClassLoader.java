@@ -107,7 +107,7 @@ public class TempClassLoader extends URLClassLoader {
                     while (resources.hasMoreElements()) {
                         l.add(resources.nextElement());
                     }
-                    Collections.sort(l, new ResourceComparator(getParent(), name));
+                    l.sort(new ResourceComparator(getParent(), name));
                     return l.iterator().next();
                 }
                 return url;

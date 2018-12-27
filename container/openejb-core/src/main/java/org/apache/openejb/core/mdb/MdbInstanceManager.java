@@ -200,12 +200,7 @@ public class MdbInstanceManager {
 
         final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
 
-        MdbContext mdbContext = new MdbContext(securityService, new Flushable() {
-            @Override
-            public void flush() throws IOException {
-                data.flush();
-            }
-        });
+        MdbContext mdbContext = new MdbContext(securityService, data::flush);
 
         try {
             final Context context = beanContext.getJndiEnc();

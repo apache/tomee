@@ -38,8 +38,7 @@ public class UsernamePasswordCallbackHandler implements CallbackHandler {
     }
 
     public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        for (int i = 0; i < callbacks.length; i++) {
-            final Callback callback = callbacks[i];
+        for (final Callback callback : callbacks) {
             if (callback instanceof PasswordCallback) {
                 final PasswordCallback passwordCallback = (PasswordCallback) callback;
                 if (password == null) {

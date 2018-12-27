@@ -420,12 +420,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         @SuppressWarnings("unchecked")
         public SecurityContext(final Subject subject) {
             this.subject = subject;
-            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, new PrivilegedAction() {
-                @Override
-                public Object run() {
-                    return AccessController.getContext();
-                }
-            }, null);
+            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, (PrivilegedAction) AccessController::getContext, null);
         }
     }
 

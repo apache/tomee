@@ -58,11 +58,7 @@ public class WebappAggregatedArchive implements Archive, ScanConstants {
                             final Class<?> aClass = module.getClassLoader().loadClass(clazz);
                             loaded.add(aClass);
                             final URL jar = jarLocation(aClass).toURI().toURL();
-                            List<String> list = map.get(jar);
-                            if (list == null) {
-                                list = new ArrayList<>();
-                                map.put(jar, list);
-                            }
+                            List<String> list = map.computeIfAbsent(jar, k -> new ArrayList<>());
                             list.add(clazz);
                         } catch (final ClassNotFoundException e) {
                             throw new IllegalArgumentException(e);

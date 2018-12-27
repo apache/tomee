@@ -220,11 +220,7 @@ public class CdiScanner implements BdaScannerService {
     }
 
     private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<String> list, final ClassLoader loader) {
-        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
-        if (classes == null) {
-            classes = new HashSet<>();
-            beanClassesPerBda.put(bdaInfo, classes);
-        }
+        Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
 
         for (final String s : list) {
             final Class<?> load = load(s, loader);
@@ -234,11 +230,7 @@ public class CdiScanner implements BdaScannerService {
         }
     }
     private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<Class<?>> list) {
-        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
-        if (classes == null) {
-            classes = new HashSet<>();
-            beanClassesPerBda.put(bdaInfo, classes);
-        }
+        Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
 
         classes.addAll(list);
     }

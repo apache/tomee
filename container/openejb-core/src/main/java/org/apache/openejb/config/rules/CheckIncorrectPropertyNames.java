@@ -72,9 +72,8 @@ public class CheckIncorrectPropertyNames extends ValidationBase {
         this.module = appModule;
         final Properties systemProperties = SystemInstance.get().getProperties();
 
-        final Iterator iterator = incorrectAndCorrectPropNames.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<String, String> entry = (Map.Entry<String, String>) iterator.next();
+        for (Object o : incorrectAndCorrectPropNames.entrySet()) {
+            final Map.Entry<String, String> entry = (Map.Entry<String, String>) o;
             if (systemProperties.containsKey(entry.getKey())) {
                 warn(appModule.toString(), "incorrect.property.name", entry.getKey(), entry.getValue());
             }

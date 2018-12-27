@@ -279,12 +279,7 @@ public abstract class CUTask<T> extends ManagedTaskListenerTask implements Compa
                 if (errors.size() == 1) {
                     throw errors.iterator().next();
                 }
-                throw new OpenEJBRuntimeException(Join.join("\n", new Join.NameCallback<RuntimeException>() {
-                    @Override
-                    public String getName(final RuntimeException object) {
-                        return object.getMessage();
-                    }
-                }, errors));
+                throw new OpenEJBRuntimeException(Join.join("\n", Throwable::getMessage, errors));
             }
         }
 

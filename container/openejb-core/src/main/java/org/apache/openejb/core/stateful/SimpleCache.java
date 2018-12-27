@@ -107,11 +107,7 @@ public class SimpleCache<K, V> implements Cache<K, V> {
             final ClassLoader loader = Thread.currentThread().getContextClassLoader();
             Thread.currentThread().setContextClassLoader(SimpleCache.class.getClassLoader());
             try {
-                future = executor.scheduleWithFixedDelay(new Runnable() {
-                    public void run() {
-                        processLRU();
-                    }
-                }, frequency, frequency, TimeUnit.MILLISECONDS);
+                future = executor.scheduleWithFixedDelay(this::processLRU, frequency, frequency, TimeUnit.MILLISECONDS);
             } finally {
                 Thread.currentThread().setContextClassLoader(loader);
             }

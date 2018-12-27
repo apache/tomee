@@ -93,13 +93,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 }
 
                 // try to avoid to valid twice the same classes
-                final Iterator<String> it = classes.iterator();
-                while (it.hasNext()) {
-                    final String current = it.next();
-                    if (standAloneClasses.contains(current)) {
-                        it.remove();
-                    }
-                }
+                classes.removeIf(standAloneClasses::contains);
 
                 // valid
                 for (final String classname : classes) {

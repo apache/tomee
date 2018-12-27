@@ -108,8 +108,8 @@ public class SetValuedCmr<Bean extends EntityBean, Proxy extends EJBLocalObject>
         }
         relatedBeans.clear();
 
-        for (final Iterator iterator = new ArrayList(newProxies).iterator(); iterator.hasNext(); ) {
-            final Proxy newProxy = (Proxy) iterator.next();
+        for (Object o : new ArrayList(newProxies)) {
+            final Proxy newProxy = (Proxy) o;
             final Bean newBean = Cmp2Util.<Bean>getEntityBean(newProxy);
 
             if (newProxy != null) {
