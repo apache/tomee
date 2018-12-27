@@ -1,6 +1,7 @@
 index-group=Other Features
 type=page
 status=published
+title=Bean Validation Design by Contract
 ~~~~~~
 # Bean Validation - Design By Contract
 

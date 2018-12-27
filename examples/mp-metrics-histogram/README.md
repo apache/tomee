@@ -1,6 +1,7 @@
 index-group=Histogram
 type=page
 status=published
+title=Microprofile Metrics Histogram
 ~~~~~~
 # Microprofile Metrics
 This is an example on how to use microprofile metrics in TomEE.

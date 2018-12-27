@@ -1,6 +1,7 @@
 index-group=Unrevised
 type=page
 status=published
+title=CDI Events
 ~~~~~~
 # CDI events: loose coupling and extensibility
 

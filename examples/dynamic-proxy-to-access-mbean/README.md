@@ -1,7 +1,7 @@
 index-group=Proxy Beans
 type=page
 status=published
-title=dynamic-proxy-to-access-mbean
+title=Dynamic Proxy to Access MBean
 ~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
