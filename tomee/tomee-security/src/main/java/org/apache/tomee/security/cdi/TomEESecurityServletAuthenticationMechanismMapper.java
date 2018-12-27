@@ -22,6 +22,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
@@ -44,6 +45,12 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
                     servletAuthenticationMapper.put(servletName,
                                                     CDI.current().select(BasicAuthenticationMechanism.class).get());
                 }
+
+                if (servletClass.isAnnotationPresent(FormAuthenticationMechanismDefinition.class)) {
+                    servletAuthenticationMapper.put(servletName,
+                                                    CDI.current().select(FormAuthenticationMechanism.class).get());
+                }
+
             } catch (final ClassNotFoundException e) {
                 // Ignore
             }

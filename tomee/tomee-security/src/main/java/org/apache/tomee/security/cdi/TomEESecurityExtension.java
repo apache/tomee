@@ -31,51 +31,82 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.WithAnnotations;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import java.util.HashSet;
 import java.util.Set;
 
 public class TomEESecurityExtension implements Extension {
     private final Set<AnnotatedType> basicAuthentication = new HashSet<>();
-
-    void processAuthenticationMechanismDefinitions(@Observes final ProcessAnnotatedType<?> processAnnotatedType) {
-        final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
-        if (annotatedType.isAnnotationPresent(BasicAuthenticationMechanismDefinition.class)) {
-            basicAuthentication.add(annotatedType);
-        }
-    }
+    private final Set<AnnotatedType> formAuthentication = new HashSet<>();
 
     void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery beforeBeanDiscovery,
                                     final BeanManager beanManager) {
-        if (basicAuthentication.isEmpty()) {
-            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
-            beforeBeanDiscovery.addAnnotatedType(
-                    beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
-            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
-            beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
+        beforeBeanDiscovery.addAnnotatedType(
+                beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
+    }
+
+    void processAuthenticationMechanismDefinitions(@Observes
+                                                   @WithAnnotations({
+                                                           BasicAuthenticationMechanismDefinition.class,
+                                                           FormAuthenticationMechanismDefinition.class
+                                                   }) final ProcessAnnotatedType<?> processAnnotatedType) {
+        final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
+
+        if (annotatedType.isAnnotationPresent(BasicAuthenticationMechanismDefinition.class)) {
+            basicAuthentication.add(annotatedType);
+        }
+
+        if (annotatedType.isAnnotationPresent(FormAuthenticationMechanismDefinition.class)) {
+            formAuthentication.add(annotatedType);
         }
     }
 
     void registerAuthenticationMechanism(@Observes final AfterBeanDiscovery afterBeanDiscovery,
                                          final BeanManager beanManager) {
         if (!basicAuthentication.isEmpty()) {
-            afterBeanDiscovery.addBean()
-               .id(BasicAuthenticationMechanism.class.getName())
-               .beanClass(BasicAuthenticationMechanism.class)
-               .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
-               .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
-               .scope(ApplicationScoped.class)
-               .createWith((CreationalContext<BasicAuthenticationMechanism> creationalContext) -> {
-                   AnnotatedType<BasicAuthenticationMechanism> annotatedType =
-                           beanManager.createAnnotatedType(BasicAuthenticationMechanism.class);
-                   BeanAttributes<BasicAuthenticationMechanism> beanAttributes =
-                           beanManager.createBeanAttributes(annotatedType);
-                   return beanManager.createBean(beanAttributes, BasicAuthenticationMechanism.class,
-                                                 beanManager.getInjectionTargetFactory(annotatedType))
-                                     .create(creationalContext);
-               });
+            afterBeanDiscovery
+                    .addBean()
+                    .id(BasicAuthenticationMechanism.class.getName())
+                    .beanClass(BasicAuthenticationMechanism.class)
+                    .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith((CreationalContext<BasicAuthenticationMechanism> creationalContext) -> {
+                        AnnotatedType<BasicAuthenticationMechanism> annotatedType =
+                                beanManager.createAnnotatedType(BasicAuthenticationMechanism.class);
+                        BeanAttributes<BasicAuthenticationMechanism> beanAttributes =
+                                beanManager.createBeanAttributes(annotatedType);
+                        return beanManager.createBean(beanAttributes, BasicAuthenticationMechanism.class,
+                                                      beanManager.getInjectionTargetFactory(annotatedType))
+                                          .create(creationalContext);
+                    });
         }
+
+        if (!formAuthentication.isEmpty()) {
+            afterBeanDiscovery
+                    .addBean()
+                    .id(FormAuthenticationMechanism.class.getName())
+                    .beanClass(FormAuthenticationMechanism.class)
+                    .types(Object.class, HttpAuthenticationMechanism.class, FormAuthenticationMechanism.class)
+                    .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                    .scope(ApplicationScoped.class)
+                    .createWith((CreationalContext<FormAuthenticationMechanism> creationalContext) -> {
+                        AnnotatedType<FormAuthenticationMechanism> annotatedType =
+                                beanManager.createAnnotatedType(FormAuthenticationMechanism.class);
+                        BeanAttributes<FormAuthenticationMechanism> beanAttributes =
+                                beanManager.createBeanAttributes(annotatedType);
+                        return beanManager.createBean(beanAttributes, FormAuthenticationMechanism.class,
+                                                      beanManager.getInjectionTargetFactory(annotatedType))
+                                          .create(creationalContext);
+                    });
+        }
+
     }
 
     public boolean hasAuthenticationMechanisms() {
