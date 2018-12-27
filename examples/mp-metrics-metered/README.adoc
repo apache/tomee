@@ -24,6 +24,8 @@ Within the application, there is an enpoint that will give you a weather weather
 MicroProfile metrics has a feature that can be used to find the rate of requests to a service.
 
 To use this feature you need to annotate the JAX-RS resource method with @Metered.
+[source,java]
+----
 
     @Path("/weather")
     @Produces(MediaType.APPLICATION_JSON)
@@ -40,7 +42,7 @@ To use this feature you need to annotate the JAX-RS resource method with @Metere
         }
     ...
     }
-
+----
 There are some configurations, as part of @Metered, that you need to know:
 
 **String name**
