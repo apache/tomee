@@ -53,11 +53,11 @@ public class CdiLazyRealmTOMEE1490Test {
 
     @Test
     public void success() throws IOException {
-        assertEquals("ok", WebClient.create(webapp.toExternalForm(), "user", "pwd", null).get(String.class));
+        assertEquals("ok", WebClient.create(webapp.toExternalForm() + "/simple", "user", "pwd", null).get(String.class));
     }
 
     @Test(expected = Exception.class)
     public void failure() throws IOException {
-        assertEquals("ok", WebClient.create(webapp.toExternalForm(), "user", "wrong", null).get(String.class));
+        assertEquals("ok", WebClient.create(webapp.toExternalForm() + "/simple", "user", "wrong", null).get(String.class));
     }
 }

@@ -244,8 +244,8 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        sort(operations, MBeanFeatureInfoComparator.INSTANCE);
-        sort(attributes, MBeanFeatureInfoComparator.INSTANCE);
+        operations.sort(MBeanFeatureInfoComparator.INSTANCE);
+        attributes.sort(MBeanFeatureInfoComparator.INSTANCE);
 
         if (filterAttributes) {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();

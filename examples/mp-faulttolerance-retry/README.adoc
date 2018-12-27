@@ -1,7 +1,7 @@
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
-
+~~~~~~
 # Microprofile Fault Tolerance - Retry policy
 
 This is an example of how to use
@@ -35,7 +35,7 @@ for more details.
 === Run the application
 
 ....
-mvn clean install tomee:run   
+mvn clean install tomee:run
 ....
 
 === Example 1

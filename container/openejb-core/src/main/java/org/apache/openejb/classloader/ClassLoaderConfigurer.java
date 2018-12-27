@@ -33,12 +33,7 @@ public interface ClassLoaderConfigurer {
         }
 
         public static void configure(final Collection<URL> urls, final ClassLoaderConfigurer configurer) {
-            final Iterator<URL> it = urls.iterator();
-            while (it.hasNext()) {
-                if (!configurer.accept(it.next())) {
-                    it.remove();
-                }
-            }
+            urls.removeIf(url -> !configurer.accept(url));
             urls.addAll(Arrays.asList(configurer.additionalURLs()));
         }
     }

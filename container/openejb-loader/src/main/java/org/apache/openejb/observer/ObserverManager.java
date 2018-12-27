@@ -43,17 +43,17 @@ import java.util.logging.Logger;
 
 public class ObserverManager {
 
-    private static final ThreadLocal<Set<Invocation>> seen = new ThreadLocal<Set<Invocation>>() {
+    private static final ThreadLocal<Set<Invocation>> SEEN = new ThreadLocal<Set<Invocation>>() {
         @Override
         protected Set<Invocation> initialValue() {
-            return new HashSet<Invocation>();
+            return new HashSet<>();
         }
     };
 
     // lazy init since it is used in SystemInstance
-    private static final AtomicReference<Logger> LOGGER = new AtomicReference<Logger>();
-    private final Set<Observer> observers = new LinkedHashSet<Observer>();
-    private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
+    private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();
+    private final Set<Observer> observers = new LinkedHashSet<>();
+    private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
 
     public boolean addObserver(final Object observer) {
         if (observer == null) {
@@ -99,7 +99,7 @@ public class ObserverManager {
         try {
             return doFire(event);
         } finally {
-            seen.remove();
+            SEEN.remove();
         }
     }
 
@@ -168,17 +168,13 @@ public class ObserverManager {
             }
         }
 
-        if (list.getInvocations().size() == 0) {
-
-            return IGNORE;
-
-        } else if (list.getInvocations().size() == 1) {
-
-            return list.getInvocations().get(0);
-
-        } else {
-
-            return list;
+        switch (list.getInvocations().size()) {
+            case 0:
+                return IGNORE;
+            case 1:
+                return list.getInvocations().get(0);
+            default:
+                return list;
         }
     }
 
@@ -187,9 +183,9 @@ public class ObserverManager {
      */
     public class Observer {
 
-        private final Map<Class, Invocation> before = new ConcurrentHashMap<Class, Invocation>();
-        private final Map<Class, Invocation> methods = new ConcurrentHashMap<Class, Invocation>();
-        private final Map<Class, Invocation> after = new ConcurrentHashMap<Class, Invocation>();
+        private final Map<Class, Invocation> before = new ConcurrentHashMap<>();
+        private final Map<Class, Invocation> methods = new ConcurrentHashMap<>();
+        private final Map<Class, Invocation> after = new ConcurrentHashMap<>();
         private final Object observer;
 
         public Observer(final Object observer) {
@@ -197,7 +193,7 @@ public class ObserverManager {
                 throw new IllegalArgumentException("observer cannot be null");
             }
 
-            final Set<Method> methods = new HashSet<Method>();
+            final Set<Method> methods = new HashSet<>();
             methods.addAll(Arrays.asList(observer.getClass().getMethods()));
             methods.addAll(Arrays.asList(observer.getClass().getDeclaredMethods()));
 
@@ -243,7 +239,7 @@ public class ObserverManager {
                 }
             }
 
-            if (methods.size() == 0 && after.size() == 0 && before.size() == 0) {
+            if (methods.isEmpty() && after.isEmpty() && before.isEmpty()) {
                 throw new NotAnObserverException("Object has no @Observes methods. For example: public void observe(@Observes RetryConditionAdded event){...}");
             }
         }
@@ -405,7 +401,7 @@ public class ObserverManager {
             try {
                 method.invoke(observer, event);
             } catch (final InvocationTargetException e) {
-                if (!seen.get().add(this)) {
+                if (!SEEN.get().add(this)) {
                     return;
                 }
 
@@ -455,6 +451,7 @@ public class ObserverManager {
                     return event;
                 }
 
+                @Override
                 public String toString() {
                     return "AfterEvent{} " + event;
                 }
@@ -476,6 +473,7 @@ public class ObserverManager {
                     return event;
                 }
 
+                @Override
                 public String toString() {
                     return "BeforeEvent{} " + event;
                 }
@@ -505,7 +503,7 @@ public class ObserverManager {
 
     public static class InvocationList implements Invocation {
 
-        private final List<Invocation> invocations = new LinkedList<Invocation>();
+        private final List<Invocation> invocations = new LinkedList<>();
 
         public boolean add(final Invocation invocation) {
             return invocations.add(invocation);

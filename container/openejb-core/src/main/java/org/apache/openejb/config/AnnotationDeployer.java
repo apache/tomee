@@ -5191,11 +5191,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final Map<String, List<MethodAttribute>> declarations = new HashMap<>();
                 final List<ConcurrentMethod> methods = bean.getConcurrentMethod();
                 for (final ConcurrentMethod method : methods) {
-                    List<MethodAttribute> list = declarations.get(method.getMethod().getMethodName());
-                    if (list == null) {
-                        list = new ArrayList<>();
-                        declarations.put(method.getMethod().getMethodName(), list);
-                    }
+                    List<MethodAttribute> list = declarations.computeIfAbsent(method.getMethod().getMethodName(), k -> new ArrayList<>());
                     list.add(new MethodAttribute(null, bean.getEjbName(), method.getMethod()));
                 }
                 return declarations;
@@ -5664,7 +5660,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Annotated<Class<?>>> sortClasses(final List<Annotated<Class<?>>> list) {
-        Collections.sort(list, new Comparator<Annotated<Class<?>>>() {
+        list.sort(new Comparator<Annotated<Class<?>>>() {
             @Override
             public int compare(final Annotated<Class<?>> o1, final Annotated<Class<?>> o2) {
                 return compareClasses(o1.get(), o2.get());
@@ -5674,7 +5670,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Class<?>> sortClassesParentFirst(final List<Class<?>> list) {
-        Collections.sort(list, new Comparator<Class<?>>() {
+        list.sort(new Comparator<Class<?>>() {
             @Override
             public int compare(final Class<?> o1, final Class<?> o2) {
                 return compareClasses(o2, o1);
@@ -5684,7 +5680,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Annotated<Method>> sortMethods(final List<Annotated<Method>> list) {
-        Collections.sort(list, new Comparator<Annotated<Method>>() {
+        list.sort(new Comparator<Annotated<Method>>() {
             @Override
             public int compare(final Annotated<Method> o1, final Annotated<Method> o2) {
                 return compareClasses(o1.get().getDeclaringClass(), o2.get().getDeclaringClass());
@@ -5810,11 +5806,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            Set<String> list = classes.get(url);
-            if (list == null) {
-                list = new HashSet<>();
-                classes.put(url, list);
-            }
+            Set<String> list = classes.computeIfAbsent(url, k -> new HashSet<>());
 
             // saving class url
             // first try the file approach (if the same class is in several classloaders it avoids weird errors)

@@ -252,12 +252,7 @@ public class Logger {
     /**
      * Creates a MessageFormat object for a message and returns it
      */
-    private static final Computable<String, MessageFormat> messageFormatResolver = new Computable<String, MessageFormat>() {
-        @Override
-        public MessageFormat compute(final String message) throws InterruptedException {
-            return new MessageFormat(message);
-        }
-    };
+    private static final Computable<String, MessageFormat> messageFormatResolver = MessageFormat::new;
 
     /**
      * Cache of parent-child relationships between resource names

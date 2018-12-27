@@ -165,12 +165,7 @@ public class EjbDeployment {
     }
 
     public void removeResourceLink(final String resRefName) {
-        for (final Iterator<ResourceLink> iterator = resourceLink.iterator(); iterator.hasNext(); ) {
-            final ResourceLink link = iterator.next();
-            if (resRefName.equals(link.getResRefName())) {
-                iterator.remove();
-            }
-        }
+        resourceLink.removeIf(link -> resRefName.equals(link.getResRefName()));
     }
 
     public void addEjbLink(final EjbLink ejbLink) {

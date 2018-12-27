@@ -193,11 +193,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                     });
                 }
 
-                List<Object> list = listeners.get(webAppInfo);
-                if (list == null) {
-                    list = new ArrayList<>();
-                    listeners.put(webAppInfo, list);
-                }
+                List<Object> list = listeners.computeIfAbsent(webAppInfo, k -> new ArrayList<>());
                 list.add(instance);
             }
             for (final ClassListInfo info : webAppInfo.webAnnotatedClasses) {
@@ -216,11 +212,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
                             });
                         }
 
-                        List<Object> list = listeners.get(webAppInfo);
-                        if (list == null) {
-                            list = new ArrayList<>();
-                            listeners.put(webAppInfo, list);
-                        }
+                        List<Object> list = listeners.computeIfAbsent(webAppInfo, k -> new ArrayList<>());
                         list.add(instance);
                     }
                 }

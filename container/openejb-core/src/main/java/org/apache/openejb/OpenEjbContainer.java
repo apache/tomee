@@ -414,12 +414,7 @@ public final class OpenEjbContainer extends EJBContainer {
             if (modules instanceof String) {
 
                 moduleLocations = configurationFactory.getModulesFromClassPath(null, classLoader);
-                for (final Iterator<File> i = moduleLocations.iterator(); i.hasNext(); ) {
-                    final File file = i.next();
-                    if (!match((String) modules, file)) {
-                        i.remove();
-                    }
-                }
+                moduleLocations.removeIf(file -> !match((String) modules, file));
 
             } else if (modules instanceof String[]) {
 

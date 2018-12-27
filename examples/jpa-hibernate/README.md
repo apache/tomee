@@ -4,9 +4,13 @@ status=published
 title=JPA Hibernate
 ~~~~~~
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+This example shows the persist, remove and creation a query in JPA Hibernate.
+The Java Persistence API (JPA) is a Java specification for accessing, persisting, and managing data between Java objects / classes and a relational database.
+
 
 ## Movie
+
+Define the class Movie as an entity with de annotation @Entity
 
     package org.superbiz.injection.h3jpa;
     
@@ -62,6 +66,9 @@ title=JPA Hibernate
     }
 
 ## Movies
+
+@PersistenceContext A persistence context is a set of entities such that for any persistent identity there is a unique entity instance.
+@EntityManager is associated with a persistence context. Is at the core of JPA, supported by some methods: persist, remove,merge, find,
 
     package org.superbiz.injection.h3jpa;
     
@@ -152,6 +159,12 @@ title=JPA Hibernate
 
 # Running
 
+To run the example via maven:
+
+cd jpa-hibernate
+mvn clean install
+
+Which will generate output similar to the following:
     
     -------------------------------------------------------
      T E S T S

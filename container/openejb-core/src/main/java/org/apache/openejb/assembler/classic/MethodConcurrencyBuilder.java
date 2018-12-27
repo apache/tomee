@@ -132,10 +132,10 @@ public class MethodConcurrencyBuilder {
         }
 
         Collections.reverse(lockInfos);
-        Collections.sort(lockInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
+        lockInfos.sort(new MethodConcurrencyComparator());
 
         Collections.reverse(accessTimeoutInfos);
-        Collections.sort(accessTimeoutInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
+        accessTimeoutInfos.sort(new MethodConcurrencyComparator());
     }
 
     public static class MethodConcurrencyComparator extends MethodInfoUtil.BaseComparator<MethodConcurrencyInfo> {

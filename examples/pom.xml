@@ -100,6 +100,7 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
+    <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
@@ -177,6 +178,8 @@
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
     <module>mp-rest-client</module>
+    <module>mvc-resteasy</module>
+    <module>mp-custom-healthcheck</module>
   </modules>
 
   <dependencies>

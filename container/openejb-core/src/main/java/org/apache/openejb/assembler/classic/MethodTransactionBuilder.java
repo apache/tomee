@@ -97,7 +97,7 @@ public class MethodTransactionBuilder {
         }
 
         Collections.reverse(normalized);
-        Collections.sort(normalized, new MethodTransactionComparator());
+        normalized.sort(new MethodTransactionComparator());
 
         return normalized;
     }

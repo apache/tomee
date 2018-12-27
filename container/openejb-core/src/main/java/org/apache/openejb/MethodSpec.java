@@ -76,8 +76,8 @@ public class MethodSpec implements Comparable, Serializable {
         int result = 17;
         result = 37 * result + methodIntf.hashCode();
         result = 37 * result + methodName.hashCode();
-        for (int i = 0; i < parameterTypes.length; i++) {
-            result = 37 * result + parameterTypes[i].hashCode();
+        for (String parameterType : parameterTypes) {
+            result = 37 * result + parameterType.hashCode();
         }
         return result;
     }

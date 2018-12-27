@@ -52,13 +52,12 @@ public class IntrospectionSupport {
 
         final Class clazz = target.getClass();
         final Method[] methods = clazz.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            final Method method = methods[i];
+        for (final Method method : methods) {
             String name = method.getName();
             final Class type = method.getReturnType();
             final Class[] params = method.getParameterTypes();
             if (name.startsWith("get") && params.length == 0 && type != null
-                && isSettableType(type)) {
+                    && isSettableType(type)) {
 
                 try {
 
@@ -73,7 +72,7 @@ public class IntrospectionSupport {
                     }
 
                     name = name.substring(3, 4).toLowerCase()
-                        + name.substring(4);
+                            + name.substring(4);
                     props.put(optionPrefix + name, strValue);
                     rc = true;
 
@@ -206,11 +205,10 @@ public class IntrospectionSupport {
         // Build the method name.
         name = "set" + name.substring(0, 1).toUpperCase() + name.substring(1);
         final Method[] methods = clazz.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            final Method method = methods[i];
+        for (final Method method : methods) {
             final Class[] params = method.getParameterTypes();
             if (method.getName().equals(name) && params.length == 1
-                && isSettableType(params[0])) {
+                    && isSettableType(params[0])) {
                 return method;
             }
         }
@@ -241,8 +239,8 @@ public class IntrospectionSupport {
         buffer.append(" {");
         final Set entrySet = map.entrySet();
         boolean first = true;
-        for (final Iterator iter = entrySet.iterator(); iter.hasNext(); ) {
-            final Map.Entry entry = (Map.Entry) iter.next();
+        for (Object o : entrySet) {
+            final Entry entry = (Entry) o;
             if (first) {
                 first = false;
             } else {
@@ -277,11 +275,10 @@ public class IntrospectionSupport {
         }
 
         final Field[] fields = startClass.getDeclaredFields();
-        for (int i = 0; i < fields.length; i++) {
-            final Field field = fields[i];
+        for (final Field field : fields) {
             if (Modifier.isStatic(field.getModifiers())
-                || Modifier.isTransient(field.getModifiers())
-                || Modifier.isPrivate(field.getModifiers())) {
+                    || Modifier.isTransient(field.getModifiers())
+                    || Modifier.isPrivate(field.getModifiers())) {
                 continue;
             }
 

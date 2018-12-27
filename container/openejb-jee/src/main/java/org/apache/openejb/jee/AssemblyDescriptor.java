@@ -145,11 +145,7 @@ public class AssemblyDescriptor {
             for (final Method method : binding.getMethod()) {
                 if (method.getEjbName().equals(ejbName)) {
                     final String methodName = method.getMethodName();
-                    List<MethodAttribute> list = methods.get(methodName);
-                    if (list == null) {
-                        list = new ArrayList<MethodAttribute>();
-                        methods.put(methodName, list);
-                    }
+                    List<MethodAttribute> list = methods.computeIfAbsent(methodName, k -> new ArrayList<MethodAttribute>());
                     list.add(new MethodAttribute(binding.getAttribute(), method));
                 }
             }

@@ -310,10 +310,8 @@ public class NameNode implements Serializable {
         }
         
         if(myObject instanceof Federation) {
-            Iterator<Context> federatedContextsIterator = ((Federation) myObject).iterator();
-            while(federatedContextsIterator.hasNext()) {
-                Context current = federatedContextsIterator.next();
-                if(IvmContext.class.isInstance(current)) {
+            for (Context current : ((Federation) myObject)) {
+                if (IvmContext.class.isInstance(current)) {
                     IvmContext.class.cast(current).setReadOnly(isReadOnly);
                 }
             }

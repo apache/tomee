@@ -26,6 +26,7 @@ import java.util.zip.ZipInputStream;
  * @version $Rev$ $Date$
  */
 public class Zips {
+
     public static void unzip(final File zipFile, final File destination) throws IOException {
         unzip(zipFile, destination, false);
     }

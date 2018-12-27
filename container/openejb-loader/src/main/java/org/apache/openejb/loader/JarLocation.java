@@ -86,7 +86,6 @@ public class JarLocation {
         return new File(decode(path));
     }
 
-
     public static String decode(final String fileName) {
         if (fileName.indexOf('%') == -1) {
             return fileName;

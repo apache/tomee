@@ -61,28 +61,16 @@ public class PortAddressRegistryImpl implements PortAddressRegistry {
         // portsByInterface
         Map<String, PortAddress> ports = null;
         if (portInterface != null) { // localbean have no interface
-            ports = portsByInterface.get(portInterface);
-            if (ports == null) {
-                ports = new TreeMap<>();
-                portsByInterface.put(portInterface, ports);
-            }
+            ports = portsByInterface.computeIfAbsent(portInterface, k -> new TreeMap<>());
             ports.put(portId, portAddress);
         }
 
         // portsByServiceId
-        ports = portsByServiceId.get(serviceId);
-        if (ports == null) {
-            ports = new TreeMap<>();
-            portsByServiceId.put(serviceId, ports);
-        }
+        ports = portsByServiceId.computeIfAbsent(serviceId, k -> new TreeMap<>());
         ports.put(portId, portAddress);
 
         // portsByServiceQName
-        ports = portsByServiceQName.get(serviceQName);
-        if (ports == null) {
-            ports = new TreeMap<>();
-            portsByServiceQName.put(serviceQName, ports);
-        }
+        ports = portsByServiceQName.computeIfAbsent(serviceQName, k -> new TreeMap<>());
         ports.put(portId, portAddress);
     }
 

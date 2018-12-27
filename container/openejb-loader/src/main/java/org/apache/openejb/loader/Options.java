@@ -273,7 +273,7 @@ public class Options {
      * @return
      */
     public static <T extends Enum<T>> T valueOf(final Class<T> enumType, final String name) {
-        final Map<String, T> map = new HashMap<String, T>();
+        final Map<String, T> map = new HashMap<>();
         for (final T t : enumType.getEnumConstants()) {
             map.put(t.name().toUpperCase(), t);
         }
@@ -320,7 +320,6 @@ public class Options {
         return value;
     }
 
-
     protected static <T extends Enum<T>> String[] lowercase(final T... items) {
         final String[] values = new String[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -346,7 +345,6 @@ public class Options {
     protected static String possibleValues(final Class<? extends Enum> enumType) {
         return join(", ", lowercase(enumType.getEnumConstants()));
     }
-
 
     public static String join(final String delimiter, final Object... collection) {
         final StringBuilder sb = new StringBuilder();
@@ -422,7 +420,7 @@ public class Options {
 
                 final String defaultValues;
 
-                if (defaults.size() == 0) {
+                if (defaults.isEmpty()) {
                     defaultValues = "NONE";
                 } else if (defaults.size() == enumType.getEnumConstants().length) {
                     defaultValues = "ALL";
@@ -514,6 +512,7 @@ public class Options {
     }
 
     public static class NullLog implements Log {
+
         @Override
         public boolean isDebugEnabled() {
             return false;
