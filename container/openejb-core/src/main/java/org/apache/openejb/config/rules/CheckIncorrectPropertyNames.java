@@ -21,7 +21,6 @@ import org.apache.openejb.config.AppModule;
 import org.apache.openejb.loader.SystemInstance;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 

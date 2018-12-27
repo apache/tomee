@@ -26,7 +26,6 @@ import javax.naming.NamingException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class NameNode implements Serializable {
     private final String atomicName;

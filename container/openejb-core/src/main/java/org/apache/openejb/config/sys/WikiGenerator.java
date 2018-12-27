@@ -22,7 +22,6 @@ import org.apache.openejb.util.SuperProperties;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;

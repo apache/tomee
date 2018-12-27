@@ -53,8 +53,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.sort;
-
 /**
  * @version $Rev$ $Date$
  */

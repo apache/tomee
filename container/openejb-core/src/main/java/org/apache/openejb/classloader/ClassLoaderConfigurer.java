@@ -20,7 +20,6 @@ package org.apache.openejb.classloader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 public interface ClassLoaderConfigurer {
     URL[] additionalURLs();

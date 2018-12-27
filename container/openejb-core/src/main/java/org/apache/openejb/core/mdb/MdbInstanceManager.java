@@ -69,8 +69,6 @@ import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
-import java.io.Flushable;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;

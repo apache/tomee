@@ -31,7 +31,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class CheckRestMethodArePublic implements ValidationRule {
     @Override
