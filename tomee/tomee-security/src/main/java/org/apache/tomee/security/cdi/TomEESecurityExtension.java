@@ -49,6 +49,8 @@ public class TomEESecurityExtension implements Extension {
                 beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
+
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(LoginToContinueInterceptor.class));
     }
 
     void processAuthenticationMechanismDefinitions(@Observes

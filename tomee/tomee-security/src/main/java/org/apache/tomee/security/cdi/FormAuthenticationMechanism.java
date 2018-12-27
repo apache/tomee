@@ -21,10 +21,12 @@ import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
+import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ApplicationScoped
+@LoginToContinue
 public class FormAuthenticationMechanism implements HttpAuthenticationMechanism {
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response,
