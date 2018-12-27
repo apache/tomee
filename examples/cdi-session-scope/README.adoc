@@ -1,8 +1,8 @@
 index-group=Unrevised
 type=page
 status=unpublished
-title=CDI @SessionScoped
-~~~~~~
+
+= CDI @SessionScoped
 
 This example show the use of `@SessionScoped` annotation for injected objects. An object
 which is defined as `@SessionScoped` is created once for every HTTPSession and is shared by all the
