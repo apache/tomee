@@ -19,6 +19,7 @@ package org.apache.tomee.security.cdi;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Initialized;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
@@ -27,12 +28,16 @@ import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticatio
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class TomEESecurityServletAuthenticationMechanismMapper {
     private final Map<String, HttpAuthenticationMechanism> servletAuthenticationMapper = new ConcurrentHashMap<>();
 
+    @Inject
+    private Instance<HttpAuthenticationMechanism> authenticationMechanisms;
     @Inject
     private DefaultAuthenticationMechanism defaultAuthenticationMechanism;
 
@@ -55,6 +60,17 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
                 // Ignore
             }
         });
+
+        final Set<HttpAuthenticationMechanism> availableBeans =
+                authenticationMechanisms.stream().collect(Collectors.toSet());
+        availableBeans.removeAll(servletAuthenticationMapper.values());
+        availableBeans.remove(defaultAuthenticationMechanism);
+
+        if (availableBeans.size() == 1) {
+            defaultAuthenticationMechanism.setDelegate(availableBeans.iterator().next());
+        } else if (availableBeans.size() > 1) {
+            throw new IllegalStateException();
+        }
     }
 
     public HttpAuthenticationMechanism getCurrentAuthenticationMechanism(final String servletName) {

@@ -26,23 +26,56 @@ import javax.servlet.http.HttpServletResponse;
 
 @ApplicationScoped
 public class DefaultAuthenticationMechanism implements HttpAuthenticationMechanism {
+    private HttpAuthenticationMechanism delegate;
+
+    public DefaultAuthenticationMechanism() {
+        this.delegate = new EmptyAuthenticationMechanism();
+    }
+
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response,
                                                 final HttpMessageContext httpMessageContext)
             throws AuthenticationException {
-        return httpMessageContext.doNothing();
+        return delegate.validateRequest(request, response, httpMessageContext);
     }
 
     @Override
     public AuthenticationStatus secureResponse(final HttpServletRequest request, final HttpServletResponse response,
                                                final HttpMessageContext httpMessageContext)
             throws AuthenticationException {
-        return null;
+        return delegate.secureResponse(request, response, httpMessageContext);
     }
 
     @Override
     public void cleanSubject(final HttpServletRequest request, final HttpServletResponse response,
                              final HttpMessageContext httpMessageContext) {
+        delegate.cleanSubject(request, response, httpMessageContext);
+    }
 
+    public void setDelegate(final HttpAuthenticationMechanism delegate) {
+        this.delegate = delegate;
+    }
+
+    private static class EmptyAuthenticationMechanism implements HttpAuthenticationMechanism {
+        @Override
+        public AuthenticationStatus validateRequest(final HttpServletRequest request,
+                                                    final HttpServletResponse response,
+                                                    final HttpMessageContext httpMessageContext)
+                throws AuthenticationException {
+            return httpMessageContext.doNothing();
+        }
+
+        @Override
+        public AuthenticationStatus secureResponse(final HttpServletRequest request, final HttpServletResponse response,
+                                                   final HttpMessageContext httpMessageContext)
+                throws AuthenticationException {
+            return httpMessageContext.doNothing();
+        }
+
+        @Override
+        public void cleanSubject(final HttpServletRequest request, final HttpServletResponse response,
+                                 final HttpMessageContext httpMessageContext) {
+
+        }
     }
 }
