@@ -1,4 +1,4 @@
-= Microprofile Metrics Histogram
+= MicroProfile Metrics Histogram
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
