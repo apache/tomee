@@ -375,12 +375,9 @@ public class NewLoaderLogic {
     public static String[] readInputStreamList(final InputStream is) {
 
         final List<String> list = new ArrayList<>();
-        BufferedReader reader = null;
+
         String line;
-
-        try {
-
-            reader = new BufferedReader(new InputStreamReader(is));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
@@ -396,15 +393,8 @@ public class NewLoaderLogic {
             }
         } catch (final Throwable e) {
             logger.warning("readInputStreamList: Failed to read provided stream");
-        } finally {
-            if (null != reader) {
-                try {
-                    reader.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
         }
+        //Ignore
 
         return list.toArray(new String[list.size()]);
     }
