@@ -1,4 +1,4 @@
-= CDI events - Loose coupling and extensibility
+= CDI events Ivan - Loose coupling and extensibility
 :index-group: CDI
 :jbake-type: page
 :jbake-status: published
