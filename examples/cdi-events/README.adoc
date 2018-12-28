@@ -1,9 +1,7 @@
-index-group=Unrevised
-type=page
-status=published
-title=CDI Events
-~~~~~~
-# CDI events: loose coupling and extensibility
+= CDI events - Loose coupling and extensibility
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
 
 CDI allows you to extend business code by the Notifier/Observer pattern.
 
@@ -15,9 +13,9 @@ you simply call the method fire of the event object passing as a parameter the e
 On the other side you annotated a method parameter `@Observes` and the parameter type is the sent type
 by the notifier.
 
-Note: of course you can add qualifiers to be more precise on your events.
+NOTE: of course you can add qualifiers to be more precise on your events.
 
-# The example
+== Example
 
 The example is pretty simple: an ejb uses the `@Schedule` annotation to get a notification each second.
 The each second this EJB will send the current date through CDI events.
@@ -29,7 +27,7 @@ which simply store and log each received date.
 
 The test itself (`EventTest`) simply verifies the dates were received.
 
-# Conclusion
+== Conclusion
 
 CDI let's you implement very easily plugins through this event mecanism.
 
