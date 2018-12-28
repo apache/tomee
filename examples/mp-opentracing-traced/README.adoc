@@ -1,4 +1,4 @@
-= Microprofile OpenTracing @Traced
+= MicroProfile OpenTracing @Traced
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published

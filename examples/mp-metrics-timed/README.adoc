@@ -1,8 +1,7 @@
+= MicroProfile Metrics Timed
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
-
-# Microprofile Metrics Timed
 
 This is an example on how to use MicroProfile metrics in TomEE.
 

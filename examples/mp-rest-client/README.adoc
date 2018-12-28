@@ -1,8 +1,7 @@
+== MicroProfile Rest client
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
-
-== Microprofile Rest client
 
 This is a basic example on how to configure and use MicroProfile Rest
 Client in TomEE.

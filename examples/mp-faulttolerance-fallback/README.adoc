@@ -1,4 +1,4 @@
-= Microprofile Fault Tolerance - Fallback
+= MicroProfile Fault Tolerance - Fallback
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
