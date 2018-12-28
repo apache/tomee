@@ -48,8 +48,9 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         login.getInputByName("j_username").setValueAttribute("tomcat");
         login.getInputByName("j_password").setValueAttribute("tomcat");
 
-        final HtmlPage submit = login.getInputByName("submit").click();
-        System.out.println("submit.toString() = " + submit.toString());
+        final Page result = login.getInputByName("submit").click();
+        assertEquals(200, result.getWebResponse().getStatusCode());
+        assertEquals("ok!", result.getWebResponse().getContentAsString());
     }
 
     @ApplicationScoped

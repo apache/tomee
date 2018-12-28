@@ -132,4 +132,13 @@ public interface LoginToContinueMechanism {
     static boolean hasAuthentication(final HttpServletRequest request) {
         return request.getSession().getAttribute(AUTHENTICATION) != null;
     }
+
+    static SavedAuthentication getAuthentication(final HttpServletRequest request) {
+        return (SavedAuthentication) request.getSession().getAttribute(AUTHENTICATION);
+    }
+
+    static void clearRequestAndAuthentication(final HttpServletRequest request) {
+        request.getSession().removeAttribute(ORIGINAL_REQUEST);
+        request.getSession().removeAttribute(AUTHENTICATION);
+    }
 }

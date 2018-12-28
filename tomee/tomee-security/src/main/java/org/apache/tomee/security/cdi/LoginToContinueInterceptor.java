@@ -17,6 +17,8 @@
 package org.apache.tomee.security.cdi;
 
 import org.apache.tomee.security.http.LoginToContinueMechanism;
+import org.apache.tomee.security.http.SavedAuthentication;
+import org.apache.tomee.security.http.SavedHttpServletRequest;
 import org.apache.tomee.security.http.SavedRequest;
 
 import javax.annotation.Priority;
@@ -33,6 +35,8 @@ import java.util.Arrays;
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.clearRequestAndAuthentication;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.getAuthentication;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.getRequest;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.hasAuthentication;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.hasRequest;
@@ -127,10 +131,20 @@ public class LoginToContinueInterceptor {
         }
 
         if (isOnOriginalURLAfterAuthenticate(httpMessageContext)) {
-            return null;
+            final SavedRequest savedRequest = getRequest(httpMessageContext.getRequest());
+            final SavedAuthentication savedAuthentication = getAuthentication(httpMessageContext.getRequest());
+
+            clearRequestAndAuthentication(httpMessageContext.getRequest());
+
+            final SavedHttpServletRequest savedHttpServletRequest =
+                    new SavedHttpServletRequest(httpMessageContext.getRequest(), savedRequest);
+
+            return httpMessageContext.withRequest(savedHttpServletRequest)
+                                     .notifyContainerAboutLogin(savedAuthentication.getPrincipal(),
+                                                                savedAuthentication.getGroups());
         }
 
-        return null;
+        return (AuthenticationStatus) invocationContext.proceed();
     }
 
     private boolean isOnInitialProtectedURL(final HttpMessageContext httpMessageContext) {
@@ -142,7 +156,7 @@ public class LoginToContinueInterceptor {
     }
 
     private boolean isOnOriginalURLAfterAuthenticate(final HttpMessageContext httpMessageContext) {
-        return false;
+        return hasRequest(httpMessageContext.getRequest()) && hasAuthentication(httpMessageContext.getRequest());
     }
 
     private LoginToContinue getLoginToContinue(final InvocationContext invocationContext) {
