@@ -1,8 +1,7 @@
+= MicroProfile JWT
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
-
-# MP REST JWT
 
 This is a basic example on how to configure and use MicroProfile JWT in
 TomEE.

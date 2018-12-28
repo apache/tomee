@@ -1,8 +1,8 @@
+= MicroProfile Metrics Histogram
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-# Microprofile Metrics Histogram
 This is an example on how to use microprofile metrics in TomEE.
 
 == Run the application:
