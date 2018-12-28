@@ -43,4 +43,8 @@ public abstract class AbstractTomEESecurityTest {
     public static void tearDown() throws Exception {
         container.close();
     }
+
+    protected String getAppUrl() {
+        return "http://localhost:" + container.getConfiguration().getHttpPort();
+    }
 }

@@ -40,8 +40,7 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {
         final WebClient webClient = new WebClient();
-        final HtmlPage page =
-                webClient.getPage("http://localhost:" + container.getConfiguration().getHttpPort() + "/form");
+        final HtmlPage page = webClient.getPage(getAppUrl() + "/form");
         assertEquals(200, page.getWebResponse().getStatusCode());
 
         final HtmlForm login = page.getFormByName("login");
