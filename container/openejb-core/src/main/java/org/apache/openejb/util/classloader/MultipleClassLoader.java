@@ -33,16 +33,11 @@ public class MultipleClassLoader extends ClassLoader implements ClassLoaderCompa
     public Class<?> loadClass(final String name) throws ClassNotFoundException {
         try {
             return super.loadClass(name);
-        } catch (final NoClassDefFoundError ncdfe) {
+        } catch (final ClassNotFoundException | LinkageError ncdfe) {
             if (second != getParent()) {
                 return loadClassSecond(name);
             }
             throw ncdfe;
-        } catch (final ClassNotFoundException | LinkageError cnfe) {
-            if (second != getParent()) {
-                return loadClassSecond(name);
-            }
-            throw cnfe;
         }
     }
 
