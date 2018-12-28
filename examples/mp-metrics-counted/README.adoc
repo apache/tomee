@@ -1,8 +1,8 @@
+= Microprofile Metrics Counted
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-# Microprofile Metrics
 This is an example on how to use microprofile metrics in TomEE.
 
 == Run the application:

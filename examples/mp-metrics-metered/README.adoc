@@ -1,8 +1,7 @@
-index-group=Unrevised
-type=page
-status=published
-
-= Microprofile Metrics
+= Microprofile Metrics Metered
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
 
 This is an example on how to use microprofile metrics in TomEE.
 
