@@ -1,4 +1,4 @@
-= Microprofile Metrics Metered
+= MicroProfile Metrics Metered
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published

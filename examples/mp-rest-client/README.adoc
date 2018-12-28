@@ -1,4 +1,4 @@
-== MicroProfile Rest client
+= MicroProfile Rest Client
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
