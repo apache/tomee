@@ -16,21 +16,24 @@
  */
 package org.apache.tomee.security.http;
 
-import org.apache.catalina.authenticator.SavedRequest;
 import org.apache.tomcat.util.buf.ByteChunk;
 
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Set;
 
 public interface LoginToContinueMechanism {
     int MAX_SAVE_POST_SIZE = 4 * 1024;
 
     String ORIGINAL_REQUEST = "org.apache.tomee.security.request.original";
+    String AUTHENTICATION = "org.apache.tomee.security.request.authentication";
 
     LoginToContinue getLoginToContinue();
 
@@ -80,12 +83,53 @@ public interface LoginToContinueMechanism {
         saved.setMethod(request.getMethod());
         saved.setQueryString(request.getQueryString());
         saved.setRequestURI(request.getRequestURI());
+        saved.setRequestURL(request.getRequestURL().toString());
 
         // Stash the SavedRequest in our session for later use
         request.getSession().setAttribute(ORIGINAL_REQUEST, saved);
     }
 
-    static boolean isOriginalRequestInSession(final HttpServletRequest request) {
+    static boolean matchRequest(final HttpServletRequest request) {
+        // Has a session been created?
+        final HttpSession session = request.getSession(false);
+        if (session == null) {
+            return false;
+        }
+
+        // Is there a saved request?
+        final SavedRequest originalRequest = (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+        if (originalRequest == null) {
+            return false;
+        }
+
+        // Is there a saved principal?
+        /*
+        if (session.getNote(Constants.FORM_PRINCIPAL_NOTE) == null) {
+            return false;
+        }
+        */
+
+        // Does the request URI match?
+        final String requestURI = request.getRequestURI();
+        return requestURI != null && requestURI.equals(originalRequest.getRequestURI());
+    }
+
+    static boolean hasRequest(final HttpServletRequest request) {
         return request.getSession().getAttribute(ORIGINAL_REQUEST) != null;
+    }
+
+    static SavedRequest getRequest(final HttpServletRequest request) {
+        return (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+    }
+
+    static void saveAuthentication(final HttpServletRequest request,
+                                   final Principal principal,
+                                   final Set<String> groups) {
+        final SavedAuthentication savedAuthentication = new SavedAuthentication(principal, groups);
+        request.getSession().setAttribute(AUTHENTICATION, savedAuthentication);
+    }
+
+    static boolean hasAuthentication(final HttpServletRequest request) {
+        return request.getSession().getAttribute(AUTHENTICATION) != null;
     }
 }

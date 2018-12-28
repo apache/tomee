@@ -17,6 +17,7 @@
 package org.apache.tomee.security.cdi;
 
 import org.apache.tomee.security.http.LoginToContinueMechanism;
+import org.apache.tomee.security.http.SavedRequest;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
@@ -30,7 +31,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
-import static org.apache.tomee.security.http.LoginToContinueMechanism.isOriginalRequestInSession;
+import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
+import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.getRequest;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.hasAuthentication;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.hasRequest;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.matchRequest;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.saveAuthentication;
 import static org.apache.tomee.security.http.LoginToContinueMechanism.saveRequest;
 
 @LoginToContinue
@@ -90,7 +97,33 @@ public class LoginToContinueInterceptor {
         }
 
         if (isOnLoginPostback(httpMessageContext)) {
-            return null;
+            final AuthenticationStatus authenticationStatus = (AuthenticationStatus) invocationContext.proceed();
+
+            if (authenticationStatus.equals(SUCCESS)) {
+                if (httpMessageContext.getCallerPrincipal() == null) {
+                    return SUCCESS;
+                }
+
+                if (matchRequest(httpMessageContext.getRequest())) {
+                    return SUCCESS;
+                }
+
+                saveAuthentication(httpMessageContext.getRequest(),
+                                   httpMessageContext.getCallerPrincipal(),
+                                   httpMessageContext.getGroups());
+
+                final SavedRequest savedRequest = getRequest(httpMessageContext.getRequest());
+                return httpMessageContext.redirect(savedRequest.getRequestURLWithQueryString());
+            }
+
+            if (authenticationStatus.equals(SEND_FAILURE)) {
+                final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
+                if (!loginToContinue.errorPage().isEmpty()) {
+                    return httpMessageContext.forward(loginToContinue.errorPage());
+                }
+
+                return authenticationStatus;
+            }
         }
 
         if (isOnOriginalURLAfterAuthenticate(httpMessageContext)) {
@@ -101,11 +134,11 @@ public class LoginToContinueInterceptor {
     }
 
     private boolean isOnInitialProtectedURL(final HttpMessageContext httpMessageContext) {
-        return httpMessageContext.isProtected() && !isOriginalRequestInSession(httpMessageContext.getRequest());
+        return httpMessageContext.isProtected() && !hasRequest(httpMessageContext.getRequest());
     }
 
     private boolean isOnLoginPostback(final HttpMessageContext httpMessageContext) {
-        return false;
+        return hasRequest(httpMessageContext.getRequest()) && !hasAuthentication(httpMessageContext.getRequest());
     }
 
     private boolean isOnOriginalURLAfterAuthenticate(final HttpMessageContext httpMessageContext) {

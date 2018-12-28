@@ -50,6 +50,9 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
     private final Subject clientSubject;
     private final Subject serviceSubject;
 
+    private Principal principal;
+    private Set<String> groups;
+
     private TomEEHttpMessageContext(
             final CallbackHandler handler,
             final MessageInfo messageInfo,
@@ -190,9 +193,12 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
                     new CallerPrincipalCallback(clientSubject, principal),
                     new GroupPrincipalCallback(clientSubject, groups.toArray(new String[groups.size()]))
             });
-        } catch (IOException | UnsupportedCallbackException e) {
+        } catch (final IOException | UnsupportedCallbackException e) {
             e.printStackTrace();
         }
+
+        this.principal = principal;
+        this.groups = groups;
 
         return SUCCESS;
     }
@@ -213,11 +219,11 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public Principal getCallerPrincipal() {
-        return null;
+        return principal;
     }
 
     @Override
     public Set<String> getGroups() {
-        return null;
+        return groups;
     }
 }
