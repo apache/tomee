@@ -25,8 +25,11 @@ import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
+import javax.security.enterprise.credential.UsernamePasswordCredential;
+import javax.security.enterprise.identitystore.IdentityStoreHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.HttpMethod;
 import java.util.function.Supplier;
 
 @ApplicationScoped
@@ -34,12 +37,23 @@ import java.util.function.Supplier;
 public class FormAuthenticationMechanism implements HttpAuthenticationMechanism, LoginToContinueMechanism {
     @Inject
     private Supplier<LoginToContinue> loginToContinue;
+    @Inject
+    private IdentityStoreHandler identityStoreHandler;
 
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request, final HttpServletResponse response,
                                                 final HttpMessageContext httpMessageContext)
             throws AuthenticationException {
-        throw new UnsupportedOperationException();
+
+        final String username = request.getParameter("j_username");
+        final String password = request.getParameter("j_password");
+
+        if (validateForm(httpMessageContext.getRequest(), username, password)) {
+            return httpMessageContext.notifyContainerAboutLogin(
+                    identityStoreHandler.validate(new UsernamePasswordCredential(username, password)));
+        }
+
+        return httpMessageContext.doNothing();
     }
 
     @Override
@@ -57,5 +71,11 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism,
 
     public LoginToContinue getLoginToContinue() {
         return loginToContinue.get();
+    }
+
+    private boolean validateForm(final HttpServletRequest request, final String username, final String password) {
+        return request.getMethod().equals(HttpMethod.POST) &&
+               username != null && !username.isEmpty() &&
+               password != null && !password.isEmpty();
     }
 }
