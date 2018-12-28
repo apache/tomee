@@ -22,7 +22,6 @@ import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
@@ -31,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.isOriginalRequestInSession;
+import static org.apache.tomee.security.http.LoginToContinueMechanism.saveRequest;
 
 @LoginToContinue
 @Interceptor
@@ -51,7 +52,7 @@ public class LoginToContinueInterceptor {
     }
 
     private AuthenticationStatus validateRequest(final InvocationContext invocationContext)
-            throws AuthenticationException {
+            throws Exception {
 
         final HttpMessageContext httpMessageContext = (HttpMessageContext) invocationContext.getParameters()[2];
         clearStaleState(httpMessageContext);
@@ -74,11 +75,13 @@ public class LoginToContinueInterceptor {
 
     private AuthenticationStatus processContainerInitiatedAuthentication(
             final InvocationContext invocationContext,
-            final HttpMessageContext httpMessageContext) {
+            final HttpMessageContext httpMessageContext)
+            throws Exception {
 
         if (isOnInitialProtectedURL(httpMessageContext)) {
-            final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
+            saveRequest(httpMessageContext.getRequest());
 
+            final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
             if (loginToContinue.useForwardToLogin()) {
                 return httpMessageContext.forward(loginToContinue.loginPage());
             } else {
@@ -86,7 +89,7 @@ public class LoginToContinueInterceptor {
             }
         }
 
-        if (isOnOnLoginPostback(httpMessageContext)) {
+        if (isOnLoginPostback(httpMessageContext)) {
             return null;
         }
 
@@ -98,10 +101,10 @@ public class LoginToContinueInterceptor {
     }
 
     private boolean isOnInitialProtectedURL(final HttpMessageContext httpMessageContext) {
-        return httpMessageContext.isProtected();
+        return httpMessageContext.isProtected() && !isOriginalRequestInSession(httpMessageContext.getRequest());
     }
 
-    private boolean isOnOnLoginPostback(final HttpMessageContext httpMessageContext) {
+    private boolean isOnLoginPostback(final HttpMessageContext httpMessageContext) {
         return false;
     }
 
