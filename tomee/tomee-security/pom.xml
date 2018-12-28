@@ -33,6 +33,11 @@
   <name>OpenEJB :: TomEE :: Security</name>
   <description>Implementation of Java EE Security JSR-375</description>
 
+  <properties>
+    <!-- Reset Jetty Version to not clash with HtmlUnit -->
+    <jetty.version/>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -56,6 +61,12 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-embedded</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.33</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

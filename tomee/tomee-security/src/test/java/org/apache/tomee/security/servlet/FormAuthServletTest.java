@@ -16,6 +16,10 @@
  */
 package org.apache.tomee.security.servlet;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.junit.Test;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,7 +32,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.ClientBuilder;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
@@ -36,11 +39,17 @@ import static org.junit.Assert.assertEquals;
 public class FormAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/form";
-        assertEquals(200, ClientBuilder.newBuilder().build()
-                                       .target(servlet)
-                                       .request()
-                                       .get().getStatus());
+        final WebClient webClient = new WebClient();
+        final HtmlPage page =
+                webClient.getPage("http://localhost:" + container.getConfiguration().getHttpPort() + "/form");
+        assertEquals(200, page.getWebResponse().getStatusCode());
+
+        final HtmlForm login = page.getFormByName("login");
+        login.getInputByName("j_username").setValueAttribute("tomcat");
+        login.getInputByName("j_password").setValueAttribute("tomcat");
+
+        final HtmlPage submit = login.getInputByName("submit").click();
+        System.out.println("submit.toString() = " + submit.toString());
     }
 
     @ApplicationScoped
@@ -56,7 +65,21 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
                 throws ServletException, IOException {
-
+            final String loginPage =
+                    "<html>" +
+                    "<body>" +
+                    "  <h1>Login Page</h1>" +
+                    "  <form name=\"login\" method=post action=\"j_security_check\">\n" +
+                    "    <p>Username:</p>" +
+                    "    <input type=\"text\" name=\"j_username\">\n" +
+                    "    <p>Password:</p>" +
+                    "    <input type=\"password\" name=\"j_password\">\n" +
+                    "    <input type=\"submit\" name=\"submit\" value=\"Submit\">\n" +
+                    "    <input type=\"reset\" value=\"Reset\">" +
+                    "  </form>" +
+                    "</body>" +
+                    "</html>";
+            resp.getWriter().write(loginPage);
         }
     }
 
