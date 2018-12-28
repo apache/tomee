@@ -56,19 +56,6 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism,
         return httpMessageContext.doNothing();
     }
 
-    @Override
-    public AuthenticationStatus secureResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                               final HttpMessageContext httpMessageContext)
-            throws AuthenticationException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void cleanSubject(final HttpServletRequest request, final HttpServletResponse response,
-                             final HttpMessageContext httpMessageContext) {
-        throw new UnsupportedOperationException();
-    }
-
     public LoginToContinue getLoginToContinue() {
         return loginToContinue.get();
     }

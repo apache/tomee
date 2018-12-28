@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.security.cdi;
 
-import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
@@ -26,6 +24,7 @@ import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticatio
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.credential.BasicAuthenticationCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
+import javax.security.enterprise.identitystore.IdentityStoreHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -36,7 +35,7 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 @ApplicationScoped
 public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism {
     @Inject
-    private TomEEIdentityStoreHandler identityStoreHandler;
+    private IdentityStoreHandler identityStoreHandler;
 
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request,
@@ -62,21 +61,6 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
         response.setHeader("WWW-Authenticate", "Basic");
         return httpMessageContext.responseUnauthorized();
-    }
-
-    @Override
-    public AuthenticationStatus secureResponse(final HttpServletRequest request,
-                                               final HttpServletResponse response,
-                                               final HttpMessageContext httpMessageContext)
-            throws AuthenticationException {
-        return null;
-    }
-
-    @Override
-    public void cleanSubject(final HttpServletRequest request,
-                             final HttpServletResponse response,
-                             final HttpMessageContext httpMessageContext) {
-
     }
 
     private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {

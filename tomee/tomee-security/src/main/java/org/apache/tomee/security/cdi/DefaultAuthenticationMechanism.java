@@ -64,18 +64,5 @@ public class DefaultAuthenticationMechanism implements HttpAuthenticationMechani
                 throws AuthenticationException {
             return httpMessageContext.doNothing();
         }
-
-        @Override
-        public AuthenticationStatus secureResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                                   final HttpMessageContext httpMessageContext)
-                throws AuthenticationException {
-            return httpMessageContext.doNothing();
-        }
-
-        @Override
-        public void cleanSubject(final HttpServletRequest request, final HttpServletResponse response,
-                                 final HttpMessageContext httpMessageContext) {
-
-        }
     }
 }
