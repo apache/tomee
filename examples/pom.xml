@@ -182,6 +182,7 @@
     <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>
+    <module>mp-jsonb-configuration</module>
   </modules>
 
   <dependencies>
