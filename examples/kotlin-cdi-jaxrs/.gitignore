@@ -1,0 +1,43 @@
+# Java #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# IDEA #
+*.iml
+.idea
+
+# eclipse specific git ignore
+.project
+.metadata
+.classpath
+.settings/
+
+# Maven files #
+target
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# Misc #
+*.log
+*.odt#
+*~
+.DS_Store
+public/
+
+#Git build properties omission
+src/main/resources/git.properties
+src/main/resources/mergedconf
+test.sh
+compile.sh
+
+#JMeter
+*.jtl
+new/

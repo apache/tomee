@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar>
+  <pojo-deployment class-name="jaxrs-application">
+    <properties>
+      cxf.jaxrs.providers = johnzonProvider,
+      com.example.ports.rest.exception.ClientErrorExceptionMapper,
+      com.example.ports.rest.exception.ConstraintViolationExceptionMapper,
+      com.example.ports.rest.exception.IllegalArgumentExceptionMapper,
+      com.example.ports.rest.exception.JsonParsingExceptionMapper,
+      com.example.ports.rest.exception.NullPointerExceptionMapper,
+      com.example.ports.rest.exception.NumberFormatExceptionMapper,
+      com.example.ports.rest.exception.WebApplicationExceptionMapper,
+      com.example.ports.rest.exception.BaseExceptionMapper
+    </properties>
+  </pojo-deployment>
+</openejb-jar>
