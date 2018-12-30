@@ -1,5 +1,4 @@
 = DeltaSpike Project Stage
-
 :index-group: Testing Techniques
 :jbake-type: page
 :jbake-status: published
@@ -31,7 +30,7 @@ public final class ManagerFactory {
     }
 }
 ----
-<1> Current project stage injected via CDI. 
+<1> Current project stage injected via CDI.
 
 On the example above a `Manager` instance is created based on current ProjectStage.
 
@@ -328,3 +327,4 @@ Results :
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 
 ----
+
