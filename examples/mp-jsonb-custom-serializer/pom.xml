@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.superbiz</groupId>
-	<artifactId>mp-jsonb-custom-serializer</artifactId>
+	<artifactId>jsonb-custom-serializer</artifactId>
 	<version>8.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>OpenEJB :: Examples :: Microprofile JSONB Custom Serializer/Deserializer</name>
