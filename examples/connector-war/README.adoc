@@ -1,8 +1,8 @@
-index-group=Unrevised 
+index-group=Java EE Connectors
 type=page 
 status=published 
 
-= Movies Complete
+= Connectors in WAR Files
 
 
 == AddInterceptor
