@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=JSON-B
 type=page
 status=published
 ~~~~~~
@@ -7,7 +7,7 @@ This examples shows how to customize jsonb for a JAX-RS Application. JSONB is th
 
 ## Run and test Endpoint
 
-the application can be run with 'mvn clean install tomee:run' if port 8080 is available you can invoke the following endpoint: (GET) http://localhost:8080/mp-jsonb-configuration/api/users that should respond with the following json:
+the application can be run with 'mvn clean install tomee:run' if port 8080 is available you can invoke the following endpoint: (GET) http://localhost:8080/jsonb-configuration/api/users that should respond with the following json:
 [
   {
     "Id":1,
@@ -148,7 +148,7 @@ The test spin up an openejb webapp and invoke the users endpoint
 
 # Running
 
-Running the example can be done from maven with a simple 'mvn clean install' command run from the 'mp-jsonb-configuration' directory.
+Running the example can be done from maven with a simple 'mvn clean install' command run from the 'jsonb-configuration' directory.
 
 When run you should see output similar to the following.
 
@@ -173,7 +173,7 @@ When run you should see output similar to the following.
 	INFO -   httpejbd             127.0.0.1       4204  
 	INFO - -------
 	INFO - Ready!
-	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
+	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-configuration/UserServiceTest
 	INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
 	INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 	INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
@@ -182,9 +182,9 @@ When run you should see output similar to the following.
 	INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 	INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
 	INFO - Creating Container(id=Default Stateless Container)
-	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest" loaded.
+	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-configuration/UserServiceTest" loaded.
 	INFO - Creating dedicated application classloader for UserServiceTest
-	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
+	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-configuration/UserServiceTest
 	INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
@@ -224,7 +224,7 @@ When run you should see output similar to the following.
 	INFO - REST Application: http://127.0.0.1:4204/test/api       -> org.superbiz.JAXRSApplication@5af28b27
 	INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
 	INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
-	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest)
+	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-configuration/UserServiceTest)
 	[
 	  {
 	    "Id":1,
@@ -237,7 +237,7 @@ When run you should see output similar to the following.
 	    "Registration":"2018 - 12 - 28"
 	  }
 	]
-	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-configuration/UserServiceTest
+	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-configuration/UserServiceTest
 	INFO - Stopping network services
 	INFO - Stopping server services
 	Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.203 sec
@@ -252,7 +252,7 @@ javaee-api:8.0 brings in all the dependencies needed to spin up a working REST a
 
 If we look at the jar built by maven, we'll see the application itself is quite small:
 
-    $ jar tvf target/mp-jsonb-configuration-8.0.0-SNAPSHOT.war 
+    $ jar tvf target/jsonb-configuration-8.0.0-SNAPSHOT.war 
 	     0 Fri Dec 28 19:36:10 CET 2018 META-INF/
 	   134 Fri Dec 28 19:36:08 CET 2018 META-INF/MANIFEST.MF
 	     0 Fri Dec 28 19:36:08 CET 2018 WEB-INF/
@@ -268,8 +268,8 @@ If we look at the jar built by maven, we'll see the application itself is quite 
 	  1224 Fri Dec 28 18:28:32 CET 2018 WEB-INF/web.xml
 	     0 Fri Dec 28 19:36:10 CET 2018 META-INF/maven/
 	     0 Fri Dec 28 19:36:10 CET 2018 META-INF/maven/org.superbiz/
-	     0 Fri Dec 28 19:36:10 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-configuration/
-	  1791 Fri Dec 28 19:10:44 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-configuration/pom.xml
-	   128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-configuration/pom.properties
+	     0 Fri Dec 28 19:36:10 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/
+	  1791 Fri Dec 28 19:10:44 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/pom.xml
+	   128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/pom.properties
 
 This single jar could be deployed any any compliant Java EE implementation.  In TomEE you'd simply place it in the `tomee.home/webapps/` directory.
