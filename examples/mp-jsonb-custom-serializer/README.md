@@ -1,4 +1,4 @@
-index-group=Unrevised
+index-group=JSON-B
 type=page
 status=published
 ~~~~~~
@@ -7,7 +7,7 @@ This examples shows how to customize objects serialization/deserialization with 
 
 ## Run and test Endpoint
 
-the application can be run with 'mvn clean install tomee:run' if port 8080 is available you can invoke the following endpoint: (GET) http://localhost:8080/mp-jsonb-custom-serializer/api/users that should respond with the following json:
+the application can be run with 'mvn clean install tomee:run' if port 8080 is available you can invoke the following endpoint: (GET) http://localhost:8080/jsonb-custom-serializer/api/users that should respond with the following json:
 
 	[
 	  {
@@ -28,7 +28,7 @@ the application can be run with 'mvn clean install tomee:run' if port 8080 is av
 	  }
 	]
 
-and the endpoint: (POST) http://localhost:8080/mp-jsonb-custom-serializer/api/users with a body like:
+and the endpoint: (POST) http://localhost:8080/jsonb-custom-serializer/api/users with a body like:
 	
 	{ 
 		"id": 1, 
@@ -267,7 +267,7 @@ The test spin up an openejb webapp and invoke the users endpoint
 
 # Running
 
-Running the example can be done from maven with a simple 'mvn clean install' command run from the 'mp-jsonb-custom-serializer' directory.
+Running the example can be done from maven with a simple 'mvn clean install' command run from the 'jsonb-custom-serializer' directory.
 
 When run you should see output similar to the following.
 
@@ -292,7 +292,7 @@ When run you should see output similar to the following.
 	INFO -   httpejbd             127.0.0.1       4204  
 	INFO - -------
 	INFO - Ready!
-	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
 	INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 	INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
@@ -301,9 +301,9 @@ When run you should see output similar to the following.
 	INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 	INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
 	INFO - Creating Container(id=Default Stateless Container)
-	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest" loaded.
+	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest" loaded.
 	INFO - Creating dedicated application classloader for UserServiceTest
-	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
@@ -344,8 +344,8 @@ When run you should see output similar to the following.
 	INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
 	INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
 	INFO -              POST http://127.0.0.1:4204/test/api/users ->      User addUser(User)
-	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest)
-	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest)
+	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Stopping network services
 	INFO - Stopping server services
 	INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@7823a2f9
@@ -365,7 +365,7 @@ When run you should see output similar to the following.
 	INFO -   httpejbd             127.0.0.1       4204  
 	INFO - -------
 	INFO - Ready!
-	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Configuring enterprise application: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Auto-deploying ejb UserService: EjbDeployment(deployment-id=UserService)
 	INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
 	INFO - Auto-creating a container for bean org.superbiz.rest.UserServiceTest: Container(type=MANAGED, id=Default Managed Container)
@@ -374,9 +374,9 @@ When run you should see output similar to the following.
 	INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
 	INFO - Auto-creating a container for bean UserService: Container(type=STATELESS, id=Default Stateless Container)
 	INFO - Creating Container(id=Default Stateless Container)
-	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest" loaded.
+	INFO - Enterprise application "/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest" loaded.
 	INFO - Creating dedicated application classloader for UserServiceTest
-	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Assembling app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Jndi(name=UserServiceLocalBean) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService!org.superbiz.rest.UserService) --> Ejb(deployment-id=UserService)
 	INFO - Jndi(name=global/test/UserService) --> Ejb(deployment-id=UserService)
@@ -417,8 +417,8 @@ When run you should see output similar to the following.
 	INFO -      Service URI: http://127.0.0.1:4204/test/api/users ->  EJB org.superbiz.rest.UserService
 	INFO -               GET http://127.0.0.1:4204/test/api/users ->      List<User> users()
 	INFO -              POST http://127.0.0.1:4204/test/api/users ->      User addUser(User)
-	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest)
-	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/mp-jsonb-custom-serializer/UserServiceTest
+	INFO - Deployed Application(path=/home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest)
+	INFO - Undeploying app: /home/federico/Documents/PRIVATO/Apache/tomee/examples/jsonb-custom-serializer/UserServiceTest
 	INFO - Stopping network services
 	INFO - Stopping server services
 	Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.31 sec
@@ -433,7 +433,7 @@ javaee-api:8.0 brings in all the dependencies needed to spin up a working REST a
 
 If we look at the jar built by maven, we'll see the application itself is quite small:
 
-    $ jar tvf target/mp-jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
+    $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
 	     0 Sat Dec 29 19:10:44 CET 2018 META-INF/
 	   134 Sat Dec 29 19:10:42 CET 2018 META-INF/MANIFEST.MF
 	     0 Sat Dec 29 19:10:42 CET 2018 WEB-INF/
@@ -452,8 +452,8 @@ If we look at the jar built by maven, we'll see the application itself is quite 
 	  1241 Sat Dec 29 17:52:48 CET 2018 WEB-INF/web.xml
 	     0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/
 	     0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/org.superbiz/
-	     0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-custom-serializer/
-	  1811 Sat Dec 29 17:53:36 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-custom-serializer/pom.xml
-	   132 Sat Dec 29 19:10:42 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-custom-serializer/pom.properties
+	     0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/
+	  1811 Sat Dec 29 17:53:36 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.xml
+	   132 Sat Dec 29 19:10:42 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.properties
 
 This single jar could be deployed any any compliant Java EE implementation.  In TomEE you'd simply place it in the `tomee.home/webapps/` directory.
