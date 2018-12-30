@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-This example shows how to use https://deltaspike.apache.org/documentation/projectstage.html[DeltaSpike project stage^] within Arquillian tests running on Tomee.
+This example shows how to use https://deltaspike.apache.org/documentation/projectstage.html[DeltaSpike project stage^] within Arquillian tests running on TomEE.
 
 == Example
 
