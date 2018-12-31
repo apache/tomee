@@ -3,6 +3,7 @@ package org.superbiz.rest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
@@ -31,10 +32,12 @@ public class UserServiceTest {
 		final String message = WebClient.create("http://localhost:4204").path("/test/api/users").get(String.class);
 		System.out.println(message);
 
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd");
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd", Locale.ENGLISH);
 
+		String assertDate = sdf.format(new Date(1234));
+		System.out.println(assertDate);
 		// test withDateFormat("yyyy - MM - dd")
-		Assert.assertTrue(message.contains(sdf.format(new Date())));
+		Assert.assertTrue(message.contains(assertDate));
 		// test withFormatting(true)
 		Assert.assertTrue(message.contains(System.getProperty("line.separator")));
 	}

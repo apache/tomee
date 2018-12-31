@@ -6,7 +6,7 @@ public class User {
 
 	private Integer id;
 	private String name;
-	private Date registration = new Date();
+	private Date registration = new Date(1234);
 
 	public User(Integer id, String name) {
 		super();
