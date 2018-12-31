@@ -96,7 +96,7 @@
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <surefire.version>2.21.0</surefire.version>
+    <surefire.version>2.22.1</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
