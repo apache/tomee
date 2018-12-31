@@ -106,6 +106,7 @@
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
     <module>mp-rest-jwt</module>
+    <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
