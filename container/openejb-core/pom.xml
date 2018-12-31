@@ -323,6 +323,7 @@
           <forkCount>1</forkCount>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>
+            @{argLine}
             -javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar
             -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
             -Dopenejb.classloader.forced-load=org.apache.openejb
@@ -363,6 +364,26 @@
                 <include>org/apache/openejb/cdi/**</include>
               </includes>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <!-- attached to Maven test phase -->
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
