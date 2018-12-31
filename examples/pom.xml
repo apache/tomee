@@ -53,6 +53,7 @@
     <module>cdi-interceptors</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
+    <module>cdi-qualifier</module>
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
