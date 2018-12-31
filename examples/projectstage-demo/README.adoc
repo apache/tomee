@@ -1,10 +1,9 @@
 = DeltaSpike Project Stage
-
 :index-group: Testing Techniques
 :jbake-type: page
 :jbake-status: published
 
-This example shows how to use https://deltaspike.apache.org/documentation/projectstage.html[DeltaSpike project stage^] within Arquillian tests running on Tomee.
+This example shows how to use https://deltaspike.apache.org/documentation/projectstage.html[DeltaSpike project stage^] within Arquillian tests running on TomEE.
 
 == Example
 
@@ -31,7 +30,7 @@ public final class ManagerFactory {
     }
 }
 ----
-<1> Current project stage injected via CDI. 
+<1> Current project stage injected via CDI.
 
 On the example above a `Manager` instance is created based on current ProjectStage.
 
@@ -328,3 +327,4 @@ Results :
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
 
 ----
+
