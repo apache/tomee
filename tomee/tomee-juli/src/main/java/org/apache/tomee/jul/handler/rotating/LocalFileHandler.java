@@ -396,13 +396,7 @@ public class LocalFileHandler extends Handler {
         } catch (final Exception e) {
             reportError(null, e, ErrorManager.OPEN_FAILURE);
             writer = null;
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (final IOException e1) {
-                    // no-op
-                }
-            }
+        } finally {
             if (os != null) {
                 try {
                     os.close();
@@ -410,7 +404,6 @@ public class LocalFileHandler extends Handler {
                     // no-op
                 }
             }
-        } finally {
             writerLock.writeLock().unlock();
         }
 
