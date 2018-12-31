@@ -1,0 +1,10 @@
+{
+  "iss": "https://example.com",
+  "upn": "alice",
+  "sub": "alice.wonder@example.com",
+  "name": "Alice Wonder",
+  "iat": 1516239022,
+  "groups": [
+    "buyer"
+  ]
+}
