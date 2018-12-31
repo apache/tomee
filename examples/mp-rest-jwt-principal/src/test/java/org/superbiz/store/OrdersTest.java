@@ -19,10 +19,10 @@ package org.superbiz.store;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.spi.ArquillianProxyException;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.superbiz.store.entity.Order;
@@ -124,12 +124,9 @@ public class OrdersTest {
         assertEquals(Response.Status.NO_CONTENT.getStatusCode(), statusCode);
     }
 
-    @Test
-    @Ignore
+    @Test(expected = ArquillianProxyException.class)
     public void shouldNotHaveAccess() throws Exception {
-        int statusCode = orderRestClient.deleteOrder("Bearer " + createJwtToken(false), 1).getStatus();
-
-        assertEquals(Response.Status.FORBIDDEN.getStatusCode(), statusCode);
+        orderRestClient.deleteOrder("Bearer " + createJwtToken(false), 1).getStatus();
     }
 
     public String createJwtToken(boolean john) throws Exception {
