@@ -1,0 +1,19 @@
+= CDI @Qualifier
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+== Introduction
+
+Sometimes we need write several implementation for a interface of rule business, to increase uncoupling let's inject only interface and CDI choose the right implementation, to help CDI with this choice was created the **Qualifiers**.
+
+
+== Example
+
+In this example, we have an interface `Payment` and theirs implementations: 
+* Cash
+* CreditCard 
+
+In our test (Payment Test) we inject only the interface Payment, without the Qualifier feature the CDI would not known which implementation to inject in test.
+
+We created a **Qualifier** called `PaymentQualifier` a single qualifier with only one difference, the annotation `@Qualifier`:
