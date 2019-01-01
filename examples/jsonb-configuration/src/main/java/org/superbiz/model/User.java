@@ -1,17 +1,23 @@
 package org.superbiz.model;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class User {
 
 	private Integer id;
 	private String name;
-	private Date registration = new Date(1234);
+	private Date registration;
 
 	public User(Integer id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
+
+		final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.set(2019, Calendar.JANUARY, 1);
+		registration = c.getTime();
 	}
 
 	/**
