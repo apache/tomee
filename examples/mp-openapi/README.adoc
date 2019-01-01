@@ -1,0 +1,112 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: unpublished
+
+# Microprofile OpenAPI
+This is an example on how to use microprofile OpenAPI in TomEE.
+
+== Run the application:
+mvn clean install tomee:run 
+
+Within the application there is an endpoint that will give you weather based on day.
+
+== Request
+....
+GET http://localhost:8080/mp-openapi/weather/status/{today}
+
+
+== Response
+....
+{today} is a sunny day.
+
+
+== OpenAPI
+
+OpenAPI is a spec for natively producing OpenAPI v3 documents from JAX-RS applications. 
+There exists an endpoint /openApi which gives the OpenAPI document based on Accept request header.
+
+
+== Request
+....
+GET http://localhost:8080/mp-openapi/openapi
+
+
+== Response
+
+[source]
+
+----
+"/weather/status/{day}": {
+            "get": {
+                "deprecated": false,
+                "description": "Describes how the day will be.",
+                "operationId": "dayStatus",
+                "parameters": [
+                    {
+                        "allowEmptyValue": false,
+                        "allowReserved": false,
+                        "description": "The day for which the weather needs to be fetched.",
+                        "in": "path",
+                        "name": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "content": {
+                            "200": {}
+                        },
+                        "description": "Weather for this day not found"
+                    }
+                },
+                "summary": "Finds weather for day specified in the URL "
+            }
+        }
+----
+
+
+== WeatherService
+
+This is the class where the annotations relevant to OpenAPI are given.
+
+[source, java]
+
+----
+@Path("/weather")
+@ApplicationScoped
+public class WeatherService {
+
+    @Path("/status/{day}/")   
+    @GET
+    @Operation(summary = "Finds weather for day specified in the URL ", description = "Describes how the day will be.")
+    @APIResponse(responseCode = "400", description = "Weather for this day not found")
+    public Response dayStatus( @Parameter(description = "The day for which the weather needs to be fetched.", required = true) @PathParam("day") String day	) {
+    	
+    	if(day.equalsIgnoreCase("tomorrow"))
+    		return Response.status(Response.Status.NOT_FOUND).build();
+    	String message=day+ " is a sunny day.";
+        return Response.status(Response.Status.OK)
+        	      .entity(message)
+        	      .build();        	         	
+    }
+
+    @Path("/detailedWeather/{day}/")   
+    @GET
+    @APIResponse(description = "Detailed Weather", content=@Content(mediaType="application/json", schema= @Schema(implementation=Weather.class)))
+    public Weather getDetailedWeather( @Parameter(description = "The day for which the detailed weather needs to be fetched.", required = true) @PathParam("day") String day) {
+    	
+        Weather w=new Weather();
+        w.setHumidity("12");
+        w.setTemperature("37");
+        return w;
+    }
+    
+
+}
+----
+
+You can also try it out using the WeatherServiceTest.java available in
+the project.
