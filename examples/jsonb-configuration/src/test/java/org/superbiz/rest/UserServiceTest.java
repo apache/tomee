@@ -1,9 +1,10 @@
 package org.superbiz.rest;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.openejb.jee.WebApp;
@@ -32,9 +33,12 @@ public class UserServiceTest {
 		final String message = WebClient.create("http://localhost:4204").path("/test/api/users").get(String.class);
 		System.out.println(message);
 
-		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd", Locale.ENGLISH);
+		final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.set(2019, Calendar.JANUARY, 1);
 
-		String assertDate = sdf.format(new Date(1234));
+		DateFormat df = new SimpleDateFormat("yyyy - MM - dd");
+		String assertDate = df.format(c.getTime());
+
 		System.out.println(assertDate);
 		// test withDateFormat("yyyy - MM - dd")
 		Assert.assertTrue(message.contains(assertDate));
