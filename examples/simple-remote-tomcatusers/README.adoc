@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 index-group=Unrevised
 type=page
 status=published
@@ -7,6 +8,15 @@ status=published
 This is an example on how to use JNDI with security restrictions in TomEE.
 
 
+=======
+= Simple Remote Tomcatusers
+:index-group: Security
+:jbake-type: page
+:jbake-status: published
+
+This is an example on how to use JNDI with security restrictions in TomEE.
+
+>>>>>>> origin/pr/350
 == Contract
 
 In our example Contract is an interface annotated with @Remote which indicates that all methods of this interface can be accessed by client code.

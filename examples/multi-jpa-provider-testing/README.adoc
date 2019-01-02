@@ -1,0 +1,287 @@
+= Multiple JPA Providers Test
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+This test shows how to use multiple JPA providers, Hibernate and Openjpa. Using JPA annotations the code can be easily used with different implementations. The @Entity class is straight forward, a Person POJO with an id and a name, the persistence.xml creates and drop Person table for both implementations. The examples and implementations dependency are inside test resources, in particularly: arquillian.xml for test purpose, hibernate-pom.xml loads hibernate-core dependencies and openjpa-pom.xml loads openjpa dependencies. The test inside JPATest.java class is executed twice, once for each implementation.
+
+== @Entity
+
+Simple POJO class that follows JPA standard
+
+....
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Person {
+
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private String name;
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+....
+
+== persistence.xml
+
+Create and drop Person table
+
+....
+<persistence version="2.0"
+         xmlns="http://java.sun.com/xml/ns/persistence"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+                   http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+<persistence-unit name="jpa">
+    <jta-data-source>jdbc/jpa</jta-data-source>
+    <properties>
+    <!--
+        OpenJPA
+    -->
+    <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+
+    <!--
+        Hibernate
+    -->
+    <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+    </properties>
+</persistence-unit>
+</persistence>
+....
+
+== JPA test
+
+The entity manager is injected through cdi and an Object Person is created and inserted into the inmemory database
+
+....
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
+import org.jboss.arquillian.transaction.api.annotation.Transactional;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.superbiz.model.Person;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import static org.junit.Assert.assertNotNull;
+
+@RunWith(Arquillian.class)
+public class JPATest {
+
+    @Deployment
+    public static WebArchive war() {
+        return ShrinkWrap.create(WebArchive.class)
+                .addClass(Person.class)
+                .addAsWebInfResource(new ClassLoaderAsset("META-INF/persistence.xml"), ArchivePaths.create("persistence.xml"));
+    }
+
+    @PersistenceContext
+    private EntityManager em;
+
+    @Test
+    @Transactional(TransactionMode.ROLLBACK)
+    public void persist() {
+        assertNotNull(em);
+
+        // do something with the em
+        final Person p = new Person();
+        p.setName("Apache OpenEJB");
+        em.persist(p);
+    }
+}
+....
+
+Inside the example there are no reference to the JPA implementations.
+
+== Test implementations
+
+The test classes inside org.superbiz.enricher package simply load the implementation libraries and the test runs twice as described inside the pom.xml, a system property variable is used to distinguish between Hibernate and OpenJPA.
+
+= Running
+
+Running the example can be done from maven with a simple 'mvn clean install' command run from the 'multi-jpa-provider-testing' directory.
+
+When run you should see output similar to the following.
+
+....
+-------------------------------------------------------
+T E S T S
+-------------------------------------------------------
+Running org.superbiz.JPATest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Wed Dec 26 17:55:31 CET 2018
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20181226
+INFO - Build time: 02:26
+INFO - ********************************************************************************
+INFO - openejb.home = /tomee/examples/multi-jpa-provider-testing
+INFO - openejb.base = /tomee/examples/multi-jpa-provider-testing
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@5db45159
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Using 'openejb.deployments.classpath=false'
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Using 'openejb.classloader.forced-load=org.superbiz.model'
+INFO - Configuring enterprise application: /tomee/examples/multi-jpa-provider-testing/413724ac-4a44-48a3-ae4a-db190b95cc62.war
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean 413724ac-4a44-48a3-ae4a-db190b95cc62_org.superbiz.JPATest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Configuring PersistenceUnit(name=jpa)
+INFO - Configuring Service(id=Default JDBC Database, type=Resource, provider-id=Default JDBC Database)
+INFO - Auto-creating a Resource with id 'Default JDBC Database' of type 'DataSource for 'jpa'.
+INFO - Creating Resource(id=Default JDBC Database)
+INFO - Configuring Service(id=Default Unmanaged JDBC Database, type=Resource, provider-id=Default Unmanaged JDBC Database)
+INFO - Auto-creating a Resource with id 'Default Unmanaged JDBC Database' of type 'DataSource for 'jpa'.
+INFO - Creating Resource(id=Default Unmanaged JDBC Database)
+INFO - Adjusting PersistenceUnit jpa <jta-data-source> to Resource ID 'Default JDBC Database' from 'jdbc/jpa'
+INFO - Adjusting PersistenceUnit jpa <non-jta-data-source> to Resource ID 'Default Unmanaged JDBC Database' from 'null'
+INFO - Using 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'
+INFO - Enterprise application "/tomee/examples/multi-jpa-provider-testing/413724ac-4a44-48a3-ae4a-db190b95cc62.war" loaded.
+INFO - Assembling app: /tomee/examples/multi-jpa-provider-testing/413724ac-4a44-48a3-ae4a-db190b95cc62.war
+INFO - HCANN000001: Hibernate Commons Annotations {4.0.2.Final}
+INFO - HHH000412: Hibernate Core {4.2.18.Final}
+INFO - HHH000206: hibernate.properties not found
+INFO - HHH000021: Bytecode provider name : javassist
+INFO - HHH000204: Processing PersistenceUnitInfo [
+    name: jpa
+    ...]
+INFO - HHH000130: Instantiating explicit connection provider: org.hibernate.ejb.connection.InjectedDataSourceConnectionProvider
+INFO - HHH000400: Using dialect: org.hibernate.dialect.HSQLDialect
+INFO - HHH000268: Transaction strategy: org.hibernate.engine.transaction.internal.jta.CMTTransactionFactory
+INFO - HHH000397: Using ASTQueryTranslatorFactory
+INFO - HHH000227: Running hbm2ddl schema export
+INFO - HHH000230: Schema export complete
+INFO - PersistenceUnit(name=jpa, provider=org.hibernate.ejb.HibernatePersistence) - provider time 1053ms
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@5db45159
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - HV000001: Hibernate Validator 5.1.3.Final
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 194 ms.
+INFO - Deployed Application(path=/tomee/examples/multi-jpa-provider-testing/413724ac-4a44-48a3-ae4a-db190b95cc62.war)
+INFO - Undeploying app: /tomee/examples/multi-jpa-provider-testing/413724ac-4a44-48a3-ae4a-db190b95cc62.war
+INFO - HHH000227: Running hbm2ddl schema export
+INFO - HHH000230: Schema export complete
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.951 sec - in org.superbiz.JPATest
+INFO - Destroying container system
+INFO - Closing DataSource: Default JDBC Database
+INFO - Closing DataSource: Default Unmanaged JDBC Database
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+-------------------------------------------------------
+T E S T S
+-------------------------------------------------------
+SUREFIRE-859: 57  classpath-bootstrap  INFO   [main] openjpa.Enhance - You have enabled runtime enhancement, but have not specified the set of persistent classes.  OpenJPA must look for metadata for every loaded class, which might increase class load times significantly.
+353  classpath-bootstrap  INFO   [main] openjpa.Runtime - OpenJPA dynamically loaded a validation provider.
+Running org.superbiz.JPATest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Wed Dec 26 17:55:35 CET 2018
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20181226
+INFO - Build time: 02:26
+INFO - ********************************************************************************
+INFO - openejb.home = /tomee/examples/multi-jpa-provider-testing
+INFO - openejb.base = /tomee/examples/multi-jpa-provider-testing
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@4a8a60bc
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Using 'openejb.deployments.classpath=false'
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Configuring enterprise application: /tomee/examples/multi-jpa-provider-testing/450e397e-de39-49eb-837f-7b066fc9f248.war
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean 450e397e-de39-49eb-837f-7b066fc9f248_org.superbiz.JPATest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Configuring PersistenceUnit(name=jpa)
+INFO - Configuring Service(id=Default JDBC Database, type=Resource, provider-id=Default JDBC Database)
+INFO - Auto-creating a Resource with id 'Default JDBC Database' of type 'DataSource for 'jpa'.
+INFO - Creating Resource(id=Default JDBC Database)
+INFO - Configuring Service(id=Default Unmanaged JDBC Database, type=Resource, provider-id=Default Unmanaged JDBC Database)
+INFO - Auto-creating a Resource with id 'Default Unmanaged JDBC Database' of type 'DataSource for 'jpa'.
+INFO - Creating Resource(id=Default Unmanaged JDBC Database)
+INFO - Adjusting PersistenceUnit jpa <jta-data-source> to Resource ID 'Default JDBC Database' from 'jdbc/jpa'
+INFO - Adjusting PersistenceUnit jpa <non-jta-data-source> to Resource ID 'Default Unmanaged JDBC Database' from 'null'
+INFO - Using 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl'
+INFO - Enterprise application "/tomee/examples/multi-jpa-provider-testing/450e397e-de39-49eb-837f-7b066fc9f248.war" loaded.
+INFO - Assembling app: /tomee/examples/multi-jpa-provider-testing/450e397e-de39-49eb-837f-7b066fc9f248.war
+INFO - OpenJPA dynamically loaded a validation provider.
+INFO - PersistenceUnit(name=jpa, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 116ms
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@4a8a60bc
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - HV000001: Hibernate Validator 5.1.3.Final
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 170 ms.
+INFO - Deployed Application(path=/tomee/examples/multi-jpa-provider-testing/450e397e-de39-49eb-837f-7b066fc9f248.war)
+INFO - Starting OpenJPA 3.0.0
+INFO - Using dictionary class "org.apache.openjpa.jdbc.sql.HSQLDictionary" (HSQL Database Engine 2.3.2 ,HSQL Database Engine Driver 2.3.2).
+INFO - Connected to HSQL Database Engine version 2.2 using JDBC driver HSQL Database Engine Driver version 2.3.2.
+INFO - Undeploying app: /tomee/examples/multi-jpa-provider-testing/450e397e-de39-49eb-837f-7b066fc9f248.war
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.666 sec - in org.superbiz.JPATest
+INFO - Destroying container system
+INFO - Closing DataSource: Default JDBC Database
+INFO - Closing DataSource: Default Unmanaged JDBC Database
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....
+
+From the log you can see that both implementations are used: INFO - Using 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl', INFO - Using 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'.
+
+== Inside the jar
+
+If we look at the jar built by maven, we'll see the application itself is quite small:
+
+ jar tvf multi-jpa-provider-testing-8.0.0-SNAPSHOT.jar
+     0 Wed Dec 26 17:55:40 CET 2018 META-INF/
+ 134 Wed Dec 26 17:55:38 CET 2018 META-INF/MANIFEST.MF
+     0 Wed Dec 26 17:55:30 CET 2018 org/
+     0 Wed Dec 26 17:55:30 CET 2018 org/superbiz/
+     0 Wed Dec 26 17:55:30 CET 2018 org/superbiz/model/
+ 780 Wed Dec 26 17:55:30 CET 2018 org/superbiz/model/Person.class
+ 1554 Wed Dec 26 17:55:30 CET 2018 META-INF/persistence.xml
+     0 Wed Dec 26 17:55:40 CET 2018 META-INF/maven/
+     0 Wed Dec 26 17:55:40 CET 2018 META-INF/maven/org.superbiz/
+     0 Wed Dec 26 17:55:40 CET 2018 META-INF/maven/org.superbiz/multi-jpa-provider-testing/
+ 5696 Wed Dec 26 17:41:54 CET 2018 META-INF/maven/org.superbiz/multi-jpa-provider-testing/pom.xml
+ 132 Wed Dec 26 17:55:38 CET 2018 META-INF/maven/org.superbiz/multi-jpa-provider-testing/pom.properties
+
+Inside the resources package there is only a java class and the persistence.xml and the only dependency is javaee-api:8.0.
