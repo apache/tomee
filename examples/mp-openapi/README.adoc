@@ -15,6 +15,7 @@ Within the application there is an endpoint that will give you weather based on 
 GET http://localhost:8080/mp-openapi/weather/status/{today}
 
 
+
 == Response
 ....
 {today} is a sunny day.
@@ -23,13 +24,14 @@ GET http://localhost:8080/mp-openapi/weather/status/{today}
 == OpenAPI
 
 OpenAPI is a spec for natively producing OpenAPI v3 documents from JAX-RS applications. 
-There exists an endpoint /openApi which gives the OpenAPI document based on Accept request header.
+There exists an endpoint /openapi which gives the OpenAPI document based on Accept request header and by default outputs the document in YAML format.
 
 
 == Request
 ....
 GET http://localhost:8080/mp-openapi/openapi
 
+Headers: Accept:application/json
 
 == Response
 
@@ -67,6 +69,39 @@ GET http://localhost:8080/mp-openapi/openapi
         }
 ----
 
+
+== Request
+....
+GET http://localhost:8080/mp-openapi/openapi
+
+
+== Response
+
+[source]
+----
+
+/weather/status/{day}:
+    get:
+      parameters:
+      - name: ""
+        in: "path"
+        schema:
+          type: "string"
+        description: "The day for which the weather needs to be fetched."
+        required: true
+        allowReserved: false
+        allowEmptyValue: false
+      description: "Describes how the day will be."
+      summary: "Finds weather for day specified in the URL "
+      deprecated: false
+      responses:
+        400:
+          content:
+            200: {}
+          description: "Weather for this day not found"
+      operationId: "dayStatus"
+
+----
 
 == WeatherService
 
