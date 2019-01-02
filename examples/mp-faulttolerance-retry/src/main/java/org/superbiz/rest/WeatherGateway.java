@@ -74,7 +74,7 @@ public class WeatherGateway {
         throw new WeatherGatewayBusyServiceException();
     }
 
-    @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 0)
+    @Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500)
     public String statusOfWeekend() {
         if (counterStatusOfWeekend.addAndGet(1) <= 5) {
             logTimeoutMessage(statusOfWeekendInstant);
