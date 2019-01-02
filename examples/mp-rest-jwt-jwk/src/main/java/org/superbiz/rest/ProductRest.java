@@ -24,6 +24,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("store")
@@ -43,35 +44,46 @@ public class ProductRest {
     @GET
     @Path("/products")
     @RolesAllowed({"guest", "admin"})
-    public List<Product> getListOfMovies() {
+    public List<Product> getListOfProducts() {
         return productService.getProducts();
     }
 
     @GET
     @Path("/products/{id}")
     @RolesAllowed({"guest", "admin"})
-    public Product getMovie(@PathParam("id") int id) {
+    public Product getProduct(@PathParam("id") int id) {
         return productService.getProduct(id);
     }
 
     @POST
     @Path("/products")
     @RolesAllowed({"admin"})
-    public void addMovie(Product product) {
-        productService.addProduct(product);
+    public Response addProduct(Product product) {
+        return Response.status(Response.Status.CREATED)
+                .entity(productService.addProduct(product))
+                .build();
     }
 
     @DELETE
     @Path("/products/{id}")
     @RolesAllowed({"admin"})
-    public void deleteMovie(@PathParam("id") int id) {
+    public Response deleteProduct(@PathParam("id") int id) {
         productService.deleteProduct(id);
+
+        return Response
+                .status(Response.Status.NO_CONTENT)
+                .build();
     }
 
     @PUT
     @Path("/products")
     @RolesAllowed({"admin"})
-    public void updateMovie(Product product) {
+    public Response updateProduct(Product product) {
         productService.updateProduct(product);
+
+        return Response
+                .status(Response.Status.OK)
+                .entity(product)
+                .build();
     }
 }

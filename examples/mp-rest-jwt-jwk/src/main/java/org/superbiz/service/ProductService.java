@@ -40,8 +40,10 @@ public class ProductService {
         return productsInStore.get(id);
     }
 
-    public void addProduct(Product product) {
+    public Product addProduct(Product product) {
         productsInStore.put(product.getId(), product);
+
+        return product;
     }
 
     public void deleteProduct(int id) {
