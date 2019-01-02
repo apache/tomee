@@ -63,7 +63,7 @@ public class JWTAuthContextInfo {
     }
 
     public Key getSignerKey() {
-        return signerKeys.get("DEFAULT");
+        return signerKeys.get(DEFAULT_KEY);
     }
 
     public List<JsonWebKey> getSignerKeys() {
