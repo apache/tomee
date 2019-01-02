@@ -132,6 +132,7 @@ import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.UserTransactionFactory;
+import org.apache.tomee.config.TomEESystemConfig;
 import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContextsService;
@@ -198,8 +199,6 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
 
     public static final String DEFAULT_J2EE_SERVER = "Apache TomEE";
     public static final String OPENEJB_WEBAPP_MODULE_ID = "openejb.webapp.moduleId";
-    public static final String TOMEE_EAT_EXCEPTION_PROP = "tomee.eat-exception";
-    public static final String TOMEE_INIT_J2EE_INFO = "tomee.init-J2EE-info";
 
     private static final boolean FORCE_RELOADABLE = SystemInstance.get().getOptions().get("tomee.force-reloadable", false);
     private static final boolean SKIP_TLD = SystemInstance.get().getOptions().get("tomee.skip-tld", false);
@@ -275,7 +274,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
     public TomcatWebAppBuilder() {
         SystemInstance.get().setComponent(WebAppBuilder.class, this);
         SystemInstance.get().setComponent(TomcatWebAppBuilder.class, this);
-        initJEEInfo = "true".equalsIgnoreCase(SystemInstance.get().getProperty(TOMEE_INIT_J2EE_INFO, "true"));
+        initJEEInfo = "true".equalsIgnoreCase(SystemInstance.get().getProperty(TomEESystemConfig.TOMEE_INIT_J2EE_INFO, "true"));
 
         // TODO: re-write this bit, so this becomes part of the listener, and we register this with the mbean server.
 
@@ -1317,7 +1316,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     LOGGER.error("Unable to deploy collapsed ear in war " + standardContext, e);
                     undeploy(standardContext, contextInfo);
                     // just to force tomee to start without EE part
-                    if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
+                    if (System.getProperty(TomEESystemConfig.TOMEE_EAT_EXCEPTION_PROP) == null) {
                         final TomEERuntimeException tre = new TomEERuntimeException(e);
                         final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                         dem.saveDeploymentException(contextInfo.appInfo, tre);
@@ -1459,7 +1458,7 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 standardContext.getServletContext().setAttribute(InstanceManager.class.getName(), standardContext.getInstanceManager());
             } catch (final Exception e) {
                 LOGGER.error("Error merging Java EE JNDI entries in to war " + standardContext.getPath() + ": Exception: " + e.getMessage(), e);
-                if (System.getProperty(TOMEE_EAT_EXCEPTION_PROP) == null) {
+                if (System.getProperty(TomEESystemConfig.TOMEE_EAT_EXCEPTION_PROP) == null) {
                     final DeploymentExceptionManager dem = SystemInstance.get().getComponent(DeploymentExceptionManager.class);
                     if (dem != null && dem.getDeploymentException(contextInfo.appInfo) != null) {
                         if (RuntimeException.class.isInstance(e)) {
