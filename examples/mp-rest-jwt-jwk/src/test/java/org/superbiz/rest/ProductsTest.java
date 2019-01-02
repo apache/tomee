@@ -1,11 +1,8 @@
 package org.superbiz.rest;
 
-import org.apache.cxf.feature.LoggingFeature;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.johnzon.jaxrs.JohnzonProvider;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -14,73 +11,84 @@ import org.junit.runner.RunWith;
 import org.superbiz.entity.Product;
 import org.superbiz.service.ProductService;
 
-import java.net.URL;
-import java.util.logging.Logger;
+import javax.inject.Inject;
+import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
+import java.util.List;
 
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public class ProductsTest {
 
-    private final static Logger LOGGER = Logger.getLogger(ProductsTest.class.getName());
-    @ArquillianResource
-    private URL base;
+    @Inject
+    @RestClient
+    private ProductRestClient productRestClient;
 
-    @Deployment(testable = false)
+    @Deployment()
     public static WebArchive createDeployment() {
         final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
-                .addClasses(Product.class, ProductService.class, ProductsTest.class)
                 .addClasses(ProductRest.class, RestApplication.class)
-//                .addClass(MoviesMPJWTConfigurationProvider.class)
-                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
-
-        System.out.println(webArchive.toString(true));
-
+                .addClasses(Product.class)
+                .addClass(ProductService.class)
+                .addClasses(ProductRestClient.class, TokenUtils.class)
+                .addPackages(true, "com.nimbusds", "net.minidev.json")
+                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
+                .addAsResource("META-INF/microprofile-config.properties")
+                .addAsResource("jwt-john.json")
+                .addAsResource("privateKey002.pem")
+                .addAsResource("jwks.json");
         return webArchive;
     }
 
     @Test
     public void runningOfProductsApiTest() {
 
-        final WebClient webClient = WebClient
-                .create(base.toExternalForm(), singletonList(new JohnzonProvider<>()),
-                        singletonList(new LoggingFeature()), null);
-
-
-        //Testing rest endpoint deployment (GET  without security header)
-        String responsePayload = webClient.reset().path("/rest/store/").get(String.class);
-        LOGGER.info("responsePayload = " + responsePayload);
-        assertTrue(responsePayload.equalsIgnoreCase("running"));
+        assertEquals("running", productRestClient.status());
     }
 
     @Test
-    public void createProductTest() {
+    public void shouldMakeProductFlow() throws Exception {
+        Product productHuawei = new Product();
+        productHuawei.setId(1);
+        productHuawei.setName("Huawei P20 Pro");
+        productHuawei.setPrice(new BigDecimal(820.41));
+        productHuawei.setStock(6);
 
-        throw new RuntimeException("TODO Implement!");
+        int statusCode = productRestClient.addProduct("Bearer " + createJwtToken(), productHuawei).getStatus();
+
+        assertEquals(Response.Status.CREATED.getStatusCode(), statusCode);
+
+
+        Product productSamsung = new Product();
+        productSamsung.setId(2);
+        productSamsung.setName("Samsung S9");
+        productSamsung.setPrice(new BigDecimal(844.42));
+        productSamsung.setStock(2);
+
+        statusCode = productRestClient.addProduct("Bearer " + createJwtToken(), productSamsung).getStatus();
+
+        assertEquals(Response.Status.CREATED.getStatusCode(), statusCode);
+
+        productSamsung.setStock(5);
+
+        Response response = productRestClient.updateProduct("Bearer " + createJwtToken(), productSamsung);
+
+        Product updatedProduct = response.readEntity(Product.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        assertEquals(5, updatedProduct.getStock().intValue());
+
+        List<Product> products = productRestClient.getProductList("Bearer " + createJwtToken());
+
+        assertEquals(2, products.size());
+
+        statusCode = productRestClient.deleteProduct("Bearer " + createJwtToken(), 2).getStatus();
+
+        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), statusCode);
     }
 
-    @Test
-    public void getAllProductsTest() {
-
-        throw new RuntimeException("TODO Implement!");
-    }
-
-    @Test
-    public void getProductWithIdTest() {
-
-        throw new RuntimeException("TODO Implement!");
-    }
-
-    @Test
-    public void updateProductTest() {
-
-        throw new RuntimeException("TODO Implement!");
-    }
-
-    @Test
-    public void deleteProductTest() {
-
-        throw new RuntimeException("TODO Implement!");
+    private String createJwtToken() throws Exception {
+        return TokenUtils.generateJWTString("jwt-john.json", "privateKey002.pem");
     }
 }
