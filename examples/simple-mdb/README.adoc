@@ -1,5 +1,4 @@
 = Simple MDB
-
 :index-group: JMS and MDBs
 :jbake-type: page
 :jbake-status: published
