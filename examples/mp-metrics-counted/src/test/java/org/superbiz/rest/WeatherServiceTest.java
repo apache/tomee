@@ -97,7 +97,7 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        assertEquals("{\"weather_day_status\":{\"count\":1}}", metric);
+        assertEquals("{\"weather_day_status\":1}", metric);
     }
 
     @Test

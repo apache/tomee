@@ -98,7 +98,7 @@ public class WeatherServiceTest {
                 "# TYPE application:temperatures_mean_degrees F histogram\n" +
                 "application:temperatures_mean_degrees F 44.4\n" +
                 "# TYPE application:temperatures_stddev_degrees F histogram\n" +
-                "application:temperatures_stddev_degrees F 7.0710678118654755\n" +
+                "application:temperatures_stddev_degrees F 7.218494764607554\n" +
                 "# TYPE application:temperatures_degrees F histogram\n" +
                 "application:temperatures_degrees F{quantile=\"0.5\"} 45.0\n" +
                 "# TYPE application:temperatures_degrees F histogram\n" +
@@ -119,7 +119,7 @@ public class WeatherServiceTest {
                 "# TYPE application:org_superbiz_histogram_weather_service_temperatures_max histogram\n" +
                 "application:org_superbiz_histogram_weather_service_temperatures_max 0.0\n" +
                 "# TYPE application:org_superbiz_histogram_weather_service_temperatures_mean histogram\n" +
-                "application:org_superbiz_histogram_weather_service_temperatures_mean NaN\n" +
+                "application:org_superbiz_histogram_weather_service_temperatures_mean 0.0\n" +
                 "# TYPE application:org_superbiz_histogram_weather_service_temperatures_stddev histogram\n" +
                 "application:org_superbiz_histogram_weather_service_temperatures_stddev 0.0\n" +
                 "# TYPE application:org_superbiz_histogram_weather_service_temperatures histogram\n" +
@@ -143,7 +143,7 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.APPLICATION_JSON)
                 .get(String.class);
-        final String expected = "{\"temperatures\":{\"count\":15,\"max\":55,\"mean\":44.4,\"min\":27,\"p50\":45.0,\"p75\":46.0,\"p95\":54.0,\"p98\":54.0,\"p99\":54.0,\"p999\":54.0,\"stddev\":7.0710678118654755,\"unit\":\"degrees F\"},\"org.superbiz.histogram.WeatherService.temperatures\":{\"count\":0,\"max\":0,\"min\":0,\"p50\":0.0,\"p75\":0.0,\"p95\":0.0,\"p98\":0.0,\"p99\":0.0,\"p999\":0.0,\"stddev\":0.0,\"unit\":\"none\"}}";
+        final String expected = "{\"temperatures\":{\"count\":15,\"max\":55,\"mean\":44.4,\"min\":27,\"p50\":45.0,\"p75\":46.0,\"p95\":54.0,\"p98\":54.0,\"p99\":54.0,\"p999\":54.0,\"stddev\":7.218494764607554,\"unit\":\"degrees F\"},\"org.superbiz.histogram.WeatherService.temperatures\":{\"count\":0,\"max\":0,\"mean\":0.0,\"min\":0,\"p50\":0.0,\"p75\":0.0,\"p95\":0.0,\"p98\":0.0,\"p99\":0.0,\"p999\":0.0,\"stddev\":0.0,\"unit\":\"none\"}}";
         assertEquals(expected, metric);
     }
 
