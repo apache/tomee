@@ -53,6 +53,7 @@
     <module>cdi-interceptors</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
+    <module>cdi-qualifier</module>
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
@@ -106,6 +107,7 @@
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
     <module>mp-rest-jwt</module>
+    <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
