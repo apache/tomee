@@ -44,12 +44,9 @@ public abstract class JWTCallerPrincipalFactory {
                     return instance;
                 }
 
-                ClassLoader cl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                    @Override
-                    public ClassLoader run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                });
+                ClassLoader cl = AccessController.doPrivileged(
+                        (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader()
+                );
                 if (cl == null) {
                     cl = JWTCallerPrincipalFactory.class.getClassLoader();
                 }
