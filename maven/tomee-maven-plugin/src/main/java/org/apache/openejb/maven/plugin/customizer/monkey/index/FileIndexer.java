@@ -41,7 +41,7 @@ public class FileIndexer {
     private final String ignore;
 
     private final ClassLoaderFactory loaderFactory = new ClassLoaderFactory();
-    private final Map<File, List<Item>> index = new TreeMap<File, List<Item>>();
+    private final Map<File, List<Item>> index = new TreeMap<>();
     private final List<String> filesToRemove;
 
     /**
@@ -68,7 +68,7 @@ public class FileIndexer {
         this.loader = loaderFactory.create(libs);
 
         final String toRemove = configuration.getProperty("remove");
-        this.filesToRemove = toRemove == null ? Collections.<String>emptyList() : new ArrayList<String>(asList(toRemove.split(" *, *")));
+        this.filesToRemove = toRemove == null ? Collections.<String>emptyList() : new ArrayList<>(asList(toRemove.split(" *, *")));
 
         this.ignore = ignore;
     }
@@ -159,7 +159,7 @@ public class FileIndexer {
         final File jar = JarLocation.jarFromResource(loader, resource).getCanonicalFile();
         List<Item> list = index.get(jar);
         if (list == null) {
-            list = new ArrayList<Item>();
+            list = new ArrayList<>();
             index.put(jar, list);
         }
         list.add(new Item(resource, file, action));
