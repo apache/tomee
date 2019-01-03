@@ -20,7 +20,7 @@ GET http://localhost:8080/mp-openapi/weather/status/{today}
 == Response
 ....
 {today} is a sunny day.
-
+....
 
 == OpenAPI
 
@@ -33,7 +33,7 @@ There exists an endpoint /openapi which gives the OpenAPI document based on Acce
 GET http://localhost:8080/mp-openapi/openapi
 
 Headers: Accept:application/json
-
+....
 == Response
 
 [source]
