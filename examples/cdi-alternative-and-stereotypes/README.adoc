@@ -1,5 +1,4 @@
 = CDI Alternative and Stereotypes
-
 :index-group: CDI
 :jbake-type: page
 :jbake-status: published
