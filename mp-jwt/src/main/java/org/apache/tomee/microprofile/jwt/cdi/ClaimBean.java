@@ -23,7 +23,6 @@ import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
@@ -196,39 +195,27 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
                     final ClaimValueWrapper claimValueWrapper = new ClaimValueWrapper(key);
                     if (ParameterizedType.class.isInstance(claimValueType) && isOptional(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return Optional.ofNullable(claimValue);
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return Optional.ofNullable(claimValue);
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isSet(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isList(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else if (Class.class.isInstance(claimValueType)) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else {
