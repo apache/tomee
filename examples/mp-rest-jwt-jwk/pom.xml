@@ -131,28 +131,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-        The <scope>test</scope> guarantees that non of your runtime
-        code is dependent on any OpenEJB classes.
-        -->
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>openejb-cxf-rs</artifactId>
-            <version>${tomee.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.tomee</groupId>
-            <artifactId>openejb-core</artifactId>
-            <version>${tomee.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
-        </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>

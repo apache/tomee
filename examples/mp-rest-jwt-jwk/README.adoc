@@ -33,8 +33,9 @@ project:
 ....
 . Annotate our `Application.class` with `@LoginConfig(authMethod = "MP-JWT")`
 
-. Provide public and private key for authentication. And specify the location of the public key and the issuer in our
-`microprofile-config.properties` file.
+. Provide public  key for validation of the JWT. And specify the location of the public key and the issuer in our
+`microprofile-config.properties` file. The public key is then used for verification of the signature in the
+JWT.
 +
 [source,properties]
 ----
@@ -69,7 +70,7 @@ The application enables us to manipulate and view products with specific users. 
 
 We access endpoints from our test class by creating a `JWT` with the help of
 our `TokenUtils.generateJWTString(String jsonResource, String keyId)` which signs our user
-data in json format with the help of our `src/test/resources/{keyId}` key.
+data in json format with the help of our `src/test/resources/{keyId}` private key.
 
 We can also generate new `privateKey.pem` and `publicKey.pem` with the
 `GenerateKeyUtils.generateKeyPair(String keyAlgorithm, int keySize)` method which
