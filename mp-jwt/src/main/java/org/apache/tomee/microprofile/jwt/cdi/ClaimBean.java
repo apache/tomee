@@ -50,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 @Vetoed
@@ -251,6 +250,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                 final String claimValue = getClaimValue(key).toString();
                 return (T) PropertyEditors.getValue(type, claimValue);
             } catch (Exception e) {
+                logger.warning(e.getMessage());
             }
         } else {
             // handle Raw types

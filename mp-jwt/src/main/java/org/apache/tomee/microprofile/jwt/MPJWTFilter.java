@@ -196,12 +196,7 @@ public class MPJWTFilter implements Filter {
                     final Set<Principal> principals = new LinkedHashSet<>();
                     final JsonWebToken namePrincipal = tokenFunction.apply(request);
                     principals.add(namePrincipal);
-                    principals.addAll(namePrincipal.getGroups().stream().map(role -> (Principal) new Principal() {
-                        @Override
-                        public String getName() {
-                            return role;
-                        }
-                    }).collect(Collectors.<Principal>toList()));
+                    principals.addAll(namePrincipal.getGroups().stream().map(role -> (Principal) () -> role).collect(Collectors.<Principal>toList()));
                     return new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
                 }
             });
@@ -237,6 +232,7 @@ public class MPJWTFilter implements Filter {
 
         public abstract int getStatus();
 
+        @Override
         public abstract String getMessage();
     }
 
