@@ -69,6 +69,7 @@
               <goal>copy</goal>
             </goals>
             <configuration>
+              <useBaseVersion>true</useBaseVersion>
               <artifactItems>
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
