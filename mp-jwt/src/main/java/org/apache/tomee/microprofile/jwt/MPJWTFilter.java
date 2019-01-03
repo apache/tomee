@@ -196,15 +196,10 @@ public class MPJWTFilter implements Filter {
                     final Set<Principal> principals = new LinkedHashSet<>();
                     final JsonWebToken namePrincipal = tokenFunction.apply(request);
                     principals.add(namePrincipal);
-                    principals.addAll(namePrincipal.getGroups().stream().map(new Function<String, Principal>() {
+                    principals.addAll(namePrincipal.getGroups().stream().map(role -> (Principal) new Principal() {
                         @Override
-                        public Principal apply(final String role) {
-                            return (Principal) new Principal() {
-                                @Override
-                                public String getName() {
-                                    return role;
-                                }
-                            };
+                        public String getName() {
+                            return role;
                         }
                     }).collect(Collectors.<Principal>toList()));
                     return new Subject(true, principals, Collections.emptySet(), Collections.emptySet());
@@ -230,7 +225,7 @@ public class MPJWTFilter implements Filter {
 
     }
 
-    private static abstract class MPJWTException extends RuntimeException {
+    private abstract static class MPJWTException extends RuntimeException {
 
         public MPJWTException() {
             super();
@@ -260,7 +255,7 @@ public class MPJWTFilter implements Filter {
 
     private static class BadAuthorizationPrefixException extends MPJWTException {
 
-        private String authorizationHeader;
+        private final String authorizationHeader;
 
         public BadAuthorizationPrefixException(final String authorizationHeader) {
             this.authorizationHeader = authorizationHeader;
