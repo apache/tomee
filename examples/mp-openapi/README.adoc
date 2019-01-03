@@ -1,9 +1,10 @@
+= Microprofile OpenAPI
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: unpublished
 
-# Microprofile OpenAPI
-This is an example on how to use microprofile OpenAPI in TomEE.
+
+This is an example on how to use Microprofile OpenAPI in TomEE.
 
 == Run the application:
 mvn clean install tomee:run 
@@ -14,7 +15,7 @@ Within the application there is an endpoint that will give you weather based on 
 ....
 GET http://localhost:8080/mp-openapi/weather/status/{today}
 
-
+....
 
 == Response
 ....
