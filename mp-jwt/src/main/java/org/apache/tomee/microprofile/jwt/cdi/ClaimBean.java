@@ -274,7 +274,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         }
 
         JsonWebToken jsonWebToken = null;
-        if (! JsonWebToken.class.isInstance(principal)) {
+        if (!JsonWebToken.class.isInstance(principal)) {
             logger.warning(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
             return null;
         }
