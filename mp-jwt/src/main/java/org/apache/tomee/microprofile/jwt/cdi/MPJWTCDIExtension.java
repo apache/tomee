@@ -95,7 +95,7 @@ public class MPJWTCDIExtension implements Extension {
 
         types.stream()
                 .map(type -> new ClaimBean<>(bm, type))
-                .forEach((Consumer<ClaimBean>) claimBean -> abd.addBean(claimBean));
+                .forEach((Consumer<ClaimBean>) abd::addBean);
 
         abd.addBean()
                 .id(MPJWTCDIExtension.class.getName() + "#" + JsonWebToken.class.getName())

@@ -54,8 +54,9 @@ public abstract class JWTCallerPrincipal implements JsonWebToken {
      */
     public abstract String toString(final boolean showAll);
 
+    @Override
     public <T> Optional<T> claim(final String claimName) {
-        final T claim = (T) getClaim(claimName);
+        final T claim = getClaim(claimName);
         return Optional.ofNullable(claim);
     }
 }
