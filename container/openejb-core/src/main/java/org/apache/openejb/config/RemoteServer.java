@@ -17,6 +17,7 @@
 
 package org.apache.openejb.config;
 
+import org.apache.commons.lang3.JavaVersion;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
@@ -327,6 +328,14 @@ public class RemoteServer {
                         addIfSet(argsList, "javax.net.ssl.keyStorePassword");
                         addIfSet(argsList, "javax.net.ssl.trustStore");
                         addIfSet(argsList, "java.protocol.handler.pkgs");
+                    }
+
+                    // add modules needed in Java 9+
+                    double version = Double.parseDouble(System.getProperty("java.specification.version"));
+                    if (version >= 9) {
+                        argsList.add("--add-opens=java.base/java.lang=ALL-UNNAMED");
+                        argsList.add("--add-opens=java.base/java.io=ALL-UNNAMED");
+                        argsList.add("--add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED");
                     }
 
                     argsList.add("-ea");
