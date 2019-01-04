@@ -182,8 +182,8 @@
     <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>
-    <module>mp-jsonb-configuration</module>
-    <module>mp-jsonb-custom-serializer</module>
+    <module>jsonb-configuration</module>
+    <module>jsonb-custom-serializer</module>
   </modules>
 
   <dependencies>
