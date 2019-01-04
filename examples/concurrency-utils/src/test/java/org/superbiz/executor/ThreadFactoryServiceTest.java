@@ -1,17 +1,5 @@
 package org.superbiz.executor;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -27,6 +15,30 @@ import java.util.logging.Logger;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.superbiz.executor.ThreadFactoryService.LongTask;
+
+import javax.inject.Inject;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/*
+ * This demonstrates used managed threads inside a container.
+ * <br>
+ * We use CountDownLatch to demonstrate the thread management because it's faster and
+ * safer that simply using a sleep and hope the other thread has completed.
  */
 @RunWith(Arquillian.class)
 public class ThreadFactoryServiceTest {
@@ -45,9 +57,26 @@ public class ThreadFactoryServiceTest {
 
     @Test
     public void asyncTask() throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 50, countDownLatch);
+        factoryService.asyncTask(longTask);
 
-        factoryService.asyncTask(1);
-        LOGGER.info("Do something else");
-        TimeUnit.MILLISECONDS.sleep(200);
+        countDownLatch.await(200, TimeUnit.MILLISECONDS); // With the countdown latch we don't block unnecessarily.
+        LOGGER.info("task was completed");
+
+        assertEquals(2, longTask.getResult());
+    }
+
+    @Test
+    public void asyncHangingTask() throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 1000000, countDownLatch);
+
+        factoryService.asyncHangingTask(longTask);
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
+        LOGGER.info("task should have been interrupted and its operation not completed.");
+
+        assertTrue(longTask.getIsTerminated());
     }
 }

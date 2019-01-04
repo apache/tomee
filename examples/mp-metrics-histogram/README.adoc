@@ -1,0 +1,212 @@
+= MicroProfile Metrics Histogram
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+This is an example on how to use microprofile metrics in TomEE.
+
+== Run the application:
+
+....
+mvn clean install tomee:run 
+....
+
+Within the application, there is an enpoint that will give you a weather
+histogram of the most recent New York City temperatures.
+
+== Request:
+
+....
+curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
+....
+
+== Response:
+
+....
+{
+    "count":15,
+    "max":55,
+    "mean":44.4,
+    "min":27,
+    "p50":45.0,
+    "p75":46.0,
+    "p95":54.0,
+    "p98":54.0,
+    "p99":54.0,
+    "p999":54.0,
+    "stddev":7.0710678118654755,
+    "unit":"degrees F"
+} 
+....
+
+== Histogram Feature
+
+Microprofile metrics has a feature create a histogram of data.
+
+To use this feature, inject a MetricRegistry, register the Histogram,
+and add data to the histogram as shown below.
+
+....
+@Inject
+private MetricRegistry registry;
+
+@Inject
+@Metric(name = "temperatures", description = "A histogram metrics example.",
+    displayName = "Histogram of Recent New York Temperatures")
+private Histogram histogram;
+
+@Path("/histogram")
+@GET
+@Produces(MediaType.APPLICATION_JSON)
+public Histogram getTemperatures() {
+    Metadata metadata = new Metadata("temperatures", MetricType.HISTOGRAM, "degrees F");
+    metadata.setDescription("A histogram of recent New York temperatures.");
+    final int[] RECENT_NEW_YORK_TEMPS = { 46, 45, 50, 46, 45, 27, 30, 48, 55, 54, 45, 41, 45, 43, 46 };
+    histogram = registry.histogram(metadata);
+    for(int temp : RECENT_NEW_YORK_TEMPS) {
+        histogram.update(temp);
+    }
+    return histogram;
+}
+....
+
+There are some Histogram configurations defined in the @Metric
+annotation:
+
+*String name* Optional. The name of the metric. If not explicitly given
+the name of the annotated object is used.
+
+*String displayName* Optional. A human readable display name for
+metadata.
+
+*String description* Optional. A description of the metric.
+
+*String[] tags* Optional. An array of Strings in the = format to supply
+special tags to a metric.
+
+*boolean reusable* Denotes if a metric with a certain name can be
+registered in more than one place. Does not apply to gauges or
+histograms.
+
+=== For the histogram status:
+
+....
+GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
+....
+
+=== Reponse:
+
+....
+ Here are the most recent New York City temperatures.
+....
+
+=== Expected Prometheus format:
+
+....
+    # TYPE application:temperatures_degrees F summary histogram
+    # TYPE application:temperatures_degrees F_count histogram
+    application:temperatures_degrees F_count 15.0
+    # TYPE application:temperatures_min_degrees F histogram
+    application:temperatures_min_degrees F 27.0
+    # TYPE application:temperatures_max_degrees F histogram
+    application:temperatures_max_degrees F 55.0
+    # TYPE application:temperatures_mean_degrees F histogram
+    application:temperatures_mean_degrees F 44.4
+    # TYPE application:temperatures_stddev_degrees F histogram
+    application:temperatures_stddev_degrees F 7.0710678118654755
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.5"} 45.0
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.75"} 46.0
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.95"} 54.0
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.98"} 54.0
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.99"} 54.0
+    # TYPE application:temperatures_degrees F histogram
+    application:temperatures_degrees F{quantile="0.999"} 54.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures summary histogram
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures_count histogram
+    application:org_superbiz_histogram_weather_service_temperatures_count 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures_min histogram
+    application:org_superbiz_histogram_weather_service_temperatures_min 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures_max histogram
+    application:org_superbiz_histogram_weather_service_temperatures_max 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures_mean histogram
+    application:org_superbiz_histogram_weather_service_temperatures_mean NaN
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures_stddev histogram
+    application:org_superbiz_histogram_weather_service_temperatures_stddev 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.5"} 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.75"} 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.95"} 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.98"} 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.99"} 0.0
+    # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
+    application:org_superbiz_histogram_weather_service_temperatures{quantile="0.999"} 0.0
+....
+
+=== Request:
+
+....
+curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
+....
+
+=== Response:
+
+....
+{
+    "org.superbiz.histogram.WeatherService.temperatures": {
+        "count":0,
+        "max":0,
+        "min":0,
+        "p50":0.0,
+        "p75":0.0,
+        "p95":0.0,
+        "p98":0.0,
+        "p99":0.0,
+        "p999":0.0,
+        "stddev":0.0,
+        "unit":"none"
+    }
+}  
+....
+
+== Metric Metadata:
+
+A metric will have a metadata to provide information about it such as
+displayName, description, tags, etc.
+
+=== Request:
+
+....
+curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
+....
+
+=== Response:
+
+....
+{
+    "org.superbiz.histogram.WeatherService.temperatures": {
+        "description": "A histogram metrics example.",
+        "displayName":"Histogram of Recent New York Temperatures",
+        "name":"org.superbiz.histogram.WeatherService.temperatures",
+        "reusable":false,
+        "tags":"",
+        "type":"histogram",
+        "typeRaw":"HISTOGRAM",
+        "unit":"none"
+    }
+}
+....
+
+=== Test the application:
+
+....
+mvn test
+....

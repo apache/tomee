@@ -26,6 +26,7 @@ public class WebAppClassPath extends TomcatClassPath {
         super(classLoader);
     }
 
+    @Override
     protected void rebuild() {
     }
 }

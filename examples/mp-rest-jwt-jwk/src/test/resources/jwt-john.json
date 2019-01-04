@@ -1,0 +1,10 @@
+{
+  "iss": "https://example.com",
+  "sub": "24400320",
+  "name": "John Doe",
+  "upn": "john.doe@example.com",
+  "preferred_username": "john",
+  "groups": [
+    "guest", "admin"
+  ]
+}

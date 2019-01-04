@@ -20,7 +20,6 @@ package org.apache.openejb.classloader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 public interface ClassLoaderConfigurer {
     URL[] additionalURLs();
@@ -33,12 +32,7 @@ public interface ClassLoaderConfigurer {
         }
 
         public static void configure(final Collection<URL> urls, final ClassLoaderConfigurer configurer) {
-            final Iterator<URL> it = urls.iterator();
-            while (it.hasNext()) {
-                if (!configurer.accept(it.next())) {
-                    it.remove();
-                }
-            }
+            urls.removeIf(url -> !configurer.accept(url));
             urls.addAll(Arrays.asList(configurer.additionalURLs()));
         }
     }

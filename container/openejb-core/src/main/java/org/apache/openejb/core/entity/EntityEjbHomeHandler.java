@@ -71,8 +71,8 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         if (retValue instanceof Collection) {
             final Object[] proxyInfos = ((Collection) retValue).toArray();
             final Vector proxies = new Vector();
-            for (int i = 0; i < proxyInfos.length; i++) {
-                final ProxyInfo proxyInfo = (ProxyInfo) proxyInfos[i];
+            for (Object proxyInfo1 : proxyInfos) {
+                final ProxyInfo proxyInfo = (ProxyInfo) proxyInfo1;
                 proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;

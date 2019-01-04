@@ -90,8 +90,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     public boolean addAll(final Collection c) {
         final Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
-        for (final Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext(); ) {
-            final Bean bean = iterator.next();
+        for (final Bean bean : entityBeans) {
             changed = add(bean) || changed;
         }
         return changed;

@@ -93,11 +93,7 @@ public class DependencyVisitor extends EmptyVisitor {
             current = new HashMap<>();
         } else {
             final String p = getGroupKey(name);
-            current = groups.get(p);
-            if (current == null) {
-                current = new HashMap<>();
-                groups.put(p, current);
-            }
+            current = groups.computeIfAbsent(p, k -> new HashMap<>());
 
             if (signature == null) {
                 addName(superName);
@@ -369,8 +365,8 @@ public class DependencyVisitor extends EmptyVisitor {
     private void addMethodDesc(final String desc) {
         addType(Type.getReturnType(desc));
         final Type[] types = Type.getArgumentTypes(desc);
-        for (int i = 0; i < types.length; i++) {
-            addType(types[i]);
+        for (Type type : types) {
+            addType(type);
         }
     }
 

@@ -602,11 +602,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         final Map<String, List<ContainerInfo>> appContainers = new HashMap<>();
 
         for (final ContainerInfo serviceInfo : containerSystemInfo.containers) {
-            List<ContainerInfo> containerInfos = appContainers.get(serviceInfo.originAppName);
-            if (containerInfos == null) {
-                containerInfos = new ArrayList<>();
-                appContainers.put(serviceInfo.originAppName, containerInfos);
-            }
+            List<ContainerInfo> containerInfos = appContainers.computeIfAbsent(serviceInfo.originAppName, k -> new ArrayList<>());
 
             containerInfos.add(serviceInfo);
         }
@@ -1833,7 +1829,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Sort all the singletons to the back of the list.  We want to make sure
         // all non-singletons are created first so that if a singleton refers to them
         // they are available.
-        Collections.sort(deployments, new Comparator<BeanContext>() {
+        deployments.sort(new Comparator<BeanContext>() {
             @Override
             public int compare(final BeanContext a, final BeanContext b) {
                 final int aa = a.getComponentType() == BeanType.SINGLETON ? 1 : 0;
@@ -1859,7 +1855,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Now Sort all the MDBs to the back of the list.  The Resource Adapter
         // may attempt to use the MDB on endpointActivation and the MDB may have
         // references to other ejbs that would need to be available first.
-        Collections.sort(deployments, new Comparator<BeanContext>() {
+        deployments.sort(new Comparator<BeanContext>() {
             @Override
             public int compare(final BeanContext a, final BeanContext b) {
                 final int aa = a.getComponentType() == BeanType.MESSAGE_DRIVEN ? 1 : 0;
@@ -1977,7 +1973,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             }
         }
 
-        Collections.sort(resources, new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instance)
+        resources.sort(new Comparator<DestroyingResource>() { // end by destroying RA after having closed CF pool (for jms for instance)
             @Override
             public int compare(final DestroyingResource o1, final DestroyingResource o2) {
                 final boolean ra1 = isRa(o1.instance);
@@ -3783,11 +3779,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 instrumentation.addTransformer(classFileTransformer);
 
                 if (unitId != null) {
-                    List<ClassFileTransformer> transformers = this.transformers.get(unitId);
-                    if (transformers == null) {
-                        transformers = new ArrayList<>(1);
-                        this.transformers.put(unitId, transformers);
-                    }
+                    List<ClassFileTransformer> transformers = this.transformers.computeIfAbsent(unitId, k -> new ArrayList<>(1));
                     transformers.add(classFileTransformer);
                 }
             } else if (!logged.getAndSet(true)) {

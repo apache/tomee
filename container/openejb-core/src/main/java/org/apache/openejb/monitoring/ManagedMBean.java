@@ -53,8 +53,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.sort;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -244,8 +242,8 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        sort(operations, MBeanFeatureInfoComparator.INSTANCE);
-        sort(attributes, MBeanFeatureInfoComparator.INSTANCE);
+        operations.sort(MBeanFeatureInfoComparator.INSTANCE);
+        attributes.sort(MBeanFeatureInfoComparator.INSTANCE);
 
         if (filterAttributes) {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();

@@ -53,6 +53,7 @@
     <module>cdi-interceptors</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
+    <module>cdi-qualifier</module>
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
@@ -100,11 +101,14 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
+    <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
     <module>mp-rest-jwt</module>
+    <module>mp-rest-jwt-jwk</module>
+    <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -177,6 +181,10 @@
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
     <module>mp-rest-client</module>
+    <module>mvc-resteasy</module>
+    <module>mp-custom-healthcheck</module>
+    <module>jsonb-configuration</module>
+    <module>jsonb-custom-serializer</module>
   </modules>
 
   <dependencies>

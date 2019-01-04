@@ -28,11 +28,6 @@ public class CUCallable<T> extends CUTask<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        return invoke(new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                return delegate.call();
-            }
-        });
+        return invoke(delegate::call);
     }
 }

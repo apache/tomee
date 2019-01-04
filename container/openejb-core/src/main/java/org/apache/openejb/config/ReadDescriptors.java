@@ -81,7 +81,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -474,9 +473,7 @@ public class ReadDescriptors implements DynamicDeployer {
     }
 
     private static void checkDuplicatedByBeansXml(final List<String> list, final List<String> duplicated) {
-        final Iterator<String> it = list.iterator();
-        while (it.hasNext()) {
-            final String str = it.next();
+        for (String str : list) {
             if (list.indexOf(str) != list.lastIndexOf(str)) {
                 duplicated.add(str);
             }

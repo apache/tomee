@@ -22,7 +22,6 @@ import static org.apache.openejb.InjectionProcessor.unwrap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -158,9 +157,8 @@ public class HandlerResolverImpl implements HandlerResolver {
                 return true;
             } else {
                 final String actualBindingURI = JaxWsUtils.getBindingURI(binding);
-                final Iterator iter = bindings.iterator();
-                while (iter.hasNext()) {
-                    final String bindingToken = (String) iter.next();
+                for (Object binding1 : bindings) {
+                    final String bindingToken = (String) binding1;
                     final String bindingURI = JaxWsUtils.getBindingURI(bindingToken);
                     if (actualBindingURI.equals(bindingURI)) {
                         return true;

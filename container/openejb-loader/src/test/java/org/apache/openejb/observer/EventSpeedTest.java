@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class EventSpeedTest extends Assert {
 
-    private static final String format = "%10s %5s %5s %3.0f%%";
+    private static final String FORMAT = "%10s %5s %5s %3.0f%%";
 
     @Test
     public void test() throws Exception {
@@ -31,7 +31,7 @@ public class EventSpeedTest extends Assert {
         final long start = System.nanoTime();
         long events = 0;
 
-        System.out.println(String.format(format, "Events", "Obsvs", "Avg", 0d));
+        System.out.println(String.format(FORMAT, "Events", "Obsvs", "Avg", 0d));
         Stats previous = null;
         for (int i = 1; i < (64 / 4 + 1); i *= 2) {
             final Stats stats = time(i);
@@ -108,7 +108,7 @@ public class EventSpeedTest extends Assert {
         public String compare(final Stats previous) {
             final double change = change(previous);
 
-            return String.format(format, events, observers, eventAverage(), change);
+            return String.format(FORMAT, events, observers, eventAverage(), change);
         }
 
         private double change(final Stats previous) {

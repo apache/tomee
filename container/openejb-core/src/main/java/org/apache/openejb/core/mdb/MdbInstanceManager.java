@@ -69,8 +69,6 @@ import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
-import java.io.Flushable;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
@@ -200,12 +198,7 @@ public class MdbInstanceManager {
 
         final Data data = new Data(builder.build(), accessTimeout, closeTimeout);
 
-        MdbContext mdbContext = new MdbContext(securityService, new Flushable() {
-            @Override
-            public void flush() throws IOException {
-                data.flush();
-            }
-        });
+        MdbContext mdbContext = new MdbContext(securityService, data::flush);
 
         try {
             final Context context = beanContext.getJndiEnc();

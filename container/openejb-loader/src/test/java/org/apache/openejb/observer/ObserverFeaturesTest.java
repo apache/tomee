@@ -314,8 +314,8 @@ public class ObserverFeaturesTest {
         }, 42);
     }
 
-    private final List<Boolean> conditions = new ArrayList<Boolean>();
-    private final List<String> invocations = new ArrayList<String>();
+    private final List<Boolean> conditions = new ArrayList<>();
+    private final List<String> invocations = new ArrayList<>();
 
     @Before
     public void init() {

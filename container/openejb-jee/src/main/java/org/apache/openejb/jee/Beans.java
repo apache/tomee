@@ -152,11 +152,7 @@ public class Beans {
     }
 
     public void addManagedClass(final URL url, final String clazz) {
-        List<String> list = managedClasses.get(url);
-        if (list == null) {
-            list = new LinkedList<>();
-            managedClasses.put(url, list);
-        }
+        List<String> list = managedClasses.computeIfAbsent(url, k -> new LinkedList<>());
         list.add(clazz);
     }
 

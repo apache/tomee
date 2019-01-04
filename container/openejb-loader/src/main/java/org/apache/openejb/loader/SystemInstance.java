@@ -29,8 +29,8 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * This class aims to be the one and only static in the entire system
- * A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
+ * This class aims to be the one and only static in the entire SYSTEM
+ A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
  * <p/>
  * It is assumed that only one singleton per classloader is possible in any given VM
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
@@ -60,9 +60,9 @@ public final class SystemInstance {
     private final ObserverManager observerManager = new ObserverManager();
 
     private SystemInstance(final Properties properties) {
-        this.components = new HashMap<Class, Object>();
+        this.components = new HashMap<>();
 
-        // import JVM system property config (if a resource/container/... is set through this way)
+        // import JVM SYSTEM property config (if a resource/container/... is set through this way)
         for (final String key : System.getProperties().stringPropertyNames()) {
             if (key.startsWith("sun.")) {
                 continue;
@@ -263,7 +263,7 @@ public final class SystemInstance {
         return removed;
     }
 
-    private static final AtomicReference<SystemInstance> system = new AtomicReference<SystemInstance>();
+    private static final AtomicReference<SystemInstance> SYSTEM = new AtomicReference<>();
 
     static {
         reset();
@@ -278,7 +278,7 @@ public final class SystemInstance {
     public static synchronized void reset() {
         try {
             System.clearProperty("openejb.loader");
-            system.set(new SystemInstance(new Properties())); // don't put system properties here, it is already done
+            SYSTEM.set(new SystemInstance(new Properties())); // don't put SYSTEM properties here, it is already done
             initialized = false;
         } catch (final Exception e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
@@ -289,7 +289,7 @@ public final class SystemInstance {
         if (initialized) {
             return;
         }
-        system.set(new SystemInstance(properties));
+        SYSTEM.set(new SystemInstance(properties));
         // WARNING: reverse order since we don't overwrite existing entries
         readSystemProperties(get().currentProfile());
         readSystemProperties();
@@ -297,7 +297,7 @@ public final class SystemInstance {
 
 
         // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
-        System.getProperties().putAll(system.get().getProperties());
+        System.getProperties().putAll(SYSTEM.get().getProperties());
 
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
@@ -306,7 +306,7 @@ public final class SystemInstance {
     }
 
     private static void initDefaultComponents() {
-        system.get().components.put(ProvisioningResolver.class, new ProvisioningResolver());
+        SYSTEM.get().components.put(ProvisioningResolver.class, new ProvisioningResolver());
     }
 
     private static void readUserSystemProperties() {
@@ -317,7 +317,7 @@ public final class SystemInstance {
     public File getConf(final String subPath) {
 
         File conf = null;
-        final FileUtils base = system.get().getBase();
+        final FileUtils base = SYSTEM.get().getBase();
 
         try {
             conf = base.getDirectory("conf");
@@ -351,7 +351,7 @@ public final class SystemInstance {
         }
 
         // Read in and apply the conf/system.properties
-        final File conf = system.get().getConf(completePrefix + "system.properties");
+        final File conf = SYSTEM.get().getConf(completePrefix + "system.properties");
         if (conf != null && conf.exists()) {
             addSystemProperties(conf);
         }
@@ -374,17 +374,17 @@ public final class SystemInstance {
         }
 
         for (final String key : systemProperties.stringPropertyNames()) {
-            final SystemInstance systemInstance = system.get();
+            final SystemInstance systemInstance = SYSTEM.get();
             if (systemInstance.getProperty(key) == null) {
                 systemInstance.setProperty(key, systemProperties.getProperty(key));
             }
         }
-        // don't override system props
-        // system.getProperties().putAll(systemProperties);
+        // don't override SYSTEM props
+        // SYSTEM.getProperties().putAll(systemProperties);
     }
 
     public static SystemInstance get() {
-        return system.get();
+        return SYSTEM.get();
     }
 
     public String currentProfile() {

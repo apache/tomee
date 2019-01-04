@@ -150,11 +150,7 @@ public class CoreContainerSystem implements ContainerSystem {
 
     public void addWebContext(final WebContext webDeployment) {
         final String id = webDeployment.getId();
-        List<WebContext> list = this.webDeployments.get(id);
-        if (list == null) {
-            list = new ArrayList<>();
-            this.webDeployments.put(id, list);
-        }
+        List<WebContext> list = this.webDeployments.computeIfAbsent(id, k -> new ArrayList<>());
         list.add(webDeployment);
     }
 

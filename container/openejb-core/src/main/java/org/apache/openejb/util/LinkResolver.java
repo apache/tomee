@@ -45,11 +45,7 @@ public class LinkResolver<E> {
         byFullName.put(uri, value);
 
         // Short name: name -> List(values)
-        Collection<E> values = byShortName.get(name);
-        if (values == null) {
-            values = new ArrayList<>();
-            byShortName.put(name, values);
-        }
+        Collection<E> values = byShortName.computeIfAbsent(name, k -> new ArrayList<>());
         values.add(value);
 
         return true;

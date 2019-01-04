@@ -21,9 +21,6 @@ import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Module;
-import org.apache.safeguard.api.ExecutionManager;
-import org.apache.safeguard.impl.cdi.FailsafeExecutionManagerProvider;
-import org.apache.safeguard.impl.cdi.SafeguardInterceptor;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,16 +35,13 @@ import static org.junit.Assert.assertTrue;
 public class FailsafeContainerExecutionManagerProviderTest {
 
     @Inject
-    private FailsafeExecutionManagerProvider manager;
+    private FailsafeContainerExecutionManagerProvider manager;
 
     @Inject
     private FTClass ftClass;
 
     @Module
     @Classes(value = {FailsafeContainerExecutionManagerProvider.class,
-            FailsafeExecutionManagerProvider.class,
-            ExecutionManager.class,
-            SafeguardInterceptor.class,
             FTClass.class},
             cdi = true)
     public WebApp app() {

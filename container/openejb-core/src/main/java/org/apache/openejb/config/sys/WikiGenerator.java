@@ -22,7 +22,6 @@ import org.apache.openejb.util.SuperProperties;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,7 +59,7 @@ public class WikiGenerator {
 
         // generate containers
         final List<ServiceProvider> serviceProvider = servicesJar.getServiceProvider();
-        Collections.sort(serviceProvider, new Comparator<ServiceProvider>() {
+        serviceProvider.sort(new Comparator<ServiceProvider>() {
             @Override
             public int compare(final ServiceProvider o1, final ServiceProvider o2) {
                 return grade(o2) - grade(o1);

@@ -1,6 +1,7 @@
 index-group=Misc
 type=page
 status=published
+title=Polling
 ~~~~~~
 # Sample #
 

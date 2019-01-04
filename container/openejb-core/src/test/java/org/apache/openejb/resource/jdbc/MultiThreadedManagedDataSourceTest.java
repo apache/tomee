@@ -226,12 +226,7 @@ public class MultiThreadedManagedDataSourceTest {
     private void run(final Runnable runnable) {
         final ExecutorService es = Executors.newFixedThreadPool(20);
         for (int i = 0; i < INSERTS_NB; i++) {
-            es.submit(new Runnable() {
-                @Override
-                public void run() {
-                    runnable.run();
-                }
-            });
+            es.submit(runnable::run);
         }
         es.shutdown();
         try {
