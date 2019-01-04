@@ -59,7 +59,7 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
         final List<Class<? extends Annotation>[]> methodSecurityAnnotations = hasMethodLevelAnnotations(method,
                 RolesAllowed.class, PermitAll.class, DenyAll.class);
 
-        if (classSecurityAnnotations.size() == 0 && methodSecurityAnnotations.size() == 0) {
+        if (classSecurityAnnotations.isEmpty() && methodSecurityAnnotations.isEmpty()) {
             return false; // nothing to do
         }
 
@@ -74,13 +74,13 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
             throw new IllegalStateException(method.toString() + " has more than one security annotation (RolesAllowed, PermitAll, DenyAll).");
         }
 
-        if (methodSecurityAnnotations.size() == 0) { // no need to deal with class level annotations if the method has some
+        if (methodSecurityAnnotations.isEmpty()) { // no need to deal with class level annotations if the method has some
             final RolesAllowed classRolesAllowed = (RolesAllowed) clazz.getAnnotation(RolesAllowed.class);
             final PermitAll classPermitAll = (PermitAll) clazz.getAnnotation(PermitAll.class);
             final DenyAll classDenyAll = (DenyAll) clazz.getAnnotation(DenyAll.class);
 
             if (classRolesAllowed != null) {
-                Set<String> roles = new HashSet<String>();
+                Set<String> roles = new HashSet<>();
                 final Set<String> previous = rolesAllowed.putIfAbsent(method, roles);
                 if (previous != null) {
                     roles = previous;
@@ -102,7 +102,7 @@ public class MPJWTSecurityAnnotationsInterceptorsFeature implements DynamicFeatu
         final DenyAll mthdDenyAll = method.getAnnotation(DenyAll.class);
 
         if (mthdRolesAllowed != null) {
-            Set<String> roles = new HashSet<String>();
+            Set<String> roles = new HashSet<>();
             final Set<String> previous = rolesAllowed.putIfAbsent(method, roles);
             if (previous != null) {
                 roles = previous;

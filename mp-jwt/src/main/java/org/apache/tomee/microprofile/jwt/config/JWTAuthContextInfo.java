@@ -23,12 +23,14 @@ import java.security.Key;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthContextInfo {
+    private static final Logger logger = Logger.getLogger(JWTAuthContextInfo.class.getName());
     public static final String DEFAULT_KEY = "DEFAULT";
 
     private Map<String, Key> signerKeys;
@@ -63,7 +65,7 @@ public class JWTAuthContextInfo {
     }
 
     public Key getSignerKey() {
-        return signerKeys.get("DEFAULT");
+        return signerKeys.get(DEFAULT_KEY);
     }
 
     public List<JsonWebKey> getSignerKeys() {
@@ -73,7 +75,7 @@ public class JWTAuthContextInfo {
                 jsonWebKey.setKeyId(key.getKey());
                 return jsonWebKey;
             } catch (final JoseException e) {
-                e.printStackTrace();
+                logger.warning(e.getMessage());
                 return null;
             }
         }).collect(Collectors.toList());

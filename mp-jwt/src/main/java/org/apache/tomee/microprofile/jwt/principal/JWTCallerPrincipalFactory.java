@@ -23,6 +23,7 @@ import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 
 /**
  * The factory class that provides the token string to JWTCallerPrincipal parsing for a given implementation.
@@ -30,7 +31,7 @@ import java.util.ServiceLoader;
 public abstract class JWTCallerPrincipalFactory {
 
     private static JWTCallerPrincipalFactory instance;
-
+    private static final Logger logger = Logger.getLogger(JWTCallerPrincipalFactory.class.getName());
     /**
      * Obtain the JWTCallerPrincipalFactory that has been set or by using the ServiceLoader pattern.
      *
@@ -44,12 +45,9 @@ public abstract class JWTCallerPrincipalFactory {
                     return instance;
                 }
 
-                ClassLoader cl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                    @Override
-                    public ClassLoader run() {
-                        return Thread.currentThread().getContextClassLoader();
-                    }
-                });
+                ClassLoader cl = AccessController.doPrivileged(
+                        (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader()
+                );
                 if (cl == null) {
                     cl = JWTCallerPrincipalFactory.class.getClassLoader();
                 }
@@ -88,7 +86,8 @@ public abstract class JWTCallerPrincipalFactory {
         if (instance == null) {
             ServiceLoader<JWTCallerPrincipalFactory> sl = ServiceLoader.load(JWTCallerPrincipalFactory.class, cl);
             URL u = cl.getResource("/META-INF/services/org.apache.tomee.microprofile.jwt.JWTCallerPrincipalFactory");
-            System.out.printf("JWTCallerPrincipalFactory, cl=%s, u=%s, sl=%s\n", cl, u, sl);
+            logger.info(String.format("JWTCallerPrincipalFactory, cl=%s, u=%s, sl=%s", cl, u, sl));
+
             try {
                 for (JWTCallerPrincipalFactory spi : sl) {
                     if (instance != null) {
@@ -97,13 +96,13 @@ public abstract class JWTCallerPrincipalFactory {
                                         + spi.getClass().getName() + " and "
                                         + instance.getClass().getName());
                     } else {
-                        System.out.printf("sl=%s, loaded=%s\n", sl, spi);
+                        logger.info(String.format("sl=%s, loaded=%s", sl, spi));
                         instance = spi;
                     }
                 }
 
             } catch (final Throwable e) {
-                System.err.printf("Warning: %s\n", e.getMessage());
+                logger.warning(String.format("Warning: %s", e.getMessage()));
             }
         }
         return instance;
