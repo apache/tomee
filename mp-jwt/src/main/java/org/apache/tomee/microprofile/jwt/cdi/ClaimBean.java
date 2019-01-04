@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 @Vetoed
 public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
-    private static final Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger logger = Logger.getLogger(ClaimBean.class.getName());
 
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
 
