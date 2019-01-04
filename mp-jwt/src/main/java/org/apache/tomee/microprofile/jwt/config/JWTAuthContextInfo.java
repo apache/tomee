@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.lang.JoseException;
 
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * The public key and expected issuer needed to validate a token.
  */
 public class JWTAuthContextInfo {
-    private static final Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger logger = Logger.getLogger(JWTAuthContextInfo.class.getName());
     public static final String DEFAULT_KEY = "DEFAULT";
 
     private Map<String, Key> signerKeys;

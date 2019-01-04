@@ -17,7 +17,6 @@
 package org.apache.tomee.microprofile.jwt.principal;
 
 import org.apache.tomee.microprofile.jwt.ParseException;
-import org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
 
 import java.net.URL;
@@ -32,7 +31,7 @@ import java.util.logging.Logger;
 public abstract class JWTCallerPrincipalFactory {
 
     private static JWTCallerPrincipalFactory instance;
-    private static final Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger logger = Logger.getLogger(JWTCallerPrincipalFactory.class.getName());
     /**
      * Obtain the JWTCallerPrincipalFactory that has been set or by using the ServiceLoader pattern.
      *
