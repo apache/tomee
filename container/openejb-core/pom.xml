@@ -443,6 +443,14 @@
       <artifactId>javax.activation</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>jaxws-rt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.ws</groupId>
+      <artifactId>rt</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jacorb</groupId>
       <artifactId>jacorb</artifactId>
     </dependency>
