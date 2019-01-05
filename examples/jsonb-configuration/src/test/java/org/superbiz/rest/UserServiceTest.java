@@ -43,7 +43,7 @@ public class UserServiceTest {
 		// test withDateFormat("yyyy - MM - dd")
 		Assert.assertTrue(message.contains(assertDate));
 		// test withFormatting(true)
-		Assert.assertTrue(message.contains(System.getProperty("line.separator")));
+		Assert.assertTrue(message.contains("\n"));
 	}
 
 }
