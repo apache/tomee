@@ -82,13 +82,11 @@ import java.util.logging.LogRecord;
 /**
  * @version $Rev$ $Date$
  */
-@Ignore
 public class AutoConnectionTrackerTest extends TestCase {
 
     public static final int LOOP_SIZE = 200;
     public static final int NUM_THREADS = 4;
 
-    @Ignore
     public void test() throws Exception {
         System.setProperty("openejb.log.async", "false");
         final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, AutoConnectionTrackerTest.class);
@@ -108,7 +106,7 @@ public class AutoConnectionTrackerTest extends TestCase {
         // JMS persistence datasource
         final ResourceInfo dataSourceInfo = config.configureService("Default Unmanaged JDBC Database", ResourceInfo.class);
         dataSourceInfo.properties.setProperty("JdbcUrl", "jdbc:hsqldb:mem:MdbConfigTest");
-        assembler.createResource(dataSourceInfo);
+        assembler.createResource(null, dataSourceInfo);
 
         // FakeRA
         final ResourceInfo resourceInfo = new ResourceInfo();
@@ -116,7 +114,7 @@ public class AutoConnectionTrackerTest extends TestCase {
         resourceInfo.className = FakeRA.class.getName();
         resourceInfo.id = "FakeRA";
         resourceInfo.properties = new Properties();
-        assembler.createResource(resourceInfo);
+        assembler.createResource(null, resourceInfo);
 
         // FakeRA container
         final ContainerInfo containerInfo = config.configureService(MdbContainerInfo.class);
@@ -136,7 +134,7 @@ public class AutoConnectionTrackerTest extends TestCase {
         mcfResourceInfo.properties.setProperty("ResourceAdapter", "FakeRA");
         mcfResourceInfo.properties.setProperty("TransactionSupport", "None");
         mcfResourceInfo.properties.setProperty("allConnectionsEqual", "false");
-        assembler.createResource(mcfResourceInfo);
+        assembler.createResource(null, mcfResourceInfo);
 
         // generate ejb jar application
         final EjbJar ejbJar = new EjbJar();
@@ -154,19 +152,14 @@ public class AutoConnectionTrackerTest extends TestCase {
 
         {
             logCapture.clear();
-            runTest(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        bean.nonLeakyTxMethod();
-                        System.gc();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            runTest(() -> {
+                try {
+                    bean.nonLeakyTxMethod();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
-            System.gc();
             cf.getConnection().close();
             assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
             assertLogs(logCapture, 0, "Detected abandoned connection");
@@ -174,18 +167,14 @@ public class AutoConnectionTrackerTest extends TestCase {
         }
         {
             logCapture.clear();
-            runTest(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        bean.nonleakyNonTxMethod();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            runTest(() -> {
+                try {
+                    bean.nonleakyNonTxMethod();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 
-            System.gc();
             cf.getConnection().close();
             assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
             assertLogs(logCapture, 0, "Detected abandoned connection");
@@ -214,30 +203,7 @@ public class AutoConnectionTrackerTest extends TestCase {
 
     // this is a very quick and dirty hack for debugging purpose
     private void assertLogs(final LogCaptureHandler logCapture, final int times, final String message) {
-        final int iteration = 5;
-        final int waitSeconds = 2;
-
-        AssertionFailedError failure = null;
-
-        for (int i = 0 ; i < iteration ; i++) {
-            try {
-                assertEquals(message, times, logCapture.find(message).size());
-                return;
-
-            } catch (final AssertionFailedError e) {
-                if (failure == null) { // keep the first issue
-                    failure = e;
-                }
-
-                try {
-                    Thread.sleep(waitSeconds * 1000);
-                } catch (final InterruptedException e1) {
-                    // no-op
-                }
-            }
-        }
-
-        throw failure;
+        assertEquals(message, times, logCapture.find(message).size());
     }
 
     private AutoConnectionTracker getAutoConnectionTracker(final FakeConnectionFactoryImpl cf) throws Exception {
@@ -249,8 +215,7 @@ public class AutoConnectionTrackerTest extends TestCase {
         final ConnectionTrackingInterceptor cti = (ConnectionTrackingInterceptor) stackField.get(o);
         final Field connectionTrackerField = ConnectionTrackingInterceptor.class.getDeclaredField("connectionTracker");
         connectionTrackerField.setAccessible(true);
-        AutoConnectionTracker tracker = (AutoConnectionTracker) connectionTrackerField.get(cti);
-        return tracker;
+        return (AutoConnectionTracker) connectionTrackerField.get(cti);
     }
 
     private int getConnectionCount(FakeConnectionFactoryImpl cf) {
@@ -262,19 +227,16 @@ public class AutoConnectionTrackerTest extends TestCase {
         final CountDownLatch startingLine = new CountDownLatch(NUM_THREADS);
         final CountDownLatch start = new CountDownLatch(1);
         final CountDownLatch end = new CountDownLatch(NUM_THREADS * LOOP_SIZE);
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    startingLine.countDown();
-                    start.await();
-                    for (int i = 0; i < LOOP_SIZE; i++) {
-                        testCode.run();
-                        end.countDown();
-                    }
-                } catch (InterruptedException e) {
-                    fail(e.getMessage());
+        final Runnable runnable = () -> {
+            try {
+                startingLine.countDown();
+                start.await();
+                for (int i = 0; i < LOOP_SIZE; i++) {
+                    testCode.run();
+                    end.countDown();
                 }
+            } catch (InterruptedException e) {
+                fail(e.getMessage());
             }
         };
 
