@@ -159,7 +159,7 @@
           </archive>
         </configuration>
       </plugin>
-      <!--<plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
         <executions>
@@ -170,21 +170,19 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <dependencies>
-            <dependency>
-              <groupId>javax.xml.bind</groupId>
-              <artifactId>jaxb-api</artifactId>
-              <version>2.3.0</version>
-            </dependency>
-            <dependency>
-              <groupId>org.glassfish.jaxb</groupId>
-              <artifactId>jaxb-runtime</artifactId>
-              <version>2.4.0-b180830.0438</version>
-            </dependency>
-          </dependencies>
-        </configuration>
-      </plugin>-->
+        <dependencies>
+          <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.4.0-b180830.0438</version>
+          </dependency>
+        </dependencies>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
