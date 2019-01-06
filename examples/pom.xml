@@ -143,7 +143,7 @@
     <module>rest-example</module>
     <module>rest-example-with-application</module>
     <module>rest-xml-json</module>
-    <module>scala-basic</module>
+    <!--<module>scala-basic</module>-->
     <module>schedule-expression</module>
     <module>schedule-events</module>
     <module>schedule-methods-meta</module>

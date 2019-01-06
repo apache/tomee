@@ -173,6 +173,18 @@
           <parallel>classes</parallel>
           <threadCount>1</threadCount>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+          </dependency>
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.4.0-b180830.0438</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
