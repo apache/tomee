@@ -207,11 +207,11 @@
     <microprofile.health.version>1.0</microprofile.health.version>
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
-    <microprofile.metrics.impl.version>1.0.1</microprofile.metrics.impl.version>
+    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
     <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.2</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>1.0.3</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
