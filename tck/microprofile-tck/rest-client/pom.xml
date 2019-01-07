@@ -70,6 +70,44 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>mp-tck-all</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>tomee-plus</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <arquillian.launch>tomee-plus</arquillian.launch>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
+                <id>tomee-plume</id>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <systemPropertyVariables>
+                    <arquillian.launch>tomee-plume</arquillian.launch>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.eclipse.microprofile.rest.client</groupId>

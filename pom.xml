@@ -137,7 +137,7 @@
 
     <tomcat.version>9.0.12</tomcat.version>
 
-    <cxf.version>3.2.8-SNAPSHOT</cxf.version>
+    <cxf.version>3.2.7</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -216,6 +216,8 @@
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
     
+    <!-- Jackson required by OpenAPI Impl -->
+    <jackson.version>2.9.4</jackson.version>
     
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
