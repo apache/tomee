@@ -141,12 +141,19 @@ public class Observers {
                 throw new IllegalArgumentException("event cannot be null");
             }
 
-            final Class eventType = event.getClass();
-            final Method method = methods.get(eventType);
+            Class eventType = event.getClass();
+            while (eventType != Object.class) {
+                final Method method = methods.get(eventType);
 
-            if (method != null) {
-                method.invoke(observer, event);
-            } else if (defaultMethod != null) {
+                if (method != null) {
+                    method.invoke(observer, event);
+
+                    return;
+                }
+
+                eventType = eventType.getSuperclass();
+            }
+            if (defaultMethod != null) {
                 defaultMethod.invoke(observer, event);
             }
         }
