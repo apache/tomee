@@ -493,7 +493,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         deploy("testSweeps", properties);
 
-        Thread.sleep(200);
+        Thread.sleep(300);
 
         final Long sweeps = (Long) (server.getAttribute(objectName, "Sweeps"));
         assertTrue("sweeps=" + sweeps, sweeps >= 1L);
