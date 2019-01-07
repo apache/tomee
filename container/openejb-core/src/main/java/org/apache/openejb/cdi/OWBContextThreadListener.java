@@ -45,29 +45,33 @@ public class OWBContextThreadListener implements ThreadContextListener {
         final AppContext appContext = moduleContext.getAppContext();
         final WebBeansContext owbContext = appContext.getWebBeansContext();
         final Object oldOWBContext;
+        final OWBContextHolder holder;
         if (owbContext != null) {
             oldOWBContext = singletonService.contextEntered(owbContext);
+            holder = new OWBContextHolder(oldOWBContext);
         } else {
-            oldOWBContext = null;
+            holder = OWBContextHolder.EMPTY_CONTEXT;
         }
-        final OWBContextHolder holder = new OWBContextHolder(oldOWBContext);
         newContext.set(OWBContextHolder.class, holder);
     }
 
     @Override
     public void contextExited(final ThreadContext exitedContext, final ThreadContext reenteredContext) {
-        final OWBContextHolder oldOWBContext = exitedContext.get(OWBContextHolder.class);
-        if (oldOWBContext == null) {
+        final OWBContextHolder holder = exitedContext.get(OWBContextHolder.class);
+        if (holder == null) {
             throw new NullPointerException("OWBContext not set in this thread");
         }
 
-        final Object oldOWBContextContext = oldOWBContext.getContext();
-        if (oldOWBContextContext != null) {
+        if (holder != OWBContextHolder.EMPTY_CONTEXT) {
+            final Object oldOWBContextContext = holder.getContext();
             singletonService.contextExited(oldOWBContextContext);
         }
     }
 
     private static final class OWBContextHolder {
+
+        static OWBContextHolder EMPTY_CONTEXT = new OWBContextHolder(null);
+
         private final Object context;
 
         private OWBContextHolder(final Object context) {
