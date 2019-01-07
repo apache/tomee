@@ -50,6 +50,8 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         final Page result = login.getInputByName("submit").click();
         assertEquals(200, result.getWebResponse().getStatusCode());
         assertEquals("ok!", result.getWebResponse().getContentAsString());
+
+        assertEquals("ok!", webClient.getPage(getAppUrl() + "/form").getWebResponse().getContentAsString());
     }
 
     @ApplicationScoped
