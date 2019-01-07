@@ -487,7 +487,7 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
         final Properties properties = new Properties();
-        properties.setProperty("SweepInterval", "100");
+        properties.setProperty("SweepInterval", "100 MS");
 
         final Date expectedDate = new Date(); // now
 
