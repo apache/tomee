@@ -20,6 +20,7 @@ import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.junit.Test;
 
 import javax.enterprise.context.ApplicationScoped;

@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.servlet;
 
+import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.apache.tomee.security.client.BasicAuthFilter;
 import org.junit.Test;
 

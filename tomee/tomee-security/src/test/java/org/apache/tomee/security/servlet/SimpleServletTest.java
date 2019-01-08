@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.servlet;
 
+import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
