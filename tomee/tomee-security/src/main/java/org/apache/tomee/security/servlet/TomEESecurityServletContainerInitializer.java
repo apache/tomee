@@ -33,10 +33,11 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
                 CDI.current().getBeanManager().getExtension(TomEESecurityExtension.class);
 
         if (securityExtension.hasAuthenticationMechanisms()) {
-            AuthConfigFactory.getFactory()
-                             .registerConfigProvider(new TomEESecurityAuthConfigProvider(),
-                                                     "http", ctx.getVirtualServerName() + " " + ctx.getContextPath(),
-                                                     "TomEE Security JSR-375");
+            AuthConfigFactory.getFactory().registerConfigProvider(
+                    new TomEESecurityAuthConfigProvider(),
+                    "http",
+                    ctx.getContextPath().length() == 0 ? "root" : ctx.getContextPath(),
+                    "TomEE Security JSR-375");
         }
     }
 }
