@@ -1231,7 +1231,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         final File[] files = dir.listFiles();
         if (files != null) {
-            final Collection<File> copied = new ArrayList<File>();
+            final Collection<File> copied = new ArrayList<>();
             for (final File f : files) {
                 if (f.isHidden()) {
                     continue;
@@ -1562,14 +1562,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             forceReloadable = true;
         }
         if (docBases == null) {
-            docBases = new ArrayList<File>();
+            docBases = new ArrayList<>();
         }
         if (docBases.isEmpty() && webappResources.exists()) {
             getLog().info("adding " + webappResources.toString() + " docBase");
             docBases.add(webappResources);
         }
         if (externalRepositories == null) {
-            externalRepositories = new ArrayList<File>();
+            externalRepositories = new ArrayList<>();
         }
         if (externalRepositories.isEmpty() && webappClasses.exists()) {
             getLog().info("adding " + webappClasses.toString() + " externalRepository");
@@ -1584,7 +1584,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private static String filesToString(final Collection<File> files) {
-        final Collection<String> paths = new ArrayList<String>(files.size());
+        final Collection<String> paths = new ArrayList<>(files.size());
         for (final File path : files) { // don't use relative paths (toString())
             paths.add(path.getAbsolutePath());
         }
@@ -1713,7 +1713,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 // no-op
             }
         } else if (remoteRepos != null && remoteRepos.isEmpty()) {
-            remoteRepos = new ArrayList<ArtifactRepository>();
+            remoteRepos = new ArrayList<>();
         }
 
         if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))

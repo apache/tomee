@@ -66,6 +66,13 @@
       <artifactId>slf4j-api</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>1.60</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

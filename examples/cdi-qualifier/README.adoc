@@ -1,0 +1,100 @@
+= CDI @Qualifier
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+== Introduction
+
+Sometimes we need write several implementation for a interface of rule business, to increase uncoupling let's inject only interface and CDI choose the right implementation, to help CDI with this choice was created the **Qualifiers**.
+
+
+== Example
+
+In this example, we have an interface `Payment` and theirs implementations: 
+* Cash
+* CreditCard 
+
+In our test (Payment Test) we inject only the interface Payment, without the Qualifier feature the CDI would not known which implementation to inject in test.
+
+We created a **Qualifier** called `PaymentQualifier` a single qualifier with only one difference, the annotation `@Qualifier`.
+
+....
+@Retention(RUNTIME)
+@Target({ TYPE, FIELD, METHOD })
+@Qualifier
+public @interface PaymentQualifier {
+
+	PaymentType type();	
+}
+....
+
+This qualifier has a method named `type()`, this method will help the CDI to inject correctly implementation. see this enum:
+
+....
+public enum PaymentType {
+
+	CASH,
+	CREDITCARD
+}
+....
+
+now see an implementation
+
+....
+@PaymentQualifier(type=PaymentType.CASH)
+public class Cash implements Payment {
+
+	@Override
+	public String pay() {
+		
+		return "cash";
+	}
+}
+....
+
+Each implementation should marked with this qualifier.
+
+How to inject? see simplicity
+
+....
+public class PaymentTest {
+
+    private static EJBContainer container;
+
+    @Inject
+    @PaymentQualifier(type=PaymentType.CREDITCARD) //qualifier informing the CDI about the correctly implementation
+    private Payment paymentCreditCard;
+    
+    @Inject
+    @PaymentQualifier(type=PaymentType.CASH) //qualifier informing the CDI about the correctly implementation
+    private Payment paymentCash;
+
+    @BeforeClass
+    public static void start() {
+        container = EJBContainer.createEJBContainer();
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        container.getContext().bind("inject", this);
+    }
+
+    @Test
+    public void mustReturnCreditCard() {
+    	
+        assertEquals(paymentCreditCard.pay(), "creditCard");
+    }
+    
+    @Test
+    public void mustReturnCash() {
+    	
+        assertEquals(paymentCash.pay(), "cash");
+    }
+
+    @AfterClass
+    public static void stop() {
+        container.close();
+    }
+}
+
+....

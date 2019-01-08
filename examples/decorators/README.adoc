@@ -1,8 +1,7 @@
-index-group=CDI
-type=page
-status=published
-
 = Decorators
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
 
 == AccessDeniedException
 

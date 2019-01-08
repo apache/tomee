@@ -144,7 +144,7 @@ public class ExecRunner {
                     server.setAdditionalClasspath(config.getProperty("additionalClasspath"));
                 }
 
-                final List<String> jvmArgs = new LinkedList<String>();
+                final List<String> jvmArgs = new LinkedList<>();
                 if (additionalArgs != null) {
                     Collections.addAll(jvmArgs, additionalArgs.split(" "));
                 }

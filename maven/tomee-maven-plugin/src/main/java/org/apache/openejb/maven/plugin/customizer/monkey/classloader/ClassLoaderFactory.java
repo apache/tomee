@@ -38,7 +38,7 @@ public class ClassLoaderFactory {
      * @return the class loader
      */
     public ClassLoader create(final File libFolder) {
-        final Collection<URL> urls = new ArrayList<URL>();
+        final Collection<URL> urls = new ArrayList<>();
         final File[] children = libFolder.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(final File dir, final String name) {

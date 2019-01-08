@@ -1,9 +1,7 @@
-index-group=Java EE Connectors
-type=page 
-status=published 
-
 = Connectors in WAR Files
-
+:index-group: Java EE Connectors
+:jbake-type: page
+:jbake-status: published
 
 == AddInterceptor
 

@@ -203,17 +203,17 @@
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <!-- 1.1 Implementation not started yet -->
     <microprofile.fault-tolerance.version>1.0</microprofile.fault-tolerance.version>
-    <microprofile.fault-tolerance.impl.version>1.2.0</microprofile.fault-tolerance.impl.version>
+    <microprofile.fault-tolerance.impl.version>1.1-SNAPSHOT</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
-    <microprofile.metrics.impl.version>1.0.1</microprofile.metrics.impl.version>
+    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
     <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.2</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>1.0.3</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
-    <microprofile.opentracing.impl.version>1.0.1</microprofile.opentracing.impl.version>
+    <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
     
     <!-- Jackson required by OpenAPI Impl -->
@@ -378,6 +378,26 @@
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
           <version>4.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <!-- attached to Maven test phase -->
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -1520,7 +1540,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>0.14.0</version>
+        <version>2.1.0</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>

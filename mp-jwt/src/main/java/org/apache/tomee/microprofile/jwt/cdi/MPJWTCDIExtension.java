@@ -24,9 +24,7 @@ import org.apache.tomee.microprofile.jwt.jaxrs.MPJWPProviderRegistration;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
@@ -67,7 +65,7 @@ public class MPJWTCDIExtension implements Extension {
 
     private Set<InjectionPoint> injectionPoints = new HashSet<>();
 
-    public void collectConfigProducer(@Observes final ProcessInjectionPoint<?, ?> pip, final BeanManager bm) {
+    public void collectConfigProducer(@Observes final ProcessInjectionPoint<?, ?> pip) {
         final Claim claim = pip.getInjectionPoint().getAnnotated().getAnnotation(Claim.class);
         if (claim != null) {
             injectionPoints.add(pip.getInjectionPoint());
@@ -97,12 +95,7 @@ public class MPJWTCDIExtension implements Extension {
 
         types.stream()
                 .map(type -> new ClaimBean<>(bm, type))
-                .forEach(new Consumer<ClaimBean>() {
-                    @Override
-                    public void accept(final ClaimBean claimBean) {
-                        abd.addBean(claimBean);
-                    }
-                });
+                .forEach((Consumer<ClaimBean>) abd::addBean);
 
         abd.addBean()
                 .id(MPJWTCDIExtension.class.getName() + "#" + JsonWebToken.class.getName())
