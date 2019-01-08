@@ -17,6 +17,7 @@
 package org.apache.tomee.security.http;
 
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
+import org.apache.tomee.security.message.TomEEMessageInfo;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -99,7 +100,9 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationParameters getAuthParameters() {
-        return new AuthenticationParameters();
+        return (AuthenticationParameters) messageInfo.getMap()
+                                                     .getOrDefault(TomEEMessageInfo.AUTH_PARAMS,
+                                                                   new AuthenticationParameters());
     }
 
     @Override
