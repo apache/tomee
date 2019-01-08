@@ -34,7 +34,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <!-- Updated version to fix hanging text -->
-        <version>2.22.0</version>
+        <version>3.0.0-M1</version>
         <configuration>
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
