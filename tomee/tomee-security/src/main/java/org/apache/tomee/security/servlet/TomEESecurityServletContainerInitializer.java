@@ -20,23 +20,23 @@ import org.apache.tomee.security.cdi.TomEESecurityExtension;
 import org.apache.tomee.security.provider.TomEESecurityAuthConfigProvider;
 
 import javax.enterprise.inject.spi.CDI;
-import javax.inject.Inject;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.util.Optional;
 import java.util.Set;
 
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
-        Optional.ofNullable(CDI.current().getBeanManager().getExtension(TomEESecurityExtension.class))
-                .map(TomEESecurityExtension::hasAuthenticationMechanisms)
-                .filter(has -> has.equals(true))
-                .ifPresent(has -> AuthConfigFactory.getFactory()
-                                                   .registerConfigProvider(new TomEESecurityAuthConfigProvider(),
-                                                                           null, null,
-                                                                           "TomEE Security JSR-375"));
+        final TomEESecurityExtension securityExtension =
+                CDI.current().getBeanManager().getExtension(TomEESecurityExtension.class);
+
+        if (securityExtension.hasAuthenticationMechanisms()) {
+            AuthConfigFactory.getFactory()
+                             .registerConfigProvider(new TomEESecurityAuthConfigProvider(),
+                                                     "http", ctx.getVirtualServerName() + " " + ctx.getContextPath(),
+                                                     "TomEE Security JSR-375");
+        }
     }
 }
