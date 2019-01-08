@@ -32,6 +32,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
+
 @ApplicationScoped
 public class TomEESecurityServletAuthenticationMechanismMapper {
     private final Map<String, HttpAuthenticationMechanism> servletAuthenticationMapper = new ConcurrentHashMap<>();
@@ -69,7 +72,13 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
         if (availableBeans.size() == 1) {
             defaultAuthenticationMechanism.setDelegate(availableBeans.iterator().next());
         } else if (availableBeans.size() > 1) {
-            throw new IllegalStateException();
+            throw new IllegalStateException(
+                    "Multiple HttpAuthenticationMechanism found " +
+                    availableBeans.stream()
+                                  .map(b -> substringBefore(b.getClass().getSimpleName(), "$$"))
+                                  .collect(toList()) + " " +
+                    "without a @WebServlet association. " +
+                    "Deploy a single one for the application, or associate it with a @WebServlet.");
         }
     }
 
