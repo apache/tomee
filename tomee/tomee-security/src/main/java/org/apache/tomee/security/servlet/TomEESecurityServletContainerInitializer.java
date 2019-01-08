@@ -35,8 +35,8 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
         if (securityExtension.hasAuthenticationMechanisms()) {
             AuthConfigFactory.getFactory().registerConfigProvider(
                     new TomEESecurityAuthConfigProvider(),
-                    "http",
-                    ctx.getContextPath().length() == 0 ? "root" : ctx.getContextPath(),
+                    "HttpServlet",                                              // from AuthenticatorBase.java:1245
+                    ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
                     "TomEE Security JSR-375");
         }
     }
