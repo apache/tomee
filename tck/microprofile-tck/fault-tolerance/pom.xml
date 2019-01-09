@@ -39,6 +39,7 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.fault-tolerance:microprofile-fault-tolerance-tck</dependency>
           </dependenciesToScan>
+          <trimStackTrace>false</trimStackTrace>
         </configuration>
       </plugin>
     </plugins>
