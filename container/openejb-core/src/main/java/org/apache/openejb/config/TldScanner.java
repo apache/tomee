@@ -258,9 +258,7 @@ public class TldScanner {
             return urls;
         }
 
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(file);
+        try (JarFile jarFile = new JarFile(file)) {
 
             final URL jarFileUrl = new URL("jar", "", -1, file.toURI().toURL().toExternalForm() + "!/");
             for (final JarEntry entry : Collections.list(jarFile.entries())) {
@@ -273,15 +271,8 @@ public class TldScanner {
             }
         } catch (final IOException e) {
             DeploymentLoader.logger.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
-        } finally {
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (final IOException e) {
-                    // exception ignored
-                }
-            }
         }
+        // exception ignored
 
         return urls;
     }
