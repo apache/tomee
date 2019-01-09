@@ -20,9 +20,7 @@ import org.apache.openejb.loader.JarLocation;
 import org.apache.openejb.util.NetworkUtil;
 import org.apache.tomee.embedded.Configuration;
 import org.apache.tomee.embedded.Container;
-import org.apache.tomee.security.servlet.TomEESecurityServletContainerInitializer;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 
 public abstract class AbstractTomEESecurityTest {
@@ -36,19 +34,12 @@ public abstract class AbstractTomEESecurityTest {
                         .http(NetworkUtil.getNextAvailablePort())
                         .property("openejb.container.additional.exclude", "org.apache.tomee.security.")
                         .property("openejb.additional.include", "tomee-"))
-                .deployPathsAsWebapp(
-                        JarLocation.jarLocation(AbstractTomEESecurityTest.class),
-                        JarLocation.jarLocation(TomEESecurityServletContainerInitializer.class));
+                .deployPathsAsWebapp(JarLocation.jarLocation(AbstractTomEESecurityTest.class));
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
         container.close();
-    }
-
-    @Before
-    public void setUpBefore() throws Exception {
-        container.inject(this);
     }
 
     protected String getAppUrl() {
