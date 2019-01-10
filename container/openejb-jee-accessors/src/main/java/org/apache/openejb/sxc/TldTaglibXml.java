@@ -75,8 +75,6 @@ public class TldTaglibXml {
                     return "tei-class";
                 case "bodycontent":
                     return "body-content";
-                case "jspversion":
-                    return "jsp-version";
                 case "info":
                     return "description";
             }
