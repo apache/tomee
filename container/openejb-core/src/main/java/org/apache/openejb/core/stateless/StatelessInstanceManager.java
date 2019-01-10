@@ -547,7 +547,7 @@ public class StatelessInstanceManager {
         public void run() {
             final Instance obj = supplier.create();
             if (obj != null) {
-                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0L;
                 data.getPool().add(obj, offset);
             }
         }
