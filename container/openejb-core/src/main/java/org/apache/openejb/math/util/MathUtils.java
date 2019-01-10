@@ -1434,7 +1434,7 @@ public final class MathUtils {
      * @return +1, 0, or -1, depending on the sign of x
      */
     public static int sign(final int x) {
-        return x == 0 ? 0 : x > 0 ? 1 : -1;
+        return Integer.compare(x, 0);
     }
 
     /**
