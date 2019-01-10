@@ -11,6 +11,13 @@ This is an example on how to use microprofile metrics in TomEE.
 mvn clean install tomee:run 
 ....
 
+== Alternatively run the application via Docker:
+
+....
+mvn docker:build
+docker run -it --rm -p 8080:8080 --name=tomee-test tomee/mp-metrics-counted
+....
+
 Within the application there is an endpoint that will give you weather
 status for the day and week.
 
@@ -18,6 +25,12 @@ status for the day and week.
 
 ....
 GET http://localhost:8080/mp-metrics-counted/weather/week/status
+....
+
+== If running via Docker, because the application is installed as the ROOT application, remove the application name such as:
+
+....
+GET http://localhost:8080/weather/week/status
 ....
 
 == Response:

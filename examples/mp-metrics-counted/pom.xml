@@ -35,6 +35,8 @@
         <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
         <tomee.version>${project.version}</tomee.version>
         <junit.version>4.12</junit.version>
+        <docker.image.name>tomee/${artifactId}</docker.image.name>
+        <docker.file.name>Dockerfile</docker.file.name>
     </properties>
 
     <dependencies>
@@ -102,6 +104,43 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.28.0</version>
+                <executions>
+                    <execution>
+                        <id>start</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <pushRegistry>somename</pushRegistry>
+                    <images>
+                        <image>
+                            <name>${docker.image.name}</name>
+                            <build>
+                                <tags>
+                                    <tag>${project.version}</tag>
+                                    <tag>latest</tag>
+                                </tags>
+                                <dockerFile>${project.basedir}/${docker.file.name}</dockerFile >
+                            </build>
+                        </image>
+                    </images>
                 </configuration>
             </plugin>
         </plugins>
