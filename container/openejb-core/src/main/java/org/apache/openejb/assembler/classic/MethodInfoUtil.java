@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 
@@ -403,7 +404,7 @@ public class MethodInfoUtil {
             if (!method.equals(that.method)) {
                 return false;
             }
-            if (view != null ? !view.equals(that.view) : that.view != null) {
+            if (!Objects.equals(view, that.view)) {
                 return false;
             }
 

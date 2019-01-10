@@ -241,6 +241,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -3845,7 +3846,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final DeploymentListenerObserver that = (DeploymentListenerObserver) o;
 
-            return !(delegate != null ? !delegate.equals(that.delegate) : that.delegate != null);
+            return !(!Objects.equals(delegate, that.delegate));
         }
 
         @Override

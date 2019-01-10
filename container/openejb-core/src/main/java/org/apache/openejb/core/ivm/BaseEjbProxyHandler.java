@@ -68,6 +68,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -538,7 +539,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     protected boolean equalHandler(final BaseEjbProxyHandler other) {
-        return (primaryKey == null ? other.primaryKey == null : primaryKey.equals(other.primaryKey))
+        return (Objects.equals(primaryKey, other.primaryKey))
             && deploymentID.equals(other.deploymentID)
             && getMainInterface().equals(other.getMainInterface());
     }
