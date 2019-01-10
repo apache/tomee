@@ -100,9 +100,7 @@ public class DynamicSubclass implements Opcodes {
                 thisHandler.setAccessible(true);
             }
             thisHandler.set(instance, handler);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final IllegalAccessException e) {
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }

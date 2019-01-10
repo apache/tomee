@@ -100,9 +100,7 @@ public class DeployTimeEnhancer {
 
                 usedUrls.add(url);
             } else if (file.getName().endsWith(".jar")) {
-                JarFile jar = null;
-                try {
-                    jar = new JarFile(file);
+                try (JarFile jar = new JarFile(file)) {
                     final ZipEntry entry = jar.getEntry(META_INF_PERSISTENCE_XML);
                     if (entry != null) {
                         final String path = file.getAbsolutePath();
@@ -118,15 +116,8 @@ public class DeployTimeEnhancer {
                     }
                 } catch (final IOException e) {
                     // ignored
-                } finally {
-                    try {
-                        if (jar != null) {
-                            jar.close();
-                        }
-                    } catch (final IOException e) {
-                        // no-op
-                    }
                 }
+                // no-op
             } else {
                 usedUrls.add(url);
             }

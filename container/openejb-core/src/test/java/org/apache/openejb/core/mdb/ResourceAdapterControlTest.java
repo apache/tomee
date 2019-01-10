@@ -143,29 +143,11 @@ public class ResourceAdapterControlTest {
     }
 
     private void doSend(final String txt) throws JMSException {
-        Connection c = null;
-        try {
-            c = connectionFactory.createConnection();
-            Session session = null;
-            try {
-                session = c.createSession(false, Session.AUTO_ACKNOWLEDGE);
-                MessageProducer producer = null;
-                try {
-                    producer = session.createProducer(queue);
+        try (Connection c = connectionFactory.createConnection()) {
+            try (Session session = c.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+                try (MessageProducer producer = session.createProducer(queue)) {
                     producer.send(session.createTextMessage(txt));
-                } finally {
-                    if (producer != null) {
-                        producer.close();
-                    }
                 }
-            } finally {
-                if (session != null) {
-                    session.close();
-                }
-            }
-        } finally {
-            if (c != null) {
-                c.close();
             }
         }
     }

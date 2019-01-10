@@ -350,9 +350,7 @@ public class DataSourceFactory {
                     Class.forName(value, false, containerLoader);
                 }
             }
-        } catch (final ClassNotFoundException cnfe) {
-            return false;
-        } catch (final NoClassDefFoundError cnfe) {
+        } catch (final ClassNotFoundException | NoClassDefFoundError cnfe) {
             return false;
         }
 
