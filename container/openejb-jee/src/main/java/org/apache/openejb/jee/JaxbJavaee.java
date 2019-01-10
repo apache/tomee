@@ -469,9 +469,6 @@ public class JaxbJavaee {
                 case "bodycontent":
                     localName = "body-content";
                     break;
-                case "jspversion":
-                    localName = "jsp-version";
-                    break;
                 case "info":
                     localName = "description";
                     break;
