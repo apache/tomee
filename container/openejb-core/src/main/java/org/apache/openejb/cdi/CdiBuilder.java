@@ -37,12 +37,14 @@ public class CdiBuilder {
     private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, CdiBuilder.class);
     private static final ThreadSingletonService SINGLETON_SERVICE = new ThreadSingletonServiceImpl();
 
+    private static final RequestScopedThreadContextListener REQUEST_SCOPED_THREAD_CONTEXT_LISTENER = new RequestScopedThreadContextListener();
+
     public void build(final AppInfo appInfo, final AppContext appContext, final List<BeanContext> allDeployments) {
         initSingleton().initialize(new StartupObject(appContext, appInfo, allDeployments));
     }
 
     private ThreadSingletonService initSingleton() {
-        ThreadContext.addThreadContextListener(new RequestScopedThreadContextListener());
+        ThreadContext.addThreadContextListener(REQUEST_SCOPED_THREAD_CONTEXT_LISTENER);
         ThreadSingletonService singletonService = SystemInstance.get().getComponent(ThreadSingletonService.class);
 
         //TODO hack for tests.  Currently initialized in OpenEJB line 90.  cf alternative in AccessTimeoutTest which would
@@ -62,6 +64,7 @@ public class CdiBuilder {
 
     public static synchronized ThreadSingletonService initializeOWB() {
         logger.info("Created new singletonService " + SINGLETON_SERVICE);
+        SystemInstance.get().addObserver(SINGLETON_SERVICE);
         SystemInstance.get().setComponent(ThreadSingletonService.class, SINGLETON_SERVICE);
         try {
             WebBeansFinder.setSingletonService(SINGLETON_SERVICE);
@@ -72,8 +75,6 @@ public class CdiBuilder {
             logger.debug("Could not install our singleton service");
         }
 
-        //TODO there must be a better place to initialize this
-        ThreadContext.addThreadContextListener(new OWBContextThreadListener());
         return SINGLETON_SERVICE;
     }
 
