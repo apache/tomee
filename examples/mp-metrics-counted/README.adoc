@@ -17,7 +17,7 @@ status for the day and week.
 == For the day status call:
 
 ....
-GET http://localhost:8080/rest-mp-metrics/weather/day/status
+GET http://localhost:8080/mp-metrics-counted/weather/week/status
 ....
 
 == Response:
