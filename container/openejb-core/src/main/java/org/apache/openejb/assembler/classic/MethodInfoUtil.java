@@ -244,24 +244,25 @@ public class MethodInfoUtil {
 
     private static Class getClassForParam(final String className, final ClassLoader cl) throws ClassNotFoundException {
 
-        if (className.equals("int")) {
-            return Integer.TYPE;
-        } else if (className.equals("double")) {
-            return Double.TYPE;
-        } else if (className.equals("long")) {
-            return Long.TYPE;
-        } else if (className.equals("boolean")) {
-            return Boolean.TYPE;
-        } else if (className.equals("float")) {
-            return Float.TYPE;
-        } else if (className.equals("char")) {
-            return Character.TYPE;
-        } else if (className.equals("short")) {
-            return Short.TYPE;
-        } else if (className.equals("byte")) {
-            return Byte.TYPE;
-        } else {
-            return Class.forName(className, false, cl);
+        switch (className) {
+            case "int":
+                return Integer.TYPE;
+            case "double":
+                return Double.TYPE;
+            case "long":
+                return Long.TYPE;
+            case "boolean":
+                return Boolean.TYPE;
+            case "float":
+                return Float.TYPE;
+            case "char":
+                return Character.TYPE;
+            case "short":
+                return Short.TYPE;
+            case "byte":
+                return Byte.TYPE;
+            default:
+                return Class.forName(className, false, cl);
         }
 
     }
