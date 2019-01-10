@@ -87,7 +87,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void destroyResource() {
-        // no-op
+        ThreadContext.removeThreadContextListener(this);
     }
 
     public void onLogout(final HttpServletRequest request) {
