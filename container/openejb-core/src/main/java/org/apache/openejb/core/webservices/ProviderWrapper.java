@@ -374,9 +374,7 @@ public class ProviderWrapper extends Provider {
         // 1. META-INF/services/javax.xml.ws.spi.Provider
         try {
             for (final URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
-                BufferedReader in = null;
-                try {
-                    in = new BufferedReader(new InputStreamReader(url.openStream()));
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
 
                     providerClass = in.readLine();
                     provider = createProviderInstance(providerClass, classLoader);
@@ -385,15 +383,8 @@ public class ProviderWrapper extends Provider {
                     }
                 } catch (final Exception ignored) {
                     // no-op
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (final IOException e) {
-                            // no-op
-                        }
-                    }
                 }
+                // no-op
             }
         } catch (final Exception ingored) {
             // no-op

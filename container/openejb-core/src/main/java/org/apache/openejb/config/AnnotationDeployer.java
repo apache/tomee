@@ -1811,14 +1811,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return url;
             }
 
-            URLClassLoader loader = null;
-            try {
-                loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader());
+            try (URLClassLoader loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader())) {
                 final String[] paths = {
-                    "META-INF/beans.xml",
-                    "WEB-INF/beans.xml",
-                    "/WEB-INF/beans.xml",
-                    "/META-INF/beans.xml",
+                        "META-INF/beans.xml",
+                        "WEB-INF/beans.xml",
+                        "/WEB-INF/beans.xml",
+                        "/META-INF/beans.xml",
                 };
 
                 for (final String path : paths) {
@@ -1829,15 +1827,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } catch (final Exception e) {
                 // no-op
-            } finally {
-                try {
-                    if (loader != null) {
-                        loader.close();
-                    }
-                } catch (final IOException e) {
-                    // no-op
-                }
             }
+            // no-op
             if (ddMapper != null) {
                 final File asFile = URLs.toFile(url);
                 if (asFile.isDirectory()) {

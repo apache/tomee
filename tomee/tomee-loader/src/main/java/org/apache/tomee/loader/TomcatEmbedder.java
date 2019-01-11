@@ -18,6 +18,7 @@
 package org.apache.tomee.loader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URI;
@@ -73,8 +74,9 @@ public class TomcatEmbedder {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
+        URLClassLoader childCl = null;
         try {
-            final ClassLoader childCl = new URLClassLoader(new URL[] {
+        	childCl = new URLClassLoader(new URL[] {
                     getThisJar().toURI().toURL(),
                     findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX).toURI().toURL()
             });
@@ -88,6 +90,13 @@ public class TomcatEmbedder {
         } catch (final Throwable e) {
             e.printStackTrace();
         } finally {
+        	if(childCl != null) {
+        		try {
+					childCl.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+        	}
             Thread.currentThread().setContextClassLoader(oldCl);
         }
     }

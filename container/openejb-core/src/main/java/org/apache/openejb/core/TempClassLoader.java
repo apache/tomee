@@ -217,13 +217,11 @@ public class TempClassLoader extends URLClassLoader {
         // define the class
         try {
             return this.defineClass(name, bytes, 0, bytes.length);
-        } catch (final SecurityException e) {
+        } catch (final SecurityException | LinkageError e) {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
-        } catch (final LinkageError le) {
-            // fallback
-            return super.loadClass(name, resolve);
-        }
+        } // fallback
+
     }
 
     // TODO: for jsf it can be useful to include commons-logging and openwebbeans...

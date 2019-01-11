@@ -223,9 +223,8 @@ public class SQLLoginModule implements LoginModule {
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    final ResultSet result = statement.executeQuery();
 
-                    try {
+                    try (ResultSet result = statement.executeQuery()) {
                         boolean found = false;
                         while (result.next()) {
                             final String userName = result.getString(1);
@@ -243,8 +242,6 @@ public class SQLLoginModule implements LoginModule {
                             // User does not exist
                             throw new FailedLoginException();
                         }
-                    } finally {
-                        result.close();
                     }
                 } finally {
                     statement.close();
@@ -256,9 +253,8 @@ public class SQLLoginModule implements LoginModule {
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    final ResultSet result = statement.executeQuery();
 
-                    try {
+                    try (ResultSet result = statement.executeQuery()) {
                         while (result.next()) {
                             final String userName = result.getString(1);
                             final String groupName = result.getString(2);
@@ -267,8 +263,6 @@ public class SQLLoginModule implements LoginModule {
                                 groups.add(groupName);
                             }
                         }
-                    } finally {
-                        result.close();
                     }
                 } finally {
                     statement.close();

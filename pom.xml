@@ -105,7 +105,7 @@
     <version.javaee-api>8.0</version.javaee-api>
 
     <openjpa.version>3.0.0</openjpa.version>
-    <openwebbeans.version>2.0.8</openwebbeans.version>
+    <openwebbeans.version>2.0.9</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.1.11</johnzon.version>
 
@@ -202,8 +202,8 @@
     <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <!-- 1.1 Implementation not started yet -->
-    <microprofile.fault-tolerance.version>1.0</microprofile.fault-tolerance.version>
-    <microprofile.fault-tolerance.impl.version>1.1-SNAPSHOT</microprofile.fault-tolerance.impl.version>
+    <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
+    <microprofile.fault-tolerance.impl.version>1.2.1-SNAPSHOT</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>

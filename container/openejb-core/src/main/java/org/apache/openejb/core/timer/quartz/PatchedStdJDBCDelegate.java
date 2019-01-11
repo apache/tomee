@@ -39,11 +39,8 @@ public class PatchedStdJDBCDelegate extends StdJDBCDelegate {
 
             if (null != binaryInput) {
                 if (!(binaryInput instanceof ByteArrayInputStream) || ((ByteArrayInputStream) binaryInput).available() != 0) {
-                    final ObjectInputStream in = new QuartzObjectInputStream(binaryInput, classLoadHelper);
-                    try {
+                    try (ObjectInputStream in = new QuartzObjectInputStream(binaryInput, classLoadHelper)) {
                         obj = in.readObject();
-                    } finally {
-                        in.close();
                     }
                 }
             }

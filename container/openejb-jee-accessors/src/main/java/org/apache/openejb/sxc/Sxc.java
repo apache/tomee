@@ -128,14 +128,8 @@ public class Sxc {
     }
 
     public static <T> T unmarshalJavaee(final URL resource, final JAXBObject<T> jaxbType) throws Exception {
-        final InputStream inputStream = resource.openStream();
-        try {
+        try (InputStream inputStream = resource.openStream()) {
             return unmarshalJavaee(jaxbType, inputStream);
-        } finally {
-            try {
-                inputStream.close();
-            } catch (final IOException e1) {
-            }
         }
     }
 
