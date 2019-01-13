@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use microprofile metrics in TomEE.
+This is an example on how to use microprofile metrics in TomEE.  The project includes a docker profile which can be used to create a Docker image. 
 
 == Run the application:
 
@@ -11,11 +11,14 @@ This is an example on how to use microprofile metrics in TomEE.
 mvn clean install tomee:run 
 ....
 
-== Alternatively run the application via Docker:
+== Alternatively build and run the application via Docker (note the use of the docker profile):
 
 ....
-mvn docker:build
-docker run -it --rm -p 8080:8080 --name=tomee-test tomee/mp-metrics-counted
+mvn -Pdocker docker:build
+docker run -it --rm \
+       -p 8080:8080 \
+       --name=tomee-mp-metrics-counted \
+       tomee/mp-metrics-counted
 ....
 
 Within the application there is an endpoint that will give you weather
