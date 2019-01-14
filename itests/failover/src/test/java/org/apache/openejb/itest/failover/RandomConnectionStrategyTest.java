@@ -53,7 +53,7 @@ import static org.apache.openejb.util.NetworkUtil.getNextAvailablePort;
 
 public class RandomConnectionStrategyTest {
 
-    static final Logger logger = Logger.getLogger("org.apache.openejb.client");
+    private static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
     private static final int CLIENT_DELAY = 60;
 
@@ -107,7 +107,7 @@ public class RandomConnectionStrategyTest {
         final Services services = new Services();
         Client.addEventObserver(services);
 
-        final Map<String, StandaloneServer> servers = new HashMap<String, StandaloneServer>();
+        final Map<String, StandaloneServer> servers = new HashMap<>();
         for (final String name : new String[]{"red", "green", "blue"}) {
 
             final File home = new File(dir, name);
@@ -148,7 +148,6 @@ public class RandomConnectionStrategyTest {
             server.start(1, TimeUnit.MINUTES);
         }
 
-
         System.setProperty("openejb.client.requestretry", "true");
         System.setProperty("openejb.client.connection.strategy", "random");
 
@@ -160,6 +159,11 @@ public class RandomConnectionStrategyTest {
 
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
+
+        // Lets restart one server. This will change the cluster configuration so when we call
+        // 'bean' business methods new ClusterMetaDataUpdated event will be triggered
+        servers.get("red").kill();
+        servers.get("red").start(1, TimeUnit.MINUTES);
 
         for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();
@@ -229,7 +233,7 @@ public class RandomConnectionStrategyTest {
 
 
     private Map<String, AtomicInteger> invoke(final Calculator bean, final int max) {
-        final Map<String, AtomicInteger> invocations = new HashMap<String, AtomicInteger>();
+        final Map<String, AtomicInteger> invocations = new HashMap<>();
         for (int i = 0; i < max; i++) {
             final String name = bean.name();
 
@@ -253,9 +257,9 @@ public class RandomConnectionStrategyTest {
         private final ReentrantLock lock = new ReentrantLock();
         private final Condition condition = lock.newCondition();
 
-        private final Set<URI> expected = new HashSet<URI>();
+        private final Set<URI> expected = new HashSet<>();
 
-        public Services() {
+        Services() {
         }
 
         public Set<URI> get() {
@@ -266,13 +270,13 @@ public class RandomConnectionStrategyTest {
             return expected.add(uri);
         }
 
-        public boolean remove(final URI o) {
+        boolean remove(final URI o) {
             return expected.remove(o);
         }
 
         public void observe(@Observes final ClusterMetaDataUpdated updated) {
             final URI[] locations = updated.getClusterMetaData().getLocations();
-            final Set<URI> found = new HashSet<URI>(Arrays.asList(locations));
+            final Set<URI> found = new HashSet<>(Arrays.asList(locations));
 
             if (expected.equals(found)) {
                 lock.lock();
@@ -285,7 +289,7 @@ public class RandomConnectionStrategyTest {
         }
 
         public Set<URI> diff(final Set<URI> a, final Set<URI> b) {
-            final Set<URI> diffs = new HashSet<URI>();
+            final Set<URI> diffs = new HashSet<>();
             for (final URI uri : b) {
                 if (!a.contains(uri)) diffs.add(uri);
             }
@@ -297,7 +301,7 @@ public class RandomConnectionStrategyTest {
             assertServices(timeout, unit, callable, 10);
         }
 
-        public void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
+        void assertServices(final long timeout, final TimeUnit unit, final Callable callable, final int delay) {
             final ClientThread client = new ClientThread(callable);
             client.delay(delay);
             client.start();
@@ -311,7 +315,7 @@ public class RandomConnectionStrategyTest {
             }
         }
 
-        public boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
+        boolean await(final long timeout, final TimeUnit unit) throws InterruptedException {
             lock.lock();
             try {
                 return condition.await(timeout, unit);
@@ -324,7 +328,7 @@ public class RandomConnectionStrategyTest {
     private static class CalculatorCallable implements Callable {
         private final Calculator bean;
 
-        public CalculatorCallable(final Calculator bean) {
+        CalculatorCallable(final Calculator bean) {
             this.bean = bean;
         }
 

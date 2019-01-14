@@ -3,12 +3,22 @@
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use microprofile metrics in TomEE.
+This is an example on how to use microprofile metrics in TomEE.  The project includes a docker profile which can be used to create a Docker image. 
 
 == Run the application:
 
 ....
 mvn clean install tomee:run 
+....
+
+== Alternatively build and run the application via Docker (note the use of the docker profile):
+
+....
+mvn -Pdocker docker:build
+docker run -it --rm \
+       -p 8080:8080 \
+       --name=tomee-mp-metrics-counted \
+       tomee/mp-metrics-counted
 ....
 
 Within the application there is an endpoint that will give you weather
@@ -17,7 +27,13 @@ status for the day and week.
 == For the day status call:
 
 ....
-GET http://localhost:8080/rest-mp-metrics/weather/day/status
+GET http://localhost:8080/mp-metrics-counted/weather/week/status
+....
+
+== If running via Docker, because the application is installed as the ROOT application, remove the application name such as:
+
+....
+GET http://localhost:8080/weather/week/status
 ....
 
 == Response:

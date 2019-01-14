@@ -925,7 +925,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                     factory.register();
                 }
 
-                logger.debug("Loaded peristence units: " + units);
+                logger.debug("Loaded persistence units: " + units);
 
                 // Connectors
                 for (final ConnectorInfo connector : appInfo.connectors) {

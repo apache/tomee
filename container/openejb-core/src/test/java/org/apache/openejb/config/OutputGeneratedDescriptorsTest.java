@@ -108,35 +108,28 @@ public class OutputGeneratedDescriptorsTest {
 	}
 
 	private void assertEjbFileCorrect(File file) throws Exception {
-		FileInputStream in = null;
-		
-		try {
-			in = new FileInputStream(file);
-			EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
-			
-			Assert.assertEquals(4, ejbJar.getEnterpriseBeans().length);
-			Assert.assertEquals("Red", ejbJar.getEnterpriseBeans()[0].getEjbName());
-			Assert.assertEquals("com.foo.Red", ejbJar.getEnterpriseBeans()[0].getEjbClass());
-			Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[0]).getRemote());
-			Assert.assertEquals(SessionType.STATELESS, ((SessionBean) ejbJar.getEnterpriseBeans()[0]).getSessionType());
-			Assert.assertEquals("Orange", ejbJar.getEnterpriseBeans()[1].getEjbName());
-			Assert.assertEquals("com.foo.Orange", ejbJar.getEnterpriseBeans()[1].getEjbClass());
-			Assert.assertEquals(SessionType.MANAGED, ((SessionBean) ejbJar.getEnterpriseBeans()[1]).getSessionType());
-			Assert.assertEquals("Yellow", ejbJar.getEnterpriseBeans()[2].getEjbName());
-			Assert.assertEquals("com.foo.Yellow", ejbJar.getEnterpriseBeans()[2].getEjbClass());
-			Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[2]).getRemote());
-			Assert.assertEquals(SessionType.STATEFUL, ((SessionBean) ejbJar.getEnterpriseBeans()[2]).getSessionType());
-			Assert.assertEquals("Green", ejbJar.getEnterpriseBeans()[3].getEjbName());
-			Assert.assertEquals("com.foo.Green", ejbJar.getEnterpriseBeans()[3].getEjbClass());
-			Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[3]).getRemote());
-			Assert.assertEquals(SessionType.SINGLETON, ((SessionBean) ejbJar.getEnterpriseBeans()[3]).getSessionType());
-			
-		} finally {
-			try {
-				in.close();
-			} catch (Exception e) {
-			}
-		}
+
+        try (FileInputStream in = new FileInputStream(file)) {
+            EjbJar ejbJar = (EjbJar) JaxbJavaee.unmarshalJavaee(EjbJar.class, in);
+
+            Assert.assertEquals(4, ejbJar.getEnterpriseBeans().length);
+            Assert.assertEquals("Red", ejbJar.getEnterpriseBeans()[0].getEjbName());
+            Assert.assertEquals("com.foo.Red", ejbJar.getEnterpriseBeans()[0].getEjbClass());
+            Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[0]).getRemote());
+            Assert.assertEquals(SessionType.STATELESS, ((SessionBean) ejbJar.getEnterpriseBeans()[0]).getSessionType());
+            Assert.assertEquals("Orange", ejbJar.getEnterpriseBeans()[1].getEjbName());
+            Assert.assertEquals("com.foo.Orange", ejbJar.getEnterpriseBeans()[1].getEjbClass());
+            Assert.assertEquals(SessionType.MANAGED, ((SessionBean) ejbJar.getEnterpriseBeans()[1]).getSessionType());
+            Assert.assertEquals("Yellow", ejbJar.getEnterpriseBeans()[2].getEjbName());
+            Assert.assertEquals("com.foo.Yellow", ejbJar.getEnterpriseBeans()[2].getEjbClass());
+            Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[2]).getRemote());
+            Assert.assertEquals(SessionType.STATEFUL, ((SessionBean) ejbJar.getEnterpriseBeans()[2]).getSessionType());
+            Assert.assertEquals("Green", ejbJar.getEnterpriseBeans()[3].getEjbName());
+            Assert.assertEquals("com.foo.Green", ejbJar.getEnterpriseBeans()[3].getEjbClass());
+            Assert.assertEquals("com.foo.Color", ((SessionBean) ejbJar.getEnterpriseBeans()[3]).getRemote());
+            Assert.assertEquals(SessionType.SINGLETON, ((SessionBean) ejbJar.getEnterpriseBeans()[3]).getSessionType());
+
+        }
 		
 		
 	}

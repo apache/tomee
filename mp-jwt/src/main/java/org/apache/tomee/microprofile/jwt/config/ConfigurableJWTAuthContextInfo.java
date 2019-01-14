@@ -67,6 +67,8 @@ public class ConfigurableJWTAuthContextInfo {
 
     private Config config;
     private JWTAuthContextInfo jwtAuthContextInfo;
+    private static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
+    private static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
 
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         this.config = ConfigProvider.getConfig();
@@ -123,7 +125,7 @@ public class ConfigurableJWTAuthContextInfo {
                 .map(Supplier::get)
                 .filter(keys -> !keys.isEmpty())
                 .findFirst()
-                .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key: " + publicKey));
+                .orElseThrow(() -> new DeploymentException(": " + publicKey));
     }
 
     private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation) {
@@ -139,7 +141,7 @@ public class ConfigurableJWTAuthContextInfo {
                 .map(Optional::get)
                 .findFirst()
                 .map(this::readPublicKeys)
-                .orElseThrow(() -> new DeploymentException("Could not read MicroProfile Public Key from Location: " +
+                .orElseThrow(() -> new DeploymentException(PUBLIC_KEY_ERROR_LOCATION +
                                                            publicKeyLocation));
     }
 
@@ -153,7 +155,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(is));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -168,14 +170,14 @@ public class ConfigurableJWTAuthContextInfo {
             final File publicKeyFile = new File(locationURL.toURI());
             if (!publicKeyFile.exists() || publicKeyFile.isDirectory()) {
                 throw new DeploymentException(
-                        "Could not read MicroProfile Public Key from Location: " +
+                        PUBLIC_KEY_ERROR_LOCATION +
                         publicKeyLocation +
                         ". File does not exist or it is a directory.");
             }
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException | URISyntaxException e) {
             throw new DeploymentException(
-                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -189,7 +191,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -199,7 +201,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    "Could not read MicroProfile Public Key from Location: " + publicKeyLocation, e);
+                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -244,7 +246,7 @@ public class ConfigurableJWTAuthContextInfo {
             final JsonWebKey key = JsonWebKey.Factory.newJwk(publicKey);
             return Collections.singletonMap(key.getKeyId(), key.getKey());
         } catch (final JoseException e) {
-            throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
+            throw new DeploymentException(PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 
@@ -284,7 +286,7 @@ public class ConfigurableJWTAuthContextInfo {
                           .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
             return Collections.unmodifiableMap(keys);
         } catch (final JoseException e) {
-            throw new DeploymentException("Could not read MicroProfile Public Key JWK.", e);
+            throw new DeploymentException(PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 

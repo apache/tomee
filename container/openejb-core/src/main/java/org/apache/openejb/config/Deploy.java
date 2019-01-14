@@ -323,9 +323,7 @@ public class Deploy {
             return true;
         }
 
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(file);
+        try (JarFile jarFile = new JarFile(file)) {
 
             if (jarFile.getEntry("META-INF/application.xml") != null) {
                 return true;
@@ -338,15 +336,8 @@ public class Deploy {
             }
         } catch (final IOException e) {
             // no-op
-        } finally {
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (final IOException ignored) {
-                    // no-op
-                }
-            }
         }
+        // no-op
 
         return false;
     }

@@ -26,11 +26,8 @@ public class Connect {
 
     public static boolean connect(int tries, final String host, final int port) {
 
-        Socket s = null;
+        try (Socket s = new Socket(host, port)) {
 
-        try {
-
-            s = new Socket(host, port);
             s.getOutputStream().close();
 
         } catch (final Exception e) {
@@ -55,16 +52,9 @@ public class Connect {
 
             }
 
-        } finally {
-
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
         }
+
+        //Ignore
 
         return true;
     }
