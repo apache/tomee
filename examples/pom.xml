@@ -190,6 +190,7 @@
     <module>vaadin-lts-v10-simple</module>
     <module>vaadin-vxx-simple</module>
     <module>mp-faulttolerance-timeout</module>
+    <module>cloud-azure</module>
   </modules>
 
   <dependencies>
