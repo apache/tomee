@@ -68,13 +68,11 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
         final HttpMessageContext httpMessageContext =
                 httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
 
-        final HttpServletRequest request = httpMessageContext.getRequest();
-        final String servletName = request.getHttpServletMapping().getServletName();
         final HttpAuthenticationMechanism authenticationMechanism =
                 CDI.current()
                    .select(TomEESecurityServletAuthenticationMechanismMapper.class)
                    .get()
-                   .getCurrentAuthenticationMechanism(servletName);
+                   .getCurrentAuthenticationMechanism(httpMessageContext);
 
         final AuthenticationStatus authenticationStatus;
         try {
