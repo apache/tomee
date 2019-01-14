@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.security.cdi;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
@@ -28,8 +29,9 @@ import javax.servlet.http.HttpServletResponse;
 public class DefaultAuthenticationMechanism implements HttpAuthenticationMechanism {
     private HttpAuthenticationMechanism delegate;
 
-    public DefaultAuthenticationMechanism() {
-        this.delegate = new EmptyAuthenticationMechanism();
+    @PostConstruct
+    private void init() {
+        delegate = new EmptyAuthenticationMechanism();
     }
 
     @Override
