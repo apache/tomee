@@ -80,7 +80,7 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public boolean isAuthenticationRequest() {
-        return false;
+        return Boolean.valueOf((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.AUTHENTICATE, "false"));
     }
 
     @Override

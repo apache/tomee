@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class TomEEMessageInfo extends MessageInfoImpl {
     public static final String AUTH_PARAMS = "org.apache.tomee.security.context.authParams";
+    public static final String AUTHENTICATE = "org.apache.tomee.security.context.authenticate";
 
     public TomEEMessageInfo(final HttpServletRequest request,
                             final HttpServletResponse response,
@@ -37,5 +38,6 @@ public class TomEEMessageInfo extends MessageInfoImpl {
                             final AuthenticationParameters authParameters) {
         super(request, response, authMandatory);
         getMap().put(AUTH_PARAMS, authParameters);
+        getMap().put(AUTHENTICATE, Boolean.toString(true));
     }
 }
