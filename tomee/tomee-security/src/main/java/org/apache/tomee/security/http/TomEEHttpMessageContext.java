@@ -17,6 +17,12 @@
 package org.apache.tomee.security.http;
 
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
+import org.apache.catalina.connector.Request;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.tomee.catalina.OpenEJBSecurityListener;
+import org.apache.tomee.catalina.TomcatSecurityService;
+import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.message.TomEEMessageInfo;
 
 import javax.security.auth.Subject;
@@ -202,6 +208,8 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
         this.principal = principal;
         this.groups = groups;
+
+        TomEESecurityContext.registerContainerAboutLogin(principal);
 
         return SUCCESS;
     }

@@ -17,8 +17,14 @@
 package org.apache.tomee.security;
 
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
+import org.apache.catalina.connector.Request;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
+import org.apache.tomee.catalina.OpenEJBSecurityListener;
+import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.security.message.TomEEMessageInfo;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.Subject;
 import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
@@ -40,9 +46,19 @@ import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.security.auth.message.AuthStatus.SUCCESS;
 
 public class TomEESecurityContext implements SecurityContext {
+    private TomcatSecurityService securityService;
+
+    @PostConstruct
+    private void init() {
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        if (securityService instanceof TomcatSecurityService) {
+            this.securityService = (TomcatSecurityService) securityService;
+        }
+    }
+
     @Override
     public Principal getCallerPrincipal() {
-        return null;
+        return securityService.getCallerPrincipal();
     }
 
     @Override
@@ -102,5 +118,16 @@ public class TomEESecurityContext implements SecurityContext {
                 authConfigProvider.getServerAuthConfig("HttpServlet", appContext, CallbackHandlerImpl.getInstance());
 
         return serverAuthConfig.getAuthContext(null, null, null);
+    }
+
+    public static void registerContainerAboutLogin(final Principal principal) {
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        if (TomcatSecurityService.class.isInstance(securityService)) {
+            final TomcatSecurityService tomcatSecurityService = (TomcatSecurityService) securityService;
+            final Request request = OpenEJBSecurityListener.requests.get();
+            tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
+                                              principal,
+                                              request.getWrapper().getRunAs());
+        }
     }
 }

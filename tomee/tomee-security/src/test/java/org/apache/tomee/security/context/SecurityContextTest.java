@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.security.Principal;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static org.junit.Assert.assertEquals;
@@ -45,7 +46,7 @@ import static org.junit.Assert.assertEquals;
 public class SecurityContextTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/securityContext";
+        final String servlet = getAppUrl() + "/securityContext";
         final Response response = ClientBuilder.newBuilder()
                                                .build()
                                                .target(servlet)
@@ -58,8 +59,22 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
     }
 
     @Test
+    public void callerPrincipal() throws Exception {
+        final String servlet = getAppUrl() + "/securityContextPrincipal";
+        final Response response = ClientBuilder.newBuilder()
+                                               .build()
+                                               .target(servlet)
+                                               .queryParam("username", "tomcat")
+                                               .queryParam("password", "tomcat")
+                                               .request()
+                                               .get();
+        assertEquals(200, response.getStatus());
+        assertEquals("tomcat", response.readEntity(String.class));
+    }
+
+    @Test
     public void wrongPassword() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/securityContext";
+        final String servlet = getAppUrl() + "/securityContext";
         assertEquals(401, ClientBuilder.newBuilder().build()
                                        .target(servlet)
                                        .queryParam("username", "tomcat")
@@ -88,6 +103,30 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
             resp.getWriter().write("ok!");
         }
     }
+
+    @WebServlet(urlPatterns = "/securityContextPrincipal")
+    public static class PrincipalServlet extends HttpServlet {
+        @Inject
+        private SecurityContext securityContext;
+
+        @Override
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+                throws ServletException, IOException {
+
+            final AuthenticationParameters parameters =
+                    AuthenticationParameters.withParams()
+                                            .credential(new UsernamePasswordCredential(req.getParameter("username"),
+                                                                                       req.getParameter("password")))
+                                            .newAuthentication(true);
+
+            securityContext.authenticate(req, resp, parameters);
+
+            final Principal callerPrincipal = securityContext.getCallerPrincipal();
+
+            resp.getWriter().write(callerPrincipal.getName());
+        }
+    }
+
 
     public static class SecurityContextHttpAuthenticationMechanism implements HttpAuthenticationMechanism {
         @Inject
