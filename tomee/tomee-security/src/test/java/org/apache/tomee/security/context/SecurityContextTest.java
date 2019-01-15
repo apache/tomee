@@ -17,7 +17,6 @@
 package org.apache.tomee.security.context;
 
 import org.apache.tomee.security.AbstractTomEESecurityTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -70,6 +69,21 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
                                                .get();
         assertEquals(200, response.getStatus());
         assertEquals("tomcat", response.readEntity(String.class));
+    }
+
+    @Test
+    public void callerInRole() throws Exception {
+        final String servlet = getAppUrl() + "/securityContextRole";
+        final Response response = ClientBuilder.newBuilder()
+                                               .build()
+                                               .target(servlet)
+                                               .queryParam("username", "tomcat")
+                                               .queryParam("password", "tomcat")
+                                               .queryParam("role", "tomcat")
+                                               .request()
+                                               .get();
+        assertEquals(200, response.getStatus());
+        assertEquals("ok", response.readEntity(String.class));
     }
 
     @Test
@@ -127,6 +141,26 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
         }
     }
 
+    @WebServlet(urlPatterns = "/securityContextRole")
+    public static class RoleServlet extends HttpServlet {
+        @Inject
+        private SecurityContext securityContext;
+
+        @Override
+        protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
+                throws ServletException, IOException {
+
+            final AuthenticationParameters parameters =
+                    AuthenticationParameters.withParams()
+                                            .credential(new UsernamePasswordCredential(req.getParameter("username"),
+                                                                                       req.getParameter("password")))
+                                            .newAuthentication(true);
+
+            securityContext.authenticate(req, resp, parameters);
+
+            resp.getWriter().write(securityContext.isCallerInRole(req.getParameter("role")) ? "ok" : "nok");
+        }
+    }
 
     public static class SecurityContextHttpAuthenticationMechanism implements HttpAuthenticationMechanism {
         @Inject

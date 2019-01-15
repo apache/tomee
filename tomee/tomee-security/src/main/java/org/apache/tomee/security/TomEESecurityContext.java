@@ -18,6 +18,7 @@ package org.apache.tomee.security;
 
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
 import org.apache.catalina.connector.Request;
+import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
@@ -39,6 +40,7 @@ import javax.security.enterprise.authentication.mechanism.http.AuthenticationPar
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Set;
 
 import static javax.security.auth.message.AuthStatus.SEND_CONTINUE;
@@ -68,7 +70,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean isCallerInRole(final String role) {
-        return false;
+        return securityService.isCallerInRole(role);
     }
 
     @Override
@@ -120,13 +122,15 @@ public class TomEESecurityContext implements SecurityContext {
         return serverAuthConfig.getAuthContext(null, null, null);
     }
 
-    public static void registerContainerAboutLogin(final Principal principal) {
+    public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (TomcatSecurityService.class.isInstance(securityService)) {
             final TomcatSecurityService tomcatSecurityService = (TomcatSecurityService) securityService;
             final Request request = OpenEJBSecurityListener.requests.get();
+            final GenericPrincipal genericPrincipal =
+                    new GenericPrincipal(principal.getName(), null, new ArrayList<>(groups), principal);
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
-                                              principal,
+                                              genericPrincipal,
                                               request.getWrapper().getRunAs());
         }
     }
