@@ -45,7 +45,7 @@ import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
-public class TomEEHttpMessageContext implements HttpMessageContext {
+public final class TomEEHttpMessageContext implements HttpMessageContext {
     private final CallbackHandler handler;
     private final MessageInfo messageInfo;
     private final Subject clientSubject;
