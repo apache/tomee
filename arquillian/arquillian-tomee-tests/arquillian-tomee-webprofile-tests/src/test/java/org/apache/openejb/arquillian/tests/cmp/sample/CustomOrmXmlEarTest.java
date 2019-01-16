@@ -53,7 +53,7 @@ public class CustomOrmXmlEarTest {
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "META-INF/openejb-jar.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "META-INF/ejb-jar.xml");
 
-        final WebArchive war = ShrinkWrap.create(WebArchive.class, CustomOrmXmlEarTest.class.getSimpleName() + ".jar")
+        final WebArchive war = ShrinkWrap.create(WebArchive.class, CustomOrmXmlEarTest.class.getSimpleName() + ".war")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
 
         final EnterpriseArchive archive = ShrinkWrap.create(EnterpriseArchive.class, CustomOrmXmlTest.class.getSimpleName() + ".ear")
