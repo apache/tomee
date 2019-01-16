@@ -64,6 +64,7 @@ public class CustomOrmXmlEarTest {
         return archive;
     }
 
+
     @Test
     @RunAsClient
     public void checkCmpJpaEntityORMMappings() throws Exception {
