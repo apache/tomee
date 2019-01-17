@@ -49,7 +49,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
     public Log4jLogStreamFactory() {
         try {
-            final boolean externalLogging = SystemInstance.get().getOptions().get("openejb.logger.external", false);
+            final boolean externalLogging = SystemInstance.get().getOptions().get("openejb.LOGGER.external", false);
             if (!externalLogging) {
                 configureInternal();
             }
@@ -180,7 +180,7 @@ public class Log4jLogStreamFactory implements LogStreamFactory {
 
         final SimpleLayout simpleLayout = new SimpleLayout();
         final ConsoleAppender newAppender = new ConsoleAppender(simpleLayout);
-        logger.addAppender(newAppender);
+        LOGGER.addAppender(newAppender);
         */
         return logger;
     }

@@ -78,7 +78,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
 
                     setRootLogger(value);
 
-                    value.readConfiguration(); // re-read the config to ensure we have a parent logger
+                    value.readConfiguration(); // re-read the config to ensure we have a parent LOGGER
                 } catch (final Exception e) {
                     // no-op
                 }
@@ -93,7 +93,7 @@ public class JuliLogStreamFactory implements LogStreamFactory {
                 JavaSecurityManagers.setSystemProperty("openjpa.Log", "org.apache.openejb.openjpa.JULOpenJPALogFactory");
             }
         } catch (final Exception ignored) {
-            // no-op: openjpa is not at the classpath so don't trigger it loading with our logger
+            // no-op: openjpa is not at the classpath so don't trigger it loading with our LOGGER
         }
 
         try {

@@ -245,7 +245,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (!options.get(VALIDATION_SKIP_PROPERTY, false)) {
             chain.add(new ValidateModules());
         } else {
-            DeploymentLoader.logger.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
+            DeploymentLoader.LOGGER.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
         }
         //END SNIPPET: code
         chain.add(new InitEjbDeployments());

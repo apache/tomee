@@ -105,7 +105,7 @@ public class Core {
                     "org.apache.openejb.util.proxy.ProxyManager",
                     "org.apache.openjpa.enhance.PCRegistry",
                     "org.apache.openjpa.lib.util.Localizer",
-                    "org.apache.webbeans.logger.WebBeansLoggerFacade",
+                    "org.apache.webbeans.LOGGER.WebBeansLoggerFacade",
                     "org.apache.xbean.naming.reference.SimpleReference",
                     "org.apache.xbean.propertyeditor.PropertyEditors",
                     "org.apache.xbean.propertyeditor.ReferenceIdentityMap",

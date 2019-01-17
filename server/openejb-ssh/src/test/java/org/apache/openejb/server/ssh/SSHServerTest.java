@@ -46,7 +46,7 @@ public class SSHServerTest {
     @BeforeClass
     public static void start() {
         System.setProperty("openejb.server.ssh.key", "src/test/key/ssh-key");
-        System.setProperty("openejb.logger.external", "true");
+        System.setProperty("openejb.LOGGER.external", "true");
         container = EJBContainer.createEJBContainer(new HashMap<Object, Object>() {{
             put(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, "true");
             put(DeploymentFilterable.CLASSPATH_FILTER_SYSTEMAPPS, "false");
@@ -56,7 +56,7 @@ public class SSHServerTest {
     @AfterClass
     public static void close() {
         container.close();
-        System.getProperties().remove("openejb.logger.external");
+        System.getProperties().remove("openejb.LOGGER.external");
         System.getProperties().remove("openejb.server.ssh.key");
     }
 

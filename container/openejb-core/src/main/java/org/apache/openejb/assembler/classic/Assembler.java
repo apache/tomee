@@ -3008,7 +3008,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         // Update the config tree
         config.facilities.resources.add(serviceInfo);
 
-        if (logger.isDebugEnabled()) { // weird to check parent logger but save time and it is almost never activated
+        if (logger.isDebugEnabled()) { // weird to check parent LOGGER but save time and it is almost never activated
             logger.getChildLogger("service").debug("createService.success", serviceInfo.service, serviceInfo.id, serviceInfo.className);
         }
     }

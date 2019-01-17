@@ -21,7 +21,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
 
-// WARN: don't add any logger or container dependency, it should stay self contained
+// WARN: don't add any LOGGER or container dependency, it should stay self contained
 public final class JavaSecurityManagers {
     private static final PrivilegedAction<Properties> GET_SYSTEM_PROPERTIES = System::getProperties;
 

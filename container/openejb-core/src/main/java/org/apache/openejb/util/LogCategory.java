@@ -21,7 +21,7 @@ package org.apache.openejb.util;
  * Contains Logger categories used in OpenEJB. Be careful when adding new Categories. For example, if a new Category
  * named OpenEJB.shutdown needs to be added, then the following is not a recommended way
  * public static final LogCategory OPENEJB_SHUTDOWN = new LogCategory("OpenEJB.shutdown");
- * The above is not recommended because the above logger has a parent logger in OpenEJB. If we change the Parent logger
+ * The above is not recommended because the above LOGGER has a parent LOGGER in OpenEJB. If we change the Parent LOGGER
  * category i.e. lets say to OPENEJB (all uppercase), then to maintain the parent-child relationship, we will need
  * to change other loggers too. For example, we will not need to change OPENEJB_STARTUP and OPENEJB_SERVER because
  * of the way they are defined (using OPENEJB.name as a prefix).

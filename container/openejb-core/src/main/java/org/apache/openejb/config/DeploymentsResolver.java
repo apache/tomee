@@ -55,7 +55,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
     private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
-    private static final Logger logger = DeploymentLoader.logger;
+    private static final Logger logger = DeploymentLoader.LOGGER;
     private static File lib;
 
     static {

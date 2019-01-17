@@ -332,7 +332,7 @@ public class TomcatLoader implements Loader {
             service.init(properties);
             return true;
         } catch (final ClassNotFoundException e) {
-            // no-op: logger.info("Optional service not installed: " + className);
+            // no-op: LOGGER.info("Optional service not installed: " + className);
         } catch (final Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to start: " + className, e);
         }

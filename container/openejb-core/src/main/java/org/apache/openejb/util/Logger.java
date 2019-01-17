@@ -41,7 +41,7 @@ public class Logger {
     @SuppressWarnings("UnusedDeclaration")
     public static String delegateClass() {
         if (logStreamFactory == null) {
-            throw new IllegalStateException("Call this method after having configured the logger");
+            throw new IllegalStateException("Call this method after having configured the LOGGER");
         }
         return logStreamFactory.getClass().getName();
     }
@@ -90,7 +90,7 @@ public class Logger {
         // we can be called before having SystemInstance so we need this hack to set some specific
         // environment
         // without changing LogStreamFactory contract
-        final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz", "openejb.logger.external" };
+        final String[] specialKeys = new String[] { "openejb.jul.forceReload", "openejb.jul.consoleHandlerClazz", "openejb.LOGGER.external" };
         final String[] originals = new String[specialKeys.length];
         for (int i = 0; i < specialKeys.length; i++) {
             originals[i] = JavaSecurityManagers.getSystemProperty(specialKeys[i]);
@@ -143,7 +143,7 @@ public class Logger {
                 return;
             }
             if (systemProperties.size() == 1 && "log4j.configurationFile".equals(systemProperties.stringPropertyNames().iterator().next())) {
-                // not a logger config but the overall config
+                // not a LOGGER config but the overall config
                 // since log4j2 uses it too we can't pollute logs with warnings there for that only
                 return;
             }
@@ -277,7 +277,7 @@ public class Logger {
     /**
      * Finds a Logger from the cache and returns it. If not found in cache then builds a Logger and returns it.
      *
-     * @param category - The category of the logger
+     * @param category - The category of the LOGGER
      * @param baseName - The baseName for the ResourceBundle
      * @return Logger
      */
@@ -661,7 +661,7 @@ public class Logger {
      * the key is not found in this ResourceBundle for this baseName, then it
      * recursively looks up its parent to find the message for a key. If no
      * message is found for a key, the key is returned as is and is logged by
-     * the logger.
+     * the LOGGER.
      *
      * @param key      String
      * @param baseName String

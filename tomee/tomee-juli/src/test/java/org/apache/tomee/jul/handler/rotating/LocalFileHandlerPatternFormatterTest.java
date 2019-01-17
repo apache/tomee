@@ -43,7 +43,7 @@ public class LocalFileHandlerPatternFormatterTest {
     @Test
     public void format() {
         final LogRecord record = new LogRecord(Level.FINE, "test message");
-        record.setLoggerName("logger");
+        record.setLoggerName("LOGGER");
         record.setLevel(Level.FINER);
         record.setMillis(123456789);
         record.setSourceClassName("my.class.Name");

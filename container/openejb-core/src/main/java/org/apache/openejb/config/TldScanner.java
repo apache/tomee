@@ -135,7 +135,7 @@ public class TldScanner {
                         }
                         url = new URL(path);
                     } catch (final MalformedURLException e) {
-                        DeploymentLoader.logger.warning("JSP tag library location bad: " + url.toExternalForm(), e);
+                        DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + url.toExternalForm(), e);
                         continue;
                     }
                 }
@@ -148,7 +148,7 @@ public class TldScanner {
                 try {
                     file = toFile(url).getCanonicalFile().getAbsoluteFile();
                 } catch (final IOException e) {
-                    DeploymentLoader.logger.warning("JSP tag library location bad: " + url.toExternalForm(), e);
+                    DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + url.toExternalForm(), e);
                     continue;
                 }
 
@@ -224,7 +224,7 @@ public class TldScanner {
                     file = file.getCanonicalFile().getAbsoluteFile();
                     urls.add(file.toURI().toURL());
                 } catch (final IOException e) {
-                    DeploymentLoader.logger.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
+                    DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
                 }
             }
         }
@@ -245,7 +245,7 @@ public class TldScanner {
                 tldLocations.add(url);
             }
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning for JSP tag libraries: " + file.getAbsolutePath(), e);
+            DeploymentLoader.LOGGER.warning("Error scanning for JSP tag libraries: " + file.getAbsolutePath(), e);
         }
 
         return tldLocations;
@@ -270,7 +270,7 @@ public class TldScanner {
                 urls.add(url);
             }
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
+            DeploymentLoader.LOGGER.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
         }
         // exception ignored
 
@@ -319,7 +319,7 @@ public class TldScanner {
             try {
                 urlSet = new UrlSet(classLoader);
             } catch (final IOException e) {
-                DeploymentLoader.logger.warning("Error scanning class loader for JSP tag libraries", e);
+                DeploymentLoader.LOGGER.warning("Error scanning class loader for JSP tag libraries", e);
             }
         }
 
@@ -330,7 +330,7 @@ public class TldScanner {
                     Filters.tokens("taglibs-standard-impl", "taglibs-standard-jstlel", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc"),
                     Filters.prefixes("commons-jcs-", "myfaces-", "tomcat-websocket.jar")); // myfaces is hardcoded in tomee
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning class loader for JSP tag libraries", e);
+            DeploymentLoader.LOGGER.warning("Error scanning class loader for JSP tag libraries", e);
         }
 
         return urlSet.getUrls();

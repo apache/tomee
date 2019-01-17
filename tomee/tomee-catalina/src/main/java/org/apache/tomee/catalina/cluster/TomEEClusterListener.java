@@ -171,7 +171,7 @@ public class TomEEClusterListener extends ClusterListener {
         }
     }
 
-    // lazy init of logger (can fail with shutdown hooks to kill the container) and executor
+    // lazy init of LOGGER (can fail with shutdown hooks to kill the container) and executor
     private static final class Static {
         private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomEEClusterListener.class);
         private static final Properties IC_PROPS = new Properties();
