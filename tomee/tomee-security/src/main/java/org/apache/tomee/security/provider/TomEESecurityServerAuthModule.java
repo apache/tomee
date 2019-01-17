@@ -30,7 +30,6 @@ import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;

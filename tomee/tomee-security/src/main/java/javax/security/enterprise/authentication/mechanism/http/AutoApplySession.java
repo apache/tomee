@@ -31,10 +31,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 public @interface AutoApplySession {
     @SuppressWarnings("all")
-    public final static class Literal extends AnnotationLiteral<AutoApplySession> implements AutoApplySession {
+    public static final class Literal extends AnnotationLiteral<AutoApplySession> implements AutoApplySession {
         private static final long serialVersionUID = 1L;
 
         public static final Literal INSTANCE = new Literal();
-
     }
 }
