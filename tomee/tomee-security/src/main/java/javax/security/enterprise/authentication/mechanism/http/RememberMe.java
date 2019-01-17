@@ -58,6 +58,7 @@ public @interface RememberMe {
     @Nonbinding
     String isRememberMeExpression() default "";
 
+    @SuppressWarnings("all")
     final class Literal extends AnnotationLiteral<RememberMe> implements RememberMe {
         private static final long serialVersionUID = 1L;
 
