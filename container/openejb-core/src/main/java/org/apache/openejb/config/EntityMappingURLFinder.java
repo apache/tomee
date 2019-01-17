@@ -16,19 +16,43 @@
  */
 package org.apache.openejb.config;
 
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
-interface EntityMappingURLFinder extends BiFunction<String, AppModule, URL> {
+import static java.util.Arrays.asList;
+
+enum EntityMappingURLFinder implements BiFunction<String, AppModule, URL> {
+
+    INSTANCE;
+
+    private final DefaultFinder defaultFinder = new DefaultFinder();
+
+    private final URLFinder urlFinder = new URLFinder();
+
+    private final AppModuleMetaInfFinder appModuleMetaInfFinder = new AppModuleMetaInfFinder();
+
+    private final List<BiFunction<String, AppModule, URL>> finders = asList(defaultFinder, urlFinder, appModuleMetaInfFinder);
 
 
-    class DefaultFinder implements EntityMappingURLFinder {
+    @Override
+    public URL apply(String location, AppModule appModule) {
+        for (BiFunction<String, AppModule, URL> finder : finders) {
+            URL url = finder.apply(location, appModule);
+            if (Objects.nonNull(url)) {
+                return url;
+            }
+        }
+        return null;
+    }
+
+
+    private class DefaultFinder implements BiFunction<String, AppModule, URL> {
 
         @Override
         public URL apply(String location, AppModule appModule) {
@@ -36,7 +60,7 @@ interface EntityMappingURLFinder extends BiFunction<String, AppModule, URL> {
         }
     }
 
-    class URLFinder implements EntityMappingURLFinder {
+    private class URLFinder implements BiFunction<String, AppModule, URL> {
 
         @Override
         public URL apply(String location, AppModule appModule) {
@@ -49,26 +73,38 @@ interface EntityMappingURLFinder extends BiFunction<String, AppModule, URL> {
         }
     }
 
-    class AppModuleMetaInfFinder implements EntityMappingURLFinder {
+    private class AppModuleMetaInfFinder implements BiFunction<String, AppModule, URL> {
 
         @Override
         public URL apply(String location, AppModule appModule) {
+
             if (!location.contains(DeploymentLoader.META_INF)) {
                 return null;
             }
 
             for (EjbModule ejbModule : appModule.getEjbModules()) {
 
-                try {
-                    final ResourceFinder finder = new ResourceFinder("", ejbModule.getClassLoader());
-                    Map<String, URL> stringURLMap = DeploymentLoader.mapDescriptors(finder);
-                    String fileName = location.replace(DeploymentLoader.META_INF, "");
-                    boolean exist = stringURLMap.get(fileName) != null;
-                    System.out.println(exist);
-                } catch (Exception ex) {
-                    CmpJpaConversion.LOGGER.error("Unable to read entity mappings from " + location, ex);
-                    return null;
+                URL url = getUrl(location, ejbModule);
+                if (Objects.nonNull(url)) {
+                    return url;
                 }
+            }
+            return null;
+        }
+
+        private URL getUrl(String location, EjbModule ejbModule) {
+            try {
+                final ResourceFinder finder = new ResourceFinder("", ejbModule.getClassLoader());
+                Map<String, URL> stringURLMap = DeploymentLoader.mapDescriptors(finder);
+                String fileName = location.replace(DeploymentLoader.META_INF, "");
+                URL url = stringURLMap.get(fileName);
+                boolean exist = url != null;
+                System.out.println(exist);
+                return url;
+            } catch (Exception ex) {
+                CmpJpaConversion.LOGGER.error("Unable to read entity mappings from " + location, ex);
+                return null;
             }
         }
     }
+}
