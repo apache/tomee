@@ -77,6 +77,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -91,56 +92,32 @@ class CmpJpaConversion implements DynamicDeployer {
 
     // A specific set of fields that get marked as transient in the superclass mappings 
     private static final Set<String> ENHANCED_FIELDS = Collections.unmodifiableSet(new TreeSet<String>(Arrays.asList(
-        "pcInheritedFieldCount",
-        "pcFieldNames",
-        "pcFieldTypes",
-        "pcFieldFlags",
-        "pcPCSuperclass",
-        "pcStateManager",
-        "class$Ljava$lang$String",
-        "class$Ljava$lang$Integer",
-        "class$Lcom$sun$ts$tests$common$ejb$wrappers$CMP11Wrapper",
-        "pcDetachedState",
-        "serialVersionUID"
+            "pcInheritedFieldCount",
+            "pcFieldNames",
+            "pcFieldTypes",
+            "pcFieldFlags",
+            "pcPCSuperclass",
+            "pcStateManager",
+            "class$Ljava$lang$String",
+            "class$Ljava$lang$Integer",
+            "class$Lcom$sun$ts$tests$common$ejb$wrappers$CMP11Wrapper",
+            "pcDetachedState",
+            "serialVersionUID"
     )));
 
     private static EntityMappings readEntityMappings(final String location, final AppModule appModule) {
 
-        // first try the classpath
-        EntityMappings entitymappings = null;
-
         try {
-            final URL cpUrl = Thread.currentThread().getContextClassLoader().getResource(location);
-            entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(cpUrl));
-        } catch (Exception e) {
-            // ignore
-        }
-
-        if (entitymappings == null) {
-            // then try reading as a URL
-            try {
-                final URL url = new URL(location);
-                entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
-            } catch (Exception e) {
-                LOGGER.error("Unable to read entity mappings from " + location, e);
+            URL url = EntityMappingURLFinder.INSTANCE.apply(location, appModule);
+            if (Objects.isNull(url)) {
+                return null;
             }
+            return (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
+        } catch (Exception exp) {
+            LOGGER.error("Unable to read entity mappings from " + location, exp);
+            return null;
         }
 
-        for (EjbModule ejbModule : appModule.getEjbModules()) {
-
-          try {
-              final ResourceFinder finder = new ResourceFinder("", ejbModule.getClassLoader());
-              Map<String, URL> stringURLMap = DeploymentLoader.mapDescriptors(finder);
-              boolean exist = stringURLMap.get(location) != null;
-              System.out.println(exist);
-          }catch (Exception ex) {
-              ex.printStackTrace();
-          }
-
-        }
-
-
-        return entitymappings;
     }
 
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
@@ -218,7 +195,7 @@ class CmpJpaConversion implements DynamicDeployer {
 
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
             for (final Entity entity : cmpMappings.getEntity()) {
-                if (! persistenceUnit.getClazz().contains(entity.getClazz())) {
+                if (!persistenceUnit.getClazz().contains(entity.getClazz())) {
                     persistenceUnit.getClazz().add(entity.getClazz());
                 }
             }
@@ -348,12 +325,12 @@ class CmpJpaConversion implements DynamicDeployer {
         // left not found?
         if (leftEntity == null) {
             throw new OpenEJBException("Role source " + leftEjbName + " defined in relationship role " +
-                relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
+                    relation.getEjbRelationName() + "::" + leftRole.getEjbRelationshipRoleName() + " not found");
         }
         // right not found?
         if (rightEntity == null) {
             throw new OpenEJBException("Role source " + rightEjbName + " defined in relationship role " +
-                relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
+                    relation.getEjbRelationName() + "::" + rightRole.getEjbRelationshipRoleName() + " not found");
         }
 
         final Attributes rightAttributes = rightEntity.getAttributes();
@@ -504,7 +481,8 @@ class CmpJpaConversion implements DynamicDeployer {
     /**
      * Generate the CMP mapping data for an individual
      * EntityBean.
-     *  @param ejbModule      The module containing the bean.
+     *
+     * @param ejbModule      The module containing the bean.
      * @param ignoreClasses
      * @param entityMappings The accumulated set of entity mappings.
      * @param bean           The been we're generating the mapping for.
