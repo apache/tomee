@@ -103,7 +103,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         "serialVersionUID"
     )));
 
-    public static EntityMappings readEntityMappings(final String location) {
+    private static EntityMappings readEntityMappings(final String location) {
 
         // first try the classpath
         EntityMappings entitymappings = null;
