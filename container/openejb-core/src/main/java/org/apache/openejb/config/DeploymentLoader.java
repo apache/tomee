@@ -101,7 +101,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
 
-    private static final String META_INF = "META-INF/";
+    static final String META_INF = "META-INF/";
 
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
     public static final String EAR_SCOPED_CDI_BEANS = "ear-scoped-cdi-beans_";
