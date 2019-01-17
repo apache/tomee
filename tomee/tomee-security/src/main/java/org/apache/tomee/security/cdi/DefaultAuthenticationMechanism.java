@@ -54,7 +54,7 @@ public class DefaultAuthenticationMechanism implements HttpAuthenticationMechani
         delegate.cleanSubject(request, response, httpMessageContext);
     }
 
-    public void setDelegate(final HttpAuthenticationMechanism delegate) {
+    void setDelegate(final HttpAuthenticationMechanism delegate) {
         this.delegate = delegate;
     }
 
