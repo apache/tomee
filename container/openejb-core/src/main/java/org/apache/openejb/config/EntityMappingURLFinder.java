@@ -16,6 +16,8 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.net.MalformedURLException;
@@ -29,7 +31,10 @@ import static java.util.Arrays.asList;
 
 enum EntityMappingURLFinder implements BiFunction<String, AppModule, URL> {
 
+
+
     INSTANCE;
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, EntityMappingURLFinder.class);
 
     private final DefaultFinder defaultFinder = new DefaultFinder();
 
@@ -67,7 +72,7 @@ enum EntityMappingURLFinder implements BiFunction<String, AppModule, URL> {
             try {
                 return new URL(location);
             } catch (MalformedURLException e) {
-                CmpJpaConversion.LOGGER.error("Unable to read entity mappings from " + location, e);
+                LOGGER.info("Unable to using URL" + location, e);
                 return null;
             }
         }
@@ -95,14 +100,11 @@ enum EntityMappingURLFinder implements BiFunction<String, AppModule, URL> {
         private URL getUrl(String location, EjbModule ejbModule) {
             try {
                 final ResourceFinder finder = new ResourceFinder("", ejbModule.getClassLoader());
-                Map<String, URL> stringURLMap = DeploymentLoader.mapDescriptors(finder);
+                Map<String, URL> map = DeploymentLoader.mapDescriptors(finder);
                 String fileName = location.replace(DeploymentLoader.META_INF, "");
-                URL url = stringURLMap.get(fileName);
-                boolean exist = url != null;
-                System.out.println(exist);
-                return url;
+                return map.get(fileName);
             } catch (Exception ex) {
-                CmpJpaConversion.LOGGER.error("Unable to read entity mappings from " + location, ex);
+                LOGGER.error("Unable to read entity mappings from " + location, ex);
                 return null;
             }
         }
