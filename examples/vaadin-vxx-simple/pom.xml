@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>examples</artifactId>
+    <groupId>org.apache.tomee</groupId>
+    <version>8.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>vaadin-vxx-simple</artifactId>
+  <name>OpenEJB :: Examples :: Vaadin LATEST</name>
+  <packaging>war</packaging>
+
+  <!--
+This section allows you to configure where to publish libraries for sharing.
+It is not required and may be deleted.  For more information see:
+http://maven.apache.org/plugins/maven-deploy-plugin/
+-->
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <failOnMissingWebXml>false</failOnMissingWebXml>
+    <transpilation.output>${project.build.directory}/build</transpilation.output>
+    <webapp.directory>src/main/webapp</webapp.directory>
+
+    <vaadin.version>12.0.3</vaadin.version>
+    <vaadin.productionMode>false</vaadin.productionMode>
+
+  </properties>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>vaadin-prereleases</id>
+      <url>https://maven.vaadin.com/vaadin-prereleases</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <repositories>
+    <!--Releases-->
+    <repository>
+      <id>vaadin-addons</id>
+      <url>http://maven.vaadin.com/vaadin-addons</url>
+    </repository>
+
+    <!--Pre-Releases-->
+    <repository>
+      <id>vaadin-prereleases</id>
+      <url>http://maven.vaadin.com/vaadin-prereleases</url>
+    </repository>
+  </repositories>
+
+
+  <dependencyManagement>
+    <dependencies>
+      <!--Specs-->
+      <dependency>
+        <groupId>javax</groupId>
+        <artifactId>javaee-api</artifactId>
+        <version>8.0</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!--Vaadin -->
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-bom</artifactId>
+        <version>${vaadin.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!--Vaadin -->
+    <dependency>
+      <groupId>com.vaadin</groupId>
+      <artifactId>vaadin-core</artifactId>
+    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>com.vaadin</groupId>-->
+    <!--<artifactId>vaadin-cdi</artifactId>-->
+    <!--</dependency>-->
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tomee.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!--<tomeeClassifier>microprofile</tomeeClassifier>-->
+          <tomeeClassifier>webprofile</tomeeClassifier>
+          <!--<context>${project.artifactId}</context>-->
+          <context>ROOT</context>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>_vaadin_v10_productionMode</id>
+      <activation>
+        <property>
+          <name>vaadin.productionMode</name>
+        </property>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>flow-server-production-mode</artifactId>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <configuration>
+              <webResources>
+                <resource>
+                  <directory>${transpilation.output}</directory>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-maven-plugin</artifactId>
+            <version>${vaadin.version}</version>
+            <executions>
+              <execution>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>copy-production-files</goal>
+                  <goal>package-for-production</goal>
+                </goals>
+                <configuration>
+                  <transpileOutputDirectory>${webapp.directory}</transpileOutputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-clean-plugin</artifactId>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>${webapp.directory}/frontend-es5</directory>
+                </fileset>
+                <fileset>
+                  <directory>${webapp.directory}/frontend-es6</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
