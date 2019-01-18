@@ -155,11 +155,13 @@ public class AutoConnectionTrackerTest extends TestCase {
             runTest(() -> {
                 try {
                     bean.nonLeakyTxMethod();
+                    System.gc();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
 
+            System.gc();
             cf.getConnection().close();
             assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
             assertLogs(logCapture, 0, "Detected abandoned connection");
@@ -175,6 +177,7 @@ public class AutoConnectionTrackerTest extends TestCase {
                 }
             });
 
+            System.gc();
             cf.getConnection().close();
             assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
             assertLogs(logCapture, 0, "Detected abandoned connection");
