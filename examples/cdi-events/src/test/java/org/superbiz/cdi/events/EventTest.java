@@ -38,8 +38,8 @@ public class EventTest {
 
     @BeforeClass
     public static void start() throws NamingException {
-        initialLogProperty = System.getProperty("openejb.LOGGER.external");
-        System.setProperty("openejb.LOGGER.external", "true");
+        initialLogProperty = System.getProperty("openejb.logger.external");
+        System.setProperty("openejb.logger.external", "true");
         container = EJBContainer.createEJBContainer();
     }
 
@@ -49,9 +49,9 @@ public class EventTest {
             container.close();
         }
         if (initialLogProperty != null) {
-            System.setProperty("openejb.LOGGER.external", initialLogProperty);
+            System.setProperty("openejb.logger.external", initialLogProperty);
         } else {
-            System.getProperties().remove("openejb.LOGGER.external");
+            System.getProperties().remove("openejb.logger.external");
         }
     }
 

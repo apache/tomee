@@ -57,7 +57,7 @@ public class LoggingSqlTest {
     public void checkOutput() throws Exception {
         final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SQL, LoggingPreparedSqlStatement.class);
         final JuliLogStream stream = JuliLogStream.class.cast(Reflections.get(logger, "logStream"));
-        final LoggerCreator julCreator = LoggerCreator.class.cast(Reflections.get(stream, "LOGGER"));
+        final LoggerCreator julCreator = LoggerCreator.class.cast(Reflections.get(stream, "logger"));
         final java.util.logging.Logger actualLogger = julCreator.call();
         final Collection<String> msgs = new LinkedList<>();
         final Handler handler = new Handler() {

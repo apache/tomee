@@ -517,7 +517,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     LogUtils.getL7dLogger(ValidationExceptionMapper.class).setLevel(Level.parse(level));
                 } catch (final UnsupportedOperationException uoe) {
                     LOGGER.warning("Can't set level " + level + " on " +
-                            "org.apache.cxf.jaxrs.validation.ValidationExceptionMapper LOGGER, " +
+                            "org.apache.cxf.jaxrs.validation.ValidationExceptionMapper logger, " +
                             "please configure it in your logging framework.");
                 }
             }

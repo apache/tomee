@@ -55,7 +55,7 @@ public class RoundRobinConnectionStrategyTest {
     static final Logger logger = Logger.getLogger("org.apache.openejb.client");
 
     static {
-//        set(LOGGER, Level.FINEST);
+//        set(logger, Level.FINEST);
 //        set(Logger.getLogger("OpenEJB.client"), Level.FINEST);
     }
 

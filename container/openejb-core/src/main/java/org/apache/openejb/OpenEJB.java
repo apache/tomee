@@ -308,7 +308,7 @@ public final class OpenEJB {
         }
     }
 
-    private static Logger logger() { // do it lazily to avoid to trigger LOGGER creation before properties are read + generally useless
+    private static Logger logger() { // do it lazily to avoid to trigger logger creation before properties are read + generally useless
         return Logger.getInstance(LogCategory.OPENEJB_STARTUP, "org.apache.openejb.util.resources");
     }
 

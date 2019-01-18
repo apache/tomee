@@ -83,7 +83,7 @@ public class PersistenceBootstrap {
     public static final String DEFAULT_PROVIDER = getDefaultProvider();
     private static volatile boolean systemDone;
 
-    private static String getDefaultProvider() { // TODO: we shouldn't use a LOGGER here, too early!
+    private static String getDefaultProvider() { // TODO: we shouldn't use a logger here, too early!
         final Class<PersistenceBootstrap> clzz = PersistenceBootstrap.class;
         final String name = "/META-INF/" + clzz.getName() + ".provider";
 

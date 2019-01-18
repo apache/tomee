@@ -50,7 +50,7 @@ public class PerfRunner {
     @Setup
     public void setup() {
         {
-            defaultLogger = Logger.getLogger("perf.LOGGER.default");
+            defaultLogger = Logger.getLogger("perf.logger.default");
             cleanHandlers(defaultLogger);
 
             final Map<String, String> config = new HashMap<>();
@@ -68,7 +68,7 @@ public class PerfRunner {
             });
         }
         {
-            bufferizedLogger = Logger.getLogger("perf.LOGGER.buffer");
+            bufferizedLogger = Logger.getLogger("perf.logger.buffer");
             cleanHandlers(bufferizedLogger);
 
             final Map<String, String> config = new HashMap<>();

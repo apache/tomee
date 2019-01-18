@@ -65,7 +65,7 @@ public class LoggingJAXRSCommons {
         final Logger logger = Logger.getInstance(LogCategory.OPENEJB_RS, RESTService.class);
         final LogStreamAsync stream = LogStreamAsync.class.cast(Reflections.get(logger, "logStream"));
         final JuliLogStream ls = JuliLogStream.class.cast(Reflections.get(stream, "ls"));
-        final LoggerCreator julCreator = LoggerCreator.class.cast(Reflections.get(ls, "LOGGER"));
+        final LoggerCreator julCreator = LoggerCreator.class.cast(Reflections.get(ls, "logger"));
         return julCreator.call();
     }
 
