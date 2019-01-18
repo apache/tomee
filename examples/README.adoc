@@ -26,12 +26,18 @@ If you want to translate an existing example into another language you just need
 
 1. Find two letter code for the language you want to translate to: https://www.loc.gov/standards/iso639-2/php/code_list.php
 
+For example, Spanish: `es` or Portuguese: `pt`
+
+
 2. Create the translated version of the readme file with the suffix:
 
         README_<TwoDigitLanguageCode>.adoc
 
+For example, Spanish: `README_es.adoc` or Portuguese: `README_pt.adoc`
+
+
 Check https://github.com/apache/tomee/tree/master/examples/access-timeout for an example on how the translation into Spanish looks like.
 
-That's it!, Tomitribe website generator will pickup the language and update the examples index automatically without any further configuration.
+That's it!, TomEE website generator will pickup the language and update the examples index automatically without any further configuration.
 
 
