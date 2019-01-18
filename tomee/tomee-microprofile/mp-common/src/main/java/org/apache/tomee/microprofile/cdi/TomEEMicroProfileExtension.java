@@ -16,8 +16,10 @@
  */
 package org.apache.tomee.microprofile.cdi;
 
-import org.apache.geronimo.microprofile.impl.health.jaxrs.HealthChecksEndpoint;
-import org.apache.geronimo.microprofile.metrics.jaxrs.MetricsEndpoints;
+import org.apache.geronimo.microprofile.common.jaxrs.HealthChecksEndpoint;
+import org.apache.geronimo.microprofile.impl.health.cdi.CdiHealthChecksEndpoint;
+import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
+import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
 import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
@@ -39,15 +41,10 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.Interceptor;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.enterprise.inject.spi.WithAnnotations;
-import javax.enterprise.util.AnnotationLiteral;
 
-import java.util.List;
-
-import static javax.enterprise.inject.spi.InterceptionType.AROUND_INVOKE;
 import static javax.interceptor.Interceptor.Priority.LIBRARY_BEFORE;
 
 public class TomEEMicroProfileExtension implements Extension {
@@ -103,9 +100,11 @@ public class TomEEMicroProfileExtension implements Extension {
                         @Priority(BEFORE_MICROPROFILE_EXTENSIONS)
                         final AfterBeanDiscovery afterBeanDiscovery,
                         final BeanManager beanManager) {
+        /*
         final List<Interceptor<?>> interceptors =
                 beanManager.resolveInterceptors(AROUND_INVOKE, new AnnotationLiteral<Counted>() {});
         interceptors.isEmpty();
+        */
     }
 
     public boolean requiresConfig() {
@@ -156,7 +155,7 @@ public class TomEEMicroProfileExtension implements Extension {
         SystemInstance.get().addObserver(new TomEEMicroProfileAfterApplicationCreated());
     }
 
-    static class TomEEMicroProfileAfterApplicationCreated {
+    public static class TomEEMicroProfileAfterApplicationCreated {
         public void processApplication(
                 @org.apache.openejb.observer.Observes
                 final BeforeEvent<AssemblerAfterApplicationCreated> afterApplicationCreated) {
@@ -166,11 +165,12 @@ public class TomEEMicroProfileExtension implements Extension {
             final AppInfo app = afterApplicationCreated.getEvent().getApp();
             for (final WebAppInfo webApp : app.webApps) {
                 if (webApp.restApplications.isEmpty()) {
-                    if (!microProfileExtension.requiresMetrics) {
-                        webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
-                    }
-
                     webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
+                    webApp.restClass.removeIf(className -> className.equals(CdiHealthChecksEndpoint.class.getName()));
+
+                    webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
+                    webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
+
                     webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
                 }
             }
