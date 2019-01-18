@@ -18,6 +18,7 @@ package org.apache.tomee.microprofile.cdi;
 
 import org.apache.geronimo.microprofile.common.jaxrs.HealthChecksEndpoint;
 import org.apache.geronimo.microprofile.impl.health.cdi.CdiHealthChecksEndpoint;
+import org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension;
 import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
 import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
 import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
@@ -26,30 +27,19 @@ import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.assembler.classic.event.AssemblerAfterApplicationCreated;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.event.BeforeEvent;
-import org.eclipse.microprofile.metrics.annotation.Counted;
-import org.eclipse.microprofile.metrics.annotation.Gauge;
-import org.eclipse.microprofile.metrics.annotation.Metered;
-import org.eclipse.microprofile.metrics.annotation.Metric;
-import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.annotation.Priority;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.AfterBeanDiscovery;
-import javax.enterprise.inject.spi.Annotated;
-import javax.enterprise.inject.spi.AnnotatedType;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.inject.spi.ProcessInjectionPoint;
-import javax.enterprise.inject.spi.WithAnnotations;
+import java.util.Collection;
+import java.util.Optional;
 
-import static javax.interceptor.Interceptor.Priority.LIBRARY_BEFORE;
+import static javax.interceptor.Interceptor.Priority.PLATFORM_AFTER;
 
 public class TomEEMicroProfileExtension implements Extension {
-    private static final int BEFORE_MICROPROFILE_EXTENSIONS = LIBRARY_BEFORE - 10;
-
     private boolean requiresConfig;
     private boolean requiresJwt;
     private boolean requiresFaultTolerance;
@@ -59,52 +49,27 @@ public class TomEEMicroProfileExtension implements Extension {
     private boolean requiresOpenTracing;
     private boolean requiresRestClient;
 
-    void beforeBeanDiscovery(@Observes
-                             @Priority(BEFORE_MICROPROFILE_EXTENSIONS) final BeforeBeanDiscovery beforeBeanDiscovery) {
-        this.requiresConfig = true;
-        this.requiresJwt = true;
-        this.requiresFaultTolerance = true;
-        // MP Metrics is not required unless specific annotations are found (or additional REST enpoints are deployed)
-        this.requiresMetrics = false;
-        this.requiresHealth = true;
-        this.requiresOpenApi = true;
-        this.requiresOpenTracing = true;
-        this.requiresRestClient = true;
-    }
+    void afterDeploymentValidation(
+            @Observes
+            @Priority(PLATFORM_AFTER + 10)
+            final AfterDeploymentValidation afterDeploymentValidation,
+            final BeanManager beanManager) {
+        requiresConfig = true;
 
-    void processMPAnnotatedTypes(@Observes
-                                 @Priority(BEFORE_MICROPROFILE_EXTENSIONS)
-                                 @WithAnnotations({
-                                         Metric.class,
-                                         Counted.class,
-                                         Gauge.class,
-                                         Metered.class,
-                                         Timed.class
-                                 }) final ProcessAnnotatedType<?> processAnnotatedType) {
+        requiresJwt = true;
 
-        final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
-        if (annotatedType.getJavaClass().getName().startsWith("org.apache.geronimo.microprofile")) {
-            return;
-        }
+        requiresFaultTolerance = true;
 
-        hasMetricsAnnotations(annotatedType);
-    }
+        requiresMetrics = false;
 
-    void processMPInjectionPoints(@Observes
-                                  @Priority(BEFORE_MICROPROFILE_EXTENSIONS)
-                                  final ProcessInjectionPoint<?, ?> processInjectionPoint) {
-        hasMetricsAnnotations(processInjectionPoint.getInjectionPoint().getAnnotated());
-    }
+        final GeronimoHealthExtension healthExtension = beanManager.getExtension(GeronimoHealthExtension.class);
+        requiresHealth = !Optional.ofNullable(healthExtension.getChecks()).map(Collection::isEmpty).orElse(true);
 
-    void processMPBeans(@Observes
-                        @Priority(BEFORE_MICROPROFILE_EXTENSIONS)
-                        final AfterBeanDiscovery afterBeanDiscovery,
-                        final BeanManager beanManager) {
-        /*
-        final List<Interceptor<?>> interceptors =
-                beanManager.resolveInterceptors(AROUND_INVOKE, new AnnotationLiteral<Counted>() {});
-        interceptors.isEmpty();
-        */
+        requiresOpenApi = false;
+
+        requiresOpenTracing = false;
+
+        requiresRestClient = false;
     }
 
     public boolean requiresConfig() {
@@ -139,18 +104,6 @@ public class TomEEMicroProfileExtension implements Extension {
         return requiresRestClient;
     }
 
-    private void hasMetricsAnnotations(final Annotated annotated) {
-        if (requiresMetrics) {
-            return;
-        }
-
-        requiresMetrics = annotated.isAnnotationPresent(Metric.class) ||
-                          annotated.isAnnotationPresent(Counted.class) ||
-                          annotated.isAnnotationPresent(Gauge.class) ||
-                          annotated.isAnnotationPresent(Metered.class) ||
-                          annotated.isAnnotationPresent(Timed.class);
-    }
-
     static {
         SystemInstance.get().addObserver(new TomEEMicroProfileAfterApplicationCreated());
     }
@@ -164,14 +117,22 @@ public class TomEEMicroProfileExtension implements Extension {
                     CDI.current().getBeanManager().getExtension(TomEEMicroProfileExtension.class);
             final AppInfo app = afterApplicationCreated.getEvent().getApp();
             for (final WebAppInfo webApp : app.webApps) {
+                webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
+                webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
+
                 if (webApp.restApplications.isEmpty()) {
-                    webApp.restClass.removeIf(className -> className.equals(HealthChecksEndpoint.class.getName()));
-                    webApp.restClass.removeIf(className -> className.equals(CdiHealthChecksEndpoint.class.getName()));
+                    if (!microProfileExtension.requiresHealth()) {
+                        webApp.restClass.removeIf(
+                                className -> className.equals(CdiHealthChecksEndpoint.class.getName()));
+                    }
 
-                    webApp.restClass.removeIf(className -> className.equals(MetricsEndpoints.class.getName()));
-                    webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
+                    if (!microProfileExtension.requiresMetrics()) {
+                        webApp.restClass.removeIf(className -> className.equals(CdiMetricsEndpoints.class.getName()));
+                    }
 
-                    webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
+                    if (!microProfileExtension.requiresOpenApi()) {
+                        webApp.restClass.removeIf(className -> className.equals(OpenAPIEndpoint.class.getName()));
+                    }
                 }
             }
         }
