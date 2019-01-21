@@ -2,14 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>examples</artifactId>
-    <groupId>org.apache.tomee</groupId>
-    <version>8.0.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
 
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-lts-v10-simple</artifactId>
+  <version>8.0.0-SNAPSHOT</version>
+
   <name>OpenEJB :: Examples :: Vaadin LTS V10</name>
   <packaging>war</packaging>
 
@@ -30,14 +28,17 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
   </distributionManagement>
 
   <properties>
-    <failOnMissingWebXml>false</failOnMissingWebXml>
-    <transpilation.output>${project.build.directory}/build</transpilation.output>
-    <webapp.directory>src/main/webapp</webapp.directory>
+    <!--<maven.compiler.release>11</maven.compiler.release>-->
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.source>8</maven.compiler.source>
 
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <vaadin.version>10.0.9</vaadin.version>
-    <vaadin.productionMode>false</vaadin.productionMode>
 
+    <transpilation.output>${project.build.directory}/build</transpilation.output>
+    <webapp.directory>src/main/webapp</webapp.directory>
   </properties>
 
   <pluginRepositories>
@@ -111,6 +112,10 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.2</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -119,9 +124,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <profile>
       <id>_vaadin_v10_productionMode</id>
       <activation>
-        <property>
-          <name>vaadin.productionMode</name>
-        </property>
+        <activeByDefault>false</activeByDefault>
       </activation>
 
       <dependencies>
@@ -136,7 +139,9 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
+            <version>3.2.2</version>
             <configuration>
+              <failOnMissingWebXml>false</failOnMissingWebXml>
               <webResources>
                 <resource>
                   <directory>${transpilation.output}</directory>
@@ -164,6 +169,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-clean-plugin</artifactId>
+            <version>3.1.0</version>
             <configuration>
               <filesets>
                 <fileset>
