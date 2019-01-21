@@ -133,8 +133,6 @@ public class CdiScanner implements BdaScannerService {
                 if (!ejbJar.moduleId.equals(startupObject.getWebContext().getId())) {
                     continue;
                 }
-            } else if (ejbJar.webapp && !appInfo.webAppAlone) {
-                continue;
             }
 
             if (appInfo.webAppAlone || !ejbJar.webapp) {
