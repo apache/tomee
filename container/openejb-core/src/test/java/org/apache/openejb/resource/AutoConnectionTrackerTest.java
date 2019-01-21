@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +16,6 @@
  */
 package org.apache.openejb.resource;
 
-import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
 import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
@@ -33,14 +31,12 @@ import org.apache.openejb.assembler.classic.SecurityServiceInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.ConnectorReference;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.junit.Ignore;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -150,58 +146,70 @@ public class AutoConnectionTrackerTest extends TestCase {
         final FakeRemote bean = (FakeRemote) containerSystem.getJNDIContext().lookup("java:global/FakeEjbJar/FakeEjbJar/TestBean!org.apache.openejb.resource.AutoConnectionTrackerTest$FakeRemote");
 
 
-        {
-            logCapture.clear();
-            runTest(() -> {
-                try {
-                    bean.nonLeakyTxMethod();
-                    System.gc();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+        nonLeakyTx(logCapture, cf, bean);
+        nonLeakyNonTx(logCapture, cf, bean);
+        leakyTx(logCapture, (FakeConnectionFactoryImpl) cf, bean);
+        leakyNonTx(logCapture, (FakeConnectionFactoryImpl) cf, bean);
+    }
 
-            System.gc();
-            cf.getConnection().close();
-            assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
-            assertLogs(logCapture, 0, "Detected abandoned connection");
-            assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
-        }
-        {
-            logCapture.clear();
-            runTest(() -> {
-                try {
-                    bean.nonleakyNonTxMethod();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+    private void leakyNonTx(LogCaptureHandler logCapture, FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
+        logCapture.clear();
+        bean.leakyNonTxMethod();
+        System.gc();
 
-            System.gc();
-            cf.getConnection().close();
-            assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
-            assertLogs(logCapture, 0, "Detected abandoned connection");
-            assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
-        }
-        {
-            logCapture.clear();
-            bean.leakyTxMethod();
-            System.gc();
+        final AutoConnectionTracker tracker = getAutoConnectionTracker(cf);
+        tracker.setEnvironment(null, null);
 
-            final AutoConnectionTracker tracker = getAutoConnectionTracker((FakeConnectionFactoryImpl) cf);
-            tracker.setEnvironment(null, null);
-            assertLogs(logCapture, 1, "Transaction complete, but connection still has handles associated");
-            assertLogs(logCapture, 1, "Detected abandoned connection");
-        }
-        {
-            logCapture.clear();
-            bean.leakyNonTxMethod();
-            System.gc();
+        assertLogs(logCapture, 1, "Detected abandoned connection");
+    }
 
-            final AutoConnectionTracker tracker = getAutoConnectionTracker((FakeConnectionFactoryImpl) cf);
-            tracker.setEnvironment(null, null);
-            assertLogs(logCapture, 1, "Detected abandoned connection");
-        }
+    private void leakyTx(LogCaptureHandler logCapture, FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
+        logCapture.clear();
+        bean.leakyTxMethod();
+        System.gc();
+
+        final AutoConnectionTracker tracker = getAutoConnectionTracker(cf);
+        tracker.setEnvironment(null, null);
+
+        assertLogs(logCapture, 1, "Transaction complete, but connection still has handles associated");
+        assertLogs(logCapture, 1, "Detected abandoned connection");
+    }
+
+    private void nonLeakyNonTx(LogCaptureHandler logCapture, FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
+        logCapture.clear();
+        runTest(() -> {
+            try {
+                bean.nonleakyNonTxMethod();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        System.gc();
+        cf.getConnection().close();
+
+        assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
+        assertLogs(logCapture, 0, "Detected abandoned connection");
+        assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
+    }
+
+    private void nonLeakyTx(LogCaptureHandler logCapture, FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
+        logCapture.clear();
+        runTest(() -> {
+            try {
+                bean.nonLeakyTxMethod();
+                System.gc();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        System.gc();
+        cf.getConnection().close();
+
+        assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
+        assertLogs(logCapture, 0, "Detected abandoned connection");
+        assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
     }
 
     // this is a very quick and dirty hack for debugging purpose

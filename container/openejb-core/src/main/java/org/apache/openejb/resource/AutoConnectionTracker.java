@@ -82,13 +82,22 @@ public class AutoConnectionTracker implements ConnectionTracker {
      */
     public void setEnvironment(final ConnectionInfo connectionInfo, final String key) {
         ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
-        while (reference != null) {
-            reference.clear();
-            references.remove(reference.managedConnectionInfo);
 
+        if (reference == null && !references.isEmpty()) {
+            // Wait and check referenceQueue again. Sometimes GC is not fast enough to put all phantom references in the queue on time
+            try {
+                Thread.sleep(0, 100);
+            } catch (InterruptedException ignored) {
+            }
+            reference = (ProxyPhantomReference) referenceQueue.poll();
+        }
+        while (reference != null) {
             if (cleanupLeakedConnections) {
                 final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
                 reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+            } else {
+                reference.clear();
+                references.remove(reference.managedConnectionInfo);
             }
 
             logger.warning("Detected abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
