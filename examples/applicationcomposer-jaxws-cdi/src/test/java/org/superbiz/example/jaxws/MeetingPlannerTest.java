@@ -24,19 +24,26 @@ import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
-import org.codehaus.stax2.io.Stax2StringSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.util.JAXBSource;
 import javax.xml.namespace.QName;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import java.net.MalformedURLException;
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
 
@@ -74,9 +81,34 @@ public class MeetingPlannerTest {
         final Service service = Service.create(
                 new URL("http://127.0.0.1:" + JAX_WS_PORT + "/demo/meeting-planner?wsdl"),
                 new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplService"));
-        final JAXBContext jc = JAXBContext.newInstance(MeetingPlannerImpl.class);
-        final Dispatch<Object> dispatch = service.createDispatch(new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplPort"), jc, Service.Mode.PAYLOAD);
+        final Dispatch<Source> dispatch = service.createDispatch(new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplPort"), Source.class, Service.Mode.PAYLOAD);
 
-        //TODO - Complete
+        Date currentDate = new Date();
+        LocalDateTime nowPlusTwoDays = LocalDateTime.from(currentDate.toInstant().atZone(ZoneId.systemDefault())).plusDays(2);
+        String dateArgument = nowPlusTwoDays.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        String request = "<ns1:book xmlns:ns1=\"http://jaxws.example.superbiz.org/\"><arg0>"+ dateArgument +"</arg0></ns1:book>";
+        Source invoke = dispatch.invoke(new StreamSource(new StringReader(request)));
+        String result = sourceToXMLString(invoke);
+
+        assertTrue(result.contains("<return>true</return>"));
+    }
+
+    private String sourceToXMLString(Source result) {
+        String xmlResult = null;
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            OutputStream out = new ByteArrayOutputStream();
+            StreamResult streamResult = new StreamResult();
+            streamResult.setOutputStream(out);
+            transformer.transform(result, streamResult);
+            xmlResult = streamResult.getOutputStream().toString();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        }
+        return xmlResult;
     }
 }
