@@ -1,0 +1,232 @@
+= Application Composer with JAX-WS and CDI
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: published
+
+This example shows the use of `@ApplicationComposer` annotation, in the context of a JAX-WS application.
+
+Application Composer is an API for creating an EE application programmatically. It is very useful in a text context, so it's no wonder that it originated from here.
+For more information about Application Composer, please refer to http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Application Composer section in the documentation].
+In this example, we will use `@ApplicationComposer` in the context of a JAX-WS application.
+
+== Example
+
+This example is a meeting planner application. It is a JAX-WS application, and it accepts incoming booking meeting requests. The application first checks if the request can be booked, books it if possible,
+and returns to the caller if the request was booked (a boolean value). This is a simple, demo-purpose application, so it is greatly simplified. A book request is represented only by the meeting start date (a `java.util.Date` value).
+A book request is bookable if it starts after current date.
+
+The business logic is implemented using a `MeetingPlannerImpl` class (implementing `MeetingPlanner`). This class is a JAX-WS service, exposing the following method: `boolean book(final Date date)`.
+The client will send a request, containing a date; the service will return if the request can be booked, true or false. The exposed JAX-WS service uses in addition a different feature, CDI, injecting a
+business logic service class checking if the request is bookable. So, when the time will come to test the `@ApplicationComposer` annotation, we will both check that CDI worked in our programmatically
+started application and that the JAX-WS service is up and running.
+
+The business logic that checks if a request is bookable is defined by the following interface:
+
+....
+import java.util.Date;
+
+public interface Agenda {
+    boolean isBookable(Date d);
+}
+....
+
+The implementation is a simple one, without distracting details:
+
+....
+import java.util.Date;
+
+public class LazyAgenda implements Agenda {
+    @Override
+    public boolean isBookable(final Date d) {
+        return d.after(new Date());
+    }
+}
+....
+
+The JAX-WS service is defined by the following interface:
+
+....
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import java.util.Date;
+
+@WebService
+public interface MeetingPlanner {
+
+    @WebMethod(operationName = "book", exclude = false)
+    boolean book(final Date date);
+}
+....
+
+The class implementing this interface is:
+
+....
+import javax.inject.Inject;
+import javax.jws.WebService;
+import java.util.Date;
+
+@WebService
+public class MeetingPlannerImpl implements MeetingPlanner {
+    @Inject
+    private Agenda agenda;
+
+    @Override
+    public boolean book(final Date date) {
+        return agenda.isBookable(date);
+    }
+}
+....
+
+== Using Application Composer
+
+Now, that the application is completed, it's time to test it. For this, we will add a unit test that will use Application Composer to start and deploy our application in a full JEE environment.
+The full test:
+
+....
+import org.apache.openejb.jee.WebApp;
+import org.apache.openejb.junit.ApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.EnableServices;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.namespace.QName;
+import javax.xml.ws.Dispatch;
+import javax.xml.ws.Service;
+import java.net.URL;
+import java.util.Date;
+import java.util.Properties;
+
+import static org.junit.Assert.assertTrue;
+
+@EnableServices("jax-ws")
+@RunWith(ApplicationComposer.class)
+public class MeetingPlannerTest {
+    private static final int JAX_WS_PORT = NetworkUtil.getNextAvailablePort();
+
+    @Configuration
+    public Properties configuration() {
+        return new PropertiesBuilder().p("httpejbd.port", Integer.toString(JAX_WS_PORT)).build();
+    }
+
+    @Module
+    @Classes(cdi = true, value = {MeetingPlannerImpl.class, LazyAgenda.class})
+    public WebApp war() {
+        return new WebApp()
+                .contextRoot("/demo")
+                .addServlet("jaxws", MeetingPlannerImpl.class.getName(), "/meeting-planner");
+    }
+
+    @Test
+    public void bookPort() throws Exception {
+        final Service service = Service.create(
+                new URL("http://127.0.0.1:" + JAX_WS_PORT + "/demo/meeting-planner?wsdl"),
+                new QName("http://jaxws.example.superbiz.org/", "MeetingPlannerImplService"));
+        final MeetingPlanner planner = service.getPort(MeetingPlanner.class);
+        assertTrue(planner.book(new Date(System.currentTimeMillis() + 1000000)));
+    }
+}
+....
+
+First thing to see, we use Application Composer as a JUnit runner. So, our test integrates with current tools just like any other JUnit test. The test's configuration is defined in the method annotated with `@Configuration`.
+
+The application is started in the method having the `@Module` annotation. In this example, we specify the classes we want to scan, and the fact that we want to use CDI.
+
+Our test makes a booking request, sending a date in the future, then it verifies that booking is done.
+
+== Running the test
+
+Running the test we can see that the application was successfully started, that the JAX-WS service is running and that it fulfills incoming requests correctly.
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.example.jaxws.MeetingPlannerTest
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@49993335
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Initializing network services
+INFO - Creating ServerService(id=cxf)
+INFO - Creating ServerService(id=httpejbd)
+INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
+INFO - Initializing network services
+INFO -   ** Bound Services **
+INFO -   NAME                 IP              PORT
+INFO -   httpejbd             127.0.0.1       39649
+INFO - -------
+INFO - Ready!
+INFO - Configuring enterprise application: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.example.jaxws.MeetingPlannerTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Enterprise application "/home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest" loaded.
+INFO - Creating dedicated application classloader for MeetingPlannerTest
+INFO - Assembling app: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@49993335
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 406 ms.
+INFO - Webservice(wsdl=http://127.0.0.1:39649/demo/meeting-planner, qname={http://jaxws.example.superbiz.org/}MeetingPlannerImplService) --> Pojo(id=null./demo.jaxws)
+INFO - Deployed Application(path=/home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest)
+INFO - Creating Service {http://jaxws.example.superbiz.org/}MeetingPlannerImplService from WSDL: http://127.0.0.1:39649/demo/meeting-planner?wsdl
+INFO - Creating Service {http://jaxws.example.superbiz.org/}MeetingPlannerImplService from WSDL: http://127.0.0.1:39649/demo/meeting-planner?wsdl
+INFO - Undeploying app: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Stopping network services
+INFO - Stopping server services
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@49993335
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Initializing network services
+INFO - Creating ServerService(id=cxf)
+INFO - Creating ServerService(id=httpejbd)
+INFO - Created ServicePool 'httpejbd' with (10) core threads, limited to (200) threads with a queue of (9)
+INFO - Initializing network services
+INFO -   ** Bound Services **
+INFO -   NAME                 IP              PORT
+INFO -   httpejbd             127.0.0.1       39649
+INFO - -------
+INFO - Ready!
+INFO - Configuring enterprise application: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.example.jaxws.MeetingPlannerTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Enterprise application "/home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest" loaded.
+INFO - Creating dedicated application classloader for MeetingPlannerTest
+INFO - Assembling app: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@49993335
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 52 ms.
+INFO - Webservice(wsdl=http://127.0.0.1:39649/demo/meeting-planner, qname={http://jaxws.example.superbiz.org/}MeetingPlannerImplService) --> Pojo(id=null./demo.jaxws)
+INFO - Deployed Application(path=/home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest)
+INFO - Undeploying app: /home/bogdan/open_source/tomee-master/examples/applicationcomposer-jaxws-cdi/MeetingPlannerTest
+INFO - Stopping network services
+INFO - Stopping server services
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.076 sec
+
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+....
+
+Full example can be found https://github.com/apache/tomee/tree/master/examples/applicationcomposer-jaxws-cdi[here].
