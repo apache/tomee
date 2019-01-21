@@ -36,6 +36,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-catalina</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- MicroProfile -->
     <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
