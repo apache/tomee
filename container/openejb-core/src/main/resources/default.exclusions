@@ -109,6 +109,7 @@ istack-commons-runtime-
 jackson-annotations-
 jackson-core-
 jackson-databind-
+jackson-dataformat
 jackson-mapper-asl-
 jackson-module-jaxb-annotations-
 janino-
@@ -138,6 +139,7 @@ jline
 jmdns-
 joda-time-
 johnzon-
+jose4j-
 jsoup-
 jsp-api
 jsr299-
@@ -156,6 +158,7 @@ lucene-core-
 management-agent.jar
 maven-
 mbean-annotation-api-
+microprofile-
 mimepull-
 mina-
 mqtt-client-
@@ -191,11 +194,13 @@ openejb-webservices
 openjpa-
 openmdx-
 opensaml-
+opentracing-
 openwebbeans-
 openws-
 ops4j-
 org.eclipse.
 org.junit.
+org.osgi.annotation.versioning-
 org.osgi.core-
 oro-
 pax-url
@@ -222,6 +227,7 @@ shrinkwrap-
 slf4j-
 smack-
 smackx-
+snakeyaml-
 snappy-java-
 spring-
 sshd-
