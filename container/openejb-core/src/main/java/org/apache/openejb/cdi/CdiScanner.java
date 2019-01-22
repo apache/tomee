@@ -154,6 +154,13 @@ public class CdiScanner implements BdaScannerService {
 
             final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new HashMap<>();
             for (final BeansInfo.BDAInfo bda : beans.bdas) {
+                if (!startupObject.isFromWebApp() &&
+                    ejbJar.webapp &&
+                    !appInfo.webAppAlone &&
+                    bda.uri.toString().contains(ejbJar.path)) {
+                    continue;
+                }
+
                 if (bda.uri != null) {
                     try {
                         beansXml.add(bda.uri.toURL());
@@ -163,6 +170,11 @@ public class CdiScanner implements BdaScannerService {
                 }
                 infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
             }
+
+            if (!startupObject.isFromWebApp() && ejbJar.webapp && !appInfo.webAppAlone) {
+                continue;
+            }
+
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
                 // infoByBda.put() not needed since we know it means annotated
                 handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
