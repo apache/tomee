@@ -23,6 +23,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -30,6 +31,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJB;
+import javax.inject.Inject;
 import java.net.URL;
 
 /**
@@ -42,9 +45,9 @@ public class CustomOrmXmlEarTest {
     private URL url;
 
 
-    @Deployment(testable = false)
+    @Deployment
     public static EnterpriseArchive createDeployment() {
-        final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, CustomOrmXmlEarTest.class.getSimpleName() + ".jar")
+        final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, "ejb-jar.jar")
                 .addClasses(ActorBean.class, ActorDetails.class, LocalActor.class, LocalActorHome.class,
                         LocalMovie.class, LocalMovieHome.class, MovieBean.class, MovieDetails.class,
                         MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class,
@@ -52,14 +55,18 @@ public class CustomOrmXmlEarTest {
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/custom-orm.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/persistence.xml"), "META-INF/persistence.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "META-INF/openejb-jar.xml")
-                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "META-INF/ejb-jar.xml");
+                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "META-INF/ejb-jar.xml")
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
 
-        final WebArchive war = ShrinkWrap.create(WebArchive.class, CustomOrmXmlEarTest.class.getSimpleName() + ".war")
+        final WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
+
+                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
 
         final EnterpriseArchive archive = ShrinkWrap.create(EnterpriseArchive.class, CustomOrmXmlTest.class.getSimpleName() + ".ear")
                 .addAsModule(ejbJar)
-                .addAsModule(war);
+                .addAsModule(war)
+                .setApplicationXML("org/apache/openejb/arquillian/tests/cmp/sample/application.xml");
 
         System.out.println(ejbJar.toString(true));
         System.out.println(war.toString(true));
@@ -68,23 +75,25 @@ public class CustomOrmXmlEarTest {
     }
 
 
+    @EJB
+    private ActorBean actorBean;
+
     @Test
-    @RunAsClient
     public void checkCmpJpaEntityORMMappings() throws Exception {
-//
-//        final String output = IO.slurp(new URL(url.toExternalForm()));
-//        System.out.println(output);
-//
-//
-//        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTOR_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR_MOVIE, COLUMN_NAME: ACTORS_ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR_MOVIE, COLUMN_NAME: MOVIES_MOVIEID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: MOVIEID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: GENRE, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 255"));
-//        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: MOVIE_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
-//
-//        final String[] split = output.split("\r?\n");
-//        Assert.assertEquals(7, split.length);
+        System.out.println(actorBean);
+        final String output = IO.slurp(new URL(url.toExternalForm()));
+        System.out.println(output);
+
+        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
+        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTOR_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
+        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR_MOVIE, COLUMN_NAME: ACTORS_ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
+        Assert.assertTrue(output.contains("TABLE_NAME: ACTOR_MOVIE, COLUMN_NAME: MOVIES_MOVIEID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
+        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: MOVIEID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
+        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: GENRE, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 255"));
+        Assert.assertTrue(output.contains("TABLE_NAME: MOVIE, COLUMN_NAME: MOVIE_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
+
+        final String[] split = output.split("\r?\n");
+        Assert.assertEquals(7, split.length);
+
     }
 }
