@@ -72,7 +72,7 @@ enum EntityMappingURLFinder implements BiFunction<String, AppModule, URL> {
             try {
                 return new URL(location);
             } catch (MalformedURLException e) {
-                LOGGER.info("Unable to using URL: " + location, e);
+                LOGGER.info("Unable to using URL: " + location);
                 return null;
             }
         }
