@@ -157,6 +157,7 @@ public class CdiScanner implements BdaScannerService {
                 if (!startupObject.isFromWebApp() &&
                     ejbJar.webapp &&
                     !appInfo.webAppAlone &&
+                    ejbJar.path != null &&
                     bda.uri.toString().contains(ejbJar.path)) {
                     continue;
                 }
