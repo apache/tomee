@@ -64,7 +64,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
-import org.apache.xbean.finder.ResourceFinder;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Field;
