@@ -184,7 +184,7 @@ public class ReadDescriptors implements DynamicDeployer {
                     }
                     appModule.addPersistenceModule(persistenceModule);
                 } catch (final Exception e1) {
-                    DeploymentLoader.logger.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
+                    DeploymentLoader.LOGGER.error("Unable to load Persistence Unit from EAR: " + appModule.getJarLocation() + ", module: " + moduleName + ". Exception: " + e1.getMessage(), e1);
                 }
             }
         }
@@ -238,7 +238,7 @@ public class ReadDescriptors implements DynamicDeployer {
                         }
                     }
                 } catch (final Exception e1) {
-                    DeploymentLoader.logger.error("Unable to load Persistence Unit Fragment from EAR: " + appModule.getJarLocation() + ", fragment: " + persistenceFragmentUrl.toString() + ". Exception: " + e1.getMessage(), e1);
+                    DeploymentLoader.LOGGER.error("Unable to load Persistence Unit Fragment from EAR: " + appModule.getJarLocation() + ", fragment: " + persistenceFragmentUrl.toString() + ". Exception: " + e1.getMessage(), e1);
                 }
             }
         }
@@ -447,7 +447,7 @@ public class ReadDescriptors implements DynamicDeployer {
             clientModule.setApplicationClient(applicationClient);
         } else {
             if (!clientModule.isEjbModuleGenerated()) {
-                DeploymentLoader.logger.debug("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
+                DeploymentLoader.LOGGER.debug("No application-client.xml found assuming annotations present: " + appModule.getJarLocation() + ", module: " + clientModule.getModuleId());
                 clientModule.setApplicationClient(new ApplicationClient());
             }
         }
@@ -467,7 +467,7 @@ public class ReadDescriptors implements DynamicDeployer {
                 throw new OpenEJBException(e);
             }
         } else {
-            DeploymentLoader.logger.debug("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
+            DeploymentLoader.LOGGER.debug("No ejb-jar.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + ejbModule.getModuleId());
             ejbModule.setEjbJar(new EjbJar());
         }
     }
@@ -580,7 +580,7 @@ public class ReadDescriptors implements DynamicDeployer {
             final Connector connector = readConnector(url);
             connectorModule.setConnector(connector);
         } else {
-            DeploymentLoader.logger.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
+            DeploymentLoader.LOGGER.debug("No ra.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + connectorModule.getModuleId());
             connectorModule.setConnector(new Connector());
         }
     }
@@ -599,7 +599,7 @@ public class ReadDescriptors implements DynamicDeployer {
             final WebApp webApp = readWebApp(url);
             webModule.setWebApp(webApp);
         } else {
-            DeploymentLoader.logger.debug("No web.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + webModule.getModuleId());
+            DeploymentLoader.LOGGER.debug("No web.xml found assuming annotated beans present: " + appModule.getJarLocation() + ", module: " + webModule.getModuleId());
             webModule.setWebApp(new WebApp());
         }
 
