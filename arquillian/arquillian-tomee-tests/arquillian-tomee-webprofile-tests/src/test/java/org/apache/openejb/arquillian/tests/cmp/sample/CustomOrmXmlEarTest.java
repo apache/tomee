@@ -23,7 +23,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ClassLoaderAsset;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -31,8 +30,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJB;
-import javax.inject.Inject;
 import java.net.URL;
 
 /**
@@ -44,38 +41,41 @@ public class CustomOrmXmlEarTest {
     @ArquillianResource
     private URL url;
 
-
-    @Deployment
+    @Deployment(testable = false)
     public static EnterpriseArchive createDeployment() {
-        final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, EnterpriseArchive.class.getSimpleName()+ ".jar")
-                .addClasses(ActorBean.class, ActorDetails.class, LocalActor.class, LocalActorHome.class,
-                        LocalMovie.class, LocalMovieHome.class, MovieBean.class, MovieDetails.class,
-                        MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class)
+
+        final JavaArchive clientJar = ShrinkWrap.create(JavaArchive.class, "client.jar")
+                .addClasses(ActorDetails.class, LocalActor.class, LocalActorHome.class,
+                        LocalMovie.class, LocalMovieHome.class, MovieDetails.class,
+                        MoviesBusiness.class, MoviesBusinessHome.class);
+
+        final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, "ejb-jar.jar")
+                .addClasses(ActorBean.class, MovieBean.class, MovieDetails.class, MoviesBusinessBean.class)
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/custom-orm.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/persistence.xml"), "META-INF/persistence.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "META-INF/openejb-jar.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "META-INF/ejb-jar.xml");
 
-        final WebArchive war = ShrinkWrap.create(WebArchive.class, EnterpriseArchive.class.getSimpleName() + ".war")
+        final WebArchive testWar = ShrinkWrap.create(WebArchive.class, "test.war")
                 .addClass(MoviesServlet.class)
                 .addAsWebInfResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/web.xml"), "web.xml");
 
-        final EnterpriseArchive archive = ShrinkWrap.create(EnterpriseArchive.class, EnterpriseArchive.class.getSimpleName()+ ".ear")
+        final EnterpriseArchive archive = ShrinkWrap.create(EnterpriseArchive.class, "test.ear")
+                .addAsLibrary(clientJar)
                 .addAsModule(ejbJar)
-                .addAsModule(war)
-                .setApplicationXML("org/apache/openejb/arquillian/tests/cmp/sample/application.xml");
+                .addAsModule(testWar);
 
-        System.out.println(ejbJar.toString(true));
-        System.out.println(war.toString(true));
         System.out.println(archive.toString(true));
         return archive;
     }
 
 
     @Test
+    @RunAsClient
     public void checkCmpJpaEntityORMMappings() throws Exception {
-        final String output = IO.slurp(new URL(url.toExternalForm()));
+        final String output = IO.slurp(new URL(url.toExternalForm() + "/test/test/"));
         System.out.println(output);
+
         Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
         Assert.assertTrue(output.contains("TABLE_NAME: ACTOR, COLUMN_NAME: ACTOR_NAME, DATA_TYPE: CHARACTER VARYING, CHARACTER_MAXIMUM_LENGTH: 250"));
         Assert.assertTrue(output.contains("TABLE_NAME: ACTOR_MOVIE, COLUMN_NAME: ACTORS_ACTORID, DATA_TYPE: INTEGER, CHARACTER_MAXIMUM_LENGTH: null"));
