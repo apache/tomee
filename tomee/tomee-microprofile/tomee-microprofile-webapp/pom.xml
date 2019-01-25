@@ -73,7 +73,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-jwt</artifactId>
-      <version>${microprofile.jwt.impl.version}</version>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>
