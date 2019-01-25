@@ -102,7 +102,7 @@
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-faulttolerance-fallback</module>
-    <module>mp-faulttolerance-retry</module>
+    <!--<module>mp-faulttolerance-retry</module>-->
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
