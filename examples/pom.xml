@@ -185,6 +185,9 @@
     <module>mp-custom-healthcheck</module>
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
+    <module>vaadin-lts-v08-simple</module>
+    <module>vaadin-lts-v10-simple</module>
+    <module>vaadin-vxx-simple</module>
   </modules>
 
   <dependencies>
