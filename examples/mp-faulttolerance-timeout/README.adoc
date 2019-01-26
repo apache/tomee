@@ -31,7 +31,7 @@ mvn clean install tomee:run
 ----
 
 [discrete]
-=== How does it works?
+=== How does it work?
 
 The method `statusOfDayByAccuWeather` fails when the threshold of `@Timeout` annotation is reached due to a long execution of
 `longProcessingTask` method. To respond to the request nicely, a fallback method will take place to complete the request
