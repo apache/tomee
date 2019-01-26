@@ -90,7 +90,7 @@ Beautiful day!
 ----
 
 [discrete]
-===== Running the test
+=== Running the test
 
 You can also try it out using the
 link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java]
