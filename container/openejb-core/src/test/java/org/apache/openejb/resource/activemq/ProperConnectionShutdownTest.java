@@ -26,7 +26,6 @@ import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.NetworkUtil;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.model.Statement;
 
@@ -71,16 +70,10 @@ public class ProperConnectionShutdownTest {
                 assertEquals(messages.receiveMessage(), "How are you?");
                 assertEquals(messages.receiveMessage(), "Still spinning?");
 
-                /* TODO: activate it when AMQ-6051 is fixed
-
                 // all worked, now hold a connection
-                new Thread(new Runnable() { // not daemon!
-                    @Override
-                    public void run() {
-                        messages.blockConnection(); // oops, I forgot to close it
-                    }
-                }).start();
-                 */
+                // not daemon!
+                // oops, I forgot to close it
+                new Thread(messages::blockConnection).start();
             }
         };
         new DeployApplication(this, testInContainer, new ApplicationComposers(this)).evaluate();
