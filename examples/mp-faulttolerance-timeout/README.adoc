@@ -44,7 +44,7 @@ public class WeatherGateway {
 
     private static final Logger LOGGER = Logger.getLogger(WeatherGateway.class.getName());
 
-    @Timeout(1000)
+    @Timeout(50)
     @Fallback(fallbackMethod = "statusOfWeekByMetEireann")
     public String statusOfDayByAccuWeather(){
         return longProcessingTask();
@@ -57,7 +57,7 @@ public class WeatherGateway {
 
     private String longProcessingTask(){
         try {
-            Thread.sleep(1100);
+            Thread.sleep(80);
         } catch (InterruptedException e) {
             LOGGER.log(Level.WARNING,"AccuWeather task has been interrupted.");
         }
@@ -71,7 +71,7 @@ Day status call
 
 [source,text]
 ----
-GET http://localhost:8080/mp-faulttolerance-retry/weather/day/status
+GET http://localhost:8080/mp-faulttolerance-timeout/weather/day/status
 ----
 
 Server log
