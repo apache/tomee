@@ -189,8 +189,8 @@
     <module>vaadin-lts-v08-simple</module>
     <module>vaadin-lts-v10-simple</module>
     <module>vaadin-vxx-simple</module>
+    <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
-    <module>cloud-azure</module>
   </modules>
 
   <dependencies>

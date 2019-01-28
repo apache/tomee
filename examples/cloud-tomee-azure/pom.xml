@@ -55,7 +55,9 @@
                 <version>${project.version}</version>
                 <configuration>
                     <tomeeClassifier>plus</tomeeClassifier>
+                    <!--You can tweak this for your case-->
                     <args>-Xmx512m -XX:PermSize=256m</args>
+                    <!--Azure requires this port and the default on TomEE is 8080-->
                     <tomeeHttpPort>80</tomeeHttpPort>
                     <!--You can place here, if needed, all the config files needed for the tomee/conf folder-->
                     <!--<config>${project.basedir}/src/main/tomee/</config>-->
@@ -80,7 +82,7 @@
 
     <profiles>
         <profile>
-            <id>azure</id>
+            <id>azure-single-jar</id>
             <build>
                 <plugins>
                     <plugin>
@@ -105,7 +107,7 @@
                             <jarFile>${project.build.directory}/${project.build.finalName}-exec.jar</jarFile>
                             <stopAppDuringDeployment>true</stopAppDuringDeployment>
                             <resourceGroup>tomee-group</resourceGroup>
-                            <appName>cloud-azure2</appName>
+                            <appName>cloud-tomee-azure</appName>
                             <region>ukwest</region>
                             <pricingTier>B1</pricingTier>
                             <linuxRuntime>jre8</linuxRuntime>

@@ -51,24 +51,26 @@ and automation tools to access specific Azure resources:
 `az ad sp create-for-rbac --name ServicePrincipalName --password <Choose a strong password>`
 
 ----
-az ad sp create-for-rbac --name http://cloud-azure2 --password <password for this app>
+az ad sp create-for-rbac --name  http://cloud-tomee-azure --password <password for this app>
 
 {
   "appId": "cccccccc-cccc-cccc-cccc-ccccccccccccccc",
-  "displayName": "cloud-azure2",
-  "name": "http://cloud-azure2",
+  "displayName": "cloud-tomee-azure",
+  "name": "http://cloud-tomee-azure",
   "password": "<password for this app>",
   "tenant": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb"
 }
 ----
-The ServicePrincipalName will also be set as subdomain name. In this case "http://cloud-azure2".
+The ServicePrincipalName will also be set as subdomain name. In this case "http://cloud-tomee-azure".
 The appId is the identification of the app service.
 
 === Configure Maven
 
-We now need to setup Maven's settings.xml so the azure-webapp-maven-plugin can authenticate against Azure:
+You could continue just using the Azure CLI for authentication but we can also do it permanently with maven.
 
-On `~/.m2/settings.xml` please add a new server:
+In that case we need to edit Maven's settings.xml so the azure-webapp-maven-plugin can authenticate against Azure:
+
+You can add a new server to `~/.m2/settings.xml` like this:
 ----
 <server>
   <id>azure-auth</id>
@@ -80,9 +82,9 @@ On `~/.m2/settings.xml` please add a new server:
    </configuration>
 </server>
 ----
-That's it you can now build the example and deploy it to Azure just using Maven:
+That's it. You can now build the example and deploy it to Azure just using Maven:
 
-`mvn clean install azure-webapp:deploy`
+`mvn clean install -Pazure-single-jar azure-webapp:deploy`
 
 
 
@@ -92,7 +94,8 @@ To deploy the echo app locally you can execute:
 
 `mvn tomee:run`
 
-You can test the app by calling `http://localhost:8080/cloud-azure-8.0.0-SNAPSHOT/echo/blabla`
+You can test the app by calling `http://localhost:8080/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/blabla`
 
-It will return blabla
+It will return blabla.
 
+The echo app is also available with a simple war file that you can deploy on TomEE manually, for testing purposes.
