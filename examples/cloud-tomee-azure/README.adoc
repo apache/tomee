@@ -94,7 +94,7 @@ To deploy the echo app locally you can execute:
 
 `mvn tomee:run`
 
-You can test the app by calling `http://localhost:8080/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/blabla`
+You can test the app by calling `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/blabla`
 
 It will return blabla.
 
