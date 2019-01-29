@@ -86,7 +86,7 @@ That's it. You can now build the example and deploy it to Azure just using Maven
 
 `mvn clean install -Pazure-single-jar azure-webapp:deploy`
 
-
+The azure-webapp is explicitly invoked because it relies on you Azure account. The standard TomEE build will not use an Azure account.
 
 ==== Notes
 
