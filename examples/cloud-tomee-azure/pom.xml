@@ -33,15 +33,14 @@
     <name>OpenEJB :: Examples :: Azure deployment example</name>
 
     <properties>
-        <docker.image.name>tomee/${artifactId}</docker.image.name>
-        <!--<docker.file.name>Dockerfile</docker.file.name>-->
+        <javaee-api.version>7.0</javaee-api.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <version>${javaee-api.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
