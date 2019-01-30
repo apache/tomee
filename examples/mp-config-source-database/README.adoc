@@ -1,0 +1,14 @@
+= MicroProfile Configuration ConfigSource Database
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+This is an example on how to implement a custom MicroProfile Configuration ConfigSource. The custom ConfigSource is
+going to read configuration values from a Database.
+
+== Run the application:
+
+[source,bash]
+----
+mvn clean install tomee:run
+----
