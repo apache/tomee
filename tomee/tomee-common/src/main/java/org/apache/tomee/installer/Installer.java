@@ -794,8 +794,6 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# Which paths / libraries should be scanned?\n");
                 systemPropertiesWriter.write("openejb.scan.webapp.container = true\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container.includes = .*(geronimo|mp-jwt|mp-common|failsafe).*\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container.excludes = \n");
 
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory

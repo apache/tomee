@@ -25,6 +25,8 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
+import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
+import org.apache.openejb.config.event.BeforeAppInfoBuilderEvent;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
@@ -1106,7 +1108,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
                             urlSet = URLs.cullSystemJars(urlSet);
-                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ".*(geronimo|mp-jwt|mp-common|failsafe).*"));
+                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ""));
                             final PatternFilter containerExcludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_EXCLUDES, ""));
                             urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, containerIncludes, containerExcludes);
                             containerUrls = urlSet.getUrls();
@@ -1136,6 +1138,8 @@ public class DeploymentLoader implements DeploymentFilterable {
                 containerUrls = Collections.emptyList();
             }
         }
+
+        SystemInstance.get().fireEvent(new AfterContainerUrlScanEvent(containerUrls));
     }
 
     public static List<URL> filterWebappUrls(final URL[] webUrls, final Filter filter, final URL exclusions) {

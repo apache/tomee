@@ -22,15 +22,49 @@ import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
 import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
 import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
 import org.apache.openejb.assembler.classic.WebAppInfo;
+import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
+import org.apache.tomee.installer.Paths;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 public class TomEEMicroProfileListener {
+    private static final String[] MICROPROFILE_LIBS_IMPLS_PREFIXES = new String[]{
+            "mp-common",
+            "geronimo-config",
+            "safeguard",
+            "mp-jwt",
+            "geronimo-health",
+            "geronimo-metrics",
+            "geronimo-opentracing",
+            "geronimo-openapi",
+            "cxf-rt-rs-mp-client",
+            };
+
+    @SuppressWarnings("Duplicates")
+    public void enrichContainerWithMicroProfile(@Observes final AfterContainerUrlScanEvent afterContainerUrlScanEvent) {
+        final List<URL> containerUrls = afterContainerUrlScanEvent.getContainerUrls();
+        final Paths paths = new Paths(new File(System.getProperty("openejb.home")));
+        for (final String prefix : MICROPROFILE_LIBS_IMPLS_PREFIXES) {
+            final File file = paths.findTomEELibJar(prefix);
+            if (file != null) {
+                try {
+                    containerUrls.add(file.toURI().toURL());
+                } catch (final MalformedURLException e) {
+                    // ignored
+                }
+            }
+        }
+    }
+
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
         final ServletContext context = afterApplicationCreated.getEvent().getContext();
         final WebAppInfo webApp = afterApplicationCreated.getEvent().getWeb();
