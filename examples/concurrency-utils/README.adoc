@@ -1,0 +1,1038 @@
+= Concurrency Utilities for Java EE
+:index-group: Other Features
+:jbake-type: page
+:jbake-status: published
+
+In this example will be used https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities.htm[Concurrency Utilities for Java EE], or JSR 236.
+
+This standard allows application developers to use concurrency utilities managed by the application server.
+In this way, the developer no longer has the responsibility to manually manage thread polls or threads.
+Also, in a non-managed Thread object, the container cannot guarantee that other JEE platform services work correctly. For these reasons, it is recommended the usage of managed threads whenever the need arise.
+More information can be found https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[here].
+
+== Main Components of the Concurrency Utilities
+
+The standard specifies main components of the concurrency utilities. In short, these components are managed objects that offer concurrency facilities. These objects, since are managed by the application, can be injected either using CDI, either JNDI. More information can be found https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities002.htm[here].
+
+=== ManagedExecutorService
+
+A `ManagedExecutorService` is an object that allows application developers to submit tasks asynchronously. Tasks are executed on threads that are managed by the container.
+
+==== Example
+
+Here is a class that uses a `ManagedExecutorService`:
+
+....
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.context.RequestScoped;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
+
+import static java.util.Objects.nonNull;
+
+
+@RequestScoped
+public class ManagedService {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedService.class.getSimpleName());
+
+    @Resource
+    private ManagedExecutorService executor;
+
+    /**
+     * Executes an operation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
+     * The computation will carry on after the return of the method.
+     *
+     * @param value The demo data.
+     * @return A {@link CompletableFuture} that will return immediately.
+     */
+    public CompletableFuture<Integer> asyncTask(final int value) {
+        LOGGER.info("Create asyncTask");
+        return CompletableFuture
+                .supplyAsync(longTask(value, 100, null), executor) // Execute asynchronously.
+                .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
+    }
+
+    /**
+     * Executes an operation asynchronously, in a different thread provided by the {@link ManagedExecutorService}.
+     * The computation will carry on after the return of the method.
+     *
+     * @param value The demo data.
+     * @return A {@link CompletableFuture} that will return immediately.
+     */
+    public CompletableFuture<Integer> asyncTaskWithException(final int value) {
+        LOGGER.info("Create asyncTaskWithException");
+        return CompletableFuture
+                .supplyAsync(longTask(value, 100, "Planned exception"), executor) // Execute asynchronously.
+                .thenApply(i -> i + 1); // After the return of the task, do something else with the result.
+    }
+
+    /**
+     * Method to simulate an asynchronous task. Will add 1 to the value for each invocation.
+     *
+     * @param value          The demo data.
+     * @param taskDurationMs How long the task will take to complete. In ms.
+     * @param errorMessage   Message for the exception simulating an execution problem
+     * @return a {@link Supplier} function processing the new value
+     */
+    private Supplier<Integer> longTask(final int value,
+                                       final int taskDurationMs,
+                                       final String errorMessage) {
+        return () -> {
+            if (nonNull(errorMessage)) {
+                LOGGER.severe("Exception will be thrown");
+                throw new RuntimeException(errorMessage);
+            }
+
+            try {
+                // Simulate a long processing task using TimeUnit to sleep.
+                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Problem while waiting");
+            }
+            LOGGER.info("longTask complete");
+            return value + 1;
+        };
+    }
+
+}
+....
+
+The `ManagedExecutorService` object, being an managed object, is injected using the `@Resource` annotation.
+
+This example simulates a long running computation:
+
+....
+private Supplier<Integer> longTask(final int value,
+                                       final int taskDurationMs,
+                                       final String errorMessage) {
+        return () -> {
+            if (nonNull(errorMessage)) {
+                LOGGER.severe("Exception will be thrown");
+                throw new RuntimeException(errorMessage);
+            }
+
+            try {
+                // Simulate a long processing task using TimeUnit to sleep.
+                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Problem while waiting");
+            }
+            LOGGER.info("longTask complete");
+            return value + 1;
+        };
+    }
+....
+
+Next, the capabilities of `ManagedExecutorService` are exemplified in these method:
+
+....
+public CompletableFuture<Integer> asyncTask(final int value) {
+        LOGGER.info("Create asyncTask");
+        return CompletableFuture
+                .supplyAsync(longTask(value, 100, null), executor)
+                .thenApply(i -> i + 1);
+}
+....
+
+....
+public CompletableFuture<Integer> asyncTaskWithException(final int value) {
+        LOGGER.info("Create asyncTaskWithException");
+        return CompletableFuture
+                .supplyAsync(longTask(value, 100, "Planned exception"), executor)
+                .thenApply(i -> i + 1);
+}
+....
+
+Both methods invoke the `longTask` method defined above; each execution of `longTask` is performed in a thread managed by the application.
+The method `asyncTask` simulates a successful execution, while the `asyncTaskWithException` simulates a execution that will throw an exception.
+
+The methods are used in the following test class:
+....
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+
+@RunWith(Arquillian.class)
+public class ManagedServiceTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedServiceTest.class.getName());
+
+    @Inject
+    private ManagedService managedService;
+
+    @Deployment()
+    public static final WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class, "example.war")
+                .addClasses(ManagedService.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    /**
+     * Happy path. Normal invocation.
+     */
+    @Test
+    public void managedInvocationTest() {
+        final CompletableFuture<Integer> future = managedService.asyncTask(1);
+        LOGGER.info("You can do something else in the meantime and later get the future value");
+        try {
+            // To prevent hanged tasks, you should obtain the value of a future with a timeout.
+            assertEquals(3, future.get(200, TimeUnit.MILLISECONDS).intValue());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+    }
+
+    /**
+     * Request timeout. The result will take at least 100ms and we want it after 10ms.
+     *
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   we don't expect it
+     * @throws TimeoutException     Expected exception
+     */
+    @Test(expected = TimeoutException.class)
+    public void managedInvocationTestWithTimeout() throws InterruptedException, ExecutionException, TimeoutException {
+        final CompletableFuture<Integer> future = managedService.asyncTask(1);
+        future.get(10, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * The execution ended with an exception.
+     * Handle the exception appropriately.
+     *
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   Expected exception
+     * @throws TimeoutException     we don't expect it
+     */
+    @Test
+    public void managedInvocationTestWithException() {
+        final CompletableFuture<Integer> future = managedService.asyncTaskWithException(1);
+
+        try {
+            future.get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the thrown RuntimeException will be wrapped around an ExecutionException
+            assertEquals("Planned exception", e.getCause().getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+
+    }
+
+}
+....
+
+=== ManagedScheduledExecutorService
+
+A `ManagedScheduledExecutorService` is an object that allows developers to execute tasks asynchronously at specific times. The tasks are executed on threads started by the container.
+
+==== Example
+
+....
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.enterprise.context.RequestScoped;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import static java.util.Objects.nonNull;
+
+
+@RequestScoped
+public class ManagedScheduledService {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedScheduledService.class.getSimpleName());
+
+    @Resource
+    private ManagedScheduledExecutorService executor;
+
+    /**
+     * Execute a task after a planned delay and get the result back by using a {@link Callable}
+     *
+     * @param value        The value to compute
+     * @param errorMessage If not null an exception with be thrown with this message
+     * @return the processed result
+     */
+    public Future<Integer> singleFixedDelayTask(final int value,
+                                                final String errorMessage) {
+        LOGGER.info("longCallableTask scheduled");
+        return executor.schedule(
+                longCallableTask(value, 10, errorMessage), 100, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Execute a task periodically. Although a future is returned, it will not contain a result because the
+     * executor uses a runnable to perform the operations.<br>
+     * If an exception happens, the task will stop and you can catch the exception with the {@link ScheduledFuture}.
+     *
+     * @param value          The value to compute
+     * @param errorMessage   If not null an exception with be thrown with this message
+     * @param countDownLatch
+     * @return An object where you can cancel the periodic task and check for exceptions.
+     */
+    public ScheduledFuture<?> periodicFixedDelayTask(final int value,
+                                                     final String errorMessage,
+                                                     final CountDownLatch countDownLatch) {
+        LOGGER.info("longRunnableTask scheduled");
+        return executor.scheduleAtFixedRate(
+                longRunnableTask(value, 10, errorMessage, countDownLatch), 0, 100, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Will simulate a long running operation
+     *
+     * @param value          The value to compute
+     * @param taskDurationMs the time length of the operation
+     * @param errorMessage   If not null an exception with be thrown with this message
+     * @return a {@link Runnable}
+     */
+    private Runnable longRunnableTask(final int value,
+                                      final int taskDurationMs,
+                                      final String errorMessage,
+                                      final CountDownLatch countDownLatch) {
+        return () -> {
+            failOrWait(taskDurationMs, errorMessage);
+            Integer result = value + 1;
+            LOGGER.info("longRunnableTask complete. Value is " + result);
+            // Cannot return result with a Runnable.
+            countDownLatch.countDown();
+        };
+    }
+
+    /**
+     * Will simulate a long running operation
+     *
+     * @param value          The value to compute
+     * @param taskDurationMs the time lenght of the operation
+     * @param errorMessage   If not null an exception with be thrown with this message
+     * @return a {@link Callable} with the result
+     */
+    private Callable<Integer> longCallableTask(final int value,
+                                               final int taskDurationMs,
+                                               final String errorMessage) {
+        return () -> {
+            LOGGER.info("longCallableTask start");
+            failOrWait(taskDurationMs, errorMessage);
+            LOGGER.info("longCallableTask complete");
+            // We can return a result with a Callable.
+            return value + 1;
+        };
+    }
+
+    private void failOrWait(final int taskDurationMs,
+                            final String errorMessage) {
+        if (nonNull(errorMessage)) {
+            LOGGER.severe("Exception will be thrown");
+            throw new RuntimeException(errorMessage);
+        }
+        try {
+            // Simulate a long processing task using TimeUnit to sleep.
+            TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Problem while waiting");
+        }
+    }
+
+}
+....
+
+This example also defines a method, `longCallableTask`, simulating the execution of a long running computation.
+
+The method `singleFixedDelayTask` schedules a long running task (by calling `longCallableTask`), but the execution will start after 100 ms:
+
+....
+public Future<Integer> singleFixedDelayTask(final int value,
+                                                final String errorMessage) {
+        LOGGER.info("longCallableTask scheduled");
+        return executor.schedule(
+                longCallableTask(value, 10, errorMessage), 100, TimeUnit.MILLISECONDS);
+}
+....
+
+The method `periodicFixedDelayTask` schedules tasks to be run periodically, after each 100 ms, with an initial delay of 0:
+
+....
+public ScheduledFuture<?> periodicFixedDelayTask(final int value,
+                                                     final String errorMessage,
+                                                     final CountDownLatch countDownLatch) {
+        LOGGER.info("longRunnableTask scheduled");
+        return executor.scheduleAtFixedRate(
+                longRunnableTask(value, 10, errorMessage, countDownLatch), 0, 100, TimeUnit.MILLISECONDS);
+}
+....
+
+The methods are used in the following test class:
+
+....
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+@RunWith(Arquillian.class)
+public class ManagedScheduledServiceTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ManagedScheduledServiceTest.class.getSimpleName());
+
+    @Inject
+    private ManagedScheduledService scheduledService;
+
+    @Deployment()
+    public static final WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class, "example.war")
+                .addClasses(ManagedScheduledService.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+
+    /**
+     * Happy path with multiple tasks to be executed after a planed amount of time.
+     *
+     * @throws InterruptedException we don't expect it
+     * @throws ExecutionException   we don't expect it
+     * @throws TimeoutException     we don't expect it
+     */
+    @Test
+    public void singleFixedDelayTask() throws InterruptedException, ExecutionException, TimeoutException {
+        final Future<Integer> futureA = scheduledService.singleFixedDelayTask(1, null);
+        final Future<Integer> futureB = scheduledService.singleFixedDelayTask(50, null);
+        LOGGER.info("Do some other work while we wait for the tasks");
+        assertEquals(2, futureA.get(200, TimeUnit.MILLISECONDS).intValue());
+        assertEquals(51, futureB.get(200, TimeUnit.MILLISECONDS).intValue());
+
+    }
+
+    /**
+     * Happy path with single task to be executed periodically until it's canceled.
+     *
+     * @throws InterruptedException we don't expect it
+     */
+    @Test
+    public void periodicFixedDelayTask() throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(4); // execute 4 times
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, null, countDownLatch);
+        LOGGER.info("Do some other work while we wait for the tasks");
+        countDownLatch.await(500, TimeUnit.MILLISECONDS);
+        if (!scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true);
+            LOGGER.info("task stopped");
+        }
+    }
+
+    /**
+     * Exception happens while processing the task executed after a planed amount of time.
+     */
+    @Test
+    public void singleFixedDelayTaskWithException() {
+        final Future<Integer> future = scheduledService.singleFixedDelayTask(1, "Planned exception");
+        try {
+            future.get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the thrown RuntimeException will be wrapped around an ExecutionException
+            assertEquals("Planned exception", e.getCause().getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+    }
+
+    /**
+     * Exception happens while processing the periodic task.
+     *
+     * @throws InterruptedException we don't expect it
+     */
+    @Test
+    public void periodicFixedDelayTaskWithException() {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final ScheduledFuture<?> scheduledFuture = scheduledService.periodicFixedDelayTask(1, "Planned exception", countDownLatch);
+
+        try {
+            countDownLatch.await(200, TimeUnit.MILLISECONDS);
+            // please note that this thread will pause here until an exception is thrown.
+            // The scheduler uses a Runnable that will never return a result.
+            scheduledFuture.get(200, TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            // the thrown RuntimeException will be wrapped around an ExecutionException
+            assertEquals("Planned exception", e.getCause().getMessage());
+        } catch (Exception e) {
+            fail("Unexpected exception" + e);
+        }
+
+        if (!scheduledFuture.isCancelled()) {
+            scheduledFuture.cancel(true);
+            LOGGER.info("task stopped");
+        }
+    }
+
+}
+....
+
+=== ManagedThreadFactory
+
+A `ManagedThreadFactory` is an object that allows developers to create container managed threads.
+
+==== Example
+
+....
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedThreadFactory;
+import javax.enterprise.context.RequestScoped;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Logger;
+
+@RequestScoped
+public class ThreadFactoryService {
+
+    private static final Logger LOGGER = Logger.getLogger(ThreadFactoryService.class.getSimpleName());
+
+    @Resource
+    private ManagedThreadFactory factory;
+
+    /**
+     * Happy path.
+     *
+     * @param longTask to compute
+     */
+    public void asyncTask(final LongTask longTask) throws InterruptedException {
+        LOGGER.info("Create asyncTask");
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncTask");
+        thread.start();
+    }
+
+    /**
+     * Example where we have to stop a thread.
+     *
+     * @param longTask
+     * @throws InterruptedException
+     */
+    public void asyncHangingTask(final Runnable longTask) {
+        LOGGER.info("Create asyncHangingTask");
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncHangingTask");
+        thread.start();
+
+        if (thread.isAlive()) {
+            // This will cause any wait in the thread to resume.
+            // This will call the InterruptedException block in the longRunnableTask method.
+            thread.interrupt();
+        }
+    }
+
+    /**
+     * Runnable rung task simulating a lengthy operation.
+     * In the other test classes we use anonymous classes.
+     * It's useful to have a "real" class in this case to be able to access the result of the operation.
+     */
+    public static class LongTask implements Runnable {
+        private final int value;
+        private final long taskDurationMs;
+        private final CountDownLatch countDownLatch;
+        private int result;
+        private AtomicBoolean isTerminated = new AtomicBoolean(false);
+
+        public LongTask(final int value,
+                        final long taskDurationMs,
+                        final CountDownLatch countDownLatch) {
+            this.value = value;
+            this.taskDurationMs = taskDurationMs;
+            this.countDownLatch = countDownLatch;
+        }
+
+        public int getResult() {
+            return result;
+        }
+
+        public boolean getIsTerminated() {
+            return isTerminated.get();
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Simulate a long processing task using TimeUnit to sleep.
+                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+            } catch (InterruptedException e) {
+                isTerminated.set(true);
+                countDownLatch.countDown();
+                throw new RuntimeException("Problem while waiting");
+            }
+
+            result = value + 1;
+            LOGGER.info("longRunnableTask complete. Value is " + result);
+            countDownLatch.countDown();
+            // Cannot return result with a Runnable. Must store and access it later.
+        }
+    }
+}
+....
+
+This example defines a class implementing `Runnable`, executing a long running task in the `run` method:
+
+....
+public static class LongTask implements Runnable {
+        private final int value;
+        private final long taskDurationMs;
+        private final CountDownLatch countDownLatch;
+        private int result;
+        private AtomicBoolean isTerminated = new AtomicBoolean(false);
+
+        public LongTask(final int value,
+                        final long taskDurationMs,
+                        final CountDownLatch countDownLatch) {
+            this.value = value;
+            this.taskDurationMs = taskDurationMs;
+            this.countDownLatch = countDownLatch;
+        }
+
+        public int getResult() {
+            return result;
+        }
+
+        public boolean getIsTerminated() {
+            return isTerminated.get();
+        }
+
+        @Override
+        public void run() {
+            try {
+                // Simulate a long processing task using TimeUnit to sleep.
+                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+            } catch (InterruptedException e) {
+                isTerminated.set(true);
+                countDownLatch.countDown();
+                throw new RuntimeException("Problem while waiting");
+            }
+
+            result = value + 1;
+            LOGGER.info("longRunnableTask complete. Value is " + result);
+            countDownLatch.countDown();
+            // Cannot return result with a Runnable. Must store and access it later.
+        }
+}
+....
+
+The method `asyncTask` just creates a managed thread (using the injected `ManagedThreadFactory`) then starts it:
+
+....
+public void asyncTask(final LongTask longTask) throws InterruptedException {
+        LOGGER.info("Create asyncTask");
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncTask");
+        thread.start();
+}
+....
+
+The method `asyncHangingTask` creates a managed thread then stops it:
+
+....
+public void asyncHangingTask(final Runnable longTask) {
+        LOGGER.info("Create asyncHangingTask");
+
+        final Thread thread = factory.newThread(longTask);
+        thread.setName("pretty asyncHangingTask");
+        thread.start();
+
+        if (thread.isAlive()) {
+            // This will cause any wait in the thread to resume.
+            // This will call the InterruptedException block in the longRunnableTask method.
+            thread.interrupt();
+        }
+}
+....
+
+The following class tests these methods:
+
+....
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.superbiz.executor.ThreadFactoryService.LongTask;
+
+import javax.inject.Inject;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+/*
+ * This demonstrates used managed threads inside a container.
+ * <br>
+ * We use CountDownLatch to demonstrate the thread management because it's faster and
+ * safer that simply using a sleep and hope the other thread has completed.
+ */
+@RunWith(Arquillian.class)
+public class ThreadFactoryServiceTest {
+
+    private static final Logger LOGGER = Logger.getLogger(ThreadFactoryServiceTest.class.getSimpleName());
+
+    @Inject
+    private ThreadFactoryService factoryService;
+
+    @Deployment()
+    public static final WebArchive app() {
+        return ShrinkWrap.create(WebArchive.class, "example.war")
+                .addClasses(ThreadFactoryService.class)
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @Test
+    public void asyncTask() throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 50, countDownLatch);
+        factoryService.asyncTask(longTask);
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS); // With the countdown latch we don't block unnecessarily.
+        LOGGER.info("task was completed");
+
+        assertEquals(2, longTask.getResult());
+    }
+
+    @Test
+    public void asyncHangingTask() throws InterruptedException {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final LongTask longTask = new LongTask(1, 1000000, countDownLatch);
+
+        factoryService.asyncHangingTask(longTask);
+
+        countDownLatch.await(200, TimeUnit.MILLISECONDS);
+        LOGGER.info("task should have been interrupted and its operation not completed.");
+
+        assertTrue(longTask.getIsTerminated());
+    }
+}
+....
+
+== Running the test
+
+Running the tests we can check that concurrency utilities objects function correctly.
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.executor.ThreadFactoryServiceTest
+Feb 02, 2019 3:09:14 PM org.apache.openejb.arquillian.common.Setup findHome
+INFO: Unable to find home in: /tmp/arquillian-apache-tomee
+Feb 02, 2019 3:09:14 PM org.apache.openejb.arquillian.common.MavenCache getArtifact
+INFO: Downloading org.apache.tomee:apache-tomee:8.0.0-SNAPSHOT:zip:webprofile please wait...
+Feb 02, 2019 3:09:14 PM org.apache.openejb.arquillian.common.Zips unzip
+INFO: Extracting '/home/bogdan/.m2/repository/org/apache/tomee/apache-tomee/8.0.0-SNAPSHOT/apache-tomee-8.0.0-SNAPSHOT-webprofile.zip' to '/tmp/arquillian-apache-tomee'
+Feb 02, 2019 3:09:14 PM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
+INFO: Downloaded container to: /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:15.503 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Sep 4 2018 22:13:41 UTC
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server number:         9.0.12.0
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Version:            4.4.0-141-generic
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Architecture:          amd64
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /usr/lib/jvm/java-8-oracle/jre
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_201-b09
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            Oracle Corporation
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:15.504 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xmx512m
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xms256m
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:ReservedCodeCacheSize=64m
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dtomee.httpPort=8080
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false
+02-Feb-2019 15:09:15.505 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=true
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/conf/logging.properties
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openejb-javaagent.jar
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/temp
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
+02-Feb-2019 15:09:15.506 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib]
+02-Feb-2019 15:09:15.676 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["http-nio-8080"]
+02-Feb-2019 15:09:15.686 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Using a shared selector for servlet write/read
+02-Feb-2019 15:09:15.701 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["ajp-nio-8009"]
+02-Feb-2019 15:09:15.702 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Using a shared selector for servlet write/read
+02-Feb-2019 15:09:16.147 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+02-Feb-2019 15:09:16.159 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+02-Feb-2019 15:09:16.327 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+02-Feb-2019 15:09:16.327 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+02-Feb-2019 15:09:16.329 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Sat Feb 02 15:09:16 EET 2019
+02-Feb-2019 15:09:16.330 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+02-Feb-2019 15:09:16.330 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.0-SNAPSHOT
+02-Feb-2019 15:09:16.331 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20190116
+02-Feb-2019 15:09:16.331 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:19
+02-Feb-2019 15:09:16.332 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+02-Feb-2019 15:09:16.332 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:16.333 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT
+02-Feb-2019 15:09:16.340 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@4b168fa9
+02-Feb-2019 15:09:16.341 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+02-Feb-2019 15:09:16.396 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/conf/tomee.xml'
+02-Feb-2019 15:09:16.529 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+02-Feb-2019 15:09:16.531 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+02-Feb-2019 15:09:16.534 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
+02-Feb-2019 15:09:16.536 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+02-Feb-2019 15:09:16.542 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+02-Feb-2019 15:09:16.609 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+02-Feb-2019 15:09:16.629 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Singleton Container)
+02-Feb-2019 15:09:16.648 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: openejb
+02-Feb-2019 15:09:16.718 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jndiname.format={deploymentId}{interfaceType.openejbLegacyName}'
+02-Feb-2019 15:09:16.730 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/DeployerBusinessRemote) --> Ejb(deployment-id=openejb/Deployer)
+02-Feb-2019 15:09:16.730 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.Deployer) --> Ejb(deployment-id=openejb/Deployer)
+02-Feb-2019 15:09:16.732 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer) --> Ejb(deployment-id=openejb/Deployer)
+02-Feb-2019 15:09:16.733 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+02-Feb-2019 15:09:16.734 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+02-Feb-2019 15:09:16.737 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
+02-Feb-2019 15:09:16.738 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+02-Feb-2019 15:09:16.753 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.756 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.760 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.760 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.761 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.762 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Feb-2019 15:09:16.768 INFO [main] org.apache.openejb.assembler.classic.Assembler.deployMBean Deployed MBean(openejb.user.mbeans:application=openejb,group=org.apache.openejb.assembler.monitoring,name=JMXDeployer)
+02-Feb-2019 15:09:16.770 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=openejb)
+02-Feb-2019 15:09:16.817 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+02-Feb-2019 15:09:17.028 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+02-Feb-2019 15:09:17.028 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT
+02-Feb-2019 15:09:17.029 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+02-Feb-2019 15:09:17.031 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+02-Feb-2019 15:09:17.032 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initialization processed in 1959 ms
+02-Feb-2019 15:09:17.056 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+02-Feb-2019 15:09:17.057 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+02-Feb-2019 15:09:17.073 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
+02-Feb-2019 15:09:17.073 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+02-Feb-2019 15:09:17.134 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+02-Feb-2019 15:09:17.134 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+02-Feb-2019 15:09:17.134 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [skipMemoryLeakChecksOnJvmShutdown] to [false] as the property does not exist.
+02-Feb-2019 15:09:17.179 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
+02-Feb-2019 15:09:17.191 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-8009"]
+02-Feb-2019 15:09:17.195 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in 163 ms
+Feb 02, 2019 3:09:17 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:17.554 INFO [http-nio-8080-exec-3] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tmp/arquillian-tomee-app-working-dir/0/example.war
+02-Feb-2019 15:09:17.614 INFO [http-nio-8080-exec-3] org.apache.openejb.util.JarExtractor.extract Extracted path: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:17.614 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+02-Feb-2019 15:09:17.615 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /example
+02-Feb-2019 15:09:17.616 INFO [http-nio-8080-exec-3] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+02-Feb-2019 15:09:17.959 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:18.095 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+02-Feb-2019 15:09:18.096 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean example.Comp1809613562: Container(type=MANAGED, id=Default Managed Container)
+02-Feb-2019 15:09:18.096 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+02-Feb-2019 15:09:18.109 INFO [http-nio-8080-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/temp for stateful session passivation
+02-Feb-2019 15:09:18.115 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Thread Factory, type=Resource, provider-id=Default Managed Thread Factory)
+02-Feb-2019 15:09:18.115 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default Managed Thread Factory' of type 'javax.enterprise.concurrent.ManagedThreadFactory for 'example.Comp1809613562'.
+02-Feb-2019 15:09:18.118 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.executor.ThreadFactoryService/factory' in bean example.Comp1809613562 to Resource(id=Default Managed Thread Factory)
+02-Feb-2019 15:09:18.147 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/tmp/arquillian-tomee-app-working-dir/0/example" loaded.
+02-Feb-2019 15:09:18.148 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:18.208 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@4b168fa9
+02-Feb-2019 15:09:18.304 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.ManagedSecurityService.<init> Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+02-Feb-2019 15:09:18.349 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+02-Feb-2019 15:09:18.356 INFO [http-nio-8080-exec-3] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+02-Feb-2019 15:09:19.416 INFO [http-nio-8080-exec-3] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+02-Feb-2019 15:09:19.426 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 1077 ms.
+02-Feb-2019 15:09:19.437 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/tmp/arquillian-tomee-app-working-dir/0/example)
+02-Feb-2019 15:09:19.546 INFO [http-nio-8080-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+02-Feb-2019 15:09:19.569 INFO [http-nio-8080-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+02-Feb-2019 15:09:19.586 INFO [http-nio-8080-exec-3] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+02-Feb-2019 15:09:19.592 INFO [http-nio-8080-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+02-Feb-2019 15:09:19.653 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
+02-Feb-2019 15:09:19.894 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openwebbeans-jsf-2.0.9.jar!/META-INF/faces-config.xml
+02-Feb-2019 15:09:19.896 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/openwebbeans-el22-2.0.9.jar!/META-INF/faces-config.xml
+02-Feb-2019 15:09:19.983 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.2' from path 'file:/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/myfaces-api-2.3.2.jar'
+02-Feb-2019 15:09:19.983 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.2' from path 'file:/tmp/arquillian-apache-tomee/apache-tomee-webprofile-8.0.0-SNAPSHOT/lib/myfaces-impl-2.3.2.jar'
+02-Feb-2019 15:09:19.991 INFO [http-nio-8080-exec-3] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
+02-Feb-2019 15:09:19.992 INFO [http-nio-8080-exec-3] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+02-Feb-2019 15:09:20.047 INFO [http-nio-8080-exec-3] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
+02-Feb-2019 15:09:20.075 INFO [http-nio-8080-exec-3] org.apache.myfaces.application.ApplicationImpl.getProjectStage Couldn't discover the current project stage, using Production
+02-Feb-2019 15:09:20.076 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.FacesConfigurator.handleSerialFactory Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+02-Feb-2019 15:09:20.081 INFO [http-nio-8080-exec-3] org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory.getLifecycleProvider Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+02-Feb-2019 15:09:20.156 INFO [http-nio-8080-exec-3] org.apache.myfaces.webapp.AbstractFacesInitializer.initFaces ServletContext initialized.
+02-Feb-2019 15:09:20.162 INFO [http-nio-8080-exec-3] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+02-Feb-2019 15:09:20.175 INFO [http-nio-8080-exec-3] org.apache.myfaces.webapp.StartupServletContextListener.contextInitialized MyFaces Core has started, it took [579] ms.
+02-Feb-2019 15:09:20.692 INFO [http-nio-8080-exec-5] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default Managed Thread Factory)
+02-Feb-2019 15:09:20.696 INFO [http-nio-8080-exec-5] org.superbiz.executor.ThreadFactoryService.asyncTask Create asyncTask
+02-Feb-2019 15:09:20.748 INFO [71] org.superbiz.executor.ThreadFactoryService$LongTask.run longRunnableTask complete. Value is 2
+02-Feb-2019 15:09:20.748 INFO [http-nio-8080-exec-5] org.superbiz.executor.ThreadFactoryServiceTest.asyncTask task was completed
+02-Feb-2019 15:09:20.783 INFO [http-nio-8080-exec-8] org.superbiz.executor.ThreadFactoryService.asyncHangingTask Create asyncHangingTask
+Exception in thread "pretty asyncHangingTask" java.lang.RuntimeException: Problem while waiting
+	at org.superbiz.executor.ThreadFactoryService$LongTask.run(ThreadFactoryService.java:104)
+	at java.lang.Thread.run(Thread.java:748)
+02-Feb-2019 15:09:20.784 INFO [http-nio-8080-exec-8] org.superbiz.executor.ThreadFactoryServiceTest.asyncHangingTask task should have been interrupted and its operation not completed.
+Feb 02, 2019 3:09:20 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:20.802 INFO [http-nio-8080-exec-1] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /tmp/arquillian-tomee-app-working-dir/0/example
+Feb 02, 2019 3:09:20 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example.war
+Feb 02, 2019 3:09:20 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.272 sec
+Running org.superbiz.executor.ManagedScheduledServiceTest
+Feb 02, 2019 3:09:21 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:21.669 INFO [http-nio-8080-exec-5] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tmp/arquillian-tomee-app-working-dir/0/example.war
+02-Feb-2019 15:09:21.689 INFO [http-nio-8080-exec-5] org.apache.openejb.util.JarExtractor.extract Extracted path: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:21.690 INFO [http-nio-8080-exec-5] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+02-Feb-2019 15:09:21.690 INFO [http-nio-8080-exec-5] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /example
+02-Feb-2019 15:09:21.691 INFO [http-nio-8080-exec-5] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+02-Feb-2019 15:09:21.767 INFO [http-nio-8080-exec-5] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:21.794 INFO [http-nio-8080-exec-5] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Scheduled Executor Service, type=Resource, provider-id=Default Scheduled Executor Service)
+02-Feb-2019 15:09:21.795 INFO [http-nio-8080-exec-5] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default Scheduled Executor Service' of type 'javax.enterprise.concurrent.ManagedScheduledExecutorService for 'example.Comp826763784'.
+02-Feb-2019 15:09:21.795 INFO [http-nio-8080-exec-5] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.executor.ManagedScheduledService/executor' in bean example.Comp826763784 to Resource(id=Default Scheduled Executor Service)
+02-Feb-2019 15:09:21.797 INFO [http-nio-8080-exec-5] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/tmp/arquillian-tomee-app-working-dir/0/example" loaded.
+02-Feb-2019 15:09:21.797 INFO [http-nio-8080-exec-5] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:21.816 INFO [http-nio-8080-exec-5] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@4b168fa9
+02-Feb-2019 15:09:21.819 INFO [http-nio-8080-exec-5] org.apache.openejb.cdi.ManagedSecurityService.<init> Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+02-Feb-2019 15:09:21.823 INFO [http-nio-8080-exec-5] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+02-Feb-2019 15:09:21.979 INFO [http-nio-8080-exec-5] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 156 ms.
+02-Feb-2019 15:09:21.984 INFO [http-nio-8080-exec-5] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/tmp/arquillian-tomee-app-working-dir/0/example)
+02-Feb-2019 15:09:22.025 INFO [http-nio-8080-exec-5] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+02-Feb-2019 15:09:22.028 INFO [http-nio-8080-exec-5] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+02-Feb-2019 15:09:22.265 INFO [http-nio-8080-exec-5] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+02-Feb-2019 15:09:22.507 INFO [http-nio-8080-exec-2] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default Scheduled Executor Service)
+02-Feb-2019 15:09:22.523 INFO [http-nio-8080-exec-2] org.superbiz.executor.ManagedScheduledService.singleFixedDelayTask longCallableTask scheduled
+02-Feb-2019 15:09:22.634 INFO [managed-thread-3] org.superbiz.executor.ManagedScheduledService.lambda$longCallableTask$1 longCallableTask start
+02-Feb-2019 15:09:22.634 SEVERE [managed-thread-3] org.superbiz.executor.ManagedScheduledService.failOrWait Exception will be thrown
+02-Feb-2019 15:09:22.658 INFO [http-nio-8080-exec-8] org.superbiz.executor.ManagedScheduledService.singleFixedDelayTask longCallableTask scheduled
+02-Feb-2019 15:09:22.658 INFO [http-nio-8080-exec-8] org.superbiz.executor.ManagedScheduledService.singleFixedDelayTask longCallableTask scheduled
+02-Feb-2019 15:09:22.658 INFO [http-nio-8080-exec-8] org.superbiz.executor.ManagedScheduledServiceTest.singleFixedDelayTask Do some other work while we wait for the tasks
+02-Feb-2019 15:09:22.758 INFO [managed-thread-3] org.superbiz.executor.ManagedScheduledService.lambda$longCallableTask$1 longCallableTask start
+02-Feb-2019 15:09:22.758 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longCallableTask$1 longCallableTask start
+02-Feb-2019 15:09:22.768 INFO [managed-thread-3] org.superbiz.executor.ManagedScheduledService.lambda$longCallableTask$1 longCallableTask complete
+02-Feb-2019 15:09:22.768 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longCallableTask$1 longCallableTask complete
+02-Feb-2019 15:09:22.792 INFO [http-nio-8080-exec-9] org.superbiz.executor.ManagedScheduledService.periodicFixedDelayTask longRunnableTask scheduled
+02-Feb-2019 15:09:22.795 SEVERE [managed-thread-5] org.superbiz.executor.ManagedScheduledService.failOrWait Exception will be thrown
+02-Feb-2019 15:09:22.995 INFO [http-nio-8080-exec-9] org.superbiz.executor.ManagedScheduledServiceTest.periodicFixedDelayTaskWithException task stopped
+02-Feb-2019 15:09:23.022 INFO [http-nio-8080-exec-7] org.superbiz.executor.ManagedScheduledService.periodicFixedDelayTask longRunnableTask scheduled
+02-Feb-2019 15:09:23.023 INFO [http-nio-8080-exec-7] org.superbiz.executor.ManagedScheduledServiceTest.periodicFixedDelayTask Do some other work while we wait for the tasks
+02-Feb-2019 15:09:23.033 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longRunnableTask$0 longRunnableTask complete. Value is 2
+02-Feb-2019 15:09:23.133 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longRunnableTask$0 longRunnableTask complete. Value is 2
+02-Feb-2019 15:09:23.233 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longRunnableTask$0 longRunnableTask complete. Value is 2
+02-Feb-2019 15:09:23.333 INFO [managed-thread-4] org.superbiz.executor.ManagedScheduledService.lambda$longRunnableTask$0 longRunnableTask complete. Value is 2
+02-Feb-2019 15:09:23.333 INFO [http-nio-8080-exec-7] org.superbiz.executor.ManagedScheduledServiceTest.periodicFixedDelayTask task stopped
+Feb 02, 2019 3:09:23 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:23.412 INFO [http-nio-8080-exec-12] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /tmp/arquillian-tomee-app-working-dir/0/example
+Feb 02, 2019 3:09:23 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example.war
+Feb 02, 2019 3:09:23 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.526 sec
+Running org.superbiz.executor.ManagedServiceTest
+Feb 02, 2019 3:09:24 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:24.038 INFO [http-nio-8080-exec-3] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tmp/arquillian-tomee-app-working-dir/0/example.war
+02-Feb-2019 15:09:24.056 INFO [http-nio-8080-exec-3] org.apache.openejb.util.JarExtractor.extract Extracted path: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:24.056 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+02-Feb-2019 15:09:24.056 INFO [http-nio-8080-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /example
+02-Feb-2019 15:09:24.057 INFO [http-nio-8080-exec-3] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+02-Feb-2019 15:09:24.114 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:24.145 INFO [http-nio-8080-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Executor Service, type=Resource, provider-id=Default Executor Service)
+02-Feb-2019 15:09:24.146 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default Executor Service' of type 'javax.enterprise.concurrent.ManagedExecutorService for 'example.Comp1044706463'.
+02-Feb-2019 15:09:24.146 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.executor.ManagedService/executor' in bean example.Comp1044706463 to Resource(id=Default Executor Service)
+02-Feb-2019 15:09:24.149 INFO [http-nio-8080-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/tmp/arquillian-tomee-app-working-dir/0/example" loaded.
+02-Feb-2019 15:09:24.149 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:24.162 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@4b168fa9
+02-Feb-2019 15:09:24.165 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.ManagedSecurityService.<init> Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+02-Feb-2019 15:09:24.167 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+02-Feb-2019 15:09:24.303 INFO [http-nio-8080-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 136 ms.
+02-Feb-2019 15:09:24.307 INFO [http-nio-8080-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/tmp/arquillian-tomee-app-working-dir/0/example)
+02-Feb-2019 15:09:24.346 INFO [http-nio-8080-exec-3] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+02-Feb-2019 15:09:24.349 INFO [http-nio-8080-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+02-Feb-2019 15:09:24.476 INFO [http-nio-8080-exec-3] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+02-Feb-2019 15:09:24.610 INFO [http-nio-8080-exec-10] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default Executor Service)
+02-Feb-2019 15:09:24.615 INFO [http-nio-8080-exec-10] org.superbiz.executor.ManagedService.asyncTask Create asyncTask
+02-Feb-2019 15:09:24.619 INFO [http-nio-8080-exec-10] org.superbiz.executor.ManagedServiceTest.managedInvocationTest You can do something else in the meantime and later get the future value
+02-Feb-2019 15:09:24.719 INFO [managed-thread-8] org.superbiz.executor.ManagedService.lambda$longTask$2 longTask complete
+02-Feb-2019 15:09:24.777 INFO [http-nio-8080-exec-13] org.superbiz.executor.ManagedService.asyncTaskWithException Create asyncTaskWithException
+02-Feb-2019 15:09:24.780 SEVERE [managed-thread-9] org.superbiz.executor.ManagedService.lambda$longTask$2 Exception will be thrown
+02-Feb-2019 15:09:24.840 INFO [http-nio-8080-exec-12] org.superbiz.executor.ManagedService.asyncTask Create asyncTask
+Feb 02, 2019 3:09:24 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:8080/tomee/ejb}
+02-Feb-2019 15:09:24.896 INFO [http-nio-8080-exec-4] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /tmp/arquillian-tomee-app-working-dir/0/example
+02-Feb-2019 15:09:24.923 WARNING [http-nio-8080-exec-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [example] appears to have started a thread named [managed-thread-10] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.lang.Thread.sleep(Native Method)
+ java.lang.Thread.sleep(Thread.java:340)
+ java.util.concurrent.TimeUnit.sleep(TimeUnit.java:386)
+ org.superbiz.executor.ManagedService.lambda$longTask$2(ManagedService.java:86)
+ org.superbiz.executor.ManagedService$$Lambda$340/1111032447.get(Unknown Source)
+ java.util.concurrent.CompletableFuture$AsyncSupply.run(CompletableFuture.java:1590)
+ org.apache.openejb.threads.task.CURunnable$1.call(CURunnable.java:35)
+ org.apache.openejb.threads.task.CURunnable$1.call(CURunnable.java:32)
+ org.apache.openejb.threads.task.CUTask.invoke(CUTask.java:100)
+ org.apache.openejb.threads.task.CURunnable.run(CURunnable.java:32)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ java.lang.Thread.run(Thread.java:748)
+Feb 02, 2019 3:09:25 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example.war
+Feb 02, 2019 3:09:25 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/example
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.486 sec
+02-Feb-2019 15:09:25.070 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+02-Feb-2019 15:09:25.071 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-8080"]
+02-Feb-2019 15:09:25.124 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["ajp-nio-8009"]
+02-Feb-2019 15:09:25.175 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
+02-Feb-2019 15:09:25.179 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-8080"]
+02-Feb-2019 15:09:25.183 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["ajp-nio-8009"]
+02-Feb-2019 15:09:25.185 INFO [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+02-Feb-2019 15:09:25.206 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+02-Feb-2019 15:09:25.208 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+02-Feb-2019 15:09:25.209 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+02-Feb-2019 15:09:25.235 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["http-nio-8080"]
+02-Feb-2019 15:09:25.237 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["ajp-nio-8009"]
+
+Results :
+
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
+....
+
+Full example can be found https://github.com/apache/tomee/tree/master/examples/concurrency-utils[here].
