@@ -23,6 +23,7 @@ import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
 import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
@@ -35,6 +36,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class TomEEMicroProfileListener {
     private static final String[] MICROPROFILE_LIBS_IMPLS_PREFIXES = new String[]{
@@ -49,8 +51,28 @@ public class TomEEMicroProfileListener {
             "cxf-rt-rs-mp-client",
             };
 
+    private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
+            "org.apache.geronimo.config.cdi.ConfigExtension",
+            "org.apache.safeguard.impl.cdi.SafeguardExtension",
+            "org.apache.tomee.microprofile.jwt.cdi.MPJWTCDIExtension",
+            "org.apache.geronimo.microprofile.impl.health.cdi.GeronimoHealthExtension",
+            "org.apache.geronimo.microprofile.metrics.cdi.MetricsExtension",
+            "org.apache.geronimo.microprofile.opentracing.microprofile.cdi.OpenTracingExtension",
+            "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension",
+            "org.apache.cxf.microprofile.client.cdi.RestClientExtension",
+            };
+
     @SuppressWarnings("Duplicates")
     public void enrichContainerWithMicroProfile(@Observes final AfterContainerUrlScanEvent afterContainerUrlScanEvent) {
+        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "all");
+
+        if (mpScan.equals("none")) {
+            Stream.of(MICROPROFILE_EXTENSIONS).forEach(
+                    extension -> SystemInstance.get().setProperty(extension + ".active", "false"));
+
+            return;
+        }
+
         final List<URL> containerUrls = afterContainerUrlScanEvent.getContainerUrls();
         final Paths paths = new Paths(new File(System.getProperty("openejb.home")));
         for (final String prefix : MICROPROFILE_LIBS_IMPLS_PREFIXES) {

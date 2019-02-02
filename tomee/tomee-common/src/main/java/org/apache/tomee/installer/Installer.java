@@ -792,8 +792,8 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
 
                 systemPropertiesWriter.write("#\n");
-                systemPropertiesWriter.write("# Which paths / libraries should be scanned?\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container = true\n");
+                systemPropertiesWriter.write("# MicroProfile\n");
+                systemPropertiesWriter.write("tomee.mp.scan = none\n");
 
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory

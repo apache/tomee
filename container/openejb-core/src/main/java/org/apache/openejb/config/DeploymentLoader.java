@@ -26,7 +26,6 @@ import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
-import org.apache.openejb.config.event.BeforeAppInfoBuilderEvent;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
@@ -62,7 +61,6 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
-import org.apache.xbean.finder.filter.PatternFilter;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -117,9 +115,6 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
     private volatile List<URL> containerUrls = null;
-
-    private static final String OPENEJB_CONTAINER_INCLUDES = "openejb.scan.webapp.container.includes";
-    private static final String OPENEJB_CONTAINER_EXCLUDES = "openejb.scan.webapp.container.excludes";
 
     @Deprecated // use load(File, ExternalConfiguration)
     public AppModule load(final File jarFile) throws OpenEJBException {
@@ -1102,15 +1097,13 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private void ensureContainerUrls() {
         if (containerUrls == null) {
-            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "true"))) {
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "false"))) {
                 synchronized (this) {
                     if (containerUrls == null) {
                         try {
                             UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
                             urlSet = URLs.cullSystemJars(urlSet);
-                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ""));
-                            final PatternFilter containerExcludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_EXCLUDES, ""));
-                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, containerIncludes, containerExcludes);
+                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
                             containerUrls = urlSet.getUrls();
 
                             final boolean skipContainerFolders = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container.skip-folder", "true"));
@@ -1135,7 +1128,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } else {
-                containerUrls = Collections.emptyList();
+                containerUrls = new ArrayList<>();
             }
         }
 
