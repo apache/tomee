@@ -31,10 +31,6 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
-      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
@@ -47,10 +43,6 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
-      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plume">
@@ -63,10 +55,6 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
-      </property>
     </configuration>
   </container>
 </arquillian>

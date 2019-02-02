@@ -85,6 +85,8 @@ public class TomEEMicroProfileListener {
                 }
             }
         }
+
+        SystemInstance.get().setProperty("openejb.cxf-rs.cache-application", "false");
     }
 
     public void processApplication(@Observes final BeforeEvent<AfterApplicationCreated> afterApplicationCreated) {
