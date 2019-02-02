@@ -64,7 +64,7 @@ public class TomEEMicroProfileListener {
 
     @SuppressWarnings("Duplicates")
     public void enrichContainerWithMicroProfile(@Observes final AfterContainerUrlScanEvent afterContainerUrlScanEvent) {
-        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "all");
+        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
 
         if (mpScan.equals("none")) {
             Stream.of(MICROPROFILE_EXTENSIONS).forEach(
