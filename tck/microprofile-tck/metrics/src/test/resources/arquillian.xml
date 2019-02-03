@@ -47,6 +47,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
+        tomee.mp.scan = all
         MP_METRICS_TAGS = tier=integration
       </property>
     </configuration>
@@ -62,6 +63,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
+        tomee.mp.scan = all
         MP_METRICS_TAGS = tier=integration
       </property>
     </configuration>
