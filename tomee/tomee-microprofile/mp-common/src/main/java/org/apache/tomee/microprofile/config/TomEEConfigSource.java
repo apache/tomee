@@ -24,7 +24,6 @@ import org.eclipse.microprofile.config.spi.ConfigSource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 

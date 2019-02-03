@@ -24,8 +24,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.jar.JarFile;
 
 public class Installer implements InstallerInterface {
