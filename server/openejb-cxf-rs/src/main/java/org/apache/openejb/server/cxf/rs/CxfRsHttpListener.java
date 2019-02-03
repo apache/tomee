@@ -281,9 +281,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 pathInfo = pathInfo.substring(0, indexOf);
             }
         }
-        if ("/".equals(pathInfo) || pathInfo.isEmpty()) { // root is redirected to welcomefiles
+        if (pathInfo.endsWith("/") || pathInfo.isEmpty()) { // root of path is redirected to welcomefiles
+            if (pathInfo.endsWith("/")) {
+              pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
+            }
             for (final String n : welcomeFiles) {
-                final InputStream is = request.getServletContext().getResourceAsStream(n);
+                final InputStream is = request.getServletContext().getResourceAsStream(pathInfo + n);
                 if (is != null) {
                     return is;
                 }
