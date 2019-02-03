@@ -49,7 +49,6 @@ public class TomEEConfigSource implements ConfigSource {
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
         if (mpScan.equals("none")) {
             openTracingFilterActive(false);
-            openTracingFilterActive(false);
         }
     }
 
