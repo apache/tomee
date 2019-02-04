@@ -22,7 +22,7 @@ import org.apache.geronimo.microprofile.metrics.common.jaxrs.MetricsEndpoints;
 import org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints;
 import org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint;
 import org.apache.openejb.assembler.classic.WebAppInfo;
-import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
+import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.observer.event.BeforeEvent;
@@ -63,7 +63,7 @@ public class TomEEMicroProfileListener {
             };
 
     @SuppressWarnings("Duplicates")
-    public void enrichContainerWithMicroProfile(@Observes final AfterContainerUrlScanEvent afterContainerUrlScanEvent) {
+    public void enhanceScannableUrls(@Observes final EnhanceScannableUrlsEvent enhanceScannableUrlsEvent) {
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
 
         if (mpScan.equals("none")) {
@@ -73,7 +73,7 @@ public class TomEEMicroProfileListener {
             return;
         }
 
-        final List<URL> containerUrls = afterContainerUrlScanEvent.getContainerUrls();
+        final List<URL> containerUrls = enhanceScannableUrlsEvent.getScannableUrls();
         final Paths paths = new Paths(new File(System.getProperty("openejb.home")));
         for (final String prefix : MICROPROFILE_LIBS_IMPLS_PREFIXES) {
             final File file = paths.findTomEELibJar(prefix);

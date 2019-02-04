@@ -81,11 +81,7 @@ jfxrt.jar
 jnr-
 johnzon-
 fusemq-leveldb-
-geronimo-connector
-geronimo-j2ee-
-geronimo-jpa_
-geronimo-javamail
-geronimo-transaction
+geronimo-
 google-
 gragent.jar
 groovy-
@@ -214,6 +210,7 @@ rmock-
 rt.jar
 saaj-
 sac-
+safeguard-
 scala-library-
 scalatest
 scannotation-
