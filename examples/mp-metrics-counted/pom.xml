@@ -33,7 +33,6 @@
         <version.javaee-api>8.0</version.javaee-api>
         <microprofile.metrics.version>1.1</microprofile.metrics.version>
         <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-        <tomee.version>${project.version}</tomee.version>
         <junit.version>4.12</junit.version>
         <docker.image.name>tomee/${artifactId}</docker.image.name>
         <docker.file.name>Dockerfile</docker.file.name>
@@ -61,7 +60,7 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-cxf-rs</artifactId>
-            <version>${tomee.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -73,13 +72,13 @@
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>arquillian-tomee-remote</artifactId>
-            <version>${tomee.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>apache-tomee</artifactId>
-            <version>${tomee.version}</version>
+            <version>${project.version}</version>
             <type>zip</type>
             <classifier>microprofile</classifier>
             <scope>test</scope>
@@ -155,4 +154,18 @@
             </build>
         </profile>
     </profiles>
+
+    <!-- This section allows you to configure where to publish libraries for
+    sharing. It is not required and may be deleted. For more information see:
+    http://maven.apache.org/plugins/maven-deploy-plugin/ -->
+    <distributionManagement>
+        <repository>
+            <id>localhost</id>
+            <url>file://${basedir}/target/repo/</url>
+        </repository>
+        <snapshotRepository>
+            <id>localhost</id>
+            <url>file://${basedir}/target/snapshot-repo/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

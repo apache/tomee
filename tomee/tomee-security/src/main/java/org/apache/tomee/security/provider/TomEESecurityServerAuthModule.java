@@ -30,7 +30,6 @@ import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static org.apache.tomee.security.http.TomEEHttpMessageContext.httpMessageContext;
@@ -68,13 +67,11 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
         final HttpMessageContext httpMessageContext =
                 httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
 
-        final HttpServletRequest request = httpMessageContext.getRequest();
-        final String servletName = request.getHttpServletMapping().getServletName();
         final HttpAuthenticationMechanism authenticationMechanism =
                 CDI.current()
                    .select(TomEESecurityServletAuthenticationMechanismMapper.class)
                    .get()
-                   .getCurrentAuthenticationMechanism(servletName);
+                   .getCurrentAuthenticationMechanism(httpMessageContext);
 
         final AuthenticationStatus authenticationStatus;
         try {

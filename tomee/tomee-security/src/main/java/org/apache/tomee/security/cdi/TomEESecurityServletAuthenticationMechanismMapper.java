@@ -25,8 +25,10 @@ import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
+import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,7 +84,14 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
         }
     }
 
-    public HttpAuthenticationMechanism getCurrentAuthenticationMechanism(final String servletName) {
+    public HttpAuthenticationMechanism getCurrentAuthenticationMechanism(final HttpMessageContext httpMessageContext) {
+        final HttpServletRequest request = httpMessageContext.getRequest();
+
+        if (request.getRequestURI().endsWith("j_security_check")) {
+            return CDI.current().select(FormAuthenticationMechanism.class).get();
+        }
+
+        final String servletName = request.getHttpServletMapping().getServletName();
         return servletAuthenticationMapper.getOrDefault(servletName, defaultAuthenticationMechanism);
     }
 }

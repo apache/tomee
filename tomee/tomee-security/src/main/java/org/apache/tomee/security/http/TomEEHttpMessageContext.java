@@ -17,6 +17,7 @@
 package org.apache.tomee.security.http;
 
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
+import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.message.TomEEMessageInfo;
 
 import javax.security.auth.Subject;
@@ -45,7 +46,7 @@ import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
-public class TomEEHttpMessageContext implements HttpMessageContext {
+public final class TomEEHttpMessageContext implements HttpMessageContext {
     private final CallbackHandler handler;
     private final MessageInfo messageInfo;
     private final Subject clientSubject;
@@ -80,7 +81,7 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public boolean isAuthenticationRequest() {
-        return false;
+        return Boolean.valueOf((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.AUTHENTICATE, "false"));
     }
 
     @Override
@@ -202,6 +203,8 @@ public class TomEEHttpMessageContext implements HttpMessageContext {
 
         this.principal = principal;
         this.groups = groups;
+
+        TomEESecurityContext.registerContainerAboutLogin(principal, groups);
 
         return SUCCESS;
     }

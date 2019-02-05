@@ -245,7 +245,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
         if (!options.get(VALIDATION_SKIP_PROPERTY, false)) {
             chain.add(new ValidateModules());
         } else {
-            DeploymentLoader.logger.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
+            DeploymentLoader.LOGGER.info("validationDisabled", VALIDATION_SKIP_PROPERTY);
         }
         //END SNIPPET: code
         chain.add(new InitEjbDeployments());
@@ -567,10 +567,6 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
                 } else {
                     appInfo = configureApplication(new AppModule(SystemApps.getSystemModule()));
                 }
-                // they doesn't use CDI so no need to activate it
-                // 1) will be faster
-                // 2) will let embedded containers (tomee-embedded mainly) not be noised by it in our singleton service
-                appInfo.properties.put("openejb.cdi.activated", "false");
                 sys.containerSystem.applications.add(appInfo);
             } catch (final OpenEJBException e) {
                 logger.error("Unable to load the system applications.", e);

@@ -26,6 +26,7 @@ import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -60,7 +61,6 @@ import org.apache.xbean.finder.UrlSet;
 import org.apache.xbean.finder.archive.ClassesArchive;
 import org.apache.xbean.finder.filter.Filter;
 import org.apache.xbean.finder.filter.Filters;
-import org.apache.xbean.finder.filter.PatternFilter;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -98,10 +98,10 @@ import java.util.zip.ZipEntry;
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader implements DeploymentFilterable {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
 
-    private static final String ddDir = "META-INF/";
+    static final String META_INF = "META-INF/";
 
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
     public static final String EAR_SCOPED_CDI_BEANS = "ear-scoped-cdi-beans_";
@@ -115,9 +115,6 @@ public class DeploymentLoader implements DeploymentFilterable {
     private static final Collection<String> KNOWN_DESCRIPTORS = Arrays.asList("app-ctx.xml", "module.properties", "application.properties", "web.xml", "ejb-jar.xml", "openejb-jar.xml", "env-entries.properties", "beans.xml", "ra.xml", "application.xml", "application-client.xml", "persistence-fragment.xml", "persistence.xml", "validation.xml", NewLoaderLogic.EXCLUSION_FILE);
     private static String ALTDD = SystemInstance.get().getOptions().get(OPENEJB_ALTDD_PREFIX, (String) null);
     private volatile List<URL> containerUrls = null;
-
-    private static final String OPENEJB_CONTAINER_INCLUDES = "openejb.scan.webapp.container.includes";
-    private static final String OPENEJB_CONTAINER_EXCLUDES = "openejb.scan.webapp.container.excludes";
 
     @Deprecated // use load(File, ExternalConfiguration)
     public AppModule load(final File jarFile) throws OpenEJBException {
@@ -273,7 +270,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // "persistence.xml" is done separately since we manage a list of url and not s single url
         try {
-            final List<URL> persistenceXmls = finder.findAll(ddDir + "persistence.xml");
+            final List<URL> persistenceXmls = finder.findAll(META_INF + "persistence.xml");
             if (persistenceXmls.size() >= 1) {
                 final URL old = (URL) otherDD.get("persistence.xml");
                 if (old != null && !persistenceXmls.contains(old)) {
@@ -315,7 +312,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } catch (final Exception e) {
-                logger.error("error processing url " + url.toExternalForm(), e);
+                LOGGER.error("error processing url " + url.toExternalForm(), e);
             }
         }
 
@@ -345,7 +342,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } catch (final Exception e) {
-                logger.error("error processing url " + url.toExternalForm(), e);
+                LOGGER.error("error processing url " + url.toExternalForm(), e);
             }
         }
     }
@@ -478,7 +475,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
             }
 
             // APP-INF/lib/*
@@ -486,7 +483,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
             }
 
             // META-INF/lib/*
@@ -494,7 +491,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
             }
 
             // All jars nested in the Resource Adapter
@@ -579,7 +576,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
                     appModule.getEjbModules().add(ejbModule);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load EJBs from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -603,7 +600,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     appModule.getClientModules().add(clientModule);
                 } catch (final Exception e) {
-                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load App Client from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -625,7 +622,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         appModule.getConnectorModules().add(connectorModule);
                     }
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load RAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load RAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -635,7 +632,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final URL warUrl = stringURLEntry.getValue();
                     addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(stringURLEntry.getKey()), null);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load WAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load WAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -691,7 +688,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             return appModule;
 
         } catch (final OpenEJBException e) {
-            logger.error("Unable to load EAR: " + jarPath, e);
+            LOGGER.error("Unable to load EAR: " + jarPath, e);
             throw e;
         }
     }
@@ -707,7 +704,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 detectAndAddModuleToApplication(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, entry);
             } catch (final UnsupportedOperationException | UnknownModuleTypeException e) {
                 // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
-                logger.info("Ignoring unknown module type: " + entry.getKey());
+                LOGGER.info("Ignoring unknown module type: " + entry.getKey());
             } catch (final Exception e) {
                 throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
             }
@@ -980,7 +977,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     try {
                         externalUrls.add(new File(trim).toURI().toURL());
                     } catch (final MalformedURLException e) {
-                        logger.error(e.getMessage());
+                        LOGGER.error(e.getMessage());
                     }
                 }
             }
@@ -999,7 +996,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             addedUrls.add(f.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + f.getAbsolutePath(), e);
+                            LOGGER.warning("War path bad: " + f.getAbsolutePath(), e);
                         }
                     }
                 }
@@ -1071,6 +1068,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
 
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(webUrls);
@@ -1100,15 +1098,13 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     private void ensureContainerUrls() {
         if (containerUrls == null) {
-            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "true"))) {
+            if ("true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container", "false"))) {
                 synchronized (this) {
                     if (containerUrls == null) {
                         try {
                             UrlSet urlSet = new UrlSet(ParentClassLoaderFinder.Helper.get());
                             urlSet = URLs.cullSystemJars(urlSet);
-                            final PatternFilter containerIncludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_INCLUDES, ".*(geronimo|mp-jwt|mp-common|failsafe).*"));
-                            final PatternFilter containerExcludes = new PatternFilter(SystemInstance.get().getProperty(OPENEJB_CONTAINER_EXCLUDES, ""));
-                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet, containerIncludes, containerExcludes);
+                            urlSet = NewLoaderLogic.applyBuiltinExcludes(urlSet);
                             containerUrls = urlSet.getUrls();
 
                             final boolean skipContainerFolders = "true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.scan.webapp.container.skip-folder", "true"));
@@ -1128,12 +1124,12 @@ public class DeploymentLoader implements DeploymentFilterable {
                                 }
                             }
                         } catch (final Exception e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     }
                 }
             } else {
-                containerUrls = Collections.emptyList();
+                containerUrls = new ArrayList<>();
             }
         }
     }
@@ -1145,7 +1141,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String[] prefixes = NewLoaderLogic.readInputStreamList(exclusions.openStream());
                 excludeFilter = Filters.prefixes(prefixes);
             } catch (final IOException e) {
-                logger.warning("can't read " + exclusions.toExternalForm());
+                LOGGER.warning("can't read " + exclusions.toExternalForm());
             }
         }
 
@@ -1198,7 +1194,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             doMerge(url, current, beans);
         } catch (final OpenEJBException e) {
-            logger.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
+            LOGGER.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
         }
         return current;
     }
@@ -1247,7 +1243,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         complete.removeDuplicates();
 
         ensureContainerUrls();
-        appModule.getScannableContainerUrls().addAll(containerUrls);
+        final List<URL> scannableUrls = new ArrayList<>(this.containerUrls);
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
+        appModule.getScannableContainerUrls().addAll(scannableUrls);
 
         IAnnotationFinder finder;
         try {
@@ -1280,7 +1278,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         try {
             webClassPath.add(new File(webInfDir, "classes").toURI().toURL());
         } catch (final MalformedURLException e) {
-            logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
+            LOGGER.warning("War path bad: " + new File(webInfDir, "classes"), e);
         }
 
         final File libDir = new File(webInfDir, "lib");
@@ -1293,13 +1291,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             webClassPath.add(file.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + file, e);
+                            LOGGER.warning("War path bad: " + file, e);
                         }
                     } else if (name.endsWith(".rar")) {
                         try {
                             webRars.add(file.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + file, e);
+                            LOGGER.warning("War path bad: " + file, e);
                         }
                     }
                 }
@@ -1346,7 +1344,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 moduleUrl = new URL("jar", "", -1, moduleUrl + "!/");
             }
         } catch (final MalformedURLException e) {
-            logger.warning("Invalid module location " + wsModule.getJarLocation());
+            LOGGER.warning("Invalid module location " + wsModule.getJarLocation());
             return;
         }
 
@@ -1375,7 +1373,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         wsModule.getWatchedResources().add(URLs.toFilePath(jaxrpcMappingUrl));
                     }
                 } catch (final MalformedURLException e) {
-                    logger.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
+                    LOGGER.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
                 }
             }
         }
@@ -1400,7 +1398,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
                         tldLocations.addAll(TldScanner.scanForTagLibs(file));
                     } catch (final IOException e) {
-                        logger.warning("JSP tag library location bad: " + location, e);
+                        LOGGER.warning("JSP tag library location bad: " + location, e);
                     }
                 }
             }
@@ -1459,7 +1457,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // convert each file to a URL and add it to facesConfigLocations
                 for (final String location : trimmedConfigFiles) {
                     if (!location.startsWith("/")) {
-                        logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
+                        LOGGER.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
                     }
                     try {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
@@ -1467,11 +1465,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                         facesConfigLocations.add(url);
 
                     } catch (final IOException e) {
-                        logger.error("Faces configuration file location bad: " + location, e);
+                        LOGGER.error("Faces configuration file location bad: " + location, e);
                     }
                 }
             } else {
-                logger.debug("faces config file is null");
+                LOGGER.debug("faces config file is null");
             }
         }
 
@@ -1511,7 +1509,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         if (!rarFile.exists()) {
-            logger.warning(rarPath + " doesn't exist, skipping connector");
+            LOGGER.warning(rarPath + " doesn't exist, skipping connector");
             return null;
         }
         rarFile = unpack(rarFile);
@@ -1591,7 +1589,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/" + WEB_FRAGMENT_XML)) {
-                    logger.info("AltDD persistence.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence.xml -> " + urlString);
                 }
 
                 webFragmentUrls.add(descriptor);
@@ -1649,7 +1647,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // log if it is an altdd
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/persistence.xml")) {
-                    logger.info("AltDD persistence.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence.xml -> " + urlString);
                 }
 
                 persistenceUrls.add(descriptor);
@@ -1675,7 +1673,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // log if it is an altdd
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/persistence-fragment.xml")) {
-                    logger.info("AltDD persistence-fragment.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence-fragment.xml -> " + urlString);
                 }
 
                 persistenceFragmentsUrls.add(descriptor);
@@ -1708,13 +1706,13 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public static Map<String, URL> mapDescriptors(final ResourceFinder finder)
         throws IOException {
-        final Map<String, URL> map = finder.getResourcesMap(ddDir);
+        final Map<String, URL> map = finder.getResourcesMap(META_INF);
 
         if (map.size() == 0) {
 
             for (final String descriptor : KNOWN_DESCRIPTORS) {
 
-                final URL url = finder.getResource(ddDir + descriptor);
+                final URL url = finder.getResource(META_INF + descriptor);
                 if (url != null) {
                     map.put(descriptor, url);
                 }
@@ -1768,7 +1766,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (log) {
-                logger.info("AltDD " + key + " -> " + value.toExternalForm());
+                LOGGER.info("AltDD " + key + " -> " + value.toExternalForm());
             }
             map.put(key, value);
         }
@@ -1809,7 +1807,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             // handle some few file(s) which can be in META-INF too
-            final File webAppDdDir = new File(webInfDir, "classes/" + ddDir);
+            final File webAppDdDir = new File(webInfDir, "classes/" + META_INF);
             if (webAppDdDir.isDirectory()) {
                 final File[] files = webAppDdDir.listFiles();
                 if (files != null) {
@@ -1818,7 +1816,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         if (!descriptors.containsKey(name)) {
                             descriptors.put(name, file.toURI().toURL());
                         } else {
-                            logger.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
+                            LOGGER.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
                         }
                     }
                 }
@@ -1893,7 +1891,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     try {
                         files.put(path + name, file.toURI().toURL());
                     } catch (final MalformedURLException e) {
-                        logger.warning("EAR path bad: " + path + name, e);
+                        LOGGER.warning("EAR path bad: " + path + name, e);
                     }
                 }
             }
@@ -2002,7 +2000,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 throw new UnknownModuleTypeException("Unknown module type: url=" + path + " which can't be a war.");
             }
 
-            logger.debug("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
+            LOGGER.debug("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
             return defaultType;
         }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
@@ -2094,13 +2092,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                 cls = EjbModule.class;
                 // if it is a war just throw an error
                 try {
-                    if(logger.isWarningEnabled()) {
+                    if(LOGGER.isWarningEnabled()) {
                         final File ar = URLs.toFile(urls);
                         if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
                             try (JarFile war = new JarFile(ar)) {
                                 final ZipEntry entry = war.getEntry("WEB-INF/");
                                 if (entry != null) {
-                                    logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                                    LOGGER.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
                                 }
                             }
                         }

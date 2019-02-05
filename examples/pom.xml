@@ -101,6 +101,7 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
+    <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
     <module>mp-metrics-counted</module>
@@ -185,6 +186,10 @@
     <module>mp-custom-healthcheck</module>
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
+    <module>vaadin-lts-v08-simple</module>
+    <module>vaadin-lts-v10-simple</module>
+    <module>vaadin-vxx-simple</module>
+    <module>mp-faulttolerance-timeout</module>
   </modules>
 
   <dependencies>

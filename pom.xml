@@ -178,7 +178,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.3.2</myfaces.version>
+    <myfaces.version>2.3.3</myfaces.version>
     <mojarra.version>2.3.3</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -211,7 +211,7 @@
     <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.3</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>1.0.5</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
@@ -412,6 +412,7 @@
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
           <releaseProfiles></releaseProfiles>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
 

@@ -31,10 +31,6 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
-      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
@@ -48,8 +44,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
+        tomee.mp.scan = all
       </property>
     </configuration>
   </container>
@@ -64,8 +59,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        <!-- TODO - The final dist should include this property -->
-        openejb.cxf-rs.cache-application = false
+        tomee.mp.scan = all
       </property>
     </configuration>
   </container>

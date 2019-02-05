@@ -26,7 +26,7 @@ public class BasicAuthenticationCredential extends UsernamePasswordCredential {
     }
 
     private static String decodeHeader(String authorizationHeader) {
-        final String BASIC_AUTH_CHARSET = "US-ASCII";
+        final String basicAuthCharset = "US-ASCII";
 
         if (null == authorizationHeader) {
             throw new NullPointerException("authorization header");
@@ -39,9 +39,9 @@ public class BasicAuthenticationCredential extends UsernamePasswordCredential {
         final Base64.Decoder decoder = Base64.getMimeDecoder();
         byte[] decodedBytes = decoder.decode(authorizationHeader);
         try {
-            return new String(decodedBytes, BASIC_AUTH_CHARSET);
+            return new String(decodedBytes, basicAuthCharset);
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Unknown Charset: " + BASIC_AUTH_CHARSET, e);
+            throw new IllegalStateException("Unknown Charset: " + basicAuthCharset, e);
         }
     }
 

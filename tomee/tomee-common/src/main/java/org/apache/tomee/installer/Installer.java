@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarFile;
 
 public class Installer implements InstallerInterface {
@@ -31,6 +32,7 @@ public class Installer implements InstallerInterface {
     private final Paths paths;
     private Status status = Status.NONE;
     private boolean force;
+    private Map<String, String> properties;
 
     private static final boolean LISTENER_INSTALLED;
     private static final boolean AGENT_INSTALLED;
@@ -59,11 +61,18 @@ public class Installer implements InstallerInterface {
         if (LISTENER_INSTALLED && AGENT_INSTALLED) {
             status = Status.INSTALLED;
         }
+
+        this.properties = new HashMap<>();
     }
 
     public Installer(final Paths paths, final boolean force) {
         this(paths);
         this.force = force;
+    }
+
+    public Installer(final Paths paths, final Map<String, String> properties, final boolean force) {
+        this(paths, force);
+        this.properties = properties;
     }
 
     @Override
@@ -791,11 +800,12 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
 
-                systemPropertiesWriter.write("#\n");
-                systemPropertiesWriter.write("# Which paths / libraries should be scanned?\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container = true\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container.includes = .*(geronimo|mp-jwt|mp-common|failsafe).*\n");
-                systemPropertiesWriter.write("openejb.scan.webapp.container.excludes = \n");
+                final String flavour = properties.getOrDefault("tomee.webapp", "");
+                if (flavour.contains("microprofile")) {
+                    systemPropertiesWriter.write("#\n");
+                    systemPropertiesWriter.write("# MicroProfile\n");
+                    systemPropertiesWriter.write("tomee.mp.scan = all\n");
+                }
 
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory

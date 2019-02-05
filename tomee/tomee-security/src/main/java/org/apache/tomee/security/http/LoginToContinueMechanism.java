@@ -39,7 +39,7 @@ public interface LoginToContinueMechanism {
 
     static void saveRequest(final HttpServletRequest request) throws IOException {
         SavedRequest saved = new SavedRequest();
-        Cookie cookies[] = request.getCookies();
+        Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 saved.addCookie(cookies[i]);
@@ -91,13 +91,13 @@ public interface LoginToContinueMechanism {
 
     static boolean matchRequest(final HttpServletRequest request) {
         // Has a session been created?
-        final HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false);
         if (session == null) {
             return false;
         }
 
         // Is there a saved request?
-        final SavedRequest originalRequest = (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
+        SavedRequest originalRequest = (SavedRequest) request.getSession().getAttribute(ORIGINAL_REQUEST);
         if (originalRequest == null) {
             return false;
         }
@@ -110,7 +110,7 @@ public interface LoginToContinueMechanism {
         */
 
         // Does the request URI match?
-        final String requestURI = request.getRequestURI();
+        String requestURI = request.getRequestURI();
         return requestURI != null && requestURI.equals(originalRequest.getRequestURI());
     }
 
@@ -125,7 +125,7 @@ public interface LoginToContinueMechanism {
     static void saveAuthentication(final HttpServletRequest request,
                                    final Principal principal,
                                    final Set<String> groups) {
-        final SavedAuthentication savedAuthentication = new SavedAuthentication(principal, groups);
+        SavedAuthentication savedAuthentication = new SavedAuthentication(principal, groups);
         request.getSession().setAttribute(AUTHENTICATION, savedAuthentication);
     }
 

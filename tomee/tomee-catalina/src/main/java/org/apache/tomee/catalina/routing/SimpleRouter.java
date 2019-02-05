@@ -48,8 +48,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimpleRouter {
-	
-	private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, SimpleRouter.class);
+
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, SimpleRouter.class);
 
     private static final Pattern PATTERN = Pattern.compile("(.*)->(.*)");
 
@@ -72,19 +72,19 @@ public class SimpleRouter {
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
                 if (!line.isEmpty() && !line.startsWith("#")) {
-                   parseRoute(line);
+                    parseRoute(line);
                 }
             }
         } catch (final IOException e) {
             throw new RouterException("can't read " + url.toExternalForm());
         } finally {
-        	if(reader != null) {
-        		try {
-					reader.close();
-				} catch (IOException e) {
-					logger.warning(e.getMessage(), e);
-				}
-        	}
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.warning(e.getMessage(), e);
+                }
+            }
         }
         return this;
     }

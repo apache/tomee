@@ -1780,7 +1780,10 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     final String wId = getId(webAppInfo.host, webAppInfo.contextRoot, contextInfo.version);
                     if (id.equals(wId)) {
-                        SystemInstance.get().fireEvent(new AfterApplicationCreated(contextInfo.appInfo, webAppInfo));
+                        SystemInstance.get().fireEvent(
+                                new AfterApplicationCreated(contextInfo.appInfo,
+                                                            webAppInfo,
+                                                            standardContext.getServletContext()));
                         break;
                     }
                 }

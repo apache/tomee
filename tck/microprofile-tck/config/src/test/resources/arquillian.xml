@@ -48,6 +48,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
+        tomee.mp.scan = all
         config.test = SUCCESS
         org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy = false
       </property>
@@ -64,6 +65,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
+        tomee.mp.scan = all
         config.test = SUCCESS
         org.apache.geronimo.config.configsource.SystemPropertyConfigSource.copy = false
       </property>

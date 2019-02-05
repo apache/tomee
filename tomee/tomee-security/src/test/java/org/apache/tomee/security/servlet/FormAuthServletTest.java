@@ -23,7 +23,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.junit.Test;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.servlet.ServletException;
@@ -53,14 +52,6 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         assertEquals("ok!", result.getWebResponse().getContentAsString());
 
         assertEquals("ok!", webClient.getPage(getAppUrl() + "/form").getWebResponse().getContentAsString());
-    }
-
-    @ApplicationScoped
-    @FormAuthenticationMechanismDefinition(
-            loginToContinue = @LoginToContinue()
-    )
-    public static class ApplicationAuthentication {
-
     }
 
     @WebServlet(urlPatterns = "/login")
@@ -97,6 +88,9 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
 
     @WebServlet(urlPatterns = "/form")
     @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
+    @FormAuthenticationMechanismDefinition(
+            loginToContinue = @LoginToContinue()
+    )
     public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)
