@@ -35,6 +35,7 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.model.URITemplate;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
@@ -106,6 +107,8 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -326,6 +329,28 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         return true;
+    }
+    
+    public boolean isCXFResource(final HttpServletRequest request) {
+        final JAXRSServiceImpl service;
+        try {
+            service = (JAXRSServiceImpl)server.getEndpoint().getService();
+        } finally { }
+        if( service == null ) {
+            return false;
+        }
+        final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+        for (final ClassResourceInfo info : resources) {
+            if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                continue;
+            }
+
+            final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+            if (info.getURITemplate().match(request.getServletPath(), parameters)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
