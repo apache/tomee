@@ -48,10 +48,8 @@ The TenantId is someone that can register and manage apps, yourself. You will ne
 An Azure service principal is a security identity used by user-created apps, services,
 and automation tools to access specific Azure resources:
 
-`az ad sp create-for-rbac --name ServicePrincipalName --password <Choose a strong password>`
-
 ----
-az ad sp create-for-rbac --name  http://cloud-tomee-azure --password <password for this app>
+az ad sp create-for-rbac --name  http://<your-sub-domain> --password <password for this app>
 
 {
   "appId": "cccccccc-cccc-cccc-cccc-ccccccccccccccc",
@@ -61,7 +59,8 @@ az ad sp create-for-rbac --name  http://cloud-tomee-azure --password <password f
   "tenant": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb"
 }
 ----
-The ServicePrincipalName will also be set as subdomain name. In this case "http://cloud-tomee-azure".
+The <your-sub-domain>, also called the service principal name in the Azure documentation.
+In this example "http://cloud-tomee-azure". It has to be unique across Azure.
 The appId is the identification of the app service.
 
 === Configure Maven
@@ -88,14 +87,18 @@ That's it. You can now build the example and deploy it to Azure just using Maven
 
 The azure-webapp is explicitly invoked because it relies on you Azure account. The standard TomEE build will not use an Azure account.
 
+The end URL will look like:
+
+`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+
 ==== Notes
 
 To deploy the echo app locally you can execute:
 
 `mvn tomee:run`
 
-You can test the app by calling `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/blabla`
+You can test the app by calling `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
 
-It will return blabla.
+It will return send-this-back.
 
 The echo app is also available with a simple war file that you can deploy on TomEE manually, for testing purposes.
