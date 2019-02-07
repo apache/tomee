@@ -16,27 +16,24 @@
  */
 package org.apache.openejb.config.event;
 
-import org.apache.openejb.observer.Event;
-
 import java.net.URL;
 import java.util.List;
 
-@Event
-public class AfterContainerUrlScanEvent {
-    private List<URL> containerUrls;
+public class EnhanceScannableUrlsEvent {
+    private List<URL> scannableUrls;
 
-    public AfterContainerUrlScanEvent(final List<URL> containerUrls) {
-        this.containerUrls = containerUrls;
+    public EnhanceScannableUrlsEvent(final List<URL> scannableUrls) {
+        this.scannableUrls = scannableUrls;
     }
 
-    public List<URL> getContainerUrls() {
-        return containerUrls;
+    public List<URL> getScannableUrls() {
+        return scannableUrls;
     }
 
     @Override
     public String toString() {
-        return "AfterContainerUrlScanEvent{" +
-               "containerUrls=" + containerUrls +
+        return "EnhanceScannableUrlsEvent{" +
+               "scannableUrls=" + scannableUrls +
                '}';
     }
 }
