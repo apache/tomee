@@ -93,6 +93,10 @@ The end URL will look like:
 
 ==== Notes
 
+At the moment of creation of this example there is a bug on azure with the JAVA_HOME that prevents the deployment.
+Check: https://github.com/Azure-App-Service/java/issues/11
+The workaround is to set the Env. variable on the Azure web console and restart the app.
+
 To deploy the echo app locally you can execute:
 
 `mvn tomee:run`
