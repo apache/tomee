@@ -447,11 +447,6 @@
     </dependency>
     <dependency>
       <groupId>com.sun.xml.ws</groupId>
-      <artifactId>jaxws-rt</artifactId>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.ws</groupId>
       <artifactId>rt</artifactId>
     </dependency>
     <dependency>
