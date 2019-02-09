@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.resource;
 
-import junit.framework.TestCase;
 import org.apache.geronimo.connector.outbound.AbstractConnectionManager;
 import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.GenericConnectionManager;
 import org.apache.geronimo.connector.outbound.connectionmanagerconfig.PoolingSupport;
+import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
@@ -37,6 +37,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -75,22 +78,38 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * @version $Rev$ $Date$
  */
-public class AutoConnectionTrackerTest extends TestCase {
+public class AutoConnectionTrackerTest  {
 
-    public static final int LOOP_SIZE = 200;
-    public static final int NUM_THREADS = 4;
+    private static final int LOOP_SIZE = 200;
+    private static final int NUM_THREADS = 4;
+    private LogCaptureHandler captureHandler;
 
-    public void test() throws Exception {
+    @Before
+    public void setupLogger() {
         System.setProperty("openejb.log.async", "false");
         final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, AutoConnectionTrackerTest.class);
         logger.info("Starting test");
         final java.util.logging.Logger julLogger = LogManager.getLogManager().getLogger(LogCategory.OPENEJB_CONNECTOR.getName());
-        final LogCaptureHandler logCapture = new LogCaptureHandler();
-        julLogger.addHandler(logCapture);
+        captureHandler = new LogCaptureHandler();
+        julLogger.addHandler(captureHandler);
+    }
 
+    @After
+    public void cleanupLogger() {
+        final java.util.logging.Logger julLogger = LogManager.getLogManager().getLogger(LogCategory.OPENEJB_CONNECTOR.getName());
+        julLogger.removeHandler(captureHandler);
+    }
+
+    @Test
+    public void test() throws Exception {
         final ConfigurationFactory config = new ConfigurationFactory();
         final Assembler assembler = new Assembler();
 
@@ -139,47 +158,46 @@ public class AutoConnectionTrackerTest extends TestCase {
 
         // configure and deploy it
         final EjbJarInfo info = config.configureApplication(ejbModule);
-        assembler.createEjbJar(info);
+        AppContext context = assembler.createEjbJar(info);
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final FakeConnectionFactory cf = (FakeConnectionFactory) containerSystem.getJNDIContext().lookup("openejb:Resource/FakeConnectionFactory");
         final FakeRemote bean = (FakeRemote) containerSystem.getJNDIContext().lookup("java:global/FakeEjbJar/FakeEjbJar/TestBean!org.apache.openejb.resource.AutoConnectionTrackerTest$FakeRemote");
 
-
-        nonLeakyTx(logCapture, cf, bean);
-        nonLeakyNonTx(logCapture, cf, bean);
-        leakyTx(logCapture, (FakeConnectionFactoryImpl) cf, bean);
-        leakyNonTx(logCapture, (FakeConnectionFactoryImpl) cf, bean);
+        nonLeakyTx(cf, bean);
+        nonLeakyNonTx(cf, bean);
+        leakyTx((FakeConnectionFactoryImpl) cf, bean);
+        leakyNonTx((FakeConnectionFactoryImpl) cf, bean);
     }
 
-    private void leakyNonTx(LogCaptureHandler logCapture, FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
-        logCapture.clear();
+    private void leakyNonTx(FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
+        captureHandler.clear();
         bean.leakyNonTxMethod();
         System.gc();
 
         final AutoConnectionTracker tracker = getAutoConnectionTracker(cf);
         tracker.setEnvironment(null, null);
 
-        assertLogs(logCapture, 1, "Detected abandoned connection");
+        assertLogs(1, "Detected abandoned connection");
     }
 
-    private void leakyTx(LogCaptureHandler logCapture, FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
-        logCapture.clear();
+    private void leakyTx(FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
+        captureHandler.clear();
         bean.leakyTxMethod();
         System.gc();
 
         final AutoConnectionTracker tracker = getAutoConnectionTracker(cf);
         tracker.setEnvironment(null, null);
 
-        assertLogs(logCapture, 1, "Transaction complete, but connection still has handles associated");
-        assertLogs(logCapture, 1, "Detected abandoned connection");
+        assertLogs(1, "Transaction complete, but connection still has handles associated");
+        assertLogs(1, "Detected abandoned connection");
     }
 
-    private void nonLeakyNonTx(LogCaptureHandler logCapture, FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
-        logCapture.clear();
+    private void nonLeakyNonTx(FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
+        captureHandler.clear();
         runTest(() -> {
             try {
-                bean.nonleakyNonTxMethod();
+                bean.nonLeakyNonTxMethod();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -188,13 +206,13 @@ public class AutoConnectionTrackerTest extends TestCase {
         System.gc();
         cf.getConnection().close();
 
-        assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
-        assertLogs(logCapture, 0, "Detected abandoned connection");
+        assertLogs(0, "Transaction complete, but connection still has handles associated");
+        assertLogs(0, "Detected abandoned connection");
         assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
     }
 
-    private void nonLeakyTx(LogCaptureHandler logCapture, FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
-        logCapture.clear();
+    private void nonLeakyTx(FakeConnectionFactory cf, FakeRemote bean) throws InterruptedException, ResourceException {
+        captureHandler.clear();
         runTest(() -> {
             try {
                 bean.nonLeakyTxMethod();
@@ -207,14 +225,37 @@ public class AutoConnectionTrackerTest extends TestCase {
         System.gc();
         cf.getConnection().close();
 
-        assertLogs(logCapture, 0, "Transaction complete, but connection still has handles associated");
-        assertLogs(logCapture, 0, "Detected abandoned connection");
+        assertLogs(0, "Transaction complete, but connection still has handles associated");
+        assertLogs(0, "Detected abandoned connection");
         assertTrue(getConnectionCount((FakeConnectionFactoryImpl) cf) > 0);
     }
 
     // this is a very quick and dirty hack for debugging purpose
-    private void assertLogs(final LogCaptureHandler logCapture, final int times, final String message) {
-        assertEquals(message, times, logCapture.find(message).size());
+    private void assertLogs(final int times, final String message) {
+        final int iteration = 5;
+        final int waitMilliSeconds = 100;
+
+        AssertionError failure = null;
+
+        for (int i = 0 ; i < iteration ; i++) {
+            try {
+                assertEquals(message, times, captureHandler.find(message).size());
+                return;
+            } catch (final AssertionError e) {
+                if (failure == null) { // keep the first issue
+                    failure = e;
+                }
+
+                try {
+                    Thread.sleep(waitMilliSeconds);
+                } catch (final InterruptedException e1) {
+                    // no-op
+                }
+            }
+        }
+
+        throw failure;
+        // assertEquals(message, times, captureHandler.find(message).size());
     }
 
     private AutoConnectionTracker getAutoConnectionTracker(final FakeConnectionFactoryImpl cf) throws Exception {
@@ -264,7 +305,7 @@ public class AutoConnectionTrackerTest extends TestCase {
         void leakyTxMethod() throws Exception;
         void nonLeakyTxMethod() throws Exception;
         void leakyNonTxMethod() throws Exception;
-        void nonleakyNonTxMethod() throws Exception;
+        void nonLeakyNonTxMethod() throws Exception;
     }
 
     @Remote
@@ -295,7 +336,7 @@ public class AutoConnectionTrackerTest extends TestCase {
 
         @Override
         @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-        public void nonleakyNonTxMethod() throws Exception {
+        public void nonLeakyNonTxMethod() throws Exception {
             final FakeConnection connection = cf.getConnection();
             connection.sendMessage("Test message");
             connection.close();
