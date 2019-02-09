@@ -48,6 +48,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
@@ -63,11 +65,13 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
 
     private final boolean cleanupLeakedConnections;
+    private final ExecutorService executorService;
 
     public AutoConnectionTracker(final boolean cleanupLeakedConnections) {
         this.cleanupLeakedConnections = cleanupLeakedConnections;
         registry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
         txMgr = SystemInstance.get().getComponent(TransactionManager.class);
+        executorService = Executors.newSingleThreadExecutor();
     }
 
     public Set<ManagedConnectionInfo> connections() {
@@ -81,16 +85,16 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param key            the unique id of the connection manager
      */
     public void setEnvironment(final ConnectionInfo connectionInfo, final String key) {
-        ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
+        executorService.submit(this::checkForAbandonedConnections);
+    }
 
-        if (reference == null && !references.isEmpty()) {
-            // Wait and check referenceQueue again. Sometimes GC is not fast enough to put all phantom references in the queue on time
-            try {
-                Thread.sleep(0, 100);
-            } catch (InterruptedException ignored) {
-            }
-            reference = (ProxyPhantomReference) referenceQueue.poll();
+    private void checkForAbandonedConnections() {
+        // Give some time to GC to put phantom references into referenceQueue
+        try {
+            Thread.sleep(1);
+        } catch (InterruptedException ignored) {
         }
+        ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
         while (reference != null) {
             if (cleanupLeakedConnections) {
                 final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
@@ -128,30 +132,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
 
                 connectionObjects.put(connectionInfo, connectionInfo.getConnectionProxy());
 
-                registry.registerInterposedSynchronization(new Synchronization() {
-                    @Override
-                    public void beforeCompletion() {
-                        @SuppressWarnings("unchecked")
-                        final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
-                        if (txConnections != null && txConnections.size() > 0) {
-
-                            for (final Map.Entry<ManagedConnectionInfo, Map<ConnectionInfo, Object>> managedConnectionInfoMapEntry : txConnections.entrySet()) {
-                                final StringBuilder sb = new StringBuilder();
-                                final Collection<ConnectionInfo> connectionInfos = managedConnectionInfoMapEntry.getValue().keySet();
-                                for (final ConnectionInfo connectionInfo : connectionInfos) {
-                                    sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
-                                }
-
-                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfoMapEntry.getKey() + "\nAbandoned connection information: " + sb);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void afterCompletion(final int status) {
-
-                    }
-                });
+                registry.registerInterposedSynchronization(new TxConnectionHandleCheckSynchronization());
             }
         }
 
@@ -337,6 +318,29 @@ public class AutoConnectionTracker implements ConnectionTracker {
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;
             this.stackTrace = Thread.currentThread().getStackTrace();
+        }
+    }
+
+    private class TxConnectionHandleCheckSynchronization implements Synchronization {
+        @Override
+        public void beforeCompletion() {
+            @SuppressWarnings("unchecked") final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
+            if (txConnections != null && txConnections.size() > 0) {
+                for (final Map.Entry<ManagedConnectionInfo, Map<ConnectionInfo, Object>> managedConnectionInfoMapEntry : txConnections.entrySet()) {
+                    final StringBuilder sb = new StringBuilder();
+                    final Collection<ConnectionInfo> connectionInfos = managedConnectionInfoMapEntry.getValue().keySet();
+                    for (final ConnectionInfo connectionInfo : connectionInfos) {
+                        sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
+                    }
+
+                    logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfoMapEntry.getKey() + "\nAbandoned connection information: " + sb);
+                }
+            }
+        }
+
+        @Override
+        public void afterCompletion(final int status) {
+
         }
     }
 }
