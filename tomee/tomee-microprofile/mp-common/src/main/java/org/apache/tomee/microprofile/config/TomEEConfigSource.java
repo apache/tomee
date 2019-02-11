@@ -43,12 +43,14 @@ public class TomEEConfigSource implements ConfigSource {
 
             if (mpIgnoredApps.stream().anyMatch(s -> s.equalsIgnoreCase(appContextOrWeb.getId()))) {
                 openTracingFilterActive(false);
+                metricsJaxRsActive(false);
             }
         }
 
         final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
         if (mpScan.equals("none")) {
             openTracingFilterActive(false);
+            metricsJaxRsActive(false);
         }
     }
 
