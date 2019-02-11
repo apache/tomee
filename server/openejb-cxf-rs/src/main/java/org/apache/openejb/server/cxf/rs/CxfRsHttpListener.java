@@ -39,6 +39,7 @@ import org.apache.cxf.jaxrs.model.URITemplate;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
@@ -339,14 +340,17 @@ public class CxfRsHttpListener implements RsHttpListener {
         if( service == null ) {
             return false;
         }
+
+        String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+
         final List<ClassResourceInfo> resources = service.getClassResourceInfos();
         for (final ClassResourceInfo info : resources) {
             if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
                 continue;
             }
-
+           
             final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
-            if (info.getURITemplate().match(request.getServletPath(), parameters)) {
+            if (info.getURITemplate().match(pathToMatch, parameters)) {
                 return true;
             }
         }
