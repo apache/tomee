@@ -21,11 +21,11 @@ package org.apache.openejb.util.proxy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm6.ClassWriter;
-import org.apache.xbean.asm6.Label;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
-import org.apache.xbean.asm6.Type;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
