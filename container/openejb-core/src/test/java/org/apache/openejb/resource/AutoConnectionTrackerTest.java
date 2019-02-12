@@ -255,7 +255,6 @@ public class AutoConnectionTrackerTest  {
         }
 
         throw failure;
-        // assertEquals(message, times, captureHandler.find(message).size());
     }
 
     private AutoConnectionTracker getAutoConnectionTracker(final FakeConnectionFactoryImpl cf) throws Exception {
