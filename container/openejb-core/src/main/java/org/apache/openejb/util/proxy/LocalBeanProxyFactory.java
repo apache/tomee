@@ -676,7 +676,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 String className = parameterType.getCanonicalName();
 
                 if (parameterType.isMemberClass()) {
-                    final int lastDot = className.lastIndexOf(".");
+                    final int lastDot = className.lastIndexOf('.');
                     className = className.substring(0, lastDot) + "$" + className.substring(lastDot + 1);
                 }
 
