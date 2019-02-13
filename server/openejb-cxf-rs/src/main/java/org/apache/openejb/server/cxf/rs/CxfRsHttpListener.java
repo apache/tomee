@@ -333,26 +333,28 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
     
     public boolean isCXFResource(final HttpServletRequest request) {
-        final JAXRSServiceImpl service;
         try {
-            service = (JAXRSServiceImpl)server.getEndpoint().getService();
-        } finally { }
-        if( service == null ) {
-            return false;
-        }
+            JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
 
-        String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+            if( service == null ) {
+                return false;
+            }
 
-        final List<ClassResourceInfo> resources = service.getClassResourceInfos();
-        for (final ClassResourceInfo info : resources) {
-            if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
-                continue;
+            String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+
+            final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+            for (final ClassResourceInfo info : resources) {
+                if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                    continue;
+                }
+               
+                final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+                if (info.getURITemplate().match(pathToMatch, parameters)) {
+                    return true;
+                }
             }
-           
-            final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
-            if (info.getURITemplate().match(pathToMatch, parameters)) {
-                return true;
-            }
+        } catch (final Exception e) {
+            LOGGER.error("No JAX-RS service", e);
         }
         return false;
     }
