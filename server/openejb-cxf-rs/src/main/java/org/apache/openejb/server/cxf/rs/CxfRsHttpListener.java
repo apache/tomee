@@ -354,7 +354,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
         } catch (final Exception e) {
-            LOGGER.error("No JAX-RS service", e);
+            LOGGER.info("No JAX-RS service");
         }
         return false;
     }
