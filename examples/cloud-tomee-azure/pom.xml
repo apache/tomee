@@ -61,11 +61,11 @@
                 <artifactId>tomee-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <configuration>
-                    <tomeeClassifier>plus</tomeeClassifier>
+                    <tomeeClassifier>webprofile</tomeeClassifier>
                     <!--You can tweak this for your case-->
                     <args>-Xmx512m -XX:PermSize=256m</args>
                     <!--Azure requires this port and the default on TomEE is 8080-->
-                    <!--<tomeeHttpPort>80</tomeeHttpPort>-->
+                    <tomeeHttpPort>80</tomeeHttpPort>
                     <!--You can place here, if needed, all the config files needed for the tomee/conf folder-->
                     <!--<config>${project.basedir}/src/main/tomee/</config>-->
                 </configuration>
