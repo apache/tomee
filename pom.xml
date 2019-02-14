@@ -861,6 +861,18 @@
       <name>Tomitribe Repository</name>
       <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
     </repository>
+    
+    <!-- For OpenSAML 2.6.5, required by server/openejb-cxf -->
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>Shibboleth Releases</id>
+      <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
