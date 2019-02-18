@@ -5,7 +5,7 @@
 
 In this example, a REST service will be tested, using Application Composer and Mockito.
 
-http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Application Composer] is an API for creating an EE application programmatically. https://site.mockito.org/[Mockito] is a mocking framework. Both will be used for testing a REST service.
+http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Application Composer] is a testing API for TomEE. It's faster to bootstrap than Arquillian. https://site.mockito.org/[Mockito] is a mocking framework. Both will be used for testing a REST service.
 
 == Example
 
