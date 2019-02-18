@@ -35,9 +35,11 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.model.URITemplate;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
@@ -106,6 +108,8 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -281,9 +285,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 pathInfo = pathInfo.substring(0, indexOf);
             }
         }
-        if ("/".equals(pathInfo) || pathInfo.isEmpty()) { // root is redirected to welcomefiles
+        if (pathInfo.endsWith("/") || pathInfo.isEmpty()) { // root of path is redirected to welcomefiles
+            if (pathInfo.endsWith("/")) {
+              pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
+            }
             for (final String n : welcomeFiles) {
-                final InputStream is = request.getServletContext().getResourceAsStream(n);
+                final InputStream is = request.getServletContext().getResourceAsStream(pathInfo + n);
                 if (is != null) {
                     return is;
                 }
@@ -323,6 +330,33 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         return true;
+    }
+    
+    public boolean isCXFResource(final HttpServletRequest request) {
+        try {
+            JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
+
+            if( service == null ) {
+                return false;
+            }
+
+            String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+
+            final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+            for (final ClassResourceInfo info : resources) {
+                if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                    continue;
+                }
+               
+                final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+                if (info.getURITemplate().match(pathToMatch, parameters)) {
+                    return true;
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.info("No JAX-RS service");
+        }
+        return false;
     }
 
     @Override

@@ -21,31 +21,31 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
   <display-name>RosterJAR</display-name>
   <enterprise-beans>
-    <session>
-      <ejb-name>RosterBean</ejb-name>
-      <home>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessHome</home>
-      <remote>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusiness</remote>
-      <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessBean</ejb-class>
-      <session-type>Stateless</session-type>
-      <transaction-type>Container</transaction-type>
-      <ejb-local-ref>
-        <ejb-ref-name>ejb/Actor</ejb-ref-name>
-        <ejb-ref-type>Entity</ejb-ref-type>
-        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalActorHome</local-home>
-        <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalActor</local>
-        <ejb-link>ActorBean</ejb-link>
-      </ejb-local-ref>
-      <ejb-local-ref>
-        <ejb-ref-name>ejb/Movie</ejb-ref-name>
-        <ejb-ref-type>Entity</ejb-ref-type>
-        <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovieHome</local-home>
-        <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovie</local>
-        <ejb-link>MovieBean</ejb-link>
-      </ejb-local-ref>
-      <security-identity>
-        <use-caller-identity/>
-      </security-identity>
-    </session>
+  <session>
+    <ejb-name>MoviesBean</ejb-name>
+    <home>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessHome</home>
+    <remote>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusiness</remote>
+    <ejb-class>org.apache.openejb.arquillian.tests.cmp.sample.MoviesBusinessBean</ejb-class>
+    <session-type>Stateless</session-type>
+    <transaction-type>Container</transaction-type>
+    <ejb-local-ref>
+      <ejb-ref-name>ejb/Actor</ejb-ref-name>
+      <ejb-ref-type>Entity</ejb-ref-type>
+      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalActorHome</local-home>
+      <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalActor</local>
+      <ejb-link>ActorBean</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
+      <ejb-ref-name>ejb/Movie</ejb-ref-name>
+      <ejb-ref-type>Entity</ejb-ref-type>
+      <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovieHome</local-home>
+      <local>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovie</local>
+      <ejb-link>MovieBean</ejb-link>
+    </ejb-local-ref>
+    <security-identity>
+      <use-caller-identity/>
+    </security-identity>
+  </session>
     <entity>
       <ejb-name>MovieBean</ejb-name>
       <local-home>org.apache.openejb.arquillian.tests.cmp.sample.LocalMovieHome</local-home>
@@ -138,7 +138,7 @@
   <assembly-descriptor>
     <container-transaction>
       <method>
-        <ejb-name>RosterBean</ejb-name>
+        <ejb-name>MoviesBean</ejb-name>
         <method-intf>Remote</method-intf>
         <method-name>*</method-name>
       </method>

@@ -487,13 +487,13 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
         final Properties properties = new Properties();
-        properties.setProperty("SweepInterval", "100");
+        properties.setProperty("SweepInterval", "100 MS");
 
         final Date expectedDate = new Date(); // now
 
         deploy("testSweeps", properties);
 
-        Thread.sleep(200);
+        Thread.sleep(300);
 
         final Long sweeps = (Long) (server.getAttribute(objectName, "Sweeps"));
         assertTrue("sweeps=" + sweeps, sweeps >= 1L);

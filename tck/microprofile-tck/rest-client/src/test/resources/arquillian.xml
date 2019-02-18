@@ -49,6 +49,9 @@
       <property name="additionalLibs">
         mvn:com.github.tomakehurst:wiremock-standalone:2.10.1
       </property>
+      <property name="properties">
+        tomee.mp.scan = all
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plume">
@@ -63,6 +66,9 @@
       <property name="cleanOnStartUp">true</property>
       <property name="additionalLibs">
         mvn:com.github.tomakehurst:wiremock-standalone:2.10.1
+      </property>
+      <property name="properties">
+        tomee.mp.scan = all
       </property>
     </configuration>
   </container>
