@@ -33,7 +33,7 @@ GET http://localhost:8080/mp-config-example/sample/injectedJavaVersion
 GET http://localhost:8080/mp-config-example/sample/javaVersion
 ----
 
-== Caracterísitcas de Config
+== Características de Config
 
 MicroProfile Config es una solución que permite externalizar la configuración de los microservicios. Cada propiedad 
 puede ser inyectada directamente de forma individual.
