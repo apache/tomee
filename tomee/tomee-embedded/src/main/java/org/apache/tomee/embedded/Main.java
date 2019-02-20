@@ -193,7 +193,7 @@ public class Main {
                         case "exit":
                             return;
                         default:
-                            System.out.println("Unknown command '" + l + "', supported commands: 'quit', 'exist'");
+                            System.out.println("Unknown command '" + l + "', supported commands: 'quit', 'exit'");
                     }
                 }
             }
