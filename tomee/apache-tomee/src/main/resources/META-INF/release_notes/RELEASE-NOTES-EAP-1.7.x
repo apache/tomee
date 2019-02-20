@@ -1,6 +1,12 @@
-= TomEE EAP 1.7.6-TT.11
+= TomEE EAP 1.7.6-TT.12
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.12
+
+This release fixes the following issue:
+
+* CVE-2015-1796 - The PKIX trust engines in Shibboleth Identity Provider before 2.4.4 and OpenSAML Java (OpenSAML-J) before 2.6.5 trust candidate X.509 credentials when no trusted names are available for the entityID, which allows remote attackers to impersonate an entity via a certificate issued by a shibmd:KeyAuthority trust anchor.
 
 === Changes in TomEE EAP 1.7.6-TT.11
 
