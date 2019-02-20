@@ -65,6 +65,7 @@ import org.apache.openejb.cdi.OpenEJBBeanInfoService;
 import org.apache.openejb.cdi.OpenEJBJndiService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
+import org.apache.openejb.cdi.ThreadSingletonService;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
@@ -1933,6 +1934,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             systemInstance.removeComponent(JtaEntityManagerRegistry.class);
             systemInstance.removeComponent(TransactionSynchronizationRegistry.class);
             systemInstance.removeComponent(EjbResolver.class);
+            systemInstance.removeComponent(ThreadSingletonService.class);
             systemInstance.fireEvent(new AssemblerDestroyed());
             systemInstance.removeObservers();
 
