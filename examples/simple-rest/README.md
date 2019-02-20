@@ -51,8 +51,8 @@ Finally to test it we use cxf client API to call the REST service in get() and p
     import org.apache.cxf.jaxrs.client.WebClient;
     import org.apache.openejb.jee.SingletonBean;
     import org.apache.openejb.junit.ApplicationComposer;
-    import org.apache.openejb.junit.EnableServices;
-    import org.apache.openejb.junit.Module;
+    import org.apache.openejb.testing.EnableServices;
+    import org.apache.openejb.testing.Module;
     import org.junit.Test;
     import org.junit.runner.RunWith;
 
