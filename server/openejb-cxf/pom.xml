@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.4-SP.5</version>
+    <version>4.7.4-SP.6</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-cxf</artifactId>
@@ -68,7 +68,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml</artifactId>
-      <version>2.6.4</version>
+      <version>2.6.5</version>
       <exclusions>
         <exclusion>
           <groupId>org.bouncycastle</groupId>
