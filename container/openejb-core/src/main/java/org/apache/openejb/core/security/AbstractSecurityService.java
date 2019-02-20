@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -507,7 +508,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             }
 
             final User user = User.class.cast(o);
-            return !(name != null ? !name.equals(user.name) : user.name != null);
+            return !(!Objects.equals(name, user.name));
 
         }
 

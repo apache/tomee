@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -265,19 +266,19 @@ public abstract class AbstractService implements Service {
 
         final AbstractService that = (AbstractService) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) {
+        if (!Objects.equals(id, that.id)) {
             return false;
         }
-        if (jar != null ? !jar.equals(that.jar) : that.jar != null) {
+        if (!Objects.equals(jar, that.jar)) {
             return false;
         }
-        if (type != null ? !type.equals(that.type) : that.type != null) {
+        if (!Objects.equals(type, that.type)) {
             return false;
         }
-        if (provider != null ? !provider.equals(that.provider) : that.provider != null) {
+        if (!Objects.equals(provider, that.provider)) {
             return false;
         }
-        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+        if (!Objects.equals(properties, that.properties)) {
             return false;
         }
 

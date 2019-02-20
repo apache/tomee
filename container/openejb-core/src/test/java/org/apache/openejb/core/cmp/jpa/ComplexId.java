@@ -17,6 +17,8 @@
  */
 package org.apache.openejb.core.cmp.jpa;
 
+import java.util.Objects;
+
 public class ComplexId {
     public String firstId;
     public String secondId;
@@ -27,8 +29,8 @@ public class ComplexId {
 
         final ComplexId complexId = (ComplexId) o;
 
-        if (secondId != null ? !secondId.equals(complexId.secondId) : complexId.secondId != null) return false;
-        if (firstId != null ? !firstId.equals(complexId.firstId) : complexId.firstId != null) return false;
+        if (!Objects.equals(secondId, complexId.secondId)) return false;
+        if (!Objects.equals(firstId, complexId.firstId)) return false;
 
         return true;
     }

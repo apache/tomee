@@ -39,6 +39,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Wrapper;
+import java.util.Objects;
 
 public class ManagedConnection implements InvocationHandler {
     private final TransactionManager transactionManager;
@@ -313,8 +314,8 @@ public class ManagedConnection implements InvocationHandler {
 
             Key key = Key.class.cast(o);
             return (ds == key.ds || ds.equals(key.ds)) &&
-                    !(user != null ? !user.equals(key.user) : key.user != null) &&
-                    !(pwd != null ? !pwd.equals(key.pwd) : key.pwd != null);
+                    !(!Objects.equals(user, key.user)) &&
+                    !(!Objects.equals(pwd, key.pwd));
         }
 
         @Override
