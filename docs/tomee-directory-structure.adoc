@@ -22,4 +22,4 @@ License.
 TomEE directory layout is the same as that of Tomcat, with a few changes
 as described below.
 
-Considering this root to be the *$tomee-install-dir>*
+Considering this root to be the `$tomee-install-dir>`
