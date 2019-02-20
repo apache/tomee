@@ -19,22 +19,73 @@ version: '2'
 volumes:
         m2:
 services:
-    mvn:
+    # This service is a workaround to set volume permissions so that they are correct for non-root user build
+    volume_perms:
+        image: alpine
+        command: "chown -R 1000:1000 /var/maven"
+        volumes:
+            - m2:/var/maven/.m2
+    # Build+test. Stops on first test failure
+    build:
         image: "maven:3.3.9-jdk-8"
+        command: ["-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "clean", "install"]
         entrypoint: "mvn"
         working_dir: /opt/project
+        user: 1000:1000
         environment:
             - MAVEN_OPTS=-Xmx768m -XX:ReservedCodeCacheSize=64m -Xss2048k
+            - MAVEN_CONFIG=/var/maven/.m2
         volumes:
-            - m2:/root/.m2
+            - m2:/var/maven/.m2
             - .:/opt/project
-    quickbuild:
+        depends_on:
+            - volume_perms
+    # Build+test. Does not stop on test failures
+    build-all:
         image: "maven:3.3.9-jdk-8"
-        command: ["mvn", "-Pquick", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-DuniqueVersion=false", "-ff", "-Dassemble", "-DskipTests", "-DfailIfNoTests=false", "clean", "install"]
+        command: ["--fail-at-end", "-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "clean", "install"]
+        entrypoint: "mvn"
         working_dir: /opt/project
+        user: 1000:1000
+        ports:
+            - 5005:5005
         environment:
             - MAVEN_OPTS=-Xmx768m -XX:ReservedCodeCacheSize=64m -Xss2048k
+            - MAVEN_CONFIG=/var/maven/.m2
         volumes:
-            - m2:/root/.m2
+            - m2:/var/maven/.m2
             - .:/opt/project
-
+        depends_on:
+            - volume_perms
+        # Just build (no tests)
+    build-quick:
+        image: "maven:3.3.9-jdk-8"
+        command: ["-Duser.home=/var/maven", "-Pquick", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-DuniqueVersion=false", "-ff", "-Dassemble", "-DskipTests", "-DfailIfNoTests=false", "clean", "install"]
+        entrypoint: "mvn"
+        working_dir: /opt/project
+        user: 1000:1000
+        environment:
+            - MAVEN_OPTS=-Xmx768m -XX:ReservedCodeCacheSize=64m -Xss2048k
+            - MAVEN_CONFIG=/var/maven/.m2
+        volumes:
+            - m2:/var/maven/.m2
+            - .:/opt/project
+        depends_on:
+            - volume_perms
+    # Build+test. Waits for debugger on port 5005. Stops on first test failure
+    debug:
+        image: "maven:3.3.9-jdk-8"
+        command: ["-Duser.home=/var/maven", "-Pall-adapters", "-Dsurefire.useFile=false", "-DdisableXmlReport=true", "-Dopenejb.server.debug", "-Dmaven.surefire.debug", "-Dopenejb.arquillian.debug=true", "clean", "install"]
+        entrypoint: "mvn"
+        working_dir: /opt/project
+        user: 1000:1000
+        ports:
+            - 5005:5005
+        environment:
+            - MAVEN_OPTS=-Xmx768m -XX:ReservedCodeCacheSize=64m -Xss2048k
+            - MAVEN_CONFIG=/var/maven/.m2
+        volumes:
+            - m2:/var/maven/.m2
+            - .:/opt/project
+        depends_on:
+            - volume_perms
