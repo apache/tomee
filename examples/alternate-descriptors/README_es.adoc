@@ -1,10 +1,10 @@
-indice-grupo=Técnicas de prueba
-tipo=página
-estado=publicado
-título=Descriptores alternos
+index-group=Testing Techniques
+type=page
+status=published
+title=Descriptores alternos
 ~~~~~~
 
-Véase  [Descriptores alternos](../../alternate-descriptors.html) la página para todos los detalles de como funciona esta característica.
+Véase  [Descriptores alternos](../../../alternate-descriptors.html) la página para todos los detalles de como funciona esta característica.
 
 Para nuestro ejemplo usaremos el código estándar "moviefun" que tiene una entidad `Movie` y bean de session `Movies`.
 Para variar el modo que probamos y demostrar los descriptores alternos , crearemos un interceptor que sólo será usado en nuestros casos de prueba.
@@ -102,7 +102,7 @@ Para habilitar nuestro `test.ejb-jar.xml` en el caso de prueba simplemente fijam
          }
      }
 
-Como se puede notar en [la documentacion](../../alternate-descriptors.html), se pueden usar muchos prefijos al mismo tiempo.
+Como se puede notar en [la documentacion](../.../../alternate-descriptors.html), se pueden usar muchos prefijos al mismo tiempo.
 
 # Probando
 
