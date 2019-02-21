@@ -31,6 +31,7 @@ import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.apache.cxf.jaxrs.model.ApplicationInfo;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
@@ -61,9 +62,12 @@ import org.apache.openejb.api.jmx.Description;
 import org.apache.openejb.api.jmx.MBean;
 import org.apache.openejb.api.jmx.ManagedAttribute;
 import org.apache.openejb.api.jmx.ManagedOperation;
+import org.apache.openejb.assembler.classic.AppInfo;
+import org.apache.openejb.assembler.classic.Assembler;
 import org.apache.openejb.assembler.classic.ServiceInfo;
 import org.apache.openejb.assembler.classic.util.ServiceConfiguration;
 import org.apache.openejb.assembler.classic.util.ServiceInfos;
+import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.core.WebContext;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.IO;
@@ -82,7 +86,6 @@ import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.server.rest.InternalApplication;
-import org.apache.openejb.server.rest.RESTService.DeployedService;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
@@ -332,14 +335,11 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         return true;
     }
-
-    private Application findApplication(final List<DeployedService> services, final String contextPath) {
+        
+    private Application findApplication() {
         try {
-            for (final DeployedService svc : services) {
-                if (contextPath.equals(svc.webapp)) {
-                    return (javax.ws.rs.core.Application)Thread.currentThread().getContextClassLoader().loadClass(svc.origin).newInstance();
-                }
-            }
+            ApplicationInfo appInfo = (ApplicationInfo)server.getEndpoint().get(Application.class.getName());
+            return (Application)appInfo.getProvider();
         } catch (final Exception e) {
         }
         return null;
@@ -358,7 +358,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
-            Application application = findApplication(service.getServices(), request.getContextPath());
+            Application application = findApplication();
             if (!applicationProvidesResources(application)) {
                 JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
 
