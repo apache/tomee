@@ -82,6 +82,7 @@ import org.apache.openejb.server.httpd.HttpResponse;
 import org.apache.openejb.server.httpd.ServletRequestAdapter;
 import org.apache.openejb.server.rest.EJBRestServiceInfo;
 import org.apache.openejb.server.rest.InternalApplication;
+import org.apache.openejb.server.rest.RESTService.DeployedService;
 import org.apache.openejb.server.rest.RsHttpListener;
 import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.LogCategory;
@@ -331,27 +332,55 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         return true;
     }
+
+    private Application findApplication(final List<DeployedService> services, final String context) {
+        try {
+            for (final DeployedService svc : services) {
+                if (context.equals(svc.webapp)) {
+                    return (javax.ws.rs.core.Application)Thread.currentThread().getContextClassLoader().loadClass(svc.origin).newInstance();
+                }
+            }
+        } catch (final Exception e) {
+        }
+        return null;
+    }
+    
+    private boolean applicationProvidesResources(final Application application) {
+        try {
+            if (application == null) {
+                return false;
+            }
+            return !application.getClasses().isEmpty() || !application.getSingletons().isEmpty();
+        } catch (final Exception e) {
+            return false;
+        }
+    }
     
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
-            JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
+            Application application = findApplication(service.getServices(), context);
+            if (!applicationProvidesResources(application)) {
+                JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
 
-            if( service == null ) {
-                return false;
-            }
-
-            String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
-
-            final List<ClassResourceInfo> resources = service.getClassResourceInfos();
-            for (final ClassResourceInfo info : resources) {
-                if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
-                    continue;
+                if( service == null ) {
+                    return false;
                 }
-               
-                final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
-                if (info.getURITemplate().match(pathToMatch, parameters)) {
-                    return true;
+
+                String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+
+                final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+                for (final ClassResourceInfo info : resources) {
+                    if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                        continue;
+                    }
+                   
+                    final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+                    if (info.getURITemplate().match(pathToMatch, parameters)) {
+                        return true;
+                    }
                 }
+            } else {
+                return true;
             }
         } catch (final Exception e) {
             LOGGER.info("No JAX-RS service");
