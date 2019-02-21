@@ -333,10 +333,10 @@ public class CxfRsHttpListener implements RsHttpListener {
         return true;
     }
 
-    private Application findApplication(final List<DeployedService> services, final String context) {
+    private Application findApplication(final List<DeployedService> services, final String contextPath) {
         try {
             for (final DeployedService svc : services) {
-                if (context.equals(svc.webapp)) {
+                if (contextPath.equals(svc.webapp)) {
                     return (javax.ws.rs.core.Application)Thread.currentThread().getContextClassLoader().loadClass(svc.origin).newInstance();
                 }
             }
@@ -358,7 +358,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
-            Application application = findApplication(service.getServices(), context);
+            Application application = findApplication(service.getServices(), request.getContextPath());
             if (!applicationProvidesResources(application)) {
                 JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
 
