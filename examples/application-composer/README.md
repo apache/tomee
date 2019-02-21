@@ -19,7 +19,7 @@ that is used to build the actual applications:
 # Composing an Application
 
 The main difference to the embedded `EJBContainer` API is building the application in the test code.  This is done with one or more methods in the test case annotated
-with `org.apache.openejb.junit.Module` using the following format:
+with `org.apache.openejb.testing.Module` using the following format:
 
     @Module
     public <return-value> <module-name>() {
@@ -45,8 +45,8 @@ Used in an actual testcase, that might look like so:
     import org.apache.openejb.jee.StatefulBean;
     import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
     import org.apache.openejb.junit.ApplicationComposer;
-    import org.apache.openejb.junit.Configuration;
-    import org.apache.openejb.junit.Module;
+    import org.apache.openejb.testing.Configuration;
+    import org.apache.openejb.testing.Module;
     import org.junit.Test;
     import org.junit.runner.RunWith;
 
