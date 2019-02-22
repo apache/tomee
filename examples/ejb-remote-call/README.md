@@ -8,24 +8,22 @@ title=EJB Remote Call
 
 ## Calculator
 
-    package org.superbiz.ws;
-    
-    import javax.ejb.Stateless;
-    import javax.jws.WebService;
-    
-    @Stateless
-    @WebService(portName = "CalculatorPort",
-            serviceName = "CalculatorWebService",
-            targetNamespace = "http://superbiz.org/wsdl")
-    public class Calculator {
-        public int sum(int add1, int add2) {
-            return add1 + add2;
-        }
-    
-        public int multiply(int mul1, int mul2) {
-            return mul1 * mul2;
-        }
+
+@Stateless(name = "Calculator", description = "Calculator", mappedName = "Calculator")
+@Remote(Calculator.class)
+public class DefaultCalculator implements Calculator {
+    @Override
+    public int sum(int add1, int add2) {
+        return add1 + add2;
     }
+
+    @Override
+    public int multiply(int mul1, int mul2) {
+        return mul1 * mul2;
+    }
+
+
+}
 
 ## web.xml
 
