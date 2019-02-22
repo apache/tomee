@@ -1,8 +1,7 @@
-index-group=Unrevised
-type=page
-status=published
-title=Arquillian Persistence Extension
-~~~~~~
+= Arquillian Persistence Extension
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: published
 
 A sample showing how to use TomEE, Arquillian and its Persistence Extension.
 
