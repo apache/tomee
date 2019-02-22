@@ -22,5 +22,6 @@ public interface Calculator   {
 
     int multiply(int mul1, int mul2);
 
+    String echo(String input) throws BusinessException;
 }
 
