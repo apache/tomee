@@ -59,8 +59,8 @@ which prints the http messages in the logs.
     import org.apache.openejb.jee.WebApp;
     import org.apache.openejb.junit.ApplicationComposer;
     import org.apache.openejb.junit.Classes;
-    import org.apache.openejb.junit.EnableServices;
-    import org.apache.openejb.junit.Module;
+    import org.apache.openejb.testing.EnableServices;
+    import org.apache.openejb.testing.Module;
     import org.junit.Test;
     import org.junit.runner.RunWith;
     
