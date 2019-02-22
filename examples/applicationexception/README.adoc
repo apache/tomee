@@ -1,7 +1,8 @@
-index-group=Transactions
-type=page
-status=published
-title=@ApplicationException annotation
+= @ApplicationException annotation
+:index-group: Transactions
+:jbake-type: page
+:jbake-status: published
+
 ~~~~~~
 
 # Declaring an @ApplicationException
