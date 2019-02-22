@@ -1,11 +1,10 @@
-index-group=Transactions
-type=page
-status=published
-title=@ApplicationException annotation
-~~~~~~
+= @ApplicationException annotation
+:index-group: Transactions
+:jbake-type: page
+:jbake-status: published
 
 # Declaring an @ApplicationException
-
+```
     import javax.ejb.ApplicationException;
 
     /**
@@ -14,14 +13,15 @@ title=@ApplicationException annotation
     @ApplicationException(rollback = true)
     public abstract class BusinessException extends RuntimeException {
     }
+```
 
 By default, @ApplicationException is inherited
-
+```
     public class ValueRequiredException extends BusinessException {
     }
-
+```
 # In the bean code
-
+```
     @Stateless
     public class ThrowBusinessExceptionImpl implements ThrowBusinessException {
 
@@ -30,13 +30,14 @@ By default, @ApplicationException is inherited
         }
 
     }
-
+```
 Normally throwing a `RuntimeException` would cause the container to both rollback the transaction and destroy the bean instance that threw the exception.
 
 As `BusinessException` has been annotated `@ApplicationException(rollback = true)` only the transaction rollback will occur and the bean will not get destroyed.
 
 # The TestCase
-
+[source,java,numbered]
+----
     import org.junit.Assert;
     import org.junit.Before;
     import org.junit.Test;
@@ -67,9 +68,9 @@ As `BusinessException` has been annotated `@ApplicationException(rollback = true
             bean.throwValueRequiredException();
         }
     }
-
+----
 # Running
-
+```
     -------------------------------------------------------
      T E S T S
     -------------------------------------------------------
@@ -98,3 +99,4 @@ As `BusinessException` has been annotated `@ApplicationException(rollback = true
     Results :
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+```
