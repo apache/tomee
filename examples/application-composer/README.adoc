@@ -38,7 +38,8 @@ Where **module-name** is the name you wish to use for that module and **return-v
 # Example
 
 Used in an actual testcase, that might look like so:
-```
+[source,java,numbered]
+----
     import junit.framework.TestCase;
     import org.apache.openejb.jee.EjbJar;
     import org.apache.openejb.jee.StatefulBean;
@@ -119,7 +120,7 @@ Used in an actual testcase, that might look like so:
             }
         }
     }
-```
+----
 
 # Running
 ```

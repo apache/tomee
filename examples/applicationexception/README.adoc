@@ -13,9 +13,10 @@
     @ApplicationException(rollback = true)
     public abstract class BusinessException extends RuntimeException {
     }
+```
 
 By default, @ApplicationException is inherited
-
+```
     public class ValueRequiredException extends BusinessException {
     }
 ```
@@ -35,7 +36,8 @@ Normally throwing a `RuntimeException` would cause the container to both rollbac
 As `BusinessException` has been annotated `@ApplicationException(rollback = true)` only the transaction rollback will occur and the bean will not get destroyed.
 
 # The TestCase
-```
+[source,java,numbered]
+----
     import org.junit.Assert;
     import org.junit.Before;
     import org.junit.Test;
@@ -66,7 +68,7 @@ As `BusinessException` has been annotated `@ApplicationException(rollback = true
             bean.throwValueRequiredException();
         }
     }
-```
+----
 # Running
 ```
     -------------------------------------------------------
