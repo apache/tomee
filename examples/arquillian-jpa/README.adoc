@@ -10,7 +10,7 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
 (see src/test/resources folder).
 
 # Running (output)
-
+```
     -------------------------------------------------------
      T E S T S
     -------------------------------------------------------
@@ -167,3 +167,4 @@ if you don't use workarounds like https://github.com/rmannibucau/persistence-wit
     Results :
     
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+```
