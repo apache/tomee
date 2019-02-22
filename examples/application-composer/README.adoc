@@ -1,7 +1,7 @@
-index-group=Testing Techniques
-type=page
-status=published
-title=Application Composer
+= Application Composer
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: published
 ~~~~~~
 
 The `org.apache.openejb.junit.ApplicationComposer` is JUnit test runner modeled after the way we've done testing internally in OpenEJB for years (since about 2006).
