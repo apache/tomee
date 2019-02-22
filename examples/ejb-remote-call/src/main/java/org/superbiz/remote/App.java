@@ -1,4 +1,4 @@
-package org.superbiz.ws;
+package org.superbiz.remote;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -13,7 +13,7 @@ public class App {
         properties.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
 
         Context ctx = new InitialContext(properties);
-        Object ref = ctx.lookup("global/ejb_remote_call_war/Calculator!org.superbiz.ws.Calculator");
+        Object ref = ctx.lookup("global/ejb_remote_call_war/Calculator!org.superbiz.remote.Calculator");
 
         Calculator calculator = Calculator.class.cast(ref);
         System.out.println(calculator.sum(1, 2));

@@ -1,10 +1,9 @@
-index-group=Misc
-type=page
-status=published
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
 title=EJB Remote Call
 ~~~~~~
 
-*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
 ## Calculator
 

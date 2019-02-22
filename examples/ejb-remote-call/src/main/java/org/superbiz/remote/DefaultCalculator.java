@@ -1,4 +1,4 @@
-package org.superbiz.ws;
+package org.superbiz.remote;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
