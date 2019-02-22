@@ -32,5 +32,23 @@ public class DefaultCalculator implements Calculator {
         return mul1 * mul2;
     }
 
+    @Override
+    public String echo(final String input) throws BusinessException {
+        if ("CHECKED".equals(input)) {
+            throw new BusinessException("This is a checked exception");
+        }
+
+        if ("RUNTIME".equals(input)) {
+            throw new RuntimeException("This is a runtime exception");
+        }
+
+        if (input == null) {
+            return "Input was null";
+        }
+
+        return "Input was: " + input;
+    }
+
+
 
 }

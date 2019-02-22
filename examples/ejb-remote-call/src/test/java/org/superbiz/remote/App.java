@@ -23,7 +23,7 @@ import java.util.Properties;
 
 public class App {
 
-    public static void main(String[] args) throws NamingException {
+    public static void main(String[] args) throws NamingException, BusinessException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
@@ -34,6 +34,20 @@ public class App {
         Calculator calculator = Calculator.class.cast(ref);
         System.out.println(calculator.sum(1, 2));
 
+        System.out.println("Expecting Hello world: " + calculator.echo("Hello world"));
+        try {
+            System.out.println("Expecting checked exception: ");
+            System.out.println(calculator.echo("CHECKED"));
+        } catch (BusinessException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            System.out.println("Expecting runtime exception: ");
+            System.out.println(calculator.echo("RUNTIME"));
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
 
     }
 }
