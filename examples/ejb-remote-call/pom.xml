@@ -72,7 +72,7 @@
             <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-client</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
