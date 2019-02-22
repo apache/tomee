@@ -347,6 +347,9 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (application == null) {
                 return false;
             }
+            if (InternalApplication.class.isInstance(application) && (InternalApplication.class.cast(application).getOriginal() == null)) {
+                return false;
+            }
             return !application.getClasses().isEmpty() || !application.getSingletons().isEmpty();
         } catch (final Exception e) {
             return false;
