@@ -1,5 +1,5 @@
-= Microprofile Config
-:index-group: Unrevised
+= MicroProfile Config
+:index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 

@@ -1,0 +1,12 @@
+<application>
+    <display-name>ear</display-name>
+    <module>
+        <ejb>EnterpriseArchive.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>EnterpriseArchive.war</web-uri>
+            <context-root>/test</context-root>
+        </web>
+    </module>
+</application>

@@ -97,11 +97,7 @@ public class IvmContextTest extends TestCase {
         final Map<String, Object> map = Debug.contextToMap(context);
 
         // Prune the context entries out
-        final Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<String, Object> entry = iterator.next();
-            if (entry.getValue() instanceof Context) iterator.remove();
-        }
+        map.entrySet().removeIf(entry -> entry.getValue() instanceof Context);
 
         return map;
     }

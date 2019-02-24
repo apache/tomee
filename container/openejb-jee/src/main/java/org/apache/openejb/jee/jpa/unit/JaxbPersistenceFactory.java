@@ -64,15 +64,11 @@ public class JaxbPersistenceFactory {
     }
 
     public static <T> T getPersistence(final Class<T> clazz, final URL url) throws Exception {
-        InputStream persistenceDescriptor = null;
 
-        try {
+        try (InputStream persistenceDescriptor = url.openStream()) {
 
-            persistenceDescriptor = url.openStream();
             return getPersistence(clazz, persistenceDescriptor);
 
-        } finally {
-            if (persistenceDescriptor != null) persistenceDescriptor.close();
         }
     }
 

@@ -18,7 +18,7 @@ package org.apache.openejb.server.ssh;
 
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.sshd.common.Session;
+import org.apache.sshd.common.session.Session;
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
 import org.apache.sshd.server.session.ServerSession;
 

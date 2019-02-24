@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <groupId>org.superbiz</groupId>
+    <artifactId>cloud-tomee-azure</artifactId>
+    <version>8.0.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>OpenEJB :: Examples :: Azure deployment example</name>
+
+    <properties>
+        <javaee-api.version>7.0</javaee-api.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>${javaee-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomee.maven</groupId>
+                <artifactId>tomee-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <tomeeClassifier>webprofile</tomeeClassifier>
+                    <!--You can tweak this for your case-->
+                    <args>-Xmx512m -XX:PermSize=256m</args>
+                    <!--Azure requires this port and the default on TomEE is 8080-->
+                    <tomeeHttpPort>80</tomeeHttpPort>
+                    <!--You can place here, if needed, all the config files needed for the tomee/conf folder-->
+                    <!--<config>${project.basedir}/src/main/tomee/</config>-->
+                </configuration>
+                <executions>
+                    <!--This will create a TomEE embedded executable jar-->
+                    <execution>
+                        <id>executable-jar</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <!--This creates the exec suffix in the embedded TomEE fat jar-->
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>azure-single-jar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.microsoft.azure</groupId>
+                        <artifactId>azure-webapp-maven-plugin</artifactId>
+                        <!-- check Maven Central for the latest version -->
+                        <version>1.5.2</version>
+                        <executions>
+                            <execution>
+                                <!-- This needs a working azure account and would break the build. Use explicitly with: -->
+                                <!-- mvn -Pazure azure-webapp:deploy -->
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <authentication>
+                                <!-- If you invoke the plugin from a console with an Azure CLI with -->
+                                <!-- authenticated session, you don't need this block. -->
+                                <serverId>azure-auth</serverId>
+                            </authentication>
+                            <deploymentType>jar</deploymentType>
+                            <jarFile>${project.build.directory}/${project.build.finalName}-exec.jar</jarFile>
+                            <stopAppDuringDeployment>true</stopAppDuringDeployment>
+                            <resourceGroup>tomee-group</resourceGroup>
+                            <!--You need to change this. It must match <your-sub-domain> from the README file instructions.-->
+                            <appName>your sub domain</appName>
+                            <region>ukwest</region>
+                            <pricingTier>B1</pricingTier>
+                            <linuxRuntime>jre8</linuxRuntime>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

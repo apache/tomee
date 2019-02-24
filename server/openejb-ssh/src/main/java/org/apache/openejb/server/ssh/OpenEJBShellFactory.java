@@ -17,7 +17,7 @@
 package org.apache.openejb.server.ssh;
 
 import org.apache.sshd.common.Factory;
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 
 public class OpenEJBShellFactory implements Factory<Command> {
     private String bind;

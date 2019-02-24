@@ -563,10 +563,8 @@ public class RemoteServer {
      * @return True is the message was sent, else false if unable to connect after the defined number of attempts
      */
     private boolean sendShutdown(int attempts) {
-        Socket socket = null;
         OutputStream stream = null;
-        try {
-            socket = new Socket(host, portShutdown);
+        try (Socket socket = new Socket(host, portShutdown)) {
             stream = socket.getOutputStream();
             final String shutdown = command + Character.toString((char) 0);
             for (int i = 0; i < shutdown.length(); i++) {
@@ -586,13 +584,7 @@ public class RemoteServer {
             }
         } finally {
             IO.close(stream);
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (final Exception e) {
-                    // Ignore
-                }
-            }
+            // Ignore
         }
 
         return true;
@@ -603,9 +595,7 @@ public class RemoteServer {
             System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
-        Socket s = null;
-        try {
-            s = new Socket();
+        try (Socket s = new Socket()) {
             s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
             if (verbose) {
@@ -625,15 +615,8 @@ public class RemoteServer {
                 }
                 return connect(port, --tries);
             }
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Exception ignored) {
-                    // no-op
-                }
-            }
         }
+        // no-op
 
         return true;
     }
@@ -643,9 +626,7 @@ public class RemoteServer {
             System.out.println("[] DISCONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
-        Socket s = null;
-        try {
-            s = new Socket();
+        try (Socket s = new Socket()) {
             s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
 
@@ -668,15 +649,8 @@ public class RemoteServer {
 
         } catch (final IOException e) {
             //This is what we want
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Exception ignored) {
-                    // no-op
-                }
-            }
         }
+        // no-op
 
         return true;
     }

@@ -80,7 +80,7 @@ public class Embedder {
             final Object value = init.invoke(instance, properties);
             return value;
         } catch (final NoSuchMethodException e) {
-            throw (IllegalStateException) new IllegalStateException("Signatures for Loader are no longer correct.").initCause(e);
+            throw new IllegalStateException("Signatures for Loader are no longer correct.", e);
         } catch (final InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof Error) {

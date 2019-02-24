@@ -126,7 +126,7 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
                 try {
                     claim = claimsSet.getClaimValue(claimType.name(), Long.class);
                     if (claim == null) {
-                        claim = new Long(0);
+                        claim = 0L;
                     }
                 } catch (final MalformedClaimException e) {
                     logger.log(Level.FINEST, "Can't retrieve 'updated_at' a malformed claim.", e);

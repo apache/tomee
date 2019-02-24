@@ -95,7 +95,7 @@ class SetupCommand {
 
 
         Paths paths = new Paths(new File("${catalinaHome}/webapps/tomee" as String))
-        Installer installer = new Installer(paths, true)
+        Installer installer = new Installer(paths, properties, true)
         installer.installFull()
 
         // clean up duplicate jars since in TomEE it is useless

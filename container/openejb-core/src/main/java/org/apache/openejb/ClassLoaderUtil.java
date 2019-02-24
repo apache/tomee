@@ -103,18 +103,10 @@ public class ClassLoaderUtil {
     }
 
     private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
-        List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
-        if (classLoaders == null) {
-            classLoaders = new ArrayList<>(2);
-            classLoadersByApp.put(appId, classLoaders);
-        }
+        List<ClassLoader> classLoaders = classLoadersByApp.computeIfAbsent(appId, k -> new ArrayList<>(2));
         classLoaders.add(classLoader);
 
-        Set<String> apps = appsByClassLoader.get(classLoader);
-        if (apps == null) {
-            apps = new LinkedHashSet<>(1);
-            appsByClassLoader.put(classLoader, apps);
-        }
+        Set<String> apps = appsByClassLoader.computeIfAbsent(classLoader, k -> new LinkedHashSet<>(1));
         apps.add(appId);
 
         return classLoader;

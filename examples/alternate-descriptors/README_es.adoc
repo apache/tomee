@@ -1,0 +1,169 @@
+= Descriptores alternos
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: published
+
+
+Véase  link:../../../alternate-descriptors.html[Descriptores alternos] la página para todos los detalles de como funciona esta característica.
+
+
+Para nuestro ejemplo usaremos el código estándar "moviefun" que tiene una entidad `Movie` y bean de session `Movies`.
+Para variar el modo que probamos y demostrar los descriptores alternos , crearemos un interceptor que sólo será usado en nuestros casos de prueba.
+
+Para añadir esto a nuestra aplicación, únicamente necesitamos un `test.ejb-jar.xml` en la misma ubicación que `ejb-jar.xml`.
+
+Eso nos da los siguientes archivos en nuestro proyecto:
+
+ - `src/main/resources/META-INF/ejb-jar.xml`
+ - `src/main/resources/META-INF/persistence.xml`
+ - `src/main/resources/META-INF/test.ejb-jar.xml`
+
+== El test.ejb-jar.xml
+
+El comúm `ejb-jar.xml` simplemente contiene `<ejb-jar/>`, sin embargo añadimos un interceptor extra a `test.ejb-jar.xml`  :
+
+[source,xml]
+----
+    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+    <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
+      <assembly-descriptor>
+        <interceptor-binding>
+          <ejb-name>Movies</ejb-name>
+          <interceptor-class>org.superbiz.altdd.MoviesTest$Interceptor</interceptor-class>
+        </interceptor-binding>
+      </assembly-descriptor>
+    </ejb-jar>
+----
+
+== Caso de Prueba
+
+Para habilitar nuestro `test.ejb-jar.xml` en el caso de prueba simplemente fijamos la propiedad `openejb.altdd.prefix` cuando creamos el `EJBContainer` embebido
+
+[source,java,numbered]
+----
+public class MoviesTest extends TestCase {
+
+ @EJB
+ private Movies movies;
+
+ @Resource
+ private UserTransaction userTransaction;
+
+ @PersistenceContext
+ private EntityManager entityManager;
+
+ public void setUp() throws Exception {
+     Properties p = new Properties();
+     p.put("movieDatabase", "new://Resource?type=DataSource");
+     p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+     p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+     p.put("openejb.altdd.prefix", "test");
+
+     EJBContainer.createEJBContainer(p).getContext().bind("inject", this);
+ }
+
+ public void test() throws Exception {
+
+     userTransaction.begin();
+
+     try {
+         entityManager.persist(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+         entityManager.persist(new Movie("Joel Coen", "Fargo", 1996));
+         entityManager.persist(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+         List<Movie> list = movies.getMovies();
+         assertEquals("List.size()", 3, list.size());
+
+         for (Movie movie : list) {
+             movies.deleteMovie(movie);
+         }
+
+         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+
+     } finally {
+         try {
+             userTransaction.commit();
+             fail("Transaction should have been rolled back");
+         } catch (RollbackException e) {
+             // Good, we don't want to clean up the db
+         }
+     }
+ }
+
+ public static class Interceptor {
+
+     @Resource
+     private SessionContext sessionContext;
+
+     @AroundInvoke
+     public Object invoke(InvocationContext context) throws Exception {
+
+         sessionContext.setRollbackOnly();
+
+         return context.proceed();
+     }
+ }
+}
+----
+
+Como se puede notar en link:../../../alternate-descriptors.html[Descriptores alternos], se pueden usar muchos prefijos al mismo tiempo.
+
+== Probando
+
+[source,bash]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.altdd.MoviesTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/alternate-descriptors
+INFO - openejb.base = /Users/dblevins/examples/alternate-descriptors
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/alternate-descriptors/target/classes
+INFO - Beginning load: /Users/dblevins/examples/alternate-descriptors/target/classes
+INFO - AltDD ejb-jar.xml -> file:/Users/dblevins/examples/alternate-descriptors/target/classes/META-INF/test.ejb-jar.xml
+INFO - Configuring enterprise application: /Users/dblevins/examples/alternate-descriptors
+WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.altdd.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring PersistenceUnit(name=movie-unit)
+INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+INFO - Enterprise application "/Users/dblevins/examples/alternate-descriptors" loaded.
+INFO - Assembling app: /Users/dblevins/examples/alternate-descriptors
+INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 411ms
+INFO - Jndi(name="java:global/alternate-descriptors/Movies!org.superbiz.altdd.Movies")
+INFO - Jndi(name="java:global/alternate-descriptors/Movies")
+INFO - Jndi(name="java:global/EjbModule1893321675/org.superbiz.altdd.MoviesTest!org.superbiz.altdd.MoviesTest")
+INFO - Jndi(name="java:global/EjbModule1893321675/org.superbiz.altdd.MoviesTest")
+INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Created Ejb(deployment-id=org.superbiz.altdd.MoviesTest, ejb-name=org.superbiz.altdd.MoviesTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Started Ejb(deployment-id=org.superbiz.altdd.MoviesTest, ejb-name=org.superbiz.altdd.MoviesTest, container=Default Managed Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/alternate-descriptors)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.569 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----
+
+== Advertencia sobre herramientas
+
+Si divides los descriptores en diferentes directorios, este soporte no servirá. Especialmente, esto no funcionará :
+
+ - `src/main/resources/META-INF/ejb-jar.xml`
+ - `src/main/resources/META-INF/persistence.xml`
+ - `src/**test**/resources/META-INF/test.ejb-jar.xml`
+
+
+Este soporte **no** esta consciente ni de Maven, Gradle, Ant, IntelliJ, NetBeans, Eclipse ó otras configuraciones.

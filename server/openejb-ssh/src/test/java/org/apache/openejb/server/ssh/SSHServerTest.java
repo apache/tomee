@@ -18,9 +18,11 @@ package org.apache.openejb.server.ssh;
 
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.config.DeploymentFilterable;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
-import org.apache.sshd.SshClient;
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.channel.ClientChannel;
+import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.FactoryManager;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -62,8 +65,9 @@ public class SSHServerTest {
         final SshClient client = SshClient.setUpDefaultClient();
         client.start();
         try {
-            final ClientSession session = client.connect("localhost", 4222).await().getSession();
-            session.authPassword("jonathan", "secret");
+            final ClientSession session = client.connect("jonathan", "localhost", 4222).verify().getSession();
+            session.addPasswordIdentity("secret");
+            session.auth().verify(FactoryManager.DEFAULT_AUTH_TIMEOUT);
 
             final ClientChannel channel = session.createChannel("shell");
             ByteArrayOutputStream sent = new ByteArrayOutputStream();
@@ -81,7 +85,7 @@ public class SSHServerTest {
             pipedIn.write("exit\r\n".getBytes());
             pipedIn.flush();
 
-            channel.waitFor(ClientChannel.CLOSED, 0);
+            channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), 0);
             channel.close(false);
             client.stop();
 

@@ -1171,9 +1171,9 @@ public class SunConversion implements DynamicDeployer {
 
         boolean inWitespace = false;
         StringBuilder currentSymbol = new StringBuilder();
-        for (int i = 0; i < bits.size(); i++) {
+        for (Object bit1 : bits) {
             final TokenType tokenType;
-            final String bit = (String) bits.get(i);
+            final String bit = (String) bit1;
             switch (bit.charAt(0)) {
                 case ' ':
                 case '\t':

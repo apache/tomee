@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,14 +170,14 @@ public class URISupport {
             final Map<String, String> rc = new LinkedHashMap<>();
             if (uri != null) {
                 final String[] parameters = uri.split("&");
-                for (int i = 0; i < parameters.length; i++) {
-                    final int p = parameters[i].indexOf('=');
+                for (String parameter : parameters) {
+                    final int p = parameter.indexOf('=');
                     if (p >= 0) {
-                        final String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
-                        final String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
+                        final String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
+                        final String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
                         rc.put(name, value);
                     } else {
-                        rc.put(parameters[i], null);
+                        rc.put(parameter, null);
                     }
                 }
             }
@@ -313,14 +312,14 @@ public class URISupport {
             if (options.size() > 0) {
                 final StringBuilder rc = new StringBuilder();
                 boolean first = true;
-                for (final Iterator iter = options.keySet().iterator(); iter.hasNext(); ) {
+                for (Object o : options.keySet()) {
                     if (first) {
                         first = false;
                     } else {
                         rc.append("&");
                     }
 
-                    final String key = (String) iter.next();
+                    final String key = (String) o;
                     final String value = (String) options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
                     rc.append("=");

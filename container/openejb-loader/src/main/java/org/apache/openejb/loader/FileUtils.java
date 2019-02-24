@@ -20,11 +20,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.concurrent.ThreadLocalRandom;
 
 @SuppressWarnings("PMD.OverrideBothEqualsAndHashcode")
 public class FileUtils {
-
-    private static final java.util.Random _random = new java.util.Random();
 
     private File home;
 
@@ -123,7 +122,7 @@ public class FileUtils {
     public static File createTempDirectory(final String pathPrefix) throws IOException {
         for (int maxAttempts = 100; maxAttempts > 0; --maxAttempts) {
 
-            final String path = pathPrefix + _random.nextLong();
+            final String path = pathPrefix + ThreadLocalRandom.current().nextLong();
             final File tmpDir = new File(path);
 
             if (!tmpDir.exists() && tmpDir.mkdirs()) {

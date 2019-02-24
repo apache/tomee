@@ -55,7 +55,7 @@ public class ObserverListTest {
             }
         };
 
-        final List<String> invoked = new ArrayList<String>();
+        final List<String> invoked = new ArrayList<>();
         final ObserverManager observers = new ObserverManager();
         observers.addObserver(new Object() {
             public void observe(@Observes final ObserverAdded o) {

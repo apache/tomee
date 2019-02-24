@@ -52,7 +52,7 @@ public class TestCLIFromJaxRSTest {
                 ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/endpoint").request(MediaType.TEXT_PLAIN)
                         .get(String.class));
 
-        assertEquals("BeAUgMQKg6SzYbDM5vtzsQ==\n", out.toString());
+        assertEquals("BeAUgMQKg6SzYbDM5vtzsQ==" + System.lineSeparator(), out.toString());
     }
 
     @Path("endpoint")

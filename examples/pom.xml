@@ -53,6 +53,7 @@
     <module>cdi-interceptors</module>
     <module>cdi-produces-disposes</module>
     <module>cdi-produces-field</module>
+    <module>cdi-qualifier</module>
     <module>cdi-realm</module>
     <module>cdi-request-scope</module>
     <module>cdi-session-scope</module>
@@ -77,6 +78,7 @@
     <module>dynamic-proxy-to-access-mbean</module>
     <module>ear-testing</module>
     <module>ejb-examples</module>
+    <module>ejb-remote-call</module>
     <module>ejb-webservice</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
@@ -100,12 +102,15 @@
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
+    <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
     <module>mp-rest-jwt</module>
+    <module>mp-rest-jwt-jwk</module>
+    <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
@@ -180,6 +185,13 @@
     <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>
+    <module>jsonb-configuration</module>
+    <module>jsonb-custom-serializer</module>
+    <module>vaadin-lts-v08-simple</module>
+    <module>vaadin-lts-v10-simple</module>
+    <module>vaadin-vxx-simple</module>
+    <module>cloud-tomee-azure</module>
+    <module>mp-faulttolerance-timeout</module>
   </modules>
 
   <dependencies>

@@ -78,8 +78,8 @@ public class JaxrsTest {
         return URI.create(String.format("%s%s", url.toExternalForm(), path));
     }
 
-    public static void assertStatusCode(int actual, HttpResponse response) {
-        Assert.assertEquals(response.getStatusLine().getStatusCode(), actual);
+    public static void assertStatusCode(int expected, HttpResponse response) {
+        Assert.assertEquals(expected, response.getStatusLine().getStatusCode());
     }
 
     public static String asString(HttpResponse execute) throws IOException {

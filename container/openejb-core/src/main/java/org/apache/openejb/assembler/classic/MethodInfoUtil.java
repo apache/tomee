@@ -30,7 +30,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,7 +237,7 @@ public class MethodInfoUtil {
             }
         }
 
-        Collections.sort(normalized, new MethodPermissionComparator());
+        normalized.sort(new MethodPermissionComparator());
 
         return normalized;
     }
@@ -468,13 +467,7 @@ public class MethodInfoUtil {
         }
 
         // Remove methods that cannot be controlled by the user
-        final Iterator<Method> iterator = methods.iterator();
-        while (iterator.hasNext()) {
-            final Method method = iterator.next();
-            if (containerMethod(method)) {
-                iterator.remove();
-            }
-        }
+        methods.removeIf(MethodInfoUtil::containerMethod);
 
         return methods;
     }

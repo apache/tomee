@@ -218,7 +218,7 @@ public class TomcatClassPath extends BasicURLClassPath {
                             }
                             return method;
                         } catch (final Exception e2) {
-                            throw (IllegalStateException) new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader").initCause(e2);
+                            throw new IllegalStateException("Unable to find or access the addRepository method in StandardClassLoader", e2);
                         }
                     }
                 });

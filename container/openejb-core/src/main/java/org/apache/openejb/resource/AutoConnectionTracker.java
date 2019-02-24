@@ -119,11 +119,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
                     registry.putResource(KEY, txConnections);
                 }
 
-                Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
-                if (connectionObjects == null) {
-                    connectionObjects = new HashMap<>();
-                    txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
-                }
+                Map<ConnectionInfo, Object> connectionObjects = txConnections.computeIfAbsent(connectionInfo.getManagedConnectionInfo(), k -> new HashMap<>());
 
                 connectionObjects.put(connectionInfo, connectionInfo.getConnectionProxy());
 
@@ -181,11 +177,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
                 registry.putResource(KEY, txConnections);
             }
 
-            Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
-            if (connectionObjects == null) {
-                connectionObjects = new HashMap<>();
-                txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
-            }
+            Map<ConnectionInfo, Object> connectionObjects = txConnections.computeIfAbsent(connectionInfo.getManagedConnectionInfo(), k -> new HashMap<>());
 
             connectionObjects.remove(connectionInfo);
             if (connectionObjects.size() == 0) {

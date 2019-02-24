@@ -1,0 +1,104 @@
+= Simple Remote Tomcat Users
+:index-group: Security
+:jbake-type: page
+:jbake-status: published
+
+This is an example on how to use JNDI with security restrictions in TomEE.
+
+== Contract
+
+In our example Contract is an interface annotated with @Remote which indicates that all methods of this interface can be accessed by client code.
+[source,java]
+----
+
+	@Remote
+	public interface Contract {
+	    String hi();
+	}
+----
+== ContractImpl
+
+ContractImpl is a concrete implementation of the Contract interface restricting access to the hi method for users with role test. 
+
+[source,java]
+----
+public class ContractImpl implements Contract {
+    @Override
+    @RolesAllowed("test")
+    public String hi() {
+        return "hi";
+    }
+}
+----
+
+== ContractTest
+
+In this class we test the correctness of our application with Arquillian by creating a war with Contract and ContractImpl classes and deploying to 
+an embedded TomEE server with the war name test.war. In arquillian.xml we specify that arquillian pick tomcat-users.xml from src/test/conf folder.
+In tomcat-users.xml there is a single user with username "tomcat", password="users" and  role "test".
+
+To test we lookup for the ContractImpl and call the hi method using different usernames and passwords.
+ 
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class ContractTest {
+    @Deployment(testable = false)
+    public static Archive<?> app() {
+        return ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClasses(Contract.class, ContractImpl.class);
+    }
+
+    @ArquillianResource
+    private URL base;
+
+    @Test
+    public void valid() throws NamingException {
+        assertEquals("hi", hi(new Properties() {{
+            setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+            setProperty(Context.PROVIDER_URL, String.format("http://localhost:%s/tomee/ejb", base.getPort()));
+            setProperty(Context.SECURITY_PRINCIPAL, "tomcat");
+            setProperty(Context.SECURITY_CREDENTIALS, "users");
+        }}));
+    }
+
+    @Test
+    public void invalid() throws NamingException {
+        try {
+            hi(new Properties() {{
+                setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+                setProperty(Context.PROVIDER_URL, String.format("http://localhost:%s/tomee/ejb", base.getPort()));
+                setProperty(Context.SECURITY_PRINCIPAL, "tomcat");
+                setProperty(Context.SECURITY_CREDENTIALS, "wrong");
+            }});
+            fail();
+        } catch (final AuthenticationException ae) {
+            // ok
+        }
+    }
+
+    @Test
+    public void missingCredentials() throws NamingException {
+        try {
+            hi(new Properties() {{
+                setProperty(Context.INITIAL_CONTEXT_FACTORY, RemoteInitialContextFactory.class.getName());
+                setProperty(Context.PROVIDER_URL, String.format("http://localhost:%s/tomee/ejb", base.getPort()));
+            }});
+            fail();
+        } catch (final EJBAccessException eae) {
+            // no-op
+        }
+    }
+
+    private String hi(final Properties clientConfig) throws NamingException {
+        return Contract.class.cast(new InitialContext(clientConfig).lookup("java:global/test/ContractImpl!org.superbiz.Contract")).hi();
+    }
+} 
+----
+
+== Run the application:
+
+    mvn install 
+    
+All test cases will pass.    

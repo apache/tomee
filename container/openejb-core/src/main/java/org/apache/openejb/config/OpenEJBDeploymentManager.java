@@ -47,7 +47,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -95,8 +94,7 @@ public class OpenEJBDeploymentManager implements DeploymentManager {
         // target.* - known targets available on the server
         // target.*.description - known targets available on the server
         final SortedMap<String, Target> targets = new TreeMap<>();
-        for (final Iterator<Map.Entry<Object, Object>> iterator = properties.entrySet().iterator(); iterator.hasNext(); ) {
-            final Map.Entry entry = iterator.next();
+        for (final Map.Entry entry : properties.entrySet()) {
             final String key = (String) entry.getKey();
             final String targetName = (String) entry.getValue();
             if (key.startsWith("target.") && !key.endsWith(".description")) {

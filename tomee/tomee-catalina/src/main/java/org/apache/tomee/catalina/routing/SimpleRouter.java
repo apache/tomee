@@ -20,6 +20,8 @@ package org.apache.tomee.catalina.routing;
 import org.apache.openejb.monitoring.DynamicMBeanWrapper;
 import org.apache.openejb.monitoring.LocalMBeanServer;
 import org.apache.openejb.monitoring.ObjectNameBuilder;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import javax.management.ManagedAttribute;
 import javax.management.ManagedOperation;
@@ -46,6 +48,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SimpleRouter {
+
+    private static Logger logger = Logger.getInstance(LogCategory.OPENEJB, SimpleRouter.class);
+
     private static final Pattern PATTERN = Pattern.compile("(.*)->(.*)");
 
     private String prefix = "";
@@ -58,19 +63,28 @@ public class SimpleRouter {
             return this;
         }
 
+        BufferedReader reader = null;
         try {
             final InputStream is = new BufferedInputStream(url.openStream());
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            reader = new BufferedReader(new InputStreamReader(is));
 
             String line;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
                 if (!line.isEmpty() && !line.startsWith("#")) {
-                   parseRoute(line);
+                    parseRoute(line);
                 }
             }
         } catch (final IOException e) {
             throw new RouterException("can't read " + url.toExternalForm());
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    logger.warning(e.getMessage(), e);
+                }
+            }
         }
         return this;
     }
