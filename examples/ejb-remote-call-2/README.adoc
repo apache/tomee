@@ -1,7 +1,7 @@
 :index-group: Misc
 :jbake-type: page
 :jbake-status: published
-title=EJB Remote Call
+title=EJB Remote Call 2
 ~~~~~~
 
 
