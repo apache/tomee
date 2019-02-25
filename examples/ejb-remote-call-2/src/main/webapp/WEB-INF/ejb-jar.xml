@@ -6,11 +6,11 @@
          version="3.0">
     <enterprise-beans>
         <session>
-            <ejb-name>Calculator</ejb-name>
-            <mapped-name>ejb/Calculator</mapped-name>
-            <business-local>org.superbiz.remote.Calculator</business-local>
-            <business-remote>org.superbiz.remote.Calculator</business-remote>
-            <ejb-class>org.superbiz.remote.DefaultCalculator</ejb-class>
+            <ejb-name>Greetings</ejb-name>
+            <mapped-name>ejb/Greetings</mapped-name>
+            <business-local>org.superbiz.remote.Greetings</business-local>
+            <business-remote>org.superbiz.remote.Greetings</business-remote>
+            <ejb-class>org.superbiz.remote.DefaultGreetings</ejb-class>
             <session-type>Stateless</session-type>
             <transaction-type>Container</transaction-type>
         </session>

@@ -20,22 +20,23 @@ import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
 import java.rmi.RemoteException;
 
-public class DefaultCalculator implements Calculator {
+public class DefaultGreetings implements Greetings {
+
 
     @Override
-    public int sum(int add1, int add2) {
-        return add1 + add2;
+    public String morning(String name) {
+        return "Good Morning: " + name;
     }
 
     @Override
-    public int multiply(int mul1, int mul2) {
-        return mul1 * mul2;
+    public String afternoon(String name) {
+        return "Good Afternoon: " + name;
     }
 
     @Override
-    public String echo(final String input) throws BusinessException {
+    public String hello(final String input) throws GreetingsException {
         if ("CHECKED".equals(input)) {
-            throw new BusinessException("This is a checked exception");
+            throw new GreetingsException("This is a checked exception");
         }
 
         if ("RUNTIME".equals(input)) {

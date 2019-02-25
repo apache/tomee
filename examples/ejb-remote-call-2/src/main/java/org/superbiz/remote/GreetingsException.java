@@ -16,12 +16,20 @@
  */
 package org.superbiz.remote;
 
-public interface Calculator extends javax.ejb.SessionBean {
+public class GreetingsException extends Exception {
 
-    int sum(int add1, int add2);
+    public GreetingsException() {
+    }
 
-    int multiply(int mul1, int mul2);
+    public GreetingsException(String message) {
+        super(message);
+    }
 
-    String echo(String input) throws BusinessException;
+    public GreetingsException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public GreetingsException(Throwable cause) {
+        super(cause);
+    }
 }
-
