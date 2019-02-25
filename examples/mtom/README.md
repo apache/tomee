@@ -1,4 +1,0 @@
-:index-group:  Unrevised
-:jbake-type: page
-:jbake-status: status=published
-
