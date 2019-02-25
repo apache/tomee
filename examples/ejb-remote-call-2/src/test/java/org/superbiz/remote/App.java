@@ -23,28 +23,28 @@ import java.util.Properties;
 
 public class App {
 
-    public static void main(String[] args) throws NamingException, BusinessException {
+    public static void main(String[] args) throws NamingException, GreetingsException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
         properties.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
 
         Context ctx = new InitialContext(properties);
-        Object ref = ctx.lookup("global/ejb_remote_call_war/Calculator!org.superbiz.remote.Calculator");
+        Object ref = ctx.lookup("global/ejb_remote_call_war/Greetings!org.superbiz.remote.Greetings");
 
-        Calculator calculator = Calculator.class.cast(ref);
-        System.out.println(calculator.sum(1, 2));
+        Greetings greetings = Greetings.class.cast(ref);
+        System.out.println(greetings.sum(1, 2));
 
-        System.out.println("Expecting Hello world: " + calculator.echo("Hello world"));
+        System.out.println("Expecting Hello world: " + greetings.echo("Hello world"));
         try {
             System.out.println("Expecting checked exception: ");
-            System.out.println(calculator.echo("CHECKED"));
-        } catch (BusinessException e) {
+            System.out.println(greetings.echo("CHECKED"));
+        } catch (GreetingsException e) {
             e.printStackTrace();
         }
 
         try {
             System.out.println("Expecting runtime exception: ");
-            System.out.println(calculator.echo("RUNTIME"));
+            System.out.println(greetings.echo("RUNTIME"));
         } catch (RuntimeException e) {
             e.printStackTrace();
         }
