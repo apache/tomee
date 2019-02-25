@@ -16,8 +16,11 @@
  */
 package org.superbiz.remote;
 
+import javax.ejb.EJBException;
 import javax.ejb.Remote;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import java.rmi.RemoteException;
 
 @Stateless(name = "Calculator", description = "Calculator", mappedName = "Calculator")
 @Remote(Calculator.class)
@@ -50,5 +53,23 @@ public class DefaultCalculator implements Calculator {
     }
 
 
+    @Override
+    public void ejbActivate() throws EJBException, RemoteException {
 
+    }
+
+    @Override
+    public void ejbPassivate() throws EJBException, RemoteException {
+
+    }
+
+    @Override
+    public void ejbRemove() throws EJBException, RemoteException {
+
+    }
+
+    @Override
+    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+
+    }
 }

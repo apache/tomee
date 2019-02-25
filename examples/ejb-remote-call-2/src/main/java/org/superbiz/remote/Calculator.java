@@ -16,9 +16,9 @@
  */
 package org.superbiz.remote;
 
-public interface Calculator   {
+public interface Calculator extends javax.ejb.SessionBean {
 
-     int sum(int add1, int add2);
+    int sum(int add1, int add2);
 
     int multiply(int mul1, int mul2);
 
