@@ -1,4 +1,6 @@
-:index-group: Security :jbake-type: page :jbake-status: status=published
+:index-group: Security
+:jbake-type: page
+:jbake-status: status=published
 = Testing Security 2
 
 _Help us document this example! Click the blue pencil icon in the upper

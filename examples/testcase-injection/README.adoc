@@ -1,5 +1,7 @@
-:index-group: Testing Techniques :jbake-type: page :jbake-status:
-status=published = Testcase Injection
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Testcase Injection
 
 _Help us document this example! Click the blue pencil icon in the upper
 right to edit this page._

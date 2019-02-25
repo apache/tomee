@@ -1,5 +1,7 @@
-:index-group: EJB Legacy :jbake-type: page :jbake-status:
-status=published = EJB 2.1 CMP EntityBeans (CMP2)
+:index-group: EJB Legacy
+:jbake-type: page
+:jbake-status: status=published
+= EJB 2.1 CMP EntityBeans (CMP2)
 
 OpenEJB, the EJB Container for TomEE and Geronimo, does support all of
 EJB 1.1 to 3.1, including CMP2.

@@ -1,5 +1,6 @@
-:index-group: Frameworks :jbake-type: page :jbake-status:
-status=published
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: status=published
 
 == Spring Data With Meta sample
 

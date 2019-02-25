@@ -1,5 +1,7 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = @WebService handlers with @HandlerChain
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: status=published
+= @WebService handlers with @HandlerChain
 
 In this example we see a basic JAX-WS `@WebService` component use a
 handler chain to alter incoming and outgoing SOAP messages. SOAP

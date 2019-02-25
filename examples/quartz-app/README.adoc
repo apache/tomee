@@ -1,5 +1,7 @@
-:index-group: Java EE Connectors :jbake-type: page :jbake-status:
-status=published = Quartz Resource Adapter usage
+:index-group: Java EE Connectors
+:jbake-type: page
+:jbake-status: status=published
+= Quartz Resource Adapter usage
 
 Note: this example is somewhat dated. It predates the schedule API which
 was added to EJB 3.1. Modern applications should use the schedule API

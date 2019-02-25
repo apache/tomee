@@ -1,5 +1,7 @@
-:index-group: Session Beans :jbake-type: page :jbake-status:
-status=published = Simple Stateless
+:index-group: Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateless
 
 ____
 ``Stateless session beans are session beans whose instances have no

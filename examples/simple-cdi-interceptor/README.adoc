@@ -1,5 +1,7 @@
-:index-group: CDI :jbake-type: page :jbake-status: status=published =
-Simple CDI Interceptor
+:index-group: CDI
+:jbake-type: page
+:jbake-status: status=published
+= Simple CDI Interceptor
 
 #Simple CDI Interceptor
 

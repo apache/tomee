@@ -1,5 +1,7 @@
-:index-group: Misc :jbake-type: page :jbake-status: status=published =
-Polling
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= Polling
 
 == Sample
 

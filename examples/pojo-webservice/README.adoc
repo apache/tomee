@@ -1,5 +1,7 @@
-:index-group: Web Services :jbake-type: page :jbake-status:
-status=published = JAX-WS @WebService example
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: status=published
+= JAX-WS @WebService example
 
 Creating Web Services with JAX-WS is quite easy. Little has to be done
 aside from annotating a class with `@WebService`. Thie example shows the

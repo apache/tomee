@@ -1,5 +1,7 @@
-:index-group: Session Beans :jbake-type: page :jbake-status:
-status=published = Simple Stateless with Descriptor
+:index-group: Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateless with Descriptor
 
 This test is similar to simple-stateless, with two major differences. In
 this case all the classes are regular POJOs without annotations. The
