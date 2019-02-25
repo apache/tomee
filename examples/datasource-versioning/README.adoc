@@ -1,5 +1,7 @@
-:index-group: Unrevised :jbake-type: page :jbake-status:
-status=published = DataSource Versioning
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= DataSource Versioning
 
 This example shows you how to use versioned DataSources of the same
 provider using the classpath attribute.

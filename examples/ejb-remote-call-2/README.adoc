@@ -1,8 +1,7 @@
 :index-group: Misc
 :jbake-type: page
 :jbake-status: published
-title=EJB Remote Call 2
-~~~~~~
+= EJB Remote Call 2
 
 
 ## Calculator

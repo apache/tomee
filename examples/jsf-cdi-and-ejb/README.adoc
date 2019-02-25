@@ -1,5 +1,7 @@
-:index-group: Misc :jbake-type: page :jbake-status: status=published =
-JSF-CDI-EJB
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= JSF-CDI-EJB
 
 The simple application contains a CDI managed bean `CalculatorBean`,
 which uses the `Calculator` EJB to add two numbers and display the

@@ -1,4 +1,7 @@
-:index-group: JSON-B :jbake-type: page :jbake-status: status=published
+:index-group: JSON-B
+:jbake-type: page
+:jbake-status: status=published
+= JSON-B Configuration
 
 This examples shows how to customize jsonb for a JAX-RS Application.
 JSONB is the new javaee-api:8.0 standard for json

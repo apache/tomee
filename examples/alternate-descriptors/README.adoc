@@ -1,5 +1,7 @@
-:index-group: Testing Techniques :jbake-type: page :jbake-status:
-status=published = Alternate Descriptors
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Alternate Descriptors
 
 See the link:../../alternate-descriptors.html[Alternate Descriptors]
 page for the full details of how this feature works.
