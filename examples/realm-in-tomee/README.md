@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=DataSourceRealm and TomEE DataSource
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= DataSourceRealm and TomEE DataSource
+
 
 ## Quick start
 

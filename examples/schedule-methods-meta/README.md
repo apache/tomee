@@ -1,8 +1,8 @@
-index-group=Meta-Annotations
-type=page
-status=published
-title=Schedule Methods Meta
-~~~~~~
+:index-group:  Meta-Annotations
+:jbake-type: page
+:jbake-status: status=published
+= Schedule Methods Meta
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

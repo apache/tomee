@@ -1,7 +1,7 @@
-index-group=Frameworks
-type=page
-status=published
-~~~~~~
+:index-group:  Frameworks
+:jbake-type: page
+:jbake-status: status=published
+
 # Spring Data With Meta sample #
 
 This example simply simplifies the usage of spring-data sample

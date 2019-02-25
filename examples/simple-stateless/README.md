@@ -1,8 +1,8 @@
-index-group=Session Beans
-type=page
-status=published
-title=Simple Stateless
-~~~~~~
+:index-group:  Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateless
+
 
 >"Stateless session beans are session beans whose instances have no conversational state.
 This means that all bean instances are equivalent when they are not involved in servicing

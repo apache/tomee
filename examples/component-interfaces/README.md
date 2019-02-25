@@ -1,8 +1,8 @@
-index-group=EJB Legacy
-type=page
-status=published
-title=Component Interfaces
-~~~~~~
+:index-group:  EJB Legacy
+:jbake-type: page
+:jbake-status: status=published
+= Component Interfaces
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

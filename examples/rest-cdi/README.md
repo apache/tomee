@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Simple REST with CDI
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Simple REST with CDI
+
 
 Defining a REST service is pretty easy, simply ad @Path annotation to a class then define on methods
 the HTTP method to use (@GET, @POST, ...).

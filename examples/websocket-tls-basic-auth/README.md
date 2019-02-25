@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Websocket TLS Basic Auth
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Websocket TLS Basic Auth
+
 # websocket-tls-basic-auth
 
 Websocket example project using SSL and basic authentication.

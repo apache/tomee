@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Simple Stateful with callback methods
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateful with callback methods
+
 
 This example shows how to create a stateful session bean that uses the @PrePassivate, @PostActivate, @PostConstruct, @PreDestroy and @AroundInvoke annotations.
 

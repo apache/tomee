@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Change JAXWS URL
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Change JAXWS URL
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

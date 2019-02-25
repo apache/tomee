@@ -1,8 +1,8 @@
-index-group=Proxy Beans
-type=page
-status=published
-title=Dynamic Implementation
-~~~~~~
+:index-group:  Proxy Beans
+:jbake-type: page
+:jbake-status: status=published
+= Dynamic Implementation
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

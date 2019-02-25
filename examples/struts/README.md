@@ -1,8 +1,8 @@
-index-group=Frameworks
-type=page
-status=published
-title=Struts
-~~~~~~
+:index-group:  Frameworks
+:jbake-type: page
+:jbake-status: status=published
+= Struts
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

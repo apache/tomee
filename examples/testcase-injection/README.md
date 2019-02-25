@@ -1,8 +1,8 @@
-index-group=Testing Techniques
-type=page
-status=published
-title=Testcase Injection
-~~~~~~
+:index-group:  Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Testcase Injection
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

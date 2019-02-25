@@ -1,8 +1,8 @@
-index-group=Web Services
-type=page
-status=published
-title=Webservice Inheritance
-~~~~~~
+:index-group:  Web Services
+:jbake-type: page
+:jbake-status: status=published
+= Webservice Inheritance
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

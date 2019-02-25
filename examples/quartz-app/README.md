@@ -1,8 +1,8 @@
-index-group=Java EE Connectors
-type=page
-status=published
-title=Quartz Resource Adapter usage
-~~~~~~
+:index-group:  Java EE Connectors
+:jbake-type: page
+:jbake-status: status=published
+= Quartz Resource Adapter usage
+
 
 Note: this example is somewhat dated.  It predates the schedule API which was added to EJB 3.1.  Modern applications should use the schedule API which has many, if not all,
 the same features as Quartz.  In fact, Quartz is the engine that drives the `@Schedule` and `ScheduleExpression` support in OpenEJB and TomEE.

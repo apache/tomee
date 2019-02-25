@@ -1,8 +1,8 @@
-index-group=Proxy Beans
-type=page
-status=published
-title=Dynamic Proxy to Access MBean
-~~~~~~
+:index-group:  Proxy Beans
+:jbake-type: page
+:jbake-status: status=published
+= Dynamic Proxy to Access MBean
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

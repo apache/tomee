@@ -1,8 +1,8 @@
-index-group=EJB
-type=page
-status=published
-title=Interceptors
-~~~~~~
+:index-group:  EJB
+:jbake-type: page
+:jbake-status: status=published
+= Interceptors
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

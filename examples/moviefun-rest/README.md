@@ -1,8 +1,8 @@
-index-group=REST
-type=page
-status=published
-title=MovieFun REST
-~~~~~~
+:index-group:  REST
+:jbake-type: page
+:jbake-status: status=published
+= MovieFun REST
+
 
 This example shows the CRUD of a movie funny application.  
 The web client is built using backbone and the backend is built with JAX-RS, JPA for the persistence in a H2 database.

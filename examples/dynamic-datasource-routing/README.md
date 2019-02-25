@@ -1,8 +1,8 @@
-index-group=DataSources
-type=page
-status=published
-title=Dynamic Datasource Routing
-~~~~~~
+:index-group:  DataSources
+:jbake-type: page
+:jbake-status: status=published
+= Dynamic Datasource Routing
+
 
 The TomEE dynamic datasource api aims to allow to use multiple data sources as one from an application point of view.
 

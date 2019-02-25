@@ -1,7 +1,7 @@
-index-group=JSON-B
-type=page
-status=published
-~~~~~~
+:index-group:  JSON-B
+:jbake-type: page
+:jbake-status: status=published
+
 
 This examples shows how to customize objects serialization/deserialization with jsonb for a JAX-RS Application.
 

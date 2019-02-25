@@ -1,8 +1,8 @@
-index-group=REST
-type=page
-status=published
-title=REST Example with Application
-~~~~~~
+:index-group:  REST
+:jbake-type: page
+:jbake-status: status=published
+= REST Example with Application
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

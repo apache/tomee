@@ -1,8 +1,8 @@
-index-group=Transactions
-type=page
-status=published
-title=Testing Transactions
-~~~~~~
+:index-group:  Transactions
+:jbake-type: page
+:jbake-status: status=published
+= Testing Transactions
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

@@ -1,8 +1,8 @@
-index-group=DataSources
-type=page
-status=published
-title=Injection Of Datasource
-~~~~~~
+:index-group:  DataSources
+:jbake-type: page
+:jbake-status: status=published
+= Injection Of Datasource
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

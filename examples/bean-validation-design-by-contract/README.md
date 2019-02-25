@@ -1,8 +1,8 @@
-index-group=Other Features
-type=page
-status=published
-title=Bean Validation Design by Contract
-~~~~~~
+:index-group:  Other Features
+:jbake-type: page
+:jbake-status: status=published
+= Bean Validation Design by Contract
+
 # Bean Validation - Design By Contract
 
 Bean Validation (aka JSR 303) contains an optional appendix dealing with method validation.

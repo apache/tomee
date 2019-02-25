@@ -1,8 +1,8 @@
-index-group=Misc
-type=page
-status=published
-title=JSF-CDI-EJB
-~~~~~~
+:index-group:  Misc
+:jbake-type: page
+:jbake-status: status=published
+= JSF-CDI-EJB
+
 
 The simple application contains a CDI managed bean `CalculatorBean`, which uses the `Calculator` EJB to add two numbers
 and display the results to the user. The EJB is injected in the managed bean using @Inject annotation.

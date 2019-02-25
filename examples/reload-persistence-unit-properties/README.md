@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Reload Persistence Unit Properties
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Reload Persistence Unit Properties
+
 
 This example aims to simulate a benchmark campaign on JPA.
 

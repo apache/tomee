@@ -1,8 +1,8 @@
-index-group=Referencing EJBs
-type=page
-status=published
-title=Lookup Of Ejbs
-~~~~~~
+:index-group:  Referencing EJBs
+:jbake-type: page
+:jbake-status: status=published
+= Lookup Of Ejbs
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

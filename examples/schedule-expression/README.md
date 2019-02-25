@@ -1,8 +1,8 @@
-index-group=EJB
-type=page
-status=published
-title=Schedule Expression
-~~~~~~
+:index-group:  EJB
+:jbake-type: page
+:jbake-status: status=published
+= Schedule Expression
+
 
 In this example we exercise the `TimerService`.
 

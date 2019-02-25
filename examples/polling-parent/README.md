@@ -1,8 +1,8 @@
-index-group=Misc
-type=page
-status=published
-title=Polling
-~~~~~~
+:index-group:  Misc
+:jbake-type: page
+:jbake-status: status=published
+= Polling
+
 # Sample #
 
 This sample implements a simple polling application.

@@ -1,8 +1,8 @@
-index-group=Security
-type=page
-status=published
-title=Testing Security 3
-~~~~~~
+:index-group:  Security
+:jbake-type: page
+:jbake-status: status=published
+= Testing Security 3
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

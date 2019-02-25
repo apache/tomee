@@ -1,8 +1,8 @@
-index-group=JMS and MDBs
-type=page
-status=published
-title=Injection Of Connectionfactory
-~~~~~~
+:index-group:  JMS and MDBs
+:jbake-type: page
+:jbake-status: status=published
+= Injection Of Connectionfactory
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

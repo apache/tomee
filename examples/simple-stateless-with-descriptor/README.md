@@ -1,8 +1,8 @@
-index-group=Session Beans
-type=page
-status=published
-title=Simple Stateless with Descriptor
-~~~~~~
+:index-group:  Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateless with Descriptor
+
 
 This test is similar to simple-stateless, with two major differences. In this case all the classes are regular POJOs without annotations.
 The EJB-specific metadata is provided via an XML descriptor. The second difference is the explicite use of Local and Remote interfaces. 

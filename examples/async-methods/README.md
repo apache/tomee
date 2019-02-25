@@ -1,8 +1,8 @@
-index-group=EJB
-type=page
-status=published
-title=@Asynchronous Methods
-~~~~~~
+:index-group:  EJB
+:jbake-type: page
+:jbake-status: status=published
+= @Asynchronous Methods
+
 
 The @Asynchronous annotation was introduced in EJB 3.1 as a simple way of creating asynchronous processing.
 

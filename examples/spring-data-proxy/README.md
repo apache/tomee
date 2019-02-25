@@ -1,7 +1,7 @@
-index-group=Frameworks
-type=page
-status=published
-~~~~~~
+:index-group:  Frameworks
+:jbake-type: page
+:jbake-status: status=published
+
 # Spring Data sample #
 
 This example uses OpenEJB hooks to replace an EJB implementation by a proxy

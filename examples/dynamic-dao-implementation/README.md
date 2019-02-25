@@ -1,8 +1,8 @@
-index-group=Proxy Beans
-type=page
-status=published
-title=Dynamic DAO Implementation
-~~~~~~
+:index-group:  Proxy Beans
+:jbake-type: page
+:jbake-status: status=published
+= Dynamic DAO Implementation
+
 
 Many aspects of Data Access Objects (DAOs) are very repetitive and boiler plate.  As a fun and experimental feature, TomEE supports dynamically implementing an interface
 that is seen to have standard DAO-style methods.

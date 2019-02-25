@@ -1,8 +1,8 @@
-index-group=Other Features
-type=page
-status=published
-title=Troubleshooting
-~~~~~~
+:index-group:  Other Features
+:jbake-type: page
+:jbake-status: status=published
+= Troubleshooting
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

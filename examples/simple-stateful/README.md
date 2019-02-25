@@ -1,8 +1,8 @@
-index-group=Session Beans
-type=page
-status=published
-title=Simple Stateful
-~~~~~~
+:index-group:  Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Stateful
+
 
 This example demonstrates a simple deployment of a Stateful session bean.
 

@@ -1,8 +1,8 @@
-index-group=Environment Entries
-type=page
-status=published
-title=Using EnvEntries
-~~~~~~
+:index-group:  Environment Entries
+:jbake-type: page
+:jbake-status: status=published
+= Using EnvEntries
+
 
 The `@Resource` annotation can be used to inject several things including
 DataSources, Topics, Queues, etc.  Most of these are container supplied objects.

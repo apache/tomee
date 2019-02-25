@@ -1,8 +1,8 @@
-index-group=DataSources
-type=page
-status=published
-title=Resources Declared in Webapp
-~~~~~~
+:index-group:  DataSources
+:jbake-type: page
+:jbake-status: status=published
+= Resources Declared in Webapp
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

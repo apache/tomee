@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Apache DeltaSpike Demo
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Apache DeltaSpike Demo
+
 Notice:    Licensed to the Apache Software Foundation (ASF) under one
            or more contributor license agreements.  See the NOTICE file
            distributed with this work for additional information

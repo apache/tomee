@@ -1,8 +1,8 @@
-index-group=Other Features
-type=page
-status=published
-title=Mbean Auto Registration
-~~~~~~
+:index-group:  Other Features
+:jbake-type: page
+:jbake-status: status=published
+= Mbean Auto Registration
+
 
 This example shows how to automatically create and register mbeans using TomEE features.
 

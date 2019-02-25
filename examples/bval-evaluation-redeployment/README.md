@@ -1,4 +1,4 @@
-index-group=Unrevised
-type=page
-status=published
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+

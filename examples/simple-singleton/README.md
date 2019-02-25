@@ -1,8 +1,8 @@
-index-group=Session Beans
-type=page
-status=published
-title=Simple Singleton
-~~~~~~
+:index-group:  Session Beans
+:jbake-type: page
+:jbake-status: status=published
+= Simple Singleton
+
 
 As the name implies a `javax.ejb.Singleton` is a session bean with a guarantee that there is at most one instance in the application.
 

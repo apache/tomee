@@ -1,8 +1,8 @@
-index-group=Testing Techniques
-type=page
-status=published
-title=EAR Testing
-~~~~~~
+:index-group:  Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= EAR Testing
+
 
 The goal of this example is to demonstrate how maven projects might be organized in a more real world style and how testing with OpenEJB can fit into that structure.
 

@@ -1,7 +1,7 @@
-index-group=Unrevised
-type=page
-status=published
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+
 
 This examples shows how to customize jsonb for a JAX-RS Application. JSONB is the new javaee-api:8.0 standard for json serialization/deserialization. Few annotations are needed and JsonbConfig offers many configurations.
 

@@ -1,8 +1,8 @@
-index-group=Testing Techniques
-type=page
-status=published
-title=Alternate Descriptors
-~~~~~~
+:index-group:  Testing Techniques
+:jbake-type: page
+:jbake-status: status=published
+= Alternate Descriptors
+
 
 See the [Alternate Descriptors](../../alternate-descriptors.html) page for the full details of how this feature works.
 

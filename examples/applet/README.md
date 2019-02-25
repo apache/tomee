@@ -1,8 +1,8 @@
-index-group=Misc
-type=page
-status=published
-title=Applet
-~~~~~~
+:index-group:  Misc
+:jbake-type: page
+:jbake-status: status=published
+= Applet
+
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

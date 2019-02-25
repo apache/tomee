@@ -1,8 +1,8 @@
-index-group=EJB
-type=page
-status=published
-title=@Asynchronous @PostConstruct
-~~~~~~
+:index-group:  EJB
+:jbake-type: page
+:jbake-status: status=published
+= @Asynchronous @PostConstruct
+
 
 Placing `@Asynchronous` on the `@PostConstruct` of an EJB is not a supported part of Java EE, but this example shows a pattern which works just as well with little effort.
 

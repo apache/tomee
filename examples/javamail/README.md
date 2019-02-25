@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Javamail API
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Javamail API
+
 
 This is just a simple example to demonstrate a very basic usage of the API. It should be enough to get you started using the java mail packages.
 

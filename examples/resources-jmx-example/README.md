@@ -1,8 +1,8 @@
-index-group=Unrevised
-type=page
-status=published
-title=Custom resources in an EAR archive
-~~~~~~
+:index-group:  Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Custom resources in an EAR archive
+
 
 TomEE allows you to define your own resources within your application, and declare them in `META-INF/resources.xml`. This allows you do inject these resource into any managed component within your application.
 
