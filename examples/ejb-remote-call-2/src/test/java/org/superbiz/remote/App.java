@@ -29,7 +29,7 @@ public class App {
         properties.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
 
         Context ctx = new InitialContext(properties);
-        Object ref = ctx.lookup("global/ejb_remote_call_2_war/Greetings!org.superbiz.remote.Greetings");
+        Object ref = ctx.lookup("global/ejb-remote-call-2-1.1.1-SNAPSHOT/Greetings!org.superbiz.remote.Greetings");
 
         Greetings greetings = Greetings.class.cast(ref);
         System.out.println(greetings.hello("Ada"));

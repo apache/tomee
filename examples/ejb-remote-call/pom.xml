@@ -25,10 +25,12 @@
     <groupId>org.superbiz</groupId>
     <artifactId>ejb-remote-call</artifactId>
     <packaging>war</packaging>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>OpenEJB :: Web Examples :: EJB Remote Call</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tomee.version>1.7.6-SNAPSHOT</tomee.version>
+        <openejb.version>4.7.6-SNAPSHOT</openejb.version>
     </properties>
     <repositories>
         <repository>
@@ -55,14 +57,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.tomee.maven</groupId>
+                <groupId>org.apache.openejb.maven</groupId>
                 <artifactId>tomee-maven-plugin</artifactId>
-                <version>8.0.0-SNAPSHOT</version>
+                <version>${tomee.version}</version>
                 <configuration>
                     <args>-Xmx512m -XX:PermSize=256m</args>
                     <config>${project.basedir}/src/test/conf</config>
@@ -72,15 +74,15 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
+            <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
+            <version>6.0-6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tomee</groupId>
+            <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-client</artifactId>
-            <version>${project.version}</version>
+            <version>${openejb.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
