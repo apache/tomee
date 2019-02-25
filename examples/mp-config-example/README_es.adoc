@@ -1,0 +1,70 @@
+
+= MicroProfile Config
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este es un ejemplo de cómo usar la configuración de microprofile en TomEE.
+
+== Ejecutar la aplicación:
+
+[source,bash]
+----
+mvn clean install tomee:run 
+----
+
+== API
+
+Hay tres formas de inyectar valores en la aplicación usando configuración.
+
+1 . Para Valores por defecto con ConfigProperty ejecutar:
+
+----
+GET http://localhost:8080/mp-config-example/sample/defaultProperty
+----
+
+2 . Para obtener propiedades inyectadas con ConfigProperty ejecutar:
+----
+GET http://localhost:8080/mp-config-example/sample/injectedJavaVersion
+----
+
+3 . Para obtener una propiedad desde Config con getValue ejecutar:
+----
+GET http://localhost:8080/mp-config-example/sample/javaVersion
+----
+
+== Características de Config
+
+MicroProfile Config es una solución que permite externalizar la configuración de los microservicios. Cada propiedad 
+puede ser inyectada directamente de forma individual.
+
+[source,java,numbered]
+----
+@Inject
+@ConfigProperty(name = "java.runtime.version")
+private String javaVersion;
+----
+
+
+Es posible establecer valores por defecto aún cuando la propiedad no está definida en el contexto, por tanto se usará la configuración por defecto.
+
+[source,java,numbered]
+----
+@Inject
+@ConfigProperty(name = "defaultProperty", defaultValue = "ALOHA")
+private String defaultProperty;
+----
+
+El objeto Config puede también ser inyectado, de manera que se puede invocar el método getValue() para obtener una propiedad particular.
+
+[source,java,numbered]
+----    
+@Inject
+private Config config;
+
+@GET
+@Path("javaVersion")
+public String getJavaVersionPropertyFromSystemProperties() {
+    return config.getValue("java.runtime.version", String.class);
+}
+----
