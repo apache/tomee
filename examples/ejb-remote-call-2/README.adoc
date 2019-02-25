@@ -5,70 +5,70 @@ title=EJB Remote Call 2
 ~~~~~~
 
 
-## Calculator
+## Greetings
 
 
-public interface Greetings extends javax.ejb.SessionBean {
+    public interface Greetings extends javax.ejb.SessionBean {
 
-    String morning(String name);
+        String morning(String name);
 
-    String afternoon(String name);
+        String afternoon(String name);
 
-    String hello(String input) throws GreetingsException;
-}
-
-
-public class DefaultGreetings implements Greetings {
-
-
-    @Override
-    public String morning(String name) {
-        return "Good Morning: " + name;
+        String hello(String input) throws GreetingsException;
     }
 
-    @Override
-    public String afternoon(String name) {
-        return "Good Afternoon: " + name;
-    }
 
-    @Override
-    public String hello(final String input) throws GreetingsException {
-        if ("CHECKED".equals(input)) {
-            throw new GreetingsException("This is a checked exception");
+    public class DefaultGreetings implements Greetings {
+
+
+        @Override
+        public String morning(String name) {
+            return "Good Morning: " + name;
         }
 
-        if ("RUNTIME".equals(input)) {
-            throw new RuntimeException("This is a runtime exception");
+        @Override
+        public String afternoon(String name) {
+            return "Good Afternoon: " + name;
         }
 
-        if (input == null) {
-            return "Input was null";
+        @Override
+        public String hello(final String input) throws GreetingsException {
+            if ("CHECKED".equals(input)) {
+                throw new GreetingsException("This is a checked exception");
+            }
+
+            if ("RUNTIME".equals(input)) {
+                throw new RuntimeException("This is a runtime exception");
+            }
+
+            if (input == null) {
+                return "Input was null";
+            }
+
+            return "Input was: " + input;
         }
 
-        return "Input was: " + input;
+
+        @Override
+        public void ejbActivate() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void ejbPassivate() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+
+        }
     }
-
-
-    @Override
-    public void ejbActivate() throws EJBException, RemoteException {
-
-    }
-
-    @Override
-    public void ejbPassivate() throws EJBException, RemoteException {
-
-    }
-
-    @Override
-    public void ejbRemove() throws EJBException, RemoteException {
-
-    }
-
-    @Override
-    public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
-
-    }
-}
 
 ## web.xml
 
