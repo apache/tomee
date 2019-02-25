@@ -237,10 +237,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>2.2.11</version>
-      <scope>provided</scope>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.2</version>
+      <scope>provided</scope>     
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <artifactId>jakarta.activation</artifactId>
+          <groupId>jakarta.activation-api</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>
