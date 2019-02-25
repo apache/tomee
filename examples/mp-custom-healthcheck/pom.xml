@@ -33,6 +33,12 @@
             <artifactId>microprofile-health-api</artifactId>
             <version>${microprofile-health-api.version}</version>
             <scope>provided</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
