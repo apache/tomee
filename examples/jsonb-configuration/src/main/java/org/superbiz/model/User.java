@@ -1,23 +1,20 @@
 package org.superbiz.model;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class User {
 
 	private Integer id;
 	private String name;
-	private Date registration;
+	private LocalDate registration;
 
 	public User(Integer id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
-
-		final Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-		c.set(2019, Calendar.JANUARY, 1);
-		registration = c.getTime();
+		registration = LocalDate.of(2019, Month.JANUARY, 1);
 	}
 
 	/**
@@ -48,12 +45,11 @@ public class User {
 		this.name = name;
 	}
 
-	public Date getRegistration() {
+	public LocalDate getRegistration() {
 		return registration;
 	}
 
-	public void setRegistration(Date registration) {
+	public void setRegistration(LocalDate registration) {
 		this.registration = registration;
 	}
-
 }
