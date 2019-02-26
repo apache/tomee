@@ -16,20 +16,12 @@
  */
 package org.superbiz.remote;
 
-public class BusinessException extends Exception {
+public interface Greetings extends javax.ejb.SessionBean {
 
-    public BusinessException() {
-    }
+    String morning(String name);
 
-    public BusinessException(String message) {
-        super(message);
-    }
+    String afternoon(String name);
 
-    public BusinessException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public BusinessException(Throwable cause) {
-        super(cause);
-    }
+    String hello(String input) throws GreetingsException;
 }
+

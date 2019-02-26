@@ -16,20 +16,20 @@
  */
 package org.superbiz.remote;
 
-public class BusinessException extends Exception {
+public class GreetingsException extends Exception {
 
-    public BusinessException() {
+    public GreetingsException() {
     }
 
-    public BusinessException(String message) {
+    public GreetingsException(String message) {
         super(message);
     }
 
-    public BusinessException(String message, Throwable cause) {
+    public GreetingsException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public BusinessException(Throwable cause) {
+    public GreetingsException(Throwable cause) {
         super(cause);
     }
 }
