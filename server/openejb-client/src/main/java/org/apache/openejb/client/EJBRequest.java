@@ -21,12 +21,10 @@ import org.apache.openejb.client.corba.InstanceOf;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 
-import javax.rmi.PortableRemoteObject;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.lang.reflect.Method;
-import java.rmi.Remote;
 import java.util.Arrays;
 
 public class EJBRequest implements ClusterableRequest {
@@ -553,7 +551,7 @@ public class EJBRequest implements ClusterableRequest {
                         throw new IOException("Unkown primitive type: " + clazz);
                     }
                 } else {
-                    if (PortableRemoteObject.class.isInstance(obj) && Remote.class.isInstance(obj)) {
+                    if (InstanceOf.isRemote(obj)) {
                         obj = Corbas.toStub(obj);
                     }
                     out.write(OBJECT);

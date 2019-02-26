@@ -547,7 +547,9 @@ public class JndiEncBuilder {
 
         try {
             bindings.put("comp/ORB", new SystemComponentReference(ParentClassLoaderFinder.Helper.get().loadClass("org.omg.CORBA.ORB")));
-        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+        } catch (final NoClassDefFoundError e) {
+            // no corba, who does recall what it is today anyway :D
+        } catch (final ClassNotFoundException e) {
             // no corba, who does recall what it is today anyway :D
         }
         bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
