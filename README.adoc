@@ -1,0 +1,122 @@
+http://www.apache.org/licenses/LICENSE-2.0.html[image:http://img.shields.io/:license-apache-blue.svg[License]]
+https://github.com/apache/tomee/tomee/fork[image:https://img.shields.io/github/forks/apache/tomee.svg?style=social&label=Fork[GitHub
+forks]]
+https://github.com/apache/tomee[image:https://img.shields.io/github/stars/apache/tomee.svg?style=social&label=Star[GitHub
+stars]]
+
+== Apache TomEE
+
+Apache TomEE is a lightweight, yet powerful, JavaEE Application server
+with feature rich tooling.
+
+Is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
+TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile
+compliant application server.
+
+The application server is totally open source and created with the
+community efforts for the public good. Collaborative consensus and and
+peer review according to the Apache Foundation guidelines are used to
+guarantee the highest quality standards.
+
+Official website: https://tomee.apache.org
+
+'''''
+
+* link:#to-starti-using-tomee[To start using TomEE]
+* link:#to-start-developing-tomEE[To start developing TomEE]
+* link:#contributing[Contributing]
+* link:#changelog[Changelog]
+* link:#license[License]
+
+'''''
+
+=== To start using TomEE
+
+You can use TomEE to deploy Jakarta EE, Microprofile and Java EE
+compliant applications.
+
+* Apache TomEE is distributed 5 different flavors, you can check the
+http://tomee.apache.org/comparison.html[comparison] table and then
+proceed to http://tomee.apache.org/download-ng.html[donwload] the
+distribution for your use case.
+* http://tomee.apache.org/docs.html[Documentation and examples] are
+available in the official website.
+* The dozens of application included in the examples/ folder of the
+project.
+
+=== To start developing TomEE
+
+TomEE is open source and you can help in its creation.
+
+Apache TomEE is built with Apache Maven >= 3.3.9 and Java 8. The
+http://tomee.apache.org/community/sources.html[Contribute to TomEE]
+section from the official website for a complete Git, Github, Build,
+Test, and Continuous Integration details.
+
+==== Quick build
+
+If you only like to compile all classes and package up TomEE _without_
+running tests then you can use the following build options
+
+....
+mvn -Pquick -Dsurefire.useFile=false -DdisableXmlReport=true -DuniqueVersion=false -ff -Dassemble -DskipTests -DfailIfNoTests=false clean install
+....
+
+==== Full build
+
+This will run all the tests. We have thousands of tests and you should
+go out to grab a bite in the meantime.
+
+....
+mvn clean install
+....
+
+If you intend building in environments where multicast is not allowed
+then build with:
+
+....
+mvn clean install -DskipMulticastTests=true
+....
+
+Full build that execute arquillian test on all TomEE distributions:
+
+....
+mvn clean install -Pall-adapters
+....
+
+==== Partial build
+
+This will only build a module and the modules using it as a dependency.
+
+To build just TomEE distribution execute:
+
+....
+mvn clean install -pl tomee/apache-tomee -am -Dmaven.test.skip=true
+....
+
+TomEE zip/tar.gz will be in tomee/apache-tomee/target
+
+To build TomEE Embedded to be able to develop with its maven plugin
+execute:
+
+....
+mvn clean install -pl maven/tomee-embedded-maven-plugin -am -Dmaven.test.skip=true
+....
+
+=== Contributing
+
+The http://tomee.apache.org/community/index.html[community] section from
+the official website offers details on how you can join the mailing
+lists, file tickets, fix bugs and start to contribute to the project.
+
+=== Changelog
+
+List of
+https://issues.apache.org/jira/projects/TOMEE?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page&status=released[Jira
+Releases] (*)
+
+(*) You need to login or sign up with a free Apache Jira Account
+
+=== License
+
+link:LICENSE[Apache License 2.0]
