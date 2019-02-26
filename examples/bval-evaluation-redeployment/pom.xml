@@ -139,6 +139,10 @@
             <artifactId>javax.ws.rs-api</artifactId>
           </exclusion>
         </exclusions>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
       </dependency>
     </dependencies>
   </dependencyManagement>
