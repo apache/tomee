@@ -107,7 +107,7 @@ public class StatefulEjbObjectHandler extends EjbObjectProxyHandler {
 
             return containerId.equals(that.containerId) &&
                 deploymentId.equals(that.deploymentId) &&
-                !(!Objects.equals(primaryKey, that.primaryKey));
+                    Objects.equals(primaryKey, that.primaryKey);
         }
 
         public int hashCode() {
