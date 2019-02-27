@@ -31,10 +31,6 @@ import java.util.List;
 
 public class CmpJpaConversionTest {
 
-    //deve criar usar o nome do modulo com application ID
-    //deve criar o nome do module usando o ejb application
-    //deve retornar uma execao quando
-
 
     @Test
     public void shouldDeployAppModule() throws OpenEJBException {
@@ -91,6 +87,63 @@ public class CmpJpaConversionTest {
         Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
+
+    @Test
+    public void shouldDeployAppModuleWhenSetModuleId() throws OpenEJBException {
+
+        AppModule appModule = new AppModule(this.getClass().getClassLoader(), "app");
+
+        EntityMappings entityMappings = new EntityMappings();
+        Entity entity = new Entity();
+        EntityBean entityBean = new EntityBean(PersonBean.class.getName(), Person.class.getName(), PersistenceType.CONTAINER);
+
+        EjbJar ejbJar = new EjbJar();
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        OpenejbJar openejbJar = new OpenejbJar();
+
+        appModule.getEjbModules().add(ejbModule);
+        appModule.setModuleId("moduleId");
+        ejbJar.addEnterpriseBean(entityBean);
+        ejbModule.setOpenejbJar(openejbJar);
+        CmpJpaConversion conversion = new CmpJpaConversion();
+
+        AppModule deploy = conversion.deploy(appModule);
+        Assert.assertNotNull(deploy);
+
+        List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
+        Assert.assertEquals(1, persistenceModules.size());
+        PersistenceModule persistenceModule = persistenceModules.get(0);
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+    }
+
+
+    @Test
+    public void shouldDeployAppModuleWhenSetModuleIdAsNull() throws OpenEJBException {
+
+        AppModule appModule = new AppModule(this.getClass().getClassLoader(), "app");
+
+        EntityMappings entityMappings = new EntityMappings();
+        Entity entity = new Entity();
+        EntityBean entityBean = new EntityBean(PersonBean.class.getName(), Person.class.getName(), PersistenceType.CONTAINER);
+
+        EjbJar ejbJar = new EjbJar();
+        EjbModule ejbModule = new EjbModule(ejbJar);
+        OpenejbJar openejbJar = new OpenejbJar();
+
+        appModule.getEjbModules().add(ejbModule);
+        appModule.setModuleId(null);
+        ejbJar.addEnterpriseBean(entityBean);
+        ejbModule.setOpenejbJar(openejbJar);
+        CmpJpaConversion conversion = new CmpJpaConversion();
+
+        AppModule deploy = conversion.deploy(appModule);
+        Assert.assertNotNull(deploy);
+
+        List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
+        Assert.assertEquals(1, persistenceModules.size());
+        PersistenceModule persistenceModule = persistenceModules.get(0);
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+    }
 
 
     @javax.persistence.Entity
