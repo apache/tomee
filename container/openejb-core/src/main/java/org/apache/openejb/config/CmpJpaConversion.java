@@ -256,9 +256,11 @@ class CmpJpaConversion implements DynamicDeployer {
     }
 
     private String getPersistenceModuleId(final AppModule appModule) {
-        return Optional.ofNullable(appModule.getModuleUri())
-                .map(Object::toString)
-                .orElse(appModule.getModuleId());
+        if (appModule.getModuleUri() != null) {
+            return appModule.getModuleUri().toString();
+        } else {
+            return appModule.getModuleId();
+        }
     }
 
     /**
