@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
@@ -258,11 +257,15 @@ class CmpJpaConversion implements DynamicDeployer {
 
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-            return Optional.ofNullable(appModule.getModuleUri().toString()).orElse(appModule.getModuleId());
+            return Optional.ofNullable(appModule.getModuleUri())
+                    .map(Object::toString)
+                    .orElse(appModule.getModuleId());
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             if (ejbModule.getModuleId() != null) {
-                return Optional.ofNullable(ejbModule.getModuleUri().toString()).orElse(ejbModule.getModuleId());
+                return Optional.ofNullable(ejbModule.getModuleUri())
+                        .map(Object::toString)
+                        .orElse(ejbModule.getModuleId());
             }
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
