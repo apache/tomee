@@ -60,6 +60,25 @@ public class CmpJpaConversionTest {
         Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
+    @Test
+    public void shouldDeployAppModuleWithoutEJBModule() throws OpenEJBException {
+
+
+        AppModule appModule = new AppModule(this.getClass().getClassLoader(), "app");
+
+        EntityMappings entityMappings = new EntityMappings();
+        Entity entity = new Entity();
+        EntityBean entityBean = new EntityBean(PersonBean.class.getName(), Person.class.getName(), PersistenceType.CONTAINER);
+
+        CmpJpaConversion conversion = new CmpJpaConversion();
+
+        AppModule deploy = conversion.deploy(appModule);
+        Assert.assertNotNull(deploy);
+
+        List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
+        Assert.assertTrue( persistenceModules.isEmpty());
+    }
+
 
     @Test
     public void shouldDeployAppModuleUsingModuleAsContructor() throws OpenEJBException {
