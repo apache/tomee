@@ -19,7 +19,7 @@ package org.apache.openejb.monitoring;
 
 import org.apache.openejb.util.Classes;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -200,7 +200,7 @@ public class ManagedMBean implements DynamicMBean {
             final Class<?> expectedType = method.getParameterTypes()[i];
             if (value instanceof String && expectedType != Object.class) {
                 final String stringValue = (String) value;
-                value = PropertyEditors.getValue(expectedType, stringValue);
+                value = new PropertyEditorRegistry().getValue(expectedType, stringValue);
             }
             args[i] = value;
         }

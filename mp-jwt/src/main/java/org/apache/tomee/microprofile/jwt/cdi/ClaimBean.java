@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.Claims;
@@ -163,6 +163,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
         logger.finest(String.format("Found Claim injection with name=%s and for %s", key, ip.toString()));
 
+        final PropertyEditorRegistry propertyEditors = new PropertyEditorRegistry();
         if (ParameterizedType.class.isInstance(annotated.getBaseType())) {
             final ParameterizedType paramType = ParameterizedType.class.cast(annotated.getBaseType());
             final Type rawType = paramType.getRawType();
@@ -189,6 +190,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
                 }
 
                 // handle ClaimValue<T>
+
                 if (rawTypeClass.isAssignableFrom(ClaimValue.class)) {
                     final Type claimValueType = paramType.getActualTypeArguments()[0];
 
@@ -244,11 +246,11 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             // handle JsonValue<T> (number, string, etc)
             return (T) toJson(key);
 
-        } else if (PropertyEditors.canConvert((Class<?>) ip.getType())) {
+        } else if (propertyEditors.findConverter((Class<?>) ip.getType()) != null) {
             try {
                 final Class<?> type = (Class<?>) ip.getType();
                 final String claimValue = getClaimValue(key).toString();
-                return (T) PropertyEditors.getValue(type, claimValue);
+                return (T) propertyEditors.getValue(type, claimValue);
             } catch (Exception e) {
                 logger.warning(e.getMessage());
             }

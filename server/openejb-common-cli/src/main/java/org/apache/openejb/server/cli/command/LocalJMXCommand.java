@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.server.cli.command;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
+import org.apache.openejb.monitoring.LocalMBeanServer;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
+
 import javax.management.Attribute;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanInfo;
@@ -27,9 +27,9 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
-
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Set;
 
 // TODO: maybe find a better way to invoker get/set/invoke because currently we limit a bit possible values
 @Command(name = "jmx", description = "consult/update a jmx information", usage = "jmx <operation> <options>. " +
@@ -117,7 +117,7 @@ public class LocalJMXCommand extends AbstractCommand {
             for (int i = 0; i < passedArgs.length; i++) {
                 final String expected = operation.getSignature()[i].getType();
                 if (!String.class.getName().equals(expected)) {
-                    passedArgs[i] = PropertyEditors.getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
+                    passedArgs[i] = new PropertyEditorRegistry().getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
                 } else {
                     passedArgs[i] = args[i];
                 }
@@ -173,7 +173,7 @@ public class LocalJMXCommand extends AbstractCommand {
                 }
             }
 
-            final Object valueObj = PropertyEditors.getValue(type, newValue, Thread.currentThread().getContextClassLoader());
+            final Object valueObj = new PropertyEditorRegistry().getValue(type, newValue, Thread.currentThread().getContextClassLoader());
             mBeanServer.setAttribute(oname, new Attribute(split[0], valueObj));
             streamManager.writeOut("done");
         } catch (Exception ex) {

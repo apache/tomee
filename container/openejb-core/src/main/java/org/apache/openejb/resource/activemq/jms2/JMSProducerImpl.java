@@ -17,7 +17,7 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.xbean.propertyeditor.PropertyEditorException;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 
 import javax.jms.BytesMessage;
 import javax.jms.CompletionListener;
@@ -64,7 +64,7 @@ class JMSProducerImpl implements JMSProducer {
             return type.cast(val);
         }
         try {
-            return type.cast(PropertyEditors.getValue(type, val.toString()));
+            return type.cast(new PropertyEditorRegistry().getValue(type, val.toString()));
         } catch (final PropertyEditorException pee) {
             throw new MessageFormatRuntimeException(pee.getMessage());
         }
