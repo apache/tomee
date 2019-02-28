@@ -200,7 +200,7 @@ public class ManagedMBean implements DynamicMBean {
             final Class<?> expectedType = method.getParameterTypes()[i];
             if (value instanceof String && expectedType != Object.class) {
                 final String stringValue = (String) value;
-                value = new PropertyEditorRegistry().getValue(expectedType, stringValue);
+                value = new PropertyEditorRegistry().registerDefaults().getValue(expectedType, stringValue);
             }
             args[i] = value;
         }

@@ -163,7 +163,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
         logger.finest(String.format("Found Claim injection with name=%s and for %s", key, ip.toString()));
 
-        final PropertyEditorRegistry propertyEditors = new PropertyEditorRegistry();
+        final PropertyEditorRegistry propertyEditors = new PropertyEditorRegistry().registerDefaults();
         if (ParameterizedType.class.isInstance(annotated.getBaseType())) {
             final ParameterizedType paramType = ParameterizedType.class.cast(annotated.getBaseType());
             final Type rawType = paramType.getRawType();

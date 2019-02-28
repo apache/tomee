@@ -434,7 +434,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     final Object field = params.remove(key);
                     if (field != null) {
                         try {
-                            final Object toSet = new PropertyEditorRegistry().getValue(m.getParameterTypes()[0], field.toString());
+                            final Object toSet = new PropertyEditorRegistry().registerDefaults().getValue(m.getParameterTypes()[0], field.toString());
                             m.invoke(persistenceAdapter, toSet);
                         } catch (final PropertyEditorException cantConvertException) {
                             throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);

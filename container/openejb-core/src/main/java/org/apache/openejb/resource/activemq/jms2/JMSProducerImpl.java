@@ -64,7 +64,7 @@ class JMSProducerImpl implements JMSProducer {
             return type.cast(val);
         }
         try {
-            return type.cast(new PropertyEditorRegistry().getValue(type, val.toString()));
+            return type.cast(new PropertyEditorRegistry().registerDefaults().getValue(type, val.toString()));
         } catch (final PropertyEditorException pee) {
             throw new MessageFormatRuntimeException(pee.getMessage());
         }

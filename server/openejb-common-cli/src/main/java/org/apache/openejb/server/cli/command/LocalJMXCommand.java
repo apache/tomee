@@ -117,7 +117,8 @@ public class LocalJMXCommand extends AbstractCommand {
             for (int i = 0; i < passedArgs.length; i++) {
                 final String expected = operation.getSignature()[i].getType();
                 if (!String.class.getName().equals(expected)) {
-                    passedArgs[i] = new PropertyEditorRegistry().getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
+                    passedArgs[i] = new PropertyEditorRegistry().registerDefaults()
+                            .getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
                 } else {
                     passedArgs[i] = args[i];
                 }
@@ -173,7 +174,8 @@ public class LocalJMXCommand extends AbstractCommand {
                 }
             }
 
-            final Object valueObj = new PropertyEditorRegistry().getValue(type, newValue, Thread.currentThread().getContextClassLoader());
+            final Object valueObj = new PropertyEditorRegistry().registerDefaults()
+                    .getValue(type, newValue, Thread.currentThread().getContextClassLoader());
             mBeanServer.setAttribute(oname, new Attribute(split[0], valueObj));
             streamManager.writeOut("done");
         } catch (Exception ex) {
