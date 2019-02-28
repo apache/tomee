@@ -256,21 +256,18 @@ class CmpJpaConversion implements DynamicDeployer {
     }
 
     /**
-     * Returns an ID to persistence module. It tries the {@link AppModule#getModuleId()} if it null that will return the {@link EjbModule#getModuleId()}.
+     * Returns an ID to persistence module. It tries the {@link AppModule#getModuleUri()} if it null that will return the {@link EjbModule#getModuleId()}.
      * EclipseLink failed with the CMP->JPA mapping, because EclipseLink is expecting a URL. https://issues.apache.org/jira/browse/TOMEE-2330.
      *
      * @param appModule the module
      * @return the module id
-     * @throws IllegalStateException when  {@link AppModule#getModuleId()} is null and there is not EJB Modules {@link AppModule#getEjbModules()}
      */
     String getPersistenceModuleId(final AppModule appModule) {
-        if (appModule.getModuleId() != null) {
+        if (appModule.getModuleUri() != null) {
+            return appModule.getModuleUri().toString();
+        } else {
             return appModule.getModuleId();
         }
-        for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            return ejbModule.getModuleId();
-        }
-        throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }
 
     /**
