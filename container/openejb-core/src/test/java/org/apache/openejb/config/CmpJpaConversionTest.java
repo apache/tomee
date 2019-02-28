@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import javax.persistence.Id;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
     @Test
@@ -105,7 +107,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
 
@@ -134,7 +136,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleId().toString(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
 
@@ -163,45 +165,35 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
     }
 
 
     @Test
-    public void shouldReturnModuleIdAsPersistenceModuleId() {
+    public void shouldReturnModuleURIAsPersistenceModuleId() throws URISyntaxException {
+        String moduleURI = "getModuleUri";
+        URI uri = new URI(moduleURI);
+        AppModule appModule = Mockito.mock(AppModule.class);
+        Mockito.when(appModule.getModuleUri()).thenReturn(uri);
+        CmpJpaConversion conversion = new CmpJpaConversion();
+        String persistenceModuleId = conversion.getPersistenceModuleId(appModule);
+        Assert.assertEquals(moduleURI, persistenceModuleId);
+
+    }
+
+    @Test
+    public void shouldReturngetModuleIdAsPersistenceModuleId() {
         String moduleId = "moduleId";
         AppModule appModule = Mockito.mock(AppModule.class);
+
         Mockito.when(appModule.getModuleId()).thenReturn(moduleId);
+
+
         CmpJpaConversion conversion = new CmpJpaConversion();
         String persistenceModuleId = conversion.getPersistenceModuleId(appModule);
         Assert.assertEquals(moduleId, persistenceModuleId);
-
     }
 
-    @Test
-    public void shouldReturnEJBModuleIdAsPersistenceModuleId() {
-        String ejbModuleId = "ejbModuleId";
-        AppModule appModule = Mockito.mock(AppModule.class);
-        EjbModule ejbModule = Mockito.mock(EjbModule.class);
-
-        Mockito.when(ejbModule.getModuleId()).thenReturn(ejbModuleId);
-        Mockito.when(appModule.getEjbModules()).thenReturn(Collections.singletonList(ejbModule));
-
-
-        CmpJpaConversion conversion = new CmpJpaConversion();
-        String persistenceModuleId = conversion.getPersistenceModuleId(appModule);
-        Assert.assertEquals(ejbModuleId, persistenceModuleId);
-    }
-
-
-    @Test(expected = IllegalStateException.class)
-    public void shouldReturnErrorWhenThereIsNotIdAndEJBModule() {
-        AppModule appModule = Mockito.mock(AppModule.class);
-        EjbModule ejbModule = Mockito.mock(EjbModule.class);
-        Mockito.when(appModule.getEjbModules()).thenReturn(Collections.emptyList());
-        CmpJpaConversion conversion = new CmpJpaConversion();
-        conversion.getPersistenceModuleId(appModule);
-    }
 
 
     @javax.persistence.Entity
