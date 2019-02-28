@@ -25,8 +25,10 @@ import org.apache.openejb.jee.jpa.EntityMappings;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import javax.persistence.Id;
+import java.util.Collections;
 import java.util.List;
 
 public class CmpJpaConversionTest {
@@ -76,7 +78,7 @@ public class CmpJpaConversionTest {
         Assert.assertNotNull(deploy);
 
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
-        Assert.assertTrue( persistenceModules.isEmpty());
+        Assert.assertTrue(persistenceModules.isEmpty());
     }
 
 
@@ -162,6 +164,43 @@ public class CmpJpaConversionTest {
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
         Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+    }
+
+
+    @Test
+    public void shouldReturnModuleIdAsPersistenceModuleId() {
+        String moduleId = "moduleId";
+        AppModule appModule = Mockito.mock(AppModule.class);
+        Mockito.when(appModule.getModuleId()).thenReturn(moduleId);
+        CmpJpaConversion conversion = new CmpJpaConversion();
+        String persistenceModuleId = conversion.getPersistenceModuleId(appModule);
+        Assert.assertEquals(moduleId, persistenceModuleId);
+
+    }
+
+    @Test
+    public void shouldReturnEJBModuleIdAsPersistenceModuleId() {
+        String ejbModuleId = "ejbModuleId";
+        AppModule appModule = Mockito.mock(AppModule.class);
+        EjbModule ejbModule = Mockito.mock(EjbModule.class);
+
+        Mockito.when(ejbModule.getModuleId()).thenReturn(ejbModuleId);
+        Mockito.when(appModule.getEjbModules()).thenReturn(Collections.singletonList(ejbModule));
+
+
+        CmpJpaConversion conversion = new CmpJpaConversion();
+        String persistenceModuleId = conversion.getPersistenceModuleId(appModule);
+        Assert.assertEquals(ejbModuleId, persistenceModuleId);
+    }
+
+
+    @Test(expected = IllegalStateException.class)
+    public void shouldReturnErrorWhenThereIsNotIdAndEJBModule() {
+        AppModule appModule = Mockito.mock(AppModule.class);
+        EjbModule ejbModule = Mockito.mock(EjbModule.class);
+        Mockito.when(appModule.getEjbModules()).thenReturn(Collections.emptyList());
+        CmpJpaConversion conversion = new CmpJpaConversion();
+        conversion.getPersistenceModuleId(appModule);
     }
 
 
