@@ -59,7 +59,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
     }
 
 
@@ -134,7 +134,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleId().toString(), persistenceModule.getRootUrl());
     }
 
 
@@ -163,7 +163,7 @@ public class CmpJpaConversionTest {
         List<PersistenceModule> persistenceModules = appModule.getPersistenceModules();
         Assert.assertEquals(1, persistenceModules.size());
         PersistenceModule persistenceModule = persistenceModules.get(0);
-        Assert.assertEquals(appModule.getModuleUri().toString(), persistenceModule.getRootUrl());
+        Assert.assertEquals(appModule.getModuleId(), persistenceModule.getRootUrl());
     }
 
 
