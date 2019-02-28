@@ -41,6 +41,9 @@ import java.util.Set;
     "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
     "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
 public class LocalJMXCommand extends AbstractCommand {
+
+    private final PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry().registerDefaults();
+
     @Override
     public void execute(final String cmd) {
         final String jmxCmd = cmd.trim();
@@ -117,7 +120,7 @@ public class LocalJMXCommand extends AbstractCommand {
             for (int i = 0; i < passedArgs.length; i++) {
                 final String expected = operation.getSignature()[i].getType();
                 if (!String.class.getName().equals(expected)) {
-                    passedArgs[i] = new PropertyEditorRegistry().registerDefaults()
+                    passedArgs[i] = propertyEditorRegistry
                             .getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
                 } else {
                     passedArgs[i] = args[i];
@@ -174,7 +177,7 @@ public class LocalJMXCommand extends AbstractCommand {
                 }
             }
 
-            final Object valueObj = new PropertyEditorRegistry().registerDefaults()
+            final Object valueObj = propertyEditorRegistry
                     .getValue(type, newValue, Thread.currentThread().getContextClassLoader());
             mBeanServer.setAttribute(oname, new Attribute(split[0], valueObj));
             streamManager.writeOut("done");
