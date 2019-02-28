@@ -120,54 +120,58 @@ public void test() throws Exception {
 }
 ....
 
-#Running ——————————————————- T E S T S ——————————————————- Running
-org.superbiz.async.JobProcessorTest Apache OpenEJB 7.0.0-SNAPSHOT build:
-20110801-04:02 http://tomee.apache.org/ INFO - openejb.home =
-G:3-methods INFO - openejb.base = G:3-methods INFO - Using
-`javax.ejb.embeddable.EJBContainer=true' INFO - Configuring
-Service(id=Default Security Service, type=SecurityService,
-provider-id=Default Security Service) INFO - Configuring
-Service(id=Default Transaction Manager, type=TransactionManager,
-provider-id=Default Transaction Manager) INFO - Found EjbModule in
-classpath: g:3-methods INFO - Beginning load: g:3-methods INFO -
-Configuring enterprise application: g:3-methods INFO - Configuring
-Service(id=Default Singleton Container, type=Container,
-provider-id=Default Singleton Container) INFO - Auto-creating a
-container for bean JobProcessor: Container(type=SINGLETON, id=Default
-Singleton Container) INFO - Configuring Service(id=Default Managed
-Container, type=Container, provider-id=Default Managed Container) INFO -
-Auto-creating a container for bean org.superbiz.async.JobProcessorTest:
-Container(type=MANAGED, id=Default Managed Container) INFO - Enterprise
-application ``g:3-methods'' loaded. INFO - Assembling app: g:3-methods
-INFO -
-Jndi(name=``java:global/async-methods/JobProcessor!org.superbiz.async.JobProcessor'')
-INFO - Jndi(name=``java:global/async-methods/JobProcessor'') INFO -
-Jndi(name=``java:global/EjbModule100568296/org.superbiz.async.JobProcessorTest!org.superbiz.async.JobProcessorTest'')
-INFO -
-Jndi(name=``java:global/EjbModule100568296/org.superbiz.async.JobProcessorTest'')
-INFO - Created Ejb(deployment-id=org.superbiz.async.JobProcessorTest,
-ejb-name=org.superbiz.async.JobProcessorTest, container=Default Managed
-Container) INFO - Created Ejb(deployment-id=JobProcessor,
-ejb-name=JobProcessor, container=Default Singleton Container) INFO -
-Started Ejb(deployment-id=org.superbiz.async.JobProcessorTest,
-ejb-name=org.superbiz.async.JobProcessorTest, container=Default Managed
-Container) INFO - Started Ejb(deployment-id=JobProcessor,
-ejb-name=JobProcessor, container=Default Singleton Container) INFO -
-Deployed Application(path=g:3-methods) Tests run: 1, Failures: 0,
-Errors: 0, Skipped: 0, Time elapsed: 13.305 sec
-
 ....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.async.JobProcessorTest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Wed Feb 27 12:46:11 BRT 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190227
+INFO - Build time: 04:12
+INFO - ********************************************************************************
+INFO - openejb.home = /home/soro/git/apache/tomee/examples/async-methods
+INFO - openejb.base = /home/soro/git/apache/tomee/examples/async-methods
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@22f71333
+INFO - Succeeded in installing singleton service
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Found EjbModule in classpath: /home/soro/git/apache/tomee/examples/async-methods/target/classes
+INFO - Beginning load: /home/soro/git/apache/tomee/examples/async-methods/target/classes
+INFO - Configuring enterprise application: /home/soro/git/apache/tomee/examples/async-methods
+INFO - Auto-deploying ejb JobProcessor: EjbDeployment(deployment-id=JobProcessor)
+INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+INFO - Auto-creating a container for bean JobProcessor: Container(type=SINGLETON, id=Default Singleton Container)
+INFO - Creating Container(id=Default Singleton Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.async.JobProcessorTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Enterprise application "/home/soro/git/apache/tomee/examples/async-methods" loaded.
+INFO - Assembling app: /home/soro/git/apache/tomee/examples/async-methods
+INFO - Jndi(name="java:global/async-methods/JobProcessor!org.superbiz.async.JobProcessor")
+INFO - Jndi(name="java:global/async-methods/JobProcessor")
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@22f71333
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 316 ms.
+INFO - Created Ejb(deployment-id=JobProcessor, ejb-name=JobProcessor, container=Default Singleton Container)
+INFO - Started Ejb(deployment-id=JobProcessor, ejb-name=JobProcessor, container=Default Singleton Container)
+INFO - Deployed Application(path=/home/soro/git/apache/tomee/examples/async-methods)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.491 sec
+
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 21.097s
-[INFO] Finished at: Wed Aug 03 22:48:26 IST 2011
-[INFO] Final Memory: 13M/145M
-[INFO] ------------------------------------------------------------------------
 ....
 
 == How it works under the covers
