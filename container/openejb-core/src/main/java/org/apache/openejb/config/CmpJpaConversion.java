@@ -263,7 +263,7 @@ class CmpJpaConversion implements DynamicDeployer {
      * @return the module id
      * @throws IllegalStateException when  {@link AppModule#getModuleId()} is null and there is not EJB Modules {@link AppModule#getEjbModules()}
      */
-    private String getPersistenceModuleId(final AppModule appModule) {
+    String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
             return appModule.getModuleId();
         }
