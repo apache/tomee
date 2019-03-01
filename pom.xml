@@ -895,6 +895,16 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.jacorb</groupId>
+        <artifactId>jacorb</artifactId>
+        <version>3.9</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.spec.javax.rmi</groupId>
+        <artifactId>jboss-rmi-api_1.0_spec</artifactId>
+        <version>1.0.6.Final</version>
+      </dependency>
+      <dependency>
         <groupId>javax.xml.bind</groupId>
         <artifactId>jaxb-api</artifactId>
         <version>2.3.0</version>
