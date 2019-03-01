@@ -132,7 +132,8 @@ public class MPJWTCDIExtension implements Extension {
         return (T) beanManager.getReference(bean, type, creationalContext);
     }
 
-    static {
-        SystemInstance.get().addObserver(new MPJWPProviderRegistration());
-    }
+//** Scanning now happens automatically
+//    static {
+//        SystemInstance.get().addObserver(new MPJWPProviderRegistration());
+//    }
 }

@@ -137,7 +137,7 @@
 
     <tomcat.version>9.0.12</tomcat.version>
 
-    <cxf.version>3.2.7</cxf.version>
+    <cxf.version>3.3.0</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -203,15 +203,15 @@
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <!-- 1.1 Implementation not started yet -->
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
-    <microprofile.fault-tolerance.impl.version>1.2.1-SNAPSHOT</microprofile.fault-tolerance.impl.version>
+    <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
-    <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
+    <microprofile.rest-client.version>1.2.0</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.6-SNAPSHOT</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>1.0.6</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
     <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
@@ -1811,20 +1811,33 @@
         <artifactId>geronimo-jaxb_2.2_spec</artifactId>
         <version>1.0.1</version>
       </dependency>
-      <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>2.3.0</version>
+     
+      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+        <version>1.2.1</version>
       </dependency>
       <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>2.3.0</version>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>2.3.0</version>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency> <!-- licence apache, only 110ko -->
         <groupId>org.fusesource.jansi</groupId>
