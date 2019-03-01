@@ -1,0 +1,35 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
+= EJB Remote Call
+
+
+## Calculator
+
+
+@Stateless(name = "Calculator", description = "Calculator", mappedName = "Calculator")
+@Remote(Calculator.class)
+public class DefaultCalculator implements Calculator {
+    @Override
+    public int sum(int add1, int add2) {
+        return add1 + add2;
+    }
+
+    @Override
+    public int multiply(int mul1, int mul2) {
+        return mul1 * mul2;
+    }
+
+
+}
+
+## web.xml
+
+    <web-app xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+             metadata-complete="false"
+             version="2.5">
+    
+    </web-app>
+    

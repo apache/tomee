@@ -1,0 +1,57 @@
+= Multiple TomEE Arquillian
+:index-group: Arquillian
+:jbake-type: page
+:jbake-status: published
+
+This example shows how to deploy two different applications if the need for it shows.
+That sometimes happens if we need communication between two different web applications. In our
+example we will deploy two applications web resources and test their content.
+
+== Run the application:
+
+[source, bash]
+----
+mvn clean test
+----
+
+This command runs the test where we have specified the two deployments we want to
+test. The test deploys two applications on which we test their content
+that we defined as web resource in our `createDep1()` and createDep2()` method.
+
+== @Deployment annotation
+
+If we want to have two different applications running in the same test it's as
+simple as adding two different `@Deployment` annotated methods to our test class.
+
+[source,java]
+----
+@Deployment(name = "war1", testable = false)
+@TargetsContainer("tomee-1")
+public static WebArchive createDep1() {
+    return ShrinkWrap.create(WebArchive.class, "application1.war")
+            .addAsWebResource(new StringAsset("Hello from TomEE 1"), "index.html");
+}
+
+@Deployment(name = "war2", testable = false)
+@TargetsContainer("tomee-2")
+public static WebArchive createDep2() {
+    return ShrinkWrap.create(WebArchive.class, "application2.war")
+            .addAsWebResource(new StringAsset("Hello from TomEE 2"), "index.html");
+}
+----
+
+== Define `Deployment` context
+
+For each test method we have to define on which `Deployment` context the tests
+should be run. For that we use the `@OperateOnDeployment("war2")` annotation on our
+test method.
+
+[source,java]
+----
+@Test
+@OperateOnDeployment("war2")
+public void testRunningInDep2(@ArquillianResource final URL url) throws IOException {
+    final String content = IO.slurp(url);
+    assertEquals("Hello from TomEE 2", content);
+}
+----

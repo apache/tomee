@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.Objects;
 
 /**
  * javaee6.xsd
@@ -90,9 +91,9 @@ public class InjectionTarget {
 
         final InjectionTarget that = (InjectionTarget) o;
 
-        if (injectionTargetClass != null ? !injectionTargetClass.equals(that.injectionTargetClass) : that.injectionTargetClass != null)
+        if (!Objects.equals(injectionTargetClass, that.injectionTargetClass))
             return false;
-        if (injectionTargetName != null ? !injectionTargetName.equals(that.injectionTargetName) : that.injectionTargetName != null)
+        if (!Objects.equals(injectionTargetName, that.injectionTargetName))
             return false;
 
         return true;

@@ -17,6 +17,8 @@
 
 package org.apache.openejb;
 
+import java.util.Objects;
+
 /**
  * @version $Rev$ $Date$
  */
@@ -80,10 +82,10 @@ public class Injection {
 
         final Injection injection = (Injection) o;
 
-        if (name != null ? !name.equals(injection.name) : injection.name != null) {
+        if (!Objects.equals(name, injection.name)) {
             return false;
         }
-        if (classname != null ? !classname.equals(injection.classname) : injection.classname != null) {
+        if (!Objects.equals(classname, injection.classname)) {
             return false;
         }
 

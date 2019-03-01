@@ -44,7 +44,7 @@ public class CustomOrmXmlCastTest {
         final WebArchive archive = ShrinkWrap.create(WebArchive.class, CustomOrmXmlCastTest.class.getSimpleName() + ".war")
                 .addClasses(ActorBean.class, ActorDetails.class, LocalActor.class, LocalActorHome.class,
                         LocalMovie.class, LocalMovieHome.class, MovieBean.class, MovieDetails.class,
-                        MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class,
+                        MoviesBusiness.class, MoviesBusinessBean.class, MoviesBusinessHome.class, MoviesServlet.class,
                         MoviesServlet2.class)
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/custom-orm.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/persistence.xml"), "META-INF/persistence.xml")

@@ -78,6 +78,11 @@ public class CXFJAXRSFilter implements Filter {
         final HttpServletRequest httpServletRequest = HttpServletRequest.class.cast(request);
         final HttpServletResponse httpServletResponse = HttpServletResponse.class.cast(response);
 
+        if (!this.delegate.isCXFResource(httpServletRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         if (CxfRsHttpListener.TRY_STATIC_RESOURCES) { // else 100% JAXRS
             if (servletMappingIsUnderRestPath(httpServletRequest)) {
                 chain.doFilter(request, response);
@@ -121,7 +126,7 @@ public class CXFJAXRSFilter implements Filter {
             accept = false;
             if (!"org.apache.catalina.servlets.DefaultServlet".equals(wrapper.getServletClass())) {
                 for (final String mapping : wrapper.findMappings()) {
-                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && !mapping.equals("*")
+                    if (!mapping.isEmpty() && !"/*".equals(mapping) && !"/".equals(mapping) && !mapping.startsWith("*")
                             && mapping.startsWith(this.mapping)) {
                         accept = true;
                         break;
