@@ -76,7 +76,7 @@
                 <version>${project.version}</version>
                 <configuration>
                     <tomeeClassifier>microprofile</tomeeClassifier>
-                    <context>${artifactId}</context>
+                    <context>${project.artifactId}</context>
                 </configuration>
             </plugin>
             <plugin>

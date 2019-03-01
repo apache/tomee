@@ -34,22 +34,14 @@ import javax.servlet.ServletRegistration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.CodeSource;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class TomEEMicroProfileListener {
     private static final String[] MICROPROFILE_LIBS_IMPLS_PREFIXES = new String[]{
-            "mp-common",
-            "geronimo-config",
-            "safeguard",
-            "mp-jwt",
-            "geronimo-health-1.0.1.jar",
-            "geronimo-metrics-1.0.2.jar",
-            "geronimo-opentracing",
-            "geronimo-openapi",
-            "cxf-rt-rs-mp-client",
-            };
+            "mp-common" };
 
     private static final String[] MICROPROFILE_EXTENSIONS = new String[]{
             "org.apache.geronimo.config.cdi.ConfigExtension",
@@ -72,8 +64,20 @@ public class TomEEMicroProfileListener {
 
             return;
         }
-
+        
         final List<URL> containerUrls = enhanceScannableUrlsEvent.getScannableUrls();
+
+        for (final String extension : MICROPROFILE_EXTENSIONS) {
+            try {
+                CodeSource src = Class.forName(extension).getProtectionDomain().getCodeSource();
+                if (src != null) {
+                    containerUrls.add(src.getLocation());
+                }
+            } catch(final ClassNotFoundException e) {
+                // ignored
+            }
+        }
+        
         final Paths paths = new Paths(new File(System.getProperty("openejb.home")));
         for (final String prefix : MICROPROFILE_LIBS_IMPLS_PREFIXES) {
             final File file = paths.findTomEELibJar(prefix);
