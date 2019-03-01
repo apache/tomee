@@ -137,7 +137,7 @@
 
     <tomcat.version>9.0.12</tomcat.version>
 
-    <cxf.version>3.2.7</cxf.version>
+    <cxf.version>3.3.0</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -208,7 +208,7 @@
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
-    <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
+    <microprofile.rest-client.version>1.2.0</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
     <microprofile.openapi.impl.version>1.0.6-SNAPSHOT</microprofile.openapi.impl.version>
@@ -1845,6 +1845,34 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jaxb_2.2_spec</artifactId>
         <version>1.0.1</version>
+      </dependency>
+     
+      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency> <!-- licence apache, only 110ko -->
         <groupId>org.fusesource.jansi</groupId>

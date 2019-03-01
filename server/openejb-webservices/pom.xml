@@ -34,12 +34,13 @@
     <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
   </properties>
   <dependencies>
-    <dependency> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
+<!--    <dependency>--> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
+<!-- Removed as included in javaee-api-8.0.0
       <groupId>javax.xml.soap</groupId>
       <artifactId>javax.xml.soap-api</artifactId>
       <version>1.4.0-b01</version>
       <scope>test</scope>
-    </dependency>
+    </dependency>--> 
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -62,14 +63,25 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>      
     </dependency>
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
@@ -100,6 +112,10 @@
         <exclusion>
           <groupId>javax.activation</groupId>
           <artifactId>activation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
