@@ -156,6 +156,7 @@ maven-
 mbean-annotation-api-
 mimepull-
 mina-
+mp-jwt-
 mqtt-client-
 myfaces-api
 myfaces-impl
