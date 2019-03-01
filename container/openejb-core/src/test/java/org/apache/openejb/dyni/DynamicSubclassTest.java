@@ -57,7 +57,7 @@ public class DynamicSubclassTest extends Assert {
         final Class subclass = DynamicSubclass.createSubclass(Blue.class, loader);
 
         final Constructor constructor = subclass.getConstructor(long.class);
-        final Blue blue = (Blue) constructor.newInstance(1l);
+        final Blue blue = (Blue) constructor.newInstance(1L);
 
         final Class<?> generatedClass = blue.getClass();
         assertNotEquals(Blue.class, generatedClass);

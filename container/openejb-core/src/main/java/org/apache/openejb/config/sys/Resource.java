@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -139,7 +140,7 @@ public class Resource extends AbstractService {
 
         final Resource resource = (Resource) o;
 
-        if (jndi != null ? !jndi.equals(resource.jndi) : resource.jndi != null) {
+        if (!Objects.equals(jndi, resource.jndi)) {
             return false;
         }
 

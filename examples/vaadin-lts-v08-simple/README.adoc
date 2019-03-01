@@ -1,0 +1,59 @@
+== Vaadin V8 (LTS) - Simple WebApp in Java
+
+This demo will show how to start with a simple Vaadin V8 webapp, based
+on pure Java API running on TomEE (webprofile)
+
+The Vaadin Framework is OpenSource and available at
+https://github.com/vaadin/framework[Github]
+
+=== Build this example
+
+To build this example, just run _mvn clean install tomee:run_ You will
+find the app running under http://localhost:8080/
+
+=== Implementation
+
+This implementation is using the https://vaadin.com/framework[Vaadin 8
+API].
+
+[source,java]
+----
+public class HelloVaadin {
+
+    public static class MyUI extends UI {
+        @Override
+        protected void init(VaadinRequest request) {
+
+            //create the components you want to use
+            // and set the main component with setContent(..)
+            final Layout layout = new VerticalLayout();
+            layout
+                .addComponent(new Button("click me",
+                                         event -> layout.addComponents(new Label("clicked again"))
+                ));
+
+            //set the main Component
+            setContent(layout);
+        }
+
+        @WebServlet("/*")
+        @VaadinServletConfiguration(productionMode = false, ui = MyUI.class)
+        public static class MyProjectServlet extends VaadinServlet { }
+    }
+}
+----
+
+The documentation of the Vaadin Framework is available
+https://vaadin.com/docs/v8/framework/tutorial.html[here]
+
+=== Support Information’s
+
+Vaadin Framework 8 is the latest version based on GWT. V8 itself is a
+LTS version.
+
+The new Vaadin Platform is based on WebComponents. As of Vaadin 10,
+Vaadin is moving to a release train model with four major releases every
+year. This allows them to ship new features faster to developers. Vaadin
+is continuing their commitment to long-term stability with long-term
+support (LTS) releases. The LTS releases will come out approximately
+every two years and offer 5 years of support.
