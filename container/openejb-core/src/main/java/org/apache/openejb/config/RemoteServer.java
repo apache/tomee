@@ -17,7 +17,6 @@
 
 package org.apache.openejb.config;
 
-import org.apache.commons.lang3.JavaVersion;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.Options;
