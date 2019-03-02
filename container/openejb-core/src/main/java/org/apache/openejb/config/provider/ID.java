@@ -17,6 +17,8 @@
 
 package org.apache.openejb.config.provider;
 
+import java.util.Objects;
+
 /**
  * IDs are not case-sensitive
  */
@@ -91,7 +93,7 @@ public class ID {
         if (!name.equals(id.name)) {
             return false;
         }
-        if (namespace != null ? !namespace.equals(id.namespace) : id.namespace != null) {
+        if (!Objects.equals(namespace, id.namespace)) {
             return false;
         }
 

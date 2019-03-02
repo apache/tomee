@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Objects;
 
 public class ManagedObjectHandler extends EjbObjectProxyHandler {
 
@@ -106,7 +107,7 @@ public class ManagedObjectHandler extends EjbObjectProxyHandler {
 
             return containerId.equals(that.containerId) &&
                 deploymentId.equals(that.deploymentId) &&
-                !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
+                    Objects.equals(primaryKey, that.primaryKey);
         }
 
         public int hashCode() {

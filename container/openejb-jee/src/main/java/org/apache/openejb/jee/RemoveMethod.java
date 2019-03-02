@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Objects;
 
 
 /**
@@ -111,7 +112,7 @@ public class RemoveMethod {
 
         final RemoveMethod that = (RemoveMethod) o;
 
-        if (beanMethod != null ? !beanMethod.equals(that.beanMethod) : that.beanMethod != null) return false;
+        if (!Objects.equals(beanMethod, that.beanMethod)) return false;
 
         return true;
     }

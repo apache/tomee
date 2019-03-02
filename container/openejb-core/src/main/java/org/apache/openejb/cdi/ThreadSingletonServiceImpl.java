@@ -21,7 +21,11 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.transactional.TransactionContext;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.event.ComponentAdded;
+import org.apache.openejb.loader.event.ComponentRemoved;
+import org.apache.openejb.observer.Observes;
 import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
 import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.util.AppFinder;
@@ -74,6 +78,25 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
     private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
+
+    private OWBContextThreadListener contextThreadListener;
+
+    public void threadSingletonServiceAdded(@Observes ComponentAdded<ThreadSingletonService> componentAdded) {
+        if (componentAdded.getComponent() != this) {
+            return;
+        }
+
+        contextThreadListener = new OWBContextThreadListener();
+        ThreadContext.addThreadContextListener(contextThreadListener);
+    }
+
+    public void threadSingletonServiceRemoved(@Observes ComponentRemoved componentRemoved) {
+        if (componentRemoved.getComponent() != this) {
+            return;
+        }
+
+        ThreadContext.removeThreadContextListener(contextThreadListener);
+    }
 
     @Override
     public void initialize(final StartupObject startupObject) {

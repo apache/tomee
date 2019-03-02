@@ -1554,9 +1554,6 @@ public class BeanContext extends DeploymentContext {
 
     @SuppressWarnings("unchecked")
     public InstanceContext newInstance() throws Exception {
-        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
-        final ThreadContext oldContext = ThreadContext.enter(callContext);
-
         final boolean dynamicallyImplemented = isDynamicallyImplemented();
 
         final WebBeansContext webBeansContext = getWebBeansContext();
@@ -1566,6 +1563,9 @@ public class BeanContext extends DeploymentContext {
                 throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
         }
+
+        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         try {
             final Context ctx = getJndiEnc();

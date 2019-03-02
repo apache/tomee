@@ -52,6 +52,14 @@
           <groupId>javax.ws.rs</groupId>
           <artifactId>javax.ws.rs-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
   </dependencies>
