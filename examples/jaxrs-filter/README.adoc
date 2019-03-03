@@ -18,22 +18,22 @@ NOTE: It is possible to do redirects using the provided ContextRequestFilter arg
 @Provider
 public class GenericServletFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-/**
- * Incoming (request) filter
- */
-@Override
-public void filter(ContainerRequestContext ctx) {
-    // your filter logic
-}
+	/**
+	 * Incoming (request) filter
+	 */
+	@Override
+	public void filter(ContainerRequestContext ctx) {
+	    // your filter logic
+	}
 
-/**
- * Outbound (response) filter
- */
-@Override
-public void filter(ContainerRequestContext requestCtx,
-	ContainerResponseContext responseCtx) {
-    // your filter logic
-}
+	/**
+	 * Outbound (response) filter
+	 */
+	@Override
+	public void filter(ContainerRequestContext requestCtx,
+		ContainerResponseContext responseCtx) {
+	    // your filter logic
+	}
 
 }
 ----
