@@ -37,7 +37,7 @@ GET http://localhost:8080/mp-config-example/sample/javaVersion
 == Características de Config
 
 
-MicroProfile Confi é uma solução para externalizar configurações de microsserviços.
+MicroProfile Config é uma solução para externalizar configurações de microsserviços.
 Cada propriedade individual pode ser injetada diretamente
 
 [source,java,numbered]
@@ -56,7 +56,7 @@ Você pode também inserir um valor padrão para ele, caso o config não encontr
 private String defaultProperty;
 ----
 
-O objecto config também pode ser injetado. Então use o método getValue() para recuperar a propriedade individual. 
+O objeto config também pode ser injetado. Então use o método getValue() para recuperar a propriedade individual. 
 
 [source,java,numbered]
 ----    
