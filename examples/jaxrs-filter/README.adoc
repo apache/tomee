@@ -1,0 +1,33 @@
+= JAX-RS Filter
+:index-group: Misc
+:jbake-type: page
+:jbake-status: draft
+
+*Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
+
+== ContainerRequestFilter & ContainerResponseFilter
+
+Filters may be utilized in your project through implementing the ContainerRequestFilter or ContainerResponseFilter interfaces. Each interface handles a separate filter scenario—inbound, or outbound—with unique function parameters to the overridden *filter* method. Note: the **@Provider** annoation on the class is necessary to perform the servlet mapping independent of the web.xml.
+
+    @Provider
+    public class GenericServletFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
+        /**
+         * Incoming (request) filter
+         */
+        @Override
+        public void filter(ContainerRequestContext ctx) throws IOException {
+            // your filter logic
+        }
+
+        /**
+         * Outbound (response) filter
+         */
+        @Override
+        public void filter(ContainerRequestContext requestCtx,
+                ContainerResponseContext responseCtx) throws IOException {
+            // your filter logic
+        }
+
+    }
+
