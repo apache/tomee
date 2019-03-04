@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Introduction
 
 CDI is a revolution for Java EE world. This specification is the best one to avoid coupling between classes.

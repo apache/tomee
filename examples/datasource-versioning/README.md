@@ -1,4 +1,8 @@
-Title: DataSource Versioning
+index-group=Unrevised
+type=page
+status=published
+title=DataSource Versioning
+~~~~~~
 
 This example shows you how to use versioned DataSources of the same provider using the classpath attribute.
 

@@ -1,4 +1,8 @@
-Title: Simple Stateless
+index-group=Unrevised
+type=page
+status=published
+title=Simple Stateless
+~~~~~~
 
 >"Stateless session beans are session beans whose instances have no conversational state.
 This means that all bean instances are equivalent when they are not involved in servicing

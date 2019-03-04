@@ -27,6 +27,7 @@ import org.apache.openejb.jee.EjbRelation;
 import org.apache.openejb.jee.EjbRelationshipRole;
 import org.apache.openejb.jee.EnterpriseBean;
 import org.apache.openejb.jee.EntityBean;
+import org.apache.openejb.jee.JaxbJavaee;
 import org.apache.openejb.jee.Multiplicity;
 import org.apache.openejb.jee.PersistenceContextRef;
 import org.apache.openejb.jee.PersistenceType;
@@ -58,6 +59,7 @@ import org.apache.openejb.jee.jpa.unit.PersistenceUnit;
 import org.apache.openejb.jee.jpa.unit.TransactionType;
 import org.apache.openejb.jee.oejb3.EjbDeployment;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -67,6 +69,7 @@ import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -99,20 +102,60 @@ public class CmpJpaConversion implements DynamicDeployer {
         "serialVersionUID"
     )));
 
+    public static EntityMappings readEntityMappings(final String location) {
+
+        // first try the classpath
+        EntityMappings entitymappings = null;
+
+        try {
+            final URL cpUrl = Thread.currentThread().getContextClassLoader().getResource(location);
+            entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(cpUrl));
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (entitymappings == null) {
+            // then try reading as a URL
+            try {
+                final URL url = new URL(location);
+                entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
+            } catch (Exception e) {
+                logger.error("Unable to read entity mappings from " + location, e);
+            }
+        }
+
+        return entitymappings;
+    }
+
     public AppModule deploy(final AppModule appModule) throws OpenEJBException {
 
         if (!hasCmpEntities(appModule)) {
             return appModule;
         }
 
-        // todo scan existing persistence module for all entity mappings and don't generate mappings for them
-
-        // create mappings if no mappings currently exist 
+        // create mappings if no mappings currently exist
         EntityMappings cmpMappings = appModule.getCmpMappings();
         if (cmpMappings == null) {
             cmpMappings = new EntityMappings();
             cmpMappings.setVersion("1.0");
             appModule.setCmpMappings(cmpMappings);
+        }
+
+        // todo scan existing persistence module for all entity mappings and don't generate mappings for them
+
+        final Set<String> definedMappedClasses = new HashSet<>();
+
+        // check for an existing "cmp" persistence unit, and look at existing mappings
+        final PersistenceUnit cmpPersistenceUnit = findCmpPersistenceUnit(appModule);
+        if (cmpPersistenceUnit != null) {
+            if (cmpPersistenceUnit.getMappingFile() != null && cmpPersistenceUnit.getMappingFile().size() > 0) {
+                for (final String mappingFile : cmpPersistenceUnit.getMappingFile()) {
+                    final EntityMappings entityMappings = readEntityMappings(mappingFile);
+                    if (entityMappings != null) {
+                        definedMappedClasses.addAll(entityMappings.getEntityMap().keySet());
+                    }
+                }
+            }
         }
 
         // we process this one jar-file at a time...each contributing to the 
@@ -123,7 +166,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             // scan for CMP entity beans and merge the data into the collective set 
             for (final EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
                 if (isCmpEntity(enterpriseBean)) {
-                    processEntityBean(ejbModule, cmpMappings, (EntityBean) enterpriseBean);
+                    processEntityBean(ejbModule, definedMappedClasses, cmpMappings, (EntityBean) enterpriseBean);
                 }
             }
 
@@ -132,7 +175,7 @@ public class CmpJpaConversion implements DynamicDeployer {
             final Relationships relationships = ejbJar.getRelationships();
             if (relationships != null) {
 
-                final Map<String, Entity> entitiesByEjbName = new TreeMap<String, Entity>();
+                final Map<String, Entity> entitiesByEjbName = new TreeMap<>();
                 for (final Entity entity : cmpMappings.getEntity()) {
                     entitiesByEjbName.put(entity.getEjbName(), entity);
                 }
@@ -152,7 +195,6 @@ public class CmpJpaConversion implements DynamicDeployer {
             for (final MappedSuperclass mapping : userMappings.getMappedSuperclass()) {
                 logger.warning("openejb-cmp-orm.xml mapping ignored: module=" + ejbModule.getModuleId() + ":  <mapped-superclass class=\"" + mapping.getClazz() + "\">");
             }
-
         }
 
         if (!cmpMappings.getEntity().isEmpty()) {
@@ -160,7 +202,9 @@ public class CmpJpaConversion implements DynamicDeployer {
 
             persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
             for (final Entity entity : cmpMappings.getEntity()) {
-                persistenceUnit.getClazz().add(entity.getClazz());
+                if (! persistenceUnit.getClazz().contains(entity.getClazz())) {
+                    persistenceUnit.getClazz().add(entity.getClazz());
+                }
             }
         }
 
@@ -176,17 +220,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
     private PersistenceUnit getCmpPersistenceUnit(final AppModule appModule) {
         // search for the cmp persistence unit
-        PersistenceUnit persistenceUnit = null;
-        for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
-            final Persistence persistence = persistenceModule.getPersistence();
-            for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
-                if (CMP_PERSISTENCE_UNIT_NAME.equals(unit.getName())) {
-                    persistenceUnit = unit;
-                    break;
-                }
-
-            }
-        }
+        PersistenceUnit persistenceUnit = findCmpPersistenceUnit(appModule);
         // if not found create one
         if (persistenceUnit == null) {
             persistenceUnit = new PersistenceUnit();
@@ -215,12 +249,27 @@ public class CmpJpaConversion implements DynamicDeployer {
         return persistenceUnit;
     }
 
+    private PersistenceUnit findCmpPersistenceUnit(final AppModule appModule) {
+        PersistenceUnit persistenceUnit = null;
+        for (final PersistenceModule persistenceModule : appModule.getPersistenceModules()) {
+            final Persistence persistence = persistenceModule.getPersistence();
+            for (final PersistenceUnit unit : persistence.getPersistenceUnit()) {
+                if (CMP_PERSISTENCE_UNIT_NAME.equals(unit.getName())) {
+                    persistenceUnit = unit;
+                    break;
+                }
+
+            }
+        }
+        return persistenceUnit;
+    }
+
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-            return appModule.getModuleId();
+            return appModule.getJarLocation() == null ? appModule.getModuleId() : appModule.getJarLocation();
         }
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
-            return ejbModule.getModuleId();
+            return appModule.getJarLocation() == null ? appModule.getModuleId() : appModule.getJarLocation();
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
     }
@@ -437,12 +486,14 @@ public class CmpJpaConversion implements DynamicDeployer {
     /**
      * Generate the CMP mapping data for an individual
      * EntityBean.
-     *
-     * @param ejbModule      The module containing the bean.
+     *  @param ejbModule      The module containing the bean.
+     * @param ignoreClasses
      * @param entityMappings The accumulated set of entity mappings.
      * @param bean           The been we're generating the mapping for.
      */
-    private void processEntityBean(final EjbModule ejbModule, final EntityMappings entityMappings, final EntityBean bean) {
+    private void processEntityBean(final EjbModule ejbModule, final Collection<String> ignoreClasses,
+                                   final EntityMappings entityMappings, final EntityBean bean) {
+
         // try to add a new persistence-context-ref for cmp
         if (!addPersistenceContextRef(bean)) {
             // Bean already has a persistence-context-ref for cmp
@@ -476,6 +527,11 @@ public class CmpJpaConversion implements DynamicDeployer {
             if (mappedSuperclass != null) {
                 entityMappings.getMappedSuperclass().add(mappedSuperclass);
             }
+        }
+
+        // Check that this mapping hasn't already been defined in another mapping file on the persistence unit
+        if (ignoreClasses.contains(jpaEntityClassName)) {
+            return;
         }
 
         // Look for an existing mapping using the openejb generated subclass name
@@ -673,7 +729,7 @@ public class CmpJpaConversion implements DynamicDeployer {
      *                    primary key classes.
      */
     private Collection<MappedSuperclass> mapClass2x(final Mapping mapping, final EntityBean bean, final ClassLoader classLoader) {
-        final Set<String> allFields = new TreeSet<String>();
+        final Set<String> allFields = new TreeSet<>();
         // get an acculated set of the CMP fields. 
         for (final CmpField cmpField : bean.getCmpField()) {
             allFields.add(cmpField.getFieldName());
@@ -755,7 +811,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         // id: the primary key
         //
-        final Set<String> primaryKeyFields = new HashSet<String>();
+        final Set<String> primaryKeyFields = new HashSet<>();
 
 
         if (bean.getPrimkeyField() != null) {
@@ -841,7 +897,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         }
         // all of the fields should now be identified by type, so return a set of 
         // the field mappings 
-        return new HashSet<MappedSuperclass>(superclassByField.values());
+        return new HashSet<>(superclassByField.values());
     }
 
 
@@ -864,7 +920,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         final Class ejbClass = loadClass(classLoader, ejbClassName);
 
         // build a set of all field names
-        final Set<String> allFields = new TreeSet<String>();
+        final Set<String> allFields = new TreeSet<>();
         for (final CmpField cmpField : bean.getCmpField()) {
             allFields.add(cmpField.getFieldName());
         }
@@ -874,7 +930,7 @@ public class CmpJpaConversion implements DynamicDeployer {
         //
         // id: the primary key
         //
-        final Set<String> primaryKeyFields = new HashSet<String>();
+        final Set<String> primaryKeyFields = new HashSet<>();
         if (bean.getPrimkeyField() != null) {
             final String fieldName = bean.getPrimkeyField();
             final MappedSuperclass superclass = superclassByField.get(fieldName);
@@ -945,7 +1001,7 @@ public class CmpJpaConversion implements DynamicDeployer {
 
         // all of the fields should now be identified by type, so return a set of 
         // the field mappings 
-        return new HashSet<MappedSuperclass>(superclassByField.values());
+        return new HashSet<>(superclassByField.values());
     }
 
 
@@ -1020,8 +1076,8 @@ public class CmpJpaConversion implements DynamicDeployer {
      * @return A map of fieldname-to-defining class relationships.
      */
     private Map<String, MappedSuperclass> mapFields(Class clazz, Set<String> persistantFields) {
-        persistantFields = new TreeSet<String>(persistantFields);
-        final Map<String, MappedSuperclass> fields = new TreeMap<String, MappedSuperclass>();
+        persistantFields = new TreeSet<>(persistantFields);
+        final Map<String, MappedSuperclass> fields = new TreeMap<>();
 
         // spin down the class hierarchy until we've either processed all of the fields
         // or we've reached the Object class. 

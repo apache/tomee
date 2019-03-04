@@ -1,4 +1,8 @@
-Title: JPA Eclipselink
+index-group=Unrevised
+type=page
+status=published
+title=JPA Eclipselink
+~~~~~~
 
 This example shows how to configure `persistence.xml` to work with Eclipselink. It uses an `@Entity` class and a `@Stateful` bean to add and delete entities from a database.
 

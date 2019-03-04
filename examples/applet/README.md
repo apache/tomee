@@ -1,4 +1,8 @@
-Title: Applet
+index-group=Unrevised
+type=page
+status=published
+title=Applet
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

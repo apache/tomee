@@ -15,12 +15,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.1.0-TT.2</version>
+    <version>7.1.1-TT.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mp-jwt</artifactId>
@@ -28,6 +27,12 @@
   <name>OpenEJB :: Microprofile JWT</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.eclipse.microprofile.jwt</groupId>
+      <artifactId>microprofile-jwt-auth-api</artifactId>
+      <version>${microprofile.jwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
@@ -47,15 +52,10 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.bitbucket.b_c</groupId>
-      <artifactId>jose4j</artifactId>
-      <version>0.6.0</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <version>${johnzon.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
@@ -69,12 +69,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.microprofile.jwt</groupId>
-      <artifactId>microprofile-jwt-auth-api</artifactId>
-      <version>${mp-jwt.version}</version>
-      <scope>provided</scope>
+      <groupId>org.bitbucket.b_c</groupId>
+      <artifactId>jose4j</artifactId>
+      <version>0.6.0</version>
     </dependency>
   </dependencies>
-
-
 </project>

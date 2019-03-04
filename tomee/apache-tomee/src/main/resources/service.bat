@@ -90,11 +90,18 @@ if not exist "%JRE_HOME%\bin\java.exe" goto noJavaHome
 if not exist "%JRE_HOME%\bin\javaw.exe" goto noJavaHome
 goto okJavaHome
 :gotJdkHome
-if not exist "%JAVA_HOME%\jre\bin\java.exe" goto noJavaHome
-if not exist "%JAVA_HOME%\jre\bin\javaw.exe" goto noJavaHome
+for /f tokens^=2^ delims^=.-_^" %%j in ('"%JAVA_HOME%\bin\java.exe" -fullversion 2^>^&1') do set "JAVA_MAJOR_VERSION=%%j"
+if JAVA_MAJOR_VERSION lss 11 (
+    if not exist "%JAVA_HOME%\jre\bin\java.exe" goto noJavaHome
+    if not exist "%JAVA_HOME%\jre\bin\javaw.exe" goto noJavaHome
+)
 if not exist "%JAVA_HOME%\bin\javac.exe" goto noJavaHome
 if not "%JRE_HOME%" == "" goto okJavaHome
-set "JRE_HOME=%JAVA_HOME%\jre"
+if %JAVA_MAJOR_VERSION% lss 11 (
+    set "JRE_HOME=%JAVA_HOME%\jre"
+) else (
+    set "JRE_HOME=%JAVA_HOME%"
+)
 goto okJavaHome
 :noJavaHome
 echo The JAVA_HOME environment variable is not defined correctly
@@ -190,9 +197,9 @@ echo Using JVM:              "%PR_JVM%"
     --StopMode jvm ^
     --LogLevel Info ^
     --LogPrefix TomEE
-    
+
 echo Installed, will now configure TomEE
-    
+
 if not errorlevel 1 goto installed
 echo Failed installing '%SERVICE_NAME%' service
 goto end
@@ -207,8 +214,13 @@ set PR_CLASSPATH=
 set PR_JVM=
 
 rem Set extra parameters
-"%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions "-javaagent:%CATALINA_HOME%\lib\openejb-javaagent.jar;-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\endorsed"
+if %JAVA_MAJOR_VERSION% lss 11 (
+    "%EXECUTABLE%" //US//%SERVICE_NAME% ^
+    	++JvmOptions "-javaagent:%CATALINA_HOME%\lib\openejb-javaagent.jar;-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%;-Djava.endorsed.dirs=%CATALINA_HOME%\endorsed"
+) else (
+    "%EXECUTABLE%" //US//%SERVICE_NAME% ^
+	    ++JvmOptions "-javaagent:%CATALINA_HOME%\lib\openejb-javaagent.jar;-Dcatalina.base=%CATALINA_BASE%;-Dcatalina.home=%CATALINA_HOME%"
+)
 
 rem More extra parameters
 set "PR_LOGPATH=%CATALINA_BASE%\logs"

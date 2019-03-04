@@ -77,15 +77,13 @@ public class MPJWTFilter implements Filter {
             if (MPJWTException.class.isInstance(e)) {
                 final MPJWTException jwtException = MPJWTException.class.cast(e);
                 HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
-            }
-
-            if (MPJWTException.class.isInstance(e.getCause())) {
+            } else if (MPJWTException.class.isInstance(e.getCause())) {
                 final MPJWTException jwtException = MPJWTException.class.cast(e.getCause());
                 HttpServletResponse.class.cast(response).sendError(jwtException.getStatus(), jwtException.getMessage());
+            } else {
+                throw e;
             }
-
         }
-
     }
 
     @Override
