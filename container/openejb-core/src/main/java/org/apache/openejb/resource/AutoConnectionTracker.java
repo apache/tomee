@@ -23,19 +23,28 @@ import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
 import org.apache.openejb.dyni.DynamicSubclass;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
+import javax.transaction.Synchronization;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,10 +52,23 @@ import java.util.concurrent.ConcurrentMap;
 import static org.apache.commons.lang3.ClassUtils.getAllInterfaces;
 
 public class AutoConnectionTracker implements ConnectionTracker {
+
+    private static final String KEY = "AutoConnectionTracker_Connections";
+    private final TransactionSynchronizationRegistry registry;
+    private final TransactionManager txMgr;
+    private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, "org.apache.openejb.resource");
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
+
+    private final boolean cleanupLeakedConnections;
+
+    public AutoConnectionTracker(final boolean cleanupLeakedConnections) {
+        this.cleanupLeakedConnections = cleanupLeakedConnections;
+        registry = SystemInstance.get().getComponent(TransactionSynchronizationRegistry.class);
+        txMgr = SystemInstance.get().getComponent(TransactionManager.class);
+    }
 
     public Set<ManagedConnectionInfo> connections() {
         return references.keySet();
@@ -64,8 +86,12 @@ public class AutoConnectionTracker implements ConnectionTracker {
             reference.clear();
             references.remove(reference.managedConnectionInfo);
 
-            final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
-            reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+            if (cleanupLeakedConnections) {
+                final ConnectionInfo released = new ConnectionInfo(reference.managedConnectionInfo);
+                reference.interceptor.returnConnection(released, ConnectionReturnAction.DESTROY);
+            }
+
+            logger.warning("Detected abandoned connection " + reference.managedConnectionInfo + " opened at " + stackTraceToString(reference.stackTrace));
             reference = (ProxyPhantomReference) referenceQueue.poll();
         }
     }
@@ -78,7 +104,56 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param reassociate    should always be false
      */
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
-        if (!reassociate) {
+        if (txMgr != null && registry != null) {
+            Transaction currentTx = null;
+            try {
+                currentTx = txMgr.getTransaction();
+            } catch (SystemException e) {
+                //ignore
+            }
+
+            if (currentTx != null) {
+                Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
+                if (txConnections == null) {
+                    txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                    registry.putResource(KEY, txConnections);
+                }
+
+                Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
+                if (connectionObjects == null) {
+                    connectionObjects = new HashMap<ConnectionInfo, Object>();
+                    txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
+                }
+
+                connectionObjects.put(connectionInfo, connectionInfo.getConnectionProxy());
+
+                registry.registerInterposedSynchronization(new Synchronization() {
+                    @Override
+                    public void beforeCompletion() {
+                        final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
+                        if (txConnections != null && txConnections.size() > 0) {
+
+                            for (final ManagedConnectionInfo managedConnectionInfo : txConnections.keySet()) {
+                                final StringBuilder sb = new StringBuilder();
+                                final Collection<ConnectionInfo> connectionInfos = txConnections.get(managedConnectionInfo).keySet();
+                                for (final ConnectionInfo connectionInfo : connectionInfos) {
+                                    sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
+                                }
+
+                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfo + "\nAbandoned connection information: " + sb.toString());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void afterCompletion(final int status) {
+
+                    }
+                });
+            }
+        }
+
+        if (! reassociate) {
             proxyConnection(interceptor, connectionInfo);
         }
     }
@@ -92,6 +167,32 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param action         ignored
      */
     public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
+        Transaction currentTx = null;
+        try {
+            currentTx = txMgr.getTransaction();
+        } catch (SystemException e) {
+            //ignore
+        }
+
+        if (currentTx != null) {
+            Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
+            if (txConnections == null) {
+                txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                registry.putResource(KEY, txConnections);
+            }
+
+            Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
+            if (connectionObjects == null) {
+                connectionObjects = new HashMap<ConnectionInfo, Object>();
+                txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
+            }
+
+            connectionObjects.remove(connectionInfo);
+            if (connectionObjects.size() == 0) {
+                txConnections.remove(connectionInfo.getManagedConnectionInfo());
+            }
+        }
+
         final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
         if (phantomReference != null) {
             phantomReference.clear();
@@ -99,7 +200,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     }
 
     private void proxyConnection(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo) throws ResourceException {
-        // if this connection already has a proxy no need to create another
+        // no-op if we have opted to not use proxies
         if (connectionInfo.getConnectionProxy() != null) {
             return;
         }
@@ -165,6 +266,25 @@ public class AutoConnectionTracker implements ConnectionTracker {
         return found;
     }
 
+    public static String stackTraceToString(final StackTraceElement[] stackTrace) {
+        if (stackTrace == null) {
+            return "";
+        }
+
+        final StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < stackTrace.length; i++) {
+            final StackTraceElement element = stackTrace[i];
+            if (i > 0) {
+                sb.append(", ");
+            }
+
+            sb.append(element.toString());
+        }
+
+        return sb.toString();
+    }
+
     public static class ConnectionInvocationHandler implements InvocationHandler {
         private final Object handle;
 
@@ -204,6 +324,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private static class ProxyPhantomReference extends PhantomReference<ConnectionInvocationHandler> {
         private final ConnectionTrackingInterceptor interceptor;
         private final ManagedConnectionInfo managedConnectionInfo;
+        private StackTraceElement[] stackTrace;
 
         @SuppressWarnings({"unchecked"})
         public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
@@ -213,6 +334,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             super(handler, referenceQueue);
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;
+            this.stackTrace = Thread.currentThread().getStackTrace();
         }
     }
 }

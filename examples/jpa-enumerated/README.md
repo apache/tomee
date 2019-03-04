@@ -1,4 +1,8 @@
-Title: JPA and Enums via @Enumerated
+index-group=Unrevised
+type=page
+status=published
+title=JPA and Enums via @Enumerated
+~~~~~~
 
 It can sometimes be desirable to have a Java `enum` type to represent a particular column in a database. JPA supports converting database data to and from Java `enum` types via the `@javax.persistence.Enumerated` annotation.
 

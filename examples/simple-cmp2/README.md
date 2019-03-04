@@ -1,4 +1,8 @@
-Title: EJB 2.1 CMP EntityBeans (CMP2)
+index-group=Unrevised
+type=page
+status=published
+title=EJB 2.1 CMP EntityBeans (CMP2)
+~~~~~~
 
 
 

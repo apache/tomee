@@ -1,4 +1,8 @@
-Title: @AccessTimeout annotation
+index-group=Unrevised
+type=page
+status=published
+title=@AccessTimeout annotation
+~~~~~~
 
 Before taking a look at `@AccessTimeout`, it might help to see when a caller might have to "wait"
 
@@ -193,4 +197,3 @@ The `@Asynchronous` method is not a critical part of `@AccessTimeout`, but serve
     Results :
 
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-

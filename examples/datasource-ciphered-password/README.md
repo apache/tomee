@@ -1,4 +1,8 @@
-Title: DataSource Ciphered Password
+index-group=Unrevised
+type=page
+status=published
+title=DataSource Ciphered Password
+~~~~~~
 
 # Datasource Ciphered Password example
 

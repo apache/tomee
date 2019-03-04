@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Spring Data sample #
 
 This example uses OpenEJB hooks to replace an EJB implementation by a proxy

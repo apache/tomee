@@ -1,4 +1,8 @@
-Title: MyFaces CODI Demo
+index-group=Unrevised
+type=page
+status=published
+title=MyFaces CODI Demo
+~~~~~~
 Notice:    Licensed to the Apache Software Foundation (ASF) under one
            or more contributor license agreements.  See the NOTICE file
            distributed with this work for additional information

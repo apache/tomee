@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress>
+        <notes><![CDATA[
+   file name: self dependencies...
+   ]]></notes>
+        <gav regex="true">^org\.apache\.tomee:.*$</gav>
+        <cve>CVE-2018-8031</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: self dependencies...
+   ]]></notes>
+        <gav regex="true">^org\.apache\.tomee:.*$</gav>
+        <cve>CVE-2010-1151</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: false positive apache http server
+   ]]></notes>
+        <gav regex="true">^org\.apache\.tomee:.*$</gav>
+        <cpe>cpe:/a:apache:apache_http_server</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: false positive apache http server
+   ]]></notes>
+        <gav regex="true">^org\.apache\.tomee:.*$</gav>
+        <cpe>cpe:/a:apache:http_server</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: ziplock-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.apache\.tomee:ziplock:.*$</gav>
+        <cpe>cpe:/a:zip_project:zip</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: eclipselink-*jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:eclipselink:.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: eclipselink-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:eclipselink:.*$</gav>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.persistence-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:javax\.persistence:.*$</gav>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: javax.persistence-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:javax\.persistence:.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: commonj.sdo-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:commonj\.sdo:.*$</gav>
+        <cpe>cpe:/a:git:git</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: commonj.sdo-*.jar
+   ]]></notes>
+        <gav regex="true">^org\.eclipse\.persistence:commonj\.sdo:.*$</gav>
+        <cpe>cpe:/a:git_project:git</cpe>
+    </suppress>
+</suppressions>

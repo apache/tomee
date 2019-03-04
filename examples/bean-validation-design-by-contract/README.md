@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Bean Validation - Design By Contract
 
 Bean Validation (aka JSR 303) contains an optional appendix dealing with method validation.

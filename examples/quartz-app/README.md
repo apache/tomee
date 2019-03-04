@@ -1,4 +1,8 @@
-Title: Quartz Resource Adapter usage
+index-group=Unrevised
+type=page
+status=published
+title=Quartz Resource Adapter usage
+~~~~~~
 
 Note this example is somewhat dated.  It predates the schedule API which was added to EJB 3.1.  Modern applications should use the schedule API which has many, if not all,
 the same features as Quartz.  In fact, Quartz is the engine that drives the `@Schedule` and `ScheduleExpression` support in OpenEJB and TomEE.
@@ -228,4 +232,3 @@ Here we see the outbound resource adapter used in a stateless session bean to sc
     Results :
 
     Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-

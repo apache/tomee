@@ -103,14 +103,6 @@ public class AnnotatedFieldInjectionStatefulBean {
     private BasicStatefulBusinessRemote statefulBusinessRemote;
 
 
-    @Init
-    public void create(final String name) {
-    }
-
-    @Remove
-    public void remove() {
-    }
-
     public void lookupEntityBean() throws TestFailureException {
         try {
             Assert.assertNotNull("The EJBObject is null", bmpHome);

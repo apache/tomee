@@ -1,4 +1,8 @@
-Title: Injection Of Entitymanager
+index-group=Unrevised
+type=page
+status=published
+title=Injection Of Entitymanager
+~~~~~~
 
 This example shows use of `@PersistenceContext` to have an `EntityManager` with an
 `EXTENDED` persistence context injected into a `@Stateful bean`. A JPA

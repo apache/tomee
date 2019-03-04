@@ -256,6 +256,11 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             // handle JsonValue<T> (number, string, etc)
             return (T) toJson(key);
 
+        } else if (((Class<?>) ip.getType()).isEnum()) {
+            try {
+                return (T) ((Class<?>) ip.getType()).getMethod("valueOf", String.class).invoke(null, getClaimValue(key).toString());
+            } catch (Exception e) {
+            }
         } else {
             // handle Raw types
             return getClaimValue(key);

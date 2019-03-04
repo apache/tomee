@@ -498,8 +498,10 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
-        if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
-            instances.add(new WadlDocumentMessageBodyWriter());
+        if (SystemInstance.get().getProperty("openejb.jaxrs.jsonProviders") == null) {
+            if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
+                instances.add(new WadlDocumentMessageBodyWriter());
+            }
         }
         if (!shouldSkipProvider(EJBExceptionMapper.class.getName())) {
             instances.add(new EJBExceptionMapper());
