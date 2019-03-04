@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.1.1-TT.1</version>
+  <version>7.1.1-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -93,7 +93,7 @@
 
   <properties>
 
-    <tomee.version>7.1.1-TT.1</tomee.version>
+    <tomee.version>7.1.1-SNAPSHOT</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
@@ -178,7 +178,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.2.13-TT.1</myfaces.version>
+    <myfaces.version>2.2.12</myfaces.version>
     <mojarra.version>2.2.12</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -643,11 +643,6 @@
             <enabled>true</enabled>
           </snapshots>
         </repository>
-        <repository>
-          <id>tomitribe-all</id>
-          <name>Tomitribe Repository</name>
-          <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
-        </repository>
       </repositories>
     </profile>
 
@@ -756,17 +751,6 @@
   </profiles>
   <repositories>
     <repository>
-      <id>staging</id>
-      <name>Staging</name>
-      <url>https://repository.tomitribe.com/content/repositories/tomitribe-1473</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>apache-snapshots</id>
       <name>Apache Snapshots Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
@@ -809,11 +793,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </repository>
-    <repository>
-      <id>tomitribe-all</id>
-      <name>Tomitribe Repository</name>
-      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
     </repository>
   </repositories>
   <pluginRepositories>
@@ -1051,12 +1030,12 @@
             <artifactId>guava</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-mapper</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
@@ -1171,16 +1150,6 @@
             <artifactId>hadoop-core</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>2.9.8</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>2.9.8</version>
       </dependency>
       <dependency>
         <groupId>xalan</groupId>
@@ -1810,17 +1779,10 @@
   </dependencyManagement>
 
   <distributionManagement>
-    <repository>
-      <id>tomitribe.releases.https</id>
-      <name>Tomitribe Release Distribution Repository</name>
-      <url>https://repository.tomitribe.com/service/local/staging/deploy/maven2</url>
-    </repository>
-
-    <snapshotRepository>
-      <id>tomitribe.snapshots.https</id>
-      <name>Tomitribe Development Snapshot Repository</name>
-      <url>https://repository.tomitribe.com/content/repositories/snapshots-tomitribe</url>
-    </snapshotRepository>
+    <site>
+      <id>openejb-website</id>
+      <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
+    </site>
   </distributionManagement>
 
   <reporting>
