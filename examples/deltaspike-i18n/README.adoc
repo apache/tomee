@@ -48,7 +48,7 @@ Now you can inject the interface and retrieve the type-safe message:
 
 == Running
 
-Running the example is fairly simple. In the ``deltaspike-i18n'' directory
+Running the example is fairly simple. In the `/tomee/examples/deltaspike-i18n` directory
 run:
 
 $ mvn clean install
