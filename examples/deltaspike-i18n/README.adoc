@@ -5,7 +5,7 @@
 
 This example shows how to use DeltaSpike I18n.
 
-== @Intro of Apache DeltaSpike I18n
+== Intro of Apache DeltaSpike I18n
 
 The Apache DeltaSpike I18n is a module of Apache DeltaSpike project that enables the use of type-safe messages and internationalization.
 
