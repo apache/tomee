@@ -158,7 +158,15 @@ lucene-core-
 management-agent.jar
 maven-
 mbean-annotation-api-
-microprofile-
+#Do not exclude mp config
+#microprofile-config-api-
+microprofile-fault-tolerance-api-
+microprofile-health-api-
+microprofile-jwt-auth-api-
+microprofile-metrics-api-
+microprofile-openapi-api-
+microprofile-opentracing-
+microprofile-rest-client-api-
 mimepull-
 mina-
 mp-jwt-
