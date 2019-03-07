@@ -65,6 +65,10 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
           </dependenciesToScan>
+          <excludes>
+            <!-- TODO - Remove once issue https://github.com/eclipse/microprofile-rest-client/issues/166 is solved  -->
+            <exclude>org.eclipse.microprofile.rest.client.tck.InvokeWithJsonBProviderTest</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
