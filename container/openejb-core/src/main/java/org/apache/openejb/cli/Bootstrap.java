@@ -19,7 +19,6 @@ package org.apache.openejb.cli;
 
 import org.apache.openejb.loader.BasicURLClassPath;
 import org.apache.openejb.loader.IO;
-import org.apache.openejb.loader.SystemClassPath;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.URLs;
@@ -32,8 +31,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.StringTokenizer;
-
-import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 /**
  * @version $Rev$ $Date$
