@@ -19,6 +19,7 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
+import org.apache.cxf.management.counters.CounterRepository;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
@@ -84,6 +85,7 @@ public class CxfRSService extends RESTService {
     private DestinationFactory destinationFactory;
     private boolean factoryByListener;
     private Properties config;
+    private CounterRepository counterRepository;
 
     @Override
     public void service(final InputStream in, final OutputStream out) throws ServiceException, IOException {
@@ -195,6 +197,11 @@ public class CxfRSService extends RESTService {
         CxfUtil.configureBus();
 
         final Bus bus = CxfUtil.getBus();
+
+        if (Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.jaxrs.stats", "false").trim())) {
+            counterRepository = new CounterRepository();
+            counterRepository.setBus(bus);
+        }
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
