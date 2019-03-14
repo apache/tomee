@@ -1,5 +1,4 @@
 ApacheJMeter
-XmlSchema-
 activation-
 activeio-
 activemq-
@@ -7,6 +6,7 @@ aether-
 akka-actor-
 akka-cluster-
 akka-remote-
+ant-
 antlr-
 aopalliance-
 # Arquillian embedded jar (enrichment)
@@ -43,6 +43,7 @@ catalina-
 catalina.jar
 cglib-
 charsets.jar
+codemodel-
 commons-beanutils
 commons-cli-
 commons-codec-
@@ -54,6 +55,7 @@ commons-discovery-
 commons-httpclient-
 commons-io-
 commons-jcs-core-
+commons-jcs-jcache-
 commons-lang-
 commons-lang3-
 commons-logging-
@@ -70,16 +72,12 @@ derby-
 derbyclient-
 derbynet-
 dom4j
+dtd-parser-
 ecj-
-el-api
 eclipselink-
 ehcache-
-FastInfoset
-jce.jar
-jfr.jar
-jfxrt.jar
-jnr-
-johnzon-
+el-api
+FastInfoset-
 fusemq-leveldb-
 geronimo-
 google-
@@ -102,16 +100,18 @@ icu4j-
 idb-
 idea_rt.jar
 istack-commons-runtime-
+istack-commons-tools-
 jackson-annotations-
 jackson-core-
 jackson-databind-
 jackson-dataformat
 jackson-mapper-asl-
 jackson-module-jaxb-annotations-
+jakarta.
 janino-
 jansi-
-jasper.jar
 jasper-el.jar
+jasper.jar
 jasypt-
 java-atk-wrapper
 java-support-
@@ -127,12 +127,16 @@ jbossall-
 jbosscx-
 jbossjts-
 jbosssx-
+jce.jar
 jcommander-
 jersey-
 jettison-
 jetty-
+jfr.jar
+jfxrt.jar
 jline
 jmdns-
+jnr-
 joda-time-
 johnzon-
 jose4j-
@@ -154,6 +158,15 @@ lucene-core-
 management-agent.jar
 maven-
 mbean-annotation-api-
+#Do not exclude mp config
+#microprofile-config-api-
+microprofile-fault-tolerance-api-
+microprofile-health-api-
+microprofile-jwt-auth-api-
+microprofile-metrics-api-
+microprofile-openapi-api-
+microprofile-opentracing-
+microprofile-rest-client-api-
 mimepull-
 mina-
 mp-jwt-
@@ -169,8 +182,8 @@ openejb-api
 openejb-client
 openejb-core
 openejb-cxf
-openejb-cxf-rs
 openejb-cxf-bundle
+openejb-cxf-rs
 openejb-cxf-transport
 openejb-derby
 openejb-ejbd
@@ -184,8 +197,8 @@ openejb-loader
 openejb-openwebbeans
 openejb-provisionning
 openejb-rest
-openejb-shade
 openejb-server
+openejb-shade
 openejb-webservices
 openjpa-
 openmdx-
@@ -206,8 +219,10 @@ plugin.jar
 poi-
 quartz-2
 quartz-openejb-
+relaxng-datatype-
 resources.jar
 rmock-
+rngom-
 rt.jar
 saaj-
 sac-
@@ -218,9 +233,9 @@ scannotation-
 serializer-
 serp-
 servlet-api-
-sisu-inject
-sisu-guice
 shrinkwrap-
+sisu-guice
+sisu-inject
 slf4j-
 smack-
 smackx-
@@ -229,6 +244,7 @@ snappy-java-
 spring-
 sshd-
 stax-api-
+stax-ex-
 stax2-api-
 sunec.jar
 surefire-
@@ -248,14 +264,15 @@ tomcat-jdbc
 tomcat-jni
 tomcat-jsp
 tomcat-juli
-tomcat-tribes
 tomcat-servlet
 tomcat-spdy
+tomcat-tribes
 tomcat-util
 tomcat-websocket-api
 tomee-
 tools.jar
 twitter4j-
+txw2-
 velocity-
 wagon-
 webbeans-ee
@@ -263,7 +280,7 @@ webbeans-ejb
 webbeans-impl
 webbeans-spi
 websocket-api
-woodstox-core-asl-
+woodstox-
 ws-commons-util-
 wsdl4j-
 wss4j-
@@ -279,5 +296,6 @@ xmlschema-
 xmlsec-
 xmltooling-
 xmlunit-
-ziplock-
+xsom-
 zipfs.jar
+ziplock-

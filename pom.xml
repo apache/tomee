@@ -137,7 +137,7 @@
 
     <tomcat.version>9.0.12</tomcat.version>
 
-    <cxf.version>3.2.7</cxf.version>
+    <cxf.version>3.3.1</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -208,7 +208,7 @@
     <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
-    <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
+    <microprofile.rest-client.version>1.2.1</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
     <microprofile.openapi.impl.version>1.0.6</microprofile.openapi.impl.version>
