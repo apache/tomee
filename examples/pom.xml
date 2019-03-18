@@ -91,6 +91,7 @@
     <module>injection-of-env-entry</module>
     <module>interceptors</module>
     <module>javamail</module>
+    <module>jaxrs-filter</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
