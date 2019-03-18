@@ -1,13 +1,13 @@
-= Simple Remote Tomcat Users
+= Usuários remotos do Tomcat simples
 :index-group: Security
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use JNDI with security restrictions in TomEE.
+Este é um simples exemplo sobre como utilizar JNDI com restrições de segurança para o TomEE.
 
-== Contract
+== Contrato
 
-In our example Contract is an interface annotated with @Remote which indicates that all methods of this interface can be accessed by client code.
+No nosso exemplo, Contract é uma interface anotada com @Remote a qual indica que todos os métodos desta interface podem ser acessados por um código em um cliente.
 [source,java]
 ----
 
@@ -16,9 +16,9 @@ In our example Contract is an interface annotated with @Remote which indicates t
 	    String hi();
 	}
 ----
-== ContractImpl
+== Implementação de contrato
 
-ContractImpl is a concrete implementation of the Contract interface restricting access to the hi method for users with role test. 
+ContractImpl é uma implementação da interface Contract restringindo o acesso ao método hi para usuários com a permissão test.
 
 [source,java]
 ----
@@ -31,14 +31,12 @@ public class ContractImpl implements Contract {
 }
 ----
 
-== ContractTest
+== Teste de contrato
 
-In this class we test the correctness of our application with Arquillian by creating a war with Contract and ContractImpl classes and deploying to 
-an embedded TomEE server with the war name test.war. In arquillian.xml we specify that arquillian pick tomcat-users.xml from src/test/conf folder.
-In tomcat-users.xml there is a single user with username "tomcat", password="users" and  role "test".
+Nesta classe, nós testamos nossa aplicação com Arquillian criando um war, com as classes do contrato e sua implementação, e fazendo o deploy para um servidor TomEE embutido com o nome test.war. No arquivo arquillian.xml especificamos que o arquillian utiliza o arquivo tomcat-users.xml na pasta src/test/conf. No arquivo tomcat-users.xml existe um único usuário com o nome de usuário "tomcat", senha "users" and permissão "test".
 
-To test we lookup for the ContractImpl and call the hi method using different usernames and passwords.
- 
+Para testar, nós procuramos pela ContractImpl e chamamos o método hi usando diferentes nomes de usuários e senhas.
+
 
 [source,java]
 ----
@@ -97,8 +95,8 @@ public class ContractTest {
 } 
 ----
 
-== Run the application:
+== Rodando a aplicação
 
     mvn install 
     
-All test cases will pass.    
+Todos os casos de testes irão passar.
