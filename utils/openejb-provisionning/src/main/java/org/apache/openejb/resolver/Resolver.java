@@ -27,14 +27,16 @@ import java.io.InputStream;
 public class Resolver extends MavenResolver {
     public InputStream resolve(final String rawLocation) {
         final boolean initialized = SystemInstance.isInitialized();
+	final String MVN_JNDI_PREFIX = "mvn:";
+
         if (!initialized) {
             SystemInstance.get().setComponent(ProvisioningResolver.class, new ProvisioningResolver());
         }
 
         try {
-            if (rawLocation.startsWith("mvn:") && rawLocation.length() > "mvn:".length()) {
+            if (rawLocation.startsWith(MVN_JNDI_PREFIX) && rawLocation.length() > MVN_JNDI_PREFIX.length()) {
                 try {
-                    return new FileInputStream(new ShrinkwrapBridge().resolve(rawLocation));
+                    return new FileInputStream(ShrinkwrapBridge.resolve(rawLocation));
                 } catch (final Throwable th) {
                     // try aether if not in a mvn build
                     th.printStackTrace();

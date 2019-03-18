@@ -1,0 +1,243 @@
+= JPA Hibernate
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo mostra a persistência, exclusão e a criação de uma query com JPA Hibernate.
+A Java Persistence API (JPA) é uma especificação Java para acessar, persistir e gerenciar dados entre classes/objetos Java e um banco de dados relacional.
+
+Para exemplificar o uso da JPA vamos persistir um objeto (Movie) no banco de dados.
+
+Links para a documentação foram adicionados em partes chave do exemplo para o caso de duvidas e como forma de incentivar sua leitura em busca de detalhes. 
+
+== Movie
+
+Aqui nós temos uma classe com alguns detalhes. Perceba a anotação 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Entity.html[@Entity] 
+acima da declaração da classe, com ela estamos dizendo que esta classe é uma entidade (uma tabela no banco de dados). Nós ainda temos mais duas anotações acima do atributo id, uma delas é o 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Id.html[@Id], 
+ele indica que este atributo é o identificador da entidade e a outra anotação 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
+indica que a geração desses identificadores unicos serão gerenciados pelo provedor da persistência.
+
+....
+package org.superbiz.injection.h3jpa;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Movie {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    private String director;
+    private String title;
+    private int year;
+
+    public Movie() {
+    }
+
+    public Movie(String director, String title, int year) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+}
+....
+
+== Movies
+
+Agora nós podemos notar duas coisas diferentes: a anotação  
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext] 
+e a declaração de um  
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager].
+O 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+é uma interface com as principais funcionalidades do JPA como persist, remove, merge, find e outros...
+Nós anotamos o 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+com 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], um contexto de persistência é um gerenciamento de entidades onde, todo contexto de persistência é associado com uma unidade de persistência (persistence-unit), logo criaremos um persistence.xml para isso.
+
+....
+package org.superbiz.injection.h3jpa;
+
+import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
+import java.util.List;
+
+@Stateful
+public class Movies {
+
+    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
+    private EntityManager entityManager;
+
+    public void addMovie(Movie movie) throws Exception {
+        entityManager.persist(movie);
+    }
+
+    public void deleteMovie(Movie movie) throws Exception {
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        return query.getResultList();
+    }
+}
+....
+
+== persistence.xml
+
+Aqui nós definimos qual banco de dados vai gravar nossos filmes (Movie) e realizamos outras configurações como: definir uma unidade de persistência (persistence-unit) com o nome movie-unit, seguidos pela definição do provedor/implementação do JPA (no caso o hibernate) e definimos algumas properties para o hibernate:
+
+ <persistence version="1.0"
+              xmlns="http://java.sun.com/xml/ns/persistence"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+   <persistence-unit name="movie-unit">
+     <provider>org.hibernate.ejb.HibernatePersistence</provider>
+     <jta-data-source>movieDatabase</jta-data-source>
+     <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+     <properties>
+       <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+       <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
+     </properties>
+   </persistence-unit>
+ </persistence>
+
+== MoviesTest
+
+Agora vamos realizar um teste, persistindo três filmes, em seguida realizamos uma busca e por fim nós os deletamos.
+
+....
+package org.superbiz.injection.h3jpa;
+
+import junit.framework.TestCase;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+import java.util.List;
+import java.util.Properties;
+
+/**
+ * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
+ */
+public class MoviesTest extends TestCase {
+
+    public void test() throws Exception {
+        final Properties p = new Properties();
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+        final Context context = EJBContainer.createEJBContainer(p).getContext();
+        Movies movies = (Movies) context.lookup("java:global/jpa-hibernate/Movies");
+
+        movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+        movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
+        movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 3, list.size());
+
+        for (Movie movie : list) {
+            movies.deleteMovie(movie);
+        }
+
+        assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+    }
+}
+....
+
+= Executando
+
+Para executar o exemplo com o maven, acesse a pasta do projeto:
+
+....
+cd jpa-hibernate
+....
+
+E execute:
+
+....
+mvn clean install
+....
+
+Com isso teremos uma saida no terminal similar a esta:
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.injection.h3jpa.MoviesTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/jpa-hibernate
+INFO - openejb.base = /Users/dblevins/examples/jpa-hibernate
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/jpa-hibernate/target/classes
+INFO - Beginning load: /Users/dblevins/examples/jpa-hibernate/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/jpa-hibernate
+INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.injection.h3jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
+INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+INFO - Enterprise application "/Users/dblevins/examples/jpa-hibernate" loaded.
+INFO - Assembling app: /Users/dblevins/examples/jpa-hibernate
+INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence) - provider time 631ms
+INFO - Jndi(name="java:global/jpa-hibernate/Movies!org.superbiz.injection.h3jpa.Movies")
+INFO - Jndi(name="java:global/jpa-hibernate/Movies")
+INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest!org.superbiz.injection.h3jpa.MoviesTest")
+INFO - Jndi(name="java:global/EjbModule1235930463/org.superbiz.injection.h3jpa.MoviesTest")
+INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Created Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Started Ejb(deployment-id=org.superbiz.injection.h3jpa.MoviesTest, ejb-name=org.superbiz.injection.h3jpa.MoviesTest, container=Default Managed Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/jpa-hibernate)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

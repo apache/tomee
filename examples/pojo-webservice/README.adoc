@@ -1,0 +1,306 @@
+:index-group: Web Services
+:jbake-type: page
+:jbake-status: status=published
+= JAX-WS @WebService example
+
+Creating Web Services with JAX-WS is quite easy. Little has to be done
+aside from annotating a class with `@WebService`. Thie example shows the
+use of CDI with webservice annotation. The web.xml expose the webservice
+servlet at the address
+http://latexmath:[${host}:$]\{port}/pojo-webservice?wsdl. To run the
+sample you can use the tomee maven plugin, mvn tomee:run.
+
+== web.xml
+
+Expose a servlet for the webservice
+
+....
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+        version="3.0">
+<servlet>
+    <servlet-name>ws</servlet-name>
+    <servlet-class>org.superbiz.ws.pojo.PojoWS</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ws</servlet-name>
+    <url-pattern>/*</url-pattern>
+</servlet-mapping>
+</web-app>
+....
+
+== @PojoWS
+
+This is the only concrete class annotated as @WebService that expose one
+operation ws(), also WebServiceContext and UserTransaction are injected
+in the class and used in the operation.
+
+....
+import javax.annotation.Resource;
+import javax.jws.WebService;
+import javax.transaction.UserTransaction;
+import javax.xml.ws.WebServiceContext;
+
+@WebService
+public class PojoWS implements WS {
+
+    @Resource
+    private WebServiceContext webServiceContext;
+
+    @Resource
+    private UserTransaction userTransaction;
+
+    @Override
+    public String ws() {
+        return webServiceContext + " & " + userTransaction;
+    }
+
+    public void setWebServiceContext(WebServiceContext webServiceContext) {
+        this.webServiceContext = webServiceContext;
+    }
+
+    public void setUserTransaction(UserTransaction userTransaction) {
+        this.userTransaction = userTransaction;
+    }
+}
+....
+
+== @WebService Endpoint Interface
+
+Having an endpoint interface is not required, but it can make testing
+and using the web service from other Java clients far easier.
+
+....
+import javax.jws.WebService;
+
+@WebService
+public interface WS {
+
+    String ws();
+}
+....
+
+== PojoWS WSDL
+
+The wsdl for our service is autmatically created for us and available at
+`http://127.0.0.1:8080/pojo-webservice?wsdl`.
+
+....
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://pojo.ws.superbiz.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="PojoWSService" targetNamespace="http://pojo.ws.superbiz.org/">
+<wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://pojo.ws.superbiz.org/" elementFormDefault="unqualified" targetNamespace="http://pojo.ws.superbiz.org/" version="1.0">
+
+<xs:element name="ws" type="tns:ws"/>
+
+<xs:element name="wsResponse" type="tns:wsResponse"/>
+
+<xs:complexType name="ws">
+    <xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="wsResponse">
+    <xs:sequence>
+    <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+</xs:complexType>
+
+</xs:schema>
+</wsdl:types>
+<wsdl:message name="ws">
+    <wsdl:part element="tns:ws" name="parameters">
+    </wsdl:part>
+</wsdl:message>
+<wsdl:message name="wsResponse">
+    <wsdl:part element="tns:wsResponse" name="parameters">
+    </wsdl:part>
+</wsdl:message>
+<wsdl:portType name="WS">
+    <wsdl:operation name="ws">
+    <wsdl:input message="tns:ws" name="ws">
+    </wsdl:input>
+    <wsdl:output message="tns:wsResponse" name="wsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="PojoWSServiceSoapBinding" type="tns:WS">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="ws">
+    <soap:operation soapAction="" style="document"/>
+    <wsdl:input name="ws">
+        <soap:body use="literal"/>
+    </wsdl:input>
+    <wsdl:output name="wsResponse">
+        <soap:body use="literal"/>
+    </wsdl:output>
+    </wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="PojoWSService">
+    <wsdl:port binding="tns:PojoWSServiceSoapBinding" name="PojoWSPort">
+    <soap:address location="http://localhost:8080/pojo-webservice"/>
+    </wsdl:port>
+</wsdl:service>
+....
+
+== Invoke ws operation
+
+The operation can be tested with a client like SoapUI that will generate
+the following request for the ws operation
+
+=== ws()
+
+Request SOAP message:
+
+....
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pojo="http://pojo.ws.superbiz.org/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <pojo:ws/>
+    </soapenv:Body>
+</soapenv:Envelope>
+....
+
+Response SOAP message:
+
+....
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <ns2:wsResponse xmlns:ns2="http://pojo.ws.superbiz.org/">
+            <return>org.apache.cxf.jaxws.context.WebServiceContextImpl@94b724d &amp; org.apache.openejb.resource.GeronimoTransactionManagerFactory$DestroyableTransactionManager@5fe405bf</return>
+        </ns2:wsResponse>
+    </soap:Body>
+</soap:Envelope>
+....
+
+This shows that WebServiceContext and UserTransaction are successfully
+injected.
+
+== Running
+
+Running the example can be done from maven with a simple `mvn tomee:run'
+command run from the `pojo-webservice' directory.
+
+When run you should see output similar to the following.
+
+....
+26-Dec-2018 21:20:55.667 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Sep 4 2018 22:13:41 UTC
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server number:         9.0.12.0
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Version:            4.15.0-43-generic
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Architecture:          amd64
+26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /usr/lib/jvm/java-8-oracle/jre
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_144-b01
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            Oracle Corporation
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dopenejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager
+26-Dec-2018 21:20:55.669 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=false
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.jsp-development=true
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/tomee/examples/pojo-webservice/target/apache-tomee/conf/logging.properties
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/tomee/examples/pojo-webservice/target/apache-tomee/lib/openejb-javaagent.jar
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/tomee/examples/pojo-webservice/target/apache-tomee/temp
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/tomee/examples/pojo-webservice/target/apache-tomee/lib
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+26-Dec-2018 21:20:55.670 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
+26-Dec-2018 21:20:55.671 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib]
+26-Dec-2018 21:20:55.855 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["http-nio-8080"]
+26-Dec-2018 21:20:55.873 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Using a shared selector for servlet write/read
+26-Dec-2018 21:20:55.893 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["ajp-nio-8009"]
+26-Dec-2018 21:20:55.896 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Using a shared selector for servlet write/read
+26-Dec-2018 21:20:56.206 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+26-Dec-2018 21:20:56.217 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed Dec 26 21:20:56 CET 2018
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+26-Dec-2018 21:20:56.302 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.0-SNAPSHOT
+26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20181226
+26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 02:24
+26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:56.303 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /tomee/examples/pojo-webservice/target/apache-tomee
+26-Dec-2018 21:20:56.305 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@159f197
+26-Dec-2018 21:20:56.305 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+26-Dec-2018 21:20:56.344 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/tomee/examples/pojo-webservice/target/apache-tomee/conf/tomee.xml'
+26-Dec-2018 21:20:56.431 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+26-Dec-2018 21:20:56.433 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+26-Dec-2018 21:20:56.435 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=false'
+26-Dec-2018 21:20:56.436 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.deployments.classpath=false'
+26-Dec-2018 21:20:56.454 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+26-Dec-2018 21:20:56.504 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+26-Dec-2018 21:20:56.564 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+26-Dec-2018 21:20:56.724 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+26-Dec-2018 21:20:56.778 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+26-Dec-2018 21:20:56.778 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT  
+26-Dec-2018 21:20:56.778 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+26-Dec-2018 21:20:56.779 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+26-Dec-2018 21:20:56.779 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initialization processed in 1609 ms
+26-Dec-2018 21:20:56.806 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+26-Dec-2018 21:20:56.807 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+26-Dec-2018 21:20:56.822 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
+26-Dec-2018 21:20:56.822 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet Engine: Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
+26-Dec-2018 21:20:56.839 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deploying web application archive [/tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice.war]
+26-Dec-2018 21:20:56.846 INFO [main] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /pojo-webservice
+26-Dec-2018 21:20:56.847 INFO [main] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice.war
+26-Dec-2018 21:20:56.850 INFO [main] org.apache.openejb.util.JarExtractor.extract Extracted path: /tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice
+26-Dec-2018 21:20:56.852 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+26-Dec-2018 21:20:57.121 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice
+26-Dec-2018 21:20:57.227 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+26-Dec-2018 21:20:57.227 INFO [main] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean pojo-webservice.Comp1279740095: Container(type=MANAGED, id=Default Managed Container)
+26-Dec-2018 21:20:57.228 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+26-Dec-2018 21:20:57.238 INFO [main] org.apache.openejb.core.managed.SimplePassivater.init Using directory /tomee/examples/pojo-webservice/target/apache-tomee/temp for stateful session passivation
+26-Dec-2018 21:20:57.278 INFO [main] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice" loaded.
+26-Dec-2018 21:20:57.283 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice
+26-Dec-2018 21:20:57.538 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice)
+26-Dec-2018 21:20:57.643 INFO [main] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+26-Dec-2018 21:20:57.717 INFO [main] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+26-Dec-2018 21:20:58.086 INFO [main] org.apache.cxf.common.injection.ResourceInjector.visitField failed to resolve resource org.superbiz.ws.pojo.PojoWS/userTransaction
+26-Dec-2018 21:20:58.370 INFO [main] org.apache.openejb.server.webservices.WsService.afterApplicationCreated Webservice(wsdl=http://localhost:8080/pojo-webservice/*, qname={http://pojo.ws.superbiz.org/}PojoWSService) --> Pojo(id=localhost.pojo-webservice.ws)
+26-Dec-2018 21:20:58.411 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deployment of web application archive [/tomee/examples/pojo-webservice/target/apache-tomee/webapps/pojo-webservice.war] has finished in [1,571] ms
+26-Dec-2018 21:20:58.422 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+26-Dec-2018 21:20:58.423 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+26-Dec-2018 21:20:58.423 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [skipMemoryLeakChecksOnJvmShutdown] to [false] as the property does not exist.
+26-Dec-2018 21:20:58.438 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
+26-Dec-2018 21:20:58.456 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-8009"]
+26-Dec-2018 21:20:58.463 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in 1681 ms
+....
+
+=== Inside the jar
+
+With so much going on it can make things look more complex than they
+are. It can be hard to believe that so much can happen with such little
+code. That’s the benefit of having an app server.
+
+If we look at the jar built by maven, we’ll see the application itself
+is quite small:
+
+....
+$ jar tvf target/pojo-webservice.war 
+    99 Wed Dec 26 21:08:26 CET 2018 META-INF/MANIFEST.MF
+    0 Wed Dec 26 21:08:26 CET 2018 META-INF/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/classes/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/classes/org/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/classes/org/superbiz/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/classes/org/superbiz/ws/
+    0 Wed Dec 26 21:08:26 CET 2018 WEB-INF/classes/org/superbiz/ws/pojo/
+1160 Wed Dec 26 21:08:24 CET 2018 WEB-INF/classes/org/superbiz/ws/pojo/PojoWS.class
+207 Wed Dec 26 21:08:24 CET 2018 WEB-INF/classes/org/superbiz/ws/pojo/WS.class
+1349 Wed Dec 26 17:41:54 CET 2018 WEB-INF/web.xml
+3661 Wed Dec 26 17:41:54 CET 2018 META-INF/maven/org.superbiz/pojo-webservice/pom.xml
+102 Wed Dec 26 21:08:26 CET 2018 META-INF/maven/org.superbiz/pojo-webservice/pom.properties
+....
+
+This single jar could be deployed any any compliant Java EE
+implementation.
+
+The server already contains the right libraries to run the code, such as
+Apache CXF, so no need to include anything extra beyond your own
+application code.

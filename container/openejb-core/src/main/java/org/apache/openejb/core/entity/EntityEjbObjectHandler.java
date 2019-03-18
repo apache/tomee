@@ -26,6 +26,7 @@ import org.apache.openejb.util.proxy.ProxyManager;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Objects;
 
 public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
 
@@ -138,7 +139,7 @@ public class EntityEjbObjectHandler extends EjbObjectProxyHandler {
 
             return containerId.equals(that.containerId) &&
                 deploymentId.equals(that.deploymentId) &&
-                !(primaryKey != null ? !primaryKey.equals(that.primaryKey) : that.primaryKey != null);
+                    Objects.equals(primaryKey, that.primaryKey);
         }
 
         public int hashCode() {

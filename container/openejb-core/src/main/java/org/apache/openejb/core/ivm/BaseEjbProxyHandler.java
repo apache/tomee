@@ -68,6 +68,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -283,14 +284,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
 
-            if (methodName.equals("toString")) {
-                return toString();
-            } else if (methodName.equals("equals")) {
-                return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
-            } else if (methodName.equals("hashCode")) {
-                return hashCode();
-            } else {
-                throw new UnsupportedOperationException("Unknown method: " + method);
+            switch (methodName) {
+                case "toString":
+                    return toString();
+                case "equals":
+                    return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+                case "hashCode":
+                    return hashCode();
+                default:
+                    throw new UnsupportedOperationException("Unknown method: " + method);
             }
         } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
@@ -537,7 +539,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     protected boolean equalHandler(final BaseEjbProxyHandler other) {
-        return (primaryKey == null ? other.primaryKey == null : primaryKey.equals(other.primaryKey))
+        return (Objects.equals(primaryKey, other.primaryKey))
             && deploymentID.equals(other.deploymentID)
             && getMainInterface().equals(other.getMainInterface());
     }
