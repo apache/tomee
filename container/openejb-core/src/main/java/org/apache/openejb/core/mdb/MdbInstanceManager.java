@@ -643,7 +643,7 @@ public class MdbInstanceManager {
                                        final Data data, final InstanceSupplier supplier) {
             this.data = data;
             this.supplier = supplier;
-            this.offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
+            this.offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0L;
         }
 
         @Override

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.Objects;
 
 
 /**
@@ -132,11 +133,11 @@ public class NamedMethod {
 
         final NamedMethod that = (NamedMethod) o;
 
-        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) return false;
+        if (!Objects.equals(methodName, that.methodName)) return false;
 
         if (nullOrEmpty(this.methodParams) && nullOrEmpty(that.methodParams)) return true;
 
-        if (methodParams != null ? !methodParams.equals(that.methodParams) : that.methodParams != null) return false;
+        if (!Objects.equals(methodParams, that.methodParams)) return false;
 
         return true;
     }

@@ -450,22 +450,28 @@ public class JaxbJavaee {
         }
 
         private String fixLocalName(String localName) {
-            if (localName.equals("tlibversion")) {
-                localName = "tlib-version";
-            } else if (localName.equals("jspversion")) {
-                localName = "jsp-version";
-            } else if (localName.equals("shortname")) {
-                localName = "short-name";
-            } else if (localName.equals("tagclass")) {
-                localName = "tag-class";
-            } else if (localName.equals("teiclass")) {
-                localName = "tei-class";
-            } else if (localName.equals("bodycontent")) {
-                localName = "body-content";
-            } else if (localName.equals("jspversion")) {
-                localName = "jsp-version";
-            } else if (localName.equals("info")) {
-                localName = "description";
+            switch (localName) {
+                case "tlibversion":
+                    localName = "tlib-version";
+                    break;
+                case "jspversion":
+                    localName = "jsp-version";
+                    break;
+                case "shortname":
+                    localName = "short-name";
+                    break;
+                case "tagclass":
+                    localName = "tag-class";
+                    break;
+                case "teiclass":
+                    localName = "tei-class";
+                    break;
+                case "bodycontent":
+                    localName = "body-content";
+                    break;
+                case "info":
+                    localName = "description";
+                    break;
             }
             return localName;
         }

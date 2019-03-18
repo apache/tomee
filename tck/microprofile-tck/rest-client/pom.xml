@@ -65,6 +65,10 @@
           <dependenciesToScan>
             <dependency>org.eclipse.microprofile.rest.client:microprofile-rest-client-tck</dependency>
           </dependenciesToScan>
+          <excludes>
+            <!-- TODO - Remove once issue https://github.com/eclipse/microprofile-rest-client/issues/166 is solved  -->
+            <exclude>org.eclipse.microprofile.rest.client.tck.InvokeWithJsonBProviderTest</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
@@ -114,6 +118,12 @@
       <artifactId>microprofile-rest-client-api</artifactId>
       <version>${microprofile.rest-client.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+        </exclusion>
+      </exclusions>      
     </dependency>
 
     <dependency>
@@ -150,6 +160,20 @@
       <artifactId>cxf-rt-rs-mp-client</artifactId>
       <version>${microprofile.rest-client.impl.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
