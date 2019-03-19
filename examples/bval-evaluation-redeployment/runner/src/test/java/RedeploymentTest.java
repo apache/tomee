@@ -32,18 +32,34 @@ import java.io.File;
 
 @RunWith(Arquillian.class)
 public class RedeploymentTest {
+    private static final String projectDir;
+    private static String versionNum = "-8.0.0-SNAPSHOT";
+
+    static {
+        String userDir = System.getProperty("user.dir");
+
+        //If running this test alone from runner subdir, exclude the containing
+        //directory from the path
+        if (userDir.contains("runner")) {
+            userDir = userDir.substring(0, userDir.length() - "runner".length());
+        }
+
+        projectDir = userDir;
+    }
 
     public RedeploymentTest() {
     }
 
     @Deployment(name = "webapp1", managed = false)
     public static Archive<?> webapp1() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp1/target/WebApp1-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, 
+		new File(projectDir + "/WebApp1/target/WebApp1" + versionNum + ".war"));
     }
 
     @Deployment(name = "webapp2", managed = false)
     public static Archive<?> webapp2() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp2/target/WebApp2-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, 
+		new File(projectDir + "/WebApp2/target/WebApp2" + versionNum + ".war"));
     }
 
     @ArquillianResource
@@ -57,29 +73,27 @@ public class RedeploymentTest {
         System.out.println("===========================================");
         System.out.println("Running test on port: " + port);
 
+        final String urlPath1 = "http://localhost:" + port + "/WebApp1" + versionNum + "/test/";
+        final String urlPath2 = "http://localhost:" + port + "/WebApp2" + versionNum + "/test/";
+
         deployer.deploy("webapp1");
-        int result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
-        System.out.println(result);
-        Assert.assertEquals(406, result);
-
-        //Not interested in webapp2 output
-        // deployer.undeploy("webapp2");
-        deployer.deploy("webapp2");
-
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
-        System.out.println(result);
-        Assert.assertEquals(406, result);
-        deployer.undeploy("webapp2");
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
-        System.out.println(result);
-        Assert.assertEquals(406, result);
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
+        int result = WebClient.create(urlPath1)
                 .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+
         System.out.println(result);
         Assert.assertEquals(200, result);
+
+        deployer.undeploy("webapp1");
+        deployer.deploy("webapp2");
+
+        result = WebClient.create(urlPath2)
+                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+
+        System.out.println(result);
+        Assert.assertEquals(200, result);
+ 
+        deployer.undeploy("webapp2");
+
         System.out.println("===========================================");
         System.out.println("");
     }
