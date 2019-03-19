@@ -38,6 +38,7 @@
     <module>access-timeout-meta</module>
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
+    <module>applet</module>
     <module>application-composer</module>
     <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
@@ -45,6 +46,7 @@
     <module>async-methods</module>
     <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
+    <module>bval-evaluation-redeployment</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
     <module>cdi-basic</module>
@@ -91,6 +93,7 @@
     <module>injection-of-env-entry</module>
     <module>interceptors</module>
     <module>javamail</module>
+    <module>java-modules</module>
     <module>jaxrs-filter</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
@@ -108,9 +111,12 @@
     <module>mp-faulttolerance-retry</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
+    <module>mp-metrics-metered</module>
     <module>mp-metrics-timed</module>
+    <module>mp-opentracing-traced</module>
     <module>mp-rest-jwt</module>
     <module>mp-rest-jwt-jwk</module>
+    <module>mp-rest-jwt-principle</module>
     <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
