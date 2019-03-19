@@ -117,7 +117,7 @@
     <module>mp-opentracing-traced</module>
     <module>mp-rest-jwt</module>
     <module>mp-rest-jwt-jwk</module>
-    <module>mp-rest-jwt-principle</module>
+    <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>

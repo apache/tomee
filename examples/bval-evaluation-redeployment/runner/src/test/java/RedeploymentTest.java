@@ -33,7 +33,7 @@ import java.io.File;
 @RunWith(Arquillian.class)
 public class RedeploymentTest {
     private static final String projectDir;
-    private static String versionNum = "-8.0.0-SNAPSHOT";
+    private static final String versionNum = "-8.0.0-SNAPSHOT";
 
     static {
         String userDir = System.getProperty("user.dir");
