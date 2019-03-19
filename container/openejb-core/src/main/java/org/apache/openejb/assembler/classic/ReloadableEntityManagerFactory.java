@@ -368,16 +368,22 @@ public class ReloadableEntityManagerFactory implements EntityManagerFactory, Ser
     public synchronized void setProvider(final String providerRaw) {
         final String provider = providerRaw.trim();
         final String newProvider;
-        if ("hibernate".equals(provider)) {
-            newProvider = "org.hibernate.ejb.HibernatePersistence";
-        } else if ("openjpa".equals(provider)) {
-            newProvider = "org.apache.openjpa.persistence.PersistenceProviderImpl";
-        } else if ("eclipselink".equals(provider)) {
-            newProvider = "org.eclipse.persistence.jpa.PersistenceProvider";
-        } else if ("toplink".equals(provider)) {
-            newProvider = "oracle.toplink.essentials.PersistenceProvider";
-        } else {
-            newProvider = provider;
+        switch (provider) {
+            case "hibernate":
+                newProvider = "org.hibernate.ejb.HibernatePersistence";
+                break;
+            case "openjpa":
+                newProvider = "org.apache.openjpa.persistence.PersistenceProviderImpl";
+                break;
+            case "eclipselink":
+                newProvider = "org.eclipse.persistence.jpa.PersistenceProvider";
+                break;
+            case "toplink":
+                newProvider = "oracle.toplink.essentials.PersistenceProvider";
+                break;
+            default:
+                newProvider = provider;
+                break;
         }
 
         try {

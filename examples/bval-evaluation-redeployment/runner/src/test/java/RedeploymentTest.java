@@ -37,11 +37,12 @@ public class RedeploymentTest {
 
     static {
         String userDir = System.getProperty("user.dir");
+        String runnerDir = "runner";
 
         //If running this test alone from runner subdir, exclude the containing
         //directory from the path
-        if (userDir.contains("runner")) {
-            userDir = userDir.substring(0, userDir.length() - "runner".length());
+        if (userDir.contains(runnerDir)) {
+            userDir = userDir.substring(0, userDir.length() - runnerDir.length());
         }
 
         projectDir = userDir;

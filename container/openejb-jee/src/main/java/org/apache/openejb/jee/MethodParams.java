@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -96,7 +97,7 @@ public class MethodParams {
 
         final MethodParams that = (MethodParams) o;
 
-        if (methodParam != null ? !methodParam.equals(that.methodParam) : that.methodParam != null) return false;
+        if (!Objects.equals(methodParam, that.methodParam)) return false;
 
         return true;
     }

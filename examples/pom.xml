@@ -81,6 +81,7 @@
     <module>ear-testing</module>
     <module>ejb-examples</module>
     <module>ejb-remote-call</module>
+    <module>ejb-remote-call-2</module>
     <module>ejb-webservice</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
@@ -189,6 +190,7 @@
     <module>websocket-tls-basic-auth</module>
     <module>concurrency-utils</module>
     <module>mvc-cxf</module>
+    <module>mvc-cxf-hibernate</module>
     <module>mp-rest-client</module>
     <module>mvc-resteasy</module>
     <module>mp-custom-healthcheck</module>

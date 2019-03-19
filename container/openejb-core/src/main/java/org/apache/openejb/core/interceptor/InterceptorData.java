@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -178,7 +179,7 @@ public class InterceptorData {
 
         final InterceptorData that = (InterceptorData) o;
 
-        if (clazz != null ? !clazz.equals(that.clazz) : that.clazz != null) {
+        if (!Objects.equals(clazz, that.clazz)) {
             return false;
         }
 

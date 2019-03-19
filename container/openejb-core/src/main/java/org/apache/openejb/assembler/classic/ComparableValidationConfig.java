@@ -18,6 +18,7 @@ package org.apache.openejb.assembler.classic;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 public class ComparableValidationConfig implements Serializable {
@@ -77,31 +78,31 @@ public class ComparableValidationConfig implements Serializable {
         if (executableValidationEnabled != that.executableValidationEnabled) {
             return false;
         }
-        if (constraintFactoryClass != null ? !constraintFactoryClass.equals(that.constraintFactoryClass) : that.constraintFactoryClass != null) {
+        if (!Objects.equals(constraintFactoryClass, that.constraintFactoryClass)) {
             return false;
         }
-        if (constraintMappings != null ? !constraintMappings.equals(that.constraintMappings) : that.constraintMappings != null) {
+        if (!Objects.equals(constraintMappings, that.constraintMappings)) {
             return false;
         }
-        if (messageInterpolatorClass != null ? !messageInterpolatorClass.equals(that.messageInterpolatorClass) : that.messageInterpolatorClass != null) {
+        if (!Objects.equals(messageInterpolatorClass, that.messageInterpolatorClass)) {
             return false;
         }
-        if (parameterNameProviderClass != null ? !parameterNameProviderClass.equals(that.parameterNameProviderClass) : that.parameterNameProviderClass != null) {
+        if (!Objects.equals(parameterNameProviderClass, that.parameterNameProviderClass)) {
             return false;
         }
-        if (propertyTypes != null ? !propertyTypes.equals(that.propertyTypes) : that.propertyTypes != null) {
+        if (!Objects.equals(propertyTypes, that.propertyTypes)) {
             return false;
         }
-        if (providerClassName != null ? !providerClassName.equals(that.providerClassName) : that.providerClassName != null) {
+        if (!Objects.equals(providerClassName, that.providerClassName)) {
             return false;
         }
-        if (traversableResolverClass != null ? !traversableResolverClass.equals(that.traversableResolverClass) : that.traversableResolverClass != null) {
+        if (!Objects.equals(traversableResolverClass, that.traversableResolverClass)) {
             return false;
         }
-        if (validatedTypes != null ? !validatedTypes.equals(that.validatedTypes) : that.validatedTypes != null) {
+        if (!Objects.equals(validatedTypes, that.validatedTypes)) {
             return false;
         }
-        if (version != null ? !version.equals(that.version) : that.version != null) {
+        if (!Objects.equals(version, that.version)) {
             return false;
         }
         return true;
