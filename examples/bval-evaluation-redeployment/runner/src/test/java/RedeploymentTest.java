@@ -33,7 +33,6 @@ import java.io.File;
 @RunWith(Arquillian.class)
 public class RedeploymentTest {
     private static final String projectDir;
-    private static final String versionNum = "-8.0.0-SNAPSHOT";
 
     static {
         String userDir = System.getProperty("user.dir");
@@ -53,14 +52,12 @@ public class RedeploymentTest {
 
     @Deployment(name = "webapp1", managed = false)
     public static Archive<?> webapp1() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, 
-		new File(projectDir + "/WebApp1/target/WebApp1" + versionNum + ".war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File(projectDir + "/WebApp1/target/WebApp1.war"));
     }
 
     @Deployment(name = "webapp2", managed = false)
     public static Archive<?> webapp2() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, 
-		new File(projectDir + "/WebApp2/target/WebApp2" + versionNum + ".war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File(projectDir + "/WebApp2/target/WebApp2.war"));
     }
 
     @ArquillianResource
@@ -74,8 +71,8 @@ public class RedeploymentTest {
         System.out.println("===========================================");
         System.out.println("Running test on port: " + port);
 
-        final String urlPath1 = "http://localhost:" + port + "/WebApp1" + versionNum + "/test/";
-        final String urlPath2 = "http://localhost:" + port + "/WebApp2" + versionNum + "/test/";
+        final String urlPath1 = "http://localhost:" + port + "/WebApp1/test/";
+        final String urlPath2 = "http://localhost:" + port + "/WebApp2/test/";
 
         deployer.deploy("webapp1");
         int result = WebClient.create(urlPath1)
