@@ -17,6 +17,7 @@
 package org.superbiz.webapp2.service;
 
 import javax.ejb.Singleton;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -31,7 +32,7 @@ import javax.ws.rs.core.Response;
 public class WebApp2Service {
 
     @POST
-    public Response getInfo(final String input) {
+    public Response getInfo(@Pattern(regexp = "valid") final String input) {
         return Response.ok().build();
     }
 

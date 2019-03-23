@@ -79,16 +79,22 @@ public class RedeploymentTest {
 
         deployer.deploy("webapp1");
         int result = WebClient.create(urlPath1)
-                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
 
         System.out.println(result);
-        Assert.assertEquals(200, result);
+        Assert.assertEquals(406, result);
 
         deployer.undeploy("webapp1");
         deployer.deploy("webapp2");
 
         result = WebClient.create(urlPath2)
-                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
+
+        System.out.println(result);
+        Assert.assertEquals(406, result);
+
+        result = WebClient.create(urlPath2)
+                 .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
 
         System.out.println(result);
         Assert.assertEquals(200, result);
