@@ -1,6 +1,6 @@
 :index-group: Security
 :jbake-type: page
-:jbake-status: status=published
+:jbake-status: status=not-published
 = Testing Security 4
 
 Theses is a simple example to show how to use the security configured by the context set by properties.
