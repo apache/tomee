@@ -3,8 +3,7 @@
 :jbake-status: status=published
 = Testing Security 3
 
-_Help us document this example! Click the blue pencil icon in the upper
-right to edit this page._
+Theses is a simple example to show how to use the login possibilities. We show what is the result behaviors from login fail, success and errors.
 
 == Movie
 
