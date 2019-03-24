@@ -555,6 +555,7 @@
         <module>maven</module>
         <module>gradle</module>
         <module>container</module>
+        <module>mp-jwt</module>
         <module>server</module>
         <module>assembly</module>
         <module>arquillian</module>
