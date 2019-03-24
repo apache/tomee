@@ -7,7 +7,7 @@ Este é um simples exemplo sobre como utilizar JNDI com restrições de seguran�
 
 == Contrato
 
-No nosso exemplo, Contract é uma interface anotada com @Remote a qual indica que todos os métodos desta interface podem ser acessados por um código em um cliente.
+No nosso exemplo, `Contract` é uma interface anotada com `@Remote` a qual indica que todos os métodos desta interface podem ser acessados por um código em um cliente.
 [source,java]
 ----
 
@@ -18,7 +18,7 @@ No nosso exemplo, Contract é uma interface anotada com @Remote a qual indica qu
 ----
 == Implementação de contrato
 
-ContractImpl é uma implementação da interface Contract restringindo o acesso ao método hi para usuários com a permissão test.
+`ContractImpl` é uma implementação da interface `Contract` restringindo o acesso ao método `hi` para usuários com a permissão `test`.
 
 [source,java]
 ----
@@ -33,9 +33,9 @@ public class ContractImpl implements Contract {
 
 == Teste de contrato
 
-Nesta classe, nós testamos nossa aplicação com Arquillian criando um war, com as classes do contrato e sua implementação, e fazendo o deploy para um servidor TomEE embutido com o nome test.war. No arquivo arquillian.xml especificamos que o arquillian utiliza o arquivo tomcat-users.xml na pasta src/test/conf. No arquivo tomcat-users.xml existe um único usuário com o nome de usuário "tomcat", senha "users" and permissão "test".
+Nesta classe, nós testamos nossa aplicação com Arquillian criando um war, com as classes do contrato e sua implementação, e fazendo o deploy para um servidor TomEE embutido com o nome `test.war`. No arquivo arquillian.xml especificamos que o arquillian utiliza o arquivo `tomcat-users.xml` na pasta `src/test/conf`. No arquivo `tomcat-users.xml` existe um único usuário com o nome de usuário "tomcat", senha "users" and permissão "test".
 
-Para testar, nós procuramos pela ContractImpl e chamamos o método hi usando diferentes nomes de usuários e senhas.
+Para testar, nós procuramos pela `ContractImpl` e chamamos o método `hi` usando diferentes nomes de usuários e senhas.
 
 
 [source,java]
