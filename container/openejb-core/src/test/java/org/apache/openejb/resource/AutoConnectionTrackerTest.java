@@ -158,7 +158,7 @@ public class AutoConnectionTrackerTest  {
 
         // configure and deploy it
         final EjbJarInfo info = config.configureApplication(ejbModule);
-        AppContext context = assembler.createEjbJar(info);
+        assembler.createEjbJar(info);
 
         final ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
         final FakeConnectionFactory cf = (FakeConnectionFactory) containerSystem.getJNDIContext().lookup("openejb:Resource/FakeConnectionFactory");
@@ -168,6 +168,8 @@ public class AutoConnectionTrackerTest  {
         nonLeakyNonTx(cf, bean);
         leakyTx((FakeConnectionFactoryImpl) cf, bean);
         leakyNonTx((FakeConnectionFactoryImpl) cf, bean);
+
+        assembler.destroy();
     }
 
     private void leakyNonTx(FakeConnectionFactoryImpl cf, FakeRemote bean) throws Exception {
