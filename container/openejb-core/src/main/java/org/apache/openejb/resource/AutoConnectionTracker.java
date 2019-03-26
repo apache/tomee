@@ -270,6 +270,10 @@ public class AutoConnectionTracker implements ConnectionTracker {
         return sb.toString();
     }
 
+    public void release() {
+        executorService.shutdown();
+    }
+
     public static class ConnectionInvocationHandler implements InvocationHandler {
         private final Object handle;
 

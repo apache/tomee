@@ -273,7 +273,7 @@ public class GeronimoConnectionManagerFactory {
                     null, new AutoConnectionTracker(cleanupLeakedConnections), tm,
                     mcf, name, classLoader, validationIntervalMs);
         } else {
-            mgr = new GenericConnectionManager(txSupport, poolingSupport,
+            mgr = new AutoConnectionTrackerReleaseConnectionManager(txSupport, poolingSupport,
                     null, new AutoConnectionTracker(cleanupLeakedConnections), tm,
                     mcf, name, classLoader);
         }
@@ -436,7 +436,24 @@ public class GeronimoConnectionManagerFactory {
         }
     }
 
-    private static class ValidatingGenericConnectionManager extends GenericConnectionManager {
+    private static class AutoConnectionTrackerReleaseConnectionManager extends GenericConnectionManager {
+        AutoConnectionTracker connectionTracker;
+
+        AutoConnectionTrackerReleaseConnectionManager(final TransactionSupport transactionSupport, final PoolingSupport pooling, final SubjectSource o,
+                                                      final AutoConnectionTracker connectionTracker, final RecoverableTransactionManager tm,
+                                                      final ManagedConnectionFactory mcf, final String name, final ClassLoader classLoader) {
+            super(transactionSupport, pooling, o, connectionTracker, tm, mcf, name, classLoader);
+            this.connectionTracker = connectionTracker;
+        }
+
+        @Override
+        public void doStop() throws Exception {
+            connectionTracker.release();
+            super.doStop();
+        }
+    }
+
+    private static class ValidatingGenericConnectionManager extends AutoConnectionTrackerReleaseConnectionManager {
         private static final Timer TIMER = new Timer("ValidatingGenericConnectionManagerTimer", true);
 
         private final TimerTask validatingTask;
