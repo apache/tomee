@@ -673,6 +673,7 @@ public class LightweightWebAppBuilder implements WebAppBuilder {
             return params.getProperty(name);
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Enumeration<String> getInitParameterNames() {
             return new ArrayEnumeration(params.keySet());
