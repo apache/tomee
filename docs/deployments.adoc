@@ -5,7 +5,7 @@
 :jbake-status: published
 
 
-= The 'Deployments' element in openejb.xml
+= The 'Deployments' element in tomee.xml
 
 == A single jar
 
@@ -14,54 +14,54 @@ with a 'jar' attribute pointing to the jar file on the file system.
 
 [source,xml]
 ----
-<openejb>
+<tomee>
 ...
 <Deployments jar="c:\my\app\superEjbs.jar" />
 <Deployments jar="c:\someplace\purchasing.jar" />
 <Deployments jar="timeTrack.jar" />
-</openejb>
+</tomee>
 ----
 
 The last element in the example uses a relative path to point to the ejb
-jar. This path will be resolved relative to the openejb.base property.
-So, for example, of the value of openejb.base was 'c:' then OpenEJB
+jar. This path will be resolved relative to the catalina.base property.
+So, for example, of the value of catalina.base was 'c:' then TomEE
 would look for the jar 'c:.jar'. See the [OPENEJB:Configuration] guide
 for more details.
 
 == A directory of jars
 
-To point to a directory that contains several jar files that OpenEJB
+To point to a directory that contains several jar files that TomEE
 should load, simply declare a 'Deployments' element with a 'dir'
 attribute pointing to the directory containing the jar files.
 
 [source,xml]
 ----
-<openejb>
+<tomee>
 ...
 
 <Deployments dir="c:\my\app\beans\" />
 <Deployments dir="c:\crimestopper\lib" />
 <Deployments dir="ejbs" />
 <Deployments dir="beans" />
-</openejb>
+</tomee>
 ----
 
 The directories listed will be searched for jars containing
 'META-INF/ejb-jar.xml' files and will be added to the list of jars to
 load if they do. Better said, it's completely safe to point to a
-directory containing a mix of ejbs and regular jar files. OpenEJB will
+directory containing a mix of ejbs and regular jar files. TomEE will
 simply skip over jars that do contain the required
 'META-INF/ejb-jar.xml' file.
 
 The last Deployments element declares a 'beans' directory relative to
-openejb.base for holding ejb jars. This declaration is simply convention
+catalina.base for holding ejb jars. This declaration is simply convention
 and not required.
 
 == An unpacked jar
 
-As of 1.0 beta1, OpenEJB supports unpacked ejb jars. Simply meaning that
+As of 1.0 beta1, TomEE supports unpacked ejb jars. Simply meaning that
 you don't need to pack your ejb's into a jar file in order to use them
-in OpenEJB. You still need to follow the ejb jar layout and include an
+in TomEE. You still need to follow the ejb jar layout and include an
 "META-INF/ejb-jar.xml" in the directory that contains your ejbs.
 
 For example, if you have a directory structure like this:
@@ -84,17 +84,17 @@ set to 'C:' as shown below.
 
 [source,xml]
 ----
-<openejb>
+<tomee>
 ...
 
 <Deployments dir="c:\myapp\acmeEjbs" />
-</openejb>
+</tomee>
 ----
 
 Note that this syntax is the same as the directory syntax above. If
-OpenEJB finds a META-INF directory with an 'ejb-jar.xml' fine inside,
-then OpenEJB will treat the directory as an unpacked ejb jar. Otherwise
-OpenEJB will look for ejb jar files to load as detailed in the above
+TomEE finds a META-INF directory with an 'ejb-jar.xml' fine inside,
+then TomEE will treat the directory as an unpacked ejb jar. Otherwise
+TomEE will look for ejb jar files to load as detailed in the above
 section.
 
 == Log file
