@@ -2259,6 +2259,24 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    // @todo Remove this method in next release
+    @Deprecated
+    public void destroyApplication(final AppContext appContext) throws UndeployException {
+
+        final ReentrantLock l = lock;
+        l.lock();
+
+        try {
+            final AppInfo appInfo = deployedApplications.remove(appContext.getId());
+            if (appInfo == null) {
+                throw new IllegalStateException(String.format("Cannot find AppInfo for app: %s", appContext.getId()));
+            }
+            destroyApplication(appInfo);
+        } finally {
+            l.unlock();
+        }
+    }
+
     public void destroyApplication(final AppInfo appInfo) throws UndeployException {
 
         final ReentrantLock l = lock;
