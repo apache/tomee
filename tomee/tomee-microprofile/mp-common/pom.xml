@@ -26,8 +26,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>mp-common</artifactId>
-    <name>OpenEJB :: TomEE :: MicroProfile Common</name>
+  <artifactId>mp-common</artifactId>
+  <name>OpenEJB :: TomEE :: MicroProfile Common</name>
 
   <dependencies>
     <dependency>
@@ -39,6 +39,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-catalina</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <artifactId>openejb-rest</artifactId>
+      <groupId>org.apache.tomee</groupId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
