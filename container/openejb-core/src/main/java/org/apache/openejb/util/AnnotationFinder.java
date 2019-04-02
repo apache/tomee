@@ -18,13 +18,13 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.xbean.asm6.AnnotationVisitor;
-import org.apache.xbean.asm6.Attribute;
-import org.apache.xbean.asm6.ClassReader;
-import org.apache.xbean.asm6.ClassVisitor;
-import org.apache.xbean.asm6.FieldVisitor;
-import org.apache.xbean.asm6.MethodVisitor;
-import org.apache.xbean.asm6.Opcodes;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.Attribute;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassVisitor;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.BufferedInputStream;
