@@ -33,6 +33,10 @@
     <!-- cause mojarra only works with CDI for now -->
     <skip.remote.plume>true</skip.remote.plume>
     <skip.webapp.plume>true</skip.webapp.plume>
+
+    <!-- no JMS in webprofile -->
+    <skip.remote.webprofile>true</skip.remote.webprofile>
+    <skip.webapp.webprofile>true</skip.webapp.webprofile>
   </properties>
 
   <dependencies>
