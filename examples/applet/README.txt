@@ -86,7 +86,7 @@ please update the pom.xml with the correct password before proceeding forward)
 Use the keytool as shown below (answer all questions asked by keytool -- the answers do not
 have to match as shown below (except for store password and alias <mykey> -- since it is used by maven))
 
-karan@jee:~$ keytool -genkey
+karan@jee:~$ keytool -genkey -alias mykey
 Enter keystore password:  openejb
 What is your first and last name?
   [Unknown]:  karan malhi
