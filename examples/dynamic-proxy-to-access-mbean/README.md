@@ -1,4 +1,8 @@
-Title: dynamic-proxy-to-access-mbean
+index-group=Unrevised
+type=page
+status=published
+title=dynamic-proxy-to-access-mbean
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
@@ -430,4 +434,3 @@ Simply an annotation to get the object
             }
         }
     }
-

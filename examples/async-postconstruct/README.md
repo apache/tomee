@@ -1,4 +1,8 @@
-Title: @Asynchronous @PostConstruct
+index-group=Unrevised
+type=page
+status=published
+title=@Asynchronous @PostConstruct
+~~~~~~
 
 Placing `@Asynchronous` on the `@PostConstruct` of an EJB is not a supported part of Java EE, but this example shows a pattern which works just as well with little effort.
 

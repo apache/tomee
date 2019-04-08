@@ -19,6 +19,8 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.config.sys.Resources;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.jpa.EntityMappings;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -92,4 +94,12 @@ public class ReadDescriptorsTest {
         Assert.assertNull(res.getProperties().getProperty("InitializeAfterDeployment"));
     }
 
+    @Test
+    public void testReadCmpOrmDescriptor() throws Exception {
+        final EjbModule ejbModule = new EjbModule(new EjbJar());
+        ejbModule.getAltDDs().put("openejb-cmp-orm.xml", getClass().getResource("test-openejb-cmp-orm.xml"));
+        new ReadDescriptors().readCmpOrm(ejbModule);
+        Assert.assertNotNull(ejbModule.getAltDDs().get("openejb-cmp-orm.xml"));
+        Assert.assertTrue(EntityMappings.class.isInstance(ejbModule.getAltDDs().get("openejb-cmp-orm.xml")));
+    }
 }

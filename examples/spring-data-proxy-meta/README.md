@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 # Spring Data With Meta sample #
 
 This example simply simplifies the usage of spring-data sample

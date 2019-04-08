@@ -1,4 +1,8 @@
-Title: CDI @ApplicationScoped
+index-group=Unrevised
+type=page
+status=published
+title=CDI @ApplicationScoped
+~~~~~~
 
 This example show the use of `@ApplicationScoped` annotation for injected objects. An object
 which is defined as `@ApplicationScoped` is created once for the duration of the application.

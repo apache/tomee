@@ -1,4 +1,8 @@
-Title: CDI Interceptors
+index-group=Unrevised
+type=page
+status=published
+title=CDI Interceptors
+~~~~~~
 
 Let's write a simple application that would allow us to book tickets for a movie show. As with all applications, logging is one cross-cutting concern that we have. Apart from that, there are some methods in our application, that can be accessed only in the working hours. If accessed at non-working-hours we'll throw out an AccessDeniedException.
 
@@ -213,4 +217,3 @@ Not to forget, the old style binding with `@Interceptors(WhicheverInterceptor.cl
             return ticketPrice - 50;
         }
     }
-

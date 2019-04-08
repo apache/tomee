@@ -1,4 +1,8 @@
-Title: Webservice Ws Security
+index-group=Unrevised
+type=page
+status=published
+title=Webservice Ws Security
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

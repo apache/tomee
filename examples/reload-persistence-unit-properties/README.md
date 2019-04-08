@@ -1,4 +1,8 @@
-Title: Reload Persistence Unit Properties
+index-group=Unrevised
+type=page
+status=published
+title=Reload Persistence Unit Properties
+~~~~~~
 
 This example aims to simulate a benchmark campaign on JPA.
 
@@ -47,6 +51,3 @@ In the ouput we find the 3 parts described just before.
     DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1532943889 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
     DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
     INFO - TEST, queries with cache done
-
-
-

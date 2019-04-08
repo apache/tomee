@@ -1,4 +1,8 @@
-Title: CDI Produces Disposes
+index-group=Unrevised
+type=page
+status=published
+title=CDI Produces Disposes
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

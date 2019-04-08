@@ -1,4 +1,8 @@
-Title: @WebService handlers with @HandlerChain
+index-group=Unrevised
+type=page
+status=published
+title=@WebService handlers with @HandlerChain
+~~~~~~
 
 In this example we see a basic JAX-WS `@WebService` component use a handler chain to alter incoming and outgoing SOAP messages.  SOAP Handlers are similar to Servlet Filters or EJB/CDI Interceptors.
 

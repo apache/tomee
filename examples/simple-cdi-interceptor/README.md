@@ -1,3 +1,7 @@
+index-group=Unrevised
+type=page
+status=published
+~~~~~~
 #Simple CDI Interceptor
 
 Let's write a simple application that would allow us to book tickets for a movie show. As with all applications, logging is one cross-cutting concern that we have. 

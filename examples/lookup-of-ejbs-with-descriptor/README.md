@@ -1,4 +1,8 @@
-Title: Lookup Of Ejbs with Descriptor
+index-group=Unrevised
+type=page
+status=published
+title=Lookup Of Ejbs with Descriptor
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 
