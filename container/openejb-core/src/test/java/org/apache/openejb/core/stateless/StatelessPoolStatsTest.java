@@ -461,7 +461,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         final CounterBean bean = deploy("testAccessTimeouts", properties);
 
-        assertAttribute("AccessTimeouts", 0l);
+        assertAttribute("AccessTimeouts", 0L);
 
         final Checkout checkout = checkout(bean, 10);
 
@@ -475,7 +475,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         checkout.release();
 
-        assertAttribute("AccessTimeouts", 7l);
+        assertAttribute("AccessTimeouts", 7L);
     }
 
     /**

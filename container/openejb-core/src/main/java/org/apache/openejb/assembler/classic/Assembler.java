@@ -65,6 +65,7 @@ import org.apache.openejb.cdi.OpenEJBBeanInfoService;
 import org.apache.openejb.cdi.OpenEJBJndiService;
 import org.apache.openejb.cdi.OpenEJBTransactionService;
 import org.apache.openejb.cdi.OptimizedLoaderService;
+import org.apache.openejb.cdi.ThreadSingletonService;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
@@ -241,6 +242,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -1933,6 +1935,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             systemInstance.removeComponent(JtaEntityManagerRegistry.class);
             systemInstance.removeComponent(TransactionSynchronizationRegistry.class);
             systemInstance.removeComponent(EjbResolver.class);
+            systemInstance.removeComponent(ThreadSingletonService.class);
             systemInstance.fireEvent(new AssemblerDestroyed());
             systemInstance.removeObservers();
 
@@ -3845,7 +3848,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final DeploymentListenerObserver that = (DeploymentListenerObserver) o;
 
-            return !(delegate != null ? !delegate.equals(that.delegate) : that.delegate != null);
+            return !(!Objects.equals(delegate, that.delegate));
         }
 
         @Override

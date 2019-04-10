@@ -60,6 +60,7 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionScoped;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 // this extension adds to CDI a producer a JMSContext,
@@ -238,7 +239,7 @@ public class JMS2CDIExtension implements Extension {
             return connectionFactory != null ? connectionFactory.equals(key.connectionFactory) : key.connectionFactory == null
                 && (username != null ? username.equals(key.username) : key.username == null
                 && (password != null ? password.equals(key.password) : key.password == null
-                && (session != null ? session.equals(key.session) : key.session == null)));
+                && (Objects.equals(session, key.session))));
 
         }
 

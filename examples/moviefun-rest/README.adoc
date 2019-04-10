@@ -1,0 +1,419 @@
+:index-group: REST
+:jbake-type: page
+:jbake-status: status=published
+= MovieFun REST
+
+This example shows the CRUD of a movie funny application. +
+The web client is built using backbone and the backend is built with
+JAX-RS, JPA for the persistence in a H2 database.
+
+== The Code
+
+=== ApplicationConfig
+
+Here use JAX-RS annotations to create resources. @ApplicationPath
+identifies the application path that serves as the base URI for all
+resources. The implementation of method getClasses will be called by the
+JAX-RS framework to get information about this application. In the
+following example, it defines two resources: LoadRest and MoviesRest.
+
+....
+package org.superbiz.moviefun.rest;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+@ApplicationPath("/rest")
+public class ApplicationConfig extends Application {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Set<Class<?>> getClasses() {
+        return new HashSet<Class<?>>(Arrays.asList(LoadRest.class, MoviesRest.class));
+    }
+}
+....
+
+=== LoadRest
+
+It is a POJO which is mapped to a root URL (``load'') with the
+annotation @Path and has Java methods for serving requests to this root
+URL and its sub-URLs. In this case, only have a POST request where use
+an EJB (MoviesBean) injected to it class for do an initial load of data
+in the database.
+
+....
+package org.superbiz.moviefun.rest;
+
+import org.superbiz.moviefun.Movie;
+import org.superbiz.moviefun.MoviesBean;
+
+import javax.ejb.EJB;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+@Path("load")
+public class LoadRest {
+    @EJB
+    private MoviesBean moviesBean;
+
+    @POST
+    public void load() {
+        moviesBean.addMovie(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 7, 2005));
+        moviesBean.addMovie(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 6, 2004));
+        moviesBean.addMovie(new Movie("Shanghai Knights", "David Dobkin", "Action", 6, 2003));
+        moviesBean.addMovie(new Movie("I-Spy", "Betty Thomas", "Adventure", 5, 2002));
+        moviesBean.addMovie(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 8, 2001));
+        moviesBean.addMovie(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
+        moviesBean.addMovie(new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000));
+    }
+
+}
+....
+
+=== MovieRest
+
+It is a POJO which is mapped to a root URL (``movies'') with the
+annotation @Path and has Java methods for serving requests of entities
+movies in JSON format according to the @Produces annotation. Here has a
+method for each HTTP method (GET, POST, PUT, DELETE).
+
+....
+package org.superbiz.moviefun.rest;
+
+import org.superbiz.moviefun.Movie;
+import org.superbiz.moviefun.MoviesBean;
+
+import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+
+@Path("movies")
+@Produces({"application/json"})
+public class MoviesRest {
+
+    @EJB
+    private MoviesBean service;
+
+    @GET
+    @Path("{id}")
+    public Movie find(@PathParam("id") Long id) {
+        return service.find(id);
+    }
+
+    @GET
+    public List<Movie> getMovies(@QueryParam("first") Integer first, @QueryParam("max") Integer max,
+                                 @QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
+        return service.getMovies(first, max, field, searchTerm);
+    }
+
+    @POST
+    @Consumes("application/json")
+    public Movie addMovie(Movie movie) {
+        service.addMovie(movie);
+        return movie;
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes("application/json")
+    public Movie editMovie(Movie movie) {
+        service.editMovie(movie);
+        return movie;
+    }
+
+    @DELETE
+    @Path("{id}")
+    public void deleteMovie(@PathParam("id") long id) {
+        service.deleteMovie(id);
+    }
+
+    @GET
+    @Path("count")
+    @Produces(MediaType.TEXT_PLAIN)
+    public int count(@QueryParam("field") String field, @QueryParam("searchTerm") String searchTerm) {
+        return service.count(field, searchTerm);
+    }
+
+}
+....
+
+=== Movie
+
+This is the entity Movie that will be persisted by JPA.
+
+....
+package org.superbiz.moviefun;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@Entity
+@XmlRootElement(name = "movie")
+public class Movie {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    private String director;
+    private String title;
+    private int year;
+    private String genre;
+    private int rating;
+
+    public Movie() {
+    }
+
+    public Movie(String title, String director, String genre, int rating, int year) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+        this.genre = genre;
+        this.rating = rating;
+    }
+
+    public Movie(String director, String title, int year) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+}
+....
+
+=== MoviesBean
+
+....
+This is the EJB according to the @Stateless annotation. It uses the unit persistence "movie-unit" for persist 
+entities movie.
+
+package org.superbiz.moviefun;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import java.util.List;
+
+@Stateless
+public class MoviesBean {
+
+    @PersistenceContext(unitName = "movie-unit")
+    private EntityManager entityManager;
+
+    public Movie find(Long id) {
+        return entityManager.find(Movie.class, id);
+    }
+
+    public void addMovie(Movie movie) {
+        entityManager.persist(movie);
+    }
+
+    public void editMovie(Movie movie) {
+        entityManager.merge(movie);
+    }
+
+    public void deleteMovie(long id) {
+        Movie movie = entityManager.find(Movie.class, id);
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> getMovies(Integer firstResult, Integer maxResults, String field, String searchTerm) {
+        CriteriaBuilder qb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Movie> cq = qb.createQuery(Movie.class);
+        Root<Movie> root = cq.from(Movie.class);
+        EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
+        if (field != null && searchTerm != null && !"".equals(field.trim()) && !"".equals(searchTerm.trim())) {
+            Path<String> path = root.get(type.getDeclaredSingularAttribute(field.trim(), String.class));
+            Predicate condition = qb.like(path, "%" + searchTerm.trim() + "%");
+            cq.where(condition);
+        }
+        TypedQuery<Movie> q = entityManager.createQuery(cq);
+        if (maxResults != null) {
+            q.setMaxResults(maxResults);
+        }
+        if (firstResult != null) {
+            q.setFirstResult(firstResult);
+        }
+        return q.getResultList();
+    }
+
+    public int count(String field, String searchTerm) {
+        CriteriaBuilder qb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = qb.createQuery(Long.class);
+        Root<Movie> root = cq.from(Movie.class);
+        EntityType<Movie> type = entityManager.getMetamodel().entity(Movie.class);
+        cq.select(qb.count(root));
+        if (field != null && searchTerm != null && !"".equals(field.trim()) && !"".equals(searchTerm.trim())) {
+            Path<String> path = root.get(type.getDeclaredSingularAttribute(field.trim(), String.class));
+            Predicate condition = qb.like(path, "%" + searchTerm.trim() + "%");
+            cq.where(condition);
+        }
+        return entityManager.createQuery(cq).getSingleResult().intValue();
+    }
+
+    public void clean() {
+        entityManager.createQuery("delete from Movie").executeUpdate();
+    }
+}
+....
+
+== Running
+
+Running the example is fairly simple. In the ``moviefun-rest'' directory
+run:
+
+$ mvn clean install
+
+Which should create output like the following.
+
+....
+INFO: OpenJPA dynamically loaded a validation provider.
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory createDelegate
+INFO: PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 36ms
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=MoviesBeanLocalBean) --> Ejb(deployment-id=MoviesBean)
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/test/MoviesBean!org.superbiz.moviefun.MoviesBean) --> Ejb(deployment-id=MoviesBean)
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.JndiBuilder bind
+INFO: Jndi(name=global/test/MoviesBean) --> Ejb(deployment-id=MoviesBean)
+Dec 18, 2018 1:31:44 PM org.apache.openejb.util.LogStreamAsync run
+INFO: Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@94f6bfb
+Dec 18, 2018 1:31:44 PM org.apache.openejb.cdi.ManagedSecurityService <init>
+INFO: Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+Dec 18, 2018 1:31:44 PM org.apache.openejb.util.LogStreamAsync run
+INFO: OpenWebBeans Container is starting...
+Dec 18, 2018 1:31:44 PM org.apache.webbeans.plugins.PluginLoader startUp
+INFO: Adding OpenWebBeansPlugin : [CdiPlugin]
+Dec 18, 2018 1:31:44 PM org.apache.openejb.cdi.CdiScanner handleBda
+INFO: Using annotated mode for file:/Users/josediaz/Projects/tomitribe/tomee/examples/moviefun-rest/target/arquillian-test-working-dir/0/test/WEB-INF/classes/ looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+Dec 18, 2018 1:31:44 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
+INFO: All injection points were validated successfully.
+Dec 18, 2018 1:31:44 PM org.apache.openejb.util.LogStreamAsync run
+INFO: OpenWebBeans Container has started, it took 466 ms.
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Created Ejb(deployment-id=MoviesBean, ejb-name=MoviesBean, container=Default Stateless Container)
+Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.Assembler startEjbs
+INFO: Started Ejb(deployment-id=MoviesBean, ejb-name=MoviesBean, container=Default Stateless Container)
+Dec 18, 2018 1:31:45 PM org.apache.openejb.assembler.classic.Assembler createApplication
+INFO: Deployed Application(path=/Users/josediaz/Projects/tomitribe/tomee/examples/moviefun-rest/target/arquillian-test-working-dir/0/test)
+Dec 18, 2018 1:31:45 PM org.apache.myfaces.ee.MyFacesContainerInitializer onStartup
+INFO: Using org.apache.myfaces.ee.MyFacesContainerInitializer
+Dec 18, 2018 1:31:45 PM org.apache.myfaces.ee.MyFacesContainerInitializer onStartup
+INFO: Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+Dec 18, 2018 1:31:45 PM org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+Dec 18, 2018 1:31:45 PM org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer addListener
+INFO: Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+Dec 18, 2018 1:31:45 PM org.apache.myfaces.config.DefaultFacesConfigurationProvider getStandardFacesConfig
+INFO: Reading standard config META-INF/standard-faces-config.xml
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.config.DefaultFacesConfigurationProvider getClassloaderFacesConfig
+INFO: Reading config : jar:file:/Users/josediaz/.m2/repository/org/apache/openwebbeans/openwebbeans-el22/2.0.8/openwebbeans-el22-2.0.8.jar!/META-INF/faces-config.xml
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.config.DefaultFacesConfigurationProvider getClassloaderFacesConfig
+INFO: Reading config : jar:file:/Users/josediaz/.m2/repository/org/apache/openwebbeans/openwebbeans-jsf/2.0.8/openwebbeans-jsf-2.0.8.jar!/META-INF/faces-config.xml
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.config.LogMetaInfUtils logArtifact
+INFO: Artifact 'myfaces-api' was found in version '2.3.2' from path 'file:/Users/josediaz/.m2/repository/org/apache/myfaces/core/myfaces-api/2.3.2/myfaces-api-2.3.2.jar'
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.config.LogMetaInfUtils logArtifact
+INFO: Artifact 'myfaces-impl' was found in version '2.3.2' from path 'file:/Users/josediaz/.m2/repository/org/apache/myfaces/core/myfaces-impl/2.3.2/myfaces-impl-2.3.2.jar'
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.util.ExternalSpecifications isCDIAvailable
+INFO: MyFaces CDI support enabled
+Dec 18, 2018 1:31:46 PM org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory getInjectionProvider
+INFO: Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.util.ExternalSpecifications isBeanValidationAvailable
+INFO: MyFaces Bean Validation support enabled
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.application.ApplicationImpl getProjectStage
+INFO: Couldn't discover the current project stage, using Production
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.config.FacesConfigurator handleSerialFactory
+INFO: Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory getLifecycleProvider
+INFO: Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.webapp.AbstractFacesInitializer initFaces
+INFO: ServletContext initialized.
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.view.facelets.ViewPoolProcessor initialize
+INFO: org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+Dec 18, 2018 1:31:47 PM org.apache.myfaces.webapp.StartupServletContextListener contextInitialized
+INFO: MyFaces Core has started, it took [1867] ms.
+Dec 18, 2018 1:31:47 PM null
+INFO: Starting OpenJPA 3.0.0
+Dec 18, 2018 1:31:47 PM null
+INFO: Using dictionary class "org.apache.openjpa.jdbc.sql.HSQLDictionary" (HSQL Database Engine 2.3.2 ,HSQL Database Engine Driver 2.3.2).
+Dec 18, 2018 1:31:47 PM null
+INFO: Connected to HSQL Database Engine version 2.2 using JDBC driver HSQL Database Engine Driver version 2.3.2. 
+Dec 18, 2018 1:31:53 PM null
+INFO: Creating subclass and redefining methods for "[class org.superbiz.moviefun.Movie]". This means that your application will be less efficient than it would if you ran the OpenJPA enhancer.
+Dec 18, 2018 1:31:54 PM org.apache.openejb.assembler.classic.Assembler destroyApplication
+INFO: Undeploying app: /Users/josediaz/Projects/tomitribe/tomee/examples/moviefun-rest/target/arquillian-test-working-dir/0/test
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.77 sec - in org.superbiz.moviefun.MoviesEJBTest
+
+Results :
+
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+....

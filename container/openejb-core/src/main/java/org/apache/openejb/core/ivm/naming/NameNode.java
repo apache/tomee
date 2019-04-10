@@ -218,13 +218,7 @@ public class NameNode implements Serializable {
 
 
     public int compareTo(final int otherHash) {
-        if (atomicHash == otherHash) {
-            return 0;
-        } else if (atomicHash > otherHash) {
-            return 1;
-        } else {
-            return -1;
-        }
+        return Integer.compare(atomicHash, otherHash);
     }
 
     private void bind(final NameNode node) {

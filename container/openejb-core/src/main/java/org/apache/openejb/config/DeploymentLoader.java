@@ -25,8 +25,8 @@ import org.apache.openejb.api.RemoteClient;
 import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
-import org.apache.openejb.config.event.AfterContainerUrlScanEvent;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -1068,6 +1068,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
 
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(webUrls);
@@ -1131,8 +1132,6 @@ public class DeploymentLoader implements DeploymentFilterable {
                 containerUrls = new ArrayList<>();
             }
         }
-
-        SystemInstance.get().fireEvent(new AfterContainerUrlScanEvent(containerUrls));
     }
 
     public static List<URL> filterWebappUrls(final URL[] webUrls, final Filter filter, final URL exclusions) {
@@ -1244,7 +1243,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         complete.removeDuplicates();
 
         ensureContainerUrls();
-        appModule.getScannableContainerUrls().addAll(containerUrls);
+        final List<URL> scannableUrls = new ArrayList<>(this.containerUrls);
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
+        appModule.getScannableContainerUrls().addAll(scannableUrls);
 
         IAnnotationFinder finder;
         try {

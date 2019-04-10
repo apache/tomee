@@ -35,6 +35,10 @@
     <!-- cause mojarra only works with CDI for now -->
     <skip.remote.plume>true</skip.remote.plume>
     <skip.webapp.plume>true</skip.webapp.plume>
+
+    <!-- no JMS in webprofile -->
+    <skip.remote.webprofile>true</skip.remote.webprofile>
+    <skip.webapp.webprofile>true</skip.webapp.webprofile>
   </properties>
 
   <dependencies>
@@ -43,6 +47,24 @@
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>
