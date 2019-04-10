@@ -1,4 +1,8 @@
-Title: CDI field producer
+index-group=Unrevised
+type=page
+status=published
+title=CDI field producer
+~~~~~~
 
 This example shows the usage of the @Produces annotation. @Produces is a CDI mechanism which allows defining a source
  for injection. This example shows one of two ways of declaring a producer. Instead of a producer method (see CDI-produces-disposes example)

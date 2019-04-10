@@ -1,4 +1,8 @@
-Title: Testing Security 2
+index-group=Unrevised
+type=page
+status=published
+title=Testing Security 2
+~~~~~~
 
 *Help us document this example! Click the blue pencil icon in the upper right to edit this page.*
 

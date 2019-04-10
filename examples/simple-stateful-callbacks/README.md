@@ -1,4 +1,8 @@
-Title: Simple Stateful with callback methods
+index-group=Unrevised
+type=page
+status=published
+title=Simple Stateful with callback methods
+~~~~~~
 
 This example shows how to create a stateful session bean that uses the @PrePassivate, @PostActivate, @PostConstruct, @PreDestroy and @AroundInvoke annotations.
 
@@ -288,5 +292,3 @@ This example shows how to create a stateful session bean that uses the @PrePassi
     [INFO] Finished at: Sat Jul 21 08:18:35 EDT 2012
     [INFO] Final Memory: 11M/247M
     [INFO] ------------------------------------------------------------------------
-
-

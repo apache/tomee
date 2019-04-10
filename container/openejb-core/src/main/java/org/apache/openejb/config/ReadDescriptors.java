@@ -538,13 +538,14 @@ public class ReadDescriptors implements DynamicDeployer {
         return current;
     }
 
-    private void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
+    // package scoped for testing
+    void readCmpOrm(final EjbModule ejbModule) throws OpenEJBException {
         final Object data = ejbModule.getAltDDs().get("openejb-cmp-orm.xml");
         if (data != null && !(data instanceof EntityMappings)) {
             if (data instanceof URL) {
                 final URL url = (URL) data;
                 try {
-                    final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshalJavaee(EntityMappings.class, IO.read(url));
+                    final EntityMappings entitymappings = (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
                     ejbModule.getAltDDs().put("openejb-cmp-orm.xml", entitymappings);
                 } catch (final SAXException e) {
                     throw new OpenEJBException("Cannot parse the openejb-cmp-orm.xml file: " + url.toExternalForm(), e);

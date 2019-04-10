@@ -1,4 +1,8 @@
-Title: @Asynchronous Methods
+index-group=Unrevised
+type=page
+status=published
+title=@Asynchronous Methods
+~~~~~~
 
 The @Asynchronous annotation was introduced in EJB 3.1 as a simple way of creating asynchronous processing.
 
@@ -151,4 +155,3 @@ For complex asynchronous processing, JavaEE's answer is `@MessageDrivenBean`. Ha
 [1]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html
 [3]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executor.html
 [4]: http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/AtomicInteger.html
-
