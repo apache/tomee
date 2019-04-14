@@ -40,6 +40,7 @@ import org.apache.openejb.loader.ProvisioningUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -91,9 +92,9 @@ public class JarsTxtMojo extends AbstractMojo {
             FileUtils.mkdir(outputFile.getParentFile().getAbsolutePath());
         }
 
-        FileWriter writer = null;
+        BufferedWriter writer = null;
         try {
-            writer = new FileWriter(outputFile);
+            writer = new BufferedWriter(new FileWriter(outputFile));
 
             final TreeSet<String> set = new TreeSet<>();
 
