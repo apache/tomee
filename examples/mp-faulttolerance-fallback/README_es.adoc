@@ -30,7 +30,7 @@ Para más detalles revisar http://download.eclipse.org/microprofile/microprofile
 
 El método `statusOfDay` siempre fallará lanzando `WeatherException` y como la anotación
 `@CircuitBreaker` esta configurada con `failOn` en caso de una excepción, el fallback,
-`WeatherDayStatusFallbackHandler#handle` será invocada.
+`WeatherDayStatusFallbackHandler#handle` será invocado.
 
 ```java
 @RequestScoped
@@ -98,7 +98,7 @@ Llamada del estado del tiempo de la semana
 
     GET http://localhost:8080/mp-faulttolerance-fallback/weather/week/status
 
-Bitácora del server
+Bitácora del servidor
 
 ```
 SEVERE [http-nio-8080-exec-2] org.superbiz.rest.WeatherService.fallbackForWeekStatus Fallback was triggered due a fail
@@ -113,7 +113,7 @@ Hi, week will be mostly sunny!
 
 === Ejecución de las pruebas
 
-Puedes intenar esto usando la prueba link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponible en este proyecto.
+Puede además usar la prueba link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponible en este proyecto.
 
     mvn clean test
     
