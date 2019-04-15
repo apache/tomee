@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.91</tomcat.version>
+    <tomcat.version>7.0.94</tomcat.version>
 
     <cxf.version>2.6.17-TT.3</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
