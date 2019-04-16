@@ -26,7 +26,7 @@ Para más detalles revisar http://download.eclipse.org/microprofile/microprofile
 
     mvn clean install tomee:run   
     
-=== Example 1
+=== Ejemplo 1
 
 El método `statusOfDay` siempre fallará lanzando `WeatherException` y como la anotación
 `@CircuitBreaker` esta configurada con `failOn` en caso de una excepción, el fallback,
@@ -69,7 +69,7 @@ Respuesta
 Hi, today is a sunny day!
 ```
 
-=== Example 2
+=== Ejemplo 2
 
 El método `statusOfDay` siempre fallará lanzando `WeatherException` y como la anotación
 `@Retry` está configurada con `maxRetries = 1` en caso de fallo, el método fallback,
