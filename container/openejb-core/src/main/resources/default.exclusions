@@ -132,6 +132,7 @@ jcommander-
 jersey-
 jettison-
 jetty-
+jfreechart-
 jfr.jar
 jfxrt.jar
 jline
@@ -140,6 +141,7 @@ jnr-
 joda-time-
 johnzon-
 jose4j-
+jscience-
 jsoup-
 jsp-api
 jsr299-
@@ -150,6 +152,7 @@ junit-
 junit5-
 kahadb-
 kotlin-runtime
+lesscss-engine-
 leveldb
 log4j-
 logkit-
@@ -221,6 +224,7 @@ quartz-2
 quartz-openejb-
 relaxng-datatype-
 resources.jar
+rhino-
 rmock-
 rngom-
 rt.jar
