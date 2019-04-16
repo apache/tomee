@@ -102,9 +102,9 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0</version.javaee-api>
+    <version.javaee-api>8.0-1</version.javaee-api>
 
-    <openjpa.version>3.0.0</openjpa.version>
+    <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.9</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.1.11</johnzon.version>
@@ -1332,11 +1332,11 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.1_spec</artifactId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
