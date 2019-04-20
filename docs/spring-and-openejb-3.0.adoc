@@ -5,8 +5,10 @@
 :jbake-status: published
 
 
-\{note}OpenEJB 3.1 and later users should refer to the [Spring]
-page.\{note} # Bootstrapping OpenEJB in Spring
+NOTE: OpenEJB 3.1 and later users should refer to the link:spring.html[Spring]
+page.
+
+# Bootstrapping OpenEJB in Spring
 
 If you wish to use OpenEJB inside Spring you can do so pretty easily.
 Include OpenEJB and its dependencies in your classpath as you would in a
@@ -223,12 +225,14 @@ Spring bean definitions combined
 </bean>
 ----
 
-{title= Some more useful info.} Here is a bunch of links suggested
+[NOTE]
+====
+Here is a bunch of links suggested
 by a user. If anybody has time to go through them and write a doc, that
 would be great. These links explain how to make available spring
-components to openejb
-http://twasink.net/blog/archives/2007/01/using_spring_wi.html
-http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/ejb/interceptor/SpringBeanAutowiringInterceptor.html
-http://wiki.netbeans.org/MavenSpringEJBsOnGlassfish
+components to openejb.
 
-\{info}
+- http://twasink.net/blog/archives/2007/01/using_spring_wi.html
+- http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/ejb/interceptor/SpringBeanAutowiringInterceptor.html
+- http://wiki.netbeans.org/MavenSpringEJBsOnGlassfish
+====
