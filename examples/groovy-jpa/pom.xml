@@ -94,13 +94,13 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-openejb-embedded-4</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>ziplock</artifactId>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

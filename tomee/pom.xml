@@ -23,17 +23,17 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-TT.12</version>
+    <version>4.7.6-TT.13</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee</artifactId>
-  <version>1.7.6-TT.12</version>
+  <version>1.7.6-TT.13</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: TomEE</name>
 
   <properties>
-    <version.openejb>4.7.6-TT.12</version.openejb>
+    <version.openejb>4.7.6-TT.13</version.openejb>
   </properties>
 
   <modules>

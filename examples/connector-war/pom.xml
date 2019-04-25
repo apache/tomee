@@ -21,7 +21,7 @@
   <name>OpenEJB :: Connector Examples :: Connector in WAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>1.7.6-TT.12</tomee.version>
+    <tomee.version>1.7.6-TT.13</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
@@ -47,7 +47,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.6-TT.12</version>
+        <version>1.7.6-TT.13</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>

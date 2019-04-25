@@ -56,7 +56,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends

@@ -64,7 +64,7 @@
   </dependencies>
 
   <properties>
-    <tomee.version>1.7.6-TT.12</tomee.version>
+    <tomee.version>1.7.6-TT.13</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>

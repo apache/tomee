@@ -25,7 +25,7 @@
   <name>OpenEJB :: Examples :: Quartz</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<version.openejb>4.7.6-TT.12</version.openejb>
+	<version.openejb>4.7.6-TT.13</version.openejb>
   </properties>
   <modules>
     <module>quartz-ra</module>

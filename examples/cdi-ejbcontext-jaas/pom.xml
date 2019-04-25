@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -62,7 +62,7 @@
       <plugin>
         <groupId>org.apache.openejb.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>1.7.6-TT.12</version>
+        <version>1.7.6-TT.13</version>
         <configuration>
           <systemVariables>
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>

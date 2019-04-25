@@ -25,8 +25,8 @@
   <name>OpenEJB :: Web Examples :: REST Example With Application</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.6-TT.12</openejb.version>
-    <tomee.version>1.7.6-TT.12</tomee.version>
+    <openejb.version>4.7.6-TT.13</openejb.version>
+    <tomee.version>1.7.6-TT.13</tomee.version>
   </properties>
   <repositories>
     <repository>

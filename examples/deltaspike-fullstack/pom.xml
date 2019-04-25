@@ -22,8 +22,8 @@
     <version.myfaces2>2.2.3</version.myfaces2>
     <version.deltaspike>1.0.1</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <version.openejb>4.7.6-TT.12</version.openejb>
-    <version.tomee>1.7.6-TT.12</version.tomee>
+    <version.openejb>4.7.6-TT.13</version.openejb>
+    <version.tomee>1.7.6-TT.13</version.tomee>
   </properties>
 
   <build>
