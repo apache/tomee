@@ -71,7 +71,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.6.0.3-TT.18</version>
+      <version>4.6.0.3-TT.19</version>
       <scope>test</scope>
     </dependency>
     <dependency>
