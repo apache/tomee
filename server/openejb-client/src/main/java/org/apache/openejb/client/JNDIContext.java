@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.apache.openejb.client.serializer.EJBDSerializer;
-import org.omg.CORBA.ORB;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Binding;
@@ -40,6 +39,7 @@ import javax.naming.spi.NamingManager;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -586,8 +586,18 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
-    private ORB getDefaultOrb() {
-        return ORB.init();
+    private Object getDefaultOrb() {
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB").getMethod("init").invoke(null);
+        } catch (final ClassNotFoundException e) {
+            throw new IllegalStateException("No CORBA available", e);
+        } catch (final IllegalAccessException e) {
+            throw new IllegalStateException("No CORBA available", e);
+        } catch (final NoSuchMethodException e) {
+            throw new IllegalStateException("No CORBA available", e);
+        } catch (final InvocationTargetException e) {
+            throw new IllegalStateException("No CORBA available", e.getCause());
+        }
     }
 
     @Override

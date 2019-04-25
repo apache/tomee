@@ -72,6 +72,8 @@
     <module>dynamic-proxy-to-access-mbean</module>
     <module>ear-testing</module>
     <module>ejb-examples</module>
+    <module>ejb-remote-call</module>
+    <module>ejb-remote-call-2</module>
     <module>ejb-webservice</module>
     <module>groovy-cdi</module>
     <module>groovy-jpa</module>
