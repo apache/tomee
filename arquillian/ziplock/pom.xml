@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.12</version>
+    <version>1.7.6-TT.13</version>
   </parent>
   <artifactId>ziplock</artifactId>
   <packaging>jar</packaging>

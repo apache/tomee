@@ -27,8 +27,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <tomee.version>1.7.6-TT.12</tomee.version>
-    <openejb.version>4.7.6-TT.12</openejb.version>
+    <tomee.version>1.7.6-TT.13</tomee.version>
+    <openejb.version>4.7.6-TT.13</openejb.version>
     <arquillian.version>1.0.1.Final</arquillian.version>
   </properties>
 

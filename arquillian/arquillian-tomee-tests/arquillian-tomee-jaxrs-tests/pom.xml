@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian-tomee-tests</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.12</version>
+    <version>1.7.6-TT.13</version>
   </parent>
 
   <artifactId>arquillian-tomee-jaxrs-tests</artifactId>

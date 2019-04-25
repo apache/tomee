@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.12</version>
+    <version>1.7.6-TT.13</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
   <packaging>jar</packaging>
@@ -91,7 +91,7 @@
       <groupId>org.apache.openejb</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
       <classifier>webprofile</classifier>
       <scope>provided</scope>
     </dependency>
@@ -120,7 +120,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -147,7 +147,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
     </dependency>
 
     <dependency>

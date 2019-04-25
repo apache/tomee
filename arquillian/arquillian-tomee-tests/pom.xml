@@ -14,7 +14,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.12</version>
+    <version>1.7.6-TT.13</version>
   </parent>
   <artifactId>arquillian-tomee-tests</artifactId>
   <packaging>pom</packaging>
@@ -115,7 +115,7 @@
     <dependency> <!-- tomee-embedded needs it + dependencies but tomee-*-remote doesn't need dependencies so to avoid conflicts bringing it back here -->
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
     </dependency>
 
     <!-- just to get it in the correct order -->

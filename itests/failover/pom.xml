@@ -20,7 +20,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-TT.12</version>
+    <version>4.7.6-TT.13</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.openejb.itests</groupId>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.openejb</groupId>

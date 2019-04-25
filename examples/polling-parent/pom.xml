@@ -185,8 +185,8 @@
   <properties>
     <xbean.version>3.17</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>1.7.6-TT.12</version.tomee>
-    <version.openejb>4.7.6-TT.12</version.openejb>
+    <version.tomee>1.7.6-TT.13</version.tomee>
+    <version.openejb>4.7.6-TT.13</version.openejb>
   </properties>
 
   <!--

@@ -33,7 +33,7 @@
   <artifactId>openejb</artifactId>
   <packaging>pom</packaging>
 
-  <version>4.7.6-TT.12</version>
+  <version>4.7.6-TT.13</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extendable EJB Container System and EJB
@@ -97,8 +97,8 @@
     <test.complexity.coverage.minimun>0</test.complexity.coverage.minimun>
     <test.branch.coverage.minimun>0</test.branch.coverage.minimun>
     <test.coverage.skip>false</test.coverage.skip>
-    <openejb.version>4.7.6-TT.12</openejb.version>
-    <tomee.version>1.7.6-TT.12</tomee.version>
+    <openejb.version>4.7.6-TT.13</openejb.version>
+    <tomee.version>1.7.6-TT.13</tomee.version>
 
     <openjpa.version>2.4.3</openjpa.version>
     <org.apache.openwebbeans.version>1.2.8</org.apache.openwebbeans.version>
@@ -128,7 +128,7 @@
 
     <jaxb.version>2.2.7</jaxb.version>
 
-    <tomcat.version>7.0.91</tomcat.version>
+    <tomcat.version>7.0.94</tomcat.version>
 
     <cxf.version>2.6.17-TT.3</cxf.version>
     <!--2.6.4 requires wss4j 1.6.8-->
@@ -898,22 +898,11 @@
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
     <repository>
-      <id>openjpa-staging</id>
-      <name>Current staging</name>
-      <url>https://repository.apache.org/content/repositories/orgapacheopenjpa-1003/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
       <id>tomitribe-all</id>
       <name>Tomitribe Repository</name>
       <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
     </repository>
-    
+
     <!-- For OpenSAML 2.6.5, required by server/openejb-cxf -->
     <repository>
       <releases>

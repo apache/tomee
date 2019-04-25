@@ -24,7 +24,7 @@
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <openejb.version>4.7.6-TT.12</openejb.version>
+    <openejb.version>4.7.6-TT.13</openejb.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>org.apache.openejb</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>4.7.6-TT.12</version>
+      <version>4.7.6-TT.13</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

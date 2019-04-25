@@ -20,13 +20,13 @@
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.openejb.maven</groupId>
-    <version>1.7.6-TT.12</version>
+    <version>1.7.6-TT.13</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-embedded-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>4.7.6-TT.12</version>
+  <version>4.7.6-TT.13</version>
   <name>OpenEJB :: Maven Plugins :: OpenEJB Embedded Maven Plugin</name>
 
   <dependencies>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>maven-util</artifactId>
-      <version>1.7.6-TT.12</version>
+      <version>1.7.6-TT.13</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>

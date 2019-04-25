@@ -21,11 +21,11 @@
   <parent>
     <artifactId>openejb</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>4.7.6-TT.12</version>
+    <version>4.7.6-TT.13</version>
   </parent>
 
   <groupId>org.apache.openejb.maven</groupId>
-  <version>1.7.6-TT.12</version>
+  <version>1.7.6-TT.13</version>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Maven Plugins</name>
