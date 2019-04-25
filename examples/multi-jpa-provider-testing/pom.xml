@@ -28,7 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.6-TT.6</tomee.version>
+    <tomee.version>7.0.6-TT.7</tomee.version>
   </properties>
 
   <build>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -139,7 +139,7 @@
     <dependency> <!-- just a facade pom which will bring hibernate for us -->
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core-hibernate</artifactId>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>

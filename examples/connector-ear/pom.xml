@@ -20,12 +20,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.6-TT.6</version>
+  <version>7.0.6-TT.7</version>
   <name>OpenEJB :: Connector Examples :: Connector in EAR</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.6-TT.6</tomee.version>
+    <tomee.version>7.0.6-TT.7</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
   </properties>
 

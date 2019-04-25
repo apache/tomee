@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.6-TT.6</version>
+  <version>7.0.6-TT.7</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -93,7 +93,7 @@
 
   <properties>
 
-    <tomee.version>7.0.6-TT.6</tomee.version>
+    <tomee.version>7.0.6-TT.7</tomee.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
 
