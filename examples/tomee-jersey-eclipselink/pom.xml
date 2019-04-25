@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>tomee-jersey-eclipselink</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <packaging>war</packaging>
   <name>OpenEJB :: Examples :: TomEE, Jersey, Eclipselink</name>
 
@@ -95,7 +95,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <configuration>
           <systemVariables>
             <com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager>true</com.sun.jersey.server.impl.cdi.lookupExtensionInBeanManager>

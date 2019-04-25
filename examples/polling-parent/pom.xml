@@ -21,14 +21,14 @@
 
   <groupId>jug</groupId>
   <artifactId>polling-parent</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Polling</name>
   
   <properties>
     <xbean.version>4.4</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
 
   <build>
@@ -87,7 +87,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-api</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>provided</scope>
       </dependency>
 
@@ -95,13 +95,13 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-core</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-cxf-rs</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>provided</scope>
       </dependency>
 
@@ -115,25 +115,25 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>tomee-webservices</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>ziplock</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>

@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>rest-cdi</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: REST XML JSON</name>
 
   <properties>
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

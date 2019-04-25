@@ -21,13 +21,13 @@
   
   <groupId>org.superbiz.quartz</groupId>
   <artifactId>quartz-app</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <packaging>pom</packaging>
   <name>OpenEJB :: Examples :: Quartz</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
   
   <modules>
@@ -83,7 +83,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>openejb-core</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee</groupId>

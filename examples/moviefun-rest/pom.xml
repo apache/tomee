@@ -18,12 +18,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun-rest</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Web Examples :: Moviefun Rest</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
   
@@ -135,7 +135,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <configuration>
           <tomeeClassifier>plus</tomeeClassifier>
           <args>-Xmx512m -XX:PermSize=256m</args>
@@ -189,7 +189,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -201,7 +201,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-embedded</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -223,7 +223,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -277,7 +277,7 @@
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-embedded</artifactId>
-          <version>7.1.1-TT.3</version>
+          <version>7.1.1-TT.4</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
@@ -288,7 +288,7 @@
         <dependency>
           <groupId>org.apache.tomee</groupId>
           <artifactId>arquillian-tomee-remote</artifactId>
-          <version>7.1.1-TT.3</version>
+          <version>7.1.1-TT.4</version>
           <scope>test</scope>
         </dependency>
       </dependencies>
