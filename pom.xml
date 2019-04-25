@@ -120,7 +120,7 @@
 
     <jaxb.version>2.2.6</jaxb.version>
 
-    <tomcat.version>7.0.91</tomcat.version>
+    <tomcat.version>7.0.94</tomcat.version>
 
     <!-- used mainly by jetty modules -->
     <cxf.version>2.6.17-TT.3</cxf.version>
