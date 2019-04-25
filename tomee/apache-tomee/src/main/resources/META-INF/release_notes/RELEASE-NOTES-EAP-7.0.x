@@ -1,4 +1,8 @@
-= TomEE EAP 7.1.1-TT.3
+= TomEE EAP 7.1.1-TT.4
+
+=== Changes in TomEE EAP 7.1.1-TT.4
+
+* TOMEE-2510 update to Tomcat 8.5.40 to mitigate CVE-2019-0232
 
 === Changes in TomEE EAP 7.1.1-TT.3
 
