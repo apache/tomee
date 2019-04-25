@@ -1,6 +1,10 @@
-= TomEE EAP 7.0.6-TT.6
+= TomEE EAP 7.0.6-TT.7
 
-=== Changes in TomEE EAP 7.0.6-TT.4
+=== Changes in TomEE EAP 7.0.6-TT.7
+
+* TOMEE-2510 Update Tomcat to 8.5.40 to mitigate CVE-2019-0232
+
+=== Changes in TomEE EAP 7.0.6-TT.6
 
 * TOMEE-2295 fix issues with on-the-fly conversion from CMP to JPA
 * TOMEE-2275 update OWB to 1.7.6

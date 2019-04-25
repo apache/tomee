@@ -26,7 +26,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>connector-ear</artifactId>
-    <version>7.0.6-TT.6</version>
+    <version>7.0.6-TT.7</version>
   </parent>
 
   <artifactId>connector-sample-war</artifactId>

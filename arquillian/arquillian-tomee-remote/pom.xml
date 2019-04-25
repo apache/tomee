@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.6-TT.6</version>
+    <version>7.0.6-TT.7</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
   <packaging>jar</packaging>
@@ -91,7 +91,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
       <classifier>webprofile</classifier>
       <scope>provided</scope>
     </dependency>
@@ -120,7 +120,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -147,7 +147,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
     </dependency>
 
     <dependency>

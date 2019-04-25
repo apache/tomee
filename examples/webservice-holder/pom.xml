@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf</artifactId>
-      <version>7.0.6-TT.6</version>
+      <version>7.0.6-TT.7</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends

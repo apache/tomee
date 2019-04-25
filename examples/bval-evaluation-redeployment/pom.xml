@@ -28,8 +28,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>7.0.6-TT.6</tomee.test.version>
-    <openejb.test.version>7.0.6-TT.6</openejb.test.version>
+    <tomee.test.version>7.0.6-TT.7</tomee.test.version>
+    <openejb.test.version>7.0.6-TT.7</openejb.test.version>
   </properties>
 
   <modules>
@@ -109,7 +109,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>7.0.6-TT.6</version>
+        <version>7.0.6-TT.7</version>
         <scope>test</scope>
       </dependency>
       <dependency>

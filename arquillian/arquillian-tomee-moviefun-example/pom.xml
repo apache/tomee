@@ -17,7 +17,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>arquillian</artifactId>
-    <version>7.0.6-TT.6</version>
+    <version>7.0.6-TT.7</version>
   </parent>
   <artifactId>arquillian-tomee-moviefun-example</artifactId>
   <packaging>war</packaging>
