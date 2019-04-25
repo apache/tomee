@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>ejb-webservice</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Web Examples :: EJB WebService</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

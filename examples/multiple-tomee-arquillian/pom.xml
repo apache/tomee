@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multiple-tomee-arquillian</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: Multiple TomEE with Arquillian</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -84,13 +84,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -102,7 +102,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

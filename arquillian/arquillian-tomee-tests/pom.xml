@@ -16,7 +16,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.1.1-TT.3</version>
+    <version>7.1.1-TT.4</version>
   </parent>
   
   <artifactId>arquillian-tomee-tests</artifactId>
@@ -161,7 +161,7 @@
                   <skip>${maven.test.skip}</skip>
                   <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -260,7 +260,7 @@
                   <skip>${skip.remote.webprofile}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>webprofile</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -277,7 +277,7 @@
                   <skip>${skip.embedded}</skip>
                   <argLine>-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${project.version}/openejb-javaagent-${project.version}.jar -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=768M</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -293,7 +293,7 @@
                   <skip>${skip.remote.plume}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -313,7 +313,7 @@
                   <skip>${skip.remote.plus}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>plus</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -329,7 +329,7 @@
                 <configuration>
                   <skip>${skip.webapp.webprofile}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -346,7 +346,7 @@
                 <configuration>
                   <skip>${skip.webapp.plus}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -363,7 +363,7 @@
                 <configuration>
                   <skip>${skip.webapp.plume}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -473,7 +473,7 @@
                   <skip>${maven.test.skip}</skip>
                   <argLine>-XX:MaxPermSize=768M</argLine>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <arquillian.launch>tomee-embedded</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
                   </systemPropertyVariables>
@@ -492,7 +492,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>webprofile</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -509,7 +509,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>plus</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -526,7 +526,7 @@
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
@@ -548,7 +548,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -565,7 +565,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>
@@ -582,7 +582,7 @@
                 <configuration>
                   <skip>${maven.test.skip}</skip>
                   <systemPropertyVariables>
-                    <tomee.version>7.1.1-TT.3</tomee.version>
+                    <tomee.version>7.1.1-TT.4</tomee.version>
                     <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
                     <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
                     <arquillian.launch>tomee-webapp</arquillian.launch>

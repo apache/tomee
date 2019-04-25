@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>groovy-cdi</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: Groovy CDI</name>
 
   <properties>
@@ -98,13 +98,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

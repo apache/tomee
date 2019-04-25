@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>component-interfaces</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: EJB 2.1 Component Interfaces</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

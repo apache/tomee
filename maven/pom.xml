@@ -21,11 +21,11 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.1.1-TT.3</version>
+    <version>7.1.1-TT.4</version>
   </parent>
 
   <groupId>org.apache.tomee.maven</groupId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
   <name>OpenEJB :: Maven Plugins</name>

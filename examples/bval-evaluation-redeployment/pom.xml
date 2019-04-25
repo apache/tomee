@@ -23,13 +23,13 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>bval-evaluation-redeployment</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>7.1.1-TT.3</tomee.test.version>
-    <openejb.test.version>7.1.1-TT.3</openejb.test.version>
+    <tomee.test.version>7.1.1-TT.4</tomee.test.version>
+    <openejb.test.version>7.1.1-TT.4</openejb.test.version>
   </properties>
 
   <modules>
@@ -109,7 +109,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>

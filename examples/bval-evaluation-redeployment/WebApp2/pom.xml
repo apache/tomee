@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>bval-evaluation-redeployment</artifactId>
-    <version>7.1.1-TT.3</version>
+    <version>7.1.1-TT.4</version>
   </parent>
 
   <artifactId>WebApp2</artifactId>

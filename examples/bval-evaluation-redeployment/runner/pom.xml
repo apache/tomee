@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>bval-evaluation-redeployment</artifactId>
-    <version>7.1.1-TT.3</version>
+    <version>7.1.1-TT.4</version>
   </parent>
 
   <artifactId>runner</artifactId>
@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <type>zip</type>
       <classifier>webprofile</classifier>
       <scope>test</scope>

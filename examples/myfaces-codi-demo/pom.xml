@@ -14,7 +14,7 @@
   <artifactId>myfaces-codi-demo</artifactId>
 
   <name>OpenEJB :: Examples :: JSF2/CDI/BV/JPA/CODI</name>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
 
   <packaging>war</packaging>
 
@@ -45,7 +45,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
       </plugin>
     </plugins>
   </build>

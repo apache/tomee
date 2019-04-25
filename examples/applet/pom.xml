@@ -22,7 +22,7 @@
   <groupId>org.superbiz.applet</groupId>
   <artifactId>applet</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Web Examples :: Signed Applet EJB Client</name>
   <url>http://tomee.apache.org</url>
   <properties>
@@ -44,7 +44,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-client</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -112,7 +112,7 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>openejb-client</artifactId>
-                  <version>7.1.1-TT.3</version>
+                  <version>7.1.1-TT.4</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>openejb-client.jar</destFileName>
                 </artifactItem>

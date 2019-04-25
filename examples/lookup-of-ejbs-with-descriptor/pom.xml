@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>lookup-of-ejbs-with-descriptor</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: EJB Lookup with descriptor</name>
   <properties>
     <!--
@@ -74,7 +74,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -23,12 +23,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example-with-application</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Web Examples :: REST Example With Application</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
 
   <repositories>
@@ -83,7 +83,7 @@
             <webappArtifact>
               <groupId>org.apache.tomee</groupId>
               <artifactId>tomee-plus-webapp</artifactId>
-              <version>7.1.1-TT.3</version>
+              <version>7.1.1-TT.4</version>
               <contextPath>openejb</contextPath>
             </webappArtifact>
           </webapps>

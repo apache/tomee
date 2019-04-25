@@ -22,11 +22,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-realm</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: CDI Realm</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -51,7 +51,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
       </plugin>
     </plugins>
   </build>
@@ -85,7 +85,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>

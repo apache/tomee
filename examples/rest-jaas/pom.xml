@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>rest-jaas</artifactId>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <packaging>war</packaging>
   <name>OpenEJB :: Examples :: JAXRS and JAAS</name>
 
@@ -49,7 +49,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>7.1.1-TT.3</version>
+        <version>7.1.1-TT.4</version>
         <configuration>
           <systemVariables>
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>

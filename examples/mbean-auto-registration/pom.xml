@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>mbean-auto-registration</artifactId>
   <packaging>jar</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Examples :: MBean Auto Registration</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-TT.3</tomee.version>
+    <tomee.version>7.1.1-TT.4</tomee.version>
   </properties>
 
   <build>
@@ -63,7 +63,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>mbean-annotation-api</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -78,7 +78,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>7.1.1-TT.3</version>
+      <version>7.1.1-TT.4</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

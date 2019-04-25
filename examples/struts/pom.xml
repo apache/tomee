@@ -20,7 +20,7 @@
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
 

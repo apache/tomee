@@ -20,13 +20,13 @@
   <parent>
     <artifactId>maven</artifactId>
     <groupId>org.apache.tomee.maven</groupId>
-    <version>7.1.1-TT.3</version>
+    <version>7.1.1-TT.4</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>applicationcomposer-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <version>7.1.1-TT.3</version>
+  <version>7.1.1-TT.4</version>
   <name>OpenEJB :: Maven Plugins :: ApplicationComposer Maven Plugin</name>
 
   <dependencies>
