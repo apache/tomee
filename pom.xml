@@ -897,6 +897,11 @@
     <!--<url>http://download.java.net/maven/1</url>-->
     <!--<layout>legacy</layout>-->
     <!--</repository>-->
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
 
     <!-- For OpenSAML 2.6.5, required by server/openejb-cxf -->
     <repository>
