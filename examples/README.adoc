@@ -40,4 +40,14 @@ Check https://github.com/apache/tomee/tree/master/examples/access-timeout for an
 
 That's it!, TomEE website generator will pickup the language and update the examples index automatically without any further configuration.
 
+=== Translation best practices
 
+- The preferred format for the README files is  Asciidoc(.adoc), if you found a file originally written in Markdown (.md) please proceed with the translation in Asciidoc. Keep in mind that apart from changing the file extension,  Asciidoc has it's own syntax. You can check for instance this link:https://asciidoctor.org/docs/asciidoc-vs-markdown/[comparison matrix] between both formats.
+- IF you use some translation software, make sure to review the code and narrative from the original example.
+- If the example README file contains inner links for website navigation, it's recommended to also deploy the website locally to double check navigation. You will need to checkout https://github.com/apache/tomee-site-generator and follow it's README file to deploy locally your changes.
+- At the beginning of each .adoc file is used for configuration purposes, the properties should remain in English and it's advised to translate only the values of `index-group` and `title`. Check the following example for an translation into Spanis :
+
+      index-group=Testing Techniques
+      type=page
+      status=published
+      title=Descriptores alternos
