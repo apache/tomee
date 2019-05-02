@@ -76,9 +76,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-openejb</artifactId>
-      <version>1.2.2</version>
+      <version>4.2.3</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -88,9 +88,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>info.cukes</groupId>
+      <groupId>io.cucumber</groupId>
       <artifactId>cucumber-junit</artifactId>
-      <version>1.2.2</version>
+      <version>4.2.3</version>
       <scope>test</scope>
     </dependency>
     <dependency> <!-- needed by last released versino of cucumber-openejb -->

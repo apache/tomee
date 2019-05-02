@@ -3,11 +3,11 @@
 :jbake-status: status=published
 = Testing Security
 
-These is a simple example that demonstrate how to use the security anotations to set level access on DAO actions. Finally, we show the restrictions behaviors resulted through unit tests.
+Este é um simples exemplo que demonstra como utilizar as anotações de segurança para conseguir configurar nível de acessos a métodos em `DAO`. Ao final, demonstramos através de um teste de unidade qual é o comportamento resultante da restrição de acesso a determinada ação.
 
-== Movie
+== Filme
 
-First, we create a entity class with movie info.
+Criamos uma classe de entidade com informações de filme.
 
 ....
 package org.superbiz.injection.secure;
@@ -57,9 +57,10 @@ public class Movie {
 }
 ....
 
-== Movies
+== Filmes
 
-After, we created a DAO class. Look that we used the security anotations to set the need roles to use each DAO action. For example, adition of a movie is able to a user that has "Manager" or "Employee" `ROLE`, but to remove a movie the user need to has Manager `ROLE`.
+Criamos outra classe DAO para Filme. Observe que utilizamos as anotações para dizer as roles necessárias para utilização de cada ação disponível. Por exemplo, adicionar um filme é possível para um usuário que tenha a `ROLE` "Manager" ou "Employee", mas a remoção de um filme pode ser feita somente por quem tem a `ROLE` Manager.
+
 ....
 package org.superbiz.injection.secure;
 
@@ -103,7 +104,7 @@ public class Movies {
 
 == persistence.xml
 
-We set JPA with these xml.
+Configuramos o JPA com xml.
 
 ....
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
@@ -122,7 +123,7 @@ We set JPA with these xml.
 
 == MovieTest
 
-To test, we created a class with access tests to DAO.
+Para testar, criamos uma classe com testes de acessos ao DAO.
 
 ....
 package org.superbiz.injection.secure;
@@ -264,7 +265,7 @@ public class MovieTest extends TestCase {
 
 == Running
 
-All tests passed.
+Todos os testes passaram.
 
 ....
 -------------------------------------------------------
