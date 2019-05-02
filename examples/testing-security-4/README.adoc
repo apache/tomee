@@ -1,9 +1,9 @@
 :index-group: Security
 :jbake-type: page
-:jbake-status: status=published
-= Testing Security 3
+:jbake-status: status=not-published
+= Testing Security 4
 
-Theses is a simple example to show how to use the login possibilities. We show what is the result behaviors from login fail, success and errors.
+Theses is a simple example to show how to use the security configured by the context set by properties.
 
 == Movie
 
