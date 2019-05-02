@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Vetoed
@@ -71,6 +73,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     private final Set<Type> types;
     private final String id;
     private final Class<? extends Annotation> scope;
+    private final PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry();
 
     public ClaimBean(final BeanManager bm, final Type type) {
         this.bm = bm;
@@ -79,6 +82,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         rawType = getRawType(type);
         this.id = "ClaimBean_" + types;
         scope = Dependent.class;
+        propertyEditorRegistry.registerDefaults();
     }
 
     private Class getRawType(final Type type) {
@@ -245,13 +249,17 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             return (T) toJson(key);
 
         } else if (PropertyEditors.canConvert((Class<?>) ip.getType())) {
+            final Class<?> type = (Class<?>) ip.getType();
             try {
-                final Class<?> type = (Class<?>) ip.getType();
-                final String claimValue = getClaimValue(key).toString();
-                return (T) PropertyEditors.getValue(type, claimValue);
-            } catch (Exception e) {
-                logger.warning(e.getMessage());
+                final Object claimObject = getClaimValue(key);
+                if (claimObject == null) {
+                    return null;
+                }
+                return (T) propertyEditorRegistry.getValue(type, String.valueOf(claimObject));
+            } catch (final Exception e) {
+                logger.log(Level.WARNING, String.format("Cannot convert claim %s into type %s", key, type), e);
             }
+
         } else {
             // handle Raw types
             return getClaimValue(key);

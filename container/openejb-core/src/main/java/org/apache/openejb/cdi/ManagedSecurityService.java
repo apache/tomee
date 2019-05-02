@@ -80,7 +80,11 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
             proxy = Principal.class.cast(Proxy.newProxyInstance(loader, interfaceList.toArray(new Class[0]), new InvocationHandler() {
                 @Override
                 public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                    return method.invoke(doGetPrincipal(), args);
+                    final Principal principal = doGetPrincipal();
+                    if (principal == null) {
+                        return null;
+                    }
+                    return method.invoke(principal, args);
                 }
             }));
         }
