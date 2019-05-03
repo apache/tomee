@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.eclipse.microprofile.jwt.Claim;
@@ -42,6 +43,7 @@ import javax.json.JsonValue;
 import javax.json.bind.Jsonb;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.security.Principal;
 import java.util.Collection;
@@ -272,18 +274,31 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         return claim.standard() == Claims.UNKNOWN ? claim.value() : claim.standard().name();
     }
 
+    // some JAX RS classes may have public classes. Make sure to not log warnings when no principal exists
+    // it may be because we have a public method and we did not receive a JWT
     private T getClaimValue(final String name) {
         final Bean<?> bean = bm.resolve(bm.getBeans(Principal.class));
         final Principal principal = Principal.class.cast(bm.getReference(bean, Principal.class, null));
 
         if (principal == null) {
-            logger.warning(String.format("Can't retrieve claim %s. No active principal.", name));
+            logger.fine(String.format("Can't retrieve claim %s. No active principal.", name));
             return null;
+        }
+
+        // TomEE sometimes wraps the principal with a proxy so we may have a non null principal even if we aren't authenticated
+        // we could merge this test with previous sanity check, but it would make it less readable
+        final boolean isProxy = Proxy.isProxyClass(principal.getClass())
+                && ManagedSecurityService.PrincipalInvocationHandler.class.isInstance(Proxy.getInvocationHandler(principal));
+        if (isProxy) {
+            if (!ManagedSecurityService.PrincipalInvocationHandler.class.cast(Proxy.getInvocationHandler(principal)).isLogged()) {
+                logger.fine(String.format("Can't retrieve claim %s. No active principal.", name));
+                return null;
+            }
         }
 
         JsonWebToken jsonWebToken = null;
         if (!JsonWebToken.class.isInstance(principal)) {
-            logger.warning(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
+            logger.fine(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
             return null;
         }
 
