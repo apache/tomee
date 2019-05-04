@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityService {
