@@ -18,6 +18,7 @@ package org.apache.tomee.microprofile.jwt.principal;
 
 import org.apache.openejb.spi.CallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
 
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,12 +44,13 @@ import java.util.logging.Logger;
  * Another implementation could use nimbus and another plain JSON-P
  */
 @CallerPrincipal
-public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
+public class DefaultJWTCallerPrincipal implements JsonWebToken {
 
     private static final Logger logger = Logger.getLogger(DefaultJWTCallerPrincipal.class.getName());
     private final String jwt;
     private final String type;
     private final JwtClaims claimsSet;
+    private final String name;
 
     /**
      * Create the DefaultJWTCallerPrincipal from the parsed JWT token and the extracted principal name
@@ -56,11 +59,22 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      * @param name - the extracted unqiue name to use as the principal name; from "upn", "preferred_username" or "sub" claim
      */
     public DefaultJWTCallerPrincipal(final String jwt, final String type, final JwtClaims claimsSet, final String name) {
-        super(name);
+        this.name = name;
         this.jwt = jwt;
         this.type = type;
         this.claimsSet = claimsSet;
         fixJoseTypes();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public <T> Optional<T> claim(final String claimName) {
+        final T claim = (T) getClaim(claimName);
+        return Optional.ofNullable(claim);
     }
 
     @Override
@@ -163,7 +177,6 @@ public class DefaultJWTCallerPrincipal extends JWTCallerPrincipal {
      *                JsonWebToken interface be displayed.
      * @return JWTCallerPrincipal string view
      */
-    @Override
     public String toString(boolean showAll) {
         String toString = "DefaultJWTCallerPrincipal{" +
                 "id='" + getTokenID() + '\'' +

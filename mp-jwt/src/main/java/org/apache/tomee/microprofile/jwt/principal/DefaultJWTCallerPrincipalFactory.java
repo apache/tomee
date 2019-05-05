@@ -41,8 +41,8 @@ public class DefaultJWTCallerPrincipalFactory {
     public DefaultJWTCallerPrincipalFactory() {
     }
 
-    public JWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException {
-        JWTCallerPrincipal principal;
+    public DefaultJWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException {
+        DefaultJWTCallerPrincipal principal;
 
         try {
             final JwtConsumerBuilder builder = new JwtConsumerBuilder()
