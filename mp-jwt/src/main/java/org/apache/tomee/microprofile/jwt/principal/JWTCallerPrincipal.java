@@ -44,9 +44,9 @@ import java.util.logging.Logger;
  * Another implementation could use nimbus and another plain JSON-P
  */
 @CallerPrincipal
-public class DefaultJWTCallerPrincipal implements JsonWebToken {
+public class JWTCallerPrincipal implements JsonWebToken {
 
-    private static final Logger logger = Logger.getLogger(DefaultJWTCallerPrincipal.class.getName());
+    private static final Logger logger = Logger.getLogger(JWTCallerPrincipal.class.getName());
     private final String jwt;
     private final String type;
     private final JwtClaims claimsSet;
@@ -58,7 +58,7 @@ public class DefaultJWTCallerPrincipal implements JsonWebToken {
      * @param jwt  - the parsed JWT token representation
      * @param name - the extracted unqiue name to use as the principal name; from "upn", "preferred_username" or "sub" claim
      */
-    public DefaultJWTCallerPrincipal(final String jwt, final String type, final JwtClaims claimsSet, final String name) {
+    public JWTCallerPrincipal(final String jwt, final String type, final JwtClaims claimsSet, final String name) {
         this.name = name;
         this.jwt = jwt;
         this.type = type;
