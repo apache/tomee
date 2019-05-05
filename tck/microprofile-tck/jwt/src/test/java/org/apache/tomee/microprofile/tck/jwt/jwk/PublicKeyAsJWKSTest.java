@@ -17,7 +17,7 @@
 package org.apache.tomee.microprofile.tck.jwt.jwk;
 
 import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.eclipse.microprofile.jwt.config.Names;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
@@ -54,28 +54,28 @@ public class PublicKeyAsJWKSTest {
         final ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo = new ConfigurableJWTAuthContextInfo();
         configurableJWTAuthContextInfo.init(null);
 
-        final JWTAuthContextInfo jwtAuthContextInfo =
+        final JWTAuthConfiguration jwtAuthConfiguration =
                 configurableJWTAuthContextInfo.getJWTAuthContextInfo().orElseThrow(IllegalArgumentException::new);
 
         final JwtConsumerBuilder jwtConsumerBuilder = new JwtConsumerBuilder()
                 .setRequireExpirationTime()
                 .setRequireSubject()
                 .setSkipDefaultAudienceValidation()
-                .setExpectedIssuer(jwtAuthContextInfo.getIssuer())
+                .setExpectedIssuer(jwtAuthConfiguration.getIssuer())
                 .setJwsAlgorithmConstraints(new AlgorithmConstraints(WHITELIST, RSA_USING_SHA256))
                 .setSkipDefaultAudienceValidation()
-                .setVerificationKey(jwtAuthContextInfo.getPublicKey());
+                .setVerificationKey(jwtAuthConfiguration.getPublicKey());
 
-        if (jwtAuthContextInfo.getExpGracePeriodSecs() > 0) {
-            jwtConsumerBuilder.setAllowedClockSkewInSeconds(jwtAuthContextInfo.getExpGracePeriodSecs());
+        if (jwtAuthConfiguration.getExpGracePeriodSecs() > 0) {
+            jwtConsumerBuilder.setAllowedClockSkewInSeconds(jwtAuthConfiguration.getExpGracePeriodSecs());
         } else {
             jwtConsumerBuilder.setEvaluationTime(NumericDate.fromSeconds(0));
         }
 
-        if (jwtAuthContextInfo.isSingleKey()) {
-            jwtConsumerBuilder.setVerificationKey(jwtAuthContextInfo.getPublicKey());
+        if (jwtAuthConfiguration.isSingleKey()) {
+            jwtConsumerBuilder.setVerificationKey(jwtAuthConfiguration.getPublicKey());
         } else {
-            jwtConsumerBuilder.setVerificationKeyResolver(new JwksVerificationKeyResolver(jwtAuthContextInfo.getPublicKeys()));
+            jwtConsumerBuilder.setVerificationKeyResolver(new JwksVerificationKeyResolver(jwtAuthConfiguration.getPublicKeys()));
         }
 
         final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();

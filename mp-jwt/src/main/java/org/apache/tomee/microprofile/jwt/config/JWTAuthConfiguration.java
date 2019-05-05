@@ -29,20 +29,20 @@ import java.util.stream.Collectors;
 /**
  * The public key and expected issuer needed to validate a token.
  */
-public class JWTAuthContextInfo {
-    private static final Logger logger = Logger.getLogger(JWTAuthContextInfo.class.getName());
+public class JWTAuthConfiguration {
+    private static final Logger logger = Logger.getLogger(JWTAuthConfiguration.class.getName());
     public static final String DEFAULT_KEY = "DEFAULT";
 
     private Map<String, Key> publicKeys;
     private String issuer;
     private int expGracePeriodSecs = 60;
 
-    private JWTAuthContextInfo(final Key publicKey, final String issuer) {
+    private JWTAuthConfiguration(final Key publicKey, final String issuer) {
         this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
         this.issuer = issuer;
     }
 
-    private JWTAuthContextInfo(final Map<String, Key> publicKeys, final String issuer) {
+    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer) {
         if (publicKeys.size() == 1) {
             final Key singleKey = publicKeys.values().iterator().next();
             this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
@@ -52,12 +52,12 @@ public class JWTAuthContextInfo {
         this.issuer = issuer;
     }
 
-    public static JWTAuthContextInfo authContextInfo(final Key publicKey, final String issuer) {
-        return new JWTAuthContextInfo(publicKey, issuer);
+    public static JWTAuthConfiguration authContextInfo(final Key publicKey, final String issuer) {
+        return new JWTAuthConfiguration(publicKey, issuer);
     }
 
-    public static JWTAuthContextInfo authContextInfo(final Map<String, Key> publicKeys, final String issuer) {
-        return new JWTAuthContextInfo(publicKeys, issuer);
+    public static JWTAuthConfiguration authContextInfo(final Map<String, Key> publicKeys, final String issuer) {
+        return new JWTAuthConfiguration(publicKeys, issuer);
     }
 
     public boolean isSingleKey() {

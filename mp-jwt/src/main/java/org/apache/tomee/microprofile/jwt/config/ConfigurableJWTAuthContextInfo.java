@@ -66,17 +66,17 @@ public class ConfigurableJWTAuthContextInfo {
     private static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
 
     private Config config;
-    private JWTAuthContextInfo jwtAuthContextInfo;
+    private JWTAuthConfiguration jwtAuthConfiguration;
     private static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     private static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
 
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         this.config = ConfigProvider.getConfig();
-        this.jwtAuthContextInfo = createJWTAuthContextInfo();
+        this.jwtAuthConfiguration = createJWTAuthContextInfo();
     }
 
-    public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
-        return Optional.ofNullable(jwtAuthContextInfo);
+    public Optional<JWTAuthConfiguration> getJWTAuthContextInfo() {
+        return Optional.ofNullable(jwtAuthConfiguration);
     }
 
     private Optional<String> getVerifierPublicKey() {
@@ -91,7 +91,7 @@ public class ConfigurableJWTAuthContextInfo {
         return config.getOptionalValue(ISSUER, String.class);
     }
 
-    private JWTAuthContextInfo createJWTAuthContextInfo() {
+    private JWTAuthConfiguration createJWTAuthContextInfo() {
         if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
             throw new DeploymentException("Both " +
                                           VERIFIER_PUBLIC_KEY +
@@ -109,7 +109,7 @@ public class ConfigurableJWTAuthContextInfo {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .findFirst()
-                .map(keys -> JWTAuthContextInfo.authContextInfo(keys, getIssuer().orElse(null)))
+                .map(keys -> JWTAuthConfiguration.authContextInfo(keys, getIssuer().orElse(null)))
                 .orElse(null);
     }
 

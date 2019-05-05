@@ -21,7 +21,7 @@ import org.apache.openejb.spi.SecurityService;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -72,7 +72,7 @@ public class MPJWTFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
-        final Optional<JWTAuthContextInfo> authContextInfo = getAuthContextInfo();
+        final Optional<JWTAuthConfiguration> authContextInfo = getAuthContextInfo();
         if (!authContextInfo.isPresent()) {
             chain.doFilter(request, response);
             return;
@@ -112,11 +112,11 @@ public class MPJWTFilter implements Filter {
     }
 
     @Inject
-    private Instance<JWTAuthContextInfo> authContextInfo;
+    private Instance<JWTAuthConfiguration> authContextInfo;
     @Inject
     private ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo;
 
-    private Optional<JWTAuthContextInfo> getAuthContextInfo() {
+    private Optional<JWTAuthConfiguration> getAuthContextInfo() {
         if (!authContextInfo.isUnsatisfied()) {
             return Optional.of(authContextInfo.get());
         }
@@ -124,7 +124,7 @@ public class MPJWTFilter implements Filter {
         return configurableJWTAuthContextInfo.getJWTAuthContextInfo();
     }
 
-    private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
+    private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthConfiguration authContextInfo) {
 
         return new ValidateJSonWebToken(httpServletRequest, authContextInfo)::validate;
 
@@ -142,7 +142,7 @@ public class MPJWTFilter implements Filter {
          * @param authContextInfo the context configuration to validate the token
          * @throws IllegalArgumentException if the request is null
          */
-        public MPJWTServletRequestWrapper(final HttpServletRequest request, final JWTAuthContextInfo authContextInfo) {
+        public MPJWTServletRequestWrapper(final HttpServletRequest request, final JWTAuthConfiguration authContextInfo) {
             super(request);
             this.request = request;
             tokenFunction = token(request, authContextInfo);
@@ -260,10 +260,10 @@ public class MPJWTFilter implements Filter {
     public static class ValidateJSonWebToken {
 
         private final HttpServletRequest httpServletRequest;
-        private final JWTAuthContextInfo authContextInfo;
+        private final JWTAuthConfiguration authContextInfo;
         private JsonWebToken jsonWebToken;
 
-        public ValidateJSonWebToken(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
+        public ValidateJSonWebToken(final HttpServletRequest httpServletRequest, final JWTAuthConfiguration authContextInfo) {
             this.httpServletRequest = httpServletRequest;
             this.authContextInfo = authContextInfo;
         }
@@ -311,7 +311,7 @@ public class MPJWTFilter implements Filter {
 
         }
 
-        public static JWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException {
+        public static JWTCallerPrincipal parse(final String token, final JWTAuthConfiguration authContextInfo) throws ParseException {
             JWTCallerPrincipal principal;
 
             try {
