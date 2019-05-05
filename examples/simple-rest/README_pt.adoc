@@ -41,7 +41,7 @@ Usamos o OpenEJB ``ApplicationComposer`` para facilitar o teste.
 
 A ideia é primeiro ativar os serviços ``jaxrs``. Isto é feito usando a anotação ``@EnableServices``.
 
-Então nós criamos a aplicação simplesmente retornando um objeto representando o ``web.xml``. Aqui nós simplesmente o usamos para definir o contexto raiz mas você também pode usar para definir sua aplicação REST também. E para completar a aplicação nos adicionamos a anotação ``@Classes`` para definir o conjunto de classes a ser utilizado nesse app.
+Então nós criamos a aplicação simplesmente retornando um objeto representando o ``web.xml``. Aqui nós simplesmente o usamos para definir o contexto raiz mas você também pode usar para definir sua aplicação REST também. E para completar a aplicação nós adicionamos a anotação ``@Classes`` para definir o conjunto de classes a ser utilizado nesse app.
 
 Finalmente para testar nós usamos o client API do ``cfx`` para chamar o serviço REST nos métodos ``get()`` e ``post()``.
 
