@@ -33,43 +33,43 @@ public class JWTAuthContextInfo {
     private static final Logger logger = Logger.getLogger(JWTAuthContextInfo.class.getName());
     public static final String DEFAULT_KEY = "DEFAULT";
 
-    private Map<String, Key> signerKeys;
-    private String issuedBy;
+    private Map<String, Key> publicKeys;
+    private String issuer;
     private int expGracePeriodSecs = 60;
 
-    private JWTAuthContextInfo(final Key signerKey, final String issuedBy) {
-        this.signerKeys = Collections.singletonMap(DEFAULT_KEY, signerKey);
-        this.issuedBy = issuedBy;
+    private JWTAuthContextInfo(final Key publicKey, final String issuer) {
+        this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
+        this.issuer = issuer;
     }
 
-    private JWTAuthContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
-        if (signerKeys.size() == 1) {
-            final Key singleKey = signerKeys.values().iterator().next();
-            this.signerKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
+    private JWTAuthContextInfo(final Map<String, Key> publicKeys, final String issuer) {
+        if (publicKeys.size() == 1) {
+            final Key singleKey = publicKeys.values().iterator().next();
+            this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
         } else {
-            this.signerKeys = Collections.unmodifiableMap(signerKeys);
+            this.publicKeys = Collections.unmodifiableMap(publicKeys);
         }
-        this.issuedBy = issuedBy;
+        this.issuer = issuer;
     }
 
-    public static JWTAuthContextInfo authContextInfo(final Key signerKey, final String issuedBy) {
-        return new JWTAuthContextInfo(signerKey, issuedBy);
+    public static JWTAuthContextInfo authContextInfo(final Key publicKey, final String issuer) {
+        return new JWTAuthContextInfo(publicKey, issuer);
     }
 
-    public static JWTAuthContextInfo authContextInfo(final Map<String, Key> signerKeys, final String issuedBy) {
-        return new JWTAuthContextInfo(signerKeys, issuedBy);
+    public static JWTAuthContextInfo authContextInfo(final Map<String, Key> publicKeys, final String issuer) {
+        return new JWTAuthContextInfo(publicKeys, issuer);
     }
 
     public boolean isSingleKey() {
-        return signerKeys.size() == 1;
+        return publicKeys.size() == 1;
     }
 
-    public Key getSignerKey() {
-        return signerKeys.get(DEFAULT_KEY);
+    public Key getPublicKey() {
+        return publicKeys.get(DEFAULT_KEY);
     }
 
-    public List<JsonWebKey> getSignerKeys() {
-        return signerKeys.entrySet().stream().map(key -> {
+    public List<JsonWebKey> getPublicKeys() {
+        return publicKeys.entrySet().stream().map(key -> {
             try {
                 final JsonWebKey jsonWebKey = JsonWebKey.Factory.newJwk(key.getValue());
                 jsonWebKey.setKeyId(key.getKey());
@@ -81,8 +81,8 @@ public class JWTAuthContextInfo {
         }).collect(Collectors.toList());
     }
 
-    public String getIssuedBy() {
-        return issuedBy;
+    public String getIssuer() {
+        return issuer;
     }
 
     public int getExpGracePeriodSecs() {

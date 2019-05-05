@@ -61,10 +61,10 @@ public class PublicKeyAsJWKSTest {
                 .setRequireExpirationTime()
                 .setRequireSubject()
                 .setSkipDefaultAudienceValidation()
-                .setExpectedIssuer(jwtAuthContextInfo.getIssuedBy())
+                .setExpectedIssuer(jwtAuthContextInfo.getIssuer())
                 .setJwsAlgorithmConstraints(new AlgorithmConstraints(WHITELIST, RSA_USING_SHA256))
                 .setSkipDefaultAudienceValidation()
-                .setVerificationKey(jwtAuthContextInfo.getSignerKey());
+                .setVerificationKey(jwtAuthContextInfo.getPublicKey());
 
         if (jwtAuthContextInfo.getExpGracePeriodSecs() > 0) {
             jwtConsumerBuilder.setAllowedClockSkewInSeconds(jwtAuthContextInfo.getExpGracePeriodSecs());
@@ -73,9 +73,9 @@ public class PublicKeyAsJWKSTest {
         }
 
         if (jwtAuthContextInfo.isSingleKey()) {
-            jwtConsumerBuilder.setVerificationKey(jwtAuthContextInfo.getSignerKey());
+            jwtConsumerBuilder.setVerificationKey(jwtAuthContextInfo.getPublicKey());
         } else {
-            jwtConsumerBuilder.setVerificationKeyResolver(new JwksVerificationKeyResolver(jwtAuthContextInfo.getSignerKeys()));
+            jwtConsumerBuilder.setVerificationKeyResolver(new JwksVerificationKeyResolver(jwtAuthContextInfo.getPublicKeys()));
         }
 
         final JwtConsumer jwtConsumer = jwtConsumerBuilder.build();

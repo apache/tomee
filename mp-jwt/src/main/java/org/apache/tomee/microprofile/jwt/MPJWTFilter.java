@@ -319,7 +319,7 @@ public class MPJWTFilter implements Filter {
                         .setRequireExpirationTime()
                         .setRequireSubject()
                         .setSkipDefaultAudienceValidation()
-                        .setExpectedIssuer(authContextInfo.getIssuedBy())
+                        .setExpectedIssuer(authContextInfo.getIssuer())
                         .setJwsAlgorithmConstraints(
                                 new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                         AlgorithmIdentifiers.RSA_USING_SHA256));
@@ -331,9 +331,9 @@ public class MPJWTFilter implements Filter {
                 }
 
                 if (authContextInfo.isSingleKey()) {
-                    builder.setVerificationKey(authContextInfo.getSignerKey());
+                    builder.setVerificationKey(authContextInfo.getPublicKey());
                 } else {
-                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getSignerKeys()));
+                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getPublicKeys()));
                 }
 
                 final JwtConsumer jwtConsumer = builder.build();
