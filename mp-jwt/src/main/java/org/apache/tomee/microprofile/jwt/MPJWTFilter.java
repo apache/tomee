@@ -22,7 +22,7 @@ import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
-import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipalFactory;
+import org.apache.tomee.microprofile.jwt.principal.DefaultJWTCallerPrincipalFactory;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.inject.Instance;
@@ -34,7 +34,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +63,7 @@ public class MPJWTFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final Optional<JWTAuthContextInfo> authContextInfo = getAuthContextInfo();
         if (!authContextInfo.isPresent()) {
-            chain.doFilter(request,response);
+            chain.doFilter(request, response);
             return;
         }
 
@@ -116,59 +115,8 @@ public class MPJWTFilter implements Filter {
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
 
-        return new Function<HttpServletRequest, JsonWebToken>() {
+        return new ValidateJSonWebToken(httpServletRequest, authContextInfo)::validate;
 
-            private JsonWebToken jsonWebToken;
-
-            @Override
-            public JsonWebToken apply(final HttpServletRequest request) {
-
-                // not sure it's worth having synchronization inside a single request
-                // worth case, we would parse and validate the token twice
-                if (jsonWebToken != null) {
-                    return jsonWebToken;
-                }
-
-                final String authorizationHeader = httpServletRequest.getHeader("Authorization");
-                if (authorizationHeader == null || authorizationHeader.isEmpty()) {
-                    throw new MissingAuthorizationHeaderException();
-                }
-
-                if (!authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith("bearer ")) {
-                    throw new BadAuthorizationPrefixException(authorizationHeader);
-                }
-
-                final String token = authorizationHeader.substring("bearer ".length());
-                try {
-                    jsonWebToken = validate(token, authContextInfo);
-
-                } catch (final ParseException e) {
-                    throw new InvalidTokenException(token, e);
-                }
-
-                // TODO - do the login here, save the state to the request so we can recover it later.
-
-                final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-                if (TomcatSecurityService.class.isInstance(securityService)) {
-                    TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
-                    final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
-                    Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
-
-                    request.setAttribute("MP_JWT_PRE_LOGIN_STATE", state);
-                }
-
-                // TODO Also check if it is an async request and add a listener to close off the state
-
-                return jsonWebToken;
-
-            }
-        };
-
-    }
-
-    private static JsonWebToken validate(final String bearerToken, final JWTAuthContextInfo authContextInfo) throws ParseException {
-        JWTCallerPrincipalFactory factory = JWTCallerPrincipalFactory.instance();
-        return factory.parse(bearerToken, authContextInfo);
     }
 
     public static class MPJWTServletRequestWrapper extends HttpServletRequestWrapper {
@@ -296,5 +244,60 @@ public class MPJWTFilter implements Filter {
             return Response.status(exception.getStatus()).entity(exception.getMessage()).build();
         }
 
+    }
+
+    public static class ValidateJSonWebToken {
+
+        private final HttpServletRequest httpServletRequest;
+        private final JWTAuthContextInfo authContextInfo;
+        private JsonWebToken jsonWebToken;
+
+        public ValidateJSonWebToken(final HttpServletRequest httpServletRequest, final JWTAuthContextInfo authContextInfo) {
+            this.httpServletRequest = httpServletRequest;
+            this.authContextInfo = authContextInfo;
+        }
+
+        public JsonWebToken validate(final HttpServletRequest request) {
+
+            // not sure it's worth having synchronization inside a single request
+            // worth case, we would parse and validate the token twice
+            if (jsonWebToken != null) {
+                return jsonWebToken;
+            }
+
+            final String authorizationHeader = httpServletRequest.getHeader("Authorization");
+            if (authorizationHeader == null || authorizationHeader.isEmpty()) {
+                throw new MissingAuthorizationHeaderException();
+            }
+
+            if (!authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith("bearer ")) {
+                throw new BadAuthorizationPrefixException(authorizationHeader);
+            }
+
+            final String token = authorizationHeader.substring("bearer ".length());
+            try {
+                DefaultJWTCallerPrincipalFactory factory = new DefaultJWTCallerPrincipalFactory();
+                jsonWebToken = factory.parse(token, authContextInfo);
+
+            } catch (final ParseException e) {
+                throw new InvalidTokenException(token, e);
+            }
+
+            // TODO - do the login here, save the state to the request so we can recover it later.
+
+            final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+            if (TomcatSecurityService.class.isInstance(securityService)) {
+                TomcatSecurityService tomcatSecurityService = TomcatSecurityService.class.cast(securityService);
+                final org.apache.catalina.connector.Request req = OpenEJBSecurityListener.requests.get();
+                Object state = tomcatSecurityService.enterWebApp(req.getWrapper().getRealm(), jsonWebToken, req.getWrapper().getRunAs());
+
+                request.setAttribute("MP_JWT_PRE_LOGIN_STATE", state);
+            }
+
+            // TODO Also check if it is an async request and add a listener to close off the state
+
+            return jsonWebToken;
+
+        }
     }
 }

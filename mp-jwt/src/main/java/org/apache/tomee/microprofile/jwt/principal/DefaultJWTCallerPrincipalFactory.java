@@ -33,7 +33,7 @@ import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 /**
  * A default implementation of the abstract JWTCallerPrincipalFactory that uses the Keycloak token parsing classes.
  */
-public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory {
+public class DefaultJWTCallerPrincipalFactory {
 
     /**
      * Tries to load the JWTAuthContextInfo from CDI if the class level authContextInfo has not been set.
@@ -41,7 +41,6 @@ public class DefaultJWTCallerPrincipalFactory extends JWTCallerPrincipalFactory 
     public DefaultJWTCallerPrincipalFactory() {
     }
 
-    @Override
     public JWTCallerPrincipal parse(final String token, final JWTAuthContextInfo authContextInfo) throws ParseException {
         JWTCallerPrincipal principal;
 
