@@ -20,7 +20,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
-import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
@@ -113,15 +113,16 @@ public class MPJWTFilter implements Filter {
 
     @Inject
     private Instance<JWTAuthConfiguration> authContextInfo;
+
     @Inject
-    private ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo;
+    private JWTAuthConfigurationProperties jwtAuthConfigurationProperties;
 
     private Optional<JWTAuthConfiguration> getAuthContextInfo() {
         if (!authContextInfo.isUnsatisfied()) {
             return Optional.of(authContextInfo.get());
         }
 
-        return configurableJWTAuthContextInfo.getJWTAuthContextInfo();
+        return jwtAuthConfigurationProperties.getJWTAuthContextInfo();
     }
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthConfiguration authContextInfo) {

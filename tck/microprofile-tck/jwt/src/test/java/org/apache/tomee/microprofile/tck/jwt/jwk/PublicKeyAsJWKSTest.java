@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.tck.jwt.jwk;
 
-import org.apache.tomee.microprofile.jwt.config.ConfigurableJWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.eclipse.microprofile.jwt.config.Names;
 import org.eclipse.microprofile.jwt.tck.TCKConstants;
@@ -51,11 +51,11 @@ public class PublicKeyAsJWKSTest {
         final String token = TokenUtils.generateTokenString(privateKey, kid, "/Token1.json", null, new HashMap<>());
         System.out.println("token = " + token);
 
-        final ConfigurableJWTAuthContextInfo configurableJWTAuthContextInfo = new ConfigurableJWTAuthContextInfo();
-        configurableJWTAuthContextInfo.init(null);
+        final JWTAuthConfigurationProperties JWTAuthConfigurationProperties = new JWTAuthConfigurationProperties();
+        JWTAuthConfigurationProperties.init(null);
 
         final JWTAuthConfiguration jwtAuthConfiguration =
-                configurableJWTAuthContextInfo.getJWTAuthContextInfo().orElseThrow(IllegalArgumentException::new);
+                JWTAuthConfigurationProperties.getJWTAuthContextInfo().orElseThrow(IllegalArgumentException::new);
 
         final JwtConsumerBuilder jwtConsumerBuilder = new JwtConsumerBuilder()
                 .setRequireExpirationTime()

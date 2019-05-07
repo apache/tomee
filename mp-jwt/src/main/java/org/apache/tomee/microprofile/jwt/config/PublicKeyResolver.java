@@ -92,7 +92,7 @@ public class PublicKeyResolver {
                 .map(Optional::get)
                 .findFirst()
                 .map(this::readPublicKeys)
-                .orElseThrow(() -> new DeploymentException(ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION +
+                .orElseThrow(() -> new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION +
                         publicKeyLocation));
     }
 
@@ -106,7 +106,7 @@ public class PublicKeyResolver {
             return Optional.of(readPublicKeyFromInputStream(is));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -121,14 +121,14 @@ public class PublicKeyResolver {
             final File publicKeyFile = new File(locationURL.toURI());
             if (!publicKeyFile.exists() || publicKeyFile.isDirectory()) {
                 throw new DeploymentException(
-                        ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION +
+                        JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION +
                                 publicKeyLocation +
                                 ". File does not exist or it is a directory.");
             }
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException | URISyntaxException e) {
             throw new DeploymentException(
-                    ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -142,7 +142,7 @@ public class PublicKeyResolver {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -152,7 +152,7 @@ public class PublicKeyResolver {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -197,7 +197,7 @@ public class PublicKeyResolver {
             final JsonWebKey key = JsonWebKey.Factory.newJwk(publicKey);
             return Collections.singletonMap(key.getKeyId(), key.getKey());
         } catch (final JoseException e) {
-            throw new DeploymentException(ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR + " JWK.", e);
+            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 
@@ -237,7 +237,7 @@ public class PublicKeyResolver {
                             .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
             return Collections.unmodifiableMap(keys);
         } catch (final JoseException e) {
-            throw new DeploymentException(ConfigurableJWTAuthContextInfo.PUBLIC_KEY_ERROR + " JWK.", e);
+            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 
@@ -258,7 +258,7 @@ public class PublicKeyResolver {
             throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
         }
 
-        if (!ConfigurableJWTAuthContextInfo.JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
+        if (!JWTAuthConfigurationProperties.JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
             throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
         }
     }

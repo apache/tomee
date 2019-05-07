@@ -34,8 +34,16 @@ import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
 import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 
+/**
+ * The purpose of this class is to create an instance of JWTAuthConfiguration using
+ * the MicroProfile JWT 1.1 standard configuration properties.  These are supplied
+ * through the MicroProfile Config specification.
+ *
+ * If the user @Produces an instance of JWTAuthConfiguration via a CDI bean they create,
+ * then this class will never be called.
+ */
 @ApplicationScoped
-public class ConfigurableJWTAuthContextInfo {
+public class JWTAuthConfigurationProperties {
     public static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
