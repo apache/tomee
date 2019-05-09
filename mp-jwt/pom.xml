@@ -85,5 +85,16 @@
       <artifactId>jose4j</artifactId>
       <version>0.6.0</version>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.nimbusds</groupId>
+      <artifactId>nimbus-jose-jwt</artifactId>
+      <version>4.23</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

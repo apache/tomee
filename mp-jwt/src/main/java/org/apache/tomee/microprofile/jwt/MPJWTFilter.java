@@ -22,19 +22,7 @@ import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
-import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
-import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.MalformedClaimException;
-import org.jose4j.jwt.NumericDate;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.jwt.consumer.JwtContext;
-import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -289,7 +277,10 @@ public class MPJWTFilter implements Filter {
 
             final String token = authorizationHeader.substring("bearer ".length());
             try {
-                jsonWebToken = parse(token, authContextInfo);
+                final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
+                        .verificationKey(authContextInfo.getPublicKey())
+                        .build();
+                jsonWebToken = validator.validate(token);
 
             } catch (final ParseException e) {
                 throw new InvalidTokenException(token, e);
@@ -312,57 +303,5 @@ public class MPJWTFilter implements Filter {
 
         }
 
-        public static JWTCallerPrincipal parse(final String token, final JWTAuthConfiguration authContextInfo) throws ParseException {
-            JWTCallerPrincipal principal;
-
-            try {
-                final JwtConsumerBuilder builder = new JwtConsumerBuilder()
-                        .setRequireExpirationTime()
-                        .setRequireSubject()
-                        .setSkipDefaultAudienceValidation()
-                        .setExpectedIssuer(authContextInfo.getIssuer())
-                        .setJwsAlgorithmConstraints(
-                                new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
-                                        AlgorithmIdentifiers.RSA_USING_SHA256));
-
-                if (authContextInfo.getExpGracePeriodSecs() > 0) {
-                    builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
-                } else {
-                    builder.setEvaluationTime(NumericDate.fromSeconds(0));
-                }
-
-                if (authContextInfo.isSingleKey()) {
-                    builder.setVerificationKey(authContextInfo.getPublicKey());
-                } else {
-                    builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getPublicKeys()));
-                }
-
-                final JwtConsumer jwtConsumer = builder.build();
-                final JwtContext jwtContext = jwtConsumer.process(token);
-                final String type = jwtContext.getJoseObjects().get(0).getHeader("typ");
-                //  Validate the JWT and process it to the Claims
-                jwtConsumer.processContext(jwtContext);
-                JwtClaims claimsSet = jwtContext.getJwtClaims();
-
-                // We have to determine the unique name to use as the principal name. It comes from upn, preferred_username, sub in that order
-                String principalName = claimsSet.getClaimValue("upn", String.class);
-                if (principalName == null) {
-                    principalName = claimsSet.getClaimValue("preferred_username", String.class);
-                    if (principalName == null) {
-                        principalName = claimsSet.getSubject();
-                    }
-                }
-                claimsSet.setClaim(Claims.raw_token.name(), token);
-                principal = new JWTCallerPrincipal(token, type, claimsSet, principalName);
-
-            } catch (final InvalidJwtException e) {
-                throw new ParseException("Failed to verify token", e);
-
-            } catch (final MalformedClaimException e) {
-                throw new ParseException("Failed to verify token claims", e);
-            }
-
-            return principal;
-        }
     }
 }

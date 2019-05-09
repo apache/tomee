@@ -64,7 +64,7 @@ public class PublicKeyResolver {
                 .findFirst();
     }
 
-    private Map<String, Key> readPublicKeys(final String publicKey) {
+    public Map<String, Key> readPublicKeys(final String publicKey) {
         final Stream<Supplier<Map<String, Key>>> possiblePublicKeysParses =
                 Stream.of(() -> parsePCKS8(publicKey),
                         () -> parseJwk(publicKey),
