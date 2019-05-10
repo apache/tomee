@@ -14,26 +14,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+public class JWTValidationGenerationException extends IllegalStateException {
 
-public class Colors$$JwtConstraints {
+    private final Class<?> componentClass;
 
-    public Colors$$JwtConstraints() {
+    public JWTValidationGenerationException(final Class<?> componentClass, final Throwable e) {
+        super(e);
+        this.componentClass = componentClass;
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken red$$0() {
-        return null;
-    }
-
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken blue$$1() {
-        return null;
+    public Class<?> getComponentClass() {
+        return componentClass;
     }
 }

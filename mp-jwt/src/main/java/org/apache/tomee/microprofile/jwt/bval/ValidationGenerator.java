@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.jwt.bval;
 import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
+import org.apache.xbean.asm7.AnnotationVisitor;
 import org.apache.xbean.asm7.ClassWriter;
 import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Opcodes;
@@ -89,20 +90,23 @@ import java.util.Map;
  *    }
  *
  */
-public class JWTBeanValidationConstraintsGenerator implements Opcodes {
+public class ValidationGenerator implements Opcodes {
 
     public static byte[] generateFor(final Class<?> target) throws ProxyGenerationException {
+        final List<Method> constrainedMethods = getConstrainedMethods(target);
+
+        if (constrainedMethods.size() == 0) return null;
 
         final Map<String, MethodVisitor> visitors = new HashMap<>();
 
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
-        final String generatedClassName = (target.getName() + "$$JwtConstraints").replace('.', '/');
+        final String generatedClassName = getName(target).replace('.', '/');
 
         cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, generatedClassName, null, "java/lang/Object", null);
 
-        { // private constructor
-            final MethodVisitor mv = cw.visitMethod(ACC_PRIVATE, "<init>", "()V", null, null);
+        { // public constructor
+            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
@@ -112,12 +116,17 @@ public class JWTBeanValidationConstraintsGenerator implements Opcodes {
         }
 
         int id = 0;
-        for (final Method method : getConstrainedMethods(target)) {
+        for (final Method method : constrainedMethods) {
             final String name = method.getName() + "$$" + (id++);
 
             // Declare a method of return type JsonWebToken for use with
             // a call to BeanValidation's ExecutableValidator.validateReturnValue
             final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()Lorg/eclipse/microprofile/jwt/JsonWebToken;", null, null);
+
+            // Put the method name on the
+            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
+            av.visit("value", method.toString());
+            av.visitEnd();
 
             // track the MethodVisitor
             // We will later copy over the annotations
@@ -138,6 +147,10 @@ public class JWTBeanValidationConstraintsGenerator implements Opcodes {
         }
 
         return cw.toByteArray();
+    }
+
+    public static String getName(final Class<?> target) {
+        return target.getName() + "$$JwtConstraints";
     }
 
     public static List<Method> getConstrainedMethods(final Class<?> clazz) {

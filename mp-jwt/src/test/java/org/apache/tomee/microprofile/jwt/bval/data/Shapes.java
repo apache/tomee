@@ -14,7 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval;
+package org.apache.tomee.microprofile.jwt.bval.data;
 
-public class JwtConstraintInterceptor {
+import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
+import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
+
+public class Shapes {
+
+    @Issuer("http://foo.bar.com")
+    @Audience("joe")
+    public void square() {
+    }
+
+    @Audience("jane")
+    public void triangle(boolean isRight) {
+    }
+
+    public void circle() {
+    }
 }

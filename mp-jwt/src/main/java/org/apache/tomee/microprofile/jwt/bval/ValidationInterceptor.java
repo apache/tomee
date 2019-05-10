@@ -14,26 +14,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+public class ValidationInterceptor {
 
-public class Colors$$JwtConstraints {
-
-    public Colors$$JwtConstraints() {
+    public ValidationInterceptor(final Class<?> componentClass) {
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken red$$0() {
-        return null;
-    }
+    /**
+     * Will return null if this concept does not apply to this bean.
+     */
+    public static ValidationInterceptor apply(final Class<?> componentClass) {
+//        final byte[] bytes = JWTBeanValidationConstraintsGenerator.generateFor(componentClass);
+//        if (bytes == null) return null;
+//
+//        final String name = JWTBeanValidationConstraintsGenerator.getName(componentClass);
+//        final Class constraintsClazz = LocalBeanProxyFactory.Unsafe.defineClass(componentClass.getClassLoader(), componentClass, name, bytes);
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken blue$$1() {
         return null;
     }
 }

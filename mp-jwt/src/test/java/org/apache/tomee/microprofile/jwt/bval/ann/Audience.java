@@ -24,6 +24,7 @@ import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.util.Set;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,32 +33,32 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Documented
-@javax.validation.Constraint(validatedBy = {Issuer.Constraint.class})
+@javax.validation.Constraint(validatedBy = {Audience.Constraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-public @interface Issuer {
+public @interface Audience {
 
     String value();
 
     Class<?>[] groups() default {};
 
-    String message() default "The 'iss' claim must be '{value}'";
+    String message() default "The 'aud' claim must contain '{value}'";
 
     Class<? extends Payload>[] payload() default {};
 
 
-    class Constraint implements ConstraintValidator<Issuer, JsonWebToken> {
-        private Issuer issuer;
+    class Constraint implements ConstraintValidator<Audience, JsonWebToken> {
+        private Audience audience;
 
         @Override
-        public void initialize(final Issuer constraint) {
-            this.issuer = constraint;
+        public void initialize(final Audience constraint) {
+            this.audience = constraint;
         }
 
         @Override
         public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
-            final String issuer = value.getIssuer();
-            return this.issuer.value().equals(issuer);
+            final Set<String> audience = value.getAudience();
+            return audience.contains(this.audience.value());
         }
     }
 }
