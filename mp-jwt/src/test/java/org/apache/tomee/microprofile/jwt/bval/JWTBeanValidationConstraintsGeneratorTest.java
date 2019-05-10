@@ -20,12 +20,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public class ConstraintsGeneratorTest {
+public class JWTBeanValidationConstraintsGeneratorTest {
 
     @Test
     public void testGetConstrainedMethods() throws Exception {
 
-        final List<Method> methods = ConstraintsGenerator.getConstrainedMethods(Colors.class);
+        final List<Method> methods = JWTBeanValidationConstraintsGenerator.getConstrainedMethods(Colors.class);
         final Map<String, Method> map = methods.stream().collect(Collectors.toMap(Method::getName, method -> method));
 
         Assert.assertTrue(map.containsKey("red"));
@@ -35,7 +35,7 @@ public class ConstraintsGeneratorTest {
 
     @Test
     public void test() throws Exception {
-        final String actual = Asmifier.asmify(ConstraintsGenerator.generateFor(Colors.class));
+        final String actual = Asmifier.asmify(JWTBeanValidationConstraintsGenerator.generateFor(Colors.class));
         final String expected = Asmifier.asmify(Asmifier.readClassFile(Colors$$JwtConstraints.class));
 
         Assert.assertEquals(expected, actual);
