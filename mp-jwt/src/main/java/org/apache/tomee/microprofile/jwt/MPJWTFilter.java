@@ -48,6 +48,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 // async is supported because we only need to do work on the way in
@@ -136,8 +137,11 @@ public class MPJWTFilter implements Filter {
             this.request = request;
             tokenFunction = token(request, authContextInfo);
 
+            final Supplier<JsonWebToken> tokenSupplier = () -> tokenFunction.apply(request);
+
             // this is so that the MPJWTProducer can find the function and apply it if necessary
             request.setAttribute(JsonWebToken.class.getName(), tokenFunction);
+            request.setAttribute(JsonWebToken.class.getName()+".Supplier", tokenSupplier);
             request.setAttribute("javax.security.auth.subject.callable", (Callable<Subject>) new Callable<Subject>() {
                 @Override
                 public Subject call() throws Exception {

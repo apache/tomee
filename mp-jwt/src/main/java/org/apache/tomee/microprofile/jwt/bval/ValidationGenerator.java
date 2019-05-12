@@ -16,13 +16,13 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.xbean.asm7.AnnotationVisitor;
 import org.apache.xbean.asm7.ClassWriter;
 import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.validation.Constraint;
 import java.lang.annotation.Annotation;

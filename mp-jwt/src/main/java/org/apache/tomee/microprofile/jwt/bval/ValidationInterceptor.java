@@ -16,21 +16,44 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-public class ValidationInterceptor {
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
-    public ValidationInterceptor(final Class<?> componentClass) {
+import javax.validation.ConstraintViolation;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.util.Set;
+import java.util.function.Supplier;
+
+public class ValidationInterceptor implements ContainerRequestFilter {
+
+    private final ResourceInfo resourceInfo;
+    private final ValidationConstraints constraints;
+
+    public ValidationInterceptor(final ResourceInfo resourceInfo, final ValidationConstraints constraints) {
+        this.resourceInfo = resourceInfo;
+        this.constraints = constraints;
     }
 
-    /**
-     * Will return null if this concept does not apply to this bean.
-     */
-    public static ValidationInterceptor apply(final Class<?> componentClass) {
-//        final byte[] bytes = JWTBeanValidationConstraintsGenerator.generateFor(componentClass);
-//        if (bytes == null) return null;
-//
-//        final String name = JWTBeanValidationConstraintsGenerator.getName(componentClass);
-//        final Class constraintsClazz = LocalBeanProxyFactory.Unsafe.defineClass(componentClass.getClassLoader(), componentClass, name, bytes);
+    @Override
+    public void filter(final ContainerRequestContext requestContext) throws IOException {
+        final Supplier<JsonWebToken> tokenSupplier = (Supplier<JsonWebToken>) requestContext.getProperty(JsonWebToken.class.getName() + ".Supplier");
 
-        return null;
+        final Method resourceMethod = resourceInfo.getResourceMethod();
+
+        final Set<ConstraintViolation<Object>> violations = constraints.validate(resourceMethod, tokenSupplier.get());
+        for (final ConstraintViolation<Object> violation : violations) {
+            System.out.println(violation.getMessage());
+        }
+
+        if (violations.size() > 0) forbidden(requestContext);
+    }
+
+    private void forbidden(final ContainerRequestContext requestContext) {
+        requestContext.abortWith(Response.status(HttpURLConnection.HTTP_FORBIDDEN).build());
     }
 }
