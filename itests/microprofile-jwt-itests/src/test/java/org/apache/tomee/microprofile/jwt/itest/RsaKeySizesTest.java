@@ -20,6 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
+import java.util.Base64;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
@@ -27,19 +28,33 @@ import static org.junit.Assert.assertEquals;
 public class RsaKeySizesTest {
 
     @Test
-    public void test() throws Exception {
+    public void test1024() throws Exception {
+        assertKey(Tokens.rsa(1024, 256));
+    }
 
+    @Test
+    public void test2048() throws Exception {
+        assertKey(Tokens.rsa(2048, 256));
+    }
+
+    @Test
+    public void test4096() throws Exception {
+        assertKey(Tokens.rsa(4096, 256));
+    }
+
+    public void assertKey(final Tokens tokens) throws Exception {
         final File appJar = Archive.archive()
                 .add(RsaKeySizesTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
                 .add("META-INF/microprofile-config.properties", "#\n" +
-                        "mp.jwt.verify.publickey=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlivFI8qB4D0y2jy0CfEqFyy46R0o7S8TKpsx5xbHKoU1VWg6QkQm+ntyIv1p4kE1sPEQO73+HY8+Bzs75XwRTYL1BmR1w8J5hmjVWjc6R2BTBGAYRPFRhor3kpM6ni2SPmNNhurEAHw7TaqszP5eUF/F9+KEBWkwVta+PZ37bwqSE4sCb1soZFrVz/UT/LF4tYpuVYt3YbqToZ3pZOZ9AX2o1GCG3xwOjkc4x0W7ezbQZdC9iftPxVHR8irOijJRRjcPDtA6vPKpzLl6CyYnsIYPd99ltwxTHjr3npfv/3Lw50bAkbT4HeLFxTx4flEoZLKO/g0bAoV2uqBhkA9xnQIDAQAB")
+                        "mp.jwt.verify.publickey=" + Base64.getEncoder().encodeToString(tokens.getPublicKey().getEncoded()))
                 .asJar();
 
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
+                .update()
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
@@ -52,13 +67,25 @@ public class RsaKeySizesTest {
                 "  \"exp\":2552047942" +
                 "}";
 
-        final String token = Tokens.asToken(claims);
-        final Response response = webClient.reset()
-                .path("/movies")
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + token)
-                .get();
-        assertEquals(200, response.getStatus());
+        {// valid token
+            final String token = tokens.asToken(claims);
+            final Response response = webClient.reset()
+                    .path("/movies")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .get();
+            assertEquals(200, response.getStatus());
+        }
+
+        {// invalid token
+            final String token = tokens.asToken(claims) + "a";
+            final Response response = webClient.reset()
+                    .path("/movies")
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .get();
+            assertEquals(401, response.getStatus());
+        }
     }
 
     private static WebClient createWebClient(final URL base) {

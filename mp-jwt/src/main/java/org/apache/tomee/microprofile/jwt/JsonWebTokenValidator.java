@@ -32,9 +32,6 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.jwt.consumer.JwtContext;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
-import javax.validation.metadata.BeanDescriptor;
 import java.security.Key;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -56,6 +53,7 @@ public class JsonWebTokenValidator {
         try {
             final JwtConsumerBuilder builder = new JwtConsumerBuilder()
                     .setRequireExpirationTime()
+                    .setRelaxVerificationKeyValidation()
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
                     .setExpectedIssuer(authContextInfo.getIssuer())

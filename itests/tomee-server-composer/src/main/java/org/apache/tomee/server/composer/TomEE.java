@@ -20,11 +20,15 @@ import org.apache.tomee.server.version.Version;
 import org.tomitribe.swizzle.stream.StreamBuilder;
 import org.tomitribe.util.Files;
 import org.tomitribe.util.IO;
+import org.tomitribe.util.JarLocation;
+import org.tomitribe.util.hash.XxHash64;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
@@ -95,6 +99,40 @@ public class TomEE {
         public Builder(final String mavenCoordinates) throws IOException {
             super(mavenCoordinates);
             filter(Excludes::webapps);
+        }
+
+        public Builder update() {
+            home(this::update);
+            return this;
+        }
+
+        private void update(final File home) {
+            final File repository = JarLocation.jarLocation(XxHash64.class)
+                    .getParentFile()
+                    .getParentFile()
+                    .getParentFile()
+                    .getParentFile()
+                    .getParentFile();
+
+            final File org = Files.file(repository, "org", "apache");
+
+            final Map<String, File> map = new HashMap<>();
+
+            Files.collect(org, ".*\\.jar").stream()
+                    .forEach(file -> map.put(file.getName(), file));
+
+            final File lib = new File(home, "lib");
+            for (final File jar : Files.collect(lib, ".*\\.jar")) {
+                final File file = map.get(jar.getName());
+                if (file != null && file.lastModified() > jar.lastModified()) {
+                    try {
+                        System.out.printf("Updating %s%n", jar.getName());
+                        IO.copy(file, jar);
+                    } catch (IOException e) {
+                        throw new IllegalStateException(e);
+                    }
+                }
+            }
         }
 
         public TomEE build() throws IOException {
