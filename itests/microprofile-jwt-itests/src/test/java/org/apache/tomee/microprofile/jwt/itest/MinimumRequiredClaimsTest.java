@@ -20,40 +20,32 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Optional;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ShaHashSizesTest {
-
-    @Test
-    public void test256() throws Exception {
-        assertKey(Tokens.rsa(2048, 256));
-    }
+public class MinimumRequiredClaimsTest {
 
     @Test
-    public void test384() throws Exception {
-        assertKey(Tokens.rsa(2048, 384));
-    }
-
-    @Test
-    public void test512() throws Exception {
-        assertKey(Tokens.rsa(2048, 512));
-    }
-
-    public void assertKey(final Tokens tokens) throws Exception {
+    public void test() throws Exception {
+        final Tokens tokens = Tokens.rsa(2048, 256);
         final File appJar = Archive.archive()
-                .add(ShaHashSizesTest.class)
+                .add(MinimumRequiredClaimsTest.class)
                 .add(ColorService.class)
                 .add(Api.class)
                 .add("META-INF/microprofile-config.properties", "#\n" +
                         "mp.jwt.verify.publickey=" + Base64.getEncoder().encodeToString(tokens.getPublicKey().getEncoded()))
                 .asJar();
 
+        final ArrayList<String> output = new ArrayList<>();
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
+                .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)
 //                .update()
                 .build();
 
@@ -61,31 +53,35 @@ public class ShaHashSizesTest {
 
         final String claims = "{" +
                 "  \"sub\":\"Jane Awesome\"," +
-                "  \"iss\":\"https://server.example.com\"," +
-                "  \"groups\":[\"manager\",\"user\"]," +
-                "  \"jti\":\"uB3r7zOr\"," +
                 "  \"exp\":2552047942" +
                 "}";
 
-        {// valid token
+        {// invalid token
             final String token = tokens.asToken(claims);
             final Response response = webClient.reset()
                     .path("/movies")
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + token)
                     .get();
-            assertEquals(200, response.getStatus());
+            assertEquals(403, response.getStatus());
         }
 
-        {// invalid token
-            final String token = tokens.asToken(claims) + "a";
-            final Response response = webClient.reset()
-                    .path("/movies")
-                    .header("Content-Type", "application/json")
-                    .header("Authorization", "Bearer " + token)
-                    .get();
-            assertEquals(401, response.getStatus());
-        }
+        assertNotPresent(output, "\tat org."); // no stack traces
+    }
+
+    public void assertPresent(final ArrayList<String> output, final String s) {
+        final Optional<String> actual = output.stream()
+                .filter(line -> line.contains(s))
+                .findFirst();
+
+        assertTrue(actual.isPresent());
+    }
+    public void assertNotPresent(final ArrayList<String> output, final String s) {
+        final Optional<String> actual = output.stream()
+                .filter(line -> line.contains(s))
+                .findFirst();
+
+        assertTrue(!actual.isPresent());
     }
 
     private static WebClient createWebClient(final URL base) {

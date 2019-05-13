@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.openejb.util.Logger;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.apache.tomee.microprofile.jwt.config.PublicKeyResolver;
 import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
@@ -38,6 +39,8 @@ import java.util.function.Predicate;
 
 public class JsonWebTokenValidator {
 
+    private static final Logger VALIDATION = Logger.getInstance(JWTLogCategories.CONSTRAINT, JsonWebTokenValidator.class);
+
     private final Predicate<JsonWebToken> validation;
     private final Key verificationKey;
 
@@ -56,7 +59,6 @@ public class JsonWebTokenValidator {
                     .setRelaxVerificationKeyValidation()
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
-                    .setExpectedIssuer(authContextInfo.getIssuer())
                     .setJwsAlgorithmConstraints(
                             new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
                                     AlgorithmIdentifiers.RSA_USING_SHA256,
@@ -64,6 +66,9 @@ public class JsonWebTokenValidator {
                                     AlgorithmIdentifiers.RSA_USING_SHA512
                             ));
 
+            if (authContextInfo.getIssuer() != null) {
+                builder.setExpectedIssuer(authContextInfo.getIssuer());
+            }
             if (authContextInfo.getExpGracePeriodSecs() > 0) {
                 builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
             } else {
@@ -95,9 +100,11 @@ public class JsonWebTokenValidator {
             principal = new JWTCallerPrincipal(token, type, claimsSet, principalName);
 
         } catch (final InvalidJwtException e) {
+            VALIDATION.warning(e.getMessage());
             throw new ParseException("Failed to verify token", e);
 
         } catch (final MalformedClaimException e) {
+            VALIDATION.warning(e.getMessage());
             throw new ParseException("Failed to verify token claims", e);
         }
 

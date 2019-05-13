@@ -54,7 +54,7 @@ public class RsaKeySizesTest {
         final TomEE tomee = TomEE.microprofile()
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
-                .update()
+//                .update()
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
