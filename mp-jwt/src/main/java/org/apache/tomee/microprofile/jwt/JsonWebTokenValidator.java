@@ -23,6 +23,7 @@ import org.apache.tomee.microprofile.jwt.principal.JWTCallerPrincipal;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jose4j.jwa.AlgorithmConstraints;
+import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
@@ -34,6 +35,7 @@ import org.jose4j.jwt.consumer.JwtContext;
 import org.jose4j.keys.resolvers.JwksVerificationKeyResolver;
 
 import java.security.Key;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -43,14 +45,18 @@ public class JsonWebTokenValidator {
 
     private final Predicate<JsonWebToken> validation;
     private final Key verificationKey;
+    private final Map<String, Key> verificationKeys;
+    private final String issuer;
 
-    public JsonWebTokenValidator(final Predicate<JsonWebToken> validation, final Key verificationKey) {
+    public JsonWebTokenValidator(final Predicate<JsonWebToken> validation, final Key verificationKey, final String issuer, final Map<String, Key> verificationKeys) {
         this.validation = validation;
         this.verificationKey = verificationKey;
+        this.verificationKeys = verificationKeys;
+        this.issuer = issuer;
     }
 
     public JsonWebToken validate(final String token) throws ParseException {
-        final JWTAuthConfiguration authContextInfo = JWTAuthConfiguration.authContextInfo(verificationKey, null);
+        final JWTAuthConfiguration authContextInfo = verificationKey == null ? JWTAuthConfiguration.authContextInfo(verificationKey, issuer) : JWTAuthConfiguration.authContextInfo(verificationKeys, issuer);
         JWTCallerPrincipal principal;
 
         try {
@@ -119,6 +125,8 @@ public class JsonWebTokenValidator {
 
         private Predicate<JsonWebToken> validation = jsonWebToken -> true;
         private Key verificationKey;
+        private List<JsonWebKey> verificationKeys;
+        private String issuer;
 
         public Builder add(final Predicate<JsonWebToken> validation) {
             this.validation = validation.and(validation);
@@ -136,8 +144,23 @@ public class JsonWebTokenValidator {
             return this;
         }
 
+        public Builder verificationKey(final Map<String, Key> key) {
+            this.verificationKeys = verificationKeys;
+            return this;
+        }
+
         public JsonWebTokenValidator build() {
-            return new JsonWebTokenValidator(validation, verificationKey);
+            return new JsonWebTokenValidator(validation, verificationKey, issuer, null);
+        }
+
+        public Builder verificationKeys(final List<JsonWebKey> keys) {
+            verificationKeys = keys;
+            return this;
+        }
+
+        public Builder issuer(final String iss) {
+            issuer = iss;
+            return this;
         }
     }
 }
