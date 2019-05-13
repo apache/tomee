@@ -34,6 +34,9 @@
   <name>OpenEJB :: iTests</name>
 
   <modules>
+    <module>tomee-server-composer</module>
+    <module>tomee-server-version</module>
+    <module>microprofile-jwt-itests</module>
     <module>failover</module>
     <module>failover-ejb</module>
     <module>legacy-client</module>
