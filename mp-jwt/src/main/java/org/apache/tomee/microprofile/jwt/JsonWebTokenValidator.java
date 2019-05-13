@@ -59,7 +59,10 @@ public class JsonWebTokenValidator {
                     .setExpectedIssuer(authContextInfo.getIssuer())
                     .setJwsAlgorithmConstraints(
                             new AlgorithmConstraints(AlgorithmConstraints.ConstraintType.WHITELIST,
-                                    AlgorithmIdentifiers.RSA_USING_SHA256));
+                                    AlgorithmIdentifiers.RSA_USING_SHA256,
+                                    AlgorithmIdentifiers.RSA_USING_SHA384,
+                                    AlgorithmIdentifiers.RSA_USING_SHA512
+                            ));
 
             if (authContextInfo.getExpGracePeriodSecs() > 0) {
                 builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());

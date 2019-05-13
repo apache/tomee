@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.jwt.itest;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.Requirement;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -32,7 +33,7 @@ public class Tokens {
 
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
-    private final int hashSize; // todo use this
+    private final int hashSize;
 
     public Tokens(final PrivateKey privateKey, final PublicKey publicKey, final int hashSize) {
         this.privateKey = privateKey;
@@ -61,7 +62,7 @@ public class Tokens {
 
     public String asToken(final String claims) throws Exception {
         try {
-            final JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
+            final JWSHeader header = new JWSHeader.Builder(new JWSAlgorithm("RS"+hashSize, Requirement.OPTIONAL))
                     .type(JOSEObjectType.JWT)
                     .build();
 
