@@ -107,6 +107,7 @@
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-jwt-bean-validation</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>

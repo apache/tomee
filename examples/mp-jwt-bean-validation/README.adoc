@@ -1,0 +1,7 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT with Bean Validation
+
+TomEE has a fun feature that allows the use of Bean Validation as an alternative or compliment to the @RolesAllowed annotation.  The motivation of the feature is that JsonWebToken is effectively a bean
