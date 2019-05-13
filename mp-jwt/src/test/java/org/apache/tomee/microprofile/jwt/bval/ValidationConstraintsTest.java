@@ -6,6 +6,7 @@ import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
@@ -15,6 +16,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class ValidationConstraintsTest {
 
     @Test
