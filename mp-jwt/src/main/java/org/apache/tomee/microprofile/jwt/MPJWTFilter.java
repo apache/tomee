@@ -20,6 +20,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
+import org.apache.tomee.microprofile.jwt.bval.ValidationInterceptor;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -141,7 +142,7 @@ public class MPJWTFilter implements Filter {
 
             // this is so that the MPJWTProducer can find the function and apply it if necessary
             request.setAttribute(JsonWebToken.class.getName(), tokenFunction);
-            request.setAttribute(JsonWebToken.class.getName()+".Supplier", tokenSupplier);
+            request.setAttribute(ValidationInterceptor.JWT_SUPPLIER, tokenSupplier);
             request.setAttribute("javax.security.auth.subject.callable", (Callable<Subject>) new Callable<Subject>() {
                 @Override
                 public Subject call() throws Exception {
