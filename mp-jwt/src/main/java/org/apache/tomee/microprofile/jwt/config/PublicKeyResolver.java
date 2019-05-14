@@ -8,30 +8,24 @@
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.apache.tomee.microprofile.jwt.config;
 
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.lang.JoseException;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Initialized;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
-import javax.servlet.ServletContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -46,80 +40,37 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.eclipse.microprofile.jwt.config.Names.ISSUER;
-import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY;
-import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCATION;
 import static org.jose4j.jwk.JsonWebKeySet.JWK_SET_MEMBER_NAME;
 
-@ApplicationScoped
-public class ConfigurableJWTAuthContextInfo {
-    private static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
+public class PublicKeyResolver {
 
-    private Config config;
-    private JWTAuthContextInfo jwtAuthContextInfo;
-    private static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
-    private static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
-
-    public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
-        this.config = ConfigProvider.getConfig();
-        this.jwtAuthContextInfo = createJWTAuthContextInfo();
-    }
-
-    public Optional<JWTAuthContextInfo> getJWTAuthContextInfo() {
-        return Optional.ofNullable(jwtAuthContextInfo);
-    }
-
-    private Optional<String> getVerifierPublicKey() {
-        return config.getOptionalValue(VERIFIER_PUBLIC_KEY, String.class).map(s -> s.isEmpty() ? null : s);
-    }
-
-    private Optional<String> getPublicKeyLocation() {
-        return config.getOptionalValue(VERIFIER_PUBLIC_KEY_LOCATION, String.class).map(s -> s.isEmpty() ? null : s);
-    }
-
-    private Optional<String> getIssuer() {
-        return config.getOptionalValue(ISSUER, String.class);
-    }
-
-    private JWTAuthContextInfo createJWTAuthContextInfo() {
-        if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
-            throw new DeploymentException("Both " +
-                                          VERIFIER_PUBLIC_KEY +
-                                          " and " +
-                                          VERIFIER_PUBLIC_KEY_LOCATION +
-                                          " are being supplied. You must use only one.");
-        }
-
+    public Optional<Map<String, Key>> resolve(final Optional<String> publicKeyContents, final Optional<String> publicKeyLocation) {
         final Stream<Supplier<Optional<Map<String, Key>>>> possiblePublicKeys =
-                Stream.of(() -> getVerifierPublicKey().map(this::readPublicKeys),
-                          () -> getPublicKeyLocation().map(this::readPublicKeysFromLocation));
+                Stream.of(() -> publicKeyContents.map(this::readPublicKeys),
+                        () -> publicKeyLocation.map(this::readPublicKeysFromLocation));
 
-        return possiblePublicKeys
+        return (Optional<Map<String, Key>>) possiblePublicKeys
                 .map(Supplier::get)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .findFirst()
-                .map(keys -> JWTAuthContextInfo.authContextInfo(keys, getIssuer().orElse(null)))
-                .orElse(null);
+                .findFirst();
     }
 
-    private Map<String, Key> readPublicKeys(final String publicKey) {
+    public Map<String, Key> readPublicKeys(final String publicKey) {
         final Stream<Supplier<Map<String, Key>>> possiblePublicKeysParses =
                 Stream.of(() -> parsePCKS8(publicKey),
-                          () -> parseJwk(publicKey),
-                          () -> parseJwkDecoded(publicKey),
-                          () -> parseJwks(publicKey),
-                          () -> parseJwksDecoded(publicKey));
+                        () -> parseJwk(publicKey),
+                        () -> parseJwkDecoded(publicKey),
+                        () -> parseJwks(publicKey),
+                        () -> parseJwksDecoded(publicKey));
 
         return possiblePublicKeysParses
                 .map(Supplier::get)
@@ -131,9 +82,9 @@ public class ConfigurableJWTAuthContextInfo {
     private Map<String, Key> readPublicKeysFromLocation(final String publicKeyLocation) {
         final Stream<Supplier<Optional<String>>> possiblePublicKeysLocations =
                 Stream.of(() -> readPublicKeysFromClasspath(publicKeyLocation),
-                          () -> readPublicKeysFromFile(publicKeyLocation),
-                          () -> readPublicKeysFromHttp(publicKeyLocation),
-                          () -> readPublicKeysFromUrl(publicKeyLocation));
+                        () -> readPublicKeysFromFile(publicKeyLocation),
+                        () -> readPublicKeysFromHttp(publicKeyLocation),
+                        () -> readPublicKeysFromUrl(publicKeyLocation));
 
         return possiblePublicKeysLocations
                 .map(Supplier::get)
@@ -141,8 +92,8 @@ public class ConfigurableJWTAuthContextInfo {
                 .map(Optional::get)
                 .findFirst()
                 .map(this::readPublicKeys)
-                .orElseThrow(() -> new DeploymentException(PUBLIC_KEY_ERROR_LOCATION +
-                                                           publicKeyLocation));
+                .orElseThrow(() -> new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION +
+                        publicKeyLocation));
     }
 
     private Optional<String> readPublicKeysFromClasspath(final String publicKeyLocation) {
@@ -155,7 +106,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(is));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -170,14 +121,14 @@ public class ConfigurableJWTAuthContextInfo {
             final File publicKeyFile = new File(locationURL.toURI());
             if (!publicKeyFile.exists() || publicKeyFile.isDirectory()) {
                 throw new DeploymentException(
-                        PUBLIC_KEY_ERROR_LOCATION +
-                        publicKeyLocation +
-                        ". File does not exist or it is a directory.");
+                        JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION +
+                                publicKeyLocation +
+                                ". File does not exist or it is a directory.");
             }
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException | URISyntaxException e) {
             throw new DeploymentException(
-                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -191,7 +142,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -201,7 +152,7 @@ public class ConfigurableJWTAuthContextInfo {
             return Optional.of(readPublicKeyFromInputStream(locationURL.openStream()));
         } catch (final IOException e) {
             throw new DeploymentException(
-                    PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
+                    JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR_LOCATION + publicKeyLocation, e);
         }
     }
 
@@ -246,7 +197,7 @@ public class ConfigurableJWTAuthContextInfo {
             final JsonWebKey key = JsonWebKey.Factory.newJwk(publicKey);
             return Collections.singletonMap(key.getKeyId(), key.getKey());
         } catch (final JoseException e) {
-            throw new DeploymentException(PUBLIC_KEY_ERROR + " JWK.", e);
+            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 
@@ -282,11 +233,11 @@ public class ConfigurableJWTAuthContextInfo {
             final JsonWebKeySet keySet = new JsonWebKeySet(publicKey);
             final Map<String, Key> keys =
                     keySet.getJsonWebKeys()
-                          .stream()
-                          .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
+                            .stream()
+                            .collect(Collectors.toMap(JsonWebKey::getKeyId, JsonWebKey::getKey));
             return Collections.unmodifiableMap(keys);
         } catch (final JoseException e) {
-            throw new DeploymentException(PUBLIC_KEY_ERROR + " JWK.", e);
+            throw new DeploymentException(JWTAuthConfigurationProperties.PUBLIC_KEY_ERROR + " JWK.", e);
         }
     }
 
@@ -307,7 +258,7 @@ public class ConfigurableJWTAuthContextInfo {
             throw new DeploymentException("MicroProfile Public Key JWK kty field is missing.");
         }
 
-        if (!JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
+        if (!JWTAuthConfigurationProperties.JWK_SUPPORTED_KEY_TYPES.contains(keyType)) {
             throw new DeploymentException("MicroProfile Public Key JWK kty not supported: " + keyType);
         }
     }
@@ -319,9 +270,9 @@ public class ConfigurableJWTAuthContextInfo {
 
         final String normalizedKey =
                 publicKey.replaceAll("-----BEGIN (.*)-----", "")
-                         .replaceAll("-----END (.*)----", "")
-                         .replaceAll("\r\n", "")
-                         .replaceAll("\n", "");
+                        .replaceAll("-----END (.*)----", "")
+                        .replaceAll("\r\n", "")
+                        .replaceAll("\n", "");
 
         return Base64.getDecoder().decode(normalizedKey);
     }
