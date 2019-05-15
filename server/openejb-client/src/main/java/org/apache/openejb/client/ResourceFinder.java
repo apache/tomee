@@ -680,7 +680,7 @@ public class ResourceFinder {
      * META-INF/app.properties
      * 
      * ResourceFinder finder = new ResourceFinder("META-INF/");
-     * List<Properties> appProps = finder.findAllProperties("app.properties");
+     * List&lt;Properties&gt; appProps = finder.findAllProperties("app.properties");
      *
      * @param uri String
      * @return List
@@ -713,7 +713,7 @@ public class ResourceFinder {
      * META-INF/app.properties
      * 
      * ResourceFinder finder = new ResourceFinder("META-INF/");
-     * List<Properties> appProps = finder.findAvailableProperties("app.properties");
+     * List&lt;Properties&gt; appProps = finder.findAvailableProperties("app.properties");
      *
      * @param uri String
      * @return List
@@ -750,7 +750,7 @@ public class ResourceFinder {
      * META-INF/jdbcDrivers/derby
      * 
      * ResourceFinder finder = new ResourceFinder("META-INF/");
-     * List<Properties> driversList = finder.findAvailableProperties("jdbcDrivers");
+     * List&lt;Properties&gt; driversList = finder.findAvailableProperties("jdbcDrivers");
      * Properties oracleProps = driversList.get("oracle.properties");
      * Properties mysqlProps = driversList.get("mysql.props");
      * Properties derbyProps = driversList.get("derby");
@@ -784,7 +784,7 @@ public class ResourceFinder {
      * META-INF/jdbcDrivers/derby
      * 
      * ResourceFinder finder = new ResourceFinder("META-INF/");
-     * List<Properties> driversList = finder.findAvailableProperties("jdbcDrivers");
+     * List&lt;Properties&gt; driversList = finder.findAvailableProperties("jdbcDrivers");
      * Properties oracleProps = driversList.get("oracle.properties");
      * Properties mysqlProps = driversList.get("mysql.props");
      * Properties derbyProps = driversList.get("derby");

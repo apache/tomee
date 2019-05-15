@@ -26,7 +26,7 @@ import java.util.Arrays;
 /**
  * OpenEJB Enterprise Javabean Protocol (OEJP)
  *
- * OEJP uses a "<major>.<minor>" numbering scheme to indicate versions of the protocol.
+ * OEJP uses a "major.minor" numbering scheme to indicate versions of the protocol.
  *
  * Protocol-Version   = "OEJP" "/" 1*DIGIT "." 1*DIGIT
  *
