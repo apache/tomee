@@ -253,16 +253,16 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
      * ejb-jar file's deployment descriptor. The name must be
      * unique among the names of the enterprise beans in the same
      * ejb-jar file.
-     * <p/>
+     *
      * There is no architected relationship between the used
      * ejb-name in the deployment descriptor and the JNDI name that
      * the Deployer will assign to the enterprise bean's home.
-     * <p/>
+     *
      * The name for an entity bean must conform to the lexical
      * rules for an NMTOKEN.
-     * <p/>
+     *
      * Example:
-     * <p/>
+     *
      * <ejb-name>EmployeeService</ejb-name>
      */
     public void setEjbName(final String value) {
@@ -376,11 +376,11 @@ public class MessageDrivenBean implements EnterpriseBean, TimerConsumer, Invokab
     /**
      * The Assembler sets the value to reflect the flow of messages
      * between producers and consumers in the application.
-     * <p/>
+     *
      * The value must be the message-destination-name of a message
      * destination in the same Deployment File or in another
      * Deployment File in the same Java EE application unit.
-     * <p/>
+     *
      * Alternatively, the value may be composed of a path name
      * specifying a Deployment File containing the referenced
      * message destination with the message-destination-name of the

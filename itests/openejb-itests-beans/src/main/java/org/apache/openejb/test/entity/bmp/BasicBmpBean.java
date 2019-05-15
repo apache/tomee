@@ -54,7 +54,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmpHome.sum
-     * <p/>
+     *
      * Adds x and y and returns the result.
      *
      * @param x
@@ -266,7 +266,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmpObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -280,7 +280,7 @@ public class BasicBmpBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmpObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

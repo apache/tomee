@@ -243,21 +243,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the jndiName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the jndiName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJndiName().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      */
@@ -270,21 +270,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the localJndiName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the localJndiName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLocalJndiName().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      */
@@ -384,21 +384,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the cmpFieldMapping property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cmpFieldMapping property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCmpFieldMapping().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EntityBeanType.CmpFieldMapping }
      */
@@ -511,21 +511,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the abstractNamingEntry property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the abstractNamingEntry property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getAbstractNamingEntry().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractNamingEntryType }{@code >}
      * {@link JAXBElement }{@code <}{@link PersistenceContextRefType }{@code >}
@@ -555,21 +555,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the ejbRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbRef().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRefType }
      */
@@ -582,21 +582,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the ejbLocalRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbLocalRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbLocalRef().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EjbLocalRefType }
      */
@@ -609,21 +609,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the serviceRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the serviceRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServiceRef().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceRefType }
      */
@@ -636,21 +636,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the resourceRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceRef().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceRefType }
      */
@@ -663,21 +663,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the resourceEnvRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceEnvRef property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceEnvRef().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvRefType }
      */
@@ -690,21 +690,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * Gets the value of the query property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the query property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getQuery().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link QueryType }
      */
@@ -738,9 +738,9 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -813,9 +813,9 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -958,9 +958,9 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>

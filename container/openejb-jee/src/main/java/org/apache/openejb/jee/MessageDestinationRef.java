@@ -200,11 +200,11 @@ public class MessageDestinationRef implements JndiReference {
     /**
      * The Assembler sets the value to reflect the flow of messages
      * between producers and consumers in the application.
-     * <p/>
+     *
      * The value must be the message-destination-name of a message
      * destination in the same Deployment File or in another
      * Deployment File in the same Java EE application unit.
-     * <p/>
+     *
      * Alternatively, the value may be composed of a path name
      * specifying a Deployment File containing the referenced
      * message destination with the message-destination-name of the

@@ -81,7 +81,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The Container must make the javax.transaction.UserTransaction interface available to
      * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
@@ -91,7 +91,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * responsible for the global coordination of the transaction commit.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Check that a javax.transaction.UserTransaction can be obtained from
      * the javax.ejb.EJBContext
      * </P>
@@ -107,7 +107,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The Container must make the javax.transaction.UserTransaction interface available to
      * the enterprise bean's business method via the javax.ejb.EJBContext interface and under the
      * environment entry java:comp/UserTransaction. When an instance uses the javax.trans-action.
@@ -117,7 +117,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * responsible for the global coordination of the transaction commit.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Check that a javax.transaction.UserTransaction can be obtained from
      * the environment entry java:comp/UserTransaction
      * </P>
@@ -133,13 +133,13 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
      * getRollbackOnly() method of the javax.ejb.EJBContext interface.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Test that setRollbackOnly() throws a java.lang.IllegalStateException
      * </P>
      */
@@ -153,13 +153,13 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
      * getRollbackOnly() method of the javax.ejb.EJBContext interface.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Test that getRollbackOnly() throws a java.lang.IllegalStateException
      * </P>
      */
@@ -223,7 +223,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The Container must allow the enterprise bean instance to serially perform several transactions in a
      * method.
      * </P>
@@ -238,7 +238,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * When an instance attempts to start a transaction using the
      * begin() method of the javax.transaction.UserTransaction
      * interface while the instance has not committed the previous
@@ -257,7 +257,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * If a stateless session bean instance starts a transaction in a
      * business method, it must commit the transaction before the
      * business method returns. The Container must detect the case in
@@ -281,7 +281,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
      * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
@@ -291,7 +291,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * =========================================================================
      * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
-     * <p/>
+     *
      * |      IF     |          AND             |          THEN
      * scenario  |   Client's  | Transaction currently    | Transaction associated
      * | transaction | associated with instance | with the method is
@@ -309,12 +309,12 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * 4       |  T1         |  T2                      |  T2
      * ___________|_____________|__________________________|________________________
      * </PRE>
-     * <p/>
+     *
      * If the client request is not associated with a transaction and the instance is not associated with a
      * transaction, the container invokes the instance with an unspecified transaction context.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Test scenario 1: none none<BR>
      * If the client's transaction is none and the transaction currently
      * associated with instance none then the transaction associated with the method is none.
@@ -330,7 +330,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
 
     /**
      * <B>11.6.1 Bean-managed transaction demarcation</B>
-     * <p/>
+     *
      * The actions performed by the Container for an instance with bean-managed transaction are summarized
      * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
@@ -340,7 +340,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * =========================================================================
      * Container's actions for methods of beans with bean-managed transaction
      * =========================================================================
-     * <p/>
+     *
      * |      IF     |          AND             |          THEN
      * scenario  |   Client's  | Transaction currently    | Transaction associated
      * | transaction | associated with instance | with the method is
@@ -358,14 +358,14 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * 4       |  T1         |  T2                      |  T2
      * ___________|_____________|__________________________|________________________
      * </PRE>
-     * <p/>
+     *
      * If the client is associated with a transaction T1, and the instance is not associated with a transaction,
      * the container suspends the client's transaction association and invokes the method with
      * an unspecified transaction context. The container resumes the client's ntransaction association
      * (T1) when the method completes.
      * </P>
      * <P>--------------------------------------------------------</P>
-     * <p/>
+     *
      * Test scenario 2: T1 none<BR>
      * </P>
      */

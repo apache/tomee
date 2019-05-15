@@ -558,15 +558,15 @@ public class Cmp2Generator implements Opcodes {
      * Create a simple internal method for obtaining the
      * primary key.  There are 2 possibilities for handling
      * the primary key here:
-     * <p/>
+     *
      * 1)  There is a defined primary key field.  The
      * contents of that field are returned.
-     * <p/>
+     *
      * 2)  The primary key is provided by the container.
      * This is a long value stored in a private, generated
      * field.  This field is returned as a generated
      * wrappered Long.
-     * <p/>
+     *
      * 3)  A primary key class has been provided.  An instance
      * of this class is instantiated, and code is generated
      * that will copy all of the CMP fields from the EJB

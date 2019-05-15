@@ -1157,11 +1157,11 @@ public final class MathUtils {
      * </pre>
      * applied to each non-NaN element x of the input array, where sum is the
      * sum of the non-NaN entries in the input array.</p>
-     * <p/>
+     *
      * <p>Throws IllegalArgumentException if <code>normalizedSum</code> is infinite
      * or NaN and ArithmeticException if the input array contains any infinite elements
      * or sums to 0</p>
-     * <p/>
+     *
      * <p>Ignores (i.e., copies unchanged to the output array) NaNs in the input array.</p>
      *
      * @param values        input array to be normalized

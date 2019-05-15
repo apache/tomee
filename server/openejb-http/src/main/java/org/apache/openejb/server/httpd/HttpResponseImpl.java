@@ -277,7 +277,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     /**
      * sets the HTTP response code to be sent to the browser.  These codes are:
-     * <p/>
+     *
      * OPTIONS = 0
      * GET     = 1
      * HEAD    = 2
@@ -420,7 +420,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     /**
      * Takes care of sending the response line, headers and body
-     * <p/>
+     *
      * HTTP/1.1 200 OK
      * Server: Netscape-Enterprise/3.6 SP3
      * Date: Thu, 07 Jun 2001 17:30:42 GMT
@@ -454,7 +454,7 @@ public class HttpResponseImpl implements HttpResponse {
 
     /**
      * Creates a string version of the response similar to:
-     * <p/>
+     *
      * HTTP/1.1 200 OK
      *
      * @return the string value of this HttpResponseImpl
@@ -498,9 +498,9 @@ public class HttpResponseImpl implements HttpResponse {
 
     /**
      * Writes a response line similar to this:
-     * <p/>
+     *
      * HTTP/1.1 200 OK
-     * <p/>
+     *
      * to the browser
      *
      * @param out the output stream to write the response line to

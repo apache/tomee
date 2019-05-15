@@ -286,7 +286,7 @@ public class JaccPermissionsBuilder {
 
     /**
      * Generate all the possible permissions for a bean's interface.
-     * <p/>
+     *
      * Method permissions are defined in the deployment descriptor as a binary
      * relation from the set of security roles to the set of methods of the
      * home, component, and/or web service endpoint interfaces of session and

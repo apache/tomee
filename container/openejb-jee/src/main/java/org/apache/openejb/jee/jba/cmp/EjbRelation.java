@@ -73,31 +73,31 @@ public class EjbRelation {
 
     /**
      * Gets the rest of the content model.
-     * <p/>
-     * <p/>
+     *
+     *
      * You are getting this "catch-all" property because of the following reason:
      * The field name "EjbRelationshipRole" is used by two different parts of a schema. See:
      * line 476 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
      * line 475 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
-     * <p/>
+     *
      * To get rid of this property, apply a property customization to one
      * of both of the following declarations to change their names:
      * Gets the value of the content property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRelationshipRole }
      * {@link EjbRelationName }

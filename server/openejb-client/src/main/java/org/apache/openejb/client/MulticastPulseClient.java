@@ -170,7 +170,7 @@ public class MulticastPulseClient extends MulticastConnectionFactory {
 
     /**
      * Get a list of URIs discovered for the provided request.
-     * <p/>
+     *
      * Returned URIs are of the format 'mp-{serverhost}:group:scheme://servicehost:port'.
      * The serverhost is prefixed with 'mp-' in case the serverhost is an IP-Address, as RFC 2396 defines scheme must begin with a 'letter'
      *

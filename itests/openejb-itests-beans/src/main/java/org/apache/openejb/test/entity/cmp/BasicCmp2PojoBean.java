@@ -73,7 +73,7 @@ public abstract class BasicCmp2PojoBean implements EntityBean {
 
     /**
      * Maps to BasicCmpHome.sum
-     * <p/>
+     *
      * Adds x and y and returns the result.
      */
     public int ejbHomeSum(final int x, final int y) {
@@ -138,7 +138,7 @@ public abstract class BasicCmp2PojoBean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      */
@@ -149,7 +149,7 @@ public abstract class BasicCmp2PojoBean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

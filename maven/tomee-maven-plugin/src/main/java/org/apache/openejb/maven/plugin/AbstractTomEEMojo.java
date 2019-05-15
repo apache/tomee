@@ -559,7 +559,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      * the actual path used in server.xml for the https keystore if relevant.
      * Common usage will be to put in src/main/tomee/conf a keystore foo.jks
      * and set this value to ${catalina.base}/foo.jks.
-     * <p/>
+     *
      * Note: if not set we'll check for any *.jks in conf/. You can set it to "ignore" to skip this.
      */
     @Parameter(property = "tomee-plugin.keystore")

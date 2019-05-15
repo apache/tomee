@@ -154,16 +154,16 @@ public class Method {
      * ejb-jar file's deployment descriptor. The name must be
      * unique among the names of the enterprise beans in the same
      * ejb-jar file.
-     * <p/>
+     *
      * There is no architected relationship between the used
      * ejb-name in the deployment descriptor and the JNDI name that
      * the Deployer will assign to the enterprise bean's home.
-     * <p/>
+     *
      * The name for an entity bean must conform to the lexical
      * rules for an NMTOKEN.
-     * <p/>
+     *
      * Example:
-     * <p/>
+     *
      * <ejb-name>EmployeeService</ejb-name>
      */
     public void setEjbName(final String value) {

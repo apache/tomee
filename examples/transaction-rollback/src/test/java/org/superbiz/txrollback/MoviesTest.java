@@ -60,7 +60,7 @@ public class MoviesTest extends TestCase {
     /**
      * Standard successful transaction scenario.  The data created inside
      * the transaction is visible after the transaction completes.
-     * <p/>
+     *
      * Note that UserTransaction is only usable by Bean-Managed Transaction
      * beans, which can be specified with @TransactionManagement(BEAN)
      */
@@ -115,7 +115,7 @@ public class MoviesTest extends TestCase {
     /**
      * Transaction is marked for rollback inside the bean via
      * calling the javax.ejb.SessionContext.setRollbackOnly() method
-     * <p/>
+     *
      * This is the cleanest way to make a transaction rollback.
      */
     public void testMarkedRollback() throws Exception {

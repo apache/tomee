@@ -94,7 +94,7 @@ public class SingletonRemoteIntfcTests extends BasicSingletonTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * This one seems to fail. we should double-check the spec on this.
      */
     public void TODO_test05_invokeAfterSystemException() {

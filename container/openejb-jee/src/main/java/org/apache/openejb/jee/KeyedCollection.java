@@ -74,7 +74,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
 
     /**
      * Get the underlying map used by this collection.
-     * <p/>
+     *
      * Any changes to this
      * map are directly reflected in this collection.  Additions to the map do not
      * need to implement Keyable, nor do the values need to be keyed using the key

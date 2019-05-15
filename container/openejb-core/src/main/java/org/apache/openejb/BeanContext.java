@@ -1111,7 +1111,7 @@ public class BeanContext extends DeploymentContext {
      * When an instance of an EJB is instantiated, everything in this list
      * is also instatiated and tied to the bean instance.  Per spec, interceptors
      * are supposed to have the same lifecycle as the bean they wrap.
-     * <p/>
+     *
      * OpenEJB has the concept of interceptors which do not share the same lifecycle
      * as the bean instance -- they may be instantiated elsewhere and simply applied
      * to the bean.  The impact is that these interceptors must be multithreaded.

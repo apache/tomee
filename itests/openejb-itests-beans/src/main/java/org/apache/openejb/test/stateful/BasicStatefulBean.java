@@ -91,7 +91,7 @@ public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchron
 
     /**
      * Maps to BasicStatefulObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -105,7 +105,7 @@ public class BasicStatefulBean implements javax.ejb.SessionBean, SessionSynchron
 
     /**
      * Maps to BasicStatefulObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

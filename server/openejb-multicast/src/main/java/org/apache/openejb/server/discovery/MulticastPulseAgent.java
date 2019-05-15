@@ -93,13 +93,13 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
      * On receipt of a valid pulse the agent responds with its own pulse for
      * a defined amount of time and rate. A client can deliver a pulse as often as
      * required until it is happy of the server response.
-     * <p/>
+     *
      * Both server and client deliver crafted information payloads.
-     * <p/>
+     *
      * The client pulse contains OpenEJB.MCP.Client:(group or *)[:BadUri:URI]
      * The server will only respond to a request for it's own group or *
      * The optional :BadUri: is used by clients to notify a server that it is sending out unreachable URI's
-     * <p/>
+     *
      * The server response pulse contains OpenEJB.MCP.Server:(Service|Service)|(Comma separated host list)
      */
     public MulticastPulseAgent() {

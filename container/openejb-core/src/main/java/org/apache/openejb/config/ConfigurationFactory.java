@@ -619,7 +619,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     /**
      * Main loop that gets executed when OpenEJB starts up Reads config files and produces the basic "AST" the assembler needs to actually build the contianer system
-     * <p/>
+     *
      * This method is called by the Assembler once at startup.
      *
      * @return OpenEjbConfiguration
@@ -1138,7 +1138,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * This is the major piece of code that configures services.
      * It merges the data from the <ServiceProvider> declaration
      * with the data from the openejb.xml file (say <Resource>)
-     * <p/>
+     *
      * The end result is a canonical (i.e. flattened) ServiceInfo
      * The ServiceInfo will be of a specific type (ContainerInfo, ResourceInfo, etc)
      *
@@ -1362,7 +1362,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
      * Takes a raw unparsed string expected to be in jvm classpath syntax
      * and parses it, producing a collection of URIs representing the absolute
      * file paths of the classpath to be created.
-     * <p/>
+     *
      * OS specific delimiters are supported.
      *
      * @param rawstring unparsed string in "classpath" syntax
@@ -1487,7 +1487,7 @@ public class ConfigurationFactory implements OpenEjbConfigurationFactory {
 
     /**
      * Resolving the provider for a particular service follows this algorithm:
-     * <p/>
+     *
      * 1.  Attempt to load the provider specified by the 'providerId'.
      * 2.  If this fails, throw NoSuchProviderException
      * 3.  If providerId is null, attempt to load the specified provider using the 'serviceId' as the 'providerId'

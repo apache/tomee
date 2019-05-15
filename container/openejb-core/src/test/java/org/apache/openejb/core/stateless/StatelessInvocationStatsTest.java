@@ -359,13 +359,13 @@ public class StatelessInvocationStatsTest {
     /**
      * convenience method for checking out a specific number of instances.
      * Can be used like so:
-     * <p/>
+     *
      * // checkout some instances from the pool
      * CountDownLatch startingPistol = checkout(bean, 7);
-     * <p/>
+     *
      * // Look at pool stats
      * ...
-     * <p/>
+     *
      * // Release them all back into the pool
      * startingPistol.countDown();
      *

@@ -105,7 +105,7 @@ public class StatelessRemoteBusinessIntfcTests extends StatelessTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * This one seems to fail. we should double-check the spec on this.
      */
     //TODO: implement

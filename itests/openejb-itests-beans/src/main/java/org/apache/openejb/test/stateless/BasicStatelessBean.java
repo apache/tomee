@@ -86,7 +86,7 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
 
     /**
      * Maps to BasicStatelessObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -100,7 +100,7 @@ public class BasicStatelessBean implements SessionBean, TimedObject {
 
     /**
      * Maps to BasicStatelessObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

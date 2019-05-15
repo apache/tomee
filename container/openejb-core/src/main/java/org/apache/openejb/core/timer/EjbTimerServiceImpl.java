@@ -748,7 +748,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * This method calls the ejbTimeout method and starts a transaction if the timeout is transacted.
-     * <p/>
+     *
      * This method will retry failed ejbTimeout calls until retryAttempts is exceeded.
      *
      * @param timerData the timer to call.

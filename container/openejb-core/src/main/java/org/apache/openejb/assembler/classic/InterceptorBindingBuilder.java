@@ -271,7 +271,7 @@ public class InterceptorBindingBuilder {
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     * <p/>
+     *
      * - @PostConstruct <any-scope> void <method-name>(InvocationContext)
      * - @PreDestroy <any-scope> void <method-name>(InvocationContext)
      * - @PrePassivate <any-scope> void <method-name>(InvocationContext)
@@ -328,7 +328,7 @@ public class InterceptorBindingBuilder {
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     * <p/>
+     *
      * - @PostConstruct <any-scope> void <method-name>()
      * - @PreDestroy <any-scope> void <method-name>()
      * - @PrePassivate <any-scope> void <method-name>()
@@ -336,7 +336,7 @@ public class InterceptorBindingBuilder {
      * - @AfterBegin <any-scope> void <method-name>()
      * - @BeforeCompletion <any-scope> void <method-name>()
      * - @AfterCompletion <any-scope> void <method-name>(boolean)
-     * <p/>
+     *
      * These apply to the bean class only, interceptor methods use InvocationContext as
      * a parameter.  The toMethods method is used for those.
      *

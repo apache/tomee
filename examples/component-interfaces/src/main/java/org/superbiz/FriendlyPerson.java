@@ -70,7 +70,7 @@ public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote
     /**
      * This method corresponds to the FriendlyPersonEjbHome.create() method
      * and the FriendlyPersonEjbLocalHome.create()
-     * <p/>
+     *
      * If you do not have an EJBHome or EJBLocalHome interface, this method
      * can be deleted.
      */
@@ -84,7 +84,7 @@ public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote
      * - EJBHome.remove(ejbObject)
      * - EJBLocalObject.remove()
      * - EJBLocalHome.remove(ejbObject)
-     * <p/>
+     *
      * If you do not have an EJBHome or EJBLocalHome interface, this method
      * can be deleted.
      */

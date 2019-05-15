@@ -210,9 +210,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -259,9 +259,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>
@@ -308,9 +308,9 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
      * &lt;complexType>
      *   &lt;complexContent>

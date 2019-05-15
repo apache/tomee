@@ -808,10 +808,10 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * <p>Copies source to dest, copying the underlying data, so dest is
      * a new, independent copy of source.  Does not contract before
      * the copy.</p>
-     * <p/>
+     *
      * <p>Obtains synchronization locks on both source and dest
      * (in that order) before performing the copy.</p>
-     * <p/>
+     *
      * <p>Neither source nor dest may be null; otherwise a NullPointerException
      * is thrown</p>
      *
