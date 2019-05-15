@@ -35,7 +35,7 @@ import java.util.List;
  * <div class="changed_added_2_2">
  *
  * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code&gt; element,
- * which must contain exactly one <code>&lt;flow-id&gt;</code> element.</p&gt;
+ * which must contain exactly one <code>&lt;flow-id&gt;</code&gt; element.</p&gt;
  * </div>
  *
  *

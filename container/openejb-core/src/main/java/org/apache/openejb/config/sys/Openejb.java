@@ -35,24 +35,24 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}SystemProperty" maxOccurs="unbounded"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}JndiProvider" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}SecurityService" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}TransactionManager" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}ConnectionManager" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}ProxyFactory" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Connector" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Deployments" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}SystemProperty" maxOccurs="unbounded"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}JndiProvider" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}SecurityService" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}TransactionManager" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}ConnectionManager" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}ProxyFactory" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Connector" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Deployments" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

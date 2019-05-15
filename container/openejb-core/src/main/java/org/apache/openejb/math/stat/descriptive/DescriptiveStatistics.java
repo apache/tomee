@@ -416,7 +416,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * <a href="http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm">here.</a>
      * <p>
      * <strong>Preconditions</strong>:<ul>
-     * <li><code>0 &lt; p &le; 100</code> (otherwise an
+     * <li><code>0 &lt; p &le; 100</code&gt; (otherwise an
      * <code>IllegalArgumentException</code> is thrown)</li>
      * <li>at least one value must be stored (returns <code>Double.NaN
      * </code> otherwise)</li>

@@ -404,7 +404,7 @@ public final class MathUtils {
      * @param y   the second number
      * @param eps the amount of error to allow when checking for equality
      * @return <ul><li>0 if  {@link #equals(double, double, double) equals(x, y, eps)}</li>
-     * <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
+     * <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li&gt;
      * <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
      */
     public static int compareTo(final double x, final double y, final double eps) {

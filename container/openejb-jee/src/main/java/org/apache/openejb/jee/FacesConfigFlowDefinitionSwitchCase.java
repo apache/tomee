@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Defines a case that will
- * be considered in the <code>&lt;switch&gt;</code>.</p&gt;
+ * be considered in the <code>&lt;switch&gt;</code&gt;.</p&gt;
  *
  *
  *

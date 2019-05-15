@@ -36,7 +36,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <div class="changed_added_2_2">
  *
  * <p>If there is no <code>&lt;start-node&gt;</code&gt; element declared, it
- * is assumed to be <code>&lt;flowName&gt;.xhtml</code>.</p&gt;
+ * is assumed to be <code>&lt;flowName&gt;.xhtml</code&gt;.</p&gt;
  *
  * </div>
  *

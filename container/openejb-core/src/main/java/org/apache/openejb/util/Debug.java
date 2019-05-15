@@ -216,7 +216,7 @@ public class Debug {
         }
 
         private String escape(final String methodName) {
-            return methodName.replace("<", "&lt;").replace(">", "&gt;");
+            return methodName.replace("<", "&lt;").replace("&gt;", "&gt;");
         }
 
         private void printTxt(final Set<Node> seen, final PrintStream out, final Node node, String s) {

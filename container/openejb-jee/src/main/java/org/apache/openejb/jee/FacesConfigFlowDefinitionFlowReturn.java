@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *
  * <div class="changed_added_2_2">
  *
- * <p>This element must contain exactly one <code>&lt;from-outcome&gt;</code> element.</p&gt;
+ * <p>This element must contain exactly one <code>&lt;from-outcome&gt;</code&gt; element.</p&gt;
  * </div>
  *
  *

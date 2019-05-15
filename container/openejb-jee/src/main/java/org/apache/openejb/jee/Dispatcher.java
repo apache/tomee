@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="dispatcherType"&gt;
  *   &lt;simpleContent&gt;
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string"&gt;
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee&gt;string"&gt;
  *     &lt;/restriction&gt;
  *   &lt;/simpleContent&gt;
  * &lt;/complexType&gt;

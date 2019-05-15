@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="descriptionType"&gt;
  *   &lt;simpleContent&gt;
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>xsdStringType"&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;xsdStringType"&gt;
  *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/&gt;
  *     &lt;/extension&gt;
  *   &lt;/simpleContent&gt;

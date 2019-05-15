@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p class="changed_added_2_2">Define a view node in a flow graph.</p>
  *
  * <p>This element must contain exactly one
- * <code>&lt;vdl-document&gt;</code> element.</p&gt;
+ * <code>&lt;vdl-document&gt;</code&gt; element.</p&gt;
  *
  *
  *

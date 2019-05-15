@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="java-identifierType"&gt;
  *   &lt;simpleContent&gt;
- *     &lt;restriction base="&lt;http://xmlns.jcp.org/xml/ns/javaee>string"&gt;
+ *     &lt;restriction base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;string"&gt;
  *     &lt;/restriction&gt;
  *   &lt;/simpleContent&gt;
  * &lt;/complexType&gt;

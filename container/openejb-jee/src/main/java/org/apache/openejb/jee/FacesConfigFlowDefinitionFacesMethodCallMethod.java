@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-faces-method-call-methodType"&gt;
  *   &lt;simpleContent&gt;
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>faces-config-el-expressionType"&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;faces-config-el-expressionType"&gt;
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
  *     &lt;/extension&gt;
  *   &lt;/simpleContent&gt;
