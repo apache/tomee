@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  *
  * <pre>
- * &lt;simpleType name="AcknowledgeMode">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="AutoAcknowledge"/>
- *     &lt;enumeration value="DupsOkAcknowledge"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="AcknowledgeMode"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="AutoAcknowledge"/&gt;
+ *     &lt;enumeration value="DupsOkAcknowledge"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

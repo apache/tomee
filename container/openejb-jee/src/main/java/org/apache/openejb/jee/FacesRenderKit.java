@@ -40,21 +40,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-render-kitType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="render-kit-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
- *         &lt;element name="renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-rendererType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="client-behavior-renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-client-behavior-rendererType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="render-kit-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kit-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-render-kitType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="render-kit-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/&gt;
+ *         &lt;element name="renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-rendererType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="client-behavior-renderer" type="{http://java.sun.com/xml/ns/javaee}faces-config-client-behavior-rendererType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="render-kit-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kit-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

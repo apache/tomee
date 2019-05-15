@@ -34,12 +34,12 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="UseCallerIdentity">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}SecurityIdentity">
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="UseCallerIdentity"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}SecurityIdentity"&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -37,26 +37,26 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-factoryType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="application-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="exception-handler-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="external-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="faces-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="partial-view-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="lifecycle-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="view-declaration-language-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="tag-handler-delegate-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="render-kit-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="visit-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="factory-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-factory-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/choice>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-factoryType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="application-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="exception-handler-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="external-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="faces-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="partial-view-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="lifecycle-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="view-declaration-language-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="tag-handler-delegate-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="render-kit-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="visit-context-factory" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="factory-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-factory-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 5 *
  */

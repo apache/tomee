@@ -35,19 +35,19 @@ import javax.xml.namespace.QName;
  * this class.
  *
  * <pre>
- * &lt;complexType name="XMI">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;any/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}LinkAttribs"/>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}IdentityAttribs"/>
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" fixed="2.0" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="XMI"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;any/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}LinkAttribs"/&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}IdentityAttribs"/&gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" /&gt;
+ *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" fixed="2.0" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

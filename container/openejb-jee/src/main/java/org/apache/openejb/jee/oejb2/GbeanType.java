@@ -34,22 +34,22 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="gbeanType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://geronimo.apache.org/xml/ns/deployment-1.2}abstract-serviceType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="attribute" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}attributeType"/>
- *         &lt;element name="xml-attribute" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}xml-attributeType"/>
- *         &lt;element name="reference" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}referenceType"/>
- *         &lt;element name="references" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}referencesType"/>
- *         &lt;element name="xml-reference" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}xml-attributeType"/>
- *         &lt;element name="dependency" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"/>
- *       &lt;/choice>
- *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="gbeanType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://geronimo.apache.org/xml/ns/deployment-1.2}abstract-serviceType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="attribute" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}attributeType"/&gt;
+ *         &lt;element name="xml-attribute" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}xml-attributeType"/&gt;
+ *         &lt;element name="reference" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}referenceType"/&gt;
+ *         &lt;element name="references" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}referencesType"/&gt;
+ *         &lt;element name="xml-reference" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}xml-attributeType"/&gt;
+ *         &lt;element name="dependency" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

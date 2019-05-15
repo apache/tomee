@@ -40,77 +40,77 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="entity-beanType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="local-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;group ref="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}tssGroup" minOccurs="0"/>
- *         &lt;sequence minOccurs="0">
- *           &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *           &lt;element name="static-sql" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/>
- *           &lt;element name="cmp-field-mapping" maxOccurs="unbounded">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;sequence>
- *                     &lt;element name="cmp-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                     &lt;element name="cmp-field-class" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                     &lt;element name="table-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                     &lt;element name="sql-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                     &lt;element name="type-converter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;/sequence>
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="primkey-field" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *           &lt;element ref="{http://tomee.apache.org/xml/ns/pkgen-2.1}key-generator" minOccurs="0"/>
- *           &lt;element name="prefetch-group" minOccurs="0">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;sequence>
- *                     &lt;element name="group" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}groupType" maxOccurs="unbounded" minOccurs="0"/>
- *                     &lt;element name="entity-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-group-mappingType" minOccurs="0"/>
- *                     &lt;element name="cmp-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmp-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/>
- *                     &lt;element name="cmr-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmr-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/>
- *                   &lt;/sequence>
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *           &lt;element name="select-for-update" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/>
- *         &lt;/sequence>
- *         &lt;element name="cache" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="isolation-level">
- *                     &lt;simpleType>
- *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *                         &lt;enumeration value="read-uncommitted"/>
- *                         &lt;enumeration value="read-committed"/>
- *                         &lt;enumeration value="repeatable-read"/>
- *                       &lt;/restriction>
- *                     &lt;/simpleType>
- *                   &lt;/element>
- *                   &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/>
- *         &lt;element name="query" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}queryType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="entity-beanType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="local-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}tssGroup" minOccurs="0"/&gt;
+ *         &lt;sequence minOccurs="0"&gt;
+ *           &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *           &lt;element name="static-sql" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/&gt;
+ *           &lt;element name="cmp-field-mapping" maxOccurs="unbounded"&gt;
+ *             &lt;complexType&gt;
+ *               &lt;complexContent&gt;
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                   &lt;sequence&gt;
+ *                     &lt;element name="cmp-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                     &lt;element name="cmp-field-class" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                     &lt;element name="table-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                     &lt;element name="sql-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                     &lt;element name="type-converter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                   &lt;/sequence&gt;
+ *                 &lt;/restriction&gt;
+ *               &lt;/complexContent&gt;
+ *             &lt;/complexType&gt;
+ *           &lt;/element&gt;
+ *           &lt;element name="primkey-field" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *           &lt;element ref="{http://tomee.apache.org/xml/ns/pkgen-2.1}key-generator" minOccurs="0"/&gt;
+ *           &lt;element name="prefetch-group" minOccurs="0"&gt;
+ *             &lt;complexType&gt;
+ *               &lt;complexContent&gt;
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                   &lt;sequence&gt;
+ *                     &lt;element name="group" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}groupType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *                     &lt;element name="entity-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-group-mappingType" minOccurs="0"/&gt;
+ *                     &lt;element name="cmp-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmp-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *                     &lt;element name="cmr-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmr-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *                   &lt;/sequence&gt;
+ *                 &lt;/restriction&gt;
+ *               &lt;/complexContent&gt;
+ *             &lt;/complexType&gt;
+ *           &lt;/element&gt;
+ *           &lt;element name="select-for-update" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/&gt;
+ *         &lt;/sequence&gt;
+ *         &lt;element name="cache" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="isolation-level"&gt;
+ *                     &lt;simpleType&gt;
+ *                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *                         &lt;enumeration value="read-uncommitted"/&gt;
+ *                         &lt;enumeration value="read-committed"/&gt;
+ *                         &lt;enumeration value="repeatable-read"/&gt;
+ *                       &lt;/restriction&gt;
+ *                     &lt;/simpleType&gt;
+ *                   &lt;/element&gt;
+ *                   &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/&gt;
+ *         &lt;element name="query" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}queryType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -742,24 +742,24 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      * <p>The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="isolation-level">
-     *           &lt;simpleType>
-     *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
-     *               &lt;enumeration value="read-uncommitted"/>
-     *               &lt;enumeration value="read-committed"/>
-     *               &lt;enumeration value="repeatable-read"/>
-     *             &lt;/restriction>
-     *           &lt;/simpleType>
-     *         &lt;/element>
-     *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}int"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="isolation-level"&gt;
+     *           &lt;simpleType&gt;
+     *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+     *               &lt;enumeration value="read-uncommitted"/&gt;
+     *               &lt;enumeration value="read-committed"/&gt;
+     *               &lt;enumeration value="repeatable-read"/&gt;
+     *             &lt;/restriction&gt;
+     *           &lt;/simpleType&gt;
+     *         &lt;/element&gt;
+     *         &lt;element name="size" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -817,19 +817,19 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      * <p>The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="cmp-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="cmp-field-class" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="table-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="sql-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="type-converter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="cmp-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *         &lt;element name="cmp-field-class" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="table-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *         &lt;element name="sql-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="type-converter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -962,18 +962,18 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
      * <p>The following schema fragment specifies the expected content contained within this class.
      *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="group" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}groupType" maxOccurs="unbounded" minOccurs="0"/>
-     *         &lt;element name="entity-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-group-mappingType" minOccurs="0"/>
-     *         &lt;element name="cmp-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmp-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/>
-     *         &lt;element name="cmr-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmr-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="group" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}groupType" maxOccurs="unbounded" minOccurs="0"/&gt;
+     *         &lt;element name="entity-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-group-mappingType" minOccurs="0"/&gt;
+     *         &lt;element name="cmp-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmp-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/&gt;
+     *         &lt;element name="cmr-field-group-mapping" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}cmr-field-group-mappingType" maxOccurs="unbounded" minOccurs="0"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)

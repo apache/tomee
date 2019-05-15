@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  *
  * <pre>
- * &lt;simpleType name="ResSharingScopeType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Shareable"/>
- *     &lt;enumeration value="Unshareable"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ResSharingScopeType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Shareable"/&gt;
+ *     &lt;enumeration value="Unshareable"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

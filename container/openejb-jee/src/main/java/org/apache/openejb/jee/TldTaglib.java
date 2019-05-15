@@ -39,26 +39,26 @@ import java.util.Map;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="tldTaglibType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="tlib-version" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType"/>
- *         &lt;element name="short-name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
- *         &lt;element name="uri" type="{http://java.sun.com/xml/ns/javaee}xsdAnyURIType" minOccurs="0"/>
- *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}validatorType" minOccurs="0"/>
- *         &lt;element name="listener" type="{http://java.sun.com/xml/ns/javaee}listenerType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="tag" type="{http://java.sun.com/xml/ns/javaee}tagType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="tag-file" type="{http://java.sun.com/xml/ns/javaee}tagFileType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="function" type="{http://java.sun.com/xml/ns/javaee}functionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="taglib-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="2.1" />
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tldTaglibType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="tlib-version" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType"/&gt;
+ *         &lt;element name="short-name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/&gt;
+ *         &lt;element name="uri" type="{http://java.sun.com/xml/ns/javaee}xsdAnyURIType" minOccurs="0"/&gt;
+ *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}validatorType" minOccurs="0"/&gt;
+ *         &lt;element name="listener" type="{http://java.sun.com/xml/ns/javaee}listenerType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="tag" type="{http://java.sun.com/xml/ns/javaee}tagType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="tag-file" type="{http://java.sun.com/xml/ns/javaee}tagFileType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="function" type="{http://java.sun.com/xml/ns/javaee}functionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="taglib-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="2.1" /&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlRootElement(name = "taglib")

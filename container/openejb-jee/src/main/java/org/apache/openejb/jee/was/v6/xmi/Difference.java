@@ -41,36 +41,36 @@ import org.w3c.dom.Element;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Difference">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="target">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;choice maxOccurs="unbounded" minOccurs="0">
- *                     &lt;any/>
- *                   &lt;/choice>
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="difference" type="{http://www.omg.org/XMI}Difference"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="container" type="{http://www.omg.org/XMI}Difference"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="container" type="{http://www.w3.org/2001/XMLSchema}IDREFS" />
- *       &lt;attribute name="target" type="{http://www.w3.org/2001/XMLSchema}IDREFS" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Difference"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="target"&gt;
+ *             &lt;complexType&gt;
+ *               &lt;complexContent&gt;
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                   &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *                     &lt;any/&gt;
+ *                   &lt;/choice&gt;
+ *                 &lt;/restriction&gt;
+ *               &lt;/complexContent&gt;
+ *             &lt;/complexType&gt;
+ *           &lt;/element&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="difference" type="{http://www.omg.org/XMI}Difference"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="container" type="{http://www.omg.org/XMI}Difference"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="container" type="{http://www.w3.org/2001/XMLSchema}IDREFS" /&gt;
+ *       &lt;attribute name="target" type="{http://www.w3.org/2001/XMLSchema}IDREFS" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -363,15 +363,15 @@ public class Difference {
      * within this class.
      *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;choice maxOccurs="unbounded" minOccurs="0">
-     *         &lt;any/>
-     *       &lt;/choice>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+     *         &lt;any/&gt;
+     *       &lt;/choice&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)

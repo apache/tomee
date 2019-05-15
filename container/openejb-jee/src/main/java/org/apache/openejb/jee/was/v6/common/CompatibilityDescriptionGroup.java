@@ -30,16 +30,16 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="CompatibilityDescriptionGroup">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}DescriptionGroup">
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="largeIcon" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="smallIcon" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CompatibilityDescriptionGroup"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}DescriptionGroup"&gt;
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="largeIcon" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="smallIcon" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

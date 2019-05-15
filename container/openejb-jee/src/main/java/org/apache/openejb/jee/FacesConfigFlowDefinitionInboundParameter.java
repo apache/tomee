@@ -35,16 +35,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-inbound-parameterType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/>
- *         &lt;element name="value" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-parameter-valueType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-inbound-parameterType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="name" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/&gt;
+ *         &lt;element name="value" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-parameter-valueType"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

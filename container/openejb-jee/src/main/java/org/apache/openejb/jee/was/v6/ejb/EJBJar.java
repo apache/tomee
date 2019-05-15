@@ -43,25 +43,25 @@ import org.apache.openejb.jee.was.v6.common.CompatibilityDescriptionGroup;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EJBJar">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="assemblyDescriptor" type="{ejb.xmi}AssemblyDescriptor"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="enterpriseBeans" type="{ejb.xmi}EnterpriseBean"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="relationshipList" type="{ejb.xmi}Relationships"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="ejbClientJar" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBJar"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="assemblyDescriptor" type="{ejb.xmi}AssemblyDescriptor"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="enterpriseBeans" type="{ejb.xmi}EnterpriseBean"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="relationshipList" type="{ejb.xmi}Relationships"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="ejbClientJar" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -38,32 +38,32 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-configType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="application" type="{http://java.sun.com/xml/ns/javaee}faces-config-applicationType"/>
- *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-orderingType"/>
- *         &lt;element name="absolute-ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-absoluteOrderingType" minOccurs="0"/>
- *         &lt;element name="factory" type="{http://java.sun.com/xml/ns/javaee}faces-config-factoryType"/>
- *         &lt;element name="component" type="{http://java.sun.com/xml/ns/javaee}faces-config-componentType"/>
- *         &lt;element name="converter" type="{http://java.sun.com/xml/ns/javaee}faces-config-converterType"/>
- *         &lt;element name="managed-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-managed-beanType"/>
- *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType" minOccurs="0"/>
- *         &lt;element name="navigation-rule" type="{http://java.sun.com/xml/ns/javaee}faces-config-navigation-ruleType"/>
- *         &lt;element name="referenced-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-referenced-beanType"/>
- *         &lt;element name="render-kit" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kitType"/>
- *         &lt;element name="lifecycle" type="{http://java.sun.com/xml/ns/javaee}faces-config-lifecycleType"/>
- *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}faces-config-validatorType"/>
- *         &lt;element name="behavior" type="{http://java.sun.com/xml/ns/javaee}faces-config-behaviorType"/>
- *         &lt;element name="faces-config-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/choice>
- *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}faces-config-versionType" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-configType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="application" type="{http://java.sun.com/xml/ns/javaee}faces-config-applicationType"/&gt;
+ *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-orderingType"/&gt;
+ *         &lt;element name="absolute-ordering" type="{http://java.sun.com/xml/ns/javaee}faces-config-absoluteOrderingType" minOccurs="0"/&gt;
+ *         &lt;element name="factory" type="{http://java.sun.com/xml/ns/javaee}faces-config-factoryType"/&gt;
+ *         &lt;element name="component" type="{http://java.sun.com/xml/ns/javaee}faces-config-componentType"/&gt;
+ *         &lt;element name="converter" type="{http://java.sun.com/xml/ns/javaee}faces-config-converterType"/&gt;
+ *         &lt;element name="managed-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-managed-beanType"/&gt;
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType" minOccurs="0"/&gt;
+ *         &lt;element name="navigation-rule" type="{http://java.sun.com/xml/ns/javaee}faces-config-navigation-ruleType"/&gt;
+ *         &lt;element name="referenced-bean" type="{http://java.sun.com/xml/ns/javaee}faces-config-referenced-beanType"/&gt;
+ *         &lt;element name="render-kit" type="{http://java.sun.com/xml/ns/javaee}faces-config-render-kitType"/&gt;
+ *         &lt;element name="lifecycle" type="{http://java.sun.com/xml/ns/javaee}faces-config-lifecycleType"/&gt;
+ *         &lt;element name="validator" type="{http://java.sun.com/xml/ns/javaee}faces-config-validatorType"/&gt;
+ *         &lt;element name="behavior" type="{http://java.sun.com/xml/ns/javaee}faces-config-behaviorType"/&gt;
+ *         &lt;element name="faces-config-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}faces-config-versionType" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 59 *
  */

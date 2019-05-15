@@ -36,19 +36,19 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="web-service-securityType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="security-realm-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="realm-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="transport-guarantee" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/>
- *         &lt;element name="auth-method" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/>
- *         &lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="web-service-securityType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="security-realm-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="realm-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="transport-guarantee" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/&gt;
+ *         &lt;element name="auth-method" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/&gt;
+ *         &lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -42,19 +42,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="message-driven-beanType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}resource-adapter"/>
- *         &lt;element name="activation-config" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}activation-configType" minOccurs="0"/>
- *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="message-driven-beanType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}resource-adapter"/&gt;
+ *         &lt;element name="activation-config" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}activation-configType" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

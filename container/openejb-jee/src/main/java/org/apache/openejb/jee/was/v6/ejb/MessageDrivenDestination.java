@@ -47,19 +47,19 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * this class.
  *
  * <pre>
- * &lt;complexType name="MessageDrivenDestination">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="subscriptionDurability" type="{ejb.xmi}SubscriptionDurabilityKind" />
- *       &lt;attribute name="type" type="{ejb.xmi}DestinationType" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="MessageDrivenDestination"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="subscriptionDurability" type="{ejb.xmi}SubscriptionDurabilityKind" /&gt;
+ *       &lt;attribute name="type" type="{ejb.xmi}DestinationType" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

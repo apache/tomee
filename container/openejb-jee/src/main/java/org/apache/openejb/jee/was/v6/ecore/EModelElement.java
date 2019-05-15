@@ -31,15 +31,15 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EModelElement">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EObject">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="eAnnotations" type="{http://www.eclipse.org/emf/2002/Ecore}EAnnotation"/>
- *       &lt;/choice>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EModelElement"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EObject"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="eAnnotations" type="{http://www.eclipse.org/emf/2002/Ecore}EAnnotation"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

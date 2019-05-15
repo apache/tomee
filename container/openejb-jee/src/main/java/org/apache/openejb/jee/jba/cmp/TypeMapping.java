@@ -32,30 +32,30 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://jboss.org}name"/>
- *         &lt;element ref="{http://jboss.org}row-locking-template"/>
- *         &lt;element ref="{http://jboss.org}pk-constraint-template"/>
- *         &lt;element ref="{http://jboss.org}fk-constraint-template"/>
- *         &lt;element ref="{http://jboss.org}auto-increment-template" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}add-column-template" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}alter-column-template" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}drop-column-template" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}alias-header-prefix"/>
- *         &lt;element ref="{http://jboss.org}alias-header-suffix"/>
- *         &lt;element ref="{http://jboss.org}alias-max-length"/>
- *         &lt;element ref="{http://jboss.org}subquery-supported"/>
- *         &lt;element ref="{http://jboss.org}true-mapping"/>
- *         &lt;element ref="{http://jboss.org}false-mapping"/>
- *         &lt;element ref="{http://jboss.org}function-mapping" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}mapping" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://jboss.org}name"/&gt;
+ *         &lt;element ref="{http://jboss.org}row-locking-template"/&gt;
+ *         &lt;element ref="{http://jboss.org}pk-constraint-template"/&gt;
+ *         &lt;element ref="{http://jboss.org}fk-constraint-template"/&gt;
+ *         &lt;element ref="{http://jboss.org}auto-increment-template" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}add-column-template" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}alter-column-template" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}drop-column-template" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}alias-header-prefix"/&gt;
+ *         &lt;element ref="{http://jboss.org}alias-header-suffix"/&gt;
+ *         &lt;element ref="{http://jboss.org}alias-max-length"/&gt;
+ *         &lt;element ref="{http://jboss.org}subquery-supported"/&gt;
+ *         &lt;element ref="{http://jboss.org}true-mapping"/&gt;
+ *         &lt;element ref="{http://jboss.org}false-mapping"/&gt;
+ *         &lt;element ref="{http://jboss.org}function-mapping" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}mapping" maxOccurs="unbounded"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

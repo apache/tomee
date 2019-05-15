@@ -45,31 +45,31 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Handler">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="soapRoles" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="portNames" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="handlerClass" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="initParams" type="{common.xmi}ParamValue"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="soapHeaders" type="{common.xmi}QName"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="handlerClass" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="handlerName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Handler"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="soapRoles" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="portNames" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="handlerClass" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="initParams" type="{common.xmi}ParamValue"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="soapHeaders" type="{common.xmi}QName"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="handlerClass" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="handlerName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

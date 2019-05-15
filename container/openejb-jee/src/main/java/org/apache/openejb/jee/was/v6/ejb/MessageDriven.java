@@ -56,32 +56,32 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="MessageDriven">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="destination" type="{ejb.xmi}MessageDrivenDestination"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="activationConfig" type="{ejb.xmi}ActivationConfig"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messageDestination" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messagingType" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="acknowledgeMode" type="{ejb.xmi}AcknowledgeMode" />
- *       &lt;attribute name="link" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messageDestination" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messageSelector" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messagingType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="MessageDriven"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="destination" type="{ejb.xmi}MessageDrivenDestination"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="activationConfig" type="{ejb.xmi}ActivationConfig"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messageDestination" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messagingType" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="acknowledgeMode" type="{ejb.xmi}AcknowledgeMode" /&gt;
+ *       &lt;attribute name="link" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messageDestination" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messageSelector" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messagingType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

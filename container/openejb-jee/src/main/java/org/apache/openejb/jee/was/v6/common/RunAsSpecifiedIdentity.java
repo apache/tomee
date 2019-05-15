@@ -38,15 +38,15 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="RunAsSpecifiedIdentity">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}SecurityIdentity">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="identity" type="{common.xmi}Identity"/>
- *       &lt;/choice>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="RunAsSpecifiedIdentity"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}SecurityIdentity"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="identity" type="{common.xmi}Identity"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

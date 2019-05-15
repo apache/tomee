@@ -37,17 +37,17 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-faces-method-callType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="method" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-call-methodType"/>
- *         &lt;element name="default-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string"/>
- *         &lt;element name="parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-parameterType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-faces-method-callType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="method" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-call-methodType"/&gt;
+ *         &lt;element name="default-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-parameterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

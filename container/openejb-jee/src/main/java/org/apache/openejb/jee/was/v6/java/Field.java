@@ -35,20 +35,20 @@ import org.apache.openejb.jee.was.v6.ecore.ETypedElement;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Field">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="initializer" type="{java.xmi}Block"/>
- *       &lt;/choice>
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="javaVisibility" type="{java.xmi}JavaVisibilityKind" />
- *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Field"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="initializer" type="{java.xmi}Block"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="javaVisibility" type="{java.xmi}JavaVisibilityKind" /&gt;
+ *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

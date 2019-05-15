@@ -41,21 +41,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="sequence-generator">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="sequence-name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="sequence-generator"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="sequence-name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="initial-value" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *       &lt;attribute name="allocation-size" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

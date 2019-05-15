@@ -50,41 +50,41 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EnterpriseBean">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}JNDIEnvRefsGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="securityRoleRefs" type="{common.xmi}SecurityRoleRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbClass" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="homeInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="remoteInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="securityIdentity" type="{common.xmi}SecurityIdentity"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="localHomeInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="localInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="ejbClass" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="homeInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="localHomeInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="localInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="remoteInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EnterpriseBean"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}JNDIEnvRefsGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="securityRoleRefs" type="{common.xmi}SecurityRoleRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbClass" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="homeInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="remoteInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="securityIdentity" type="{common.xmi}SecurityIdentity"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="localHomeInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="localInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="ejbClass" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="homeInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="localHomeInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="localInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="remoteInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

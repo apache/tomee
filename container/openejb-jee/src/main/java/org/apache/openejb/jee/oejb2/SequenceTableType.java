@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="sequence-tableType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="sequence-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="batch-size" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="sequence-tableType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="sequence-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="batch-size" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

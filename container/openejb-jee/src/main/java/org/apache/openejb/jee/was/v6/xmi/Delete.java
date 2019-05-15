@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Delete">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.omg.org/XMI}Difference">
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Delete"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.omg.org/XMI}Difference"&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

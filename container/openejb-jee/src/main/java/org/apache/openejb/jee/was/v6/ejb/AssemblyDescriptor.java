@@ -52,34 +52,34 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * this class.
  *
  * <pre>
- * &lt;complexType name="AssemblyDescriptor">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="methodPermissions" type="{ejb.xmi}MethodPermission"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="methodTransactions" type="{ejb.xmi}MethodTransaction"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="securityRoles" type="{common.xmi}SecurityRole"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="excludeList" type="{ejb.xmi}ExcludeList"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messageDestinations" type="{common.xmi}MessageDestination"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="AssemblyDescriptor"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="methodPermissions" type="{ejb.xmi}MethodPermission"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="methodTransactions" type="{ejb.xmi}MethodTransaction"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="securityRoles" type="{common.xmi}SecurityRole"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="excludeList" type="{ejb.xmi}ExcludeList"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messageDestinations" type="{common.xmi}MessageDestination"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

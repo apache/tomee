@@ -34,28 +34,28 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="weblogic-ejb-jar">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/>
- *         &lt;element name="weblogic-enterprise-bean" type="{http://www.bea.com/ns/weblogic/90}weblogic-enterprise-bean" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-role-assignment" type="{http://www.bea.com/ns/weblogic/90}security-role-assignment" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="run-as-role-assignment" type="{http://www.bea.com/ns/weblogic/90}run-as-role-assignment" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-permission" type="{http://www.bea.com/ns/weblogic/90}security-permission" minOccurs="0"/>
- *         &lt;element name="transaction-isolation" type="{http://www.bea.com/ns/weblogic/90}transaction-isolation" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="message-destination-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-destination-descriptor" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="idempotent-methods" type="{http://www.bea.com/ns/weblogic/90}idempotent-methods" minOccurs="0"/>
- *         &lt;element name="retry-methods-on-rollback" type="{http://www.bea.com/ns/weblogic/90}retry-methods-on-rollback" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="enable-bean-class-redeploy" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="disable-warning" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="work-manager" type="{http://www.bea.com/ns/weblogic/90}work-manager" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="weblogic-compatibility" type="{http://www.bea.com/ns/weblogic/90}weblogic-compatibility" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="weblogic-ejb-jar"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/&gt;
+ *         &lt;element name="weblogic-enterprise-bean" type="{http://www.bea.com/ns/weblogic/90}weblogic-enterprise-bean" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-role-assignment" type="{http://www.bea.com/ns/weblogic/90}security-role-assignment" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="run-as-role-assignment" type="{http://www.bea.com/ns/weblogic/90}run-as-role-assignment" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-permission" type="{http://www.bea.com/ns/weblogic/90}security-permission" minOccurs="0"/&gt;
+ *         &lt;element name="transaction-isolation" type="{http://www.bea.com/ns/weblogic/90}transaction-isolation" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="message-destination-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-destination-descriptor" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="idempotent-methods" type="{http://www.bea.com/ns/weblogic/90}idempotent-methods" minOccurs="0"/&gt;
+ *         &lt;element name="retry-methods-on-rollback" type="{http://www.bea.com/ns/weblogic/90}retry-methods-on-rollback" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="enable-bean-class-redeploy" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="disable-warning" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="work-manager" type="{http://www.bea.com/ns/weblogic/90}work-manager" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="weblogic-compatibility" type="{http://www.bea.com/ns/weblogic/90}weblogic-compatibility" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

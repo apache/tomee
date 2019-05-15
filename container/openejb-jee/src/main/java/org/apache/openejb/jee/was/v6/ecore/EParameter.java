@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EParameter">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement">
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EParameter"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement"&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

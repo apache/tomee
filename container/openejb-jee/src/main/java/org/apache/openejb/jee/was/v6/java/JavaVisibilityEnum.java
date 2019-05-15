@@ -28,14 +28,14 @@ import javax.xml.bind.annotation.XmlEnum;
  *
  *
  * <pre>
- * &lt;simpleType name="JavaVisibilityKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="PUBLIC"/>
- *     &lt;enumeration value="PRIVATE"/>
- *     &lt;enumeration value="PROTECTED"/>
- *     &lt;enumeration value="PACKAGE"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="JavaVisibilityKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="PUBLIC"/&gt;
+ *     &lt;enumeration value="PRIVATE"/&gt;
+ *     &lt;enumeration value="PROTECTED"/&gt;
+ *     &lt;enumeration value="PACKAGE"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

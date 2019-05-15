@@ -37,30 +37,30 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-applicationType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="action-listener" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="default-render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="message-bundle" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="navigation-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="view-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="state-manager" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="el-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="property-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="variable-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="resource-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="system-event-listener" type="{http://java.sun.com/xml/ns/javaee}faces-config-system-event-listenerType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="locale-config" type="{http://java.sun.com/xml/ns/javaee}faces-config-locale-configType"/>
- *         &lt;element name="resource-bundle" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-resource-bundleType"/>
- *         &lt;element name="application-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="default-validators" type="{http://java.sun.com/xml/ns/javaee}faces-config-default-validatorsType"/>
- *       &lt;/choice>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-applicationType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="action-listener" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="default-render-kit-id" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="message-bundle" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="navigation-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="view-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="state-manager" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="el-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="property-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="variable-resolver" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="resource-handler" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="system-event-listener" type="{http://java.sun.com/xml/ns/javaee}faces-config-system-event-listenerType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="locale-config" type="{http://java.sun.com/xml/ns/javaee}faces-config-locale-configType"/&gt;
+ *         &lt;element name="resource-bundle" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-resource-bundleType"/&gt;
+ *         &lt;element name="application-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-application-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="default-validators" type="{http://java.sun.com/xml/ns/javaee}faces-config-default-validatorsType"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

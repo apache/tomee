@@ -45,13 +45,13 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="display-nameType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>string">
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="display-nameType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>string"&gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

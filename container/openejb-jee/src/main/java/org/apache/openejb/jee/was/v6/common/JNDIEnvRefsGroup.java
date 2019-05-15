@@ -37,35 +37,35 @@ import org.apache.openejb.jee.was.v6.wsclient.ServiceRef;
  * within this class.
  *
  * <pre>
- * &lt;complexType name="JNDIEnvRefsGroup">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="environmentProperties" type="{common.xmi}EnvEntry"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="resourceRefs" type="{common.xmi}ResourceRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbRefs" type="{common.xmi}EjbRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="resourceEnvRefs" type="{common.xmi}ResourceEnvRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbLocalRefs" type="{common.xmi}EJBLocalRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messageDestinationRefs" type="{common.xmi}MessageDestinationRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceRefs" type="{webservice_client.xmi}ServiceRef"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="JNDIEnvRefsGroup"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="environmentProperties" type="{common.xmi}EnvEntry"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="resourceRefs" type="{common.xmi}ResourceRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbRefs" type="{common.xmi}EjbRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="resourceEnvRefs" type="{common.xmi}ResourceEnvRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbLocalRefs" type="{common.xmi}EJBLocalRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messageDestinationRefs" type="{common.xmi}MessageDestinationRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceRefs" type="{webservice_client.xmi}ServiceRef"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

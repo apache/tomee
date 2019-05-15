@@ -33,20 +33,20 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="ETypedElement">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ENamedElement">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="eType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/>
- *       &lt;/choice>
- *       &lt;attribute name="eType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="lowerBound" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="ordered" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="upperBound" type="{http://www.w3.org/2001/XMLSchema}int" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ETypedElement"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ENamedElement"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="eType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="eType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="lowerBound" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *       &lt;attribute name="ordered" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="upperBound" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

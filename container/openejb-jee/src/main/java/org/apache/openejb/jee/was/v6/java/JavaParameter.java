@@ -32,14 +32,14 @@ import org.apache.openejb.jee.was.v6.ecore.EParameter;
  * this class.
  *
  * <pre>
- * &lt;complexType name="JavaParameter">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EParameter">
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="parameterKind" type="{java.xmi}JavaParameterKind" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="JavaParameter"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EParameter"&gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="parameterKind" type="{java.xmi}JavaParameterKind" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

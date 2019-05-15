@@ -30,12 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="concurrency-management-typeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="concurrency-management-typeType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

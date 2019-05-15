@@ -37,18 +37,18 @@ import org.w3c.dom.Element;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Extension">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;any/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="extender" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="extenderID" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Extension"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;any/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="extender" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="extenderID" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -37,16 +37,16 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-flow-call-flow-referenceType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="flow-document-id" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/>
- *         &lt;element name="flow-id" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-flow-call-flow-referenceType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="flow-document-id" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/&gt;
+ *         &lt;element name="flow-id" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

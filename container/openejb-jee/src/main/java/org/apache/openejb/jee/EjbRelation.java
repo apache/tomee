@@ -38,19 +38,19 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="ejb-relationType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="ejb-relation-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="ejb-relationship-role" type="{http://java.sun.com/xml/ns/javaee}ejb-relationship-roleType"/>
- *         &lt;element name="ejb-relationship-role" type="{http://java.sun.com/xml/ns/javaee}ejb-relationship-roleType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ejb-relationType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-relation-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-relationship-role" type="{http://java.sun.com/xml/ns/javaee}ejb-relationship-roleType"/&gt;
+ *         &lt;element name="ejb-relationship-role" type="{http://java.sun.com/xml/ns/javaee}ejb-relationship-roleType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

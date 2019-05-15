@@ -74,32 +74,32 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * contained within this class.
  *
  * <pre>
- * &lt;complexType name="EJBRelationshipRole">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="source" type="{ejb.xmi}RoleSource"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="cmrField" type="{ejb.xmi}CMRField"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="descriptions" type="{common.xmi}Description"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="cascadeDelete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="multiplicity" type="{ejb.xmi}MultiplicityKind" />
- *       &lt;attribute name="roleName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBRelationshipRole"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="source" type="{ejb.xmi}RoleSource"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="cmrField" type="{ejb.xmi}CMRField"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="descriptions" type="{common.xmi}Description"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="cascadeDelete" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="multiplicity" type="{ejb.xmi}MultiplicityKind" /&gt;
+ *       &lt;attribute name="roleName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * @since J2EE1.3 The ejb-relationship-role element describes a role within a
  * relationship. There are two roles in each relationship. The

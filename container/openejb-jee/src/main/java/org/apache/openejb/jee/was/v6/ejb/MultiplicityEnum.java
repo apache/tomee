@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  *
  * <pre>
- * &lt;simpleType name="MultiplicityKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="One"/>
- *     &lt;enumeration value="Many"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="MultiplicityKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="One"/&gt;
+ *     &lt;enumeration value="Many"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

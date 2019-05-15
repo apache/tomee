@@ -41,14 +41,14 @@ import javax.xml.bind.annotation.XmlType;
  * within this class.
  *
  * <pre>
- * &lt;complexType name="EJBLocalRef">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}EjbRef">
- *       &lt;attribute name="local" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="localHome" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBLocalRef"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}EjbRef"&gt;
+ *       &lt;attribute name="local" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="localHome" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

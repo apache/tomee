@@ -27,14 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;simpleType name="generation-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="TABLE"/>
- *     &lt;enumeration value="SEQUENCE"/>
- *     &lt;enumeration value="IDENTITY"/>
- *     &lt;enumeration value="AUTO"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="generation-type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="TABLE"/&gt;
+ *     &lt;enumeration value="SEQUENCE"/&gt;
+ *     &lt;enumeration value="IDENTITY"/&gt;
+ *     &lt;enumeration value="AUTO"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlType(name = "generation-type")

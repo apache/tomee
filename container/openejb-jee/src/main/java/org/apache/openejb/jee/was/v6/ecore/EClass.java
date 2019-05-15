@@ -33,26 +33,26 @@ import javax.xml.bind.annotation.XmlType;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EClass">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EClassifier">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="eSuperTypes" type="{http://www.eclipse.org/emf/2002/Ecore}EClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="eOperations" type="{http://www.eclipse.org/emf/2002/Ecore}EOperation"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="eStructuralFeatures" type="{http://www.eclipse.org/emf/2002/Ecore}EStructuralFeature"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="eSuperTypes" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="interface" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EClass"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="eSuperTypes" type="{http://www.eclipse.org/emf/2002/Ecore}EClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="eOperations" type="{http://www.eclipse.org/emf/2002/Ecore}EOperation"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="eStructuralFeatures" type="{http://www.eclipse.org/emf/2002/Ecore}EStructuralFeature"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="abstract" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="eSuperTypes" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="interface" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

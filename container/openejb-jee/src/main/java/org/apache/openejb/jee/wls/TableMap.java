@@ -35,22 +35,22 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="table-map">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="field-map" type="{http://www.bea.com/ns/weblogic/90}field-map" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="verify-rows" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="verify-columns" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="optimistic-column" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="trigger-updates-optimistic-column" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="version-column-initial-value" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="table-map"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="table-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="field-map" type="{http://www.bea.com/ns/weblogic/90}field-map" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="verify-rows" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="verify-columns" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="optimistic-column" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="trigger-updates-optimistic-column" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="version-column-initial-value" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -51,31 +51,31 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * this class.
  *
  * <pre>
- * &lt;complexType name="MethodPermission">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="roles" type="{common.xmi}SecurityRole"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="methodElements" type="{ejb.xmi}MethodElement"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="descriptions" type="{common.xmi}Description"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="roles" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="unchecked" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="MethodPermission"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="roles" type="{common.xmi}SecurityRole"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="methodElements" type="{ejb.xmi}MethodElement"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="descriptions" type="{common.xmi}Description"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="roles" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="unchecked" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

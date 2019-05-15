@@ -47,17 +47,17 @@ import org.apache.openejb.jee.was.v6.ecore.EClassifier;
  * this class.
  *
  * <pre>
- * &lt;complexType name="ArrayType">
- *   &lt;complexContent>
- *     &lt;extension base="{java.xmi}JavaClass">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="componentType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/>
- *       &lt;/choice>
- *       &lt;attribute name="arrayDimensions" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="componentType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ArrayType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{java.xmi}JavaClass"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="componentType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="arrayDimensions" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *       &lt;attribute name="componentType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

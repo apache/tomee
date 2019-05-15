@@ -40,24 +40,24 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Initializer">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="source" type="{java.xmi}Block"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="isStatic" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Initializer"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="source" type="{java.xmi}Block"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="isStatic" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="source" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -42,33 +42,33 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * this class.
  *
  * <pre>
- * &lt;complexType name="EJBJarBinding">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="defaultDatasource" type="{commonbnd.xmi}ResourceRefBinding"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbJar" type="{ejb.xmi}EJBJar"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbBindings" type="{ejbbnd.xmi}EnterpriseBeanBinding"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="defaultCMPConnectionFactory" type="{ejbbnd.xmi}CMPConnectionFactoryBinding"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="currentBackendId" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="ejbJar" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBJarBinding"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="defaultDatasource" type="{commonbnd.xmi}ResourceRefBinding"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbJar" type="{ejb.xmi}EJBJar"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbBindings" type="{ejbbnd.xmi}EnterpriseBeanBinding"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="defaultCMPConnectionFactory" type="{ejbbnd.xmi}CMPConnectionFactoryBinding"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="currentBackendId" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="ejbJar" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

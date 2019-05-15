@@ -33,25 +33,25 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://jboss.org}ejb-relation-name"/>
- *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element ref="{http://jboss.org}foreign-key-mapping"/>
- *           &lt;element ref="{http://jboss.org}relation-table-mapping"/>
- *         &lt;/choice>
- *         &lt;sequence minOccurs="0">
- *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/>
- *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/>
- *         &lt;/sequence>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://jboss.org}ejb-relation-name"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element ref="{http://jboss.org}foreign-key-mapping"/&gt;
+ *           &lt;element ref="{http://jboss.org}relation-table-mapping"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;sequence minOccurs="0"&gt;
+ *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/&gt;
+ *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/&gt;
+ *         &lt;/sequence&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -45,30 +45,30 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="ServiceRef">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="portComponentRefs" type="{webservice_client.xmi}PortComponentRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="handlers" type="{webservice_client.xmi}Handler"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceQname" type="{common.xmi}QName"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="jaxrpcMappingFile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="serviceInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="serviceRefName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="wsdlFile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ServiceRef"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="portComponentRefs" type="{webservice_client.xmi}PortComponentRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="handlers" type="{webservice_client.xmi}Handler"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceQname" type="{common.xmi}QName"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="jaxrpcMappingFile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="serviceInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="serviceRefName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="wsdlFile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p class="changed_added_2_2">Define a view node in a flow graph.</p>
  *
  * <p>This element must contain exactly one
- * <code>&lt;vdl-document&gt;</code> element.</p>
+ * <code>&lt;vdl-document&gt;</code> element.</p&gt;
  *
  *
  *
@@ -42,16 +42,16 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-viewType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="vdl-document" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-viewType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="vdl-document" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

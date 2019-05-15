@@ -45,16 +45,16 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * within this class.
  *
  * <pre>
- * &lt;complexType name="CMRField">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}CMPAttribute">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="collectionType" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="collectionType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CMRField"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}CMPAttribute"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="collectionType" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="collectionType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

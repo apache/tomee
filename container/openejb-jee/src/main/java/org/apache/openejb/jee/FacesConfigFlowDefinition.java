@@ -35,8 +35,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *
  * <div class="changed_added_2_2">
  *
- * <p>If there is no <code>&lt;start-node&gt;</code> element declared, it
- * is assumed to be <code>&lt;flowName&gt;.xhtml</code>.</p>
+ * <p>If there is no <code>&lt;start-node&gt;</code&gt; element declared, it
+ * is assumed to be <code>&lt;flowName&gt;.xhtml</code>.</p&gt;
  *
  * </div>
  *
@@ -48,26 +48,26 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definitionType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="start-node" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/>
- *         &lt;element name="view" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-viewType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="switch" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switchType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="flow-return" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-returnType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="navigation-rule" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-navigation-ruleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="flow-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-callType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="method-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-callType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="initializer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-initializerType" minOccurs="0"/>
- *         &lt;element name="finalizer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-finalizerType" minOccurs="0"/>
- *         &lt;element name="inbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-inbound-parameterType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definitionType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="start-node" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/&gt;
+ *         &lt;element name="view" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-viewType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="switch" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switchType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="flow-return" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-returnType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="navigation-rule" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-navigation-ruleType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="flow-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-callType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="method-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-callType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="initializer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-initializerType" minOccurs="0"/&gt;
+ *         &lt;element name="finalizer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-finalizerType" minOccurs="0"/&gt;
+ *         &lt;element name="inbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-inbound-parameterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

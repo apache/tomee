@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  *
  * <pre>
- * &lt;simpleType name="ReturnTypeMapping">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Local"/>
- *     &lt;enumeration value="Remote"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ReturnTypeMapping"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Local"/&gt;
+ *     &lt;enumeration value="Remote"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

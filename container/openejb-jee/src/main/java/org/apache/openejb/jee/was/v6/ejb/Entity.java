@@ -73,17 +73,17 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Entity">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="primaryKey" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="primaryKey" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="reentrant" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Entity"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="primaryKey" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="primaryKey" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="reentrant" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

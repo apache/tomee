@@ -35,49 +35,49 @@ import org.apache.openejb.jee.was.v6.ecore.EClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="JavaClass">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EClass">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="implementsInterfaces" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="classImport" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="packageImports" type="{java.xmi}JavaPackage"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="fields" type="{java.xmi}Field"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="methods" type="{java.xmi}Method"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="initializers" type="{java.xmi}Initializer"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="declaredClasses" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="declaringClass" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="events" type="{java.xmi}JavaEvent"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="classImport" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="declaredClasses" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="declaringClass" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="implementsInterfaces" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="kind" type="{java.xmi}TypeKind" />
- *       &lt;attribute name="packageImports" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="public" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="JavaClass"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EClass"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="implementsInterfaces" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="classImport" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="packageImports" type="{java.xmi}JavaPackage"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="fields" type="{java.xmi}Field"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="methods" type="{java.xmi}Method"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="initializers" type="{java.xmi}Initializer"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="declaredClasses" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="declaringClass" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="events" type="{java.xmi}JavaEvent"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="classImport" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="declaredClasses" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="declaringClass" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="implementsInterfaces" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="kind" type="{java.xmi}TypeKind" /&gt;
+ *       &lt;attribute name="packageImports" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="public" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.XmlEnumValue;
  *
  *
  * <pre>
- * &lt;simpleType name="TransactionType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Bean"/>
- *     &lt;enumeration value="Container"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="TransactionType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Bean"/&gt;
+ *     &lt;enumeration value="Container"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

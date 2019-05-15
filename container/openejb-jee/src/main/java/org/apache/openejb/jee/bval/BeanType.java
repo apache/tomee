@@ -33,21 +33,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="beanType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="class" type="{http://jboss.org/xml/ns/javax/validation/mapping}classType" minOccurs="0"/>
- *         &lt;element name="field" type="{http://jboss.org/xml/ns/javax/validation/mapping}fieldType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="getter" type="{http://jboss.org/xml/ns/javax/validation/mapping}getterType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="constructor" type="{http://jboss.org/xml/ns/javax/validation/mapping}constructorType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="method" type="{http://jboss.org/xml/ns/javax/validation/mapping}methodType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="beanType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="class" type="{http://jboss.org/xml/ns/javax/validation/mapping}classType" minOccurs="0"/&gt;
+ *         &lt;element name="field" type="{http://jboss.org/xml/ns/javax/validation/mapping}fieldType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="getter" type="{http://jboss.org/xml/ns/javax/validation/mapping}getterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="constructor" type="{http://jboss.org/xml/ns/javax/validation/mapping}constructorType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="method" type="{http://jboss.org/xml/ns/javax/validation/mapping}methodType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="ignore-annotations" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

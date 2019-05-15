@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Defines a case that will
- * be considered in the <code>&lt;switch&gt;</code>.</p>
+ * be considered in the <code>&lt;switch&gt;</code>.</p&gt;
  *
  *
  *
@@ -41,18 +41,18 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-switch-caseType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="if" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-ifType" minOccurs="0"/>
- *         &lt;element name="from-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-switch-caseType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="if" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-ifType" minOccurs="0"/&gt;
+ *         &lt;element name="from-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -64,18 +64,18 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Session">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="serviceEndpoint" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="serviceEndpoint" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="sessionType" type="{ejb.xmi}SessionType" />
- *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Session"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="serviceEndpoint" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="serviceEndpoint" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="sessionType" type="{ejb.xmi}SessionType" /&gt;
+ *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

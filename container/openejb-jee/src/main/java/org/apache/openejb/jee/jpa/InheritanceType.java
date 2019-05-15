@@ -27,13 +27,13 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;simpleType name="inheritance-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="SINGLE_TABLE"/>
- *     &lt;enumeration value="JOINED"/>
- *     &lt;enumeration value="TABLE_PER_CLASS"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="inheritance-type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="SINGLE_TABLE"/&gt;
+ *     &lt;enumeration value="JOINED"/&gt;
+ *     &lt;enumeration value="TABLE_PER_CLASS"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlType(name = "inheritance-type")

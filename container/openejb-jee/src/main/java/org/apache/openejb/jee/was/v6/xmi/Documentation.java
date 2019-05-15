@@ -35,43 +35,43 @@ import javax.xml.namespace.QName;
  * this class.
  *
  * <pre>
- * &lt;complexType name="Documentation">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="contact" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="exporter" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="exporterVersion" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="longDescription" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="notice" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="owner" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="contact" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="exporter" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="exporterVersion" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="longDescription" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="notice" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="owner" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Documentation"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="contact" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="exporter" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="exporterVersion" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="longDescription" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="notice" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="owner" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="contact" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="exporter" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="exporterVersion" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="longDescription" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="notice" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="owner" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

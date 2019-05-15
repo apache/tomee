@@ -35,30 +35,30 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
- * &lt;complexType name="weblogic-rdbms-bean">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="data-source-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="unknown-primary-key-field" type="{http://www.bea.com/ns/weblogic/90}unknown-primary-key-field" minOccurs="0"/>
- *         &lt;element name="table-map" type="{http://www.bea.com/ns/weblogic/90}table-map" maxOccurs="unbounded"/>
- *         &lt;element name="field-group" type="{http://www.bea.com/ns/weblogic/90}field-group" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="relationship-caching" type="{http://www.bea.com/ns/weblogic/90}relationship-caching" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sql-shape" type="{http://www.bea.com/ns/weblogic/90}sql-shape" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="weblogic-query" type="{http://www.bea.com/ns/weblogic/90}weblogic-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="delay-database-insert-until" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="use-select-for-update" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="lock-order" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="instance-lock-order" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="automatic-key-generation" type="{http://www.bea.com/ns/weblogic/90}automatic-key-generation" minOccurs="0"/>
- *         &lt;element name="check-exists-on-method" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="cluster-invalidation-disabled" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="weblogic-rdbms-bean"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="data-source-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="unknown-primary-key-field" type="{http://www.bea.com/ns/weblogic/90}unknown-primary-key-field" minOccurs="0"/&gt;
+ *         &lt;element name="table-map" type="{http://www.bea.com/ns/weblogic/90}table-map" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="field-group" type="{http://www.bea.com/ns/weblogic/90}field-group" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="relationship-caching" type="{http://www.bea.com/ns/weblogic/90}relationship-caching" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="sql-shape" type="{http://www.bea.com/ns/weblogic/90}sql-shape" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="weblogic-query" type="{http://www.bea.com/ns/weblogic/90}weblogic-query" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="delay-database-insert-until" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="use-select-for-update" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="lock-order" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="instance-lock-order" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="automatic-key-generation" type="{http://www.bea.com/ns/weblogic/90}automatic-key-generation" minOccurs="0"/&gt;
+ *         &lt;element name="check-exists-on-method" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="cluster-invalidation-disabled" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
