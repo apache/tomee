@@ -29,11 +29,11 @@ import java.math.BigInteger;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for error-pageType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="error-pageType">
  *   &lt;complexContent>

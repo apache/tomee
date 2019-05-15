@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * javaee_web_services_1_3.xsd
- * <p/>
+ *
  * <p>Java class for service-impl-beanType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="service-impl-beanType">
  *   &lt;complexContent>

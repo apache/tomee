@@ -41,15 +41,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @migration EJB1.1 added optional attribute, description:String
  * @migration EJB1.1 added optional attribute, name:String (May have been
  * inherited from RefBaseObject previously)
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBRelation complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content
  * contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EJBRelation">
  *   &lt;complexContent>

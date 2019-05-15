@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * web-facesconfig_2_0.xsd
- * <p/>
+ *
  * <p>Java class for faces-config-localeType simple type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;simpleType name="faces-config-localeType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">

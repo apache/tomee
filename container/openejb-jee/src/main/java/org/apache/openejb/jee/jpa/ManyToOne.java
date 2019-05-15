@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * FetchType fetch() default EAGER;
  * boolean optional() default true;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for many-to-one complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="many-to-one">
  *   &lt;complexContent>

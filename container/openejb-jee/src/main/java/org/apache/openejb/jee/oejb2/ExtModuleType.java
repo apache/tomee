@@ -31,12 +31,12 @@ import org.w3c.dom.Element;
 /**
  * Mirrors the moduleType defined by application_1_4.xsd and adds an
  * optional alt-dd element defining a Geronimo specific deployment descriptor.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for ext-moduleType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ext-moduleType">
  *   &lt;complexContent>

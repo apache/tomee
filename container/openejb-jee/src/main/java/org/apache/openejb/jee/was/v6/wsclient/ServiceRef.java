@@ -35,15 +35,15 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * JAX-RPC mappings, an optional QName for the service element, an optional set
  * of Service Endpoint Interfaces to be resolved by the container to a WSDL
  * port, and an optional set of handlers.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ServiceRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ServiceRef">
  *   &lt;complexContent>

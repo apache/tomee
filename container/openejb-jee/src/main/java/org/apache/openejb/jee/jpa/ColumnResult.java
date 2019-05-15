@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlType;
  * public @interface ColumnResult {
  * String name();
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for column-result complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="column-result">
  *   &lt;complexContent>

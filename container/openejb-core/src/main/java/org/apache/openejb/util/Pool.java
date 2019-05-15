@@ -47,12 +47,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
- * <p/>
+ *
  * A pop() call that returns null is considered successful.  A null indicates
  * that the calling code has a permit to create a poolable object and call
  * {@link Pool#push(Object)}.  This is the only situation in which that method
  * may be called.
- * <p/>
+ *
  * To simply fill the pool without a corresponding pop(), the add() method
  * must be used.  This method will attempt to aquire a permit to add to the pool.
  *

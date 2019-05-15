@@ -26,11 +26,11 @@ import java.util.Objects;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for injection-targetType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="injection-targetType">
  *   &lt;complexContent>

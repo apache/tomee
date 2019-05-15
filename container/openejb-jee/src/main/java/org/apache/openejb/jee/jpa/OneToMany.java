@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * FetchType fetch() default LAZY;
  * String mappedBy() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for one-to-many complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="one-to-many">
  *   &lt;complexContent>

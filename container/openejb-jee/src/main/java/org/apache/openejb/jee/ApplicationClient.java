@@ -34,11 +34,11 @@ import java.util.Map;
 
 /**
  * application-client_6.xsd
- * <p/>
+ *
  * <p>Java class for application-clientType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="application-clientType">
  *   &lt;complexContent>

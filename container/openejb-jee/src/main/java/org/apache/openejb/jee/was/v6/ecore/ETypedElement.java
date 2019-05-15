@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p/>
+ *
  * Java class for ETypedElement complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ETypedElement">
  *   &lt;complexContent>

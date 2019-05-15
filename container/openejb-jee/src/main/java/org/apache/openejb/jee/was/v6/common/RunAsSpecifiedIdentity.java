@@ -28,15 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  * identity is to be used for the execution of the methods of the enterprise
  * bean or whether a specific run-as identity is to be used. It contains an
  * optional description and a specification of the security identity to be used.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for RunAsSpecifiedIdentity complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="RunAsSpecifiedIdentity">
  *   &lt;complexContent>

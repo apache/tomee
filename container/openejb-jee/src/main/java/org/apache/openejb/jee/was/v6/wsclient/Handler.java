@@ -34,16 +34,16 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * name/value pairs using the HandlerInfo interface. If port-name is not
  * specified, the handler is assumed to be associated with all ports of the
  * service.
- * <p/>
+ *
  * Used in: service-ref
- * <p/>
- * <p/>
+ *
+ *
  * Java class for Handler complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Handler">
  *   &lt;complexContent>

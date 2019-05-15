@@ -29,7 +29,7 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
 /**
  * The message-driven element declares a message-driven bean. The declaration
  * consists of:
- * <p/>
+ *
  * - an optional description - an optional display name - an optional icon
  * element that contains a small and a large icon file name. - a name assigned
  * to the enterprise bean in the deployment descriptor - the message-driven
@@ -46,15 +46,15 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * manager connection factory references - an optional declaration of the bean's
  * resource environment references. - an optional declaration of the bean's
  * message destination references
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MessageDriven complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MessageDriven">
  *   &lt;complexContent>

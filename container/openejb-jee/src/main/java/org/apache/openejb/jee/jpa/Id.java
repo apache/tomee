@@ -27,13 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Id {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for id complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="id">
  *   &lt;complexContent>

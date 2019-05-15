@@ -31,21 +31,21 @@ import org.apache.openejb.jee.was.v6.ecore.EClassifier;
  * the component type will be specified directly. This would require
  * instantiating a chain of component types such as
  * String[][][][]->String[][][]->String[][]->String[]->String.
- * <p/>
+ *
  * The component type relationship will be computed if the finalComponentType
  * and array dimensions is specified.
- * <p/>
+ *
  * For this reason, the preferred way to create is through the JavaRefFactory
  * factory method: createArrayType(JavaClass finalComponentType, int dimensions)
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ArrayType complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ArrayType">
  *   &lt;complexContent>

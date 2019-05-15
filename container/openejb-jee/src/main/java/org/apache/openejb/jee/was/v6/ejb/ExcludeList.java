@@ -35,18 +35,18 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * The exclude list element defines a set of methods which the Assembler marks
  * to be uncallable. It contains one or more methods.
- * <p/>
+ *
  * If the method permission relation contains methods that are in the exclude
  * list, the Deployer must consider those methods to be uncallable.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ExcludeList complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ExcludeList">
  *   &lt;complexContent>

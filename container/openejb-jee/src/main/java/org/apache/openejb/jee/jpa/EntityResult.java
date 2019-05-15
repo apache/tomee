@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.XmlType;
  * FieldResult[] fields() default {};
  * String discriminatorColumn() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for entity-result complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="entity-result">
  *   &lt;complexContent>

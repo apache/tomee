@@ -26,17 +26,17 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Metadata that applies to the persistence unit and not just to
  * the mapping file in which it is contained.
- * <p/>
+ *
  * If the xml-mapping-metadata-complete element is specified,
  * the complete set of mapping metadata for the persistence unit
  * is contained in the XML mapping files for the persistence unit.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for persistence-unit-metadata complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="persistence-unit-metadata">
  *   &lt;complexContent>

@@ -33,17 +33,17 @@ import static java.util.Arrays.asList;
 
 /**
  * The Extensions API mimics the equivalent CDI Extension/@Observes API
- * <p/>
+ *
  * Via the Extensions/@Obverves API it is possible to listen for any number of
  * internal events fired by OpenEJB/TomEE during the life of the server and
  * deployment of applications.
- * <p/>
+ *
  * Extensions are any java class that have one or more @Observes methods using the following format:
- * <p/>
+ *
  * - public void <any-name>(@Observes <any-type> event)
- * <p/>
+ *
  * Extensions can be registered in any number of ways:
- * <p/>
+ *
  * 1. Via a META-INF/org.apache.openejb.extension text file containing the name of exactly one
  * 2. Via a <Service> tag in the server's openejb.xml or tomee.xml configuration file
  * 3. Via a <Service> tag in a META-INF/resources.xml in the application

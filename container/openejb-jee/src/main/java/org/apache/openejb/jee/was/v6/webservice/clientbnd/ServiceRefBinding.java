@@ -33,13 +33,13 @@ import org.apache.openejb.jee.was.v6.wsclient.ServiceRef;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for ServiceRefBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ServiceRefBinding">
  *   &lt;complexContent>

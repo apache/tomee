@@ -26,16 +26,16 @@ import java.rmi.RemoteException;
 
 /**
  * 17.6.2.6 Never
- * <p/>
+ *
  * The Container invokes an enterprise Bean method whose transaction attribute
  * is set to Never without a transaction context defined by the EJB spec.
- * <p/>
+ *
  * The client is required to call without a transaction context.
- * <p/>
+ *
  * If the client calls with a transaction context, the Container throws:<ul>
  * <li>java.rmi.RemoteException exception if the client is a remote client</li>
  * <li>javax.ejb.EJBException if the client is a local client</li> </ul>
- * <p/>
+ *
  * If the client calls without a transaction context, the Container performs the
  * same steps as described in the NotSupported case.
  */

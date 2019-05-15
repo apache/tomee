@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.XmlType;
  * Class targetClass() default void.class;
  * FetchType fetch() default LAZY;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for element-collection complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="element-collection">
  *   &lt;complexContent>

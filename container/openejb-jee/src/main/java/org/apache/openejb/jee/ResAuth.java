@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for res-authType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="res-authType">
  *   &lt;simpleContent>

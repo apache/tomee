@@ -26,15 +26,15 @@ import javax.xml.bind.annotation.XmlType;
  * <p class="changed_added_2_2">A named parameter whose value will be
  * passed to a correspondingly named parameter within an "inbound-parameter" element
  * on the target flow.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-call-outbound-parameterType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-outbound-parameterType">
  *   &lt;complexContent>

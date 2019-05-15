@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.XmlType;
  * JoinColumn[] joinColumns() default{};
  * JoinTable joinTable() default @JoinTable;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for association-override complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="association-override">
  *   &lt;complexContent>

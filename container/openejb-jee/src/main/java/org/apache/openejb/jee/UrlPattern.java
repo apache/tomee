@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlValue;
  * If it contains those characters, the container must inform
  * the developer with a descriptive error message.
  * The container must preserve all characters including whitespaces.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for url-patternType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="url-patternType">
  *   &lt;simpleContent>

@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Indicates that an arbitrary SQL statement should be used to
  * generate the next ID.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for sql-generatorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="sql-generatorType">
  *   &lt;complexContent>

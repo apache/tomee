@@ -34,16 +34,16 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * set accessor methods for the relationship. The CMRField::type element
  * is used only for collection-valued CMRFields. It specifies the type of
  * the collection that is used (a java class name).
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * Java class for CMRField complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CMRField">
  *   &lt;complexContent>

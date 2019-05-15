@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * This type adds an "id" attribute to xsd:string.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for xsdStringType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="xsdStringType">
  *   &lt;simpleContent>

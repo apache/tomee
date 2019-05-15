@@ -37,13 +37,13 @@ import javax.xml.bind.annotation.XmlType;
  * int precision() default 0; // decimal precision
  * int scale() default 0; // decimal scale
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for column complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="column">
  *   &lt;complexContent>

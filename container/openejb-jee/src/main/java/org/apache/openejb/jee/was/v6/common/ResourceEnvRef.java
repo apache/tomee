@@ -39,10 +39,10 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * environment. It consists of an optional description, the resource environment
  * reference name, and an indication of the resource environment reference type
  * expected by the Deployment Component code.
- * <p/>
+ *
  * Example:
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;resource-env-ref xmlns:com.ibm.etools.j2ee.common="common.xmi" xmlns:com.ibm.etools.webservice.wsclient="webservice_client.xmi" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:org.eclipse.jem.java="java.xmi" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;&lt;resource-env-ref-name&gt;
  *
@@ -56,16 +56,16 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  *
  * 				&lt;/resource-env-ref&gt;
  * </pre>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * Java class for ResourceEnvRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ResourceEnvRef">
  *   &lt;complexContent>

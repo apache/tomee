@@ -29,18 +29,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p class="changed_added_2_2">Define a view node in a flow graph.</p>
- * <p/>
+ *
  * <p>This element must contain exactly one
  * <code>&lt;vdl-document&gt;</code> element.</p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-viewType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-viewType">
  *   &lt;complexContent>

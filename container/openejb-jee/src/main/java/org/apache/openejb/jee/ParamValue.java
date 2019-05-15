@@ -33,9 +33,9 @@ import java.util.List;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="param-valueType">
  *   &lt;complexContent>

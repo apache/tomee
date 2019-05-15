@@ -31,21 +31,21 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Define a call node in a flow graph.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code> element,
  * which must contain exactly one <code>&lt;flow-id&gt;</code> element.</p>
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-callType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-callType">
  *   &lt;complexContent>

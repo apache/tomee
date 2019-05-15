@@ -31,13 +31,13 @@ import javax.xml.bind.annotation.XmlType;
  * String columnDefinition() default "";
  * int length() default 31;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for discriminator-column complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="discriminator-column">
  *   &lt;complexContent>

@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for connection-definitionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="connection-definitionType">
  *   &lt;complexContent>

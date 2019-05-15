@@ -23,15 +23,15 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Binding information for MessageDrivenBeans.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MessageDrivenBeanBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MessageDrivenBeanBinding">
  *   &lt;complexContent>

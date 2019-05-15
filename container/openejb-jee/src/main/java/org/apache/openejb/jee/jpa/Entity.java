@@ -41,13 +41,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * public @interface Entity {
  * String name() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for entity complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="entity">
  *   &lt;complexContent>

@@ -42,15 +42,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * sense that they are omitted if the lists represented by them are empty.
  * Providing an assembly-descriptor in the deployment descriptor is optional for
  * the ejb-jar file producer.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for AssemblyDescriptor complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="AssemblyDescriptor">
  *   &lt;complexContent>

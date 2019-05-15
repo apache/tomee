@@ -34,18 +34,18 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * @since J2EE1.4 The activation-config-propertyType contains a name/value
  * configuration property pair for a message-driven bean.
- * <p/>
+ *
  * The properties that are recognized for a particular message-driven
  * bean are determined by the messaging type.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ActivationConfigProperty complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ActivationConfigProperty">
  *   &lt;complexContent>

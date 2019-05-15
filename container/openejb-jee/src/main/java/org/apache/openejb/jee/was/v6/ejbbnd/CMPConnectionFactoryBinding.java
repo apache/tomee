@@ -33,13 +33,13 @@ import org.apache.openejb.jee.was.v6.commonbnd.Property;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for CMPConnectionFactoryBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CMPConnectionFactoryBinding">
  *   &lt;complexContent>

@@ -34,11 +34,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for ejb-local-refType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ejb-local-refType">
  *   &lt;complexContent>

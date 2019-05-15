@@ -36,17 +36,17 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * declaration consists of an optional description, the name of the environment
  * entry, and an optional value. If a value is not specified, one must be
  * supplied during deployment.
- * <p/>
+ *
  * It is used by env-entry elements.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EnvEntry complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EnvEntry">
  *   &lt;complexContent>

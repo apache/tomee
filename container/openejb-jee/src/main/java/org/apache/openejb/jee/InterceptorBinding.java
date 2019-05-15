@@ -34,11 +34,11 @@ import java.util.Arrays;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for interceptor-bindingType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="interceptor-bindingType">
  *   &lt;complexContent>

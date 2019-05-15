@@ -27,15 +27,15 @@ import org.apache.openejb.jee.was.v6.wsclient.ServiceRef;
 /**
  * @since J2EE1.4 This group keeps the usage of the contained JNDI environment
  * reference elements consistent across J2EE deployment descriptors.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for JNDIEnvRefsGroup complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="JNDIEnvRefsGroup">
  *   &lt;complexContent>

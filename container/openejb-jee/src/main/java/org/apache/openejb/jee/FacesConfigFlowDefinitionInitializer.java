@@ -29,15 +29,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p class="changed_added_2_2">A <code>MethodExpression</code> that will be invoked when the flow is entered.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-initializerType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-initializerType">
  *   &lt;simpleContent>

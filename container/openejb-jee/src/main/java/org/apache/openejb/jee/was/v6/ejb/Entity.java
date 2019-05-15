@@ -63,15 +63,15 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * descriptor if the entity's persistence-type is Container and the cmp-version
  * is 1.x, and none must not be present if the entity's persistence-type is
  * Bean.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Entity complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Entity">
  *   &lt;complexContent>

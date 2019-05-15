@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for cascade-type complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="cascade-type">
  *   &lt;complexContent>

@@ -34,13 +34,13 @@ import javax.xml.bind.annotation.XmlType;
  * LockModeType lockMode() default NONE;
  * QueryHint[] hints() default {};
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for named-query complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="named-query">
  *   &lt;complexContent>

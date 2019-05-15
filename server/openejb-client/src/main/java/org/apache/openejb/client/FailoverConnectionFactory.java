@@ -23,23 +23,23 @@ import java.util.List;
 
 /**
  * This factory supports the following URI format
- * <p/>
+ *
  * failover:[strategy:]urlList
- * <p/>
+ *
  * Where strategy and urlList are variables
- * <p/>
+ *
  * strategy = the ConnectionStrategy name, such as "sticky", "round-robin",
  * or "random".  This parameter is optional.
- * <p/>
+ *
  * urlList = a comma separated list connection URIs.  There must be a
  * ConnectionFactory installed for the associated URI.
- * <p/>
+ *
  * Some examples might be:
- * <p/>
+ *
  * - failover:ejbd://foo:4201,ejbd://bar:4201
  * - failover:random:ejbd://foo:4201,ejbd://bar:4201
  * - failover:round-robin:ejbd://foo:4201,ejbds://bar:4201,multicast://239.255.2.3:6142
- * <p/>
+ *
  * The final URI being the most clever in that it will sequentially go
  * through the list, first attempting a couple hard-coded addresses before
  * finally resorting to multicast in an attempt to discover a server.

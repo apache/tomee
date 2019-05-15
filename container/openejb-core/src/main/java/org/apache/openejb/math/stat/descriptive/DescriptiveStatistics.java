@@ -47,7 +47,7 @@ import java.util.Arrays;
  * more values are added than can be stored in the dataset, new values are
  * added in a "rolling" manner, with new values replacing the "oldest" values
  * in the dataset.
- * <p/>
+ *
  * <p>Note: this class is not threadsafe.  Use
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>

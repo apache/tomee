@@ -36,13 +36,13 @@ import javax.xml.bind.annotation.XmlType;
  * JoinColumn[] inverseJoinColumns() default {};
  * UniqueConstraint[] uniqueConstraints() default {};
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for join-table complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="join-table">
  *   &lt;complexContent>

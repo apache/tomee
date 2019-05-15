@@ -32,9 +32,9 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 /**
  * <p>Java class for web-service-securityType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="web-service-securityType">
  *   &lt;complexContent>

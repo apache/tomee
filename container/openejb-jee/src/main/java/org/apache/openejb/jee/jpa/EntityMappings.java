@@ -35,15 +35,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * The entity-mappings element is the root element of a mapping
  * file. It contains the following four types of elements:
- * <p/>
+ *
  * 1. The persistence-unit-metadata element contains metadata
  * for the entire persistence unit. It is undefined if this element
  * occurs in multiple mapping files within the same persistence unit.
- * <p/>
+ *
  * 2. The package, schema, catalog and access elements apply to all of
  * the entity, mapped-superclass and embeddable elements defined in
  * the same file in which they occur.
- * <p/>
+ *
  * 3. The sequence-generator, table-generator, named-query,
  * named-native-query and sql-result-set-mapping elements are global
  * to the persistence unit. It is undefined to have more than one
@@ -52,18 +52,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * undefined to have more than one named-query, named-native-query, or
  * result-set-mapping of the same name in the same or different mapping
  * files in a persistence unit.
- * <p/>
+ *
  * 4. The entity, mapped-superclass and embeddable elements each define
  * the mapping information for a managed persistent class. The mapping
  * information contained in these elements may be complete or it may
  * be partial.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>

@@ -35,12 +35,12 @@ import java.util.Collection;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for assembly-descriptorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="assembly-descriptorType">
  *   &lt;complexContent>

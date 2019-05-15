@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for authentication-mechanismType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="authentication-mechanismType">
  *   &lt;complexContent>

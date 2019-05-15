@@ -24,18 +24,18 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p class="changed_added_2_2">Identifiy the called flow.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-call-flow-referenceType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-flow-referenceType">
  *   &lt;complexContent>

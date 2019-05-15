@@ -35,18 +35,18 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @since J2EE1.4 The icon type contains small-icon and large-icon elements that
  * specify the file names for small and large GIF or JPEG icon images
  * used to represent the parent element in a GUI tool.
- * <p/>
+ *
  * The xml:lang attribute defines the language that the icon file names
  * are provided in. Its value is "en" (English) by default.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for IconType complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="IconType">
  *   &lt;complexContent>

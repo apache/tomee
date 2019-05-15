@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Primary Key generation element.
- * <p/>
+ *
  * If this is present, a key generator GBean will be created
  * and configured to generate IDs for the surrounding object.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for key-generatorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="key-generatorType">
  *   &lt;complexContent>

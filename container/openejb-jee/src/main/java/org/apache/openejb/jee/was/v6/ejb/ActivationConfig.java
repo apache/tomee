@@ -37,21 +37,21 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * expected configuration properties of the message-driven bean in its
  * operational environment. This may include information about message
  * acknowledgement, message selector, expected destination type, etc.
- * <p/>
+ *
  * The configuration information is expressed in terms of name/value
  * configuration properties.
- * <p/>
+ *
  * The properties that are recognized for a particular message-driven
  * bean are determined by the messaging type.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ActivationConfig complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ActivationConfig">
  *   &lt;complexContent>

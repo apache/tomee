@@ -40,203 +40,203 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * same signature that is defined in both the home and remote interface; the
  * method-name element specifies the method name; and the optional method-params
  * elements identify a
- * <p/>
+ *
  * single method among multiple methods with an overloaded method name.
- * <p/>
+ *
  * There are three possible styles of the method element syntax:
- * <p/>
+ *
  * 1. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>*</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
- * <p/>
+ *
+ *
  * This style is used to refer to all the methods of the specified enterprise
  * bean's home and remote interfaces.
- * <p/>
- * <p/>
+ *
+ *
  * 2. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>METHOD</method-name>
- * <p/>
+ *
  * </method>>
- * <p/>
+ *
  * This style is used to refer to the specified method of the specified
  * enterprise bean. If there are multiple methods with
- * <p/>
+ *
  * the same overloaded name, the element of this style refers to all the methods
  * with the overloaded name.
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * 3. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>METHOD</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>PARAM-1</method-param>
- * <p/>
+ *
  * <method-param>PARAM-2</method-param>
- * <p/>
+ *
  * ...
- * <p/>
+ *
  * <method-param>PARAM-n</method-param>
- * <p/>
+ *
  * </method-params> <method>
- * <p/>
- * <p/>
+ *
+ *
  * This style is used to refer to a single method within a set of methods with
  * an overloaded name. PARAM-1 through PARAM-n are the fully-qualified Java
  * types of the method's input parameters (if the method has no input arguments,
  * the method-params element
- * <p/>
+ *
  * contains no method-param elements). Arrays are specified by the array
  * element's type, followed by one or more pair of square brackets (e.g.
  * int[][]).
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Used in: method-permission and container-transaction
- * <p/>
+ *
  * Examples:
- * <p/>
- * <p/>
+ *
+ *
  * Style 1: The following method element refers to all the methods of the
  * EmployeeService bean's home and remote interfaces:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>*</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
- * <p/>
+ *
+ *
  * Style 2: The following method element refers to all the create methods of the
  * EmployeeService bean's home interface:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
+ *
  * Style 3: The following method element refers to the create(String firstName,
  * String LastName) method of the EmployeeService bean's home interface.
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * The following example illustrates a Style 3 element with more complex
  * parameter types. The method foobar(char s, int i, int[] iar,
  * mypackage.MyClass mycl, mypackage.MyClass[][] myclaar)
- * <p/>
+ *
  * would be specified as:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>foobar</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>char</method-param>
- * <p/>
+ *
  * <method-param>int</method-param>
- * <p/>
+ *
  * <method-param>int[]</method-param>
- * <p/>
+ *
  * <method-param>mypackage.MyClass</method-param>
- * <p/>
+ *
  * <method-param>mypackage.MyClass[][]</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
+ *
+ *
  * The optional method-intf element can be used when it becomes necessary to
  * differentiate between a method defined in the home interface and a method
  * with the same name and signature that is defined in the remote interface.
- * <p/>
+ *
  * For example, the method element
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-intf>Remote</method-intf>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
+ *
+ *
  * can be used to differentiate the create(String, String) method defined in the
  * remote interface from the create(String, String) method defined in the home
  * interface, which would be defined as
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-intf>Home</method-intf>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MethodElement complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MethodElement">
  *   &lt;complexContent>

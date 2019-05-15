@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlType;
  * public @interface Inheritance {
  * InheritanceType strategy() default SINGLE_TABLE;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for inheritance complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="inheritance">
  *   &lt;complexContent>

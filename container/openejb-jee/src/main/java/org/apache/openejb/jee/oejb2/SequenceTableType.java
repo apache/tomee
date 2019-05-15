@@ -26,12 +26,12 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Indicates that a separate table holds a list of table name/ID
  * pairs and the server should fetch the next ID from that table.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for sequence-tableType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="sequence-tableType">
  *   &lt;complexContent>

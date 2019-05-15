@@ -35,11 +35,11 @@ import java.util.Map;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for message-destinationType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="message-destinationType">
  *   &lt;complexContent>

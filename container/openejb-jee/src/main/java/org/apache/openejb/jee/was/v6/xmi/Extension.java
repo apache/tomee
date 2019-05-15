@@ -29,13 +29,13 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 /**
- * <p/>
+ *
  * Java class for Extension complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Extension">
  *   &lt;complexContent>

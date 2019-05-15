@@ -35,15 +35,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @since J2EE1.4 The message-destination-ref element contains a declaration of
  * Deployment Component's reference to a message destination associated
  * with a resource in Deployment Component's environment. It consists of:
- * <p/>
+ *
  * - an optional description - the message destination reference name -
  * the message destination type - a specification as to whether the
  * destination is used for consuming or producing messages, or both - a
  * link to the message destination
- * <p/>
+ *
  * Examples:
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;message-destination-ref xmlns:com.ibm.etools.j2ee.common="common.xmi" xmlns:com.ibm.etools.webservice.wsclient="webservice_client.xmi" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:org.eclipse.jem.java="java.xmi" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;&lt;message-destination-ref-name&gt;
  *
@@ -65,16 +65,16 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  *
  * 				&lt;/message-destination-ref&gt;
  * </pre>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * Java class for MessageDestinationRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MessageDestinationRef">
  *   &lt;complexContent>

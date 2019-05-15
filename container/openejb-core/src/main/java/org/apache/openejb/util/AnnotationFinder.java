@@ -47,11 +47,11 @@ import java.util.jar.JarInputStream;
 /**
  * ClassFinder searches the classpath of the specified classloader for
  * packages, classes, constructors, methods, or fields with specific annotations.
- * <p/>
+ *
  * For security reasons ASM is used to find the annotations.  Classes are not
  * loaded unless they match the requirements of a called findAnnotated* method.
  * Once loaded, these classes are cached.
- * <p/>
+ *
  * The getClassesNotLoaded() method can be used immediately after any find*
  * method to get a list of classes which matched the find requirements (i.e.
  * contained the annotation), but were unable to be loaded.

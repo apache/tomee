@@ -36,11 +36,11 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for web-appType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="web-appType">
  *   &lt;complexContent>

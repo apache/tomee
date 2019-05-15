@@ -31,11 +31,11 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for user-data-constraintType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="user-data-constraintType">
  *   &lt;complexContent>

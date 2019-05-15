@@ -34,11 +34,11 @@ import java.util.Objects;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for method-paramsType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="method-paramsType">
  *   &lt;complexContent>

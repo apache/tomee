@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for tracking-modeType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="tracking-modeType">
  *   &lt;simpleContent>

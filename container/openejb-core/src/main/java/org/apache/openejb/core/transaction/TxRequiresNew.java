@@ -25,10 +25,10 @@ import javax.transaction.TransactionManager;
 
 /**
  * 17.6.2.4 RequiresNew
- * <p/>
+ *
  * The Container must invoke an enterprise Bean method whose transaction
  * attribute is set to RequiresNew with a new transaction context.
- * <p/>
+ *
  * If the client invokes the enterprise Bean's method while the client is not
  * associated with a transaction context, the container automatically starts a
  * new transaction before delegating a method call to the enterprise Bean
@@ -38,7 +38,7 @@ import javax.transaction.TransactionManager;
  * transaction context with the invocation. The Container attempts to commit the
  * transaction when the business method has completed. The container performs
  * the commit protocol before the method result is sent to the client.
- * <p/>
+ *
  * If a client calls with a transaction context, the container suspends the
  * association of the transaction context with the current thread before
  * starting the new transaction and invoking the business method. The container

@@ -34,11 +34,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * application_6.xsd
- * <p/>
+ *
  * <p>Java class for applicationType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="applicationType">
  *   &lt;complexContent>

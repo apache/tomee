@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Transient {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for transient complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="transient">
  *   &lt;complexContent>

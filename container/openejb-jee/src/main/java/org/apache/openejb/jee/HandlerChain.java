@@ -32,11 +32,11 @@ import javax.xml.namespace.QName;
 
 /**
  * javaee_web_services_client_1_3.xsd
- * <p/>
+ *
  * <p>Java class for handler-chainType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="handler-chainType">
  *   &lt;complexContent>

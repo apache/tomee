@@ -32,13 +32,13 @@ import javax.xml.namespace.QName;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for Block complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Block">
  *   &lt;complexContent>

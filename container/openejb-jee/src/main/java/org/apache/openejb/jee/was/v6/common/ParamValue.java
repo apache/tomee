@@ -34,15 +34,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * @since J2EE1.4 This type is a general type that can be used to declare
  * parameter/value lists.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ParamValue complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ParamValue">
  *   &lt;complexContent>

@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * for resolving a Service Endpoint Interface to a WSDL port. It optionally
  * associates the Service Endpoint Interface with a particular port-component.
  * This is only used by the container for a Service.getPort(Class) method call.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for PortComponentRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="PortComponentRef">
  *   &lt;complexContent>

@@ -33,12 +33,12 @@ import javax.xml.bind.annotation.XmlType;
  * with a corresponding database table (not if it's meant to generate
  * unique web session IDs or something like that -- see
  * auto-increment-tableType for that case).
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for database-generatedType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="database-generatedType">
  *   &lt;complexContent>

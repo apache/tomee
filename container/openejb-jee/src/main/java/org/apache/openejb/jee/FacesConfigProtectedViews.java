@@ -31,13 +31,13 @@ import java.util.List;
  * which views are protected, any navigation from an unprotected
  * view to a protected view is automatically subject to
  * protection.</p>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for faces-config-protected-viewsType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-protected-viewsType">
  *   &lt;complexContent>

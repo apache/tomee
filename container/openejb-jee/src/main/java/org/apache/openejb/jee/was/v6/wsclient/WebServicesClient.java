@@ -33,14 +33,14 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
  * @since J2EE1.4 deprecated
- * <p/>
- * <p/>
+ *
+ *
  * Java class for WebServicesClient complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="WebServicesClient">
  *   &lt;complexContent>

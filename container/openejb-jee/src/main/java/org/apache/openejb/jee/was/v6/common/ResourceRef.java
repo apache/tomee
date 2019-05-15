@@ -39,25 +39,25 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * code, the type of authentication (Application or Container), and an optional
  * specification of the shareability of connections obtained from the resource
  * (Shareable or Unshareable).
- * <p/>
+ *
  * Example:
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;resource-ref xmlns:com.ibm.etools.j2ee.common="common.xmi" xmlns:com.ibm.etools.webservice.wsclient="webservice_client.xmi" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:org.eclipse.jem.java="java.xmi" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;&lt;res-ref-name&gt;jdbc/EmployeeAppDB&lt;/res-ref-name&gt;&lt;res-type&gt;javax.sql.DataSource&lt;/res-type&gt;&lt;res-auth&gt;Container&lt;/res-auth&gt;&lt;res-sharing-scope&gt;Shareable&lt;/res-sharing-scope&gt;
  *
  * 				&lt;/resource-ref&gt;
  * </pre>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * Java class for ResourceRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ResourceRef">
  *   &lt;complexContent>

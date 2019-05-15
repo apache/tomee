@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * declaration consists of: the type of the message-driven bean's intended
  * destination and an optional declaration of whether a durable or non-durable
  * subscription should be used if the destination-type is javax.jms.Topic.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MessageDrivenDestination complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MessageDrivenDestination">
  *   &lt;complexContent>

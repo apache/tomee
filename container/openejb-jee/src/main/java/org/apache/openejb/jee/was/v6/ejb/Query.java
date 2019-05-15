@@ -41,15 +41,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * to specify the query. If a query is not expressible in EJB QL, the
  * description element should be used to describe the semantics of the query and
  * the ejb-ql element should be empty.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Query complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Query">
  *   &lt;complexContent>

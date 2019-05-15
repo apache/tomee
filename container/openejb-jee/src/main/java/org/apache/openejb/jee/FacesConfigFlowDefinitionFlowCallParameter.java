@@ -25,15 +25,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p class="changed_added_2_2">A parameter to pass when calling the method
  * identified in the "method" element that is a sibling of this element.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-call-parameterType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-call-parameterType">
  *   &lt;complexContent>

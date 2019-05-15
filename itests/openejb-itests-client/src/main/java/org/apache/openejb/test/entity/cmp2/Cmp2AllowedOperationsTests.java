@@ -22,12 +22,12 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * [9] Should be run as the nineth test suite of the BasicCmpTestClients
- * <p/>
+ *
  * <PRE>
  * =========================================================================
  * Operations allowed in the methods of an entity bean
  * =========================================================================
- * <p/>
+ *
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
  * |

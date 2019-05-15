@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * relationship-role-source element uniquely identifies an entity bean. @invariant
  * The content of each role-source element shall refer to an existing entity
  * bean, entity bean reference.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for RoleSource complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="RoleSource">
  *   &lt;complexContent>

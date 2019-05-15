@@ -33,13 +33,13 @@ import org.apache.openejb.jee.was.v6.common.ResourceEnvRef;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for ResourceEnvRefBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ResourceEnvRefBinding">
  *   &lt;complexContent>

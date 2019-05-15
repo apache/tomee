@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * container managed persistence participate. The relationships element contains
  * an optional description; and a list of ejb-relation elements, which specify
  * the container managed relationships.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Relationships complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Relationships">
  *   &lt;complexContent>

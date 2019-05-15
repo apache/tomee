@@ -22,11 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * persistence_2_0.xsd
- * <p/>
+ *
  * <p>Java class for persistence-unit-caching-type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;simpleType name="persistence-unit-caching-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">

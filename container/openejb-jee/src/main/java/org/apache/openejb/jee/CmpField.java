@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for cmp-fieldType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="cmp-fieldType">
  *   &lt;complexContent>

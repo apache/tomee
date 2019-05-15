@@ -28,18 +28,18 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
 
 /**
  * @since J2EE1.4 moved from webapp
- * <p/>
+ *
  * Declares a class in the application must be registered as a web
  * application listener bean.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Listener complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Listener">
  *   &lt;complexContent>

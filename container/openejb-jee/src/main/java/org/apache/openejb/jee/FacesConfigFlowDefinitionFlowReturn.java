@@ -29,20 +29,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p class="changed_added_2_2">Define a return node in a flow graph.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * <p>This element must contain exactly one <code>&lt;from-outcome&gt;</code> element.</p>
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-returnType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-flow-returnType">
  *   &lt;complexContent>

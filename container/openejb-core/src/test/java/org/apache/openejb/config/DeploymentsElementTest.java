@@ -44,7 +44,7 @@ import java.util.Properties;
 /**
  * If an app exists in the apps/ directory in both the
  * packed and unpacked states, only deploy the app once
- * <p/>
+ *
  * Do not treat this as two applications and deploy each one separately.
  *
  * @version $Rev$ $Date$

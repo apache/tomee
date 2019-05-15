@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * GenerationType strategy() default AUTO;
  * String generator() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for generated-value complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="generated-value">
  *   &lt;complexContent>

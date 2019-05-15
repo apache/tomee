@@ -31,11 +31,11 @@ import java.util.Set;
 
 /**
  * A few principles guide this new implementation of ServiceProvider tracking
- * <p/>
+ *
  * 1. Never expose the raw datastructure underneath so providers
  * must be registered via the "front door" and can't be slipped
  * in without proper parent provider resolution.
- * <p/>
+ *
  * 2. How to locate providers from disk or parse xml
  * is completely abstracted from this implementation.
  *

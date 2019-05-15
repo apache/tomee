@@ -37,13 +37,13 @@ import javax.xml.bind.annotation.XmlTransient;
  * String mappedBy() default "";
  * boolean orphanRemoval() default false;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for one-to-one complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="one-to-one">
  *   &lt;complexContent>

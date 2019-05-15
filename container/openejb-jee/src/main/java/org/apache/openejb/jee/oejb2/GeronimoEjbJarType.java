@@ -31,9 +31,9 @@ import java.util.ArrayList;
 
 /**
  * <p>Java class for geronimo-ejb-jarType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="geronimo-ejb-jarType">
  *   &lt;complexContent>

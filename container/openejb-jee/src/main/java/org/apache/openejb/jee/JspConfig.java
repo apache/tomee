@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * jsp_2_2.xsd
- * <p/>
+ *
  * <p>Java class for jsp-configType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="jsp-configType">
  *   &lt;complexContent>

@@ -32,14 +32,14 @@ import java.util.List;
 /**
  * <p class="changed_added_2_2">Defines a case that will
  * be considered in the <code>&lt;switch&gt;</code>.</p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-switch-caseType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-switch-caseType">
  *   &lt;complexContent>

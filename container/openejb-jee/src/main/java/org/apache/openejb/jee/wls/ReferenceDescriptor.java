@@ -29,9 +29,9 @@ import java.util.ArrayList;
 
 /**
  * <p>Java class for resource-description complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="resource-description">
  *   &lt;complexContent>

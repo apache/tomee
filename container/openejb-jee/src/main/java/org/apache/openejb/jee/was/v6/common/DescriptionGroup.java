@@ -34,15 +34,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * @since J2EE1.4 This group keeps the usage of the contained description
  * related elements consistent across J2EE deployment descriptors.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for DescriptionGroup complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="DescriptionGroup">
  *   &lt;complexContent>

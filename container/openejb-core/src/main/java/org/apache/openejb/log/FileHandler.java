@@ -40,9 +40,9 @@ import java.util.logging.SimpleFormatter;
 /**
  * Implementation of <b>Handler</b> that appends log messages to a file
  * named {prefix}{date}{suffix} in a configured directory.
- * <p/>
+ *
  * <p>The following configuration properties are available:</p>
- * <p/>
+ *
  * <ul>
  * <li><code>directory</code> - The directory where to create the log file.
  * If the path is not absolute, it is relative to the current working

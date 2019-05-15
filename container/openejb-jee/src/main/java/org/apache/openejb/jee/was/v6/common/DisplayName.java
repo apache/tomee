@@ -35,11 +35,11 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @since J2EE1.4 The display-name type contains a short name that is intended
  * to be displayed by tools. It is used by display-name elements. The
  * display name need not be unique.
- * <p/>
+ *
  * Example:
- * <p/>
+ *
  * ...
- * <p/>
+ *
  * <pre>
  * &lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;display-name xmlns:com.ibm.etools.j2ee.common="common.xmi" xmlns:com.ibm.etools.webservice.wsclient="webservice_client.xmi" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:org.eclipse.jem.java="java.xmi" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xml:lang="en"&gt;
  *
@@ -47,18 +47,18 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  *
  * 				&lt;/display-name&gt;
  * </pre>
- * <p/>
- * <p/>
+ *
+ *
  * The value of the xml:lang attribute is "en" (English) by default.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for DisplayName complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="DisplayName">
  *   &lt;complexContent>

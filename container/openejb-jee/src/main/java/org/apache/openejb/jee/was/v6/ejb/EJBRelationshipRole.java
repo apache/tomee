@@ -41,38 +41,38 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @invariant Cascade delete can only be specified for an EJBRelationshipRole
  * contained in an EJBrelation in which the other EJBRelationshipRole
  * element specifies a multiplicity of One.
- * <p/>
- * <p/>
+ *
+ *
  * Example:
- * <p/>
+ *
  * <ejb-relation>
- * <p/>
+ *
  * <ejb-relation-name>Product-LineItem</ejb-relation-name>
- * <p/>
+ *
  * <ejb-relationship-role>
- * <p/>
- * <p/>
+ *
+ *
  * <ejb-relationship-role-name>product-has-lineitems</ejb-relationship
  * -role-name>
- * <p/>
+ *
  * <multiplicity>One</multiplicity>
- * <p/>
+ *
  * <relationship-role-source>
- * <p/>
+ *
  * <ejb-name>ProductEJB</ejb-name>
- * <p/>
+ *
  * </relationship-role-source>
- * <p/>
+ *
  * </ejb-relationship-role> ...
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBRelationshipRole complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content
  * contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EJBRelationshipRole">
  *   &lt;complexContent>

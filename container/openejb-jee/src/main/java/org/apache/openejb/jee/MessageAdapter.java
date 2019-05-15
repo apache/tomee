@@ -29,11 +29,11 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for messageadapterType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="messageadapterType">
  *   &lt;complexContent>

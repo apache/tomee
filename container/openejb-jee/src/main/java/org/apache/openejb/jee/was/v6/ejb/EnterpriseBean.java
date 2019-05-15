@@ -35,20 +35,20 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * attributes, operations, and associations. These are actually derived/filtered
  * from its implementation classes and interfaces. For mapping and browsing
  * purposes, though, you would like the EJB to appear as a class.
- * <p/>
+ *
  * In this light, even Session Beans can have associations and properties
  * implemented by their bean. For example, it would be meaningful to describe
  * associations from a Session to the Entities which it uses to perform its
  * work.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EnterpriseBean complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EnterpriseBean">
  *   &lt;complexContent>

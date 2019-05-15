@@ -33,11 +33,11 @@ import java.util.Map;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- * <p/>
+ *
  * <p>Java class for tldTaglibType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="tldTaglibType">
  *   &lt;complexContent>

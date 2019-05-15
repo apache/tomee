@@ -41,15 +41,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * method-permission element must be defined in the security-role element of the
  * deployment descriptor, and the methods must be methods defined in the
  * enterprise bean's remote and/or home interfaces.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MethodPermission complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MethodPermission">
  *   &lt;complexContent>

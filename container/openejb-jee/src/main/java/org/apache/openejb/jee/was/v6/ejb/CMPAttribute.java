@@ -29,15 +29,15 @@ import org.apache.openejb.jee.was.v6.ecore.EAttribute;
 /**
  * Describes a container-managed field. The field element includes an optional
  * description of the field, and the name of the field.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for CMPAttribute complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="CMPAttribute">
  *   &lt;complexContent>

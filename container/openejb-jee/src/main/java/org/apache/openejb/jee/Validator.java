@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- * <p/>
+ *
  * <p>Java class for validatorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="validatorType">
  *   &lt;complexContent>

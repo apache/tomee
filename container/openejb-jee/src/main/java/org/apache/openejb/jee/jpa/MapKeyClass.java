@@ -28,13 +28,13 @@ import javax.xml.bind.annotation.XmlType;
  * public @interface MapKeyClass {
  * Class value();
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for map-key-class complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="map-key-class">
  *   &lt;complexContent>

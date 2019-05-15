@@ -30,13 +30,13 @@ import javax.xml.bind.annotation.XmlType;
  * public @interface EntityListeners {
  * Class[] value();
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for entity-listeners complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="entity-listeners">
  *   &lt;complexContent>

@@ -27,11 +27,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for inbound-resourceadapterType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="inbound-resourceadapterType">
  *   &lt;complexContent>

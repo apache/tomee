@@ -35,11 +35,11 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for message-destination-refType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="message-destination-refType">
  *   &lt;complexContent>

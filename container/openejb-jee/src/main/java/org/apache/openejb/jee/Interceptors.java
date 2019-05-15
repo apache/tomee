@@ -29,11 +29,11 @@ import java.util.LinkedHashMap;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for interceptorsType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="interceptorsType">
  *   &lt;complexContent>

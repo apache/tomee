@@ -34,15 +34,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * The valid EJB method category names are: EJBHOMEMETHOD, EJBCREATEMETHOD,
  * EJBFINDERMETHOD, EJBREMOTEMETHOD.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBMethodCategory complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EJBMethodCategory">
  *   &lt;complexContent>

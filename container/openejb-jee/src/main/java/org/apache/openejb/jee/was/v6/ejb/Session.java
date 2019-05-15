@@ -28,7 +28,7 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
 
 /**
  * The session-beanType declares an session bean. The declaration consists of:
- * <p/>
+ *
  * - an optional description - an optional display name - an optional icon
  * element that contains a small and a large icon file name - a name assigned to
  * the enterprise bean in the deployment description - the names of the session
@@ -45,24 +45,24 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * declaration of the bean's resource manager connection factory references - an
  * optional declaration of the bean's resource environment references. - an
  * optional declaration of the bean's message destination references
- * <p/>
+ *
  * The elements that are optional are "optional" in the sense that they are
  * omitted when if lists represented by them are empty.
- * <p/>
+ *
  * Either both the local-home and the local elements or both the home and the
  * remote elements must be specified for the session bean.
- * <p/>
+ *
  * The service-endpoint element may only be specified if the bean is a stateless
  * session bean.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Session complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Session">
  *   &lt;complexContent>

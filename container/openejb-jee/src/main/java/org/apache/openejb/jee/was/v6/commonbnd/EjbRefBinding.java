@@ -33,13 +33,13 @@ import org.apache.openejb.jee.was.v6.common.EjbRef;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for EjbRefBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EjbRefBinding">
  *   &lt;complexContent>

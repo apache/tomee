@@ -34,13 +34,13 @@ import javax.xml.bind.annotation.XmlType;
  * fields or properties. If metadata-complete for the entity is true
  * then the remainder of the attributes will be defaulted according
  * to the default rules.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for attributes complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="attributes">
  *   &lt;complexContent>

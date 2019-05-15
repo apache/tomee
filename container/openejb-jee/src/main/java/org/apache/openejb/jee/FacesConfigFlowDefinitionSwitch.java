@@ -31,26 +31,26 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Define a switch node in a flow graph.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * <p>This element must contain one or more
  * <code>&lt;case&gt;</code> elements.  When control passes to the
  * <code>&lt;switch&gt;</code> node, each of the cases must be considered
  * in order and control must past to the <code>&lt;from-outcome&gt;</code>
  * of the first one whose <code>&lt;if&gt;</code> expression evaluates to
  * <code>true</code>.</p>
- * <p/>
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-switchType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-switchType">
  *   &lt;complexContent>

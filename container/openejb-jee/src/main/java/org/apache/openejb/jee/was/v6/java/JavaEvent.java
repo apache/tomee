@@ -23,13 +23,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.was.v6.ecore.EStructuralFeature;
 
 /**
- * <p/>
+ *
  * Java class for JavaEvent complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="JavaEvent">
  *   &lt;complexContent>

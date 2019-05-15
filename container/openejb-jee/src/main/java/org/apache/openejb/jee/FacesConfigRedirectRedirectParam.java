@@ -32,13 +32,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * a "redirect" element, contains child "name"
  * and "value" elements that must be included in the
  * redirect url when the redirect is performed.</p>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for faces-config-redirect-redirectParamType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-redirect-redirectParamType">
  *   &lt;complexContent>

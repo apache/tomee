@@ -33,11 +33,11 @@ import java.util.Properties;
 
 /**
  * javaee_web_services_client_1_3.xsd
- * <p/>
+ *
  * <p>Java class for port-component-refType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="port-component-refType">
  *   &lt;complexContent>

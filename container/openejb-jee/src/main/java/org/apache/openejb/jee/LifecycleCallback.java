@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for lifecycle-callbackType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="lifecycle-callbackType">
  *   &lt;complexContent>

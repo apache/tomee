@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * These defaults are applied to the persistence unit as a whole
  * unless they are overridden by local annotation or XML
  * element settings.
- * <p/>
+ *
  * schema - Used as the schema for all tables, secondary tables, join
  * tables, collection tables, sequence generators, and table
  * generators that apply to the persistence unit
@@ -42,13 +42,13 @@ import javax.xml.bind.annotation.XmlType;
  * in all entity relationships of the persistence unit
  * entity-listeners - List of default entity listeners to be invoked
  * on each entity in the persistence unit.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for persistence-unit-defaults complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="persistence-unit-defaults">
  *   &lt;complexContent>

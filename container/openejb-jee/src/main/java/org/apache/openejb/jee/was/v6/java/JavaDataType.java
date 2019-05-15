@@ -23,13 +23,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.was.v6.ecore.EClass;
 
 /**
- * <p/>
+ *
  * Java class for JavaDataType complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="JavaDataType">
  *   &lt;complexContent>

@@ -51,11 +51,11 @@ import java.util.List;
 /**
  * The point of this test case is to verify that OpenEJB is accurately performing
  * it's part of a WebServiceProvider to OpenEJB invocation as it relates to JAX-RPC.
- * <p/>
+ *
  * In the agreement between OpenEJB and the Web Service Provider, the Web Service Provider
  * must supply the MessageContext and an Interceptor as the arguments of the standard
  * container.invoke method call.
- * <p/>
+ *
  * OpenEJB must ensure the MessageContext is exposed via the SessionContext.getMessageContext
  * and ensure that the interceptor is added to the chain just after the other interceptors and
  * before the bean method itself is invoked.

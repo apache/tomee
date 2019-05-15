@@ -31,9 +31,9 @@ import java.util.Properties;
 
 /**
  * <p>Java class for Service complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Service">
  *   &lt;simpleContent>

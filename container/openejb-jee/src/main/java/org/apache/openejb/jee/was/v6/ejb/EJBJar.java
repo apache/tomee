@@ -33,15 +33,15 @@ import org.apache.openejb.jee.was.v6.common.CompatibilityDescriptionGroup;
  * about all included enterprise beans; a descriptor for container managed
  * relationships, if any; an optional application-assembly descriptor; and an
  * optional name of an ejb-client-jar file for the ejb-jar.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBJar complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EJBJar">
  *   &lt;complexContent>

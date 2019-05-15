@@ -40,13 +40,13 @@ import javax.xml.bind.annotation.XmlType;
  * int allocationSize() default 50;
  * UniqueConstraint[] uniqueConstraints() default {};
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for table-generator complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="table-generator">
  *   &lt;complexContent>

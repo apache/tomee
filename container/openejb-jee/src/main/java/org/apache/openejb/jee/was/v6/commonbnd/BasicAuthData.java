@@ -24,15 +24,15 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A basic type of Authentication which provides a userId and password for
  * connecting to a resource.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for BasicAuthData complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="BasicAuthData">
  *   &lt;complexContent>

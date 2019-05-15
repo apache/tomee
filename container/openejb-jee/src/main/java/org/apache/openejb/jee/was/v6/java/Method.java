@@ -27,13 +27,13 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.was.v6.ecore.EOperation;
 
 /**
- * <p/>
+ *
  * Java class for Method complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Method">
  *   &lt;complexContent>

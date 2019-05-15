@@ -35,11 +35,11 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for listenerType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="listenerType">
  *   &lt;complexContent>

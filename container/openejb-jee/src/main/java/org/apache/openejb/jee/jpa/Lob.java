@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Lob {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for lob complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="lob">
  *   &lt;complexContent>

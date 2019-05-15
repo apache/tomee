@@ -34,13 +34,13 @@ import javax.xml.bind.annotation.XmlType;
  * String schema() default "";
  * UniqueConstraint[] uniqueConstraints() default {};
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for table complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="table">
  *   &lt;complexContent>

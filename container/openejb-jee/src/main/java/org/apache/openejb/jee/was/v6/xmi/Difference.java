@@ -33,13 +33,13 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 /**
- * <p/>
+ *
  * Java class for Difference complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Difference">
  *   &lt;complexContent>

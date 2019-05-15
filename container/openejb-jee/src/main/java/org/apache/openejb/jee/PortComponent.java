@@ -30,11 +30,11 @@ import java.util.List;
 
 /**
  * javaee_web_services_1_3.xsd
- * <p/>
+ *
  * <p>Java class for port-componentType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="port-componentType">
  *   &lt;complexContent>

@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * bean's method invocations. It consists of an optional description, a list of
  * method elements, and a transaction attribute.The transaction attribute is to
  * be applied to all the specified methods.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MethodTransaction complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="MethodTransaction">
  *   &lt;complexContent>

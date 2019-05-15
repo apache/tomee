@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlType;
  * Class resultClass() default void.class;
  * String resultSetMapping() default ""; //named SqlResultSetMapping
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for named-native-query complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="named-native-query">
  *   &lt;complexContent>

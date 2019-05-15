@@ -32,11 +32,11 @@ import java.util.List;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for ejb-relationship-roleType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="ejb-relationship-roleType">
  *   &lt;complexContent>

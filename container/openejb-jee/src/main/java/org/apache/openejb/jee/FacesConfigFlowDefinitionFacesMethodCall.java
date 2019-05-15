@@ -28,14 +28,14 @@ import java.util.List;
  * <p class="changed_added_2_2">Invoke a method, passing parameters if necessary.
  * The return from the method is used as the outcome for where to go next in the
  * flow.  If the method is a void method, the default outcome is used.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-faces-method-callType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definition-faces-method-callType">
  *   &lt;complexContent>

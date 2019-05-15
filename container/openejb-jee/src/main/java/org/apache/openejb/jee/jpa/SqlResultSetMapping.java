@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.XmlType;
  * EntityResult[] entities() default {};
  * ColumnResult[] columns() default {};
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for sql-result-set-mapping complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="sql-result-set-mapping">
  *   &lt;complexContent>

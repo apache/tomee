@@ -35,15 +35,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * Specifies the run-as identity to be used for the execution of the methods of
  * an enterprise bean. It contains an optional description, and the name of a
  * security role.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Identity complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Identity">
  *   &lt;complexContent>

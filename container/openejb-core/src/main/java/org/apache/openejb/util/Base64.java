@@ -21,7 +21,7 @@ import java.io.IOException;
 
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
- * <p/>
+ *
  * <p>This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite>
  * from RFC 2045 <cite>Multipurpose Internet Mail Extensions (MIME) Part One:
  * Format of Internet Message Bodies</cite> by Freed and Borenstein.</p>

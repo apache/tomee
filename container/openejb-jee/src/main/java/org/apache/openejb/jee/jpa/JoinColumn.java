@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlType;
  * String columnDefinition() default "";
  * String table() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for join-column complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="join-column">
  *   &lt;complexContent>

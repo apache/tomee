@@ -35,13 +35,13 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @Target(TYPE) @Retention(RUNTIME)
  * public @interface MappedSuperclass{}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for mapped-superclass complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="mapped-superclass">
  *   &lt;complexContent>

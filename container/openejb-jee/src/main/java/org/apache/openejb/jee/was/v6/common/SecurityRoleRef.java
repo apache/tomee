@@ -37,15 +37,15 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * consists of an optional description, the security role name used in the code,
  * and an optional link to a security role. If the security role is not
  * specified, the Deployer must choose an appropriate security role.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for SecurityRoleRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="SecurityRoleRef">
  *   &lt;complexContent>

@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
- * <p/>
+ *
  * URI relativize(URI, URI) added afterwards to deal with the
  * non-functional URI.relativize(URI) method
  */

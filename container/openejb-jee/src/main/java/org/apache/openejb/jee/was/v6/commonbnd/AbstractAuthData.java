@@ -37,14 +37,14 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * model is Basic Authentication; however, other authentication types such as
  * certificates and tokens are expected to be extended off this type in the
  * advanced and enterprise layers.
- * <p/>
- * <p/>
+ *
+ *
  * Java class for AbstractAuthData complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="AbstractAuthData">
  *   &lt;complexContent>

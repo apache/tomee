@@ -20,11 +20,11 @@ import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- * <p/>
+ *
  * <p>Java class for variable-scopeType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="variable-scopeType">
  *   &lt;simpleContent>

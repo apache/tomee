@@ -38,13 +38,13 @@ import org.apache.openejb.jee.was.v6.webservice.clientbnd.ServiceRefBinding;
 import org.apache.openejb.jee.was.v6.xmi.Extension;
 
 /**
- * <p/>
+ *
  * Java class for EnterpriseBeanBinding complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EnterpriseBeanBinding">
  *   &lt;complexContent>

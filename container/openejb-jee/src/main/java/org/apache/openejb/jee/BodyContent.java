@@ -21,11 +21,11 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * web-jsptaglibrary_2_1.xsd
- * <p/>
+ *
  * <p>Java class for body-contentType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="body-contentType">
  *   &lt;simpleContent>

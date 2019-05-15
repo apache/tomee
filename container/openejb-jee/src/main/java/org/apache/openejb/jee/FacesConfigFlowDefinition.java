@@ -32,21 +32,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * <p class="changed_added_2_2">Top level element for a flow
  * definition.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * <p>If there is no <code>&lt;start-node&gt;</code> element declared, it
  * is assumed to be <code>&lt;flowName&gt;.xhtml</code>.</p>
- * <p/>
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definitionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-flow-definitionType">
  *   &lt;complexContent>

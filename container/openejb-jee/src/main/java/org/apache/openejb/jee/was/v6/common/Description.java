@@ -40,18 +40,18 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * Typically, the tools used by such a Deployment File consumer will
  * display the description when processing the parent element that
  * contains the description.
- * <p/>
+ *
  * The lang attribute defines the language that the description is
  * provided in. The default value is "en" (English).
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Description complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="Description">
  *   &lt;complexContent>

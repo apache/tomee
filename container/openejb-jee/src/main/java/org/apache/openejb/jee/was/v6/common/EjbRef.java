@@ -34,21 +34,21 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
 /**
  * The ejb-refType is used by ejb-ref elements for the declaration of a
  * reference to an enterprise bean's home. The declaration consists of:
- * <p/>
+ *
  * - an optional description - the EJB reference name used in the code of the
  * Deployment Component that's referencing the enterprise bean - the expected
  * type of the referenced enterprise bean - the expected home and remote
  * interfaces of the referenced enterprise bean - optional ejb-link information,
  * used to specify the referenced enterprise bean
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EjbRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="EjbRef">
  *   &lt;complexContent>

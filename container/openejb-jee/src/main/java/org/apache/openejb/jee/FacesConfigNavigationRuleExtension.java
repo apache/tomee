@@ -32,13 +32,13 @@ import java.util.List;
 /**
  * <p> Extension element for navigation-rule.  It may contain
  * implementation specific content.</p>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for faces-config-navigation-rule-extensionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="faces-config-navigation-rule-extensionType">
  *   &lt;complexContent>

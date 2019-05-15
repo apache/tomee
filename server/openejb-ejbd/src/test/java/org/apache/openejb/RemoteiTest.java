@@ -35,7 +35,7 @@ import java.util.Properties;
 
 /**
  * To run from intellij or another IDE add
- * <p/>
+ *
  * -Dopenejb.home=/Users/dblevins/work/openejb3/server/openejb-ejbd/target/test-classes
  *
  * @version $Revision$ $Date$

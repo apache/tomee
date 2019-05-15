@@ -33,12 +33,12 @@ import javax.xml.bind.annotation.XmlType;
  * with an AUTO_INCREMENT key, specify an insert statement here,
  * and then capture the newly returned ID and use it as your
  * web session ID).
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for auto-increment-tableType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="auto-increment-tableType">
  *   &lt;complexContent>

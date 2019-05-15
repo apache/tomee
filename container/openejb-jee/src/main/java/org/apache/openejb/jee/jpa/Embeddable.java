@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @Target({TYPE}) @Retention(RUNTIME)
  * public @interface Embeddable {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for embeddable complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="embeddable">
  *   &lt;complexContent>

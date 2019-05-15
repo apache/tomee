@@ -33,13 +33,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * require trailing/leading space elimination as well as
  * collapsing the existing whitespace, this base type may be
  * used.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for string complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="string">
  *   &lt;simpleContent>

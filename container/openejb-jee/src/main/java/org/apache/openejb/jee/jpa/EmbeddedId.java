@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface EmbeddedId {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for embedded-id complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="embedded-id">
  *   &lt;complexContent>

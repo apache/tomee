@@ -33,11 +33,11 @@ import java.util.List;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for run-asType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="run-asType">
  *   &lt;complexContent>

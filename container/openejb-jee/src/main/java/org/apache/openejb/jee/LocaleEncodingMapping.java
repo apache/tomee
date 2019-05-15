@@ -28,11 +28,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for locale-encoding-mappingType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="locale-encoding-mappingType">
  *   &lt;complexContent>

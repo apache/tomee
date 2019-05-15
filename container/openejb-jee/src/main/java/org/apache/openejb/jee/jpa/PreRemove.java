@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * @Target({METHOD}) @Retention(RUNTIME)
  * public @interface PreRemove {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for pre-remove complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
  * &lt;complexType name="pre-remove">
  *   &lt;complexContent>
