@@ -24,7 +24,6 @@ public class ValidationGeneratorTest {
         Assert.assertFalse(map.containsKey("green"));
     }
 
-    @Ignore
     @Test
     public void test() throws Exception {
         final String actual = Asmifier.asmify(ValidationGenerator.generateFor(Colors.class));
