@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface AssociationOverride {
  * String name();
  * JoinColumn[] joinColumns() default{};

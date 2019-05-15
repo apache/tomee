@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  * If this is the case then the defaulting rules will be recursively
  * applied.
  *
- * &commat;Target(TYPE) @Retention(RUNTIME)
+ * Target(TYPE) @Retention(RUNTIME)
  * public @interface MappedSuperclass{}
  *
  *

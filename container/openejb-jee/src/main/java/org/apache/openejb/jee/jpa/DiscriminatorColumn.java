@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({TYPE}) @Retention(RUNTIME)
+ * Target({TYPE}) @Retention(RUNTIME)
  * public @interface DiscriminatorColumn {
  * String name() default "DTYPE";
  * DiscriminatorType discriminatorType() default STRING;

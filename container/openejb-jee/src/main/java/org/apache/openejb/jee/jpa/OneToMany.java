@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 
 /**
- * &commat;Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface OneToMany {
  * Class targetEntity() default void.class;
  * CascadeType[] cascade() default {};

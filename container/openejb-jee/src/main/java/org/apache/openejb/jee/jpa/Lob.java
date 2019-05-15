@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Lob {}
  *
  *

@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({}) @Retention(RUNTIME)
+ * Target({}) @Retention(RUNTIME)
  * public @interface UniqueConstraint {
  * String name() default "";
  * String[] columnNames();

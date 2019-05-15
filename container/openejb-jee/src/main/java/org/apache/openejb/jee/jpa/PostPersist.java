@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({METHOD}) @Retention(RUNTIME)
+ * Target({METHOD}) @Retention(RUNTIME)
  * public @interface PostPersist {}
  *
  *

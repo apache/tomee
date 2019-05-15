@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({TYPE}) @Retention(RUNTIME)
+ * Target({TYPE}) @Retention(RUNTIME)
  * public @interface EntityListeners {
  * Class[] value();
  * }

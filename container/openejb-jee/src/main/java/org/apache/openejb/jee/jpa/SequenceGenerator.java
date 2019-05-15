@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * &commat;Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface SequenceGenerator {
  * String name();
  * String sequenceName() default "";
