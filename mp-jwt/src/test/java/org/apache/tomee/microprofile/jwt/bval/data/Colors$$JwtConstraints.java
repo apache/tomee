@@ -25,15 +25,16 @@ public class Colors$$JwtConstraints {
     public Colors$$JwtConstraints() {
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
+    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
     @Issuer("http://foo.bar.com")
-    public JsonWebToken red$$0() {
+    public JsonWebToken blue$$0() {
         return null;
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
+    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
     @Issuer("http://foo.bar.com")
-    public JsonWebToken blue$$1() {
+    public JsonWebToken red$$1() {
         return null;
     }
+
 }

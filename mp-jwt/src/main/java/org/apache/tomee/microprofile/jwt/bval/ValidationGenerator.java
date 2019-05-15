@@ -28,7 +28,7 @@ import javax.validation.Constraint;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +97,7 @@ public class ValidationGenerator implements Opcodes {
 
         if (constrainedMethods.size() == 0) return null;
 
-        final Map<String, MethodVisitor> visitors = new HashMap<>();
+        final Map<String, MethodVisitor> visitors = new LinkedHashMap<>();
 
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
@@ -116,7 +116,7 @@ public class ValidationGenerator implements Opcodes {
         }
 
         int id = 0;
-        for (final Method method : constrainedMethods) {
+        for (final Method method : sort(constrainedMethods)) {
             final String name = method.getName() + "$$" + (id++);
 
             // Declare a method of return type JsonWebToken for use with
@@ -141,12 +141,16 @@ public class ValidationGenerator implements Opcodes {
 
         DynamicSubclass.copyMethodAnnotations(target, visitors);
 
-        // This should never be reached, but just in case
         for (final MethodVisitor visitor : visitors.values()) {
             visitor.visitEnd();
         }
 
         return cw.toByteArray();
+    }
+
+    private static List<Method> sort(final List<Method> constrainedMethods) {
+        constrainedMethods.sort((a, b) -> a.toString().compareTo(b.toString()));
+        return constrainedMethods;
     }
 
     public static String getName(final Class<?> target) {
