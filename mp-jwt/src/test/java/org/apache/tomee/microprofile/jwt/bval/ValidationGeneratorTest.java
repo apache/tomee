@@ -3,6 +3,7 @@ package org.apache.tomee.microprofile.jwt.bval;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors$$JwtConstraints;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -23,6 +24,7 @@ public class ValidationGeneratorTest {
         Assert.assertFalse(map.containsKey("green"));
     }
 
+    @Ignore
     @Test
     public void test() throws Exception {
         final String actual = Asmifier.asmify(ValidationGenerator.generateFor(Colors.class));
