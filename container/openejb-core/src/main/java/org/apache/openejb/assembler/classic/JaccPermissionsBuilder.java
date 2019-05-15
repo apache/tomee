@@ -258,7 +258,7 @@ public class JaccPermissionsBuilder {
 
         /**
          * EJB v2.1 section 21.3.2
-         * <p/>
+         *
          * It is possible that some methods are not assigned to any security
          * roles nor contained in the <code>exclude-list</code> element. In
          * this case, it is the responsibility of the Deployer to assign method

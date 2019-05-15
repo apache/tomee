@@ -996,21 +996,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
         /**
          * Gets the value of the group property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the group property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getGroup().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link GroupType }
          */
@@ -1043,21 +1043,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
         /**
          * Gets the value of the cmpFieldGroupMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the cmpFieldGroupMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getCmpFieldGroupMapping().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link CmpFieldGroupMappingType }
          */
@@ -1070,21 +1070,21 @@ public class EntityBeanType implements EnterpriseBean, RpcBean {
 
         /**
          * Gets the value of the cmrFieldGroupMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the cmrFieldGroupMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getCmrFieldGroupMapping().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link CmrFieldGroupMappingType }
          */

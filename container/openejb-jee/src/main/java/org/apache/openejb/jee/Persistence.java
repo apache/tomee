@@ -328,21 +328,21 @@ public class Persistence {
 
         /**
          * Gets the value of the mappingFile property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the mappingFile property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getMappingFile().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
          */
@@ -355,21 +355,21 @@ public class Persistence {
 
         /**
          * Gets the value of the jarFile property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the jarFile property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getJarFile().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
          */
@@ -382,21 +382,20 @@ public class Persistence {
 
         /**
          * Gets the value of the clazz property.
-         * <p/>
-         * <p/>
+
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the clazz property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getClazz().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link java.lang.String }
          */
@@ -530,9 +529,9 @@ public class Persistence {
 
         /**
          * <p>Java class for anonymous complex type.
-         * <p/>
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * <p/>
+         *
          * <pre>
          * &lt;complexType&gt;
          *   &lt;complexContent&gt;
@@ -565,21 +564,21 @@ public class Persistence {
 
             /**
              * Gets the value of the property property.
-             * <p/>
-             * <p/>
+             *
+             *
              * This accessor method returns a reference to the live list,
              * not a snapshot. Therefore any modification you make to the
              * returned list will be present inside the JAXB object.
              * This is why there is not a <CODE>set</CODE> method for the property property.
-             * <p/>
-             * <p/>
+             *
+             *
              * For example, to add a new item, do as follows:
              * <pre>
              *    getProperty().add(newItem);
              * </pre>
-             * <p/>
-             * <p/>
-             * <p/>
+             *
+             *
+             *
              * Objects of the following type(s) are allowed in the list
              * {@link Persistence.PersistenceUnit.Properties.Property }
              */
@@ -593,9 +592,9 @@ public class Persistence {
 
             /**
              * <p>Java class for anonymous complex type.
-             * <p/>
+             *
              * <p>The following schema fragment specifies the expected content contained within this class.
-             * <p/>
+             *
              * <pre>
              * &lt;complexType&gt;
              *   &lt;complexContent&gt;

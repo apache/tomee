@@ -545,7 +545,7 @@ public class Pool<T> {
          * Constructor is private so that it is impossible for an Entry object
          * to exist without there being a corresponding permit issued for the
          * object wrapped by this Entry.
-         * <p/>
+         *
          * This helps ensure that when an Entry is returned to the pool it is
          * always safe to call {@link Semaphore#release()} which increases the
          * permit size by one.

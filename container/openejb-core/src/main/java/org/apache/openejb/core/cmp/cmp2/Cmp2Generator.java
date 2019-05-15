@@ -1130,7 +1130,7 @@ public class Cmp2Generator implements Opcodes {
         /**
          * Handle a conversion from one object type to another.  If
          * There are 3 possible conversions:
-         * <p/>
+         *
          * 1)  The to class is Object.  This can be handled
          * without conversion.  This option is a NOP.
          * 2)  The to class is a reference type (non-primitive).  This conversion
