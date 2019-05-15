@@ -31,13 +31,12 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * This class aims to be the one and only static in the entire SYSTEM
  A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
- * <p/>
+ *
  * It is assumed that only one singleton per classloader is possible in any given VM
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
  * instance for that classloader and all children classloaders.
  *
  * @version $Revision$ $Date$
- * @org.apache.xbean.XBean element="system"
  */
 public final class SystemInstance {
     private static final String PROFILE_PROP = "openejb.profile";
