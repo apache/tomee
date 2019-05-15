@@ -169,7 +169,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     /**
      * <p>
      * Sets the {@link #passwordCipher}.
-     * </p>
+     *
      *
      * @param passwordCipher password codec value
      */

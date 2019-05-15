@@ -89,12 +89,12 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * resource managers used by the instance between the begin() and commit(),or rollback(),
      * methods with the transaction. When the instance attempts to commit the transaction, the Container is
      * responsible for the global coordination of the transaction commit.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Check that a javax.transaction.UserTransaction can be obtained from
      * the javax.ejb.EJBContext
-     * </P>
+     *
      */
     public void test01_EJBContext_getUserTransaction() {
         try {
@@ -115,12 +115,12 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * resource managers used by the instance between the begin() and commit(),or rollback(),
      * methods with the transaction. When the instance attempts to commit the transaction, the Container is
      * responsible for the global coordination of the transaction commit.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Check that a javax.transaction.UserTransaction can be obtained from
      * the environment entry java:comp/UserTransaction
-     * </P>
+     *
      */
     public void test02_java_comp_UserTransaction() {
         try {
@@ -137,11 +137,11 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
      * getRollbackOnly() method of the javax.ejb.EJBContext interface.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Test that setRollbackOnly() throws a java.lang.IllegalStateException
-     * </P>
+     *
      */
     public void TODO_test03_EJBContext_setRollbackOnly() {
         try {
@@ -157,11 +157,11 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * The Container must throw the java.lang.IllegalStateException if an instance of a bean
      * with bean-managed transaction demarcation attempts to invoke the setRollbackOnly() or
      * getRollbackOnly() method of the javax.ejb.EJBContext interface.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Test that getRollbackOnly() throws a java.lang.IllegalStateException
-     * </P>
+     *
      */
     public void TODO_test04_EJBContext_getRollbackOnly() {
         try {
@@ -226,7 +226,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * The Container must allow the enterprise bean instance to serially perform several transactions in a
      * method.
-     * </P>
+     *
      */
     public void TODO_test07_serialTransactions() {
         try {
@@ -244,7 +244,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * interface while the instance has not committed the previous
      * transaction, the Container must throw the
      * javax.transaction.NotSupportedException in the begin() method.
-     * </P>
+     *
      */
     public void TODO_test08_nestedTransactions() {
         try {
@@ -269,7 +269,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * <LI>Discard the instance of the session bean.
      * <LI>Throw the java.rmi.RemoteException to the client.
      * </UL>
-     * </P>
+     *
      */
     public void TODO_test09_beginWithNoCommit() {
         try {
@@ -286,7 +286,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
-     * </P>
+     *
      * <PRE>
      * =========================================================================
      * Container's actions for methods of beans with bean-managed transaction
@@ -312,13 +312,13 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      *
      * If the client request is not associated with a transaction and the instance is not associated with a
      * transaction, the container invokes the instance with an unspecified transaction context.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Test scenario 1: none none<BR>
      * If the client's transaction is none and the transaction currently
      * associated with instance none then the transaction associated with the method is none.
-     * </P>
+     *
      */
     public void TODO_test10_scenario1_NoneNone() {
         try {
@@ -335,7 +335,7 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * by the following table. T1 is a transaction associated with a client request, T2 is a transaction that is cur-rently
      * associated with the instance (i.e. a transaction that was started but not completed by a previous
      * business method).
-     * </P>
+     *
      * <PRE>
      * =========================================================================
      * Container's actions for methods of beans with bean-managed transaction
@@ -363,11 +363,11 @@ public class StatelessBeanTxTests extends org.apache.openejb.test.NamedTestCase 
      * the container suspends the client's transaction association and invokes the method with
      * an unspecified transaction context. The container resumes the client's ntransaction association
      * (T1) when the method completes.
-     * </P>
+     *
      * <P>--------------------------------------------------------</P>
      *
      * Test scenario 2: T1 none<BR>
-     * </P>
+     *
      */
     public void TODO_test11_scenario2_T1None() {
         try {

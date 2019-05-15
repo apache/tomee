@@ -56,13 +56,13 @@ public class StatelessPojoHandleTests extends BasicStatelessTestClient {
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object
      * that does not exist result in java.rmi.NoSuchObjectException.
-     * </P>
+     *
      *
      *
      * This remove method of the EJBHome is placed hear as it
      * is more a test on the handle then on the remove method
      * itself.
-     * </P>
+     *
      */
     public void test02_EJBHome_remove() {
         try {
