@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * &commat;Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Basic {
  * FetchType fetch() default EAGER;
  * boolean optional() default true;

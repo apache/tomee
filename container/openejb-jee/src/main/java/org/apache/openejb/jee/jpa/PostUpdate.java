@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({METHOD}) @Retention(RUNTIME)
+ * &commat;Target({METHOD}) @Retention(RUNTIME)
  * public @interface PostUpdate {}
  *
  *

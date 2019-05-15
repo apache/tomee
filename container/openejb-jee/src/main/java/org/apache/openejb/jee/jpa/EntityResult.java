@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({}) @Retention(RUNTIME)
+ * &commat;Target({}) @Retention(RUNTIME)
  * public @interface EntityResult {
  * Class entityClass();
  * FieldResult[] fields() default {};

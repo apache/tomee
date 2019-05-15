@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE}) @Retention(RUNTIME)
+ * &commat;Target({TYPE}) @Retention(RUNTIME)
  * public @interface NamedNativeQuery {
  * String name();
  * String query();

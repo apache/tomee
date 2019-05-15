@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * &commat;Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface MapKeyJoinColumn {
  * String name() default "";
  * String referencedColumnName() default "";

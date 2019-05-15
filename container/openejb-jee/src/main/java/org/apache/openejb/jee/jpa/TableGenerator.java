@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * &commat;Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface TableGenerator {
  * String name();
  * String table() default "";

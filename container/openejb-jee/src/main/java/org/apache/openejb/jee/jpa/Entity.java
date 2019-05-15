@@ -37,7 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * the defaulting rules for the entity and its subelements will
  * be recursively applied.
  *
- * @Target(TYPE) @Retention(RUNTIME)
+ * &commat;Target(TYPE) @Retention(RUNTIME)
  * public @interface Entity {
  * String name() default "";
  * }

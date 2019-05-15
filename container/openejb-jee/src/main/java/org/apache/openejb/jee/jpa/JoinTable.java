@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * &commat;Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface JoinTable {
  * String name() default "";
  * String catalog() default "";

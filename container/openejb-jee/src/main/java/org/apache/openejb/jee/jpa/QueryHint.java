@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({}) @Retention(RUNTIME)
+ * &commat;Target({}) @Retention(RUNTIME)
  * public @interface QueryHint {
  * String name();
  * String value();
