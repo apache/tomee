@@ -52,7 +52,7 @@ public class ValidationInterceptor implements ContainerRequestFilter {
             final Supplier<JsonWebToken> tokenSupplier = (Supplier<JsonWebToken>) requestContext.getProperty(JWT_SUPPLIER);
 
             if (tokenSupplier == null) {
-                VALIDATION.error("No JsonWebToken found in request attribute '" + JWT_SUPPLIER + "'");
+                VALIDATION.debug("No JsonWebToken found in request attribute '" + JWT_SUPPLIER + "'");
                 return;
             }
 
