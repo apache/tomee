@@ -1,14 +1,19 @@
 package org.apache.tomee.microprofile.jwt.bval;
 
+import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors$$JwtConstraints;
+import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
+import org.apache.tomee.microprofile.jwt.bval.data.Shapes$$JwtConstraints;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ValidationGeneratorTest {
@@ -16,7 +21,7 @@ public class ValidationGeneratorTest {
     @Test
     public void testGetConstrainedMethods() throws Exception {
 
-        final List<Method> methods = ValidationGenerator.getConstrainedMethods(Colors.class);
+        final Set<Method> methods = ValidationGenerator.getConstrainedMethods(Colors.class);
         final Map<String, Method> map = methods.stream().collect(Collectors.toMap(Method::getName, method -> method));
 
         Assert.assertTrue(map.containsKey("red"));
@@ -25,9 +30,13 @@ public class ValidationGeneratorTest {
     }
 
     @Test
-    public void test() throws Exception {
-        final String actual = Asmifier.asmify(ValidationGenerator.generateFor(Colors.class));
-        final String expected = Asmifier.asmify(Asmifier.readClassFile(Colors$$JwtConstraints.class));
+    public void testSimple() throws Exception {
+        assertGeneration(Colors.class, Colors$$JwtConstraints.class);
+    }
+
+    private void assertGeneration(final Class<?> target, final Class<?> expectedClass) throws IOException, ProxyGenerationException {
+        final String actual = Asmifier.asmify(ValidationGenerator.generateFor(target));
+        final String expected = Asmifier.asmify(Asmifier.readClassFile(expectedClass));
 
         Assert.assertEquals(expected, actual);
     }

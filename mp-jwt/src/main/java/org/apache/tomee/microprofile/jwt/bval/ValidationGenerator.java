@@ -28,9 +28,11 @@ import javax.validation.Constraint;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * We allow CDI and EJB beans to use BeanValidation to validate a JsonWebToken
@@ -93,7 +95,7 @@ import java.util.Map;
 public class ValidationGenerator implements Opcodes {
 
     public static byte[] generateFor(final Class<?> target) throws ProxyGenerationException {
-        final List<Method> constrainedMethods = getConstrainedMethods(target);
+        final Set<Method> constrainedMethods = getConstrainedMethods(target);
 
         if (constrainedMethods.size() == 0) return null;
 
@@ -148,17 +150,18 @@ public class ValidationGenerator implements Opcodes {
         return cw.toByteArray();
     }
 
-    private static List<Method> sort(final List<Method> constrainedMethods) {
-        constrainedMethods.sort((a, b) -> a.toString().compareTo(b.toString()));
-        return constrainedMethods;
+    private static List<Method> sort(final Set<Method> constrainedMethods) {
+        final List<Method> methods = new ArrayList<>(constrainedMethods);
+        methods.sort((a, b) -> a.toString().compareTo(b.toString()));
+        return methods;
     }
 
     public static String getName(final Class<?> target) {
         return target.getName() + "$$JwtConstraints";
     }
 
-    public static List<Method> getConstrainedMethods(final Class<?> clazz) {
-        final List<Method> constrained = new ArrayList<Method>();
+    public static Set<Method> getConstrainedMethods(final Class<?> clazz) {
+        final Set<Method> constrained = new HashSet<>();
 
         // we could have been doing this long before Streams
         for (Method method : clazz.getMethods())

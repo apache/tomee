@@ -65,7 +65,7 @@ public class Asmifier {
         return readBytes(resource);
     }
 
-    public static byte[] readClassFile(final Class<Colors$$JwtConstraints> clazz) throws IOException {
+    public static byte[] readClassFile(final Class<?> clazz) throws IOException {
         return readClassFile(clazz.getClassLoader(), clazz);
     }
 

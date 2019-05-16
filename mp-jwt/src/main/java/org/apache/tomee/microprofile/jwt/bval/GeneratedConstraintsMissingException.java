@@ -17,25 +17,25 @@
 package org.apache.tomee.microprofile.jwt.bval;
 
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Collection;
 
 public class GeneratedConstraintsMissingException extends IllegalStateException {
 
-    private final List<Method> original;
-    private final List<Method> generated;
+    private final Collection<Method> original;
+    private final Collection<Method> generated;
 
-    public GeneratedConstraintsMissingException(final List<Method> original, final List<Method> generated) {
+    public GeneratedConstraintsMissingException(final Collection<Method> original, final Collection<Method> generated) {
         super(String.format("Expected %s constrained methods, found %s", original.size(), generated.size()));
 
         this.original = original;
         this.generated = generated;
     }
 
-    public List<Method> getOriginal() {
+    public Collection<Method> getOriginal() {
         return original;
     }
 
-    public List<Method> getGenerated() {
+    public Collection<Method> getGenerated() {
         return generated;
     }
 }
