@@ -92,7 +92,8 @@
   </scm>
 
   <properties>
-
+    <!-- allows release plugin to be overriden -->
+    <arguments/>
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -413,7 +414,7 @@
           <pushChanges>false</pushChanges>
           <releaseProfiles></releaseProfiles>
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <arguments>-Dmaven.test.skip=true -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none</arguments>
+          <arguments>-Papache-release -Dmaven.test.skip=true -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
         </configuration>
       </plugin>
 
