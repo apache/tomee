@@ -19,12 +19,15 @@ package org.apache.tomee.microprofile.jwt.bval;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassVisitor;
 import org.apache.xbean.asm7.ClassWriter;
 import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Opcodes;
 import org.apache.xbean.asm7.Type;
 
 import javax.validation.Constraint;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -141,7 +144,7 @@ public class ValidationGenerator implements Opcodes {
             mv.visitMaxs(1, 1);
         }
 
-        DynamicSubclass.copyMethodAnnotations(target, visitors);
+        copyMethodAnnotations(target, visitors);
 
         for (final MethodVisitor visitor : visitors.values()) {
             visitor.visitEnd();
@@ -175,4 +178,69 @@ public class ValidationGenerator implements Opcodes {
     private static boolean isConstraint(final Annotation annotation) {
         return annotation.annotationType().isAnnotationPresent(Constraint.class);
     }
+
+    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
+        // Move all the annotations onto the newly implemented methods
+        // Ensures CDI and JAX-RS and JAX-WS still work
+        Class clazz = classToProxy;
+        while (clazz != null && !clazz.equals(Object.class)) {
+            try {
+                final ClassReader classReader = new ClassReader(DynamicSubclass.readClassFile(clazz));
+                final ClassVisitor copyMethodAnnotations = new CopyMethodAnnotations(visitors);
+                classReader.accept(copyMethodAnnotations, ClassReader.SKIP_CODE);
+            } catch (final IOException e) {
+                throw new ProxyGenerationException(e);
+            }
+            clazz = clazz.getSuperclass();
+        }
+    }
+
+    public static class MoveAnnotationsVisitor extends MethodVisitor {
+
+        private final MethodVisitor newMethod;
+
+        public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
+            super(Opcodes.ASM7, movedMethod);
+            this.newMethod = newMethod;
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+            return newMethod.visitAnnotation(desc, visible);
+        }
+
+        @Override
+        public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
+            return super.visitParameterAnnotation(parameter, desc, visible);
+        }
+
+        @Override
+        public void visitEnd() {
+            newMethod.visitEnd();
+            super.visitEnd();
+        }
+    }
+
+    private static class CopyMethodAnnotations extends ClassVisitor {
+        private final Map<String, MethodVisitor> visitors;
+
+        public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
+            super(Opcodes.ASM7);
+            this.visitors = visitors;
+        }
+
+        @Override
+        public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
+            final MethodVisitor newMethod = visitors.remove(name + desc);
+
+            if (newMethod == null) {
+                return null;
+            }
+
+            final MethodVisitor oldMethod = super.visitMethod(access, name, desc, signature, exceptions);
+
+            return new MoveAnnotationsVisitor(oldMethod, newMethod);
+        }
+    }
+
 }

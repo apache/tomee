@@ -3,6 +3,8 @@ package org.apache.tomee.microprofile.jwt.bval;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors$$JwtConstraints;
+import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
+import org.apache.tomee.microprofile.jwt.bval.data.Shapes$$JwtConstraints;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,6 +30,11 @@ public class ValidationGeneratorTest {
     @Test
     public void testSimple() throws Exception {
         assertGeneration(Colors.class, Colors$$JwtConstraints.class);
+    }
+
+    @Test
+    public void test() throws Exception {
+        assertGeneration(Shapes.class, Shapes$$JwtConstraints.class);
     }
 
     private void assertGeneration(final Class<?> target, final Class<?> expectedClass) throws IOException, ProxyGenerationException {

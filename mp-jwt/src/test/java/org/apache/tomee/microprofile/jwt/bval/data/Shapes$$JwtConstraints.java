@@ -16,22 +16,23 @@
  */
 package org.apache.tomee.microprofile.jwt.bval.data;
 
+import org.apache.tomee.microprofile.jwt.bval.Name;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import javax.ws.rs.PathParam;
+public class Shapes$$JwtConstraints {
 
-public class Shapes {
-
+    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.square(int)")
     @Issuer("http://foo.bar.com")
     @Audience("joe")
-    public void square(@PathParam("id") int id) {
+    public JsonWebToken square$$0() {
+        return null;
     }
 
+    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.triangle(boolean)")
     @Audience("jane")
-    public void triangle(boolean isRight) {
-    }
-
-    public void circle() {
+    public JsonWebToken triangle$$1() {
+        return null;
     }
 }
