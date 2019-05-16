@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +53,13 @@ public class ValidationConstraints {
         final Class constraintsClazz = loadOrCreate(componentClass);
 
         if (constraintsClazz == null) return null;
+
+        final List<Method> original = ValidationGenerator.getConstrainedMethods(componentClass);
+        final List<Method> generated = ValidationGenerator.getConstrainedMethods(constraintsClazz);
+
+        if (original.size() != generated.size()) {
+            throw new GeneratedConstraintsMissingException(original, generated);
+        }
 
         final Object instance;
         try {
