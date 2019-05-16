@@ -3,15 +3,11 @@ package org.apache.tomee.microprofile.jwt.bval;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors$$JwtConstraints;
-import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
-import org.apache.tomee.microprofile.jwt.bval.data.Shapes$$JwtConstraints;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
