@@ -413,6 +413,7 @@
           <pushChanges>false</pushChanges>
           <releaseProfiles></releaseProfiles>
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <arguments>-Dmaven.test.skip=true -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none</arguments>
         </configuration>
       </plugin>
 
