@@ -22,7 +22,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-timed</artifactId>
-  <version>8.0.0-M3</version>
+  <version>8.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>OpenEJB :: Examples :: Microprofile Metrics Timed</name>
 
@@ -84,7 +84,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.0-M3</version>
+        <version>8.0.0-SNAPSHOT</version>
         <configuration>
           <tomeeClassifier>microprofile</tomeeClassifier>
           <context>${project.artifactId}</context>
