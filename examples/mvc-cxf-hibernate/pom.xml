@@ -28,20 +28,20 @@
   <version>8.0.0-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
 
-   <properties>
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
     <version.deltaspike>1.9.0</version.deltaspike>
     <version.ozark>1.0.0-m04</version.ozark>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
-   </properties>
+  </properties>
 
   <build>
     <finalName>mvc-cxf</finalName>
     <plugins>
       <plugin>
-       <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
@@ -60,7 +60,7 @@
         <version>8.0.0-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
-	  <libs>
+          <libs>
             <!-- add hibernate -->
             <lib>org.hibernate:hibernate-entitymanager:4.3.9.Final</lib>
             <lib>org.hibernate:hibernate-core:4.3.9.Final</lib>
@@ -104,7 +104,7 @@
     <dependency>
       <groupId>org.apache.deltaspike.modules</groupId>
       <artifactId>deltaspike-data-module-impl</artifactId>
-    <version>${version.deltaspike}</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.cdictrl</groupId>
@@ -145,11 +145,11 @@
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
-      <version>2.6.3</version>     
+      <version>2.6.3</version>
     </dependency>
 
-     <!--  tests  -->
-     <dependency>
+    <!--  tests  -->
+    <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
       <version>${version.arquillian}</version>

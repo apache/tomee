@@ -31,7 +31,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
   </properties>
-  
+
   <modules>
     <module>resources-jmx-ejb</module>
     <module>resources-jmx-ear</module>
@@ -73,7 +73,7 @@
       </plugins>
     </pluginManagement>
   </build>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -86,8 +86,8 @@
       <!-- Java EE6 dependencies -->
       <dependency>
         <groupId>org.apache.tomee</groupId>
-              <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+        <artifactId>javaee-api</artifactId>
+        <version>8.0</version>
         <scope>provided</scope>
       </dependency>
       <!-- Test dependencies -->

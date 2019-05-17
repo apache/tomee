@@ -63,7 +63,7 @@
       <releases>
         <enabled>false</enabled>
       </releases>
-      <snapshots />
+      <snapshots/>
       <id>apache-maven-snapshots</id>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
@@ -112,8 +112,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

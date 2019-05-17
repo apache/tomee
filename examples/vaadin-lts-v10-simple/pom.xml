@@ -107,8 +107,8 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <artifactId>vaadin-core</artifactId>
     </dependency>
     <!--<dependency>-->
-      <!--<groupId>com.vaadin</groupId>-->
-      <!--<artifactId>vaadin-cdi</artifactId>-->
+    <!--<groupId>com.vaadin</groupId>-->
+    <!--<artifactId>vaadin-cdi</artifactId>-->
     <!--</dependency>-->
   </dependencies>
 

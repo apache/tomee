@@ -59,8 +59,8 @@
     <!-- spec apis such as javax.persistence -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
