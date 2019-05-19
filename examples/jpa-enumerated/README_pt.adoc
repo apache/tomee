@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Às vezes pode ser desejável ter um tipo `enum` do Java para representar uma coluna específica em um banco de dados. O JPA oferece suporte à conversão dos dados de um banco de dados para ou a partir de um tipo `enum` do Java por meio da anotação  `@javax.persistence.Enumerated`.
+Às vezes pode ser desejável ter um tipo `enum` do Java para representar uma coluna específica em um banco de dados. A JPA oferece suporte à conversão dos dados de um banco de dados para ou a partir de um tipo `enum` do Java por meio da anotação  `@javax.persistence.Enumerated`.
 
 Esse exemplo mostrará o uso básico do `@Enumerated` em um campo de uma `@Entity`, bem como ``enum`` como parâmetro de uma `Query`.  
 Também veremos que a representação de um banco de dados real pode ser `String` ou `int`.
@@ -23,7 +23,7 @@ Para o nosso exemplo, vamos aproveitar a familiar entidade `Movie` e adicionar u
 
 == @Enumerated
 
-In our `Movie` entity, we add a `rating` field of the enum type `Rating` and annotate it with `@Enumerated(EnumType.STRING)` to declare that its value should be converted from what is effectively a `String` in the database to the `Rating` type.
+Em nossa entidade `Movie`, nós adicionamos um campo `rating` do enum do tipo `Rating` e anotamos com `@Enumerated(EnumType.STRING)` para declarar que seu valor deve ser convertido do que é efetivamente uma `String` no banco de dados para o tipo `Rating`.
 
 ....
 @Entity
@@ -83,14 +83,14 @@ public class Movie {
 }
 ....
 
-The above is enough and we are effectively done.  For the sake of completeness we'll show a sample `Query`
+O código acima é suficiente e estará efetivamente feito. Por uma questão de completude, mostraremos um exemplo de uma `Query`
 
-== Enum in JPQL Query
+== Enum em uma Query JPQL
 
-Note the `findByRating` method which creates a `Query` with a `rating` named parameter.  The key thing to notice is that the `rating` enum instance itself is passed into the
- `query.setParameter` method, *not* `rating.name()` or `rating.ordinal()`.
+Observe o método `findByRating` que cria uma `Query` com um parâmetro denominado `rating`. A principal coisa a notar é que a instância do enum `rating` propriamente dita é passada para o método
+ `query.setParameter`, *não* `rating.name()` ou `rating.ordinal()`.
 
-Regardless if you use `EnumType.STRING` or `EnumType.ORDINAL`, you still always pass the enum itself in calls to `query.setParameter`.
+Independentemente se você usar `EnumType.STRING` ou `EnumType.ORDINAL`, você ainda sempre tem que passar o enum propriamente dito em chamadas para `query.setParameter`.
 
 ....
 @Stateful
@@ -123,21 +123,21 @@ public class Movies {
 
 == EnumType.STRING vs EnumType.ORDINAL
 
-It is a matter of style how you would like your `enum` data represented in the database.  Either `name()` or `ordinal()` are supported:
+É uma questão de estilo como você gostaria que seus dados `enum` representados no banco de dados.  Qualquer um deles `name()` ou `ordinal()` são suportados:
 
-* `@Enumerated(EnumType.STRING) Rating rating` the value of `rating.name()` is written and read from the corresponding database column; e.g. `G`, `PG`, `PG13`
-* `@Enumerated(EnumType.ORDINAL) Rating rating` the value of `rating.ordinal()` is written and read from the corresponding database column; e.g. `0`, `1`, `2`
+* `@Enumerated(EnumType.STRING) Rating rating` o valor de `rating.name()` é gravado e lido a partir da coluna correspondente no banco de dados; por exemplo `G`, `PG`, `PG13`
+* `@Enumerated(EnumType.ORDINAL) Rating rating` o valor de `rating.ordinal()` é gravado e lido a partir da coluna correspondente no banco de dados; por exemplo `0`, `1`, `2`
 
-The default is `EnumType.ORDINAL`
+O padrão é `EnumType.ORDINAL`
 
-There are advantages and disadvantages to each.
+Essas são as vantagens e desvantagens de cada.
 
-=== Disadvantage of EnumType.ORDINAL
+=== Desvantagem do EnumType.ORDINAL
 
-A disadvantage of `EnumType.ORDINAL` is the effect of time and the desire to keep `enums` in a logical order.  With `EnumType.ORDINAL` any new enum elements must be added to the
-*end* of the list or you will accidentally change the meaning of all your records.
+A desvantagem do `EnumType.ORDINAL` é o efeito do tempo e o desejo de manter `enums` em uma ordem lógica.  Com `EnumType.ORDINAL` quaisquer novos elementos enum devem ser adicionados ao
+*final* da lista ou você irá alterar acidentalmente o significado de todos os seus registros.
 
-Let's use our `Rating` enum and see how it would have had to evolve over time to keep up with changes in the MPAA.org ratings system.
+Vamos usar o nosso enum `Rating` e ver como ele teria que evoluir ao longo do tempo para acompanhar as mudanças no sistema de classificações MPAA.org.
 
 *1980*
 
@@ -148,7 +148,7 @@ Let's use our `Rating` enum and see how it would have had to evolve over time to
      UNRATED
  }
 
-*1984* PG-13 is added
+*1984* PG-13 é adicionado
 
  public enum Rating {
      G,
@@ -158,7 +158,7 @@ Let's use our `Rating` enum and see how it would have had to evolve over time to
      PG13
  }
 
-*1990* NC-17 is added
+*1990* NC-17 é adicionado
 
  public enum Rating {
      G,
@@ -169,11 +169,11 @@ Let's use our `Rating` enum and see how it would have had to evolve over time to
      NC17
  }
 
-If `EnumType.STRING` was used, then the enum could be reordered at anytime and would instead look as we have defined it originally with ratings starting at `G` and increasing in severity to `NC17` and eventually `UNRATED`.  With `EnumType.ORDINAL` the logical ordering would not have withstood the test of time as new values were added.
+Se `EnumType.STRING` foi usado, em seguida, o enum poderia ser reordenado a qualquer momento e, em vez disso, olhar como nós o definimos originalmente com classificações começando em `G` e aumentando em severidade para `NC17` e, eventualmente, `UNRATED`.  Com `EnumType.ORDINAL` a ordenação lógica não teria resistido o teste de tempo como novos valores foram adicionados.
 
-If the order of the enum values is significant to your code, avoid `EnumType.ORDINAL`
+Se a ordem dos valores enum for significativa para seu código, evite `EnumType.ORDINAL`
 
-== Unit Testing the JPA @Enumerated
+== Testando Unitariamente a JPA @Enumerated
 
 ....
 public class MoviesTest extends TestCase {
@@ -208,14 +208,14 @@ public class MoviesTest extends TestCase {
 }
 ....
 
-= Running
+= Executando
 
-To run the example via maven:
+Para executar o exemplo via maven:
 
  cd jpa-enumerated
  mvn clean install
 
-Which will generate output similar to the following:
+Que irá gerar saída semelhante ao seguinte:
 
 ....
 -------------------------------------------------------
