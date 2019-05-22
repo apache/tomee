@@ -24,31 +24,31 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE}) @Retention(RUNTIME)
+ * Target({TYPE}) @Retention(RUNTIME)
  * public @interface DiscriminatorColumn {
  * String name() default "DTYPE";
  * DiscriminatorType discriminatorType() default STRING;
  * String columnDefinition() default "";
  * int length() default 31;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for discriminator-column complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="discriminator-column">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="column-definition" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="discriminator-type" type="{http://java.sun.com/xml/ns/persistence/orm}discriminator-type" />
- *       &lt;attribute name="length" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="discriminator-column"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="column-definition" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="discriminator-type" type="{http://java.sun.com/xml/ns/persistence/orm}discriminator-type" /&gt;
+ *       &lt;attribute name="length" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

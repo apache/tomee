@@ -24,16 +24,16 @@ import javax.transaction.TransactionManager;
 
 /**
  * 17.6.2.3 Supports
- * <p/>
+ *
  * The Container invokes an enterprise Bean method whose transaction attribute
  * is set to Supports as follows.
- * <p/>
+ *
  * If the client calls with a transaction context, the Container performs the
  * same steps as described in the Required case.
- * <p/>
+ *
  * If the client calls without a transaction context, the Container performs the
  * same steps as described in the NotSupported case.
- * <p/>
+ *
  * The Supports transaction attribute must be used with caution. This is because
  * of the different transactional semantics provided by the two possible modes
  * of execution. Only the enterprise beans that will execute correctly in both

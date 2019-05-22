@@ -3602,7 +3602,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Validation
-         * <p/>
+         *
          * Conflicting use of @RolesAllowed, @PermitAll, and @DenyAll
          *
          * @param method
@@ -4604,7 +4604,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Process @PersistenceContext into <persistence-context> for the specified member (field or method)
-         * <p/>
+         *
          * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
          *
          * @param consumer
@@ -5479,7 +5479,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Checks that the values specified via @Local and @Remote are *not*:
-         * <p/>
+         *
          * - classes
          * - derived from javax.ejb.EJBObject
          * - derived from javax.ejb.EJBHome

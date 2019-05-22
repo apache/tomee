@@ -25,24 +25,24 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ejb-refType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ejb-refType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ref-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;choice>
- *           &lt;element name="pattern" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"/>
- *           &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}corbaNameGroup"/>
- *           &lt;element name="ejb-link" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ejb-refType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ref-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="pattern" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"/&gt;
+ *           &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}corbaNameGroup"/&gt;
+ *           &lt;element name="ejb-link" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

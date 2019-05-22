@@ -32,23 +32,23 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 /**
  * <p>Java class for web-service-securityType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="web-service-securityType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="security-realm-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="realm-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="transport-guarantee" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/>
- *         &lt;element name="auth-method" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/>
- *         &lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="web-service-securityType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="security-realm-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="realm-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="transport-guarantee" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}transport-guaranteeType"/&gt;
+ *         &lt;element name="auth-method" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}auth-methodType"/&gt;
+ *         &lt;element name="http-method" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -158,21 +158,21 @@ public class WebServiceSecurityType {
 
     /**
      * Gets the value of the httpMethod property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the httpMethod property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHttpMethod().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      */

@@ -71,7 +71,7 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
 
     /**
      * Maps to BasicStatelessObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -85,7 +85,7 @@ public class BasicStatefulPojoBean implements BasicStatefulBusinessLocal, BasicS
 
     /**
      * Maps to BasicStatelessObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

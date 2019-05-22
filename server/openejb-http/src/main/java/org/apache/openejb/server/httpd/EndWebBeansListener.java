@@ -30,7 +30,7 @@ import javax.servlet.http.HttpSessionListener;
 
 /**
  * @version $Rev$ $Date$
- *          <p/>
+ *
  *          Used as a stack executed at the end of the request too. Avoid multiple (useless) listeners.
  */
 public class EndWebBeansListener implements ServletContextListener, ServletRequestListener, HttpSessionListener, HttpSessionActivationListener {

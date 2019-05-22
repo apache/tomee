@@ -93,7 +93,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
 
     /**
      * Maps to BasicStatefulObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -107,7 +107,7 @@ public class BMTStatefulBean implements javax.ejb.SessionBean {
 
     /**
      * Maps to BasicStatefulObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

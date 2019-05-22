@@ -104,7 +104,7 @@ public class TomcatEmbedder {
      * Return path to jar file that contains this class.
      * <p>
      * Normally, tomee.war/lib/tomee-loader.jar
-     * </p>
+     *
      * @return path to jar file that contains this class
      */
     private static File getThisJar() {

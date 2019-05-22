@@ -338,7 +338,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     /**
      * Add missing parts - expected only part of the required providerUrl
-     * <p/>
+     *
      * TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
      * This method (class in general) doesn't really know what is required as far as connection details go
      * Assuming that java.net.URI or java.net.URL are going to be used is overly stated

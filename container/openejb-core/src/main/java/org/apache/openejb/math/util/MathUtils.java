@@ -404,7 +404,7 @@ public final class MathUtils {
      * @param y   the second number
      * @param eps the amount of error to allow when checking for equality
      * @return <ul><li>0 if  {@link #equals(double, double, double) equals(x, y, eps)}</li>
-     * <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li>
+     * <li>&lt; 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x &lt; y</li&gt;
      * <li>> 0 if !{@link #equals(double, double, double) equals(x, y, eps)} &amp;&amp; x > y</li></ul>
      */
     public static int compareTo(final double x, final double y, final double eps) {
@@ -444,7 +444,7 @@ public final class MathUtils {
      * error (inclusive).
      * <p>
      * Two NaNs are considered equals, as are two infinities with same sign.
-     * </p>
+     *
      *
      * @param x   first value
      * @param y   second value
@@ -527,7 +527,7 @@ public final class MathUtils {
      * Long.MAX_VALUE</code> is 20. If the computed value exceeds <code>Long.MAX_VALUE</code>
      * an <code>ArithMeticException </code> is thrown.</li>
      * </ul>
-     * </p>
+     *
      *
      * @param n argument
      * @return <code>n!</code>
@@ -562,7 +562,7 @@ public final class MathUtils {
      * Double.MAX_VALUE</code> is 170. If the computed value exceeds
      * Double.MAX_VALUE, Double.POSITIVE_INFINITY is returned</li>
      * </ul>
-     * </p>
+     *
      *
      * @param n argument
      * @return <code>n!</code>
@@ -615,7 +615,7 @@ public final class MathUtils {
      * using the "binary gcd" method which avoids division and modulo
      * operations. See Knuth 4.5.2 algorithm B. This algorithm is due to Josef
      * Stein (1961).
-     * </p>
+     *
      * Special cases:
      * <ul>
      * <li>The invocations
@@ -704,7 +704,7 @@ public final class MathUtils {
      * using the "binary gcd" method which avoids division and modulo
      * operations. See Knuth 4.5.2 algorithm B. This algorithm is due to Josef
      * Stein (1961).
-     * </p>
+     *
      * Special cases:
      * <ul>
      * <li>The invocations
@@ -883,7 +883,7 @@ public final class MathUtils {
      * <p>
      * Returns the least common multiple of the absolute value of two numbers,
      * using the formula <code>lcm(a,b) = (a / gcd(a,b)) * b</code>.
-     * </p>
+     *
      * Special cases:
      * <ul>
      * <li>The invocations <code>lcm(Integer.MIN_VALUE, n)</code> and
@@ -918,7 +918,7 @@ public final class MathUtils {
      * <p>
      * Returns the least common multiple of the absolute value of two numbers,
      * using the formula <code>lcm(a,b) = (a / gcd(a,b)) * b</code>.
-     * </p>
+     *
      * Special cases:
      * <ul>
      * <li>The invocations <code>lcm(Long.MIN_VALUE, n)</code> and
@@ -953,7 +953,7 @@ public final class MathUtils {
      * <p>Returns the
      * <a href="http://mathworld.wolfram.com/Logarithm.html">logarithm</a>
      * for base <code>b</code> of <code>x</code>.
-     * </p>
+     *
      * <p>Returns <code>NaN<code> if either argument is negative.  If
      * <code>base</code> is 0 and <code>x</code> is positive, 0 is returned.
      * If <code>base</code> is positive and <code>x</code> is 0,
@@ -1157,11 +1157,11 @@ public final class MathUtils {
      * </pre>
      * applied to each non-NaN element x of the input array, where sum is the
      * sum of the non-NaN entries in the input array.</p>
-     * <p/>
+     *
      * <p>Throws IllegalArgumentException if <code>normalizedSum</code> is infinite
      * or NaN and ArithmeticException if the input array contains any infinite elements
      * or sums to 0</p>
-     * <p/>
+     *
      * <p>Ignores (i.e., copies unchanged to the output array) NaNs in the input array.</p>
      *
      * @param values        input array to be normalized

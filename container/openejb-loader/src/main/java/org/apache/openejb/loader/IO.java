@@ -50,7 +50,7 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * @version $Revision$ $Date$
- *          <p/>
+ *
  *          NOTE: CHECK ExecMojo before adding dependency or inner class to it please
  */
 public class IO {

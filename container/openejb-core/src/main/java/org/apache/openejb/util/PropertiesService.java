@@ -21,18 +21,18 @@ import java.util.Properties;
 
 /**
  * Manages properties so any property modifications are handled here.
- * <p/>
+ *
  * It lets us track the properties used and possibly remove some. They are all
  * scattered in many places and it's so hard to keep track of them.
- * <p/>
+ *
  * The class holds all OpenEJB properties and optionally can amend the
  * environment.
- * <p/>
+ *
  * The aim of this class is to establish one place to keep the properties and
  * eventually remove the need to set System properties to communicate between
  * parts and possibly yet lay out a foundation for setting them up in JNDI or
  * some other means
- * <p/>
+ *
  * TODO: Should this class be concerned with concurrency issues?
  *
  * @version $Rev$ $Date$

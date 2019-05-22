@@ -29,23 +29,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p class="changed_added_2_2">A <code>MethodExpression</code> that will be invoked when the flow is entered.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-initializerType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-initializerType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>faces-config-el-expressionType">
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-initializerType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;faces-config-el-expressionType"&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

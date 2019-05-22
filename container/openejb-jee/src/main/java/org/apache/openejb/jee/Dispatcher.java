@@ -25,18 +25,18 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for dispatcherType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="dispatcherType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="dispatcherType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee&gt;string"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

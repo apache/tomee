@@ -25,17 +25,17 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for referenceType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="referenceType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType">
- *       &lt;attribute name="nameAttribute" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="referenceType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType"&gt;
+ *       &lt;attribute name="nameAttribute" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,16 +23,16 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for persistence-context-typeType.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="persistence-context-typeType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="transaction-scoped"/>
- *     &lt;enumeration value="extended"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="persistence-context-typeType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="transaction-scoped"/&gt;
+ *     &lt;enumeration value="extended"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

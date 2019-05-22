@@ -41,65 +41,65 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * @invariant Cascade delete can only be specified for an EJBRelationshipRole
  * contained in an EJBrelation in which the other EJBRelationshipRole
  * element specifies a multiplicity of One.
- * <p/>
- * <p/>
+ *
+ *
  * Example:
- * <p/>
+ *
  * <ejb-relation>
- * <p/>
+ *
  * <ejb-relation-name>Product-LineItem</ejb-relation-name>
- * <p/>
+ *
  * <ejb-relationship-role>
- * <p/>
- * <p/>
+ *
+ *
  * <ejb-relationship-role-name>product-has-lineitems</ejb-relationship
  * -role-name>
- * <p/>
+ *
  * <multiplicity>One</multiplicity>
- * <p/>
+ *
  * <relationship-role-source>
- * <p/>
+ *
  * <ejb-name>ProductEJB</ejb-name>
- * <p/>
+ *
  * </relationship-role-source>
- * <p/>
+ *
  * </ejb-relationship-role> ...
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBRelationshipRole complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content
  * contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="EJBRelationshipRole">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="source" type="{ejb.xmi}RoleSource"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="cmrField" type="{ejb.xmi}CMRField"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="descriptions" type="{common.xmi}Description"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="cascadeDelete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="multiplicity" type="{ejb.xmi}MultiplicityKind" />
- *       &lt;attribute name="roleName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBRelationshipRole"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="source" type="{ejb.xmi}RoleSource"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="cmrField" type="{ejb.xmi}CMRField"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="descriptions" type="{common.xmi}Description"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="cascadeDelete" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="multiplicity" type="{ejb.xmi}MultiplicityKind" /&gt;
+ *       &lt;attribute name="roleName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * @since J2EE1.3 The ejb-relationship-role element describes a role within a
  * relationship. There are two roles in each relationship. The
@@ -159,22 +159,22 @@ public class EJBRelationshipRole {
 
     /**
      * Gets the value of the sources property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the sources property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getSources().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link RoleSource }
      */
@@ -187,22 +187,22 @@ public class EJBRelationshipRole {
 
     /**
      * Gets the value of the cmrFields property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the cmrFields property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getCmrFields().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link CMRField }
      */
     public List<CMRField> getCmrFields() {
@@ -214,22 +214,22 @@ public class EJBRelationshipRole {
 
     /**
      * Gets the value of the descriptions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the descriptions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDescriptions().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Description }
      */
@@ -242,22 +242,22 @@ public class EJBRelationshipRole {
 
     /**
      * Gets the value of the extensions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the extensions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getExtensions().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Extension }
      */

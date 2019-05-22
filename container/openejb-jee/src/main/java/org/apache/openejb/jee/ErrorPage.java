@@ -29,26 +29,26 @@ import java.math.BigInteger;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for error-pageType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="error-pageType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="error-code" type="{http://java.sun.com/xml/ns/javaee}error-codeType"/>
- *           &lt;element name="exception-type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;/choice>
- *         &lt;element name="location" type="{http://java.sun.com/xml/ns/javaee}war-pathType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="error-pageType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="error-code" type="{http://java.sun.com/xml/ns/javaee}error-codeType"/&gt;
+ *           &lt;element name="exception-type" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element name="location" type="{http://java.sun.com/xml/ns/javaee}war-pathType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

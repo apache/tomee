@@ -55,7 +55,7 @@ public class StatefulPojoEjbLocalObjectTests extends BasicStatefulLocalTestClien
 
     /**
      * 3.6.5 Session object identity
-     * <p/>
+     *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,

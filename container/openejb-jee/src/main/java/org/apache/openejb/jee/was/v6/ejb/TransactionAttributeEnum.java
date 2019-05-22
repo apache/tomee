@@ -20,25 +20,25 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p/>
+ *
  * Java class for TransactionAttributeType.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="TransactionAttributeType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="NotSupported"/>
- *     &lt;enumeration value="Supports"/>
- *     &lt;enumeration value="Required"/>
- *     &lt;enumeration value="RequiresNew"/>
- *     &lt;enumeration value="Mandatory"/>
- *     &lt;enumeration value="Never"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="TransactionAttributeType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="NotSupported"/&gt;
+ *     &lt;enumeration value="Supports"/&gt;
+ *     &lt;enumeration value="Required"/&gt;
+ *     &lt;enumeration value="RequiresNew"/&gt;
+ *     &lt;enumeration value="Mandatory"/&gt;
+ *     &lt;enumeration value="Never"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

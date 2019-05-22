@@ -56,17 +56,17 @@ import java.util.logging.Logger;
 
 /**
  * INVOCATIONS MBEAN
- * <p/>
+ *
  * All beans have this set of attributes and operations by default:
- * <p/>
+ *
  * javax.management.MBeanAttributeInfo[description=, name=InvocationCount, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=InvocationTime, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=MonitoredMethods, type=long, read-only, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=FilterAttributes, returnType=void, signature=[javax.management.MBeanParameterInfo[description="", name=excludeRegex, type=java
  * .lang.String, descriptor={}], javax.management.MBeanParameterInfo[description="", name=includeRegex, type=java.lang.String, descriptor={}]], impact=unknown, descriptor={}]
- * <p/>
+ *
  * Then for every method there will be these attributes and operations:
- * <p/>
+ *
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Count, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().GeometricMean, type=double, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Kurtosis, type=double, read-only, descriptor={}]
@@ -90,17 +90,17 @@ import java.util.logging.Logger;
  * descriptor={}]], impact=unknown, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=someMethod().sortedValues, returnType=[D, signature=[], impact=unknown, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=someMethod().values, returnType=[D, signature=[], impact=unknown, descriptor={}]
- * <p/>
+ *
  * Attribute values that should be tested:
  * javax.management.MBeanAttributeInfo[description=, name=InvocationCount, type=long, read-only, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=InvocationTime, type=long, read-only, descriptor={}]
- * <p/>
+ *
  * Atribute values that should be tested per method:
- * <p/>
+ *
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Count, type=long, read-only, descriptor={}]
  * javax.management.MBeanOperationInfo[description=, name=someMethod().values, returnType=[D, signature=[], impact=unknown, descriptor={}]
  * javax.management.MBeanAttributeInfo[description=, name=someMethod().Max, type=double, read-only, descriptor={}]
- * <p/>
+ *
  * We should test that all expected attributes are there, but when testing each method's values
  * are updated correctly we only need to check that count is correct, values.length == count, max is as expected.
  * To determine that max is as expected one technique would be to make each method sleep for a different amount of time
@@ -359,13 +359,13 @@ public class StatelessInvocationStatsTest {
     /**
      * convenience method for checking out a specific number of instances.
      * Can be used like so:
-     * <p/>
+     *
      * // checkout some instances from the pool
      * CountDownLatch startingPistol = checkout(bean, 7);
-     * <p/>
+     *
      * // Look at pool stats
      * ...
-     * <p/>
+     *
      * // Release them all back into the pool
      * startingPistol.countDown();
      *

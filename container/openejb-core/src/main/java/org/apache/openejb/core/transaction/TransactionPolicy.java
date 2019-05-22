@@ -25,7 +25,7 @@ import javax.transaction.xa.XAResource;
 /**
  * TransactionPolicy represents a JEE container managed or bean manage
  * transaction.
- * <p/>
+ *
  * This class can be used to query the transaction status, set the transaction
  * rollback only flag, associate resources with the transaction and to register
  * a listener for transaction completion events.

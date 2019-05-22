@@ -30,24 +30,24 @@ import java.util.List;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for authentication-mechanismType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="authentication-mechanismType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="authentication-mechanism-type" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
- *         &lt;element name="credential-interface" type="{http://java.sun.com/xml/ns/javaee}credential-interfaceType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="authentication-mechanismType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="authentication-mechanism-type" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/&gt;
+ *         &lt;element name="credential-interface" type="{http://java.sun.com/xml/ns/javaee}credential-interfaceType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

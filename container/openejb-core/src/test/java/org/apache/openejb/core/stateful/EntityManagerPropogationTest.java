@@ -182,7 +182,7 @@ public class EntityManagerPropogationTest extends TestCase {
     /**
      * Test that two Stateful session bean siblings
      * do not share the same extended persistence context
-     * <p/>
+     *
      * A stateful session bean must be a child in order
      * for the context to be propogated to that bean.
      *
@@ -457,7 +457,7 @@ public class EntityManagerPropogationTest extends TestCase {
      * of the persistence context and all children downstream
      * with an EXTENDED persistence context should share the same
      * persistence context and underlying EntityManager
-     * <p/>
+     *
      * Transactions are dissabled to ensure that we aren't relying
      * on the JTA propogation that also exists with an EXTENDED
      * persistence context

@@ -1,0 +1,394 @@
+:index-group: Web Services :jbake-type: page :jbake-status:
+status=published = Webservice SSL Client Certificate
+
+_Help us document this example! Click the blue pencil icon in the upper
+right to edit this page._
+
+This example is intended to show how to setup TomEE with HTTPS with SSL Client required.
+It is very common to use HTTPS on the server side to authenticate the server.
+But it's not so common to get the server to require client authentication using SSL.
+
+This example with generate keypairs for both the client and the server and create the 2 keystores (server and client).
+
+The HTTPS connector in the `server.xml` shows how to setup up the server side.
+
+The test case shows how to interact with CXF API in order to configure the client side.
+
+
+== CalculatorImpl
+
+....
+package org.superbiz.calculator;
+
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.Stateless;
+import javax.jws.WebService;
+
+/**
+ * This is an EJB 3 style pojo stateless session bean
+ * Every stateless session bean implementation must be annotated
+ * using the annotation @Stateless
+ * This EJB has a single interface: CalculatorWs a webservice interface.
+ */
+//START SNIPPET: code
+@DeclareRoles(value = {"Administrator"})
+@Stateless
+@WebService(
+        portName = "CalculatorPort",
+        serviceName = "CalculatorWsService",
+        targetNamespace = "http://superbiz.org/wsdl",
+        endpointInterface = "org.superbiz.calculator.CalculatorWs")
+public class CalculatorImpl implements CalculatorWs {
+
+    public int sum(int add1, int add2) {
+        return add1 + add2;
+    }
+
+    public int multiply(int mul1, int mul2) {
+        return mul1 * mul2;
+    }
+
+}
+//END SNIPPET: code
+....
+
+== CalculatorWs
+
+....
+package org.superbiz.calculator;
+
+import javax.jws.WebService;
+
+//START SNIPPET: code
+/**
+ * This is an EJB 3 webservice interface
+ * A webservice interface must be annotated with the @Local
+ * annotation.
+ */
+@WebService(targetNamespace = "http://superbiz.org/wsdl")
+public interface CalculatorWs {
+
+    int sum(int add1, int add2);
+
+    int multiply(int mul1, int mul2);
+}
+//END SNIPPET: code
+....
+
+== ejb-jar.xml
+
+....
+<ejb-jar/>
+....
+
+== openejb-jar.xml
+
+....
+<openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2">
+  <enterprise-beans>
+    <session>
+      <ejb-name>CalculatorImpl</ejb-name>
+      <web-service-security>
+        <security-realm-name/>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+      </web-service-security>
+    </session>
+  </enterprise-beans>
+</openejb-jar>
+....
+
+== CalculatorTest
+
+....
+package org.superbiz.calculator;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Service;
+import junit.framework.TestCase;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(Arquillian.class)
+public class CalculatorTest {
+
+    @Deployment(testable = false)
+    public static Archive<?> app() {
+        return ShrinkWrap.create(WebArchive.class, "app.war")
+                .addClasses(CalculatorWs.class, CalculatorImpl.class);
+    }
+
+    @ArquillianResource
+    private URL base;
+
+    /**
+     * Create a webservice client using wsdl url
+     *
+     * @throws Exception
+     */
+    //START SNIPPET: webservice
+    @Test
+    public void remoteCallWithSslClient() throws Exception {
+        // create the service from the WSDL
+        final URL url = new URL(base.toExternalForm() + "webservices/CalculatorImpl?wsdl");
+        final QName calcServiceQName = new QName("http://superbiz.org/wsdl", "CalculatorWsService");
+        final Service calcService = Service.create(url, calcServiceQName);
+
+        assertNotNull(calcService);
+
+        // get the port for the service
+        final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+
+        // switch the target URL for invocation to HTTPS
+        ((BindingProvider) calc).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, "https://localhost:8443/app/webservices/CalculatorImpl");
+
+        // add the SSL Client certificate, set the trust store and the hostname verifier
+        setupTLS(calc);
+
+        // call the remote JAX-WS webservice
+        assertEquals(10, calc.sum(4, 6));
+        assertEquals(12, calc.multiply(3, 4));
+    }
+    //END SNIPPET: webservice
+
+
+    public static void setupTLS(final Object port) throws GeneralSecurityException, IOException {
+
+        final HTTPConduit httpConduit = (HTTPConduit) ClientProxy.getClient(port).getConduit();
+
+        final TLSClientParameters tlsCP = new TLSClientParameters();
+        final String storePassword = "keystorePass";
+        final String keyPassword = "clientPassword";
+        final KeyStore keyStore = KeyStore.getInstance("jks");
+        final String keyStoreLoc = "META-INF/clientStore.jks";
+        keyStore.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(keyStoreLoc), storePassword.toCharArray());
+
+        // set the key managers from the Java KeyStore we just loaded
+        final KeyManager[] myKeyManagers = getKeyManagers(keyStore, keyPassword);
+        tlsCP.setKeyManagers(myKeyManagers);
+        tlsCP.setCertAlias("clientalias"); // in case there is multiple certs in the keystore, make sure we pick the one we want
+
+        // Create a trust manager that does not validate certificate chains
+        // this should not be done in production. It's recommended to create a cacerts with the certificate chain or
+        // to rely on a well known CA such as Verisign which is already available in the JVM
+        TrustManager[] trustAllCerts = getTrustManagers();
+        tlsCP.setTrustManagers(trustAllCerts);
+
+        // don't check the host name of the certificate to match the server (running locally)
+        // this should not be done on a real production system
+        tlsCP.setHostnameVerifier((s, sslSession) -> true);
+
+        httpConduit.setTlsClientParameters(tlsCP);
+    }
+
+    private static TrustManager[] getTrustManagers() throws NoSuchAlgorithmException, KeyStoreException {
+        return new TrustManager[]{
+                new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                    public void checkClientTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                    public void checkServerTrusted(
+                            java.security.cert.X509Certificate[] certs, String authType) {
+                    }
+                }
+        };
+    }
+
+    private static KeyManager[] getKeyManagers(KeyStore keyStore, String keyPassword) throws GeneralSecurityException, IOException {
+        String alg = KeyManagerFactory.getDefaultAlgorithm();
+        char[] keyPass = keyPassword != null ? keyPassword.toCharArray() : null;
+        KeyManagerFactory fac = KeyManagerFactory.getInstance(alg);
+        fac.init(keyStore, keyPass);
+        return fac.getKeyManagers();
+    }
+
+}
+....
+
+== Running
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.calculator.CalculatorTest
+mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.Setup findHome
+INFOS: Unable to find home in: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee
+mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.MavenCache getArtifact
+INFOS: Downloading org.apache.tomee:apache-tomee:8.0.0-SNAPSHOT:zip:plus please wait...
+mai 22, 2019 11:28:28 AM org.apache.openejb.arquillian.common.Zips unzip
+INFOS: Extracting '/Users/jlmonteiro/.m2/repository/org/apache/tomee/apache-tomee/8.0.0-SNAPSHOT/apache-tomee-8.0.0-SNAPSHOT-plus.zip' to '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee'
+mai 22, 2019 11:28:29 AM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
+INFOS: Downloaded container to: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT
+22-May-2019 11:28:30.050 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke La librairie Apache Tomcat Native basée sur APR qui permet des performances optimales dans les environnements de production n'a pas été trouvée sur le java.library.path: [/Users/jlmonteiro/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+22-May-2019 11:28:30.373 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Initialisation du gestionnaire de protocole ["http-nio-64661"]
+22-May-2019 11:28:30.408 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Initialisation du gestionnaire de protocole ["https-jsse-nio-8443"]
+mai 22, 2019 11:28:30 AM org.apache.openejb.client.EventLogger log
+INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
+22-May-2019 11:28:30.724 INFOS [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+22-May-2019 11:28:30.734 INFOS [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+22-May-2019 11:28:30.856 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed May 22 11:28:30 CEST 2019
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.0-SNAPSHOT
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20190522
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:42
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+22-May-2019 11:28:30.857 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT
+22-May-2019 11:28:30.858 INFOS [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT
+22-May-2019 11:28:30.860 INFOS [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@1c1bbc4e
+22-May-2019 11:28:30.863 INFOS [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+22-May-2019 11:28:30.897 INFOS [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/conf/tomee.xml'
+22-May-2019 11:28:30.933 INFOS [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+22-May-2019 11:28:30.935 INFOS [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+22-May-2019 11:28:30.937 INFOS [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
+22-May-2019 11:28:30.939 INFOS [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+22-May-2019 11:28:30.957 INFOS [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+22-May-2019 11:28:31.003 INFOS [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+22-May-2019 11:28:31.018 INFOS [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Singleton Container)
+22-May-2019 11:28:31.033 INFOS [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: openejb
+22-May-2019 11:28:31.087 INFOS [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jndiname.format={deploymentId}{interfaceType.openejbLegacyName}'
+22-May-2019 11:28:31.095 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/DeployerBusinessRemote) --> Ejb(deployment-id=openejb/Deployer)
+22-May-2019 11:28:31.095 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.Deployer) --> Ejb(deployment-id=openejb/Deployer)
+22-May-2019 11:28:31.096 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer) --> Ejb(deployment-id=openejb/Deployer)
+22-May-2019 11:28:31.097 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+22-May-2019 11:28:31.097 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+22-May-2019 11:28:31.099 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
+22-May-2019 11:28:31.099 INFOS [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+22-May-2019 11:28:31.106 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.107 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.109 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.109 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.109 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.109 INFOS [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+22-May-2019 11:28:31.115 INFOS [main] org.apache.openejb.assembler.classic.Assembler.deployMBean Deployed MBean(openejb.user.mbeans:application=openejb,group=org.apache.openejb.assembler.monitoring,name=JMXDeployer)
+22-May-2019 11:28:31.117 INFOS [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=openejb)
+22-May-2019 11:28:31.151 INFOS [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+22-May-2019 11:28:31.282 INFOS [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+22-May-2019 11:28:31.321 INFOS [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+22-May-2019 11:28:31.321 INFOS [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT
+22-May-2019 11:28:31.322 INFOS [main] org.apache.openejb.server.SimpleServiceManager.start -------
+22-May-2019 11:28:31.322 INFOS [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+22-May-2019 11:28:31.322 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke L'initialisation du serveur a pris [1 451] millisecondes
+22-May-2019 11:28:31.330 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du service [Catalina]
+22-May-2019 11:28:31.330 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du moteur de Servlets: [Apache Tomcat (TomEE)/9.0.20 (8.0.0-SNAPSHOT)]
+22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesRmiTargets] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
+22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesObjectStreamClassCaches] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
+22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesObjectStreamClassCaches] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
+22-May-2019 11:28:31.375 INFOS [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Impossible de fixer la propriété [clearReferencesThreadLocals] du chargeur de classes de l'application web à [true] car cette propriété n'existe pas
+22-May-2019 11:28:31.405 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du gestionnaire de protocole ["http-nio-64661"]
+22-May-2019 11:28:31.416 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Démarrage du gestionnaire de protocole ["https-jsse-nio-8443"]
+22-May-2019 11:28:31.422 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Le démarrage du serveur a pris [99] millisecondes
+22-May-2019 11:28:31.612 INFOS [http-nio-64661-exec-3] org.apache.openejb.util.JarExtractor.extract Extracting jar: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app.war
+22-May-2019 11:28:31.617 INFOS [http-nio-64661-exec-3] org.apache.openejb.util.JarExtractor.extract Extracted path: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
+22-May-2019 11:28:31.617 INFOS [http-nio-64661-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+22-May-2019 11:28:31.618 INFOS [http-nio-64661-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /app
+22-May-2019 11:28:31.619 INFOS [http-nio-64661-exec-3] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+22-May-2019 11:28:31.730 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
+22-May-2019 11:28:31.824 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.InitEjbDeployments.deploy Auto-deploying ejb CalculatorImpl: EjbDeployment(deployment-id=CalculatorImpl)
+22-May-2019 11:28:31.832 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+22-May-2019 11:28:31.833 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean CalculatorImpl: Container(type=STATELESS, id=Default Stateless Container)
+22-May-2019 11:28:31.833 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Stateless Container)
+22-May-2019 11:28:31.840 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+22-May-2019 11:28:31.841 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean app.Comp168386325: Container(type=MANAGED, id=Default Managed Container)
+22-May-2019 11:28:31.841 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+22-May-2019 11:28:31.848 INFOS [http-nio-64661-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/temp for stateful session passivation
+22-May-2019 11:28:31.876 INFOS [http-nio-64661-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app" loaded.
+22-May-2019 11:28:31.876 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
+22-May-2019 11:28:31.892 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=CalculatorImplLocal) --> Ejb(deployment-id=CalculatorImpl)
+22-May-2019 11:28:31.892 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/app/CalculatorImpl!org.superbiz.calculator.CalculatorWs) --> Ejb(deployment-id=CalculatorImpl)
+22-May-2019 11:28:31.893 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/app/CalculatorImpl) --> Ejb(deployment-id=CalculatorImpl)
+22-May-2019 11:28:31.912 INFOS [http-nio-64661-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@1c1bbc4e
+22-May-2019 11:28:31.999 INFOS [http-nio-64661-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+22-May-2019 11:28:32.004 INFOS [http-nio-64661-exec-3] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+22-May-2019 11:28:32.007 INFOS [http-nio-64661-exec-3] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app/WEB-INF/classes/ looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+22-May-2019 11:28:32.620 INFOS [http-nio-64661-exec-3] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+22-May-2019 11:28:32.629 INFOS [http-nio-64661-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 629 ms.
+22-May-2019 11:28:32.634 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+22-May-2019 11:28:32.646 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=CalculatorImpl, ejb-name=CalculatorImpl, container=Default Stateless Container)
+22-May-2019 11:28:33.094 INFOS [http-nio-64661-exec-3] org.apache.openejb.server.webservices.WsService.deployApp Webservice(wsdl=http://localhost:64661/app/webservices/CalculatorImpl, qname={http://superbiz.org/wsdl}CalculatorWsService) --> Ejb(id=CalculatorImpl)
+22-May-2019 11:28:33.094 INFOS [http-nio-64661-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app)
+22-May-2019 11:28:33.200 INFOS [http-nio-64661-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+22-May-2019 11:28:33.222 INFOS [http-nio-64661-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+22-May-2019 11:28:33.252 INFOS [http-nio-64661-exec-3] org.apache.jasper.servlet.TldScanner.scanJars Au moins un fichier JAR a été analysé pour trouver des TLDs mais il n'en contenait pas, le mode "debug" du journal peut être activé pour obtenir une liste complète de JAR scannés sans succès; éviter d'analyser des JARs inutilement peut améliorer sensiblement le temps de démarrage et le temps de compilation des JSPs
+22-May-2019 11:28:33.258 INFOS [http-nio-64661-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+22-May-2019 11:28:33.316 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
+22-May-2019 11:28:33.527 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/lib/openwebbeans-el22-2.0.9.jar!/META-INF/faces-config.xml
+22-May-2019 11:28:33.528 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/lib/openwebbeans-jsf-2.0.9.jar!/META-INF/faces-config.xml
+22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/lib/myfaces-api-2.3.3.jar'
+22-May-2019 11:28:33.656 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.3' from path 'file:/Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/tomee/apache-tomee-plus-8.0.0-SNAPSHOT/lib/myfaces-impl-2.3.3.jar'
+22-May-2019 11:28:33.666 INFOS [http-nio-64661-exec-3] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
+22-May-2019 11:28:33.667 INFOS [http-nio-64661-exec-3] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+22-May-2019 11:28:33.711 INFOS [http-nio-64661-exec-3] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
+22-May-2019 11:28:33.737 INFOS [http-nio-64661-exec-3] org.apache.myfaces.application.ApplicationImpl.getProjectStage Couldn't discover the current project stage, using Production
+22-May-2019 11:28:33.737 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.FacesConfigurator.handleSerialFactory Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+22-May-2019 11:28:33.742 INFOS [http-nio-64661-exec-3] org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory.getLifecycleProvider Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+22-May-2019 11:28:33.763 INFOS [http-nio-64661-exec-3] org.apache.myfaces.webapp.AbstractFacesInitializer.initFaces ServletContext initialized.
+22-May-2019 11:28:33.767 INFOS [http-nio-64661-exec-3] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+22-May-2019 11:28:33.778 INFOS [http-nio-64661-exec-3] org.apache.myfaces.webapp.StartupServletContextListener.contextInitialized MyFaces Core has started, it took [517] ms.
+mai 22, 2019 11:28:34 AM org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean buildServiceFromWSDL
+INFOS: Creating Service {http://superbiz.org/wsdl}CalculatorWsService from WSDL: http://localhost:64661/app/webservices/CalculatorImpl?wsdl
+mai 22, 2019 11:28:34 AM org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean buildServiceFromWSDL
+INFOS: Creating Service {http://superbiz.org/wsdl}CalculatorWsService from WSDL: http://localhost:64661/app/webservices/CalculatorImpl?wsdl
+mai 22, 2019 11:28:35 AM org.apache.openejb.client.EventLogger log
+INFOS: RemoteInitialContextCreated{providerUri=http://localhost:64661/tomee/ejb}
+22-May-2019 11:28:35.386 INFOS [http-nio-64661-exec-6] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
+mai 22, 2019 11:28:35 AM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFOS: cleaning /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app.war
+mai 22, 2019 11:28:35 AM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFOS: cleaning /Users/apache/tomee/examples/webservice-ssl-client-cert/target/test/app/0/app
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.519 sec
+22-May-2019 11:28:35.570 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Une commande d'arrêt valide a été reçue sur le port d'arrêt, arrêt de l'instance du serveur
+22-May-2019 11:28:35.570 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Le gestionnaire de protocole ["http-nio-64661"] est mis en pause
+22-May-2019 11:28:35.581 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Le gestionnaire de protocole ["https-jsse-nio-8443"] est mis en pause
+22-May-2019 11:28:35.588 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Arrêt du service [Catalina]
+22-May-2019 11:28:35.589 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Arrêt du gestionnaire de protocole ["http-nio-64661"]
+22-May-2019 11:28:35.591 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Arrêt du gestionnaire de protocole ["https-jsse-nio-8443"]
+22-May-2019 11:28:35.592 INFOS [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+22-May-2019 11:28:35.600 INFOS [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+22-May-2019 11:28:35.601 GRAVE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+22-May-2019 11:28:35.601 GRAVE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+22-May-2019 11:28:35.611 INFOS [main] sun.reflect.NativeMethodAccessorImpl.invoke Destruction du gestionnaire de protocole ["http-nio-64661"]
+22-May-2019 11:28:35.611 INFOS [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destruction du gestionnaire de protocole ["https-jsse-nio-8443"]
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

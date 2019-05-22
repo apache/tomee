@@ -33,31 +33,31 @@ import java.util.Map;
 
 /**
  * connector_1_6.xsd
- * <p/>
+ *
  * <p>Java class for connectorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="connectorType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="vendor-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="eis-type" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="resourceadapter-version" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="license" type="{http://java.sun.com/xml/ns/javaee}licenseType" minOccurs="0"/>
- *         &lt;element name="resourceadapter" type="{http://java.sun.com/xml/ns/javaee}resourceadapterType"/>
- *         &lt;element name="required-work-context" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="1.6" />
- *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="connectorType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="vendor-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="eis-type" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="resourceadapter-version" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="license" type="{http://java.sun.com/xml/ns/javaee}licenseType" minOccurs="0"/&gt;
+ *         &lt;element name="resourceadapter" type="{http://java.sun.com/xml/ns/javaee}resourceadapterType"/&gt;
+ *         &lt;element name="required-work-context" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/javaee}dewey-versionType" fixed="1.6" /&gt;
+ *       &lt;attribute name="metadata-complete" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlRootElement(name = "connector")

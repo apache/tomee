@@ -26,26 +26,26 @@ import javax.xml.bind.annotation.XmlType;
  * <p class="changed_added_2_2">A named parameter whose value will be
  * passed to a correspondingly named parameter within an "inbound-parameter" element
  * on the target flow.<p>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-call-outbound-parameterType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-flow-call-outbound-parameterType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/>
- *         &lt;element name="value" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-parameter-valueType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-flow-call-outbound-parameterType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="name" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType"/&gt;
+ *         &lt;element name="value" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-parameter-valueType"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

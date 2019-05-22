@@ -31,7 +31,7 @@ import java.util.Map;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
- * <p/>
+ *
  * URI relativize(URI, URI) added afterwards to deal with the
  * non-functional URI.relativize(URI) method
  */
@@ -40,11 +40,11 @@ public class URISupport {
     /**
      * URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
      * URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
-     * <p/>
+     *
      * URI relativeB = URISupport.relativize(absoluteA, absoluteB);
-     * <p/>
+     *
      * assertEquals("../../openejb-core/foo.jar", relativeB.toString());
-     * <p/>
+     *
      * URI resolvedB = absoluteA.resolve(relativeB);
      * assertTrue(resolvedB.equals(absoluteB));
      *

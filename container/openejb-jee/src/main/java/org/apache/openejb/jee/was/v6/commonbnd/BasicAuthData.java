@@ -24,24 +24,24 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A basic type of Authentication which provides a userId and password for
  * connecting to a resource.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for BasicAuthData complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="BasicAuthData">
- *   &lt;complexContent>
- *     &lt;extension base="{commonbnd.xmi}AbstractAuthData">
- *       &lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="userId" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="BasicAuthData"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{commonbnd.xmi}AbstractAuthData"&gt;
+ *       &lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="userId" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

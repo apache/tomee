@@ -22,20 +22,20 @@ import java.sql.Connection;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for isolation-levelType.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="isolation-levelType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="TRANSACTION_READ_UNCOMMITTED"/>
- *     &lt;enumeration value="TRANSACTION_READ_COMMITTED"/>
- *     &lt;enumeration value="TRANSACTION_REPEATABLE_READ"/>
- *     &lt;enumeration value="TRANSACTION_SERIALIZABLE"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="isolation-levelType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="TRANSACTION_READ_UNCOMMITTED"/&gt;
+ *     &lt;enumeration value="TRANSACTION_READ_COMMITTED"/&gt;
+ *     &lt;enumeration value="TRANSACTION_REPEATABLE_READ"/&gt;
+ *     &lt;enumeration value="TRANSACTION_SERIALIZABLE"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 

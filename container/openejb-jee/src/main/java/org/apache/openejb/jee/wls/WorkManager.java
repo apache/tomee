@@ -28,42 +28,42 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for work-manager complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="work-manager">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="response-time-request-class" type="{http://www.bea.com/ns/weblogic/90}response-time-request-class"/>
- *           &lt;element name="fair-share-request-class" type="{http://www.bea.com/ns/weblogic/90}fair-share-request-class"/>
- *           &lt;element name="context-request-class" type="{http://www.bea.com/ns/weblogic/90}context-request-class"/>
- *           &lt;element name="request-class-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="min-threads-constraint" type="{http://www.bea.com/ns/weblogic/90}min-threads-constraint"/>
- *           &lt;element name="min-threads-constraint-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="max-threads-constraint" type="{http://www.bea.com/ns/weblogic/90}max-threads-constraint"/>
- *           &lt;element name="max-threads-constraint-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="capacity" type="{http://www.bea.com/ns/weblogic/90}capacity"/>
- *           &lt;element name="capacity-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;/choice>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="work-manager-shutdown-trigger" type="{http://www.bea.com/ns/weblogic/90}work-manager-shutdown-trigger"/>
- *           &lt;element name="ignore-stuck-threads" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="work-manager"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="response-time-request-class" type="{http://www.bea.com/ns/weblogic/90}response-time-request-class"/&gt;
+ *           &lt;element name="fair-share-request-class" type="{http://www.bea.com/ns/weblogic/90}fair-share-request-class"/&gt;
+ *           &lt;element name="context-request-class" type="{http://www.bea.com/ns/weblogic/90}context-request-class"/&gt;
+ *           &lt;element name="request-class-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="min-threads-constraint" type="{http://www.bea.com/ns/weblogic/90}min-threads-constraint"/&gt;
+ *           &lt;element name="min-threads-constraint-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="max-threads-constraint" type="{http://www.bea.com/ns/weblogic/90}max-threads-constraint"/&gt;
+ *           &lt;element name="max-threads-constraint-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="capacity" type="{http://www.bea.com/ns/weblogic/90}capacity"/&gt;
+ *           &lt;element name="capacity-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="work-manager-shutdown-trigger" type="{http://www.bea.com/ns/weblogic/90}work-manager-shutdown-trigger"/&gt;
+ *           &lt;element name="ignore-stuck-threads" type="{http://www.w3.org/2001/XMLSchema}boolean"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -73,12 +73,12 @@ public interface DoubleArray {
      * Adds an element to the end of the array and removes the first
      * element in the array.  Returns the discarded first element.
      * The effect is similar to a push operation in a FIFO queue.
-     * </p>
+     *
      * <p>
      * Example: If the array contains the elements 1, 2, 3, 4 (in that order)
      * and addElementRolling(5) is invoked, the result is an array containing
      * the entries 2, 3, 4, 5 and the value returned is 1.
-     * </p>
+     *
      *
      * @param value the value to be added to the array
      * @return the value which has been discarded or "pushed" out of the array

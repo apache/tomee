@@ -46,7 +46,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmp2DataSourcesHome.sum
-     * <p/>
+     *
      * Adds x and y and returns the result.
      *
      * @param x
@@ -206,7 +206,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmp2DataSourcesObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -219,7 +219,7 @@ public class BasicBmp2DataSourcesBean implements javax.ejb.EntityBean {
 
     /**
      * Maps to BasicBmp2DataSourcesObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

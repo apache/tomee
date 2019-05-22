@@ -208,7 +208,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * Then ignore this resource
      * 3- If the include and exclude class-path patterns are not defined
      * Then load this resource
-     * <p/>
+     *
      * The previous steps are based on the following points:
      * 1- Include class-path pattern has the highest priority
      * This helps in case both patterns are defined using the same values.

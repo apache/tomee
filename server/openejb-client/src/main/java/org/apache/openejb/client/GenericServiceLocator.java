@@ -58,10 +58,10 @@ public class GenericServiceLocator extends ServiceLocator {
 
     /**
      * Usable with JNDI name formats ending in the full class name of the interface
-     * <p/>
+     *
      * Such as:
      * - {interfaceClass}
-     * <p/>
+     *
      * Or with commonPrefix (supplied in constructor) such as:
      * - {moduleId}/{interfaceClass}
      * - ejb/{moduleId}/{interfaceClass}
@@ -76,11 +76,11 @@ public class GenericServiceLocator extends ServiceLocator {
     /**
      * Usable with JNDI name formats including a varying prefix such as ejbName or deploymentID
      * and ending in the full class name of the interface
-     * <p/>
+     *
      * Such as:
      * - {ejbName}/{interfaceClass}
      * - {deploymentId}/{interfaceClass}
-     * <p/>
+     *
      * Or with commonPrefix (supplied in constructor) such as:
      * - {moduleId}/{ejbName}/{interfaceClass}
      * - ejb/{moduleId}/{deploymentId}/{interfaceClass}
@@ -95,14 +95,14 @@ public class GenericServiceLocator extends ServiceLocator {
 
     /**
      * Usable with JNDI name formats comprised of the interfaceClass and ejbClass
-     * <p/>
+     *
      * For variation, the interface class is the prefix and the ejb class is the
      * suffix.  This is neat as the the prefix (the interface class name) becomes
      * a jndi context with one binding in it for each implementing ejb class.
-     * <p/>
+     *
      * Works with:
      * - {interfaceClass}/{ejbClass}
-     * <p/>
+     *
      * Or with commonPrefix (supplied in constructor) such as:
      * - {moduleId}/{interfaceClass}/{ejbClass}
      * - ejb/{moduleId}/{interfaceClass}/{ejbClass}

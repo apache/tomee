@@ -47,7 +47,7 @@ import java.util.Arrays;
  * more values are added than can be stored in the dataset, new values are
  * added in a "rolling" manner, with new values replacing the "oldest" values
  * in the dataset.
- * <p/>
+ *
  * <p>Note: this class is not threadsafe.  Use
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
@@ -414,9 +414,9 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * <p>
      * The implementation provided here follows the first estimation procedure presented
      * <a href="http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm">here.</a>
-     * </p><p>
+     * <p>
      * <strong>Preconditions</strong>:<ul>
-     * <li><code>0 &lt; p &le; 100</code> (otherwise an
+     * <li><code>0 &lt; p &le; 100</code&gt; (otherwise an
      * <code>IllegalArgumentException</code> is thrown)</li>
      * <li>at least one value must be stored (returns <code>Double.NaN
      * </code> otherwise)</li>
