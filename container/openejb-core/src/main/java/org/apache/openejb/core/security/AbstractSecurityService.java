@@ -359,7 +359,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
-        final String policyProvider = SystemInstance.get().getOptions().get("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
+        final String policyProvider = JaccProvider.Policy.class.getName();
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             final Class policyClass = Class.forName(policyProvider, true, classLoader);
