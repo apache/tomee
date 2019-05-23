@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>groovy-spock</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.0-M3</version>
   <name>OpenEJB :: Examples :: Groovy Spock</name>
 
   <properties>
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-openejb-embedded</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <version>8.0.0-M3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -126,7 +126,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <version>8.0.0-M3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
