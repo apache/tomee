@@ -31,28 +31,28 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}SystemProperty" maxOccurs="unbounded"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}JndiProvider" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}SecurityService" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}TransactionManager" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}ConnectionManager" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}ProxyFactory" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Connector" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Deployments" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}SystemProperty" maxOccurs="unbounded"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}JndiProvider" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}SecurityService" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}TransactionManager" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}ConnectionManager" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}ProxyFactory" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Connector" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Deployments" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -85,21 +85,21 @@ public class Openejb {
 
     /**
      * Gets the value of the container property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the container property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContainer().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Container }
      */
@@ -112,21 +112,21 @@ public class Openejb {
 
     /**
      * Gets the value of the jndiProvider property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the jndiProvider property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJndiProvider().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JndiProvider }
      */
@@ -219,21 +219,21 @@ public class Openejb {
 
     /**
      * Gets the value of the connector property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the connector property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getConnector().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Connector }
      */
@@ -246,21 +246,21 @@ public class Openejb {
 
     /**
      * Gets the value of the resource property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resource property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResource().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Resource }
      */
@@ -287,21 +287,21 @@ public class Openejb {
 
     /**
      * Gets the value of the deployments property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the deployments property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDeployments().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Deployments }
      */

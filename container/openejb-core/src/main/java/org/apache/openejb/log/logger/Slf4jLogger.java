@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  * <p>
  * Level mapping inspired by org.slf4j.bridge.SLF4JBridgeHandler:
  * </p>
- * <p/>
+ *
  * <pre>
  * FINEST  -&gt; TRACE
  * FINER   -&gt; DEBUG

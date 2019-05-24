@@ -217,7 +217,7 @@ public class MethodInfoUtil {
      * exactly one MethodInfo per MethodPermissionInfo.  A single MethodPermissionInfo
      * with three MethodInfos would be expanded into three MethodPermissionInfo with
      * one MethodInfo each.
-     * <p/>
+     *
      * The MethodPermissionInfo list is then sorted from least to most specific.
      *
      * @param infos

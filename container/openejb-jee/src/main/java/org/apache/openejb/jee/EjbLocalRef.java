@@ -34,28 +34,28 @@ import java.util.Set;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for ejb-local-refType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ejb-local-refType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="ejb-ref-name" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-nameType"/>
- *         &lt;element name="ejb-ref-type" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-typeType" minOccurs="0"/>
- *         &lt;element name="local-home" type="{http://java.sun.com/xml/ns/javaee}local-homeType" minOccurs="0"/>
- *         &lt;element name="local" type="{http://java.sun.com/xml/ns/javaee}localType" minOccurs="0"/>
- *         &lt;element name="ejb-link" type="{http://java.sun.com/xml/ns/javaee}ejb-linkType" minOccurs="0"/>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ejb-local-refType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-ref-name" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-nameType"/&gt;
+ *         &lt;element name="ejb-ref-type" type="{http://java.sun.com/xml/ns/javaee}ejb-ref-typeType" minOccurs="0"/&gt;
+ *         &lt;element name="local-home" type="{http://java.sun.com/xml/ns/javaee}local-homeType" minOccurs="0"/&gt;
+ *         &lt;element name="local" type="{http://java.sun.com/xml/ns/javaee}localType" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-link" type="{http://java.sun.com/xml/ns/javaee}ejb-linkType" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}resourceGroup"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 
@@ -216,11 +216,11 @@ public class EjbLocalRef implements EjbReference {
      * Deployment Component's environment and is relative to the
      * java:comp/env context.  The name must be unique within the
      * Deployment Component.
-     * <p/>
+     *
      * It is recommended that name is prefixed with "ejb/".
-     * <p/>
+     *
      * Example:
-     * <p/>
+     *
      * <ejb-ref-name>ejb/Payroll</ejb-ref-name>
      */
     public void setEjbRefName(final String value) {
@@ -274,7 +274,7 @@ public class EjbLocalRef implements EjbReference {
      * The value of the ejb-link element must be the ejb-name of an
      * enterprise bean in the same ejb-jar file or in another ejb-jar
      * file in the same Java EE application unit.
-     * <p/>
+     *
      * Alternatively, the name in the ejb-link element may be
      * composed of a path name specifying the ejb-jar containing the
      * referenced enterprise bean with the ejb-name of the target
@@ -283,11 +283,11 @@ public class EjbLocalRef implements EjbReference {
      * Deployment Component that is referencing the enterprise
      * bean.  This allows multiple enterprise beans with the same
      * ejb-name to be uniquely identified.
-     * <p/>
+     *
      * Examples:
-     * <p/>
+     *
      * <ejb-link>EmployeeRecord</ejb-link>
-     * <p/>
+     *
      * <ejb-link>../products/product.jar#ProductEJB</ejb-link>
      */
     public void setEjbLink(final String value) {

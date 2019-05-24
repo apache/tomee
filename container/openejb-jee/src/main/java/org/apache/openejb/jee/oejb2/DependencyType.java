@@ -25,19 +25,19 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for dependencyType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="dependencyType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://geronimo.apache.org/xml/ns/deployment-1.2}artifactType">
- *       &lt;sequence>
- *         &lt;element name="import" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}importType" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="dependencyType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://geronimo.apache.org/xml/ns/deployment-1.2}artifactType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="import" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}importType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

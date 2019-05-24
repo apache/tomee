@@ -19,6 +19,7 @@ package org.apache.tomee.microprofile.jwt.jaxrs;
 import org.apache.openejb.observer.Observes;
 import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
+import org.apache.tomee.microprofile.jwt.bval.ValidationInterceptorsFeature;
 
 /**
  * OpenEJB/TomEE hack to register a new provider on the fly
@@ -31,6 +32,7 @@ public class MPJWPProviderRegistration {
     public void registerProvider(@Observes final ExtensionProviderRegistration event) {
         event.getProviders().add(new MPJWTFilter.MPJWTExceptionMapper());
         event.getProviders().add(new MPJWTSecurityAnnotationsInterceptorsFeature());
+        event.getProviders().add(new ValidationInterceptorsFeature());
     }
 
 }

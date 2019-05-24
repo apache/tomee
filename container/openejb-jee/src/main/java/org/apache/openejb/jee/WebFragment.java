@@ -34,24 +34,24 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for web-fragmentType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="web-fragmentType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}web-commonType"/>
- *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}orderingType"/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://java.sun.com/xml/ns/javaee}web-common-attributes"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="web-fragmentType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}java-identifierType"/&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}web-commonType"/&gt;
+ *         &lt;element name="ordering" type="{http://java.sun.com/xml/ns/javaee}orderingType"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://java.sun.com/xml/ns/javaee}web-common-attributes"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

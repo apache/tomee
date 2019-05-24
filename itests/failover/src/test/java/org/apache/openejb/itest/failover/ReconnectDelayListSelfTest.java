@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 /**
  * This test verifies the situation where none of the
  * servers listed in the 'initialServers' list can be contacted.
- * <p/>
+ *
  * A server that is unable to connect to any of its peers should
  * continue trying to connect to servers on the 'initialServers'
  * list.  How long to wait between attempts is dictated by the

@@ -32,24 +32,24 @@ import javax.xml.bind.annotation.XmlType;
  * tools used by such a Deployment File consumer will display
  * the description when processing the parent element that
  * contains the description.
- * <p/>
+ *
  * The lang attribute defines the language that the
  * description is provided in. The default value is "en" (English).
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for descriptionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="descriptionType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>xsdStringType">
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="descriptionType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;xsdStringType"&gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

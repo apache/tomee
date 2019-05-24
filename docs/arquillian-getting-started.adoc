@@ -20,10 +20,12 @@ integration tests that must reflect the production environment as best
 as possible. Unit tests lose their true value.
 
 JEE always got seen as an heavy technology, impossible to test and to
-use in development. OpenEJB always fight against that idea and proved
+use in development. OpenEJB always fought against that idea and proved
 that it's really possible.
 
-As David Blevins said: > "Do not blame EJBs (ie. Java EE) because your
+As David Blevins said:
+
+> "Do not blame EJBs (ie. Java EE) because your
 server is not testable."
 
 With latest Java EE specifications (5 and especially 6), it becomes a
@@ -37,5 +39,6 @@ useful and can really help testing Java EE application. That's also an
 opportunity to get the most out of TomEE (lightweight, fast,
 feature-rich, etc).
 
-\{info See http://arquillian.org[Arquillian.org] for a great quick-start
-tutorial on Arquillian itself. }
+[tip]
+TIP: See http://arquillian.org[Arquillian.org] for a great quick-start
+tutorial on Arquillian itself.

@@ -22,17 +22,17 @@ import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * <p>Java class for transport-guaranteeType.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="transport-guaranteeType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="NONE"/>
- *     &lt;enumeration value="INTEGRAL"/>
- *     &lt;enumeration value="CONFIDENTIAL"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="transport-guaranteeType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="NONE"/&gt;
+ *     &lt;enumeration value="INTEGRAL"/&gt;
+ *     &lt;enumeration value="CONFIDENTIAL"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

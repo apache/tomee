@@ -31,7 +31,7 @@ import java.util.List;
  * The service-endpoint-method-mapping element defines the mapping of
  * Java methods to operations (which are not uniquely qualified by
  * qnames).
- * <p/>
+ *
  * The wsdl-operation should be interpreted with respect to the
  * portType and binding in which this definition is embedded within.
  * See the definitions for service-endpoint-interface-mapping and
@@ -39,7 +39,7 @@ import java.util.List;
  * wrapped-element indicator should only be specified when a WSDL
  * message wraps an element type.  The wsdl-return-value-mapping is
  * not specified for one-way operations.
- * <p/>
+ *
  * Used in: service-endpoint-interface-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

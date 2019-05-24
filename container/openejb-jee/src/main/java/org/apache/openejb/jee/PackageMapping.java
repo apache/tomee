@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * The package-mapping indicates the mapping between java-package-name
  * and XML namespace in the WSDL document.
- * <p/>
+ *
  * Used in: java-wsdl-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

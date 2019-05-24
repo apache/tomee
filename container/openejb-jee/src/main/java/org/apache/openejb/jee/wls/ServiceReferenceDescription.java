@@ -30,23 +30,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for service-reference-description complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="service-reference-description">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="service-ref-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="wsdl-url" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="call-property" type="{http://www.bea.com/ns/weblogic/90}property-namevalue" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="port-info" type="{http://www.bea.com/ns/weblogic/90}port-info" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="service-reference-description"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="service-ref-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="wsdl-url" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="call-property" type="{http://www.bea.com/ns/weblogic/90}property-namevalue" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="port-info" type="{http://www.bea.com/ns/weblogic/90}port-info" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -113,21 +113,21 @@ public class ServiceReferenceDescription {
 
     /**
      * Gets the value of the callProperty property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the callProperty property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCallProperty().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PropertyNamevalue }
      */
@@ -140,21 +140,21 @@ public class ServiceReferenceDescription {
 
     /**
      * Gets the value of the portInfo property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the portInfo property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPortInfo().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PortInfo }
      */

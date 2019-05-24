@@ -41,55 +41,55 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for session-beanType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="session-beanType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/>
- *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="home" type="{http://java.sun.com/xml/ns/javaee}homeType" minOccurs="0"/>
- *         &lt;element name="remote" type="{http://java.sun.com/xml/ns/javaee}remoteType" minOccurs="0"/>
- *         &lt;element name="local-home" type="{http://java.sun.com/xml/ns/javaee}local-homeType" minOccurs="0"/>
- *         &lt;element name="local" type="{http://java.sun.com/xml/ns/javaee}localType" minOccurs="0"/>
- *         &lt;element name="business-local" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="business-remote" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="local-bean" type="{http://java.sun.com/xml/ns/javaee}emptyType" minOccurs="0"/>
- *         &lt;element name="service-endpoint" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
- *         &lt;element name="ejb-class" type="{http://java.sun.com/xml/ns/javaee}ejb-classType" minOccurs="0"/>
- *         &lt;element name="session-type" type="{http://java.sun.com/xml/ns/javaee}session-typeType" minOccurs="0"/>
- *         &lt;element name="stateful-timeout" type="{http://java.sun.com/xml/ns/javaee}stateful-timeoutType" minOccurs="0"/>
- *         &lt;element name="timeout-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/>
- *         &lt;element name="timer" type="{http://java.sun.com/xml/ns/javaee}timerType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="init-on-startup" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="concurrency-management-type" type="{http://java.sun.com/xml/ns/javaee}concurrency-management-typeType" minOccurs="0"/>
- *         &lt;element name="concurrent-method" type="{http://java.sun.com/xml/ns/javaee}concurrent-methodType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="depends-on" type="{http://java.sun.com/xml/ns/javaee}depends-onType" minOccurs="0"/>
- *         &lt;element name="init-method" type="{http://java.sun.com/xml/ns/javaee}init-methodType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="remove-method" type="{http://java.sun.com/xml/ns/javaee}remove-methodType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="async-method" type="{http://java.sun.com/xml/ns/javaee}async-methodType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="transaction-type" type="{http://java.sun.com/xml/ns/javaee}transaction-typeType" minOccurs="0"/>
- *         &lt;element name="after-begin-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/>
- *         &lt;element name="before-completion-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/>
- *         &lt;element name="after-completion-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/>
- *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/>
- *         &lt;element name="post-activate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="pre-passivate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-role-ref" type="{http://java.sun.com/xml/ns/javaee}security-role-refType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-identity" type="{http://java.sun.com/xml/ns/javaee}security-identityType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="session-beanType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/&gt;
+ *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="home" type="{http://java.sun.com/xml/ns/javaee}homeType" minOccurs="0"/&gt;
+ *         &lt;element name="remote" type="{http://java.sun.com/xml/ns/javaee}remoteType" minOccurs="0"/&gt;
+ *         &lt;element name="local-home" type="{http://java.sun.com/xml/ns/javaee}local-homeType" minOccurs="0"/&gt;
+ *         &lt;element name="local" type="{http://java.sun.com/xml/ns/javaee}localType" minOccurs="0"/&gt;
+ *         &lt;element name="business-local" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="business-remote" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="local-bean" type="{http://java.sun.com/xml/ns/javaee}emptyType" minOccurs="0"/&gt;
+ *         &lt;element name="service-endpoint" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-class" type="{http://java.sun.com/xml/ns/javaee}ejb-classType" minOccurs="0"/&gt;
+ *         &lt;element name="session-type" type="{http://java.sun.com/xml/ns/javaee}session-typeType" minOccurs="0"/&gt;
+ *         &lt;element name="stateful-timeout" type="{http://java.sun.com/xml/ns/javaee}stateful-timeoutType" minOccurs="0"/&gt;
+ *         &lt;element name="timeout-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/&gt;
+ *         &lt;element name="timer" type="{http://java.sun.com/xml/ns/javaee}timerType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="init-on-startup" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="concurrency-management-type" type="{http://java.sun.com/xml/ns/javaee}concurrency-management-typeType" minOccurs="0"/&gt;
+ *         &lt;element name="concurrent-method" type="{http://java.sun.com/xml/ns/javaee}concurrent-methodType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="depends-on" type="{http://java.sun.com/xml/ns/javaee}depends-onType" minOccurs="0"/&gt;
+ *         &lt;element name="init-method" type="{http://java.sun.com/xml/ns/javaee}init-methodType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="remove-method" type="{http://java.sun.com/xml/ns/javaee}remove-methodType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="async-method" type="{http://java.sun.com/xml/ns/javaee}async-methodType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="transaction-type" type="{http://java.sun.com/xml/ns/javaee}transaction-typeType" minOccurs="0"/&gt;
+ *         &lt;element name="after-begin-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/&gt;
+ *         &lt;element name="before-completion-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/&gt;
+ *         &lt;element name="after-completion-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType" minOccurs="0"/&gt;
+ *         &lt;element name="around-invoke" type="{http://java.sun.com/xml/ns/javaee}around-invokeType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="around-timeout" type="{http://java.sun.com/xml/ns/javaee}around-timeoutType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}jndiEnvironmentRefsGroup"/&gt;
+ *         &lt;element name="post-activate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="pre-passivate" type="{http://java.sun.com/xml/ns/javaee}lifecycle-callbackType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-role-ref" type="{http://java.sun.com/xml/ns/javaee}security-role-refType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-identity" type="{http://java.sun.com/xml/ns/javaee}security-identityType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -337,16 +337,16 @@ public class SessionBean implements RemoteBean, Session, TimerConsumer {
      * ejb-jar file's deployment descriptor. The name must be
      * unique among the names of the enterprise beans in the same
      * ejb-jar file.
-     * <p/>
+     *
      * There is no architected relationship between the used
      * ejb-name in the deployment descriptor and the JNDI name that
      * the Deployer will assign to the enterprise bean's home.
-     * <p/>
+     *
      * The name for an entity bean must conform to the lexical
      * rules for an NMTOKEN.
-     * <p/>
+     *
      * Example:
-     * <p/>
+     *
      * <ejb-name>EmployeeService</ejb-name>
      */
     public void setEjbName(final String value) {

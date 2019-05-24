@@ -1006,7 +1006,7 @@ class CmpJpaConversion implements DynamicDeployer {
      * levels of the class hierarchy.  We want to define
      * the idClass as the most derived class (i.e., the one
      * that will contain ALL of the defined fields).
-     * <p/>
+     *
      * In practice, most ejbs will define all of the
      * primary key fields at the same subclass level, so
      * this should return quickly.

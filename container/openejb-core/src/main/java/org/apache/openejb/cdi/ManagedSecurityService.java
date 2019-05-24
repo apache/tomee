@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityService {
 
@@ -77,12 +78,8 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
                 interfaceList.add(java.security.Principal.class);
             }
 
-            proxy = Principal.class.cast(Proxy.newProxyInstance(loader, interfaceList.toArray(new Class[0]), new InvocationHandler() {
-                @Override
-                public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                    return method.invoke(doGetPrincipal(), args);
-                }
-            }));
+            proxy = Principal.class.cast(Proxy.newProxyInstance(
+                    loader, interfaceList.toArray(new Class[0]), new PrincipalInvocationHandler(this::doGetPrincipal)));
         }
     }
 
@@ -169,4 +166,25 @@ public class ManagedSecurityService implements org.apache.webbeans.spi.SecurityS
         return delegate.doPrivilegedGetSystemProperties();
     }
 
+    public static class PrincipalInvocationHandler implements InvocationHandler {
+
+        private final Supplier<Principal> principalSupplier;
+
+        public PrincipalInvocationHandler(final Supplier<Principal> principalSupplier) {
+            this.principalSupplier = principalSupplier;
+        }
+
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            final Principal principal = principalSupplier.get();
+            if (principal == null) {
+                return null;
+            }
+            return method.invoke(principal, args);
+        }
+
+        public boolean isLogged() {
+            return principalSupplier.get() != null;
+        }
+    }
 }

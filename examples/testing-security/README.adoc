@@ -3,10 +3,11 @@
 :jbake-status: status=published
 = Testing Security
 
-_Help us document this example! Click the blue pencil icon in the upper
-right to edit this page._
+These is a simple example that demonstrate how to use the security anotations to set level access on DAO actions. Finally, we show the restrictions behaviors resulted through unit tests.
 
 == Movie
+
+First, we create a entity class with movie info.
 
 ....
 package org.superbiz.injection.secure;
@@ -58,6 +59,7 @@ public class Movie {
 
 == Movies
 
+After, we created a DAO class. Look that we used the security anotations to set the need roles to use each DAO action. For example, adition of a movie is able to a user that has "Manager" or "Employee" `ROLE`, but to remove a movie the user need to has Manager `ROLE`.
 ....
 package org.superbiz.injection.secure;
 
@@ -101,6 +103,8 @@ public class Movies {
 
 == persistence.xml
 
+We set JPA with these xml.
+
 ....
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -117,6 +121,8 @@ public class Movies {
 ....
 
 == MovieTest
+
+To test, we created a class with access tests to DAO.
 
 ....
 package org.superbiz.injection.secure;
@@ -257,6 +263,8 @@ public class MovieTest extends TestCase {
 ....
 
 == Running
+
+All tests passed.
 
 ....
 -------------------------------------------------------

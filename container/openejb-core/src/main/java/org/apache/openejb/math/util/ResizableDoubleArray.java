@@ -289,12 +289,12 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * Adds an element to the end of the array and removes the first
      * element in the array.  Returns the discarded first element.
      * The effect is similar to a push operation in a FIFO queue.
-     * </p>
+     *
      * <p>
      * Example: If the array contains the elements 1, 2, 3, 4 (in that order)
      * and addElementRolling(5) is invoked, the result is an array containing
      * the entries 2, 3, 4, 5 and the value returned is 1.
-     * </p>
+     *
      *
      * @param value the value to be added to the array
      * @return the value which has been discarded or "pushed" out of the array
@@ -484,7 +484,7 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * the new array size will be <code>internalArray.length * expansionFactor.</code>
      * If <code>expansionMode</code> is set to ADDITIVE_MODE,  the length
      * after expansion will be <code>internalArray.length + expansionFactor</code>
-     * </p>
+     *
      */
     protected synchronized void expand() {
 
@@ -808,10 +808,10 @@ public class ResizableDoubleArray implements DoubleArray, Serializable {
      * <p>Copies source to dest, copying the underlying data, so dest is
      * a new, independent copy of source.  Does not contract before
      * the copy.</p>
-     * <p/>
+     *
      * <p>Obtains synchronization locks on both source and dest
      * (in that order) before performing the copy.</p>
-     * <p/>
+     *
      * <p>Neither source nor dest may be null; otherwise a NullPointerException
      * is thrown</p>
      *

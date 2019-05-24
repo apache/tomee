@@ -31,38 +31,38 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Define a switch node in a flow graph.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
+ *
  * <p>This element must contain one or more
- * <code>&lt;case&gt;</code> elements.  When control passes to the
- * <code>&lt;switch&gt;</code> node, each of the cases must be considered
- * in order and control must past to the <code>&lt;from-outcome&gt;</code>
- * of the first one whose <code>&lt;if&gt;</code> expression evaluates to
+ * <code>&lt;case&gt;</code&gt; elements.  When control passes to the
+ * <code>&lt;switch&gt;</code&gt; node, each of the cases must be considered
+ * in order and control must past to the <code>&lt;from-outcome&gt;</code&gt;
+ * of the first one whose <code>&lt;if&gt;</code&gt; expression evaluates to
  * <code>true</code>.</p>
- * <p/>
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-switchType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-switchType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="case" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switch-caseType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="default-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-switchType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="case" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switch-caseType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="default-outcome" type="{http://xmlns.jcp.org/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,21 +84,21 @@ public class FacesConfigFlowDefinitionSwitch {
 
     /**
      * Gets the value of the case property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the case property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCase().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionSwitchCase }
      */

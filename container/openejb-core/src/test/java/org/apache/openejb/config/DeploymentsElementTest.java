@@ -44,7 +44,7 @@ import java.util.Properties;
 /**
  * If an app exists in the apps/ directory in both the
  * packed and unpacked states, only deploy the app once
- * <p/>
+ *
  * Do not treat this as two applications and deploy each one separately.
  *
  * @version $Rev$ $Date$
@@ -56,7 +56,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file not extracted
      * Application.xml
      *
@@ -87,7 +87,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file not extracted
      *
      * @throws Exception
@@ -116,7 +116,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file extracted
      * Application.xml
      *
@@ -149,7 +149,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file extracted
      *
      * @throws Exception
@@ -180,7 +180,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file packed
      * EAR file extracted
      * Application.xml
@@ -215,7 +215,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file packed
      * EAR file extracted
      *
@@ -248,10 +248,10 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * EAR file packed
      * EAR file extracted
-     * <p/>
+     *
      * The packed version is newer and an updated version of the packed version
      * We should remove the extracted version and unpack the newer ear
      *
@@ -296,7 +296,7 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * Two ejb jars
      *
      * @throws Exception
@@ -333,12 +333,12 @@ public class DeploymentsElementTest extends Assert {
 
     /**
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * Two ejb jars
-     * <p/>
+     *
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     * <p/>
+     *
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *
@@ -378,10 +378,10 @@ public class DeploymentsElementTest extends Assert {
     /**
      * <Deployments dir="myapps/2000.jar"/>
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     * <p/>
+     *
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *
@@ -427,10 +427,10 @@ public class DeploymentsElementTest extends Assert {
      * <Deployments dir="myapps/2000.jar"/>
      * <Deployments dir="myapps"/>
      * <Deployments dir="myapps"/>
-     * <p/>
+     *
      * Order should be guaranteed to be the same as
      * they are declared in the openejb.xml
-     * <p/>
+     *
      * To test, the jars are named intentionally in an order
      * that would naturally sort to be the reverse.
      *

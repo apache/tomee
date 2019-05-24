@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,14 +25,14 @@ public class WebserviceClient {
     /**
      * Unfortunately, to run this example with CXF you need to have a HUGE class path.  This
      * is just what is required to run CXF:
-     * <p/>
+     *
      * jaxb-api-2.0.jar
      * jaxb-impl-2.0.3.jar
-     * <p/>
+     *
      * saaj-api-1.3.jar
      * saaj-impl-1.3.jar
-     * <p/>
-     * <p/>
+     *
+     *
      * cxf-api-2.0.2-incubator.jar
      * cxf-common-utilities-2.0.2-incubator.jar
      * cxf-rt-bindings-soap-2.0.2-incubator.jar
@@ -43,7 +43,7 @@ public class WebserviceClient {
      * cxf-rt-transports-http-jetty-2.0.2-incubator.jar
      * cxf-rt-transports-http-2.0.2-incubator.jar
      * cxf-tools-common-2.0.2-incubator.jar
-     * <p/>
+     *
      * geronimo-activation_1.1_spec-1.0.jar
      * geronimo-annotation_1.0_spec-1.1.jar
      * geronimo-ejb_3.0_spec-1.0.jar
@@ -52,7 +52,7 @@ public class WebserviceClient {
      * geronimo-stax-api_1.0_spec-1.0.jar
      * jaxws-api-2.0.jar
      * axis2-jws-api-1.3.jar
-     * <p/>
+     *
      * wsdl4j-1.6.1.jar
      * xml-resolver-1.2.jar
      * XmlSchema-1.3.1.jar

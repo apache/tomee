@@ -30,23 +30,23 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 /**
- * <p/>
+ *
  * Java class for Any complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Any">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;any/>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Any"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;any/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,22 +60,22 @@ public class Any {
 
     /**
      * Gets the value of the elements property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the elements property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getElements().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Element }
      */
     public List<Element> getElements() {
@@ -88,11 +88,11 @@ public class Any {
     /**
      * Gets a map that contains attributes that aren't bound to any typed
      * property on this class.
-     * <p/>
-     * <p/>
+     *
+     *
      * the map is keyed by the name of the attribute and the value is the string
      * value of the attribute.
-     * <p/>
+     *
      * the map returned by this method is live, and you can add new attribute by
      * updating the map directly. Because of this design, there's no setter.
      *

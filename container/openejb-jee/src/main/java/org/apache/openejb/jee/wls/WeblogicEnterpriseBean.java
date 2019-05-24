@@ -31,40 +31,40 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for weblogic-enterprise-bean complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="weblogic-enterprise-bean">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="entity-descriptor" type="{http://www.bea.com/ns/weblogic/90}entity-descriptor"/>
- *           &lt;element name="stateless-session-descriptor" type="{http://www.bea.com/ns/weblogic/90}stateless-session-descriptor"/>
- *           &lt;element name="stateful-session-descriptor" type="{http://www.bea.com/ns/weblogic/90}stateful-session-descriptor"/>
- *           &lt;element name="message-driven-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-driven-descriptor"/>
- *         &lt;/choice>
- *         &lt;element name="transaction-descriptor" type="{http://www.bea.com/ns/weblogic/90}transaction-descriptor" minOccurs="0"/>
- *         &lt;element name="iiop-security-descriptor" type="{http://www.bea.com/ns/weblogic/90}iiop-security-descriptor" minOccurs="0"/>
- *         &lt;group ref="{http://www.bea.com/ns/weblogic/90}reference-descriptorGroup"/>
- *         &lt;element name="enable-call-by-reference" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="network-access-point" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="clients-on-same-server" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="run-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="create-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="remove-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="passivate-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="local-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="dispatch-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="remote-client-timeout" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="weblogic-enterprise-bean"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="entity-descriptor" type="{http://www.bea.com/ns/weblogic/90}entity-descriptor"/&gt;
+ *           &lt;element name="stateless-session-descriptor" type="{http://www.bea.com/ns/weblogic/90}stateless-session-descriptor"/&gt;
+ *           &lt;element name="stateful-session-descriptor" type="{http://www.bea.com/ns/weblogic/90}stateful-session-descriptor"/&gt;
+ *           &lt;element name="message-driven-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-driven-descriptor"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element name="transaction-descriptor" type="{http://www.bea.com/ns/weblogic/90}transaction-descriptor" minOccurs="0"/&gt;
+ *         &lt;element name="iiop-security-descriptor" type="{http://www.bea.com/ns/weblogic/90}iiop-security-descriptor" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://www.bea.com/ns/weblogic/90}reference-descriptorGroup"/&gt;
+ *         &lt;element name="enable-call-by-reference" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="network-access-point" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="clients-on-same-server" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="run-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="create-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="remove-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="passivate-as-principal-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="local-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="dispatch-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="remote-client-timeout" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -321,21 +321,21 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the resourceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceDescription().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceDescription }
      */
@@ -348,21 +348,21 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the resourceEnvDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the resourceEnvDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getResourceEnvDescription().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvDescription }
      */
@@ -375,21 +375,21 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the ejbReferenceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the ejbReferenceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEjbReferenceDescription().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EjbReferenceDescription }
      */
@@ -402,21 +402,21 @@ public class WeblogicEnterpriseBean {
 
     /**
      * Gets the value of the serviceReferenceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the serviceReferenceDescription property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getServiceReferenceDescription().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceReferenceDescription }
      */

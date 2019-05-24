@@ -28,7 +28,7 @@ import java.util.Map;
  * When a value is added using the add method of this class a key is obtained for
  * the value using either the provided KeyExtractor, or if no KeyExtractor was
  * provided, the value is cast to Keyable and the getKey() method is called.
- * <p/>
+ *
  * The underlying Map can be obtainded with the toMap method.  Any changes to this
  * map are directly reflected in this collection.  Additions to the map do not
  * need to implement Keyable, nor do the values need to be keyed using the key
@@ -74,7 +74,7 @@ public class KeyedCollection<K, V> extends AbstractCollection<V> {
 
     /**
      * Get the underlying map used by this collection.
-     * <p/>
+     *
      * Any changes to this
      * map are directly reflected in this collection.  Additions to the map do not
      * need to implement Keyable, nor do the values need to be keyed using the key

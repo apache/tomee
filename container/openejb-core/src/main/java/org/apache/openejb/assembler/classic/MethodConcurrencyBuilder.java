@@ -105,7 +105,7 @@ public class MethodConcurrencyBuilder {
      * exactly one MethodInfo per MethodConcurrencyInfo.  A single MethodConcurrencyInfo
      * with three MethodInfos would be expanded into three MethodConcurrencyInfo with
      * one MethodInfo each.
-     * <p/>
+     *
      * The MethodConcurrencyInfo list is then sorted from least to most specific.
      *
      * @param infos

@@ -19,8 +19,7 @@
 <!--test 2-->
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -107,6 +106,8 @@
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <module>mp-jwt-bean-validation</module>
+    <module>mp-jwt-bean-validation-strongly-typed</module>
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
@@ -174,6 +175,7 @@
     <module>webservice-attachments</module>
     <module>webservice-inheritance</module>
     <module>webservice-security</module>
+    <module>webservice-ssl-client-cert</module>
     <module>webservice-ws-security</module>
     <module>webservice-ws-with-resources-config</module>
     <module>webservice-handlerchain</module>

@@ -40,228 +40,228 @@ import org.apache.openejb.jee.was.v6.xmi.Extension;
  * same signature that is defined in both the home and remote interface; the
  * method-name element specifies the method name; and the optional method-params
  * elements identify a
- * <p/>
+ *
  * single method among multiple methods with an overloaded method name.
- * <p/>
+ *
  * There are three possible styles of the method element syntax:
- * <p/>
+ *
  * 1. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>*</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
- * <p/>
+ *
+ *
  * This style is used to refer to all the methods of the specified enterprise
  * bean's home and remote interfaces.
- * <p/>
- * <p/>
+ *
+ *
  * 2. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>METHOD</method-name>
- * <p/>
+ *
  * </method>>
- * <p/>
+ *
  * This style is used to refer to the specified method of the specified
  * enterprise bean. If there are multiple methods with
- * <p/>
+ *
  * the same overloaded name, the element of this style refers to all the methods
  * with the overloaded name.
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * 3. <method>
- * <p/>
+ *
  * <ejb-name>EJBNAME</ejb-name>
- * <p/>
+ *
  * <method-name>METHOD</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>PARAM-1</method-param>
- * <p/>
+ *
  * <method-param>PARAM-2</method-param>
- * <p/>
+ *
  * ...
- * <p/>
+ *
  * <method-param>PARAM-n</method-param>
- * <p/>
+ *
  * </method-params> <method>
- * <p/>
- * <p/>
+ *
+ *
  * This style is used to refer to a single method within a set of methods with
  * an overloaded name. PARAM-1 through PARAM-n are the fully-qualified Java
  * types of the method's input parameters (if the method has no input arguments,
  * the method-params element
- * <p/>
+ *
  * contains no method-param elements). Arrays are specified by the array
  * element's type, followed by one or more pair of square brackets (e.g.
  * int[][]).
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Used in: method-permission and container-transaction
- * <p/>
+ *
  * Examples:
- * <p/>
- * <p/>
+ *
+ *
  * Style 1: The following method element refers to all the methods of the
  * EmployeeService bean's home and remote interfaces:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>*</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
- * <p/>
+ *
+ *
  * Style 2: The following method element refers to all the create methods of the
  * EmployeeService bean's home interface:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * </method>
- * <p/>
+ *
  * Style 3: The following method element refers to the create(String firstName,
  * String LastName) method of the EmployeeService bean's home interface.
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * The following example illustrates a Style 3 element with more complex
  * parameter types. The method foobar(char s, int i, int[] iar,
  * mypackage.MyClass mycl, mypackage.MyClass[][] myclaar)
- * <p/>
+ *
  * would be specified as:
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-name>foobar</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>char</method-param>
- * <p/>
+ *
  * <method-param>int</method-param>
- * <p/>
+ *
  * <method-param>int[]</method-param>
- * <p/>
+ *
  * <method-param>mypackage.MyClass</method-param>
- * <p/>
+ *
  * <method-param>mypackage.MyClass[][]</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
+ *
+ *
  * The optional method-intf element can be used when it becomes necessary to
  * differentiate between a method defined in the home interface and a method
  * with the same name and signature that is defined in the remote interface.
- * <p/>
+ *
  * For example, the method element
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-intf>Remote</method-intf>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
+ *
+ *
  * can be used to differentiate the create(String, String) method defined in the
  * remote interface from the create(String, String) method defined in the home
  * interface, which would be defined as
- * <p/>
- * <p/>
+ *
+ *
  * <method>
- * <p/>
+ *
  * <ejb-name>EmployeeService</ejb-name>
- * <p/>
+ *
  * <method-intf>Home</method-intf>
- * <p/>
+ *
  * <method-name>create</method-name>
- * <p/>
+ *
  * <method-params>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * <method-param>java.lang.String</method-param>
- * <p/>
+ *
  * </method-params> </method>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MethodElement complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="MethodElement">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="enterpriseBean" type="{ejb.xmi}EnterpriseBean"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="descriptions" type="{common.xmi}Description"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://www.omg.org/XMI}Extension"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="enterpriseBean" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="parms" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="type" type="{ejb.xmi}MethodElementKind" />
- *       &lt;attribute ref="{http://www.omg.org/XMI}id"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="MethodElement"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="enterpriseBean" type="{ejb.xmi}EnterpriseBean"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="descriptions" type="{common.xmi}Description"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://www.omg.org/XMI}Extension"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="description" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="enterpriseBean" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="parms" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="type" type="{ejb.xmi}MethodElementKind" /&gt;
+ *       &lt;attribute ref="{http://www.omg.org/XMI}id"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -304,22 +304,22 @@ public class MethodElement {
 
     /**
      * Gets the value of the enterpriseBeans property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the enterpriseBeans property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getEnterpriseBeans().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EnterpriseBean }
      */
@@ -332,22 +332,22 @@ public class MethodElement {
 
     /**
      * Gets the value of the descriptions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the descriptions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDescriptions().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Description }
      */
@@ -360,22 +360,22 @@ public class MethodElement {
 
     /**
      * Gets the value of the extensions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the extensions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getExtensions().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Extension }
      */

@@ -28,36 +28,36 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://jboss.org}field-name"/>
- *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}column-name" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}not-null" minOccurs="0"/>
- *         &lt;choice minOccurs="0">
- *           &lt;sequence>
- *             &lt;element ref="{http://jboss.org}jdbc-type"/>
- *             &lt;element ref="{http://jboss.org}sql-type"/>
- *           &lt;/sequence>
- *           &lt;sequence>
- *             &lt;element ref="{http://jboss.org}property" maxOccurs="unbounded"/>
- *           &lt;/sequence>
- *         &lt;/choice>
- *         &lt;element ref="{http://jboss.org}auto-increment" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}dbindex" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}check-dirty-after-get" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}state-factory" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://jboss.org}field-name"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}column-name" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}not-null" minOccurs="0"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;sequence&gt;
+ *             &lt;element ref="{http://jboss.org}jdbc-type"/&gt;
+ *             &lt;element ref="{http://jboss.org}sql-type"/&gt;
+ *           &lt;/sequence&gt;
+ *           &lt;sequence&gt;
+ *             &lt;element ref="{http://jboss.org}property" maxOccurs="unbounded"/&gt;
+ *           &lt;/sequence&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element ref="{http://jboss.org}auto-increment" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}dbindex" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}check-dirty-after-get" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}state-factory" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -243,21 +243,21 @@ public class CmpField {
 
     /**
      * Gets the value of the property property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the property property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getProperty().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Property }
      */

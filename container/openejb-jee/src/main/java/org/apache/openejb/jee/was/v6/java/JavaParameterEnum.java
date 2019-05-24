@@ -19,23 +19,23 @@ package org.apache.openejb.jee.was.v6.java;
 import javax.xml.bind.annotation.XmlEnum;
 
 /**
- * <p/>
+ *
  * Java class for JavaParameterKind.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="JavaParameterKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="IN"/>
- *     &lt;enumeration value="OUT"/>
- *     &lt;enumeration value="INOUT"/>
- *     &lt;enumeration value="RETURN"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="JavaParameterKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="IN"/&gt;
+ *     &lt;enumeration value="OUT"/&gt;
+ *     &lt;enumeration value="INOUT"/&gt;
+ *     &lt;enumeration value="RETURN"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

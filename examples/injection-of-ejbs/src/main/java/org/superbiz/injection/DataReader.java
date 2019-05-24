@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,11 +25,11 @@ import javax.ejb.Stateless;
  * using the annotation @Stateless
  * This EJB has 2 business interfaces: DataReaderRemote, a remote business
  * interface, and DataReaderLocal, a local business interface
- * <p/>
+ *
  * The instance variables 'dataStoreRemote' is annotated with the @EJB annotation:
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreRemote
- * <p/>
+ *
  * The instance variables 'dataStoreLocal' is annotated with the @EJB annotation:
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreLocal

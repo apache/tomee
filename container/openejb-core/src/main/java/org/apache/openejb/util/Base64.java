@@ -21,7 +21,7 @@ import java.io.IOException;
 
 /**
  * Provides Base64 encoding and decoding as defined by RFC 2045.
- * <p/>
+ *
  * <p>This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite>
  * from RFC 2045 <cite>Multipurpose Internet Mail Extensions (MIME) Part One:
  * Format of Internet Message Bodies</cite> by Freed and Borenstein.</p>
@@ -35,7 +35,7 @@ public class Base64 {
 
     /**
      * Chunk size per RFC 2045 section 6.8.
-     * <p/>
+     *
      * <p>The {@value} character limit does not count the trailing CRLF, but counts
      * all other characters, including any equal signs.</p>
      *
@@ -95,10 +95,10 @@ public class Base64 {
      * indices.
      * <p>
      * For example, <code>base64Alphabet['+']</code> returns <code>62</code>.
-     * </p>
+     *
      * <p>
      * The value of undefined encodings is <code>-1</code>.
-     * </p>
+     *
      */
     private static final byte[] base64Alphabet = new byte[BASELENGTH];
 
@@ -107,13 +107,13 @@ public class Base64 {
      * Contains the Base64 encodings <code>A</code> through <code>Z</code>, followed by <code>a</code> through
      * <code>z</code>, followed by <code>0</code> through <code>9</code>, followed by <code>+</code>, and
      * <code>/</code>.
-     * </p>
+     *
      * <p>
      * This array is accessed by using character values as indices.
-     * </p>
+     *
      * <p>
      * For example, <code>lookUpBase64Alphabet[62] </code> returns <code>'+'</code>.
-     * </p>
+     *
      */
     private static final byte[] lookUpBase64Alphabet = new byte[LOOKUPLENGTH];
 

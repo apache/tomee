@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * element is present, the Java variable name is a public data
  * member.  If data-member	is not present, the Java variable name
  * is a JavaBeans property.
- * <p/>
+ *
  * Used in: java-xml-type-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

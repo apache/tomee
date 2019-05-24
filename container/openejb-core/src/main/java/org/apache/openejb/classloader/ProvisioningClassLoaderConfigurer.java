@@ -40,14 +40,14 @@ import java.util.Set;
 /**
  * Configuration
  * <configurer prefix>.configuration = /foo/bar/config.txt
- * <p/>
+ *
  * Handled file format:
  * -xbean
  * +http://..../camel-core.jar
  * +mvn:org.foo:bar:1.0
- * <p/>
+ *
  * The maven like urls needs the openejb-provisinning module
- * <p/>
+ *
  * Note: if a line doesn't start with '+' it is considered as an addition
  */
 public class ProvisioningClassLoaderConfigurer implements ClassLoaderConfigurer {

@@ -176,7 +176,7 @@ public final class Util {
      * Returns the most specific of the 2 methods. When calling this method both should
      * already match as valid calls, so the most specific will be the one where subtype
      * relation holds against the other.
-     * <p/>
+     *
      * We also assume that the only difference between the method signatures is the type
      * of it's first argument, and thus that their first arguments can't be of the
      * same type.

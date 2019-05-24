@@ -27,31 +27,31 @@ import javax.xml.bind.annotation.XmlType;
  * The display-name type contains a short name that is intended
  * to be displayed by tools. It is used by display-name
  * elements.  The display name need not be unique.
- * <p/>
+ *
  * Example:
- * <p/>
+ *
  * ...
  * <display-name xml:lang="en">
  * Employee Self Service
  * </display-name>
- * <p/>
+ *
  * The value of the xml:lang attribute is "en" (English) by default.
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for display-nameType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="display-nameType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>string">
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="display-nameType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;string"&gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
