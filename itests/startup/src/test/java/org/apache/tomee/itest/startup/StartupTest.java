@@ -33,8 +33,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,15 +69,16 @@ public class StartupTest {
             this.name = this.file.getName().replace(".tar.gz", "");
             this.nameWidth = nameWidth;
             this.nameWidth.set(Math.max(this.nameWidth.get(), name.length()));
-            System.out.println("Max width: "+nameWidth.get());
+            System.out.println("Max width: " + nameWidth.get());
         }
 
         public String run() {
             final String namePadded = String.format("%-" + nameWidth.get() + "s", name);
             final String nameColored = namePadded.replaceAll("(apache-tomee-)(.+)-(.+)", "$1\033[38;5;231m$2\033[0m-\033[38;5;186m$3\033[0m");
+            TomEE tomee = null;
             try {
                 final long start = System.nanoTime();
-                final TomEE tomee = TomEE.from(file)
+                tomee = TomEE.from(file)
                         .out(INGORED())
                         .err(INGORED())
                         .add("webapps/speed.war", new File(StartupTest.downloads, "speed.war"))
@@ -116,8 +119,6 @@ public class StartupTest {
                 final String executionBar = new String(bar)
                         .replaceFirst("(x+)(s+)?(o+)?", "\033[38;5;060m$1\033[38;5;088m$2\033[38;5;071m$3\033[0m");
 
-                tomee.shutdown();
-
                 return String.format("%s %4s %6s %6s %6s %s",
                         nameColored,
                         i,
@@ -126,95 +127,43 @@ public class StartupTest {
                         executionTime,
                         executionBar
                 );
-            } catch (Exception e1) {
+            } catch (Throwable e1) {
                 return String.format("%-" + nameWidth.get() + "s %s: %s", nameColored, e1.getClass().getSimpleName(), e1.getMessage());
+            } finally {
+                if (tomee != null) tomee.shutdown();
             }
         }
     }
 
     @Test
-    public void runFive() throws Exception {
-        final AtomicInteger nameWidth = new AtomicInteger(30);
-        run(() -> true,
-                new Binary(nameWidth, new File(downloads, "apache-tomee-1.0.0-plus.tar.gz"))::run,
-                new Binary(nameWidth, new File(downloads, "apache-tomee-1.7.0-plus.tar.gz"))::run,
-                new Binary(nameWidth, new File(downloads, "apache-tomee-7.0.0-plus.tar.gz"))::run,
-                new Binary(nameWidth, new File(downloads, "apache-tomee-8.0.0-M1-plus.tar.gz"))::run
-        );
+    public void test() throws Exception {
+
+        final AtomicInteger nameWidth = new AtomicInteger(10);
+        final List<Supplier<String>> list = Stream.of(downloads.listFiles())
+                .filter(file -> file.getName().endsWith(".tar.gz"))
+//                .peek(System.out::println)
+                .filter(file -> file.getName().matches(".*(plus|webprofile).*"))
+                .filter(file -> !file.getName().contains("beta"))
+                .map(this::toJaxrs)
+                .filter(File::exists)
+                .peek(System.out::println)
+                .map(file -> new Binary(nameWidth, file))
+                .map(binary -> (Supplier<String>) binary::run)
+                .collect(Collectors.toList());
+
+        run(() -> true, list);
+//        run(() -> true,
+//                new Binary(nameWidth, new File(downloads, "apache-tomee-1.0.0-plus.tar.gz"))::run,
+//                new Binary(nameWidth, new File(downloads, "apache-tomee-1.7.0-plus.tar.gz"))::run,
+//                new Binary(nameWidth, new File(downloads, "apache-tomee-7.0.0-plus.tar.gz"))::run,
+//                new Binary(nameWidth, new File(downloads, "apache-tomee-8.0.0-M1-plus.tar.gz"))::run
+//        );
     }
 
-    public void runFour() throws Exception {
-        final AtomicInteger count = new AtomicInteger(0);
-        final SynchronizedDescriptiveStatistics extraction = new SynchronizedDescriptiveStatistics(2000);
-        final SynchronizedDescriptiveStatistics startup = new SynchronizedDescriptiveStatistics(2000);
-        final SynchronizedDescriptiveStatistics other = new SynchronizedDescriptiveStatistics(2000);
-
-        int nameWidth = 20;
-
-        final File file = new File("/tmp/downloads/apache-tomee-8.0.0-M1-plus.tar.gz");
-        final String name = file.getName().replace(".tar.gz", "");
-        nameWidth = Math.max(nameWidth, name.length());
-
-        final String line;
-        {
-            final long start = System.nanoTime();
-            final TomEE tomee = TomEE.from(file)
-                    .out(INGORED())
-                    .err(INGORED())
-                    .add("webapps/speed.war", new File(downloads, "speed.war"))
-                    .build();
-
-            final String address = tomee.toURI().resolve("/speed").toURL().toExternalForm();
-            final WebClient webClient = WebClient.create(address);
-
-            {// valid token
-                final Response response = webClient.reset()
-                        .path("/color/")
-                        .header("Content-Type", "application/json")
-                        .get();
-                assertEquals(200, response.getStatus());
-            }
-
-            final long e = toMillis(tomee.getStats().getExtracted());
-            final long s = toMillis(tomee.getStats().getStartup());
-            final long o = toMillis(System.nanoTime() - start);
-            extraction.addValue(e);
-            startup.addValue(s);
-            other.addValue(o);
-
-            final int i = count.incrementAndGet();
-            final long extractedTime = (long) extraction.getPercentile(90.0);
-            final long startupTime = (long) startup.getPercentile(90.0);
-            final long executionTime = (long) other.getPercentile(90.0);
-
-            final int unit = 100;
-            final int n = (int) (executionTime / unit);
-            final char[] bar = new char[n];
-
-            int j = 0;
-            for (int k = 0; k * unit < extractedTime && j < bar.length; k++, j++) bar[j] = 'x';
-            for (int k = 0; k * unit < startupTime && j < bar.length; k++, j++) bar[j] = 's';
-            for (; j < bar.length; j++) bar[j] = 'o';
-
-            final String executionBar = new String(bar)
-                    .replaceFirst("(x+)(s+)(o+)", "\033[38;5;060m$1\033[38;5;088m$2\033[38;5;071m$3\033[0m");
-
-            final String nameColored = name
-                    .replaceAll("(apache-tomee-)(.+)-(.+)", "$1\033[38;5;231m$2\033[0m-\033[38;5;186m$3\033[0m");
-
-            line = String.format("%-" + nameWidth + "s %4s %6s %6s %6s %s%n",
-                    nameColored,
-                    i,
-                    extractedTime,
-                    startupTime,
-                    executionTime,
-                    executionBar
-            );
-
-            tomee.shutdown();
-        }
-
-        System.out.println(line);
+    private File toJaxrs(final File file) {
+        if (!file.getName().contains("-1.")) return file;
+        if (!file.getName().contains("webprofile")) return file;
+        return new File(file.getAbsolutePath().replace("webprofile", "jaxrs"));
     }
 
 
@@ -230,14 +179,46 @@ public class StartupTest {
         });
     }
 
+    //    @Test
     public void progress2() throws Exception {
         run(() -> true,
-                new Line("one", 1),
-                new Line("three", 3),
-                new Line("five", 5),
                 new Line("seven", 7),
-                new Line("eleven", 11)
+                new Line("one", 1),
+                new Line("eleven", 11),
+                new Line("five", 5),
+                new Line("three", 3)
         );
+    }
+
+    public static class Sortable implements Comparable<Sortable> {
+        private String last;
+        private final SynchronizedDescriptiveStatistics time = new SynchronizedDescriptiveStatistics(10);
+        private Supplier<String> supplier;
+
+        public Sortable(final Supplier<String> supplier) {
+            this.supplier = supplier;
+        }
+
+        public String get() {
+            final long start = System.currentTimeMillis();
+            try {
+                return last = supplier.get();
+            } finally {
+                final long elapsed = System.currentTimeMillis() - start;
+                time.addValue(elapsed);
+            }
+        }
+
+        public String last() {
+            return last;
+        }
+
+        @Override
+        public int compareTo(final Sortable that) {
+            final Double a = this.time.getPercentile(90);
+            final Double b = that.time.getPercentile(90);
+            return a.compareTo(b);
+        }
     }
 
     private static void run(final Supplier<Boolean> proceed, Supplier<String>... items) {
@@ -245,25 +226,31 @@ public class StartupTest {
     }
 
     private static void run(final Supplier<Boolean> proceed, final List<Supplier<String>> items) {
-//        System.out.print(Ansi.eraseScreenDown());
-        System.out.print("\014");
-        System.out.print("\f");
-        for (final Supplier<String> item : items) System.out.println();
+        final List<Sortable> sortables = items.stream()
+                .map(Sortable::new)
+                .collect(Collectors.toList());
+        runAndSort(proceed, sortables);
+    }
+
+    private static void runAndSort(final Supplier<Boolean> proceed, final List<Sortable> list) {
+        final List<Sortable> items = new ArrayList<>(list);
+
+        for (final Sortable item : items) System.out.println();
+
+        long lastSort = System.currentTimeMillis();
 
         while (proceed.get()) {
 
             final long start = System.currentTimeMillis();
 
             System.out.print(Ansi.cursorUp(items.size() + 1));
-
-            for (final Supplier<String> item : items) {
+            for (final Sortable item : items) {
                 System.out.print("\r");
                 System.out.print(Ansi.cursorDown());
                 final String s = item.get();
                 System.out.print(Ansi.eraseLine());
                 System.out.print(s);
             }
-
             System.out.print(Ansi.cursorDown());
             System.out.printf("\r");
 
@@ -276,8 +263,25 @@ public class StartupTest {
                     Thread.interrupted();
                 }
             }
+
+            final long due = System.currentTimeMillis() - lastSort;
+            if (due > TimeUnit.SECONDS.toMillis(10)) {
+                lastSort = System.currentTimeMillis();
+                Collections.sort(items);
+                System.out.print(Ansi.cursorUp(items.size() + 1));
+                for (final Sortable item : items) {
+                    System.out.print("\r");
+                    System.out.print(Ansi.cursorDown());
+                    final String s = item.last();
+                    System.out.print(Ansi.eraseLine());
+                    System.out.print(s);
+                }
+                System.out.print(Ansi.cursorDown());
+                System.out.printf("\r");
+            }
         }
     }
+
 
     //    @Test
     public void get() throws Exception {
@@ -398,7 +402,7 @@ public class StartupTest {
         @Override
         public String get() {
             try {
-                Thread.sleep(500);
+                Thread.sleep(10 * mod);
             } catch (InterruptedException e) {
                 Thread.interrupted();
             }
