@@ -55,7 +55,7 @@ public class StartupTest {
         if (!downloads.exists()) assertTrue(downloads.mkdir());
     }
 
-    public static class Binary {
+    public static class Binary implements Sortable<Binary> {
         final AtomicInteger nameWidth;
         final AtomicInteger count = new AtomicInteger(0);
         final SynchronizedDescriptiveStatistics extraction = new SynchronizedDescriptiveStatistics(2000);
@@ -63,16 +63,21 @@ public class StartupTest {
         final SynchronizedDescriptiveStatistics other = new SynchronizedDescriptiveStatistics(2000);
         final File file;
         final String name;
+        String last;
 
         public Binary(final AtomicInteger nameWidth, final File file) {
             this.file = file;
             this.name = this.file.getName().replace(".tar.gz", "");
             this.nameWidth = nameWidth;
             this.nameWidth.set(Math.max(this.nameWidth.get(), name.length()));
-            System.out.println("Max width: " + nameWidth.get());
         }
 
-        public String run() {
+        @Override
+        public String last() {
+            return last;
+        }
+
+        public String get() {
             final String namePadded = String.format("%-" + nameWidth.get() + "s", name);
             final String nameColored = namePadded.replaceAll("(apache-tomee-)(.+)-(.+)", "$1\033[38;5;231m$2\033[0m-\033[38;5;186m$3\033[0m");
             TomEE tomee = null;
@@ -95,12 +100,9 @@ public class StartupTest {
                     assertEquals(200, response.getStatus());
                 }
 
-                final long e = toMillis(tomee.getStats().getExtracted());
-                final long s = toMillis(tomee.getStats().getStartup());
-                final long o = toMillis(System.nanoTime() - start);
-                extraction.addValue(e);
-                startup.addValue(s);
-                other.addValue(o);
+                extraction.addValue(toMillis(tomee.getStats().getExtracted()));
+                startup.addValue(toMillis(tomee.getStats().getStartup()));
+                other.addValue(toMillis(System.nanoTime() - start));
 
                 final int i = count.incrementAndGet();
                 final long extractedTime = (long) extraction.getPercentile(90.0);
@@ -119,7 +121,7 @@ public class StartupTest {
                 final String executionBar = new String(bar)
                         .replaceFirst("(x+)(s+)?(o+)?", "\033[38;5;060m$1\033[38;5;088m$2\033[38;5;071m$3\033[0m");
 
-                return String.format("%s %4s %6s %6s %6s %s",
+                return last = String.format("%s %4s %6s %6s %6s %s",
                         nameColored,
                         i,
                         extractedTime,
@@ -133,25 +135,33 @@ public class StartupTest {
                 if (tomee != null) tomee.shutdown();
             }
         }
+
+        @Override
+        public int compareTo(final Binary that) {
+            final Double a = this.other.getPercentile(90.0);
+            final Double b = that.other.getPercentile(90.0);
+            return a.compareTo(b);
+        }
     }
 
     @Test
     public void test() throws Exception {
 
         final AtomicInteger nameWidth = new AtomicInteger(10);
-        final List<Supplier<String>> list = Stream.of(downloads.listFiles())
+        final List<Sortable> list = Stream.of(downloads.listFiles())
                 .filter(file -> file.getName().endsWith(".tar.gz"))
 //                .peek(System.out::println)
                 .filter(file -> file.getName().matches(".*(plus|webprofile).*"))
                 .filter(file -> !file.getName().contains("beta"))
                 .map(this::toJaxrs)
                 .filter(File::exists)
+//                .filter(file -> file.getName().contains("-M"))
                 .peek(System.out::println)
                 .map(file -> new Binary(nameWidth, file))
-                .map(binary -> (Supplier<String>) binary::run)
+                .map(binary -> (Sortable) binary)
                 .collect(Collectors.toList());
 
-        run(() -> true, list);
+        runAndSort(() -> true, list);
 //        run(() -> true,
 //                new Binary(nameWidth, new File(downloads, "apache-tomee-1.0.0-plus.tar.gz"))::run,
 //                new Binary(nameWidth, new File(downloads, "apache-tomee-1.7.0-plus.tar.gz"))::run,
@@ -190,12 +200,18 @@ public class StartupTest {
         );
     }
 
-    public static class Sortable implements Comparable<Sortable> {
+    public interface Sortable<T> extends Comparable<T> {
+        String get();
+
+        String last();
+    }
+
+    public static class SortableAdapter implements Comparable<SortableAdapter> {
         private String last;
         private final SynchronizedDescriptiveStatistics time = new SynchronizedDescriptiveStatistics(10);
         private Supplier<String> supplier;
 
-        public Sortable(final Supplier<String> supplier) {
+        public SortableAdapter(final Supplier<String> supplier) {
             this.supplier = supplier;
         }
 
@@ -214,7 +230,7 @@ public class StartupTest {
         }
 
         @Override
-        public int compareTo(final Sortable that) {
+        public int compareTo(final SortableAdapter that) {
             final Double a = this.time.getPercentile(90);
             final Double b = that.time.getPercentile(90);
             return a.compareTo(b);
@@ -227,7 +243,8 @@ public class StartupTest {
 
     private static void run(final Supplier<Boolean> proceed, final List<Supplier<String>> items) {
         final List<Sortable> sortables = items.stream()
-                .map(Sortable::new)
+                .map(SortableAdapter::new)
+                .map(Sortable.class::cast)
                 .collect(Collectors.toList());
         runAndSort(proceed, sortables);
     }
