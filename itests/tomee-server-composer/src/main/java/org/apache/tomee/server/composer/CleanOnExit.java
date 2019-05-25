@@ -44,7 +44,7 @@ public class CleanOnExit {
         return process;
     }
 
-    private void clean() {
+    public void clean() {
         processes.stream().forEach(Process::destroy);
         for (final Process process : processes) {
             try {

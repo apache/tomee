@@ -41,12 +41,14 @@ public class TomEE {
     private final File home;
     private final int port;
     private final Process process;
+    private final CleanOnExit cleanOnExit;
 
-    private TomEE(final File home, final int port, final Process process, final Stats stats) {
+    private TomEE(final File home, final int port, final Process process, final Stats stats, final CleanOnExit cleanOnExit) {
         this.home = home;
         this.port = port;
         this.process = process;
         this.stats = stats;
+        this.cleanOnExit = cleanOnExit;
     }
 
     public URI toURI() {
@@ -67,18 +69,13 @@ public class TomEE {
 
     public void shutdown() {
         try {
-            final ProcessBuilder builder = new ProcessBuilder()
-                    .directory(home)
-                    .command(Files.file(home, "bin", "shutdown.sh").getAbsolutePath());
-
-            final Process start = builder.start();
-            Pipe.pipe(start.getErrorStream(), System.err);
-            Pipe.pipe(start.getInputStream(), System.out);
-
+            process.destroy();
             process.waitFor();
+            cleanOnExit.clean();
         } catch (Exception e) {
             throw new IllegalStateException("Shutdown failed", e);
         }
+        if (home.exists()) shutdown();
     }
 
     public static Builder plus() throws Exception {
@@ -262,7 +259,7 @@ public class TomEE {
             }
             final long startTime = System.nanoTime() - start;
 
-            return new TomEE(home, http, process, new Stats(extracted, startTime));
+            return new TomEE(home, http, process, new Stats(extracted, startTime), cleanOnExit);
         }
     }
 
