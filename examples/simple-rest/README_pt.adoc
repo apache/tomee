@@ -2,15 +2,15 @@
 :jbake-type: page
 :jbake-status: status=published
 
-= Simple REST
+= REST Simples
 
-Defining a REST service is pretty easy, simply ad ``@Path`` annotation to a class then define on methods the HTTP method to use (``@GET``, ``@POST``, …).
+Definir um serviço REST é fácil, simplesmente adicione a anotação ``@Path`` na classe, então defina o método HTTP (``@GET``, ``@POST``, ...) ao método da classe que deseja usar.
 
-= The Code
+= O código
 
-== The REST service: ``@Path``, ``@GET``, ``@POST``
+== O Serviço REST: ``@Path``, ``@GET``, ``@POST``
 
-Here we have a simple REST, we annotate the class with ``@Path("/greeting")`` to indicate the route corresponding to class ``GreetingService``. So we define ``message()`` as ``@GET`` and ``lowerCase()`` as ``@POST`` for this ``/greeting`` route. There we have a service, pretty simple huh?
+Aqui nós temos um REST simples, anotamos a classe com ``@Path("/greeting")`` para indicar a rota correspondente a classe ``GreetingService``. Definimos ``message()`` como ``@GET`` e ``lowerCase()`` como ``@POST`` para esta rota ``/greeting``. Pronto, temos um serviço! Simples não?
 
 ....
 package org.superbiz.rest;
@@ -33,17 +33,17 @@ public class GreetingService {
 }
 ....
 
-== Testing
+== Testando
 
-=== Test for the JAXRS service
+=== Teste para o serviço JAXRS
 
-The test uses the OpenEJB ApplicationComposer to make it trivial.
+Usamos o OpenEJB ``ApplicationComposer`` para facilitar o teste.
 
-The idea is first to activate the ``jaxrs`` services. This is done using ``@EnableServices`` annotation.
+A ideia é primeiro ativar os serviços ``jaxrs``. Isto é feito usando a anotação ``@EnableServices``.
 
-Then we create on the fly the application simply returning an object representing the ``web.xml``. Here we simply use it to define the context root but you can use it to define your REST Application too. And to complete the application definition we add ``@Classes`` annotation to define the set of classes to use in this app.
+Então nós criamos a aplicação simplesmente retornando um objeto representando o ``web.xml``. Aqui nós simplesmente o usamos para definir o contexto raiz mas você também pode usar para definir sua aplicação REST também. E para completar a aplicação nós adicionamos a anotação ``@Classes`` para definir o conjunto de classes a ser utilizado nesse app.
 
-Finally to test it we use cxf client API to call the REST service in ``get()`` and ``post()`` methods.
+Finalmente para testar nós usamos o client API do ``cfx`` para chamar o serviço REST nos métodos ``get()`` e ``post()``.
 
 ....
 package org.superbiz.rest;
@@ -84,14 +84,11 @@ public class GreetingServiceTest {
 
 = Running
 
-Running the example is fairly simple. In the ``simple-rest`` directory run:
-
+Executar o exemplo é bastante simples. No diretório ``simple-rest`` dê o seguinte comando:
 ....
 $ mvn clean install
 ....
-
-Which should create output like the following.
-
+Com isso, provavelmente você terá a seguinte saida.
 ....
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
