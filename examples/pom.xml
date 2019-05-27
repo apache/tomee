@@ -92,7 +92,7 @@
     <module>interceptors</module>
     <module>javamail</module>
     <module>jaxrs-filter</module>
-    <module>jaxrs-json-provider-jettison>
+    <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
