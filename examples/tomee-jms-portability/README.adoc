@@ -1,4 +1,4 @@
-:index-group: Web Services
+:index-group: JMS
 :jbake-type: page
 :jbake-status: status=published
 # Portability between ActiveMQ and IBM MQ
