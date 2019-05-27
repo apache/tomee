@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+    <pojo-deployment class-name="org.superbiz.JAXRSApplication">
+        <properties>
+            cxf.jaxrs.providers = json
+        </properties>
+    </pojo-deployment>
+</openejb-jar>
