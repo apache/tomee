@@ -126,6 +126,10 @@
       <version>${microprofile.rest-client.impl.version}</version>
       <exclusions>
         <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>javax.json</groupId>
           <artifactId>javax.json-api</artifactId>
         </exclusion>

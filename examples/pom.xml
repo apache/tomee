@@ -111,6 +111,7 @@
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
+    <module>mp-metrics-gauge</module>
     <module>mp-rest-jwt</module>
     <module>mp-rest-jwt-jwk</module>
     <module>mp-rest-jwt-public-key</module>
@@ -239,11 +240,19 @@
     <profile>
       <id>java9</id>
       <activation>
-        <jdk>[9,)</jdk>
+        <jdk>9</jdk>
       </activation>
-      <modules>
-        <module>java-modules</module>
-      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
