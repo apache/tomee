@@ -27,6 +27,6 @@ public class JaxRpcServiceInfo {
 
     public String serviceEndpointInterface;
     public BindingStyle defaultBindingStyle;
-    public final Collection<JaxRpcOperationInfo> operations = new ArrayList<JaxRpcOperationInfo>();
-    public final Collection<JaxRpcTypeInfo> types = new ArrayList<JaxRpcTypeInfo>();
+    public final Collection<JaxRpcOperationInfo> operations = new ArrayList<>();
+    public final Collection<JaxRpcTypeInfo> types = new ArrayList<>();
 }

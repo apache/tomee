@@ -41,6 +41,11 @@ public class ArrayTypeInfo extends TypeInfo {
         this.componentQName = componentQName;
     }
 
+    /**
+     *
+     * @param typeMapping TypeMapping
+     */
+    @Override
     public void register(TypeMapping typeMapping) {
 //        SerializerFactory ser = BaseSerializerFactory.createFactory(getSerFactoryClass(), getClazz(), getqName());
 //        ((ArraySerializerFactory)ser).setComponentType(componentType);
@@ -58,6 +63,11 @@ public class ArrayTypeInfo extends TypeInfo {
         private QName componentType;
         private QName componentQName;
 
+        /**
+         *
+         * @return TypeInfo
+         */
+        @Override
         public TypeInfo buildTypeInfo() {
             if (null == clazz) {
                 throw new IllegalStateException("clazz is null");

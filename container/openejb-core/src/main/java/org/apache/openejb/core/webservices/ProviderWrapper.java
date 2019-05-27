@@ -61,6 +61,8 @@ import java.util.concurrent.Executor;
 public class ProviderWrapper extends Provider {
     public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, ProviderWrapper.class);
 
+    private static final String JAXWSPROVIDER_PROPERTY = Provider.class.getName();
+
     //
     // Magic to get our provider wrapper installed with the PortRefData
     //
@@ -77,7 +79,9 @@ public class ProviderWrapper extends Provider {
             JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
         }
 
-        JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        if (oldProperty == null || !oldProperty.equals(ProviderWrapper.class.getName())) {
+            JavaSecurityManagers.setSystemProperty(JAXWSPROVIDER_PROPERTY, ProviderWrapper.class.getName());
+        }
 
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {
@@ -370,9 +374,7 @@ public class ProviderWrapper extends Provider {
         // 1. META-INF/services/javax.xml.ws.spi.Provider
         try {
             for (final URL url : Collections.list(classLoader.getResources("META-INF/services/" + JAXWSPROVIDER_PROPERTY))) {
-                BufferedReader in = null;
-                try {
-                    in = new BufferedReader(new InputStreamReader(url.openStream()));
+                try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()))) {
 
                     providerClass = in.readLine();
                     provider = createProviderInstance(providerClass, classLoader);
@@ -381,15 +383,8 @@ public class ProviderWrapper extends Provider {
                     }
                 } catch (final Exception ignored) {
                     // no-op
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (final IOException e) {
-                            // no-op
-                        }
-                    }
                 }
+                // no-op
             }
         } catch (final Exception ingored) {
             // no-op
@@ -484,7 +479,7 @@ public class ProviderWrapper extends Provider {
         public Enumeration<URL> getResources(final String name) throws IOException {
             Enumeration<URL> resources = super.getResources(name);
             if (PROVIDER_RESOURCE.equals(name)) {
-                final ArrayList<URL> list = new ArrayList<URL>();
+                final ArrayList<URL> list = new ArrayList<>();
                 list.add(PROVIDER_URL);
                 list.addAll(Collections.list(resources));
                 resources = Collections.enumeration(list);

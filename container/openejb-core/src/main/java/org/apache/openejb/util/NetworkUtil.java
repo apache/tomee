@@ -42,21 +42,12 @@ public final class NetworkUtil {
 
     public static int getNextAvailablePort(final int[] portList) {
         int port;
-        ServerSocket s = null;
-        try {
-            s = create(portList);
+        try (ServerSocket s = create(portList)) {
             port = s.getLocalPort();
         } catch (final IOException ioe) {
             port = -1;
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
         }
+        //Ignore
         return port;
     }
 

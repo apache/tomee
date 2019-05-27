@@ -16,19 +16,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>arquillian-openejb-embedded</artifactId>
   <name>OpenEJB :: Arquillian Adaptors Parent :: OpenEJB Container</name>
-  <version>7.0.3-SNAPSHOT</version>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.openejb.embedded</tomee.build.name>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -169,6 +170,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version> <!-- 2.21 snapshot has a bug with classloader due to j9 work -->
       </plugin>
     </plugins>
   </build>

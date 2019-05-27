@@ -33,10 +33,12 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 import javax.enterprise.context.spi.CreationalContext;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestObserver {
     @Inject
-    private Instance<ClassLoader> classLoader;
+    private Instance<ClassLoaders> classLoader;
 
     @Inject
     private Instance<TestClass> testClass;
@@ -49,17 +51,23 @@ public class TestObserver {
     private Instance<DeploymentContext> context;
 
     public void observesDeploy(@Observes final AfterDeploy afterDeployment) {
-        contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()));
-        final ClassLoader loader = classLoader.get();
-        if (loader != null) {
-            setTCCL(loader);
+        contextProducer.set(new DeploymentContext(Thread.currentThread().getContextClassLoader()/*use as a fallback, multiple deployment can have webapp loader*/));
+        final ClassLoaders loader = classLoader.get();
+        final String name = afterDeployment.getDeployment().getArchive() != null ? afterDeployment.getDeployment().getArchive().getName() : null;
+        if (loader != null && loader.classloaders.containsKey(name)) {
+            setTCCL(loader.classloaders.get(name));
         }
     }
 
     public void observesUndeploy(@Observes final BeforeUnDeploy beforeUnDeploy) {
-        final DeploymentContext deploymentContext = context.get();
-        if (deploymentContext != null) {
-            setTCCL(deploymentContext.loader);
+        final ClassLoaders loader = classLoader.get();
+        if (loader != null) { // with multiple deployments order is not guaranteed so we reset it the hard way
+            setTCCL(loader.original);
+        } else {
+            final DeploymentContext deploymentContext = context.get();
+            if (deploymentContext != null) {
+                setTCCL(deploymentContext.loader);
+            }
         }
     }
 
@@ -79,8 +87,11 @@ public class TestObserver {
             oldCtx = ThreadContext.enter(new ThreadContext(context, null));
         } else {
             oldCl = Thread.currentThread().getContextClassLoader();
-            if (classLoader.get() != null) {
-                setTCCL(classLoader.get());
+            final ClassLoaders classLoaders = classLoader.get();
+            if (classLoaders != null) {
+                final ClassLoader loader = classLoaders.classloaders.size() == 1 /*assume it is the one we want*/ ?
+                        classLoaders.classloaders.values().iterator().next() : oldCl /* we don't know the deployment so just passthrough */;
+                setTCCL(loader);
             }
         }
         try {
@@ -139,6 +150,19 @@ public class TestObserver {
 
         public DeploymentContext(final ClassLoader loader) {
             this.loader = loader;
+        }
+    }
+
+    public static class ClassLoaders { // to support multiple deployments otherwise we can lead a broken classloader
+        private final ClassLoader original = Thread.currentThread().getContextClassLoader(); // created once for multiple deployment so likely container one
+        private final Map<String, ClassLoader> classloaders = new HashMap<>();
+
+        public void register(final String name, final ClassLoader loader) {
+            classloaders.put(name, loader);
+        }
+
+        public void unregister(final String name) {
+            classloaders.remove(name);
         }
     }
 }

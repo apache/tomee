@@ -125,7 +125,7 @@ public final class Contexts {
     /**
      * Using a set ensures we don't set the thread local twice or more,
      * there may be super classes with injection points of identical types
-     * <p/>
+     *
      * Also allows us to get context references from other sources such as interceptors
      *
      * @param exchange Exchange
@@ -178,6 +178,9 @@ public final class Contexts {
             } else if (ResourceContext.class.equals(type)) {
                 final ResourceContext config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, ResourceContext.class);
                 ThreadLocalContextManager.RESOURCE_CONTEXT.set(config);
+            } else if (Application.class.equals(type)) {
+                final Application config = JAXRSUtils.createContextValue(exchange.getInMessage(), null, Application.class);
+                ThreadLocalContextManager.APPLICATION.set(config);
             } else {
                 final Message message = exchange.getInMessage();
                 final ContextProvider<?> provider = ProviderFactory.getInstance(message).createContextProvider(type, message);

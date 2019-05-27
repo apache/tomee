@@ -85,9 +85,12 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
             final PersistenceProvider persistenceProvider = (PersistenceProvider) clazz.newInstance();
 
             // Create entity manager factories with the validator factory
-            final Map<String, Object> properties = new HashMap<String, Object>();
+            final Map<String, Object> properties = new HashMap<>();
             if (!ValidationMode.NONE.equals(unitInfo.getValidationMode())) {
-                properties.put("javax.persistence.validation.factory", new ValidatorFactoryWrapper(potentialValidators));
+                properties.put("javax.persistence.validation.factory",
+                        potentialValidators != null && potentialValidators.size() == 1 ? // optim to avoid lookups
+                                ensureSerializable(potentialValidators.values().iterator().next()) :
+                                new ValidatorFactoryWrapper(potentialValidators));
             }
             if (cdi && "true".equalsIgnoreCase(unitInfo.getProperties().getProperty("tomee.jpa.cdi", "true"))
                     && "true".equalsIgnoreCase(SystemInstance.get().getProperty("tomee.jpa.cdi", "true"))) {
@@ -147,6 +150,13 @@ public class EntityManagerFactoryCallable implements Callable<EntityManagerFacto
 
     public void overrideClassLoader(final ClassLoader loader) {
         appClassLoader = loader;
+    }
+
+    private ValidatorFactory ensureSerializable(final ValidatorFactory factory) {
+        if (Serializable.class.isInstance(factory)) {
+            return factory;
+        }
+        return new SingleValidatorFactoryWrapper(factory);
     }
 
     private static class BmHandler implements InvocationHandler, Serializable {

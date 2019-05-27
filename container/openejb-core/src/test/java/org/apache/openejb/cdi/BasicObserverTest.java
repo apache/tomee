@@ -66,7 +66,7 @@ public class BasicObserverTest {
     }
 
     public static class Catastrophy {
-        private final List<Class> classes = new ArrayList<Class>();
+        private final List<Class> classes = new ArrayList<>();
 
         public List<Class> getClasses() {
             return classes;

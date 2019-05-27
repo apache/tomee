@@ -35,7 +35,7 @@ public class OpenEjbContainerTest extends TestCase {
 
     public void testInject() throws Exception {
 
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
 
 
         final EjbJar ejbJar = new EjbJar();
@@ -68,16 +68,14 @@ public class OpenEjbContainerTest extends TestCase {
         private Widget widget;
 
         public void startTheContainer() throws Exception {
-            final Map<String, Object> map = new HashMap<String, Object>();
+            final Map<String, Object> map = new HashMap<>();
 
 
             final EjbJar ejbJar = new EjbJar();
             ejbJar.addEnterpriseBean(new SingletonBean(Widget.class));
             map.put(EJBContainer.MODULES, ejbJar);
 
-            final OpenEjbContainer openEjbContainer = (OpenEjbContainer) EJBContainer.createEJBContainer(map);
-
-            try {
+            try (OpenEjbContainer openEjbContainer = (OpenEjbContainer) EJBContainer.createEJBContainer(map)) {
                 Injector.inject(this);
 
                 assertNotNull(widget);
@@ -85,8 +83,6 @@ public class OpenEjbContainerTest extends TestCase {
                 widget = null;
 
                 openEjbContainer.getContext().bind("inject", this);
-            } finally {
-                openEjbContainer.close();
             }
 
         }

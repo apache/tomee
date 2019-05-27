@@ -16,15 +16,15 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import java.rmi.MarshalledObject;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
+import org.apache.openejb.test.entity.cmp.BasicCmpHome;
+
 import javax.ejb.EJBObject;
 import javax.ejb.Handle;
-
-import org.apache.openejb.test.entity.cmp.BasicCmpHome;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.rmi.MarshalledObject;
 
 /**
  * [7] Should be run as the seventh test suite of the BasicCmpTestClients
@@ -38,7 +38,7 @@ public class Cmp2HandleTests extends BasicCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
-        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) obj;
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
     }

@@ -31,6 +31,9 @@ import java.util.TreeMap;
 
 import static java.util.Arrays.asList;
 
+/**
+ * The type File indexer.
+ */
 public class FileIndexer {
     private final ClassLoader loader;
     private final File binaries;
@@ -38,9 +41,17 @@ public class FileIndexer {
     private final String ignore;
 
     private final ClassLoaderFactory loaderFactory = new ClassLoaderFactory();
-    private final Map<File, List<Item>> index = new TreeMap<File, List<Item>>();
+    private final Map<File, List<Item>> index = new TreeMap<>();
     private final List<String> filesToRemove;
 
+    /**
+     * Instantiates a new File indexer.
+     *
+     * @param base               the base
+     * @param patchedFilesFolder the patched files folder
+     * @param configuration      the configuration
+     * @param ignore             the ignore
+     */
     public FileIndexer(final File base, final File patchedFilesFolder, final Properties configuration, final String ignore) {
         this.binaries = patchedFilesFolder;
         try {
@@ -57,15 +68,25 @@ public class FileIndexer {
         this.loader = loaderFactory.create(libs);
 
         final String toRemove = configuration.getProperty("remove");
-        this.filesToRemove = toRemove == null ? Collections.<String>emptyList() : new ArrayList<String>(asList(toRemove.split(" *, *")));
+        this.filesToRemove = toRemove == null ? Collections.<String>emptyList() : new ArrayList<>(asList(toRemove.split(" *, *")));
 
         this.ignore = ignore;
     }
 
+    /**
+     * Gets index.
+     *
+     * @return the index
+     */
     public Map<File, List<Item>> getIndex() {
         return index;
     }
 
+    /**
+     * Index file indexer.
+     *
+     * @return the file indexer
+     */
     public FileIndexer index() {
         if (!index.isEmpty()) {
             return this;
@@ -86,6 +107,12 @@ public class FileIndexer {
         return this;
     }
 
+    /**
+     * Dump file indexer.
+     *
+     * @param out the out
+     * @return the file indexer
+     */
     public FileIndexer dump(final PrintStream out) {
         out.println("Index:");
         for (final Map.Entry<File, List<Item>> items : index.entrySet()) {
@@ -98,6 +125,7 @@ public class FileIndexer {
         }
         return this;
     }
+
 
     private void doIndex(final File binaries) {
         if (binaries.isFile()) {
@@ -115,6 +143,7 @@ public class FileIndexer {
         }
     }
 
+
     private void doIndexLeaf(final File file) {
         try {
             final String relative = file.getCanonicalFile().getAbsolutePath().substring(binaryRoot.length());
@@ -125,11 +154,12 @@ public class FileIndexer {
         }
     }
 
+
     private void addItem(final File file, final Item.Action action, final String resource) throws IOException {
         final File jar = JarLocation.jarFromResource(loader, resource).getCanonicalFile();
         List<Item> list = index.get(jar);
         if (list == null) {
-            list = new ArrayList<Item>();
+            list = new ArrayList<>();
             index.put(jar, list);
         }
         list.add(new Item(resource, file, action));

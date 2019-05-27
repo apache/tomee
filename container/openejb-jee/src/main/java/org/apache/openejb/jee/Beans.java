@@ -37,21 +37,22 @@ import java.util.Map;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}interceptors" minOccurs="0"/>
- *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}decorators" minOccurs="0"/>
- *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}alternatives" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}interceptors" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}decorators" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}alternatives" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://java.sun.com/xml/ns/javaee}trim" minOccurs="0" maxOccurs="1"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -89,6 +90,9 @@ public class Beans {
     protected List<String> decorators;
 
     protected Alternatives alternatives;
+
+    @XmlElement(name = "trim")
+    protected String trim;
 
     @XmlAttribute(name = "version")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -148,11 +152,7 @@ public class Beans {
     }
 
     public void addManagedClass(final URL url, final String clazz) {
-        List<String> list = managedClasses.get(url);
-        if (list == null) {
-            list = new LinkedList<>();
-            managedClasses.put(url, list);
-        }
+        List<String> list = managedClasses.computeIfAbsent(url, k -> new LinkedList<>());
         list.add(clazz);
     }
 
@@ -241,23 +241,34 @@ public class Beans {
         return alternatives;
     }
 
+    public String getTrim() {
+        return trim;
+    }
+
+    public void setTrim(String trim) {
+        this.trim = trim;
+    }
+
+    public boolean isTrim() {
+        return trim != null;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;choice maxOccurs="unbounded" minOccurs="0">
-     *         &lt;element name="class" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *         &lt;element name="stereotype" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *       &lt;/choice>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+     *         &lt;element name="class" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *         &lt;element name="stereotype" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *       &lt;/choice&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)

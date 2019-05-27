@@ -1,0 +1,31 @@
+= Multipoint Considerations
+:index-group: Discovery and Failover
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Network size
+
+The general disadvantage of this topology is the number of connections
+required. The number of connections for the network of servers is equal
+to `(n * n - n) / 2`, where n is the number of servers. For example,
+with 5 servers you need 10 connections, with 10 servers you need 45
+connections, and with 50 servers you need 1225 connections. This is of
+course the number of connections across the entire network, each
+individual server only needs `n - 1` connections.
+
+The handling of these sockets is all asynchronous Java NIO code which
+allows the server to handle many connections (all of them) with one
+thread. From a pure threading perspective, the option is extremely
+efficient with just one thread to listen and broadcast to many peers.
+
+== Double connect
+
+It is possible in this process that two servers learn of each other at
+the same time and each attempts to connect to the other simultaneously,
+resulting in two connections between the same two servers. When this
+happens both servers will detect the extra connection and one of the
+connections will be dropped and one will be kept. In practice this race
+condition rarely happens and can be avoided almost entirely by fanning
+out server startup by as little as 100 milliseconds.

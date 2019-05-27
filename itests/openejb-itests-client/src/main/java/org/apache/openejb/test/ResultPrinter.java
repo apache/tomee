@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.test;
 
-import java.io.PrintStream;
-import java.util.Enumeration;
-
 import junit.framework.TestFailure;
 import junit.framework.TestResult;
+
+import java.io.PrintStream;
+import java.util.Enumeration;
 
 public class ResultPrinter extends junit.textui.ResultPrinter {
 

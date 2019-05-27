@@ -40,7 +40,7 @@ public class SingletonJndiTests extends BasicSingletonTestClient {
         try {
             final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
             assertNotNull("The EJBHome looked up from JNDI is null", obj);
-            ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+            ejbHome = (BasicSingletonHome) obj;
             assertNotNull("The EJBHome is null after PortableRemoteObject.narrow", ejbHome);
         } catch (final Exception e) {
             e.printStackTrace();

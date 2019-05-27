@@ -20,9 +20,9 @@ package org.apache.openejb.core;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.shade.commons.EmptyVisitor;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -107,7 +107,7 @@ public class TempClassLoader extends URLClassLoader {
                     while (resources.hasMoreElements()) {
                         l.add(resources.nextElement());
                     }
-                    Collections.sort(l, new ResourceComparator(getParent(), name));
+                    l.sort(new ResourceComparator(getParent(), name));
                     return l.iterator().next();
                 }
                 return url;
@@ -217,13 +217,11 @@ public class TempClassLoader extends URLClassLoader {
         // define the class
         try {
             return this.defineClass(name, bytes, 0, bytes.length);
-        } catch (final SecurityException e) {
+        } catch (final SecurityException | LinkageError e) {
             // possible prohibited package: defer to the parent
             return super.loadClass(name, resolve);
-        } catch (final LinkageError le) {
-            // fallback
-            return super.loadClass(name, resolve);
-        }
+        } // fallback
+
     }
 
     // TODO: for jsf it can be useful to include commons-logging and openwebbeans...

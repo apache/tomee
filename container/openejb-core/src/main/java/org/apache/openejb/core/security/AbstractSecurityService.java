@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void destroyResource() {
-        // no-op
+        ThreadContext.removeThreadContextListener(this);
     }
 
     public void onLogout(final HttpServletRequest request) {
@@ -136,7 +137,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public Set<String> getLogicalRoles(final Principal[] principals, final Set<String> logicalRoles) {
-        final LinkedHashSet<String> roles = new LinkedHashSet<String>(principals.length);
+        final LinkedHashSet<String> roles = new LinkedHashSet<>(principals.length);
         for (final Principal principal : principals) {
             final String name = principal.getName();
             if (logicalRoles.contains(name)) {
@@ -151,15 +152,17 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final String moduleID = newContext.getBeanContext().getModuleID();
         JavaSecurityManagers.setContextID(moduleID);
 
+        final SecurityContext defaultSecurityContext = getDefaultSecurityContext();
+
         final ProvidedSecurityContext providedSecurityContext = newContext.get(ProvidedSecurityContext.class);
         SecurityContext securityContext = oldContext != null ? oldContext.get(SecurityContext.class) :
-            (providedSecurityContext != null ? providedSecurityContext.context : null);
-        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultContext)) {
+                (providedSecurityContext != null ? providedSecurityContext.context : null);
+        if (providedSecurityContext == null && (securityContext == null || securityContext == defaultSecurityContext)) {
             final Identity identity = clientIdentity.get();
             if (identity != null) {
                 securityContext = new SecurityContext(identity.subject);
             } else {
-                securityContext = defaultContext;
+                securityContext = defaultSecurityContext;
             }
         }
 
@@ -377,7 +380,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         final Group group = new Group(groupName);
         group.addMember(user);
 
-        final HashSet<Principal> principals = new HashSet<Principal>();
+        final HashSet<Principal> principals = new HashSet<>();
         principals.add(user);
         principals.add(group);
 
@@ -398,6 +401,10 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         }
     }
 
+    protected SecurityContext getDefaultSecurityContext() {
+        return defaultContext;
+    }
+
     public static final class ProvidedSecurityContext {
         public final SecurityContext context;
 
@@ -414,12 +421,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         @SuppressWarnings("unchecked")
         public SecurityContext(final Subject subject) {
             this.subject = subject;
-            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, new PrivilegedAction() {
-                @Override
-                public Object run() {
-                    return AccessController.getContext();
-                }
-            }, null);
+            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, (PrivilegedAction) AccessController::getContext, null);
         }
     }
 
@@ -449,7 +451,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     public static class Group implements java.security.acl.Group {
 
-        private final List<Principal> members = new ArrayList<Principal>();
+        private final List<Principal> members = new ArrayList<>();
         private final String name;
 
         public Group(final String name) {
@@ -506,7 +508,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             }
 
             final User user = User.class.cast(o);
-            return !(name != null ? !name.equals(user.name) : user.name != null);
+            return !(!Objects.equals(name, user.name));
 
         }
 

@@ -1,0 +1,375 @@
+= Application Resources
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Resources
+
+TomEE provides a simple but powerful way to define resources that can be
+injected into managed components inside your application, or looked up
+via JNDI. To use a resource, it needs to be defined in the `tomee.xml`
+configuration file, a `resources.xml` file within an application, or as
+a system property. Defining a resource in `tomee.xml` will make it
+available server-wide, whereas defining the resource within a
+`resources.xml` file makes it available to a specific application.
+
+As a simple example, a JMS queue can be defined within `tomee.xml` with
+the following configuration.
+
+[source,xml]
+----
+<tomee>
+    <Resource id="MyQueue" type="javax.jms.Queue"/>
+</tomee>
+----
+
+Once the resource has been defined, the server will create an instance
+of the resource during startup, and it will be available to be injected
+into managed components using the `@Resource` annotation, as shown
+below. The `name` attribute on the `@Resource` annotation should match
+the `id` attribute on the `Resource` tag.
+
+[source,java]
+----
+public class JmsClient {
+
+    @Resource(name="MyQueue")
+    private Queue queue;
+
+    public void sendMessage() {
+        // implementation here...
+    }
+
+}
+----
+
+As an alternative to defining a resource in XML, resources can also be
+defined using system properties:
+
+[source,properties]
+----
+MyQueue = new://Resource?type=javax.jms.Queue
+----
+
+Resources, or attributes for resources specified using system properties
+will override definitions specified in `tomee.xml`. Server-wide
+resources can be looked up in JNDI under the following name:
+openejb:Resources/resource id.
+
+== Defining Resources
+
+The `<Resource>` tag has a number of attributes, and a resource may also
+have a number of fields that can be configured by adding properties to
+the body of the `Resource` tag.
+
+For example, a DataSource resource needs a JDBC driver, URL, username
+and password to be able to connect to a database. That would be
+configured with the following syntax. Notice the key/value pair syntax
+for the properties within the `<Resource>` tag.
+
+[source,xml]
+----
+<Resource id="DB" type="DataSource">
+  JdbcDriver  com.mysql.jdbc.Driver
+  JdbcUrl     jdbc:mysql://localhost/test
+  UserName    test
+  Password    password
+</Resource>
+----
+
+Specifying the key/value pairs specific to a Resource can also be done
+when defining the resource via system properties. This is done be
+specifying an additional property for each key/value pair, using the
+resource ID as a prefix: `<resourceId>.<propertyName>=<value>`. The
+system properties equivalent of the resource above is:
+
+[source,java]
+----
+p.setProperty("DB", "new://Resource?type=DataSource");
+p.setProperty("DB.JdbcDriver", "com.mysql.jdbc.Driver");
+p.setProperty("DB,JdbcUrl", "jdbc:mysql://localhost/test");
+p.setProperty("DB.UserName", "test");
+p.setProperty("DB.Password", "password");
+----
+
+The `<Resource>` tag has a number of attributes which control the way
+that the resource get created.
+
+* type
+
+A type that TomEE knows. The type is associated with a provider that
+knows how to create that type, and also any default properties that the
+resource should have if they are not specified in the resource
+definition. See service-jar.xml for an example set of service providers
+that come with TomEE.
+
+* provider
+
+Explicitly specifies a provider to create the resource, using defaults
+for any properties not specified.
+
+* class-name
+
+The fully qualified class that creates the resource. This might the
+resource class itself, which is created by calling the constructor, or a
+factory class that provides a specific factory method to create the
+resource.
+
+* factory-name
+
+The name of the method to call to create the resource. If this is not
+specified, the constructor for the class specified by class-name will be
+used.
+
+* constructor
+
+Specifies a comma separated list of constructor arguments. These can be
+other services, or attributes on the resource itself.
+
+== Custom resources
+
+TomEE allows you to define resources using your own Java classes, and
+these can also be injected into managed components in the same way as
+known resource types are.
+
+So the following simple resource
+
+[source,java]
+----
+public class Configuration {
+
+    private String url;
+    private String username;
+    private int poolSize;
+
+    // getters and setters
+}
+----
+
+Can be defined in `tomee.xml` using the following configuration (note
+the `class-name` attribute):
+
+[source,xml]
+----
+<Resource id="config" class-name="org.superbiz.Configuration">
+    url http://localhost
+    username tomee
+    poolSize 20
+</Resource>
+----
+
+This resource must be available in TomEE's system classpath - i.e. it
+must be defined in a .jar within the `lib/` directory.
+
+== Field and properties
+
+As shown above, a resource class can define a number of fields, and
+TomEE will attempt to apply the values from the resource definition onto
+those fields.
+
+As an alternative to this, you can also add a properties field as shown
+below, and this will have any used properties from the resource
+configuration set added to it. So as an alternative to the above code,
+you could do:
+
+[source,java]
+----
+public class Configuration {
+
+    private Properties properties;
+    
+    public Properties getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(final Properties properties) {
+        this.properties = properties;
+    }
+
+}
+----
+
+Using the same resource definition:
+
+[source,xml]
+----
+<Resource id="config" class-name="org.superbiz.Configuration">
+    url http://localhost
+    username tomee
+    poolSize 20
+</Resource>
+----
+
+the url, username and poolSize values will now be available in the
+properties field, so for example, the username property could be
+accessed via properties.getProperty("username");
+
+== Application resources
+
+Resources can also be defined within an application, and optionally use
+classes from the application's classpath. To define resources in a .war
+file, include a `WEB-INF/resources.xml`. For an ejb-jar module, use
+`META-INF/resources.xml`.
+
+The format of `resources.xml` uses the same `<Resource>` tag as
+`tomee.xml`. One key difference is the root element of the XML is
+`<resources>` and not `<tomee>`.
+
+[source,xml]
+----
+<resources>
+    <Resource id="config" class-name="org.superbiz.Configuration">
+        url http://localhost
+        username tomee
+        poolSize 20
+    </Resource>
+</resources>
+----
+
+This mechanism allows you to package your custom resources within your
+application, alongside your application code, rather than requiring a
+.jar file in the `lib/` directory.
+
+Application resources are bound in JNDI under
+openejb:Resource/appname/resource id.
+
+== Additional resource properties
+
+Resources are typically discovered, created, and bound to JNDI very
+early on in the deployment process, as other components depend on them.
+This may lead to problems where the final classpath for the application
+has not yet been determined, and therefore TomEE is unable to load your
+custom resource.
+
+The following properties can be used to change this behavior.
+
+* Lazy
+
+This is a boolean value, which when true, creates a proxy that defers
+the actual instantiation of the resource until the first time it is
+looked up from JNDI. This can be useful if the resource's classpath
+until the application is started (see below), or to improve startup time
+by not fully initializing resources that might not be used.
+
+* UseAppClassLoader
+
+This boolean value forces a lazily instantiated resource to use the
+application classloader, instead of the classloader available when the
+resources were first processed.
+
+* InitializeAfterDeployment
+
+This boolean setting forces a resource created with the Lazy property to
+be instantiated once the application has started, as opposed to waiting
+for it to be looked up. Use this flag if you require the resource to be
+loaded, irrespective of whether it is injected into a managed component
+or manually looked up.
+
+By default, all of these settings are `false`, unless TomEE encounters a
+custom application resource that cannot be instantiated until the
+application has started. In this case, it will set these three flags to
+`true`, unless the `Lazy` flag has been explicitly set.
+
+== Initializing resources
+
+=== constructor
+
+By default, if no factory-name attribute and no constructor attribute is
+specified on the `Resource`, TomEE will instantiate the resource using
+its no-arg constructor. If you wish to pass constructor arguments,
+specify the arguments as a comma separated list:
+
+[source,xml]
+----
+<Resource id="config" class-name="org.superbiz.Configuration" constructor="id, poolSize">
+    url http://localhost
+    username tomee
+    poolSize 20
+</Resource>
+----
+
+=== factory-name method
+
+In some circumstances, it may be desirable to add some additional logic
+to the creation process, or to use a factory pattern to create
+resources. TomEE also provides this facility via the `factory-name`
+method. The `factory-name` attribute on the resource can reference any
+no argument method that returns an object on the class specified in the
+`class-name` attribute.
+
+For example:
+
+[source,java]
+----
+public class Factory {
+
+    private Properties properties;
+
+    public Object create() {
+    
+         MyResource resource = new MyResource();
+         // some custom logic here, maybe using this.properties
+         
+         return resource;
+    }
+    
+    public Properties getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(final Properties properties) {
+        this.properties = properties;
+    }
+
+}
+
+<resources>
+    <Resource id="MyResource" class-name="org.superbiz.Factory" factory-name="create">
+        UserName tomee
+    </Resource>
+</resources>
+----
+
+=== @PostConstruct / @PreDestroy
+
+As an alternative to using a factory method or a constructor, you can
+use `@PostConstruct` and `@PreDestroy` methods within your resource class
+(note that you cannot use this within a different factory class) to
+manage any additional creation or cleanup activities. TomEE will
+automatically call these methods when the application is started and
+destroyed. Using `@PostConstruct` will effectively force a lazily loaded
+resource to be instantiated when the application is starting - in the
+same way that the `InitializeAfterDeployment` property does.
+
+[source,java]
+----
+public class MyClass {
+
+    private Properties properties;
+    
+    public Properties getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(final Properties properties) {
+        this.properties = properties;
+    }
+    
+    @PostConstruct
+        public void postConstruct() throws MBeanRegistrationException {
+            // some custom initialization
+        }
+    }
+
+}
+----
+
+== Examples
+
+The following examples demonstrate including custom resources within
+your application:
+
+* resources-jmx-example
+* resources-declared-in-webapp

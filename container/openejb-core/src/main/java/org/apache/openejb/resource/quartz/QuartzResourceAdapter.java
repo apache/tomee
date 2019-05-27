@@ -51,10 +51,10 @@ public class QuartzResourceAdapter implements ResourceAdapter {
     public static final String OPENEJB_QUARTZ_TIMEOUT = "openejb.quartz.timeout";
 
     //Start and stop may be called from different threads so use atomics
-    private final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
-    private final AtomicReference<Scheduler> scheduler = new AtomicReference<Scheduler>();
-    private final AtomicReference<BootstrapContext> bootstrapContext = new AtomicReference<BootstrapContext>();
-    private final AtomicReference<Thread> startThread = new AtomicReference<Thread>();
+    private final AtomicReference<Throwable> ex = new AtomicReference<>();
+    private final AtomicReference<Scheduler> scheduler = new AtomicReference<>();
+    private final AtomicReference<BootstrapContext> bootstrapContext = new AtomicReference<>();
+    private final AtomicReference<Thread> startThread = new AtomicReference<>();
 
     @Override
     public void start(final BootstrapContext bootstrapContext) throws ResourceAdapterInternalException {

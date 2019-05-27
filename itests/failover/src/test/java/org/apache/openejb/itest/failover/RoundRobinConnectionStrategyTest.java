@@ -77,7 +77,6 @@ public class RoundRobinConnectionStrategyTest {
         final File zip = Repository.getArtifact("org.apache.tomee", "openejb-standalone", "zip");
         final File app = Repository.getArtifact("org.apache.openejb.itests", "failover-ejb", "jar");
 
-
         final File dir = Files.tmpdir();
 
         final StandaloneServer root;
@@ -90,7 +89,8 @@ public class RoundRobinConnectionStrategyTest {
 
             root = new StandaloneServer(home, home);
             root.killOnExit();
-            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+            // root.setDebug(Boolean.getBoolean("openejb.test.standalone." + name + ".debug"));
+            root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb.itest");
             root.ignoreOut();
             root.setProperty("name", name);
             root.setProperty("openejb.extract.configuration", "false");
@@ -118,7 +118,8 @@ public class RoundRobinConnectionStrategyTest {
             final StandaloneServer server = new StandaloneServer(home, home);
             server.killOnExit();
             server.ignoreOut();
-            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
+            // server.setDebug(Boolean.getBoolean("openejb.test.standalone." + name + ".debug"));
+            server.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb.itest");
             server.setProperty("name", name);
             server.setProperty("openejb.extract.configuration", "false");
 
@@ -144,7 +145,7 @@ public class RoundRobinConnectionStrategyTest {
 
             servers.put(name, server);
 
-            logger.info(String.format("Starting %s server", name));
+            logger.info(String.format("Starting %s server, uri=%s", name, uri));
 
             server.start(1, TimeUnit.MINUTES);
         }

@@ -20,7 +20,9 @@ package org.apache.openejb.maven.plugin;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+
 /**
+ * The type ConfigTestTomEEMojo.
  * Run configtest Tomcat command.
  */
 @Mojo(name = "configtest", requiresDependencyResolution = ResolutionScope.RUNTIME_PLUS_SYSTEM)

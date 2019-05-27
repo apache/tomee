@@ -29,8 +29,7 @@ public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestCli
         super.setUp();
         final Object obj = initialContext
             .lookup("client/tests/stateless/BasicStatelessPojoHomeLocal");
-        ejbLocalHome = (BasicStatelessLocalHome) javax.rmi.PortableRemoteObject
-            .narrow(obj, BasicStatelessLocalHome.class);
+        ejbLocalHome = (BasicStatelessLocalHome) obj;
         ejbLocalObject = ejbLocalHome.create();
     }
 
@@ -60,7 +59,7 @@ public class StatelessPojoEjbLocalObjectTests extends BasicStatelessLocalTestCli
 
     /**
      * 3.6.5 Session object identity
-     * <p/>
+     *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,

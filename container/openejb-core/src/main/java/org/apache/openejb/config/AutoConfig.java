@@ -20,8 +20,8 @@ package org.apache.openejb.config;
 import org.apache.openejb.JndiConstants;
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.assembler.classic.ContainerInfo;
+import org.apache.openejb.assembler.classic.MdbContainerInfo;
 import org.apache.openejb.assembler.classic.ResourceInfo;
-import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.ActivationConfig;
 import org.apache.openejb.jee.ActivationConfigProperty;
@@ -183,13 +183,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     @Override
     public synchronized AppModule deploy(final AppModule appModule) throws OpenEJBException {
-        final AppResources appResources = new AppResources(appModule);
+        final List<ContainerInfo> containerInfos = ContainerUtils.getContainerInfos(appModule, configFactory);
+        final AppResources appResources = new AppResources(appModule, containerInfos);
 
         appResources.dump();
 
         processApplicationResources(appModule);
-        processApplicationContainers(appModule, appResources);
-
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             processActivationConfig(ejbModule);
         }
@@ -318,7 +317,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 refShortName = refShortName.replaceFirst(".*/", "");
             }
 
-            final List<String> availableUnits = new ArrayList<String>();
+            final List<String> availableUnits = new ArrayList<>();
             for (final PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                 availableUnits.add(persistenceUnit.getName());
             }
@@ -343,7 +342,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (vagueMatches.size() != 0) {
                     // Print the full rootUrls
 
-                    final List<String> possibleUnits = new ArrayList<String>();
+                    final List<String> possibleUnits = new ArrayList<>();
                     for (final PersistenceUnit persistenceUnit : persistenceUnits.values()) {
                         try {
                             URI unitURI = URLs.uri(persistenceUnit.getId());
@@ -485,7 +484,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
      */
     private void resolveDestinationLinks(final AppModule appModule) throws OpenEJBException {
         // build up a link resolver
-        final LinkResolver<MessageDestination> destinationResolver = new LinkResolver<MessageDestination>();
+        final LinkResolver<MessageDestination> destinationResolver = new LinkResolver<>();
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final AssemblyDescriptor assembly = ejbModule.getEjbJar().getAssemblyDescriptor();
             if (assembly != null) {
@@ -506,7 +505,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         // remember the type of each destination so we can use it to fillin MDBs that don't declare destination type
-        final Map<MessageDestination, String> destinationTypes = new HashMap<MessageDestination, String>();
+        final Map<MessageDestination, String> destinationTypes = new HashMap<>();
 
         // resolve all MDBs with destination links
         // if MessageDestination does not have a mapped name assigned, give it the destination from the MDB
@@ -852,19 +851,39 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 throw new OpenEJBException("No ejb deployment found for ejb " + bean.getEjbName());
             }
 
-            final Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(getType(bean));
+            final String beanType = getType(bean);
+            final Class<? extends ContainerInfo> containerInfoType = ConfigurationFactory.getContainerInfoType(beanType);
+            logger.debug("Bean type of bean {0} is {1}", bean.getEjbName(), beanType);
+
             if (ejbDeployment.getContainerId() == null && !skipMdb(bean)) {
+                logger.debug("Container for bean {0} is not set, looking for a suitable container", bean.getEjbName());
+
                 String containerId = getUsableContainer(containerInfoType, bean, appResources);
                 if (containerId == null) {
+                    logger.debug("Suitable container for bean {0} not found, creating one", bean.getEjbName());
                     containerId = createContainer(containerInfoType, ejbDeployment, bean);
                 }
+
+                logger.debug("Setting container ID {0} for bean {1}", containerId, bean.getEjbName());
                 ejbDeployment.setContainerId(containerId);
             }
 
+            logger.debug("Container ID for bean {0} is {1}", bean.getEjbName(), ejbDeployment.getContainerId());
+
             // create the container if it doesn't exist
             final List<String> containerIds = configFactory.getContainerIds();
-            containerIds.addAll(appResources.getContainerIds());
+
+            final Collection<ContainerInfo> containerInfos = appResources.getContainerInfos();
+            for (final ContainerInfo containerInfo : containerInfos) {
+                containerIds.add(containerInfo.id);
+            }
+
             if (!containerIds.contains(ejbDeployment.getContainerId()) && !skipMdb(bean)) {
+                logger.debug("Desired container {0} not found. Containers available: {1}. Creating a new container.",
+                        ejbDeployment.getContainerId(),
+                        Join.join(", ", containerIds)
+                );
+
                 createContainer(containerInfoType, ejbDeployment, bean);
             }
 
@@ -902,25 +921,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
     }
 
-    private void processApplicationContainers(final AppModule module, final AppResources appResources) throws OpenEJBException {
-        if (module.getContainers().isEmpty()) {
-            return;
-        }
-
-        final String prefix = module.getModuleId() + "/";
-        for (final Container container : module.getContainers()) {
-            if (container.getId() == null) {
-                throw new IllegalStateException("a container can't get a null id: " + container.getType() + " from " + module.getModuleId());
-            }
-            if (!container.getId().startsWith(prefix)) {
-                container.setId(prefix + container.getId());
-            }
-            final ContainerInfo containerInfo = configFactory.createContainerInfo(container);
-            configFactory.install(containerInfo);
-            appResources.addContainer(containerInfo);
-        }
-    }
-
     private void processApplicationResources(final AppModule module) throws OpenEJBException {
         final Collection<Resource> resources = module.getResources();
 
@@ -928,7 +928,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             return;
         }
 
-        final List<JndiConsumer> jndiConsumers = new ArrayList<JndiConsumer>();
+        final List<JndiConsumer> jndiConsumers = new ArrayList<>();
         for (final WebModule webModule : module.getWebModules()) {
             final JndiConsumer consumer = webModule.getWebApp();
             jndiConsumers.add(consumer);
@@ -938,8 +938,8 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             Collections.addAll(jndiConsumers, ejbModule.getEjbJar().getEnterpriseBeans());
         }
 
-        List<ResourceInfo> resourceInfos = new ArrayList<ResourceInfo>();
-        final Map<ResourceInfo, Resource> resourcesMap = new HashMap<ResourceInfo, Resource>(resources.size());
+        List<ResourceInfo> resourceInfos = new ArrayList<>();
+        final Map<ResourceInfo, Resource> resourcesMap = new HashMap<>(resources.size());
         for (final Resource resource : resources) {
             final String originalId = PropertyPlaceHolderHelper.value(resource.getId());
             final String modulePrefix = module.getModuleId() + "/";
@@ -963,7 +963,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
             final Collection<String> aliases = resource.getAliases();
             if (!aliases.isEmpty()) {
-                final Collection<String> newAliases = new ArrayList<String>();
+                final Collection<String> newAliases = new ArrayList<>();
                 for (final String s : aliases) {
                     newAliases.add(module.getModuleId() + "/" + s);
                 }
@@ -1611,7 +1611,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 // 2. The web module id
                 // 3. The web module context root
                 // 4. The application module id
-                final List<String> ids = new ArrayList<String>();
+                final List<String> ids = new ArrayList<>();
                 ids.add(unit.getName());
                 for (final WebModule webModule : app.getWebModules()) {
                     ids.add(webModule.getModuleId());
@@ -1824,7 +1824,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private static void suffixAliases(final ResourceInfo ri, final String suffix) {
         final Collection<String> aliases = ri.aliases;
-        final List<String> newAliases = new ArrayList<String>();
+        final List<String> newAliases = new ArrayList<>();
         for (final String alias : aliases) {
             newAliases.add(alias + suffix);
         }
@@ -2073,8 +2073,12 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String firstMatching(final String prefix, final String type, final Properties required, final AppResources appResources) {
-        final List<String> resourceIds = new ArrayList<String>(getResourceIds(appResources, type, required));
-        Collections.sort(resourceIds, new Comparator<String>() { // sort from webapp to global resources
+        final List<String> resourceIds = getResourceIds(appResources, type, required);
+        if(resourceIds.isEmpty()){
+            return null;
+        }
+
+        return Collections.min(resourceIds, new Comparator<String>() { // sort from webapp to global resources
             @Override
             public int compare(final String o1, final String o2) { // don't change global order, just put app scoped resource before others
                 if (o1.startsWith(prefix) && o2.startsWith(prefix)) {
@@ -2088,11 +2092,6 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 return resourceIds.indexOf(o1) - resourceIds.indexOf(o2);
             }
         });
-        String idd = null;
-        if (resourceIds.size() > 0) {
-            idd = resourceIds.get(0);
-        }
-        return idd;
     }
 
     private String findResourceId(final String resourceId, final String type, final Properties required, final AppResources appResources) {
@@ -2132,7 +2131,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
     private List<String> getResourceIds(final AppResources appResources, final String type, final Properties required) {
         final List<String> resourceIds;
-        resourceIds = new ArrayList<String>();
+        resourceIds = new ArrayList<>();
         if (appResources != null) {
             resourceIds.addAll(appResources.getResourceIds(type));
         }
@@ -2251,42 +2250,127 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         return installResource(beanName, resourceInfo);
     }
 
-    private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final AppResources appResources) {
+    private String getUsableContainer(final Class<? extends ContainerInfo> containerInfoType, final EnterpriseBean bean, final AppResources appResources) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Searching for usable container for bean: {0}. Available application containers: {1}, available system containers {2}",
+                    bean.getEjbName(),
+                    getContainerIds(appResources.getContainerInfos()),
+                    getContainerIds(configFactory.getContainerInfos())
+            );
+        }
+
         if (MessageDrivenBean.class.isInstance(bean)) {
             final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
             final String messagingType = messageDrivenBean.getMessagingType();
+
             final List<String> containerIds = appResources.containerIdsByType.get(messagingType);
+            if (logger.isDebugEnabled()) {
+                logger.debug("Searching for usable container for bean: {0} by messaging type: {1}. Potential application containers: {2}",
+                        bean.getEjbName(),
+                        messagingType,
+                        containerIds == null ? "" : Join.join(",", containerIds));
+            }
+
             if (containerIds != null && !containerIds.isEmpty()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Returning first application container matching by type: {0} - {1}",
+                            messagingType,
+                            containerIds.get(0));
+                }
+
                 return containerIds.get(0);
             }
         }
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("Attempting to find a matching container for bean: {0} from application containers {1}",
+                    bean.getEjbName(),
+                    getContainerIds(appResources.getContainerInfos()));
+        }
+
         String containerInfo = matchContainer(containerInfoType, bean, appResources.getContainerInfos());
         if (containerInfo == null) { // avoid to build configFactory.getContainerInfos() if not needed
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Matching application container not found. Attempting to find a matching container for bean: {0} from system containers {1}",
+                        bean.getEjbName(),
+                        getContainerIds(appResources.getContainerInfos()));
+            }
+
             containerInfo = matchContainer(containerInfoType, bean, configFactory.getContainerInfos());
         }
+
         if (containerInfo != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Using container {0} for bean {1}", containerInfo, bean.getEjbName());
+            }
             return containerInfo;
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("No suitable existing container found for bean {0}", bean.getEjbName());
         }
 
         return null;
     }
 
-    private String matchContainer(final Class<? extends ContainerInfo> containerInfoType, final Object bean, final Collection<ContainerInfo> list) {
+    private String getContainerIds(final Collection<ContainerInfo> containerInfos) {
+        final Set<String> containerIds = new HashSet<String>();
+
+        for (final ContainerInfo containerInfo : containerInfos) {
+            containerIds.add(containerInfo.id);
+        }
+
+        return Join.join(", ", containerIds);
+    }
+
+    private String matchContainer(final Class<? extends ContainerInfo> containerInfoType, final EnterpriseBean bean, final Collection<ContainerInfo> list) {
         for (final ContainerInfo containerInfo : list) {
             if (containerInfo.getClass().equals(containerInfoType)) {
                 // MDBs must match message listener interface type
                 if (MessageDrivenBean.class.isInstance(bean)) {
                     final MessageDrivenBean messageDrivenBean = (MessageDrivenBean) bean;
                     final String messagingType = messageDrivenBean.getMessagingType();
+
                     if (containerInfo.properties.get("MessageListenerInterface").equals(messagingType)) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Container {0} matches container type {1} and MessageListenerInterface {2} for bean {3}, this container will be used.",
+                                    containerInfo.id,
+                                    containerInfoType.getName(),
+                                    messagingType,
+                                    bean.getEjbName());
+                        }
+
                         return containerInfo.id;
+                    } else {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Container {0} of type {1} does not have the matching MessageListenerInterface. Bean listener interface is {2}, " +
+                                            "container listener interface is {3} for bean {4}. Skipping.",
+                                    containerInfo.id,
+                                    containerInfoType.getName(),
+                                    messagingType,
+                                    containerInfo.properties.get("MessageListenerInterface"),
+                                    bean.getEjbName());
+                        }
+
                     }
                 } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Container {0} matches container type {1} for bean {2}, this container will be used.",
+                                containerInfo.id,
+                                containerInfoType.getName(),
+                                bean.getEjbName());
+                    }
+
                     return containerInfo.id;
                 }
             }
+
+            if (logger.isDebugEnabled()) {
+                logger.debug("Skipping container {0} of type {1}", containerInfo.id, containerInfoType.getName());
+            }
         }
+
         return null;
     }
 
@@ -2295,10 +2379,10 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         private String appId;
 
         @SuppressWarnings({"MismatchedQueryAndUpdateOfCollection"})
-        private final Set<String> resourceAdapterIds = new TreeSet<String>();
-        private final Map<String, List<String>> resourceIdsByType = new TreeMap<String, List<String>>();
-        private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<String, List<String>>();
-        private final Map<String, List<String>> containerIdsByType = new TreeMap<String, List<String>>();
+        private final Set<String> resourceAdapterIds = new TreeSet<>();
+        private final Map<String, List<String>> resourceIdsByType = new TreeMap<>();
+        private final Map<String, List<String>> resourceEnvIdsByType = new TreeMap<>();
+        private final Map<String, List<String>> containerIdsByType = new TreeMap<>();
         private final Collection<ContainerInfo> containerInfos = new HashSet<>();
 
         public void dump() {
@@ -2308,19 +2392,19 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
             for (final String s : resourceAdapterIds) {
                 logger.debug(appId + " module contains resource adapter id: " + s);
             }
-            for (final String s : resourceIdsByType.keySet()) {
-                for (final String value : resourceIdsByType.get(s)) {
-                    logger.debug(appId + " module contains resource type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : resourceIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains resource type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
-            for (final String s : resourceEnvIdsByType.keySet()) {
-                for (final String value : resourceEnvIdsByType.get(s)) {
-                    logger.debug(appId + " module contains resource env type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : resourceEnvIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains resource env type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
-            for (final String s : containerIdsByType.keySet()) {
-                for (final String value : containerIdsByType.get(s)) {
-                    logger.debug(appId + " module contains container type: " + s + " --> " + value);
+            for (final Map.Entry<String, List<String>> stringListEntry : containerIdsByType.entrySet()) {
+                for (final String value : stringListEntry.getValue()) {
+                    logger.debug(appId + " module contains container type: " + stringListEntry.getKey() + " --> " + value);
                 }
             }
         }
@@ -2328,14 +2412,27 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         public AppResources() {
         }
 
-        public AppResources(final AppModule appModule) {
-
+        public AppResources(final AppModule appModule, final List<ContainerInfo> containerInfos) {
+            this.containerInfos.addAll(containerInfos);
             this.appId = appModule.getModuleId();
 
             //
             // DEVELOPERS NOTE:  if you change the id generation code here, you must change
             // the id generation code in ConfigurationFactory.configureApplication(AppModule appModule)
             //
+
+            for (final ContainerInfo containerInfo : containerInfos) {
+                if (!MdbContainerInfo.class.isInstance(containerInfo)) {
+                    continue;
+                }
+                
+                final MdbContainerInfo mdbContainerInfo = MdbContainerInfo.class.cast(containerInfo);
+                final String messageListenerInterface = mdbContainerInfo.properties.getProperty("MessageListenerInterface");
+                if (messageListenerInterface != null) {
+                    List<String> containerIds = containerIdsByType.computeIfAbsent(messageListenerInterface, k -> new ArrayList<>());
+                    containerIds.add(containerInfo.id);
+                }
+            }
 
             for (final ConnectorModule connectorModule : appModule.getConnectorModules()) {
                 final Connector connector = connectorModule.getConnector();
@@ -2365,11 +2462,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             resourceId = connectorModule.getModuleId() + "-" + type;
                         }
 
-                        List<String> resourceIds = resourceIdsByType.get(type);
-                        if (resourceIds == null) {
-                            resourceIds = new ArrayList<String>();
-                            resourceIdsByType.put(type, resourceIds);
-                        }
+                        List<String> resourceIds = resourceIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                         resourceIds.add(resourceId);
                     }
                 }
@@ -2388,11 +2481,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             containerId = connectorModule.getModuleId() + "-" + type;
                         }
 
-                        List<String> containerIds = containerIdsByType.get(type);
-                        if (containerIds == null) {
-                            containerIds = new ArrayList<String>();
-                            containerIdsByType.put(type, containerIds);
-                        }
+                        List<String> containerIds = containerIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                         containerIds.add(containerId);
                     }
                 }
@@ -2409,11 +2498,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         resourceEnvId = connectorModule.getModuleId() + "-" + type;
                     }
 
-                    List<String> resourceEnvIds = resourceEnvIdsByType.get(type);
-                    if (resourceEnvIds == null) {
-                        resourceEnvIds = new ArrayList<String>();
-                        resourceEnvIdsByType.put(type, resourceEnvIds);
-                    }
+                    List<String> resourceEnvIds = resourceEnvIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                     resourceEnvIds.add(resourceEnvId);
                 }
             }
@@ -2423,11 +2508,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (type != null) {
                     final String[] types = type.trim().split(",");
                     for (final String t : types) {
-                        List<String> ids = resourceIdsByType.get(t);
-                        if (ids == null) {
-                            ids = new ArrayList<String>();
-                            resourceIdsByType.put(t, ids);
-                        }
+                        List<String> ids = resourceIdsByType.computeIfAbsent(t, k -> new ArrayList<>());
                         ids.add(r.getId());
                         if (r.getJndi() != null) {
                             ids.add(r.getJndi());
@@ -2475,7 +2556,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
 
         public List<String> getResourceIds(final String type) {
             if (type == null) {
-                final List<String> allResourceIds = new ArrayList<String>();
+                final List<String> allResourceIds = new ArrayList<>();
                 for (final List<String> resourceIds : resourceIdsByType.values()) {
                     allResourceIds.addAll(resourceIds);
                 }
@@ -2500,7 +2581,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         public List<String> getContainerIds() {
-            final ArrayList<String> ids = new ArrayList<String>();
+            final ArrayList<String> ids = new ArrayList<>();
             for (final List<String> list : containerIdsByType.values()) {
                 ids.addAll(list);
             }

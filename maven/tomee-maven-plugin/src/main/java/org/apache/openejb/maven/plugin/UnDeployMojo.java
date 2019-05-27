@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
+ * The type UnDeployMojo.
  * Simply undeploy an application in a running TomEE
  */
 @Mojo(name = "undeploy")
@@ -37,7 +38,7 @@ public class UnDeployMojo extends AbstractDeployMojo {
         final Deployer deployer = (Deployer) lookup("openejb/DeployerBusinessRemote");
         try {
             final Collection<AppInfo> apps = deployer.getDeployedApps();
-            final Collection<String> paths = new ArrayList<String>(apps.size());
+            final Collection<String> paths = new ArrayList<>(apps.size());
             for (final AppInfo info : apps) {
                 paths.add(info.path);
             }

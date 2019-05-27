@@ -29,7 +29,7 @@ import javax.transaction.Transactional;
 
 @Interceptor
 @Transactional(Transactional.TxType.SUPPORTS)
-@Priority(200)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class SupportsInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {

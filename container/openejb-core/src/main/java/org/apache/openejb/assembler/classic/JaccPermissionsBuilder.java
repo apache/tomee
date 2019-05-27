@@ -80,7 +80,7 @@ public class JaccPermissionsBuilder {
 
     public PolicyContext build(final EjbJarInfo ejbJar, final HashMap<String, BeanContext> deployments) throws OpenEJBException {
 
-        final List<MethodPermissionInfo> normalized = new ArrayList<MethodPermissionInfo>();
+        final List<MethodPermissionInfo> normalized = new ArrayList<>();
 
         List<MethodPermissionInfo> perms = ejbJar.methodPermissions;
 
@@ -122,7 +122,7 @@ public class JaccPermissionsBuilder {
 
                 bm.className = method.getDeclaringClass().getName();
                 bm.methodName = method.getName();
-                bm.methodParams = new ArrayList<String>();
+                bm.methodParams = new ArrayList<>();
                 for (final Class<?> type : method.getParameterTypes()) {
                     bm.methodParams.add(type.getName());
                 }
@@ -258,7 +258,7 @@ public class JaccPermissionsBuilder {
 
         /**
          * EJB v2.1 section 21.3.2
-         * <p/>
+         *
          * It is possible that some methods are not assigned to any security
          * roles nor contained in the <code>exclude-list</code> element. In
          * this case, it is the responsibility of the Deployer to assign method
@@ -286,7 +286,7 @@ public class JaccPermissionsBuilder {
 
     /**
      * Generate all the possible permissions for a bean's interface.
-     * <p/>
+     *
      * Method permissions are defined in the deployment descriptor as a binary
      * relation from the set of security roles to the set of methods of the
      * home, component, and/or web service endpoint interfaces of session and

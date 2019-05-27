@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 /**
  * DO NOT REFACTOR THIS CLASS.  This class is referenced directly by generated code.
- * <p/>
+ *
  * The execute_xxxx() methods below are used for executing the meat of the generated
  * ejbSelectxxxx methods.  Primitive types convert and return the return type directly and the
  * generated method will give the correct return instruction.  Reference types are resolved using
@@ -140,7 +140,7 @@ public class EjbSelect {
         final CmpContainer cmpContainer = (CmpContainer) container;
 
         final Character result = (Character) cmpContainer.select(beanContext, methodSignature, "char", args);
-        return result.charValue();
+        return result;
     }
 
 
@@ -166,7 +166,7 @@ public class EjbSelect {
         final CmpContainer cmpContainer = (CmpContainer) container;
 
         final Boolean result = (Boolean) cmpContainer.select(beanContext, methodSignature, "byte", args);
-        return result.booleanValue();
+        return result;
     }
 
 

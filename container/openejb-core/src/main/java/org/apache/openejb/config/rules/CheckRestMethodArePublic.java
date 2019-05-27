@@ -31,13 +31,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 public class CheckRestMethodArePublic implements ValidationRule {
     @Override
     public void validate(final AppModule appModule) {
         // valid standalone classes
-        final Collection<String> standAloneClasses = new ArrayList<String>();
+        final Collection<String> standAloneClasses = new ArrayList<>();
 
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try {
@@ -56,7 +55,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 Thread.currentThread().setContextClassLoader(web.getClassLoader());
 
                 // build the list of classes to validate
-                final Collection<String> classes = new ArrayList<String>();
+                final Collection<String> classes = new ArrayList<>();
                 classes.addAll(web.getRestClasses());
                 classes.addAll(web.getEjbRestServices());
 
@@ -93,13 +92,7 @@ public class CheckRestMethodArePublic implements ValidationRule {
                 }
 
                 // try to avoid to valid twice the same classes
-                final Iterator<String> it = classes.iterator();
-                while (it.hasNext()) {
-                    final String current = it.next();
-                    if (standAloneClasses.contains(current)) {
-                        it.remove();
-                    }
-                }
+                classes.removeIf(standAloneClasses::contains);
 
                 // valid
                 for (final String classname : classes) {

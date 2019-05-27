@@ -30,7 +30,7 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
 
     public void testHighLevelOrdering() throws Exception {
 
-        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
+        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<>();
 
         InterceptorBindingInfo info = null;
 
@@ -57,12 +57,12 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
         info.interceptors.add("BeanTwoMethodInterceptorDos");
         info.method = new NamedMethodInfo();
         info.method.methodName = "ping";
-        info.method.methodParams = new ArrayList<String>();
+        info.method.methodParams = new ArrayList<>();
         info.method.methodParams.add("java.lang.String");
 
-        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(expected);
+        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<>(expected);
         Collections.shuffle(actual);
-        Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
+        actual.sort(new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
             final InterceptorBindingInfo a = actual.get(i);
@@ -73,8 +73,8 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
 
     public void testInnerLevelOrdering() {
 
-        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<InterceptorBindingInfo>();
-        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<InterceptorBindingInfo>(7);
+        final ArrayList<InterceptorBindingInfo> expected = new ArrayList<>();
+        final ArrayList<InterceptorBindingInfo> actual = new ArrayList<>(7);
         for (int i = 0; i < 7; i++) actual.add(null);
 
         InterceptorBindingInfo info = null;
@@ -127,7 +127,7 @@ public class InterceptorBindingInfoComparatorTest extends TestCase {
         info.interceptorOrder.add("TotalOrderingDefaultInterceptor");
         actual.set(0, info);
 
-        Collections.sort(actual, new InterceptorBindingBuilder.IntercpetorBindingComparator());
+        actual.sort(new InterceptorBindingBuilder.IntercpetorBindingComparator());
 
         for (int i = 0; i < actual.size(); i++) {
             final InterceptorBindingInfo a = actual.get(i);

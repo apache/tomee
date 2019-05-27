@@ -20,7 +20,6 @@ package org.apache.openejb;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
-import org.apache.openejb.util.reflection.Reflections;
 import org.apache.xbean.finder.ResourceFinder;
 
 import java.io.IOException;
@@ -34,17 +33,17 @@ import static java.util.Arrays.asList;
 
 /**
  * The Extensions API mimics the equivalent CDI Extension/@Observes API
- * <p/>
+ *
  * Via the Extensions/@Obverves API it is possible to listen for any number of
  * internal events fired by OpenEJB/TomEE during the life of the server and
  * deployment of applications.
- * <p/>
+ *
  * Extensions are any java class that have one or more @Observes methods using the following format:
- * <p/>
+ *
  * - public void <any-name>(@Observes <any-type> event)
- * <p/>
+ *
  * Extensions can be registered in any number of ways:
- * <p/>
+ *
  * 1. Via a META-INF/org.apache.openejb.extension text file containing the name of exactly one
  * 2. Via a <Service> tag in the server's openejb.xml or tomee.xml configuration file
  * 3. Via a <Service> tag in a META-INF/resources.xml in the application
@@ -84,7 +83,7 @@ public final class Extensions {
     public static void addExtensions(final ClassLoader loader, final Collection<String> classes) {
         for (final String clazz : classes) {
             try {
-                final Object object = loader.loadClass(clazz).newInstance();
+                final Object object = loader.loadClass(clazz).getConstructor().newInstance();
                 SystemInstance.get().addObserver(object);
             } catch (final Throwable t) {
                 LOGGER.error("Extension construction failed" + clazz, t);
@@ -95,7 +94,7 @@ public final class Extensions {
     public static void addExtensions(final Collection<Class<?>> classes) {
         for (final Class<?> clazz : classes) {
             try {
-                final Object object = clazz.newInstance();
+                final Object object = clazz.getConstructor().newInstance();
                 SystemInstance.get().addObserver(object);
             } catch (final Throwable t) {
                 LOGGER.error("Extension construction failed" + clazz.getName(), t);
@@ -105,10 +104,7 @@ public final class Extensions {
 
     public static class Finder extends ResourceFinder {
         public Finder(final String path, final boolean useLoader, final URL... urls) {
-            super(path, urls);
-            if (!useLoader && (urls == null || urls.length == 0)) {
-                Reflections.set(this, "urls", new URL[0]);
-            }
+            super(path, !useLoader && urls == null ? new URL[0] : urls);
         }
 
         // ensure we support multiple class by file

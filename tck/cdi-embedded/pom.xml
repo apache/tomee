@@ -15,18 +15,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-embedded</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: TCK :: CDI Embedded</name>
-  <version>7.0.3-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
+
+  <properties>
+    <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -64,9 +67,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openejb.patch</groupId>
-      <artifactId>openejb-jstl</artifactId>
-      <version>1.2</version>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-jstlel</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -86,13 +93,13 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.descriptors</groupId>
       <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
-      <version>2.0.0-alpha-3</version>
+      <version>2.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
-      <version>${org.apache.openwebbeans.version}</version>
+      <version>${openwebbeans.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -104,8 +111,16 @@
     <dependency>
       <groupId>org.jboss.cdi.tck</groupId>
       <artifactId>cdi-tck-impl</artifactId>
-      <version>${cdi.tck.12.version}</version>
+      <version>${cdi.tck.20.version}</version>
       <exclusions>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>javax.enterprise</groupId>
           <artifactId>cdi-api</artifactId>
@@ -126,6 +141,10 @@
           <groupId>javax.transaction</groupId>
           <artifactId>jta</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>        
       </exclusions>
     </dependency>
     <dependency>
@@ -149,7 +168,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>${org.apache.openwebbeans.version}</version>
+      <version>${openwebbeans.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -177,7 +196,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.18</version>
+        <version>${surefire.version}</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>
@@ -185,7 +204,7 @@
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
-            <suiteXmlFile>src/test/resources/passing.xml</suiteXmlFile>
+            <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
           </suiteXmlFiles>
           <properties>
             <property> <!-- broken cause @RequestScoped beans are parameters and testng logs parameters -->

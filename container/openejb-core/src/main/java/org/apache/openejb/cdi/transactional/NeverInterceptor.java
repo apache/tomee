@@ -25,15 +25,22 @@ import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import javax.transaction.InvalidTransactionException;
 import javax.transaction.Transactional;
+import javax.transaction.TransactionalException;
+import java.rmi.RemoteException;
 
 @Interceptor
 @Transactional(Transactional.TxType.NEVER)
-@Priority(200)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class NeverInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {
-        return super.intercept(ic);
+        try {
+            return super.intercept(ic);
+        } catch (final RemoteException re) {
+            throw new TransactionalException(re.getMessage(), new InvalidTransactionException(re.getMessage()));
+        }
     }
 
     @Override

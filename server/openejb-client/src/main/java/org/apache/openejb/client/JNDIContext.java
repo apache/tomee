@@ -18,7 +18,6 @@ package org.apache.openejb.client;
 
 import org.apache.openejb.client.event.RemoteInitialContextCreated;
 import org.apache.openejb.client.serializer.EJBDSerializer;
-import org.omg.CORBA.ORB;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Binding;
@@ -339,7 +338,7 @@ public class JNDIContext implements InitialContextFactory, Context {
 
     /**
      * Add missing parts - expected only part of the required providerUrl
-     * <p/>
+     *
      * TODO: Move the check to a place where it really belongs - ConnectionManager, ConnectionFactory or such
      * This method (class in general) doesn't really know what is required as far as connection details go
      * Assuming that java.net.URI or java.net.URL are going to be used is overly stated
@@ -592,8 +591,14 @@ public class JNDIContext implements InitialContextFactory, Context {
         }
     }
 
-    private ORB getDefaultOrb() {
-        return ORB.init();
+    private Object getDefaultOrb() {
+        try {
+            return Thread.currentThread().getContextClassLoader().loadClass("org.omg.CORBA.ORB").getMethod("init").invoke(null);
+        } catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
+            throw new IllegalStateException("No CORBA available", e);
+        } catch (final InvocationTargetException e) {
+            throw new IllegalStateException("No CORBA available", e.getCause());
+        }
     }
 
     @Override

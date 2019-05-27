@@ -18,15 +18,14 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>17</version>
+    <version>21</version>
     <relativePath><!--Resolve on repository--></relativePath>
   </parent>
 
@@ -34,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>7.0.3-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -89,49 +88,58 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
+    <!-- allows release plugin to be overriden -->
+    <arguments />
     <tomee.version>${project.version}</tomee.version>
-    
-    <!-- to change easily the javaee api version -->
-    <version.javaee-api>7.0-1</version.javaee-api>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <surefire.version>2.21.0</surefire.version>
 
-    <openjpa.version>2.4.2</openjpa.version>
-    <org.apache.openwebbeans.version>1.7.2</org.apache.openwebbeans.version>
+    <!-- for the default name of the module. Needs to be overridden -->
+    <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
+
+    <!-- To easily change the javaee api version -->
+    <version.javaee-api>8.0-1</version.javaee-api>
+
+    <openjpa.version>3.1.0</openjpa.version>
+    <openwebbeans.version>2.0.9</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.0.0</johnzon.version>
+    <johnzon.version>1.1.11</johnzon.version>
 
     <!-- Maven module versions -->
-    <maven-bundle-plugin.version>2.3.7</maven-bundle-plugin.version>
+    <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.5</xbeanVersion>
+    <xbeanVersion>4.12</xbeanVersion>
 
     <!-- OSGi bundles properties -->
-    <openejb.bundle.activator/>
+    <openejb.bundle.activator />
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.export.pkg>org.apache.tomee</openejb.osgi.export.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
-    <openejb.osgi.fragment/>
-    <openejb.osgi.require/>
+    <openejb.osgi.fragment />
+    <openejb.osgi.require />
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
-    <openejb.osgi.dynamic.import.pkg/>
+    <openejb.osgi.dynamic.import.pkg />
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.4-incubating</batchee.version>    
+    <batchee.version>0.5-incubating</batchee.version>
 
-    <version.arquillian>1.1.11.Final</version.arquillian>
-    <version.shrinkwrap.descriptor>2.0.0-alpha-7</version.shrinkwrap.descriptor>
-    <version.shrinkwrap.shrinkwrap>1.2.2</version.shrinkwrap.shrinkwrap>
+    <version.arquillian>1.1.13.Final</version.arquillian>
+    <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
+    <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.11</tomcat.version>
+    <tomcat.version>9.0.20</tomcat.version>
 
-    <cxf.version>3.1.10</cxf.version>
-    <ehcache.version>2.9.0</ehcache.version>
+    <cxf.version>3.3.1</cxf.version>
+    <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
@@ -148,9 +156,9 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- Apache Commons -->
-    <commons-beanutils.version>1.8.3</commons-beanutils.version>
+    <commons-beanutils.version>1.9.3</commons-beanutils.version>
     <commons-cli.version>1.2</commons-cli.version>
-    <commons-logging.version>1.1.1</commons-logging.version>
+    <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-dbcp.version>2.1</commons-dbcp.version>
     <commons-pool.version>2.3</commons-pool.version>
@@ -158,12 +166,12 @@
     <commons-codec.version>1.10</commons-codec.version>
     <commons-fileupload.version>1.3.1</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.5</commons-lang3.version>
+    <commons-lang3.version>3.8.1</commons-lang3.version>
     <commons-io.version>2.4</commons-io.version>
     <commons-net.version>3.3</commons-net.version>
 
-    <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.14.3</org.apache.activemq.version>
+    <bval.version>2.0.2-69c36fa8-1-SNAPSHOT</bval.version>
+    <org.apache.activemq.version>5.15.6</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -171,22 +179,51 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.2.11</myfaces.version>
-    <mojarra.version>2.2.12</mojarra.version>
+    <myfaces.version>2.3.4</myfaces.version>
+    <mojarra.version>2.3.3</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <version.hsqldb>2.3.2</version.hsqldb>
-    <version.axiom>1.2.14</version.axiom>
-    <version.xalan>2.7.1</version.xalan>
+    <version.axiom>1.2.20</version.axiom>
+    <version.xalan>2.7.2</version.xalan>
     <version.hibernate>4.2.18.Final</version.hibernate>
-    <version.eclipselink>2.6.3</version.eclipselink>
-    <version.groovy>2.4.2</version.groovy>
+    <version.eclipselink>2.6.4</version.eclipselink>
+    <version.groovy>2.4.12</version.groovy>
 
     <!-- arquillian related -->
-    <version.arquillian.bom>1.1.10.Final</version.arquillian.bom>
+    <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
+
+    <!-- Micro Profile -->
+    <microprofile.version>2.0</microprofile.version>
+    <microprofile.config.version>1.3</microprofile.config.version>
+    <microprofile.config.impl.version>1.2.1</microprofile.config.impl.version>
+    <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
+    <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
+    <!-- 1.1 Implementation not started yet -->
+    <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
+    <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
+    <microprofile.health.version>1.0</microprofile.health.version>
+    <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
+    <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
+    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
+    <microprofile.rest-client.version>1.2.1</microprofile.rest-client.version>
+    <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
+    <microprofile.openapi.version>1.0.1</microprofile.openapi.version>
+    <microprofile.openapi.impl.version>1.0.6</microprofile.openapi.impl.version>
+    <microprofile.opentracing.version>1.1</microprofile.opentracing.version>
+    <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
+    <opentracing.api>0.31.0</opentracing.api>
+
+    <!-- Jackson required by OpenAPI Impl -->
+    <jackson.version>2.9.4</jackson.version>
+
+    <!-- Javadoc & Asciidoclet -->
+    <javadoc.version>3.0.1</javadoc.version>
+    <asciidoclet.version>1.5.0</asciidoclet.version>
+
   </properties>
 
   <build>
@@ -194,6 +231,11 @@
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
@@ -219,7 +261,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -229,12 +271,19 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>2.10</version>
+          <version>3.0.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-ear-plugin</artifactId>
-          <version>2.10</version>
+          <version>2.10.1</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.codehaus.plexus</groupId>
+              <artifactId>plexus-archiver</artifactId>
+              <version>3.4</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -244,7 +293,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.18.1</version>
+          <version>2.20</version>
         </plugin>
         <plugin> <!-- maven-dependency-plugin:properties doesn't work as well as this one for us -->
           <groupId>org.apache.geronimo.buildsupport</groupId>
@@ -254,7 +303,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.2</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.swizzle</groupId>
@@ -299,7 +348,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.13</version>
+          <version>2.15</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmaven</groupId>
@@ -319,12 +368,37 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.19.1</version>
+          <version>${surefire.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5</version>
+          <version>3.6.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.owasp</groupId>
+          <artifactId>dependency-check-maven</artifactId>
+          <version>4.0.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <!-- attached to Maven test phase -->
+            <execution>
+              <id>report</id>
+              <phase>test</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -338,7 +412,9 @@
           <!-- the following settings are important when working with git -->
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
-          <releaseProfiles></releaseProfiles>
+          <releaseProfiles />
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <arguments>-Pmain,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
         </configuration>
       </plugin>
 
@@ -346,8 +422,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
@@ -364,6 +440,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
+          <failOnError>false</failOnError>
           <supportedProjectTypes>
             <supportedProjectType>bundle</supportedProjectType>
             <supportedProjectType>jar</supportedProjectType>
@@ -383,7 +460,6 @@
             <Implementation-Version>${project.version}</Implementation-Version>
             <Include-Resource>{maven-resources}</Include-Resource>
           </instructions>
-          <failOnError>false</failOnError>
         </configuration>
         <executions>
           <execution>
@@ -417,8 +493,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>
+          <archive combine.children="append">
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
@@ -490,6 +569,7 @@
         <module>gradle</module>
         <module>container</module>
         <module>server</module>
+        <module>mp-jwt</module>
         <module>examples</module>
         <module>assembly</module>
         <module>tck</module>
@@ -517,6 +597,7 @@
         <module>gradle</module>
         <module>container</module>
         <module>server</module>
+        <module>mp-jwt</module>
         <module>assembly</module>
         <module>arquillian</module>
         <module>utils</module>
@@ -608,6 +689,53 @@
     </profile>
 
     <profile>
+      <id>owasp-report</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>owasp-check</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <configuration>
+              <skipProvidedScope>true</skipProvidedScope>
+              <skipRuntimeScope>true</skipRuntimeScope>
+              <failBuildOnCVSS>8.0</failBuildOnCVSS>
+              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
       <id>rat</id>
       <modules>
         <module>itests</module>
@@ -638,7 +766,7 @@
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
                 <exclude>**/target/**/*</exclude>
-		            <exclude>**/js/livereload.js</exclude>
+                <exclude>**/js/livereload.js</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -662,6 +790,38 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>javadoc</id>
+      <modules>
+        <module>container</module>
+        <module>server</module>
+        <module>utils</module>
+        <module>tomee</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${javadoc.version}</version>
+            <configuration>
+              <doclet>org.asciidoctor.Asciidoclet</doclet>
+              <docletArtifact>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoclet</artifactId>
+                <version>${asciidoclet.version}</version>
+              </docletArtifact>
+              <additionalOptions>
+                <additionalOption>--base-dir ${basedir}</additionalOption>
+                <additionalOption>--attribute "name=${project.name}"</additionalOption>
+                <additionalOption>--attribute "version=${project.version}"</additionalOption>
+              </additionalOptions>
+              <doclint>none</doclint> <!-- Doclint is enabled by default in java 8+, this conf is needed disable it till a rewrite of javadoc is done (https://www.oracle.com/technetwork/java/javase/documentation/index-137868.html#format)-->
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   <repositories>
     <repository>
@@ -679,6 +839,17 @@
       <id>apache</id>
       <name>Apache Repository</name>
       <url>https://repository.apache.org/content/repositories/releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>tomee-bval-patch</id>
+      <name>BVal Patch Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1134/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -791,14 +962,9 @@
         <version>${jetty.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.bval</groupId>
-        <artifactId>bval-core</artifactId>
-        <version>${bval.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.bval</groupId>
+        <groupId>org.apache.tomee.patch</groupId>
         <artifactId>bval-jsr</artifactId>
-        <version>${bval.version}</version>
+        <version>2.0.2-69c36fa8-1</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
@@ -944,12 +1110,8 @@
             <artifactId>guava</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-mapper</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
@@ -1183,7 +1345,11 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_2.0_spec</artifactId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1226,7 +1392,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm5-shaded</artifactId>
+        <artifactId>xbean-asm7-shaded</artifactId>
         <version>${xbeanVersion}</version>
       </dependency>
       <dependency>
@@ -1284,7 +1450,7 @@
       <dependency>
         <artifactId>xmlsec</artifactId>
         <groupId>org.apache.santuario</groupId>
-        <version>2.0.6</version>
+        <version>2.1.2</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -1376,11 +1542,6 @@
         <version>${version.axiom}</version>
       </dependency>
       <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-math</artifactId>
         <version>2.2</version>
@@ -1393,7 +1554,7 @@
       <dependency>
         <groupId>org.apache.sshd</groupId>
         <artifactId>sshd-core</artifactId>
-        <version>0.14.0</version>
+        <version>2.1.0</version>
       </dependency>
       <dependency>
         <groupId>jline</groupId>
@@ -1449,7 +1610,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1460,12 +1621,12 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1473,7 +1634,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.2_spec</artifactId>
+            <artifactId>geronimo-jcdi_2.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1488,7 +1649,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1496,7 +1657,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+            <artifactId>geronimo-jcdi_2.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1507,7 +1668,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1519,7 +1680,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+            <artifactId>geronimo-jcdi_2.0_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1538,7 +1699,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1549,7 +1710,7 @@
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
-        <version>${org.apache.openwebbeans.version}</version>
+        <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1557,7 +1718,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.1_spec</artifactId>
+            <artifactId>geronimo-jcdi_2.0_spec</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -1663,6 +1824,50 @@
         <artifactId>geronimo-jaxb_2.2_spec</artifactId>
         <version>1.0.1</version>
       </dependency>
+
+      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+        <version>1.2.1</version>
+      </dependency>
+      <dependency>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jaxb</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>2.3.2</version>
+        <exclusions>
+          <exclusion> <!-- Is already included in java-ee-api -->
+            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation-api</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency> <!-- licence apache, only 110ko -->
+        <groupId>org.fusesource.jansi</groupId>
+        <artifactId>jansi</artifactId>
+        <version>1.16</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.taglibs</groupId>
+        <artifactId>taglibs-standard-jstlel</artifactId>
+        <version>1.2.5</version>
+        <exclusions>
+          <exclusion>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -1672,27 +1877,4 @@
       <url>scp://people.apache.org/www/tomee.apache.org/openejb/maven</url>
     </site>
   </distributionManagement>
-
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.1</version>
-        <configuration>
-          <aggregate>true</aggregate>
-          <additionalJOption>-J-Xmx1024m</additionalJOption>
-        </configuration>
-      </plugin>
-      <!--
-            <plugin>
-              <artifactId>maven-clover-plugin</artifactId>
-              <configuration>
-                <generateHistorical>true</generateHistorical>
-              </configuration>
-            </plugin>
-      -->
-    </plugins>
-  </reporting>
 </project>
-

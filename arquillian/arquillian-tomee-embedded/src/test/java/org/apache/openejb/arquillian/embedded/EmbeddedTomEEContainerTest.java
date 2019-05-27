@@ -18,6 +18,8 @@
 package org.apache.openejb.arquillian.embedded;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.openejb.core.ivm.naming.InitContextFactory;
+import org.apache.openejb.loader.SystemInstance;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -30,6 +32,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.naming.OperationNotSupportedException;
+
 import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
@@ -67,5 +71,21 @@ public class EmbeddedTomEEContainerTest {
     public void restServiceIsDeployed() throws Exception {
         final String read = IOUtils.toString(new URL(url.toExternalForm() + "api/rest/foo").openStream());
         assertEquals("foo", read);
+    }
+    
+    @Test
+    public void testEjbCanCreateSubContextByDefault() throws Exception {
+    	String originalValue = System.getProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
+    	if(originalValue == null) {
+    		System.setProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY, InitContextFactory.class.getName());
+    	}
+        try {
+	        String result = ejb.createSubContext();
+	        assertEquals("Cannot create sub context", "created", result);
+        } finally {
+        	if(originalValue == null) {
+        		System.clearProperty(javax.naming.Context.INITIAL_CONTEXT_FACTORY);
+        	} 
+        }
     }
 }

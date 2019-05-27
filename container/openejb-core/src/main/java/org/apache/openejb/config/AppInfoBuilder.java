@@ -24,6 +24,7 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.ClassListInfo;
 import org.apache.openejb.assembler.classic.ClientInfo;
 import org.apache.openejb.assembler.classic.ConnectorInfo;
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.EnterpriseBeanInfo;
 import org.apache.openejb.assembler.classic.EntityManagerFactoryCallable;
@@ -145,6 +146,7 @@ class AppInfoBuilder {
         this.buildPojoConfiguration(appModule, appInfo);
 
         this.buildAppResources(appModule, appInfo);
+        this.buildAppContainers(appModule, appInfo);
         this.buildAppServices(appModule, appInfo);
 
         //
@@ -164,12 +166,15 @@ class AppInfoBuilder {
                 containerIds.add(containerInfo.id);
             }
         }
-        containerIds.addAll(appInfo.containerIds);
+
+        for (final ContainerInfo containerInfo : appInfo.containers) {
+            containerIds.add(containerInfo.id);
+        }
 
         //
         //  EJB Jars
         //
-        final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<EjbModule, EjbJarInfo>();
+        final Map<EjbModule, EjbJarInfo> ejbJarInfos = new HashMap<>();
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             try {
                 final EjbJarInfo ejbJarInfo = this.ejbJarInfoBuilder.buildInfo(ejbModule);
@@ -180,9 +185,9 @@ class AppInfoBuilder {
                 for (final EnterpriseBeanInfo bean : ejbJarInfo.enterpriseBeans) {
                     final EjbDeployment d = deploymentsByEjbName.get(bean.ejbName);
                     if (d.getContainerId() != null && !containerIds.contains(d.getContainerId())) {
-                        for (final String cId : appInfo.containerIds) {
-                            if (cId.endsWith("/" + d.getContainerId())) {
-                                d.setContainerId(cId);
+                        for (final ContainerInfo containerInfo : appInfo.containers) {
+                            if (containerInfo.id.endsWith("/" + d.getContainerId())) {
+                                d.setContainerId(containerInfo.id);
                                 break;
                             }
                         }
@@ -246,7 +251,7 @@ class AppInfoBuilder {
             jndiEncInfoBuilder.build(appModule.getApplication(), appInfo.appId, null, appModule.getModuleUri(), new JndiEncInfo(), new JndiEncInfo());
         }
 
-        final List<EnterpriseBeanInfo> beans = new ArrayList<EnterpriseBeanInfo>();
+        final List<EnterpriseBeanInfo> beans = new ArrayList<>();
         // Build the JNDI tree for each ejb
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
 
@@ -278,7 +283,7 @@ class AppInfoBuilder {
 
                 @Override
                 public Set<String> getReferences(final EnterpriseBeanInfo bean) {
-                    return new LinkedHashSet<String>(bean.dependsOn);
+                    return new LinkedHashSet<>(bean.dependsOn);
                 }
             });
         } catch (final CircularReferencesException e) {
@@ -359,11 +364,17 @@ class AppInfoBuilder {
                 info.resourceAliases.addAll(def.getAliases());
             }
         }
-        for (final Container def : module.getContainers()) {
-            if (!def.getProperties().containsKey("ApplicationWide")) {
-                info.containerIds.add(def.getId());
-            }
-        }
+    }
+
+    private void buildAppContainers(final AppModule module, final AppInfo info) throws OpenEJBException {
+        final List<ContainerInfo> containerInfos = getContainerInfos(module);
+        if (containerInfos == null) { return; }
+
+        info.containers.addAll(containerInfos);
+    }
+
+    private List<ContainerInfo> getContainerInfos(AppModule module) throws OpenEJBException {
+        return ContainerUtils.getContainerInfos(module, configFactory);
     }
 
     private void buildClientModules(final AppModule appModule, final AppInfo appInfo, final JndiEncInfoBuilder jndiEncInfoBuilder) throws OpenEJBException {
@@ -910,7 +921,7 @@ class AppInfoBuilder {
                     }
                 }
 
-                final Set<String> keys = new HashSet<String>(info.properties.stringPropertyNames());
+                final Set<String> keys = new HashSet<>(info.properties.stringPropertyNames());
                 for (final String key : keys) {
                     if (key.matches("openjpa.Connection(DriverName|URL|UserName|Password)")) {
                         final Object o = info.properties.remove(key);
@@ -1002,7 +1013,7 @@ class AppInfoBuilder {
 
 
     private List<PortInfo> configureWebservices(final Webservices webservices) {
-        final List<PortInfo> portMap = new ArrayList<PortInfo>();
+        final List<PortInfo> portMap = new ArrayList<>();
         if (webservices == null) {
             return portMap;
         }

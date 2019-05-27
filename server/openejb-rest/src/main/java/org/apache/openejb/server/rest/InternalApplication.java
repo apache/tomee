@@ -17,7 +17,9 @@
 package org.apache.openejb.server.rest;
 
 import javax.ws.rs.core.Application;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class InternalApplication extends Application {
@@ -41,6 +43,11 @@ public class InternalApplication extends Application {
     @Override
     public Set<Object> getSingletons() {
         return singletons;
+    }
+
+    @Override
+    public Map<String, Object> getProperties() {
+        return original == null ? Collections.<String, Object>emptyMap() : original.getProperties();
     }
 
     public Application getOriginal() {

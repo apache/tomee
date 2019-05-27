@@ -16,9 +16,9 @@
  */
 package org.apache.openejb.mbeans;
 
-import javax.management.Description;
-import javax.management.MBean;
-import javax.management.ManagedAttribute;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
 
 @MBean
 @Description("descr ;)")

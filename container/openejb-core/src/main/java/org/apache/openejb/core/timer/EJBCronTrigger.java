@@ -107,7 +107,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
     public EJBCronTrigger(final ScheduleExpression expr) throws ParseException {
 
-        final Map<Integer, String> fieldValues = new LinkedHashMap<Integer, String>();
+        final Map<Integer, String> fieldValues = new LinkedHashMap<>();
         fieldValues.put(Calendar.YEAR, expr.getYear());
         fieldValues.put(Calendar.MONTH, expr.getMonth());
         fieldValues.put(Calendar.DAY_OF_MONTH, expr.getDayOfMonth());
@@ -121,7 +121,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         setEndTime(expr.getEnd());
 
         // If parsing fails on a field, record the error and move to the next field
-        final Map<Integer, ParseException> errors = new HashMap<Integer, ParseException>();
+        final Map<Integer, ParseException> errors = new HashMap<>();
         int index = 0;
         for (final Entry<Integer, String> entry : fieldValues.entrySet()) {
             final int field = entry.getKey();
@@ -162,7 +162,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
         expr = expr.replaceAll("\\s+", "").toUpperCase(Locale.ENGLISH);
 
 
-        if (expr.length() > 1 && expr.indexOf(",") > 0) {
+        if (expr.length() > 1 && expr.indexOf(',') > 0) {
 
             final String[] expressions = expr.split(",");
 
@@ -879,7 +879,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         public List<Integer> getAllValuesInRange(final Calendar calendar) {
 
-            final List<Integer> values = new ArrayList<Integer>();
+            final List<Integer> values = new ArrayList<>();
 
             if (isDynamicRangeExpression) {
                 try {
@@ -914,13 +914,13 @@ public class EJBCronTrigger extends CronTriggerImpl {
      */
     private static class ListExpression extends FieldExpression {
 
-        private final Set<Integer> values = new TreeSet<Integer>();
+        private final Set<Integer> values = new TreeSet<>();
 
-        private final List<RangeExpression> weekDayRangeExpressions = new ArrayList<RangeExpression>();
+        private final List<RangeExpression> weekDayRangeExpressions = new ArrayList<>();
 
-        private final List<WeekdayExpression> weekDayExpressions = new ArrayList<WeekdayExpression>();
+        private final List<WeekdayExpression> weekDayExpressions = new ArrayList<>();
 
-        private final List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<DaysFromLastDayExpression>();
+        private final List<DaysFromLastDayExpression> daysFromLastDayExpressions = new ArrayList<>();
         ;
 
         public ListExpression(final Matcher m, final int field) throws ParseException {
@@ -971,9 +971,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         private TreeSet<Integer> getNewValuesFromDynamicExpressions(final Calendar calendar) {
 
-            final TreeSet<Integer> newValues = new TreeSet<Integer>();
-
-            newValues.addAll(values);
+            final TreeSet<Integer> newValues = new TreeSet<>(values);
 
             for (final RangeExpression weekDayRangeExpression : weekDayRangeExpressions) {
 
@@ -1057,7 +1055,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;
@@ -1084,7 +1082,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                 }
 
             } else {
-                return new Integer(start);
+                return start;
             }
 
             return null;

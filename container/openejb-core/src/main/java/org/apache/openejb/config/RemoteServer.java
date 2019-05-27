@@ -74,7 +74,7 @@ public class RemoteServer {
     private boolean serverHasAlreadyBeenStarted = true;
 
     private Properties properties;
-    private final AtomicReference<Process> server = new AtomicReference<Process>();
+    private final AtomicReference<Process> server = new AtomicReference<>();
     private final int tries;
     private final boolean verbose;
     private final int portShutdown;
@@ -223,7 +223,7 @@ public class RemoteServer {
                     java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/java").getAbsolutePath();
                 }
 
-                final List<String> argsList = new ArrayList<String>(20);
+                final List<String> argsList = new ArrayList<>(20);
                 argsList.add(java);
                 argsList.add("-XX:+HeapDumpOnOutOfMemoryError");
 
@@ -247,7 +247,7 @@ public class RemoteServer {
                     argsList.addAll(parse(javaOpts.replace("${openejb.base}", home.getAbsolutePath())));
                 }
 
-                final Map<String, String> addedArgs = new HashMap<String, String>();
+                final Map<String, String> addedArgs = new HashMap<>();
                 if (additionalArgs != null) {
                     for (final String arg : additionalArgs) {
                         final int equal = arg.indexOf('=');
@@ -302,7 +302,8 @@ public class RemoteServer {
                     if (!addedArgs.containsKey("-Djava.io.tmpdir")) {
                         argsList.add("-Djava.io.tmpdir=" + temp.getAbsolutePath());
                     }
-                    if (!javaVersion.startsWith("1.9") && !addedArgs.containsKey("-Djava.endorsed.dirs")) {
+                    if ((javaVersion.startsWith("1.7") || javaVersion.startsWith("1.8")) && // java 9 dropped endorsed folder
+                            !addedArgs.containsKey("-Djava.endorsed.dirs") && endorsed.exists()) {
                         argsList.add("-Djava.endorsed.dirs=" + endorsed.getAbsolutePath());
                     }
                     if (!addedArgs.containsKey("-Dcatalina.base")) {
@@ -562,10 +563,8 @@ public class RemoteServer {
      * @return True is the message was sent, else false if unable to connect after the defined number of attempts
      */
     private boolean sendShutdown(int attempts) {
-        Socket socket = null;
         OutputStream stream = null;
-        try {
-            socket = new Socket(host, portShutdown);
+        try (Socket socket = new Socket(host, portShutdown)) {
             stream = socket.getOutputStream();
             final String shutdown = command + Character.toString((char) 0);
             for (int i = 0; i < shutdown.length(); i++) {
@@ -585,13 +584,7 @@ public class RemoteServer {
             }
         } finally {
             IO.close(stream);
-            if (socket != null) {
-                try {
-                    socket.close();
-                } catch (final Exception e) {
-                    // Ignore
-                }
-            }
+            // Ignore
         }
 
         return true;
@@ -602,9 +595,7 @@ public class RemoteServer {
             System.out.println("[] CONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
-        Socket s = null;
-        try {
-            s = new Socket();
+        try (Socket s = new Socket()) {
             s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
             if (verbose) {
@@ -624,15 +615,8 @@ public class RemoteServer {
                 }
                 return connect(port, --tries);
             }
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Exception ignored) {
-                    // no-op
-                }
-            }
         }
+        // no-op
 
         return true;
     }
@@ -642,9 +626,7 @@ public class RemoteServer {
             System.out.println("[] DISCONNECT ATTEMPT " + (this.tries - tries) + " on port: " + port);
         }
 
-        Socket s = null;
-        try {
-            s = new Socket();
+        try (Socket s = new Socket()) {
             s.connect(new InetSocketAddress(this.host, port), connectTimeout);
             s.getOutputStream().close();
 
@@ -667,15 +649,8 @@ public class RemoteServer {
 
         } catch (final IOException e) {
             //This is what we want
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (final Exception ignored) {
-                    // no-op
-                }
-            }
         }
+        // no-op
 
         return true;
     }

@@ -19,18 +19,28 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webservices</artifactId>
   <packaging>jar</packaging>
   <name>OpenEJB :: Server :: Webservices</name>
+  <properties>
+    <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
+  </properties>
   <dependencies>
+<!--    <dependency>--> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
+<!-- Removed as included in javaee-api-8.0.0
+      <groupId>javax.xml.soap</groupId>
+      <artifactId>javax.xml.soap-api</artifactId>
+      <version>1.4.0-b01</version>
+      <scope>test</scope>
+    </dependency>--> 
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
@@ -51,7 +61,26 @@
       <artifactId>openejb-http</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>      
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
@@ -76,12 +105,16 @@
     <dependency>
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
-      <version>1.3.2</version>
+      <version>1.4.0-b03</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>javax.activation</groupId>
           <artifactId>activation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

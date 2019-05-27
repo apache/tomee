@@ -20,7 +20,7 @@ package org.apache.openejb.cipher;
 /**
  * Implementations of {@link org.apache.openejb.cipher.PasswordCipher} allow to encode and decode passwords
  * used to connect to a database.
- * <p/>
+ *
  * Several implementations may exist, as several encryption algorithms may be
  * supported. One-way encryption algorithm (hash) can't be used as we need to
  * give a plain password to the database. {@link #encrypt(String)} method is not

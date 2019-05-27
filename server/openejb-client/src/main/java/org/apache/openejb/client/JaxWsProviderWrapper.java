@@ -66,6 +66,7 @@ public class JaxWsProviderWrapper extends Provider {
     //
 
     private static final ThreadLocal<ProviderWrapperData> threadPortRefs = new ThreadLocal<ProviderWrapperData>();
+    private static final String JAXWSPROVIDER_PROPERTY = Provider.class.getName();
 
     public static void beforeCreate(final List<PortRefMetaData> portRefMetaDatas) {
         // Axis JAXWS api is non compliant and checks system property before classloader
@@ -76,7 +77,9 @@ public class JaxWsProviderWrapper extends Provider {
             System.setProperty("openejb." + JAXWSPROVIDER_PROPERTY, oldProperty);
         }
 
-        System.setProperty(JAXWSPROVIDER_PROPERTY, JaxWsProviderWrapper.class.getName());
+        if (oldProperty == null || !oldProperty.equals(JaxWsProviderWrapper.class.getName())) {
+            System.setProperty(JAXWSPROVIDER_PROPERTY, JaxWsProviderWrapper.class.getName());
+        }
 
         final ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         if (oldClassLoader != null) {

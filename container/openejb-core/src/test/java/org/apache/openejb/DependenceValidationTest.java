@@ -20,8 +20,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import junit.framework.TestResult;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassWriter;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassWriter;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class DependenceValidationTest extends TestCase {
 
     private void assertNotDependentOn(final String referringPacakge, final String referredPackage, final String... exemptionsArray) {
         if (referringPacakge.equals(referredPackage)) return;
-        final List<String> exemptions = new ArrayList<String>(Arrays.asList(exemptionsArray));
+        final List<String> exemptions = new ArrayList<>(Arrays.asList(exemptionsArray));
         exemptions.add(referredPackage);
 
         for (final Map.Entry<String, Map<String, Integer>> entry : depsOfPackages.entrySet()) {

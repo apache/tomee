@@ -99,7 +99,7 @@ public class StatelessPoolStatsTest extends TestCase {
         * Pool MBeanInfo
         *
         */
-        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<MBeanAttributeInfo>();
+        final List<MBeanAttributeInfo> expectedAttributes = new ArrayList<>();
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts", "long", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.Latest", "java.lang.String", "", true, false, false));
         expectedAttributes.add(new MBeanAttributeInfo("AccessTimeouts.LatestTime", "long", "", true, false, false));
@@ -147,7 +147,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
 
         // The hardest part, check the values of each, PoolVersion is AtomicaInteger, *.Latest are time-sensitive, so not verified.
-        final Map<String, Object> expectedAttributesValue = new TreeMap<String, Object>();
+        final Map<String, Object> expectedAttributesValue = new TreeMap<>();
         expectedAttributesValue.put("AccessTimeouts", (long) 0);
         expectedAttributesValue.put("Aged", (long) 0);
         expectedAttributesValue.put("AvailablePermits", 15);
@@ -175,8 +175,8 @@ public class StatelessPoolStatsTest extends TestCase {
         // expectedAttributesValue.put("Sweeps", (long) 1);
         expectedAttributesValue.put("StrictPooling", true);
 
-        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<MBeanAttributeInfo>();
-        final Map<String, Object> actualAttributesValue = new TreeMap<String, Object>();
+        final List<MBeanAttributeInfo> actualAttributes = new ArrayList<>();
+        final Map<String, Object> actualAttributesValue = new TreeMap<>();
         for (final MBeanAttributeInfo info : poolMBeanInfo.getAttributes()) {
             actualAttributes.add(info);
             if (!info.getName().endsWith(".Latest") && !info.getName().endsWith(".LatestTime")
@@ -192,15 +192,14 @@ public class StatelessPoolStatsTest extends TestCase {
         final MBeanParameterInfo[] operations = {
             new MBeanParameterInfo("excludeRegex", "java.lang.String", "\"\""),
             new MBeanParameterInfo("includeRegex", "java.lang.String", "\"\"")};
-        final List<MBeanOperationInfo> expectedOperations = new ArrayList<MBeanOperationInfo>();
+        final List<MBeanOperationInfo> expectedOperations = new ArrayList<>();
         expectedOperations.add(new MBeanOperationInfo(
             "FilterAttributes",
             "Filters the attributes that show up in the MBeanInfo.  The exclude is applied first, then any attributes that match the include are re-added.  It may be required to disconnect and reconnect the JMX console to force a refresh of the MBeanInfo",
             operations, "void", MBeanOperationInfo.UNKNOWN));
         expectedOperations.add(new MBeanOperationInfo("flush", "", new MBeanParameterInfo[0], "void", MBeanOperationInfo.UNKNOWN));
 
-        final List<MBeanOperationInfo> actualOperations = new ArrayList<MBeanOperationInfo>();
-        actualOperations.addAll(Arrays.asList(poolMBeanInfo.getOperations()));
+        final List<MBeanOperationInfo> actualOperations = new ArrayList<>(Arrays.asList(poolMBeanInfo.getOperations()));
         assertEquals(expectedOperations, actualOperations);
     }
 
@@ -462,7 +461,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         final CounterBean bean = deploy("testAccessTimeouts", properties);
 
-        assertAttribute("AccessTimeouts", 0l);
+        assertAttribute("AccessTimeouts", 0L);
 
         final Checkout checkout = checkout(bean, 10);
 
@@ -476,7 +475,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         checkout.release();
 
-        assertAttribute("AccessTimeouts", 7l);
+        assertAttribute("AccessTimeouts", 7L);
     }
 
     /**
@@ -488,13 +487,13 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
         final Properties properties = new Properties();
-        properties.setProperty("SweepInterval", "100");
+        properties.setProperty("SweepInterval", "100 MS");
 
         final Date expectedDate = new Date(); // now
 
         deploy("testSweeps", properties);
 
-        Thread.sleep(200);
+        Thread.sleep(300);
 
         final Long sweeps = (Long) (server.getAttribute(objectName, "Sweeps"));
         assertTrue("sweeps=" + sweeps, sweeps >= 1L);
@@ -610,13 +609,13 @@ public class StatelessPoolStatsTest extends TestCase {
     /**
      * convenience method for checking out a specific number of instances.
      * Can be used like so:
-     * <p/>
+     *
      * // checkout some instances from the pool
      * CountDownLatch startingPistol = checkout(bean, 7);
-     * <p/>
+     *
      * // Look at pool stats
      * ...
-     * <p/>
+     *
      * // Release them all back into the pool
      * startingPistol.countDown();
      *

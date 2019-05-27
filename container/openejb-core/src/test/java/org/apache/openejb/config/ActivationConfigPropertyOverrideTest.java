@@ -16,25 +16,30 @@
  */
 package org.apache.openejb.config;
 
-import junit.framework.TestCase;
 import org.apache.openejb.OpenEJBException;
-import org.apache.openejb.assembler.classic.Assembler;
-import org.apache.openejb.assembler.classic.EjbJarInfo;
-import org.apache.openejb.assembler.classic.MessageDrivenBeanInfo;
-import org.apache.openejb.assembler.classic.SecurityServiceInfo;
-import org.apache.openejb.assembler.classic.TransactionServiceInfo;
+import org.apache.openejb.activemq.ActivationContainerOverwriteBothConfigurationTest;
+import org.apache.openejb.assembler.classic.*;
+import org.apache.openejb.config.sys.Container;
 import org.apache.openejb.core.builder.AppModuleBuilder;
 import org.apache.openejb.core.builder.MdbBuilder;
 import org.apache.openejb.jee.ActivationConfigProperty;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
+import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.testing.Module;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /*
 1  -D<deploymentId>.activation.<property>=<value>
@@ -43,12 +48,19 @@ import java.util.Properties;
 4. -Dmdb.activation.<property>=<value>
 Order: 4 is overriden by 3 (and so on)
 */
-public class ActivationConfigPropertyOverrideTest extends TestCase {
+@RunWith(ApplicationComposer.class)
+public class ActivationConfigPropertyOverrideTest{
+
+    @Module
+    public MessageDrivenBean jar() {
+        return new MessageDrivenBean(ActivationContainerOverwriteBothConfigurationTest.Listener.class);
+    }
 
 
     /**
      * Test internal method used in ActivationConfigPropertyOverride
      */
+    @Test
     public void testGetOverridesShouldTrimAwayPrefixesCorrectly() {
         final Properties properties = new Properties();
         properties.put("ENTERPRISEBEAN.mdb.activation.destinationType", "something");
@@ -61,6 +73,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
      *
      * @throws OpenEJBException
      */
+    @Test
     public void testOverrideActivationConfigProperty() throws OpenEJBException {
 
         // set overrides for destinationType and check
@@ -81,6 +94,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
      *
      * @throws OpenEJBException
      */
+    @Test
     public void testAddActivationConfigPropertyIfNotAlreadyPresent() throws OpenEJBException {
 
         // set overrides
@@ -110,6 +124,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         return false;
     }
 
+    @Test
     public void testNoOverrideSetShouldNotOverride() throws OpenEJBException {
         if (SystemInstance.get().getProperties().containsKey("ENTERPRISEBEAN.mdb.activation.destinationType")) {
             SystemInstance.get().getProperties().remove("ENTERPRISEBEAN.mdb.activation.destinationType");
@@ -124,6 +139,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         assertTrue(containsActivationKeyValuePair(mdb, "destinationType", "shouldNotBeOverriddenString"));
     }
 
+    @Test
     public void testNotOverridden() throws Exception {
         SystemInstance.reset();
         final Assembler assembler = new Assembler();
@@ -151,6 +167,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
     }
 
+    @Test
     public void testMdbOverrideSystem() throws Exception {
         SystemInstance.reset();
         final Properties systProps = SystemInstance.get().getProperties();
@@ -190,6 +207,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         }
     }
 
+    @Test
     public void testMdbOverrideOpenejbJar() throws Exception {
         SystemInstance.reset();
 
@@ -253,6 +271,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
 
     }
 
+    @Test
     public void testEjbNameOverrideSystem() throws Exception {
         SystemInstance.reset();
         final Properties properties = SystemInstance.get().getProperties();
@@ -286,6 +305,7 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
         assertEquals("OVERRIDDEN.QUEUE", yellow.activationProperties.get("destination"));
     }
 
+    @Test
     public void testEjbNameOverrideOpenejbJar() throws Exception {
         SystemInstance.reset();
 
@@ -347,6 +367,41 @@ public class ActivationConfigPropertyOverrideTest extends TestCase {
             assertEquals("YELLOW.TOPIC", yellow.activationProperties.get("destination"));
         }
 
+    }
+
+    @Test
+    public void testOverrideFromContainerDefinedInAppModule() throws Exception {
+        SystemInstance.reset();
+
+        final Assembler assembler = new Assembler();
+        final ConfigurationFactory config = new ConfigurationFactory();
+        assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
+        assembler.createSecurityService(config.configureService(SecurityServiceInfo.class));
+
+        final EjbJar ejbJar = new EjbJar();
+        ejbJar.addEnterpriseBean(new MessageDrivenBean("Yellow", Orange.class));
+        ejbJar.addEnterpriseBean(new MessageDrivenBean("Orange", Yellow.class));
+
+        final AppModule appModule = new AppModule(new EjbModule(ejbJar));
+        appModule.setModuleId("mymodule");
+
+        final Container container = new Container();
+        container.setId("mycontainer");
+        container.setCtype("MESSAGE");
+        container.getProperties().setProperty("activation.DeliveryActive", "false");
+        appModule.getContainers().add(container);
+
+
+        final AppInfo appInfo = config.configureApplication(appModule);
+        assertEquals(1, appInfo.ejbJars.size());
+        final EjbJarInfo ejbJarInfo = appInfo.ejbJars.get(0);
+
+        assertEquals(2, ejbJarInfo.enterpriseBeans.size());
+        final MessageDrivenBeanInfo orange = (MessageDrivenBeanInfo) ejbJarInfo.enterpriseBeans.get(0);
+        final MessageDrivenBeanInfo yellow = (MessageDrivenBeanInfo) ejbJarInfo.enterpriseBeans.get(1);
+
+        assertEquals("false", orange.activationProperties.get("DeliveryActive"));
+        assertEquals("false", yellow.activationProperties.get("DeliveryActive"));
     }
 
 

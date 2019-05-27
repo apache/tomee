@@ -24,25 +24,25 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE}) @Retention(RUNTIME)
+ * Target({TYPE}) @Retention(RUNTIME)
  * public @interface Inheritance {
  * InheritanceType strategy() default SINGLE_TABLE;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for inheritance complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="inheritance">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="strategy" type="{http://java.sun.com/xml/ns/persistence/orm}inheritance-type" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="inheritance"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="strategy" type="{http://java.sun.com/xml/ns/persistence/orm}inheritance-type" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -18,6 +18,7 @@ package org.apache.openejb.core.timer;
 
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.SingletonBean;
+import org.apache.openejb.jee.StatefulBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Module;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ejb.Stateful;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
@@ -50,6 +52,7 @@ public class GetAllTimersTest {
     @Module
     public EjbJar jar() {
         return new EjbJar()
+            .enterpriseBean(new StatefulBean(NoTimer.class).localBean())
             .enterpriseBean(new SingletonBean(Query.class).localBean())
             .enterpriseBean(new SingletonBean(Bean1.class).localBean())
             .enterpriseBean(new SingletonBean(Bean2.class).localBean());
@@ -74,7 +77,7 @@ public class GetAllTimersTest {
     }
 
     private void checkList(final Collection<Timer> in) {
-        final List<Timer> list = new ArrayList<>(in); Collections.sort(list, new Comparator<Timer>() {
+        final List<Timer> list = new ArrayList<>(in); list.sort(new Comparator<Timer>() {
             @Override
             public int compare(final Timer o1, final Timer o2) {
                 return o1.getInfo().toString().compareTo(o2.getInfo().toString());
@@ -84,6 +87,13 @@ public class GetAllTimersTest {
         final Iterator<Timer> it = list.iterator();
         assertEquals(Bean1.class.getSimpleName(), it.next().getInfo());
         assertEquals(Bean2.class.getSimpleName(), it.next().getInfo());
+    }
+
+    @Stateful
+    public static class NoTimer {
+        public void justHereToEnsureWeDontFailIfABeanHasNoTimer() {
+            // no-op
+        }
     }
 
     @Startup

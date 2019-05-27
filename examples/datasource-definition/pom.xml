@@ -15,17 +15,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>datasource-definition</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>8.0.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Datasource Definition</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.0.3-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -40,8 +39,8 @@
           <classpath>
             <dependency>
               <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-annotation_1.1_spec</artifactId>
-              <version>1.0.1</version>
+              <artifactId>geronimo-annotation_1.3_spec</artifactId>
+              <version>1.0</version>
             </dependency>
           </classpath>
         </configuration>
@@ -60,8 +59,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <compilerArguments>
             <endorseddirs>${annotations.endorsed}</endorseddirs>
           </compilerArguments>
@@ -90,13 +89,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>7.0</version>
+      <version>8.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- for the plugin to endorse the build -->
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-annotation_1.1_spec</artifactId>
-      <version>1.0.1</version>
+      <artifactId>geronimo-annotation_1.3_spec</artifactId>
+      <version>1.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

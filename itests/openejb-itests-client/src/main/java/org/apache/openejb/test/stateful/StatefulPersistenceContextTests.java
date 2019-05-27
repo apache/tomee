@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
-import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.TestManager;
 
 public class StatefulPersistenceContextTests extends StatefulTestClient {
 

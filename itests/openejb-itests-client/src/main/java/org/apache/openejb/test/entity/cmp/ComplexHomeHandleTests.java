@@ -18,7 +18,6 @@
 package org.apache.openejb.test.entity.cmp;
 
 import javax.ejb.EJBHome;
-import javax.rmi.PortableRemoteObject;
 
 /**
  * [6] Should be run as the sixth test suite of the ComplexCmpTestClients
@@ -32,7 +31,7 @@ public class ComplexHomeHandleTests extends ComplexCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/ComplexCmpHome");
-        ejbHome = (ComplexCmpHome) PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
+        ejbHome = (ComplexCmpHome) obj;
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
 

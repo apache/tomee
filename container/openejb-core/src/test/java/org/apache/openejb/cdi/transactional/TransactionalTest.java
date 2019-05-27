@@ -37,16 +37,20 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import javax.transaction.UserTransaction;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static javax.transaction.Transactional.TxType.MANDATORY;
+import static javax.transaction.Transactional.TxType.NEVER;
 import static javax.transaction.Transactional.TxType.NOT_SUPPORTED;
 import static javax.transaction.Transactional.TxType.REQUIRED;
 import static javax.transaction.Transactional.TxType.REQUIRES_NEW;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -60,6 +64,42 @@ public class TransactionalTest {
 
     @Inject
     private TxBean bean;
+
+    @Test
+    public void exceptionPriorityRules() {
+        assertFalse(new InterceptorBase.ExceptionPriotiryRules(new Class[] {IllegalArgumentException.class}, new Class[]{IllegalArgumentException.class})
+                .accept(new IllegalArgumentException(""), new Class[0]));
+        assertTrue(new InterceptorBase.ExceptionPriotiryRules(new Class[] {SQLException.class}, new Class[]{SQLWarning.class})
+                .accept(new SQLWarning(""), new Class[0]));
+    }
+
+    @Test
+    public void dontRollbackCommits() throws SystemException {
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+        try {
+            bean.dontRollback();
+        } catch (final AnException e) {
+            // expected
+        }
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+    }
+
+    @Test
+    public void neverInTx() throws SystemException {
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+        try {
+            bean.createTx(new Runnable() {
+                @Override
+                public void run() {
+                    bean.never();
+                }
+            });
+            fail();
+        } catch (final TransactionalException e) {
+            // expected
+        }
+        assertNull(OpenEJB.getTransactionManager().getTransaction());
+    }
 
     @Test(expected = TransactionalException.class)
     public void mandatoryKO() {
@@ -116,7 +156,7 @@ public class TransactionalTest {
             try {
                 bean.anException();
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             OpenEJB.getTransactionManager().rollback();
@@ -150,7 +190,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_ROLLEDBACK, status.get());
@@ -183,7 +223,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnCheckedException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -216,7 +256,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -249,7 +289,7 @@ public class TransactionalTest {
                     }
                 });
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnCheckedException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -263,7 +303,7 @@ public class TransactionalTest {
             try {
                 bean.anotherException(status);
                 fail();
-            } catch (final TransactionalException e) {
+            } catch (final AnotherException e) {
                 // no-op
             }
             assertEquals(Status.STATUS_COMMITTED, status.get());
@@ -292,9 +332,41 @@ public class TransactionalTest {
         try {
             bean.exceptionOnCompletion();
             fail();
-        } catch (final TransactionalException te) {
-            assertNotNull(te);
-            assertTrue(IllegalArgumentException.class.isInstance(te.getCause()));
+        } catch (final IllegalArgumentException te) {
+            // ok
+        }
+    }
+
+    @Test
+    public void tomee2051() {
+        for (int i = 0; i < 2; i++) {
+            final AtomicInteger status = new AtomicInteger();
+            try {
+                bean.tomee2051(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            OpenEJB.getTransactionManager().getTransaction().registerSynchronization(new Synchronization() {
+                                @Override
+                                public void beforeCompletion() {
+                                    // no-op
+                                }
+
+                                @Override
+                                public void afterCompletion(int state) {
+                                    status.set(state);
+                                }
+                            });
+                        } catch (final RollbackException | SystemException e) {
+                            fail();
+                        }
+                    }
+                });
+                fail();
+            } catch (final AnException e) {
+                // no-op
+            }
+            assertEquals(Status.STATUS_ROLLEDBACK, status.get());
         }
     }
 
@@ -361,6 +433,17 @@ public class TransactionalTest {
             }
         }
 
+        @Transactional(dontRollbackOn = AnException.class)
+        public void dontRollback() {
+            throw new AnException();
+        }
+
+        @Transactional(rollbackOn = AnException.class)
+        public void tomee2051(final Runnable r) throws AnException {
+            r.run();
+            throw new AnException();
+        }
+
         @Transactional(value = MANDATORY, rollbackOn = AnException.class)
         public void anException() {
             throw new AnException();
@@ -392,6 +475,16 @@ public class TransactionalTest {
         public void checked(Runnable runnable) throws AnCheckedException {
             runnable.run();
             throw new AnCheckedException();
+        }
+
+        @Transactional(REQUIRED)
+        public void createTx(Runnable runnable) {
+            runnable.run();
+        }
+
+        @Transactional(NEVER)
+        public void never() {
+            // no-op
         }
 
         @Transactional(REQUIRED)

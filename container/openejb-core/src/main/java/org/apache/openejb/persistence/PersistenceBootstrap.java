@@ -91,7 +91,7 @@ public class PersistenceBootstrap {
             final URL provider = clzz.getResource(name);
             if (provider != null) {
                 final String trim = IO.slurp(provider).trim();
-                Logger.getLogger(PersistenceBootstrap.class.getName()).info("Default JPA Provider changed to " + trim);
+                Logger.getLogger(PersistenceBootstrap.class.getName()).info("Default JPA Provider changed to " + trim + " specified by " + provider.toExternalForm());
                 return trim;
             }
         } catch (final Exception e) {
@@ -126,7 +126,7 @@ public class PersistenceBootstrap {
             debug("searching for persistence.xml files");
 
             // create persistence.xml names respecting altdd
-            final Collection<String> pXmlNames = new ArrayList<String>();
+            final Collection<String> pXmlNames = new ArrayList<>();
 
             // altdd logic duplicated to avoid classloading issue in tomee-webapp mode
             final String altDD = getAltDD();
@@ -139,7 +139,7 @@ public class PersistenceBootstrap {
                 pXmlNames.add("persistence.xml");
             }
 
-            final List<URL> urls = new LinkedList<URL>();
+            final List<URL> urls = new LinkedList<>();
             for (final String pXmlName : pXmlNames) { // find persistence.xml in the classloader and in WEB-INF
                 urls.addAll(Collections.list(classLoader.getResources("META-INF/" + pXmlName)));
                 if ("true".equals(args.getProperty("web-scan", "false"))) { // findUrls is slow for small tests and rarely needed
@@ -173,7 +173,7 @@ public class PersistenceBootstrap {
                 return;
             }
 
-            final Map<String, Unit> units = new HashMap<String, Unit>();
+            final Map<String, Unit> units = new HashMap<>();
 
             for (final URL url : urls) {
                 final String urlPath = url.toExternalForm();
@@ -337,12 +337,16 @@ public class PersistenceBootstrap {
             }
 
             public void endElement(final String uri, final String localName, final String qName) {
-                if (localName.equals("persistence-unit")) {
-                    endPersistenceUnit(uri, localName, qName);
-                } else if (localName.equals("provider")) {
-                    endProvider(uri, localName, qName);
-                } else if (localName.equals("class")) {
-                    endClass(uri, localName, qName);
+                switch (localName) {
+                    case "persistence-unit":
+                        endPersistenceUnit(uri, localName, qName);
+                        break;
+                    case "provider":
+                        endProvider(uri, localName, qName);
+                        break;
+                    case "class":
+                        endClass(uri, localName, qName);
+                        break;
                 }
             }
 
@@ -407,7 +411,7 @@ public class PersistenceBootstrap {
 
     private static class Unit {
         private String provider;
-        private final Set<String> classes = new HashSet<String>();
+        private final Set<String> classes = new HashSet<>();
         private final String name;
 
         public Unit(final String name) {

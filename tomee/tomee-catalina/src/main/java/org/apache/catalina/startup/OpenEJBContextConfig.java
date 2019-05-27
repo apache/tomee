@@ -20,6 +20,7 @@ import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.deploy.NamingResourcesImpl;
@@ -169,7 +170,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         }
 
         final Container[] children = context.findChildren();
-        final Map<String, Container> mappedChildren = new HashMap<String, Container>();
+        final Map<String, Container> mappedChildren = new HashMap<>();
         if (children != null) {
             // index potential rest containers by class to cleanup applications defined as servlet
             for (final Container c : children) {
@@ -219,11 +220,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processContextConfig(final Digester digester, final URL contextXml) {
+    protected void processContextConfig(final Digester digester, final URL contextXml, final InputStream stream) {
         try {
-            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml));
+            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml), stream);
         } catch (final MalformedURLException e) {
-            super.processContextConfig(digester, contextXml);
+            super.processContextConfig(digester, contextXml, stream);
         }
     }
 
@@ -272,6 +273,14 @@ public class OpenEJBContextConfig extends ContextConfig {
         if (resources instanceof OpenEJBNamingResource) {
             ((OpenEJBNamingResource) resources).setTomcatResource(false);
         }
+
+        if (context instanceof StandardContext) {
+            final StandardContext standardContext = (StandardContext) context;
+            final NamingContextListener namingContextListener = standardContext.getNamingContextListener();
+            if (null != namingContextListener) {
+                namingContextListener.setExceptionOnFailedWrite(standardContext.getJndiExceptionOnFailedWrite());
+            }
+        }
     }
 
     private void adjustDataSourceNameIfNecessary() {
@@ -301,7 +310,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                     if (ids == null) {
                         final Properties props = new Properties();
                         final OpenEjbConfiguration runningConfig = SystemInstance.get().getComponent(OpenEjbConfiguration.class);
-                        final List<String> resourceIds = new ArrayList<String>();
+                        final List<String> resourceIds = new ArrayList<>();
                         if (runningConfig != null) {
                             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
                                 if (ConfigurationFactory.isResourceType(resourceInfo.service, resourceInfo.types, "javax.sql.DataSource")
@@ -364,7 +373,7 @@ public class OpenEJBContextConfig extends ContextConfig {
     public class OpenEJBWebXml extends WebXml {
         public static final String OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY = "openejb.web.xml.major";
 
-        private String prefix;
+        private final String prefix;
         private boolean cdiConversation = false;
 
         public OpenEJBWebXml(final String prefix) {
@@ -459,7 +468,7 @@ public class OpenEJBContextConfig extends ContextConfig {
             return null;
         }
 
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        final Set<Class<?>> classes = new HashSet<>();
         for (final Set<String> entry : scanned.values()) {
             for (final String name : entry) {
                 try {
@@ -495,7 +504,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                     iterator.remove();
                 }
             }
-            initializerClassMap.put(new TomEEJasperInitializer(), new HashSet<Class<?>>());
+            initializerClassMap.put(new TomEEJasperInitializer(), new HashSet<>());
 
             final ClassLoader loader = context.getLoader().getClassLoader();
 
@@ -504,7 +513,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                 final Class<?> initializer = Class.forName("org.springframework.web.SpringServletContainerInitializer", true, loader);
                 final ServletContainerInitializer instance = (ServletContainerInitializer) initializer.newInstance();
                 typeInitializerMap.put(Class.forName("org.springframework.web.WebApplicationInitializer", true, loader), Collections.singleton(instance));
-                initializerClassMap.put(instance, new HashSet<Class<?>>());
+                initializerClassMap.put(instance, new HashSet<>());
             } catch (final Exception | NoClassDefFoundError ignored) {
                 // no-op
             }

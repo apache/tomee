@@ -28,10 +28,10 @@ public class ExampleABean_ABean extends ArtistBean implements Cmp2Entity {
     private transient boolean deleted;
     private Integer field1;
     private String field2;
-    private final Set<ExampleBBean_BBean> b = new HashSet<ExampleBBean_BBean>();
+    private final Set<ExampleBBean_BBean> b = new HashSet<>();
     private final SetValuedCmr bCmr = new SetValuedCmr(this, "b", ExampleBBean_BBean.class, "a");
 
-    private final Set<ExampleBBean_BBean> bNonCascade = new HashSet<ExampleBBean_BBean>();
+    private final Set<ExampleBBean_BBean> bNonCascade = new HashSet<>();
     private final SetValuedCmr bNonCascadeCmr = new SetValuedCmr(this, "bNonCascade", ExampleBBean_BBean.class, "aNonCascade");
 
     public Integer getId() {

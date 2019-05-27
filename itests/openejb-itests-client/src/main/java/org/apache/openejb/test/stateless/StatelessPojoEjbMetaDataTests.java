@@ -27,7 +27,7 @@ public class StatelessPojoEjbMetaDataTests extends BasicStatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbMetaData = ejbHome.getEJBMetaData();
     }
 
@@ -56,7 +56,7 @@ public class StatelessPojoEjbMetaDataTests extends BasicStatelessTestClient {
 
     /**
      * Session object identity
-     * <p/>
+     *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,

@@ -29,7 +29,7 @@ import java.util.Properties;
  *
  * @version $Rev$ $Date$
  */
-public class ServerServiceFilter implements ServerService {
+public class ServerServiceFilter extends UnwrappbleServerService {
 
     @Managed
     private final ServerService service;
@@ -76,5 +76,10 @@ public class ServerServiceFilter implements ServerService {
     @Override
     public void init(final Properties props) throws Exception {
         service.init(props);
+    }
+
+    @Override
+    protected Object getDelegate() {
+        return service;
     }
 }

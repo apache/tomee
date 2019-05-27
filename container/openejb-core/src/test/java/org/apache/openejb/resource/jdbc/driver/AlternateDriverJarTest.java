@@ -51,18 +51,14 @@ public class AlternateDriverJarTest {
         final Properties p = new Properties();
         p.put("openejb.jdbc.datasource-creator", "dbcp-alternative");
 
-        File file = new File(drivers, "derby-10.10.1.1.jar");
-        Assert.assertTrue("Failed to find: " + file, file.exists());
-
-        p.put("JdbcOne", "new://Resource?type=DataSource&classpath="
-            + file.getAbsolutePath().replace("\\", "/"));
+        p.put("JdbcOne", "new://Resource?type=DataSource&classpath=mvn:org.apache.derby:derby:10.10.1.1");
         p.put("JdbcOne.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
         p.put("JdbcOne.JdbcUrl", "jdbc:derby:memory:JdbcOne;create=true");
         p.put("JdbcOne.UserName", USER);
         p.put("JdbcOne.Password", PASSWORD);
         p.put("JdbcOne.JtaManaged", "false");
 
-        file = new File(drivers, "derby-10.9.1.0.jar");
+        final File file = new File(drivers, "derby-10.9.1.0.jar");
         Assert.assertTrue("Failed to find: " + file, file.exists());
 
         p.put("JdbcTwo", "new://Resource?type=DataSource&classpath="

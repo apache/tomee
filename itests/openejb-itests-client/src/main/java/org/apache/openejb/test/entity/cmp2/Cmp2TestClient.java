@@ -16,14 +16,13 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import java.util.Properties;
+import org.apache.openejb.test.TestManager;
+
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import org.apache.openejb.test.TestManager;
+import java.util.Properties;
 
 public abstract class Cmp2TestClient extends org.apache.openejb.test.NamedTestCase {
 

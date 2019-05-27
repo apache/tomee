@@ -16,17 +16,16 @@
  */
 package org.apache.openejb.test;
 
+import javax.naming.Context;
 import java.io.DataInputStream;
 import java.io.File;
 import java.net.URL;
 import java.util.Properties;
 
-import javax.naming.Context;
-
 /**
  * The Client test suite needs the following environment variables
  * to be set before it can be run.
- * <p/>
+ *
  * <code>test.home</code>
  * <code>server.classpath</code>
  */
@@ -104,7 +103,6 @@ public class RiTestServer implements TestServer {
      * Starts and Ri Server with the configuration file from
      * the properties used to create this RiTestServer.
      *
-     * @param confFileName
      */
     public void start() {
 

@@ -24,6 +24,9 @@ import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import org.apache.openejb.util.StringTemplate;
 
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -43,15 +46,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLServerSocketFactory;
 
 @SuppressWarnings("UnusedDeclaration")
 @Managed
-public class ServiceDaemon implements ServerService {
+public class ServiceDaemon extends UnwrappbleServerService {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER, ServiceDaemon.class);
+    private static final Logger LOG = Logger.getInstance(LogCategory.OPENEJB_SERVER, ServiceDaemon.class);
 
     @Managed
     private final ServerService next;
@@ -96,6 +96,7 @@ public class ServiceDaemon implements ServerService {
     /**
      * Gets the inetAddress number that the
      * daemon is listening on.
+     * @return 
      */
     public InetAddress getInetAddress() {
         return this.inetAddress;
@@ -181,7 +182,7 @@ public class ServiceDaemon implements ServerService {
 
             final DiscoveryAgent agent = SystemInstance.get().getComponent(DiscoveryAgent.class);
             if (agent != null && this.discoveryUriFormat != null) {
-                final Map<String, String> map = new HashMap<String, String>();
+                final Map<String, String> map = new HashMap<>();
 
                 // add all the properties that were used to construct this service
                 for (final Map.Entry<Object, Object> entry : this.props.entrySet()) {
@@ -196,7 +197,7 @@ public class ServiceDaemon implements ServerService {
                     try {
                         address = InetAddress.getLocalHost().getHostAddress();
                     } catch (UnknownHostException e) {
-                        log.error("Failed to resolve 0.0.0.0 to a routable address", e);
+                        LOG.error("Failed to resolve 0.0.0.0 to a routable address", e);
                     }
                 }
 
@@ -207,7 +208,7 @@ public class ServiceDaemon implements ServerService {
                     this.serviceUri = new URI(uriString);
                     agent.registerService(this.serviceUri);
                 } catch (Exception e) {
-                    log.error("Cannot register service '" + this.getName() + "' with DiscoveryAgent.", e);
+                    LOG.error("Cannot register service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
 
@@ -224,7 +225,7 @@ public class ServiceDaemon implements ServerService {
                 try {
                     agent.unregisterService(this.serviceUri);
                 } catch (IOException e) {
-                    log.error("Cannot unregister service '" + this.getName() + "' with DiscoveryAgent.", e);
+                    LOG.error("Cannot unregister service '" + this.getName() + "' with DiscoveryAgent.", e);
                 }
             }
             this.next.stop();
@@ -243,6 +244,7 @@ public class ServiceDaemon implements ServerService {
     /**
      * Gets the port number that the
      * daemon is listening on.
+     * @return 
      */
     @Override
     @Managed
@@ -266,6 +268,11 @@ public class ServiceDaemon implements ServerService {
     @Override
     public String getName() {
         return this.next.getName();
+    }
+
+    @Override
+    protected Object getDelegate() {
+        return next;
     }
 
     private static class SocketListener implements Runnable {
@@ -335,11 +342,11 @@ public class ServiceDaemon implements ServerService {
                     // Ignore - Should not get here on serverSocket.setSoTimeout(0)
                 } catch (SocketException e) {
                     if (!this.stop.get()) {
-                        log.debug("Socket error", e);
+                        LOG.debug("Socket error", e);
                     }
                 } catch (Throwable e) {
                     if (!this.stop.get()) {
-                        log.debug("Unexpected error", e);
+                        LOG.debug("Unexpected error", e);
                     }
                 }
             }
@@ -347,7 +354,7 @@ public class ServiceDaemon implements ServerService {
             try {
                 this.serverSocket.close();
             } catch (Throwable e) {
-                log.debug("Error cleaning up socked", e);
+                LOG.debug("Error cleaning up socked", e);
             }
         }
 

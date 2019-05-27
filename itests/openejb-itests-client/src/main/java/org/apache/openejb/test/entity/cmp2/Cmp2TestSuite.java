@@ -17,7 +17,6 @@
 package org.apache.openejb.test.entity.cmp2;
 
 import org.apache.openejb.test.TestManager;
-import org.apache.openejb.test.entity.cmr.CmrTestSuite;
 
 import javax.naming.InitialContext;
 import java.util.Properties;

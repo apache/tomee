@@ -84,7 +84,7 @@ public class LinkBuiltInTypes implements DynamicDeployer {
     private void link(final JndiConsumer consumer) {
 
 
-        final Map<String, String> links = new HashMap<String, String>();
+        final Map<String, String> links = new HashMap<>();
 
         add(links, BeanManager.class);
         add(links, Validator.class);
@@ -96,7 +96,7 @@ public class LinkBuiltInTypes implements DynamicDeployer {
         add(links, TimerService.class);
         add(links, WebServiceContext.class);
 
-        final List<JndiReference> refs = new ArrayList<JndiReference>();
+        final List<JndiReference> refs = new ArrayList<>();
         refs.addAll(consumer.getResourceRef());
         refs.addAll(consumer.getResourceEnvRef());
 

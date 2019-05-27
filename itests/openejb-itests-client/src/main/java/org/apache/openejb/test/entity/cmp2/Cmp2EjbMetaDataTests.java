@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.test.entity.cmp2;
 
-import javax.ejb.EJBHome;
-
 import org.apache.openejb.test.entity.cmp.BasicCmpHome;
 import org.apache.openejb.test.entity.cmp.BasicCmpObject;
+
+import javax.ejb.EJBHome;
 
 /**
  * [8] Should be run as the eigth test suite of the BasicCmpTestClients
@@ -33,7 +33,7 @@ public class Cmp2EjbMetaDataTests extends BasicCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp2/BasicCmpHome");
-        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) obj;
         ejbMetaData = ejbHome.getEJBMetaData();
     }
 

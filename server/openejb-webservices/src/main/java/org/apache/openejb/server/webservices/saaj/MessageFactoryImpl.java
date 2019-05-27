@@ -28,10 +28,12 @@ public class MessageFactoryImpl extends MessageFactory {
         return (MessageFactory) SaajFactoryFinder.find("javax.xml.soap.MessageFactory");
     }
 
+    @Override
     public SOAPMessage createMessage() throws SOAPException {
         return getMessageFactory().createMessage();
     }
 
+    @Override
     public SOAPMessage createMessage(MimeHeaders arg0, InputStream arg1) throws IOException, SOAPException {
         return getMessageFactory().createMessage(arg0, arg1);
     }

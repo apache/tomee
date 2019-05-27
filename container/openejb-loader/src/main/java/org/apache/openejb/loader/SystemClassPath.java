@@ -18,16 +18,19 @@ package org.apache.openejb.loader;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import static org.apache.openejb.loader.JarLocation.jarLocation;
+
 /*-------------------------------------------------------*/
 /* System ClassLoader Support */
 /*-------------------------------------------------------*/
-
+// TODO: we should get rid of it in favor of a custom root loader or flat classpath (ContextClassPath) and update Bootstrap to handle it
 public class SystemClassPath extends BasicURLClassPath {
 
     private URLClassLoader sysLoader;
@@ -35,13 +38,17 @@ public class SystemClassPath extends BasicURLClassPath {
     @Override
     public void addJarsToPath(final File dir) throws Exception {
         this.addJarsToPath(dir, getSystemLoader());
-        this.rebuildJavaClassPathVariable();
+        if (getSystemLoader() == ClassLoader.getSystemClassLoader()) {
+            this.rebuildJavaClassPathVariable();
+        }
     }
 
     @Override
     public void addJarToPath(final URL jar) throws Exception {
         this.addJarToPath(jar, getSystemLoader());
-        this.rebuildJavaClassPathVariable();
+        if (getSystemLoader() == ClassLoader.getSystemClassLoader()) {
+            this.rebuildJavaClassPathVariable();
+        }
     }
 
     @Override
@@ -55,9 +62,21 @@ public class SystemClassPath extends BasicURLClassPath {
 
     private URLClassLoader getSystemLoader() throws Exception {
         if (sysLoader == null) {
-            sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            final ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
+            sysLoader = URLClassLoader.class.isInstance(systemClassLoader) ?
+                    URLClassLoader.class.cast(systemClassLoader) : createCustomizableURLClassLoader(systemClassLoader);
         }
         return sysLoader;
+    }
+
+    private CustomizableURLClassLoader createCustomizableURLClassLoader(final ClassLoader systemClassLoader) {
+        final CustomizableURLClassLoader customizableURLClassLoader = new CustomizableURLClassLoader(systemClassLoader);
+        try {
+            customizableURLClassLoader.add(jarLocation(SystemClassPath.class).toURI().toURL());
+        } catch (final MalformedURLException e) {
+            // no-op
+        }
+        return customizableURLClassLoader;
     }
 
     private void rebuildJavaClassPathVariable() throws Exception {

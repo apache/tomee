@@ -29,7 +29,7 @@ import javax.transaction.Transactional;
 
 @Interceptor
 @Transactional(Transactional.TxType.MANDATORY)
-@Priority(200)
+@Priority(Interceptor.Priority.PLATFORM_BEFORE + 200)
 public class MandatoryInterceptor extends InterceptorBase {
     @AroundInvoke
     public Object intercept(final InvocationContext ic) throws Exception {

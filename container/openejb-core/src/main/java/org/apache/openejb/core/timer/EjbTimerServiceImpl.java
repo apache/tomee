@@ -386,7 +386,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 }
 
                 final CountDownLatch shutdownWait = new CountDownLatch(1);
-                final AtomicReference<Throwable> ex = new AtomicReference<Throwable>();
+                final AtomicReference<Throwable> ex = new AtomicReference<>();
 
                 String n = "Unknown";
                 try {
@@ -584,7 +584,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public Collection<Timer> getTimers(final Object primaryKey) throws IllegalStateException {
         checkState();
 
-        final Collection<Timer> timers = new ArrayList<Timer>();
+        final Collection<Timer> timers = new ArrayList<>();
         for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
             // if (!CalendarTimerData.class.isInstance(timerData) || !CalendarTimerData.class.cast(timerData).isAutoCreated()) {
                 timers.add(timerData.getTimer());
@@ -748,7 +748,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
     /**
      * This method calls the ejbTimeout method and starts a transaction if the timeout is transacted.
-     * <p/>
+     *
      * This method will retry failed ejbTimeout calls until retryAttempts is exceeded.
      *
      * @param timerData the timer to call.

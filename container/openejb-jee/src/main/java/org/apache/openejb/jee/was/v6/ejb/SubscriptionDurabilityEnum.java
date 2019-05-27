@@ -20,21 +20,21 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p/>
+ *
  * Java class for SubscriptionDurabilityKind.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="SubscriptionDurabilityKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Durable"/>
- *     &lt;enumeration value="NonDurable"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="SubscriptionDurabilityKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Durable"/&gt;
+ *     &lt;enumeration value="NonDurable"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

@@ -18,22 +18,22 @@ package org.apache.openejb.test.entity.cmr;
 
 import org.apache.openejb.test.entity.cmr.onetomany.ArtistLocal;
 import org.apache.openejb.test.entity.cmr.onetomany.ArtistLocalHome;
+import org.apache.openejb.test.entity.cmr.onetomany.ArtistPk;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocal;
 import org.apache.openejb.test.entity.cmr.onetomany.SongLocalHome;
-import org.apache.openejb.test.entity.cmr.onetomany.ArtistPk;
 import org.apache.openejb.test.entity.cmr.onetomany.SongPk;
 
-import javax.ejb.FinderException;
 import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * @version $Revision$ $Date$

@@ -1,0 +1,87 @@
+= Local Client Injection
+:index-group: Testing Techniques
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+The _`@LocalClient_` annotation (org.apache.openejb.api.LocalClient) is an
+innovation that crosses concepts of an Java EE Application Client with a
+plain Java SE client. This particular annotation is focused on clients
+of an Embeddable EJB container, i.e. local clients. There is another
+annotation in development called `@RemoteClient` that will be focused on
+remote clients; clients running outside the vm the container runs.
+
+Any clients annotated with `@LocalClient` will be scanned at deployment
+time for usage of injection-related annotations. The references in the
+@LocalClient will be processed with the application just as if the class
+was a Java EE Application Client module, but with a few slight
+differences:
+
+[arabic]
+. Declaring field/method injection points as 'static' is not required
+. References to EntityManagers via `@PersistenceContext` are allowed
+. References to local business interfaces via `@EJB` is allowed
+. References to UserTransaction via `@Resource` is allowed
+
+As well since this is not a heavyweight Java EE Application Client, you
+are not required to use any special packaging or command-line parameters
+to run the client. Your client can be a Unit Test or any plain java code
+that needs to pull objects from the Embedded EJB container. Classes with
+@LocalClient can be placed in a Client module or an EJB module. A given
+module may have as many classes annotated with `@LocalClient` as it
+wishes.
+
+= Injection
+
+The injection occurs via acquiring a LocalInitialContext via the
+LocalInitialContextFactory and calling _bind("inject", instance)_
+passing in the instantiated local client object:
+
+[source,java]
+----
+@LocalClient
+public class MoviesTest extends TestCase {
+
+    @EJB
+    private Movies movies;
+
+    @Resource
+    private UserTransaction userTransaction;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public void setUp() throws Exception {
+    Properties p = new Properties();
+    p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+    InitialContext initialContext = new InitialContext(p);
+    initialContext.bind("inject", this);
+    }
+
+    //... other test methods
+}
+----
+
+= Discovery
+
+All EJB modules are scanned for `@LocalClient` classes, even if those EJB
+Modules are inside .war files as with the
+link:collapsed-ear.html[Collapsed EAR] . As well any modules that
+contain a META-INF/application-client.xml file will be scanned for
+@LocalClient classes.
+
+If you see the following error message and are absolutely sure the
+module containing your `@LocalClient` class is being properly identified
+as an EJB module or a Client module, than it is possible you are seeing
+some classloading issues.
+
+\{panel} javax.naming.NamingException: Unable to find injection
+meta-data for org.superbiz.MyClient. Ensure that class was annotated
+with `@org`.apache.openejb.api.LocalClient and was successfully discovered
+and deployed. \{panel}
+
+If you encounter this try setting this openejb-specific boot flag so
+that annotations will be treated specially and always loaded by the
+parent classloader
+
+`openejb.tempclassloader.skip=annotations`

@@ -28,18 +28,18 @@ import java.util.Collections;
 public class UrlComparatorTest extends TestCase {
 
     public void test() throws Exception {
-        final ArrayList<URL> urls = new ArrayList<URL>();
+        final ArrayList<URL> urls = new ArrayList<>();
 
         urls.add(new URL("file:///Users/lblack/four"));
         urls.add(new URL("file:///Users/jstuart/two"));
         urls.add(new URL("file:///Users/jstuart/one"));
         urls.add(new URL("file:///Users/scobert/three"));
 
-        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart")));
+        urls.sort(new UrlComparator(new URL("file:///Users/jstuart")));
 
         assertEquals(new URL("file:///Users/jstuart/two"), urls.get(0));
 
-        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart/one")));
+        urls.sort(new UrlComparator(new URL("file:///Users/jstuart/one")));
 
         assertEquals(new URL("file:///Users/jstuart/one"), urls.get(0));
     }

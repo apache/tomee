@@ -29,7 +29,7 @@ import java.util.Properties;
  */
 public class DeploymentContext {
     private final String id;
-    private final Map<Class, Object> data = new HashMap<Class, Object>();
+    private final Map<Class, Object> data = new HashMap<>();
     private final Properties properties = new SuperProperties().caseInsensitive(true);
     private final Options options;
 

@@ -1,0 +1,139 @@
+= Spring
+:index-group: Spring
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+\{note} This document and the related feature is considered a prototype
+and will change based on user feedback. All comments suggestions
+welcome. \{note}
+
+= Introduction
+
+The OpenEJB Spring integration makes all Spring defined beans injectable
+to Java EE components, and all Java EE components can be injected to
+Spring beans. The injection system supports arbitrarily complex nesting
+(e.g., Spring bean injected into a Java EE component, which is then
+injected into another Spring bean), including:
+
+* @Resouce injection of any Spring bean into EJB
+* Injection of any Java EE resource into a Spring bean, including: **
+EJB 3.0 beans ** EJB 3.1 Singleton Bean ** JDBC Connector ** JMS
+Connector ** JMS Queue and Topic ** Generic Java EE Connector (JCA)
+
+In addition, the OpenEJB Spring integration add support for discovery
+and deployment of standard Java EE packages within a Spring context,
+including:
+
+* EAR
+* EJB Jar
+* Persistence Unit
+* RAR
+
+_Requirements:_ * OpenEJB 3.1+ * Spring X.X * Java 1.5 or 1.6
+
+= Spring Beans
+
+The following beans are usable in any spring xml file.
+
+Class
+
+Description
+
+org.apache.openejb.spring.ClassPathApplication
+
+Scrapes the classpath for all EJB, RAR, and Persistence applications,
+deploys them, and imports them into the current ApplicationContext. All
+applications found are treated as one big EAR unless the
+_classpathAsEar_ property is set to _false_
+
+org.apache.openejb.spring.Application
+
+Scrapes an individual jar file for EJB, RAR, and Persistence
+applications, deploys them, and imports them into the current
+ApplicationContext. The 'jarFile' property is required. The application
+is treated as it's own self-contained EAR, separate from other uses of
+'Application'
+
+org.apache.openejb.spring.Resource
+
+Allows an OpenEJB to be declared in the Spring ApplicationContext
+
+org.apache.openejb.spring.OpenEJBResource
+
+A FactoryBean that imports a Resource from OpenEJB into the Spring
+ApplicationContext. Has the following properties: _type_ such as
+javax.sql.DataSource, and _resourceId_. In the future this bean will not
+be required and all OpenEJB Resources will automatically be imported
+into the Spring ApplicationContext
+
+org.apache.openejb.spring.BmpContainer
+
+Allows an OpenEJB BMP to be declared in the Spring ApplicationContext.
+Has the following properties: _poolSize_
+
+org.apache.openejb.spring.CmpContainer
+
+Allows an OpenEJB CMP to be declared in the Spring ApplicationContext.
+
+org.apache.openejb.spring.SingletonContainer
+
+Allows an OpenEJB Singleton to be declared in the Spring
+ApplicationContext. Has the following properties: _accessTimeout_
+
+org.apache.openejb.spring.StatefulContainer
+
+Allows an OpenEJB Stateful to be declared in the Spring
+ApplicationContext. Has the following properties: _timeOut_
+
+org.apache.openejb.spring.StatelessContainer
+
+Allows an OpenEJB Stateful to be declared in the Spring
+ApplicationContext. Has the following properties: _timeOut_, _poolSize_,
+and _strictPooling_
+
+org.apache.openejb.spring.MdbContainer
+
+Allows an OpenEJB Message-Driven to be declared in the Spring
+ApplicationContext. Has the following properties: _resourceAdapter_,
+_messageListenerInterface_, _activationSpecClass_, and _instanceLimit_
+
+org.apache.openejb.spring.EJB
+
+A FactoryBean that imports an EJB from OpenEJB into the Spring
+ApplicationContext. One of these is automatically created for each
+interface of each EJB, but explicit use can be nice if you desire to
+import an EJB with a specific name. Has the following properties:
+_deploymentId_, _interface_
+
+= Examples
+
+See the link:spring-ejb-and-jpa.html[Spring EJB and JPA] page for
+example code and a working Spring xml file.
+
+= \{anchor:problems} Problems?
+
+If you are having problems with the installation, please send a message
+to the OpenEJB users link:mailing-lists.html[mailing list] containing
+any error message(s) and the following information:
+
+* OpenEJB Version
+* Spring Version
+* Java Version (execute java -version)
+* Operating System Type and Version
+
+= Limitations
+
+_JavaAgent_ - OpenEJB uses OpenJPA to provide JPA and CMP persistence,
+and OpenJPA currently requires a JavaAgent to function properly in a
+Java 1.5 environment. OpenJPA does not require a JavaAgent in Java 1.6.
+Use Hibernate as your the provider in your persistence.xml files if you
+wish to avoid this requirement.
+
+_EntityManager_ - Having an OpenEJB created EntityManager or
+EntityManagerFactory injected into Spring beans is currently not
+supported. This will be added to the next release. A small workaround
+for this is to use an EJB as a factory by adding a 'getEntityManager'
+method an using it as a
+http://static.springframework.org/spring/docs/2.5.x/reference/beans.html#beans-factory-class-instance-factory-method[Spring
+instance factory method] .

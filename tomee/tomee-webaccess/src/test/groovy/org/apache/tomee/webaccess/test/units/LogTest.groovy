@@ -21,6 +21,7 @@ package org.apache.tomee.webaccess.test.units
 import groovy.json.JsonSlurper
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
 import org.apache.tomee.webaccess.rest.ApplicationConfig
 import org.apache.tomee.webaccess.rest.Authentication
 import org.apache.tomee.webaccess.rest.Log
@@ -30,6 +31,7 @@ import org.jboss.arquillian.container.test.api.Deployment
 import org.jboss.arquillian.junit.Arquillian
 import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.shrinkwrap.api.ShrinkWrap
+import org.jboss.shrinkwrap.api.asset.UrlAsset
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Assert
 import org.junit.Test
@@ -43,18 +45,20 @@ class LogTest {
 
     @Deployment
     static WebArchive createDeployment() {
+        ClassLoader cl = LogTest.class.getClassLoader();
         Utilities.copyFile('test/loginScript.js', 'conf/loginScript.js')
         Utilities.copyFile('test/login.config', 'conf/login.config')
         Utilities.copyFile('test/log/catalina.2014-02-07.log', 'logs/catalina.2014-02-07.log')
         Utilities.copyFile('test/log/localhost_access_log.2014-02-07.txt', 'logs/localhost_access_log.2014-02-07.txt')
-        ShrinkWrap.create(WebArchive, 'webaccess.war').addClasses(
+        return ShrinkWrap.create(WebArchive, 'webaccess.war').addClasses(
                 Log,
                 ApplicationConfig,
                 Authentication,
                 Log,
                 LogServiceImpl,
-                LogTest
-        ).addAsWebResource(new File('src/test/resources/test/context.xml'), 'META-INF/context.xml')
+                LogTest,
+                ListFilesResultDto
+        ).addAsWebResource(new UrlAsset(cl.getResource('test/context.xml')), 'META-INF/context.xml')
     }
 
     @Test
@@ -63,9 +67,8 @@ class LogTest {
             def json = new JsonSlurper().parseText(
                     Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/log/list-files")))
             )
-            Assert.assertEquals(
-                    new JsonSlurper().parseText('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}'),
-                    json
+            Assert.assertTrue(
+                    new JsonSlurper().parseText('{"files":["catalina.2014-02-07.log","localhost_access_log.2014-02-07.txt"]}').toString().contains(json.toString())
             )
             Utilities.getBody(client.execute(new HttpGet("${deploymentURL.toURI()}rest/keep-alive")))
         })

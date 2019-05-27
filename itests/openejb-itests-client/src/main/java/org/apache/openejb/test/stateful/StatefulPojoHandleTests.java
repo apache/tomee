@@ -16,9 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
-import java.rmi.NoSuchObjectException;
-
 import javax.ejb.EJBObject;
+import java.rmi.NoSuchObjectException;
 
 public class StatefulPojoHandleTests extends BasicStatefulTestClient {
 
@@ -29,7 +28,7 @@ public class StatefulPojoHandleTests extends BasicStatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
-        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+        ejbHome = (BasicStatefulHome) obj;
         ejbObject = ejbHome.createObject("StatefulPojoHandleTests Bean");
         ejbHandle = ejbObject.getHandle();
     }

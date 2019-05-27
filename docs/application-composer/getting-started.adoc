@@ -1,0 +1,234 @@
+= Application Composer Getting Started
+
+ApplicationComposer API is mainly contained in
+`org.apache.openejb.testing` package (historically, today we would have
+called the package `org.apache.tomee.applicationcomposer`).
+
+== Dependencies
+
+To start using ApplicationComposer you need to add some dependencies.
+
+The minimum required one is `openejb-core`:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.openejb</groupId>
+  <artifactId>openejb-core</artifactId>
+  <version>${openejb.version></version>
+</dependency>
+----
+
+If you need JAXRS services you'll add (or replace thanks to transitivity
+of maven) `openejb-cxf-rs`:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.openejb</groupId>
+  <artifactId>openejb-cxf-rs</artifactId>
+  <version>${openejb.version></version>
+</dependency>
+----
+
+If you need JAXWS services you'll add (or replace thanks to transitivity
+of maven) `openejb-cxf`:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.openejb</groupId>
+  <artifactId>openejb-cxf</artifactId>
+  <version>${openejb.version></version>
+</dependency>
+----
+
+etc...
+
+== ApplicationComposer Components
+
+=== @Module
+
+An ApplicationComposer needs at minimum a module (the application you
+need to deploy).
+
+To do so you have two cases:
+
+* before TomEE 2.x: you can only write method(s) decorated with
+`@Module`
+* since TomEE 2.x: you can skip it and use `@Classes` directly on the
+ApplicationComposer class as a shortcut for:
++
+@Module public WebApp app() \{ return new WebApp(); }
+
+The expected returned type of these methods are in
+`org.apache.openejb.jee` package:
+
+* `Application`: entry point to create an ear
+* `WebApp`: a web application
+* `EjbJar`: an ejb module
+* `EnterpriseBean` children: a simple EJB
+* `Persistence`: a persistence module with multiple units
+* `PersistenceUnit`: a simple unit (automatically wrapped in a
+`Persistence`)
+* `Connector`: a JCA connector module
+* `Beans`: a CDI module,
+* `Class[]` or `Class`: a set of classes scanned to discover annotations
+
+Note that for easiness `@Classes` was added to be able to describe a
+module and some scanned classes. For instance the following snippet will
+create a web application with classes C1, C2 as CDI beans and E1 as an
+EJB automatically:
+
+[source,java]
+----
+@Module
+@Classes(cdi = true, value = { C1.class, C2.class, E1.class })
+public WebApp app() {
+    return new WebApp();
+}
+----
+
+=== @Configuration
+
+Often you need to customize a bit the container or at least create some
+resources like test databases. To do so you can create a method
+returning `Properties` which will be the container properties.
+
+Note: to simplify writing properties you can use `PropertiesBuilder`
+util class which is just a fluent API to write properties.
+
+In these properties you can reuse OpenEJB/TomEE property syntax for
+resources.
+
+Here is a sample:
+
+[source,java]
+----
+@Configuration
+public Properties configuration() {
+    return new PropertiesBuilder()
+        .p("db", "new://Resource?type=DataSource")
+        .p("db.JdbcUrld", "jdbc:hsqldb:mem:test")
+        .build();
+}
+----
+
+Since TomEE 2.x you can also put properties on ApplicationComposer class
+using `@ContainerProperties` API:
+
+[source,java]
+----
+@ContainerProperties({
+  @ContainerProperties.Property(name = "db", value = "new://Resource?type=DataSource"),
+  @ContainerProperties.Property(name = "db.JdbcUrl", value = "jdbc:hsqldb:mem:test")
+})
+public class MyAppComposer() {
+  // ...
+}
+----
+
+=== @Component
+
+Sometimes you need to customize a container component. The most common
+use case is the security service to mock a little bit authorization if
+you don't care in your test.
+
+To do so just write a method decorated with `@Component` returning the
+instance you desire.
+
+Components in TomEE are stored in a container Map and the key needs to
+be a `Class`. This one is deduced from the returned type of the
+`@Component` method:
+
+[source,java]
+----
+@Component
+public SecurityService mockSecurity() {
+    return new MySecurityService();
+}
+----
+
+== How to run it?
+
+=== JUnit
+
+If you use JUnit you have mainly 2 solutions to run you "model" using
+the ApplicationComposer:
+
+* using `ApplicationComposer` runner:
++
+@RunWith(ApplicationComposer.class) public class MyTest \{ // ... }
+* using `ApplicationComposerRule` rule:
++
+public class MyTest \{ `@Rule` // or `@ClassRule` if you want the
+container/application lifecycle be bound to the class and not test
+methods public final ApplicationComposerRule rule = new
+ApplicationComposerRule(this); }
+
+Tip: since TomEE 2.x ApplicationComposerRule is decomposed in 2 rules if
+you need: `ContainerRule` and `DeployApplication`. Using JUnit
+`RuleChain` you can chain them to get the samebehavior as
+`ApplicationComposerRule` or better deploy multiple ApplicationComposer
+models and controlling their deployment ordering (to mock a remote
+service for instance).
+
+Finally just write `@Test` method using test class injections as if the
+test class was a managed bean!
+
+=== TestNG
+
+TestNG integration is quite simple today and mainly
+`ApplicationComposerListener` class you can configure as a listener to
+get ApplicationComposer features.
+
+Finally just write TestNG `@Test` method using test class injections as
+if the test class was a managed bean!
+
+=== Standalone
+
+Since TomEE 2.x you can also use `ApplicationComposers` to directly run
+you ApplicationComposer model as a standalone application:
+
+[source,java]
+----
+public class MyApp {
+    public static void main(String[] args) {
+        ApplicationComposers.run(MyApp.class, args);
+    }
+
+    // @Module, @Configuration etc...
+}
+----
+
+Tip: if `MyApp` has `@PostConstruct` methods they will be respected and
+if `MyApp` has a constructor taking an array of String it will be
+instantiated getting the second parameter as argument (ie you can
+propagate your main parameter to your model to modify your application
+depending it!)
+
+== JUnit Sample
+
+[source,java]
+----
+@Classes(cdi = true, value = { MyService.class, MyOtherService.class })
+@ContainerProperties(@ContainerProperties.Property(name = "myDb", value = "new://Resource?type=DataSource"))
+@RunWith(ApplicationComposer.class)
+public class MyTest {
+    @Resource(name = "myDb")
+    private DataSource ds;
+
+    @Inject
+    private MyService service;
+
+    @Test
+    public void myTest() {
+        // do test using injections
+    }
+}
+----
+
+== Going further
+
+If you want to learn more about ApplicationComposer see
+link:advanced.html[Advanced] page.

@@ -16,13 +16,12 @@
  */
 package org.apache.openejb.test;
 
-import java.rmi.RemoteException;
-import java.util.Properties;
-
-import javax.naming.InitialContext;
-
 import org.apache.openejb.test.beans.Database;
 import org.apache.openejb.test.beans.DatabaseHome;
+
+import javax.naming.InitialContext;
+import java.rmi.RemoteException;
+import java.util.Properties;
 
 public class InstantDbTestDatabase implements TestDatabase {
 
@@ -128,7 +127,7 @@ public class InstantDbTestDatabase implements TestDatabase {
         try {
             /* Create database */
             obj = initialContext.lookup("client/tools/DatabaseHome");
-            databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+            databaseHome = (DatabaseHome) obj;
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot find 'client/tools/DatabaseHome': " + e.getClass().getName() + " " + e.getMessage());
         }

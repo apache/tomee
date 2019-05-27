@@ -16,18 +16,18 @@
  */
 package org.apache.openejb.test.singleton;
 
-import org.apache.openejb.test.object.OperationsPolicy;
 import org.apache.openejb.test.beans.TimerSync;
+import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * [10] Should be run as the nineth test suite of the BasicSingletonTestClients
- * <p/>
+ *
  * <PRE>
  * =========================================================================
  * Operations allowed in the methods of a singleton SessionBean with
  * bean-managed transaction demarcation
  * =========================================================================
- * <p/>
+ *
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
  * |
@@ -68,7 +68,7 @@ public class BMTSingletonAllowedOperationsTests extends BasicSingletonTestClient
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BeanManagedBasicSingletonHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
         timerSync = (TimerSync) initialContext.lookup("TimerSyncBeanBusinessRemote");

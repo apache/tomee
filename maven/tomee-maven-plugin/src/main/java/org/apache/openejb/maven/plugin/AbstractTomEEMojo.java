@@ -99,37 +99,73 @@ import static org.codehaus.plexus.util.FileUtils.deleteDirectory;
 import static org.codehaus.plexus.util.IOUtil.close;
 import static org.codehaus.plexus.util.IOUtil.copy;
 
+/**
+ * The type AbstractTomEEMojo is the base class to all the maven actions privided by the plugin.
+ */
 public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     // if we get let say > 5 patterns like it we should create a LocationAnalyzer
     // for < 5 patterns it should be fine
     private static final String NAME_STR = "?name=";
     private static final String UNZIP_PREFIX = "unzip:";
     private static final String REMOVE_PREFIX = "remove:";
+    /**
+     * The constant QUIT_CMD.
+     */
     public static final String QUIT_CMD = "quit";
+    /**
+     * The constant EXIT_CMD.
+     */
     public static final String EXIT_CMD = "exit";
+    /**
+     * The constant TOM_EE.
+     */
     public static final String TOM_EE = "TomEE";
 
+    /**
+     * The Factory.
+     */
     @Component
     protected ArtifactFactory factory;
 
+    /**
+     * The Resolver.
+     */
     @Component
     protected ArtifactResolver resolver;
 
+    /**
+     * The Local.
+     */
     @Parameter(defaultValue = "${localRepository}", readonly = true)
     protected ArtifactRepository local;
 
+    /**
+     * The Remote repos.
+     */
     @Parameter(defaultValue = "${project.remoteArtifactRepositories}", readonly = true)
     protected List<ArtifactRepository> remoteRepos;
 
+    /**
+     * The Skip current project.
+     */
     @Parameter(property = "tomee-plugin.skipCurrentProject", defaultValue = "false")
     protected boolean skipCurrentProject;
 
+    /**
+     * The TomEE version.
+     */
     @Parameter(property = "tomee-plugin.version", defaultValue = "-1")
     protected String tomeeVersion;
 
+    /**
+     * The TomEE group id.
+     */
     @Parameter(property = "tomee-plugin.groupId", defaultValue = "org.apache.tomee")
     protected String tomeeGroupId;
 
+    /**
+     * The TomEE artifact id.
+     */
     @Parameter(property = "tomee-plugin.artifactId", defaultValue = "apache-tomee")
     protected String tomeeArtifactId;
 
@@ -139,6 +175,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.type", defaultValue = "zip", readonly = true)
     protected String tomeeType;
 
+    /**
+     * The Apache repos.
+     */
     @Parameter(property = "tomee-plugin.apache-repos", defaultValue = "snapshots")
     protected String apacheRepos;
 
@@ -148,45 +187,87 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(property = "tomee-plugin.classifier", defaultValue = "webprofile")
     protected String tomeeClassifier;
 
+    /**
+     * The TomEE shutdown port.
+     */
     @Parameter(property = "tomee-plugin.shutdown")
     protected String tomeeShutdownPort;
 
+    /**
+     * The TomEE shutdown attempts.
+     */
     @Parameter(property = "tomee-plugin.shutdown.attempts", defaultValue = "60")
     protected int tomeeShutdownAttempts;
 
+    /**
+     * The TomEE shutdown command.
+     */
     @Parameter(property = "tomee-plugin.shutdown-command", defaultValue = "SHUTDOWN")
     protected String tomeeShutdownCommand;
 
+    /**
+     * The TomEE ajp port.
+     */
     @Parameter(property = "tomee-plugin.ajp")
     protected String tomeeAjpPort;
 
+    /**
+     * The Args.
+     */
     @Parameter(property = "tomee-plugin.args")
     protected String args;
 
+    /**
+     * The Debug.
+     */
     @Parameter(property = "tomee-plugin.debug", defaultValue = "false")
     protected boolean debug;
 
+    /**
+     * The Simple log.
+     */
     @Parameter(property = "tomee-plugin.simple-log", defaultValue = "false")
     protected boolean simpleLog;
 
+    /**
+     * The Extract wars.
+     */
     @Parameter(property = "tomee-plugin.extractWars", defaultValue = "false")
     protected boolean extractWars;
 
+    /**
+     * The Strip war version.
+     */
     @Parameter(property = "tomee-plugin.stripWarVersion", defaultValue = "true")
     protected boolean stripWarVersion;
 
+    /**
+     * The Strip version.
+     */
     @Parameter(property = "tomee-plugin.stripVersion", defaultValue = "false")
     protected boolean stripVersion;
 
+    /**
+     * The Debug port.
+     */
     @Parameter(property = "tomee-plugin.debugPort", defaultValue = "5005")
     protected int debugPort;
 
+    /**
+     * The Webapp resources.
+     */
     @Parameter(defaultValue = "${project.basedir}/src/main/webapp", property = "tomee-plugin.webappResources")
     protected File webappResources;
 
+    /**
+     * The Webapp classes.
+     */
     @Parameter(defaultValue = "${project.build.outputDirectory}", property = "tomee-plugin.webappClasses")
     protected File webappClasses;
 
+    /**
+     * The Catalina base.
+     */
     @Parameter(defaultValue = "${project.build.directory}/apache-tomee", property = "tomee-plugin.catalina-base")
     protected File catalinaBase;
 
@@ -214,39 +295,75 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter(defaultValue = "lib")
     protected String libDir;
 
+    /**
+     * The Main dir.
+     */
     @Parameter(defaultValue = "${project.basedir}/src/main")
     protected File mainDir;
 
+    /**
+     * The Target.
+     */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File target;
 
+    /**
+     * The Config.
+     */
     @Parameter(property = "tomee-plugin.conf", defaultValue = "${project.basedir}/src/main/tomee/conf")
     protected File config;
 
+    /**
+     * The Bin.
+     */
     @Parameter(property = "tomee-plugin.bin", defaultValue = "${project.basedir}/src/main/tomee/bin")
     protected File bin;
 
+    /**
+     * The Lib.
+     */
     @Parameter(property = "tomee-plugin.lib", defaultValue = "${project.basedir}/src/main/tomee/lib")
     protected File lib;
 
+    /**
+     * The System variables.
+     */
     @Parameter
     protected Map<String, String> systemVariables;
 
+    /**
+     * The Classpaths.
+     */
     @Parameter
     protected List<String> classpaths;
 
+    /**
+     * The Classpath separator.
+     */
     @Parameter(property = "tomee-plugin.classpathSeparator")
     protected String classpathSeparator;
 
+    /**
+     * The Customizers.
+     */
     @Parameter
     protected List<String> customizers;
 
+    /**
+     * The Js customizers.
+     */
     @Parameter
     protected List<String> jsCustomizers;
 
+    /**
+     * The Groovy customizers.
+     */
     @Parameter
     protected List<String> groovyCustomizers;
 
+    /**
+     * The Project.
+     */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
@@ -283,57 +400,111 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     @Parameter
     protected List<String> libs;
 
+    /**
+     * The Endorsed libs.
+     */
     @Parameter
     protected List<String> endorsedLibs;
 
+    /**
+     * The Javaagents.
+     */
     @Parameter
     protected List<String> javaagents;
 
+    /**
+     * The Persist javaagents.
+     */
     @Parameter(property = "tomee-plugin.persist-javaagents", defaultValue = "false")
     protected boolean persistJavaagents;
 
+    /**
+     * The Webapps.
+     */
     @Parameter
     protected List<String> webapps;
 
+    /**
+     * The Apps.
+     */
     @Parameter
     protected List<String> apps;
 
+    /**
+     * The Classes.
+     */
     @Parameter(property = "tomee-plugin.classes", defaultValue = "${project.build.outputDirectory}", readonly = true)
     protected File classes;
 
+    /**
+     * The War file.
+     */
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.${project.packaging}")
     protected File warFile;
 
+    /**
+     * The Work war file.
+     */
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}", readonly = true)
     protected File workWarFile;
 
+    /**
+     * The Final name.
+     */
     @Parameter(defaultValue = "${project.build.finalName}", readonly = true)
     protected String finalName;
 
+    /**
+     * The Artifact id.
+     */
     @Parameter(defaultValue = "${project.artifactId}", readonly = true)
     protected String artifactId;
 
+    /**
+     * The Remove default webapps.
+     */
     @Parameter(property = "tomee-plugin.remove-default-webapps", defaultValue = "true")
     protected boolean removeDefaultWebapps;
 
+    /**
+     * The Deploy open ejb application.
+     */
     @Parameter(property = "tomee-plugin.deploy-openejb-internal-application", defaultValue = "false")
     protected boolean deployOpenEjbApplication;
 
+    /**
+     * The Remove tomee webapp.
+     */
     @Parameter(property = "tomee-plugin.remove-tomee-webapps", defaultValue = "true")
     protected boolean removeTomeeWebapp;
 
+    /**
+     * The Ejb remote.
+     */
     @Parameter(property = "tomee-plugin.ejb-remote", defaultValue = "true")
     protected boolean ejbRemote;
 
+    /**
+     * The Packaging.
+     */
     @Parameter(defaultValue = "${project.packaging}", readonly = true)
     protected String packaging;
 
+    /**
+     * The Check started.
+     */
     @Parameter(property = "tomee-plugin.check-started", defaultValue = "false")
     protected boolean checkStarted;
 
+    /**
+     * The Use console.
+     */
     @Parameter(property = "tomee-plugin.use-console", defaultValue = "true")
     protected boolean useConsole;
 
+    /**
+     * The TomEE already installed.
+     */
     @Parameter(property = "tomee-plugin.exiting", defaultValue = "false")
     protected boolean tomeeAlreadyInstalled;
 
@@ -388,14 +559,23 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
      * the actual path used in server.xml for the https keystore if relevant.
      * Common usage will be to put in src/main/tomee/conf a keystore foo.jks
      * and set this value to ${catalina.base}/foo.jks.
-     * <p/>
+     *
      * Note: if not set we'll check for any *.jks in conf/. You can set it to "ignore" to skip this.
      */
     @Parameter(property = "tomee-plugin.keystore")
     protected String keystore;
 
+    /**
+     * The Deployed file.
+     */
     protected File deployedFile = null;
+    /**
+     * The Server.
+     */
     protected RemoteServer server = null;
+    /**
+     * The Container.
+     */
     protected String container = TOM_EE;
 
     @Override
@@ -613,6 +793,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return new URLClassLoader(urls.toArray(new URL[urls.size()]), parent);
     }
 
+    /**
+     * Fix config.
+     */
     protected void fixConfig() {
         if (useOpenEJB) {
             tomeeGroupId = "org.apache.tomee";
@@ -641,6 +824,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
+    /**
+     * Gets additional classpath.
+     *
+     * @return the additional classpath
+     */
     protected String getAdditionalClasspath() {
         if (!classpaths.isEmpty()) {
             final StringBuilder cpBuilder = new StringBuilder();
@@ -930,6 +1118,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         deployedFile = out;
     }
 
+    /**
+     * Destination name string.
+     *
+     * @return the string
+     */
     protected String destinationName() {
         if (context != null) {
             if (!context.contains(".") && !warFile.isDirectory()) {
@@ -1038,7 +1231,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
 
         final File[] files = dir.listFiles();
         if (files != null) {
-            final Collection<File> copied = new ArrayList<File>();
+            final Collection<File> copied = new ArrayList<>();
             for (final File f : files) {
                 if (f.isHidden()) {
                     continue;
@@ -1078,6 +1271,9 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return Collections.emptyList();
     }
 
+    /**
+     * Run.
+     */
     protected void run() {
         if (classpaths == null) { // NPE protection when execute is skipped and mojo delegates to run directly
             classpaths = new ArrayList<>();
@@ -1186,6 +1382,11 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
+    /**
+     * Generate jvm args list.
+     *
+     * @return the list
+     */
     protected List<String> generateJVMArgs() {
         final String deployOpenEjbAppKey = "openejb.system.apps";
         final String servletCompliance = "org.apache.catalina.STRICT_SERVLET_COMPLIANCE";
@@ -1361,14 +1562,14 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             forceReloadable = true;
         }
         if (docBases == null) {
-            docBases = new ArrayList<File>();
+            docBases = new ArrayList<>();
         }
         if (docBases.isEmpty() && webappResources.exists()) {
             getLog().info("adding " + webappResources.toString() + " docBase");
             docBases.add(webappResources);
         }
         if (externalRepositories == null) {
-            externalRepositories = new ArrayList<File>();
+            externalRepositories = new ArrayList<>();
         }
         if (externalRepositories.isEmpty() && webappClasses.exists()) {
             getLog().info("adding " + webappClasses.toString() + " externalRepository");
@@ -1383,17 +1584,27 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     }
 
     private static String filesToString(final Collection<File> files) {
-        final Collection<String> paths = new ArrayList<String>(files.size());
+        final Collection<String> paths = new ArrayList<>(files.size());
         for (final File path : files) { // don't use relative paths (toString())
             paths.add(path.getAbsolutePath());
         }
         return Join.join(",", paths);
     }
 
+    /**
+     * Available commands collection.
+     *
+     * @return the collection
+     */
     protected Collection<String> availableCommands() {
         return Arrays.asList(QUIT_CMD, EXIT_CMD);
     }
 
+    /**
+     * Stop server.
+     *
+     * @param stopCondition the stop condition
+     */
     protected synchronized void stopServer(final CountDownLatch stopCondition) {
         if (server == null) {
             return;
@@ -1426,10 +1637,22 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         return QUIT_CMD.equalsIgnoreCase(line) || EXIT_CMD.equalsIgnoreCase(line);
     }
 
+    /**
+     * Handle line boolean.
+     *
+     * @param line the line
+     * @return the boolean
+     */
     protected boolean handleLine(final String line) {
         return false;
     }
 
+    /**
+     * Server cmd.
+     *
+     * @param server  the server
+     * @param strings the strings
+     */
     protected void serverCmd(final RemoteServer server, final List<String> strings) {
         try {
             server.start(strings, getCmd(), checkStarted);
@@ -1439,14 +1662,29 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
+    /**
+     * Add shutdown hooks.
+     *
+     * @param server the server
+     */
     protected void addShutdownHooks(final RemoteServer server) {
         // no-op
     }
 
+    /**
+     * Gets connect attempts.
+     *
+     * @return the connect attempts
+     */
     protected int getConnectAttempts() {
         return (tomeeShutdownAttempts == 0 ? 60 : tomeeShutdownAttempts);
     }
 
+    /**
+     * Gets wait TomEE.
+     *
+     * @return the wait TomEE
+     */
     protected boolean getWaitTomEE() {
         return true;
     }
@@ -1475,7 +1713,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
                 // no-op
             }
         } else if (remoteRepos != null && remoteRepos.isEmpty()) {
-            remoteRepos = new ArrayList<ArtifactRepository>();
+            remoteRepos = new ArrayList<>();
         }
 
         if ((tomeeClassifier != null && (tomeeClassifier.isEmpty() || tomeeClassifier.equals("ignore")))
@@ -1626,11 +1864,48 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         }
     }
 
+    /**
+     * Gets cmd.
+     *
+     * @return the cmd
+     */
     public abstract String getCmd();
 
+    /**
+     * The interface Resolver.
+     */
     public interface Resolver {
+        /**
+         * Resolve file.
+         *
+         * @param group      the group
+         * @param artifact   the artifact
+         * @param version    the version
+         * @param classifier the classifier
+         * @param type       the type
+         * @return the file
+         */
         File resolve(String group, String artifact, String version, String classifier, String type);
+
+        /**
+         * Resolve file.
+         *
+         * @param group    the group
+         * @param artifact the artifact
+         * @param version  the version
+         * @param type     the type
+         * @return the file
+         */
         File resolve(String group, String artifact, String version, String type);
+
+        /**
+         * Resolve file.
+         *
+         * @param group    the group
+         * @param artifact the artifact
+         * @param version  the version
+         * @return the file
+         */
         File resolve(String group, String artifact, String version);
     }
 
@@ -1652,6 +1927,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             this.resolved = resolved;
         }
 
+        /**
+         * Strip version string.
+         *
+         * @param keepExtension the keep extension
+         * @return the string
+         */
         String stripVersion(final boolean keepExtension) {
             return artifact + (classifier != null && !classifier.isEmpty() ? "-" + classifier : "") +  (keepExtension ? "." + type : "");
         }

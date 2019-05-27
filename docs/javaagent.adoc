@@ -1,0 +1,66 @@
+= JavaAgent
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= Adding a JavaAgent
+
+NOTE: The java agent is only required if using OpenJPA as your
+persistence provider or if using CMP.
+
+Adding a java agent is done via a vm parameter as follows:
+
+[source,bash]
+----
+java -javaagent:openejb-javaagent-4.6.0.jar _\[other params...](other-params....html)
+----
+
+== Maven2
+
+In maven2 you can enable the javaagent for your tests by adding this to
+your pom.xml file:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <!-- this configures the surefire plugin to run your tests with the javaagent enabled -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+        <forkMode>pertest</forkMode>
+        <argLine>-javaagent:${project.basedir}/target/openejb-javaagent-4.6.0.jar</argLine>
+        <workingDirectory>${project.basedir}/target</workingDirectory>
+      </configuration>
+    </plugin>
+    <!-- this tells maven to copy the openejb-javaagent jar into your target/ directory -->
+    <!-- where surefire can see it -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-dependency-plugin</artifactId>
+      <executions>
+        <execution>
+          <id>copy</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>copy</goal>
+          </goals>
+          <configuration>
+            <artifactItems>
+              <artifactItem>
+                <groupId>org.apache.openejb</groupId>
+                <artifactId>openejb-javaagent</artifactId>
+                <version>4.6.0</version>
+                <outputDirectory>${project.build.directory}</outputDirectory>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+----

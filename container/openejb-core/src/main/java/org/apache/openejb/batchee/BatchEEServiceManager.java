@@ -36,19 +36,26 @@ import java.util.Properties;
 
 public class BatchEEServiceManager implements ServicesManagerLocator {
     public void initEnvironment(@Observes final ObserverAdded event) {
-        if (event.getObserver() == this) {
+        if (event.getObserver() == this && !Boolean.getBoolean("openejb.batchee.integration.skip")) {
             ServicesManager.setServicesManagerLocator(this);
         }
     }
 
     public void storeClassLoader(@Observes final AssemblerAfterApplicationCreated init) {
-        final Properties properties = new Properties(SystemInstance.get().getProperties());
-        properties.putAll(init.getApp().properties);
+        doInit(init.getContext());
+    }
+
+    private void doInit(final AppContext context) {
+        if (context.get(ServicesManager.class) != null) {
+            return;
+        }
 
         final Thread thread = Thread.currentThread();
         final ClassLoader current = thread.getContextClassLoader();
-        thread.setContextClassLoader(init.getContext().getClassLoader());
+        thread.setContextClassLoader(context.getClassLoader());
         final ServicesManager servicesManager = new ServicesManager();
+        final Properties properties = new Properties(SystemInstance.get().getProperties());
+        properties.putAll(context.getProperties());
         try {
             if (properties.getProperty(BatchArtifactFactory.class.getName()) == null) {
                 properties.setProperty(BatchThreadPoolService.class.getName(), TomEEThreadPoolService.class.getName());
@@ -61,7 +68,7 @@ public class BatchEEServiceManager implements ServicesManagerLocator {
             thread.setContextClassLoader(current);
         }
 
-        init.getContext().set(ServicesManager.class, servicesManager);
+        context.set(ServicesManager.class, servicesManager);
     }
 
     @Override
@@ -69,6 +76,7 @@ public class BatchEEServiceManager implements ServicesManagerLocator {
         final ClassLoader contextClassLoader = unwrap(Thread.currentThread().getContextClassLoader());
         final AppContext context = AppFinder.findAppContextOrWeb(contextClassLoader, AppFinder.AppContextTransformer.INSTANCE);
         if (context != null) {
+            doInit(context);
             return context.get(ServicesManager.class);
         }
         throw new IllegalStateException("Can't find ServiceManager for " + contextClassLoader);

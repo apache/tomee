@@ -28,21 +28,21 @@ import java.util.List;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://www.openejb.org/System/Configuration}Service" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Container" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Resource" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openejb.org/System/Configuration}Service" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -67,7 +67,7 @@ public class Resources {
 
     public List<Resource> getResource() {
         if (resource == null) {
-            resource = new ArrayList<Resource>();
+            resource = new ArrayList<>();
         }
 
         return this.resource;
@@ -75,7 +75,7 @@ public class Resources {
 
     public List<Container> getContainer() {
         if (container == null) {
-            container = new ArrayList<Container>();
+            container = new ArrayList<>();
         }
 
         return this.container;
@@ -83,21 +83,21 @@ public class Resources {
 
     public List<Service> getService() {
         if (service == null) {
-            service = new ArrayList<Service>();
+            service = new ArrayList<>();
         }
         return service;
     }
 
     public List<Connector> getConnector() {
         if (connector == null) {
-            connector = new ArrayList<Connector>();
+            connector = new ArrayList<>();
         }
         return this.connector;
     }
 
     public List<JndiProvider> getJndiProvider() {
         if (jndiProvider == null) {
-            jndiProvider = new ArrayList<JndiProvider>();
+            jndiProvider = new ArrayList<>();
         }
         return this.jndiProvider;
     }

@@ -24,6 +24,7 @@ import org.apache.openejb.jee.oejb2.GeronimoEjbJarType;
 import org.apache.openejb.jee.oejb3.OpenejbJar;
 import org.apache.openejb.loader.IO;
 import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.xml.sax.SAXException;
 
@@ -118,6 +119,7 @@ public class OpenEjb2ConversionTest extends TestCase {
             final org.w3c.dom.Document expectedDoc = XMLUnit.buildDocument(XMLUnit.newControlParser(), isr);
 
             final Diff myDiff = new Diff(expectedDoc, actualDoc);
+            myDiff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
             assertTrue("Files are similar " + myDiff, myDiff.similar());
         } finally {
             XMLUnit.setNormalizeWhitespace(nw);

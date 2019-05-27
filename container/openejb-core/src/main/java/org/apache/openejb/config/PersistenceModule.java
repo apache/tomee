@@ -30,7 +30,7 @@ import java.util.TreeSet;
 public class PersistenceModule implements DeploymentModule {
     private String rootUrl;
     private Persistence persistence;
-    private final Set<String> watchedResources = new TreeSet<String>();
+    private final Set<String> watchedResources = new TreeSet<>();
     private URI uri;
     private final AppModule appModule;
 

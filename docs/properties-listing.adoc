@@ -1,0 +1,729 @@
+= System Properties Listing
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== OpenEJB system properties
+
+Name
+
+Value
+
+Description
+
+openejb.embedded.remotable
+
+bool
+
+activate or not the remote services when available
+
+.bind, <service prefix>.port, <service prefix>.disabled, <service
+prefix>.threads
+
+host or IP, port, bool
+
+override the host. Available for ejbd and httpejbd services (used by
+jaxws and jaxrs), number of thread to maneg requests
+
+openejb.embedded.initialcontext.close
+
+LOGOUT or DESTROY
+
+configure the hook called when closing the initial context. Useful when
+starting OpenEJB from a new InitialContext([properties]) instantiation.
+By default it simply logs out the logged user if it exists. DESTROY
+means clean the container.
+
+javax.persistence.provider
+
+string
+
+override the JPA provider value
+
+javax.persistence.transactionType
+
+string
+
+override the transaction type for persistence contexts
+
+javax.persistence.jtaDataSource
+
+string
+
+override the JTA datasource value for persistence contexts
+
+javax.persistence.nonJtaDataSource
+
+string
+
+override the non JTA datasource value for persistence contexts
+
+openejb.descriptors.output
+
+bool
+
+dump memory deployment descriptors. Can be used to set complete metadata
+to true and avoid scanning when starting the container or to check the
+used configuration.
+
+openejb.deployments.classpath.require.descriptor
+
+CLIENT or EJB
+
+can allow to filter what you want to scan (client modules or ejb
+modules)
+
+openejb.descriptors.output.folder
+
+path
+
+where to dump deployement descriptors if activated.
+
+openejb.strict.interface.declaration
+
+bool
+
+add some validations on session beans (spec validations in particular).
+false by default.
+
+openejb.conf.file or openejb.configuration
+
+string
+
+OpenEJB configuration file path
+
+openejb.debuggable-vm-hackery
+
+bool
+
+remove JMS informations from deployment
+
+openejb.validation.skip
+
+bool
+
+skip the validations done when OpenEJB deploys beans
+
+openejb.deployments.classpath.ear
+
+bool
+
+deploy the classpath as an ear
+
+openejb.webservices.enabled
+
+bool
+
+activate or not webservices
+
+openejb.validation.output.level
+
+TERSE or MEDIUM or VERBOSE
+
+level of the logs used to report validation errors
+
+openejb.user.mbeans.list
+
+* or a list of classes separated by ,
++
++
++
+list of mbeans to deploy automatically
++
++
++
++
++
+openejb.deploymentId.format
++
++
++
+composition (+string) of \{ejbName} \{ejbType} \{ejbClass} and
+\{ejbClass.simpleName}
++
++
++
+default \{ejbName}. The format to use to deploy ejbs.
++
++
++
++
++
+openejb.deployments.classpath
++
++
++
+bool
++
++
++
+whether or not deploy from classpath
++
++
++
++
++
+openejb.deployments.classpath.include and
+openejb.deployments.classpath.exclude
++
++
++
+regex
++
++
++
+regex to filter the scanned classpath (when you are in this case)
++
++
++
++
++
+openejb.deployments.package.include and
+openejb.deployments.package.exclude
++
++
++
+regex
++
++
++
+regex to filter scanned packages
++
++
++
++
++
+openejb.autocreate.jta-datasource-from-non-jta-one
++
++
++
+bool
++
++
++
+whether or not auto create the jta datasource if it doesn't exist but a
+non jta datasource exists. Useful when using hibernate to be able to get
+a real non jta datasource.
++
++
++
++
++
+openejb.altdd.prefix
++
++
++
+string
++
++
++
+prefix use for altDD (example test to use a test.ejb-jar.xml).
++
++
++
++
++
+org.apache.openejb.default.system.interceptors
++
++
++
+list of interceptor (qualified names) separated by a comma or a space
++
++
++
+add these interceptor on all beans
++
++
++
++
++
+openejb.jndiname.strategy.class
++
++
++
+class name
++
++
++
+an implementation of
+org.apache.openejb.assembler.classic.JndiBuilder.JndiNameStrategy
++
++
++
++
++
+openejb.jndiname.failoncollision
++
++
++
+bool
++
++
++
+if a NameAlreadyBoundException is thrown or not when 2 EJBs have the
+same name
++
++
++
++
++
+openejb.jndiname.format
++
++
++
+composition (+string) of these properties: ejbType, ejbClass,
+ejbClass.simpleName, ejbClass.packageName, ejbName, deploymentId,
+interfaceType, interfaceType.annotationName,
+interfaceType.annotationNameLC, interfaceType.xmlName,
+interfaceType.xmlNameCc, interfaceType.openejbLegacyName,
+interfaceClass, interfaceClass.simpleName, interfaceClass.packageName
++
++
++
+default \{deploymentId}\{interfaceType.annotationName}. Change the name
+used for the ejb.
++
++
++
++
++
+openejb.org.quartz.threadPool.class
++
++
++
+class qualified name which implements org.quartz.spi.ThreadPool
++
++
++
+the thread pool used by quartz (used to manage ejb timers)
++
++
++
++
++
+openejb.localcopy
++
++
++
+bool
++
++
++
+default true. whether or not copy EJB arguments[/method/interface] for
+remote invocations.
++
++
++
++
++
+openejb.cxf.jax-rs.providers
++
++
++
+the list of the qualified name of the JAX-RS providers separated by
+comma or space. Note: to specify a provider for a specific service
+suffix its class qualified name by ".providers", the value follow the
+same rules. Note 2: default is a shortcut for jaxb and json providers.
++
++
++
++
++
++
++
+openejb.wsAddress.format
++
++
++
+composition (+string) of \{ejbJarId}, ejbDeploymentId, ejbType,
+ejbClass, ejbClass.simpleName, ejbName, portComponentName, wsdlPort,
+wsdlService
++
++
++
+default /\{ejbDeploymentId}. The WS name format.
++
++
++
++
++
+org.apache.openejb.server.webservices.saaj.provider
++
++
++
+axis2, sun or null
++
++
++
+specified the saaj configuration
++
++
++
++
++
+[<uppercase service name>.]<service id>.<name> or [<uppercase service
+name>.]<service id>
++
++
++
+whatever is supported (generally string, int ...)
++
++
++
+set this value to the corresponding service. example:
+[EnterpriseBean.]<ejb-name>.activation.<property>,
+[PERSISTENCEUNIT.]<persistence unit name>.<property>, [RESOURCE.]<name>
++
++
++
++
++
+log4j.category.OpenEJB.options
++
++
++
+DEBUG, INFO, ...
++
++
++
+active one OpenEJB log level. need log4j in the classpath
++
++
++
++
++
+openejb.jmx.active
++
++
++
+bool
++
++
++
+activate (by default) or not the OpenEJB JMX MBeans
++
++
++
++
++
+openejb.nobanner
++
++
++
+bool
++
++
++
+activate or not the OpenEJB banner (activated by default)
++
++
++
+openejb.check.classloader
++
++
++
+bool
++
++
++
+if true print some information about duplicated classes
++
++
++
++
++
+openejb.check.classloader.verbose
++
++
++
+bool
++
++
++
+if true print classes intersections
++
++
++
++
++
+openejb.additional.exclude
++
++
++
+string separated by comma
++
++
++
+list of prefixes you want to exclude and are not in the default list of
+exclusion
++
++
++
++
++
+openejb.additional.include
++
++
++
+string separated by comma
++
++
++
+list of prefixes you want to remove from thedefault list of exclusion
++
++
++
++
++
+openejb.offline
++
++
++
+bool
++
++
++
+if true can create datasources and containers automatically
++
++
++
++
++
+openejb.exclude-include.order
++
++
++
+include-exclude or exclude-include
++
++
++
+if the inclusion/exclusion should win on conflicts (intersection)
++
++
++
++
++
+openejb.log.color
++
++
++
+bool
++
++
++
+activate or not the color in the console in embedded mode
++
++
++
++
++
+openejb.log.color.<level in lowercase>
++
++
++
+color in uppercase
++
++
++
+set a color for a particular level. Color are BLACK, RED, GREEN, YELLOW,
+BLUE, MAGENTA, CYAN, WHITE, DEFAULT.
++
++
++
++
++
+tomee.serialization.class.blacklist
++
++
++
+string
++
++
++
+default list of packages/classnames excluded for EJBd deserialization
+(needs to be set on server and client sides). Please see the description
+of Ejbd Transport for details.
++
++
++
++
++
+tomee.serialization.class.whitelist
++
++
++
+string
++
++
++
+default list of packages/classnames allowed for EJBd deserialization
+(blacklist wins over whitelist, needs to be set on server and client
+sides). Please see the description of Ejbd Transport for details.
++
++
++
++
++
+tomee.remote.support
++
++
++
+boolean
++
++
++
+if true /tomee webapp is auto-deployed and EJBd is active (true by
+default for 1.x, false for 7.x excepted for tomee maven plugin and
+arquillian)
++
++
++
+
+Note: all resources can be configured by properties, see
+http://tomee.apache.org/embedded-configuration.html and
+http://tomee.apache.org/properties-tool.html
+
+== OpenEJB client
+
+Name
+
+Value
+
+Description
+
+openejb.client.identityResolver
+
+implementation of org.apache.openejb.client.IdentityResolver
+
+default org.apache.openejb.client.JaasIdentityResolver. The class to get
+the client identity.
+
+openejb.client.connection.pool.timeout or
+openejb.client.connectionpool.timeout
+
+int (ms)
+
+the timeout of the client
+
+openejb.client.connection.pool.size or
+openejb.client.connectionpool.size
+
+int
+
+size of the socket pool
+
+openejb.client.keepalive
+
+int (ms)
+
+the keepalive duration
+
+openejb.client.protocol.version
+
+string
+
+Optional legacy server protocol compatibility level. Allows 4.6.x
+clients to potentially communicate with older servers. OpenEJB 4.5.2 and
+older use version "3.1", and 4.6.x currently uses version "4.6"
+(Default). This does not allow old clients to communicate with new
+servers prior to 4.6.0
+
+== TomEE specific system properties
+
+Name
+
+Value
+
+Description
+
+openejb.crosscontext
+
+bool
+
+set the cross context property on tomcat context (can be done in the
+traditionnal way if the deployment is don through the webapp discovery
+and not the OpenEJB Deployer EJB)
+
+openejb.jsessionid-support
+
+bool
+
+remove URL from session tracking modes for this context (see
+javax.servlet.SessionTrackingMode)
+
+openejb.myfaces.disable-default-values
+
+bool
+
+by default TomEE will initialize myfaces with some its default values to
+avoid useless logging
+
+openejb.web.xml.major
+
+int
+
+major version of web.xml. Can be useful to force tomcat to scan servlet
+3 annotatino when deploying with a servlet 2.x web.xml
+
+tomee.jaxws.subcontext
+
+string
+
+sub context used to bind jaxws web services, default is webservices
+
+openejb.servicemanager.enabled
+
+bool
+
+run all services detected or only known available services (WS and RS
+
+tomee.jaxws.oldsubcontext
+
+bool
+
+wether or not activate old way to bind jaxws webservices directly on
+root context
+
+openejb.modulename.useHash
+
+bool
+
+add a hash after the module name of the webmodule if it is generated
+from the webmodule location, it avoids conflicts between multiple
+deployment (through ear) of the same webapp. Note: it disactivated by
+default since names are less nice this way.
+
+openejb.session.manager
+
+qualified name (string)
+
+configure a session managaer to use for all contexts
+
+== TomEE Arquillian adaptor
+
+Name
+
+Value
+
+Description
+
+tomee.ejbcontainer.http.port
+
+int
+
+tomee port, -1 means random. When using a random port you can retreive
+it getting this property too.
+
+tomee.arquillian.http
+
+int
+
+http port used by the embedded arquillian adaptor
+
+tomee.arquillian.stop
+
+int
+
+shutdown port used by the embedded arquillian adaptor

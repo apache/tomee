@@ -68,6 +68,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -139,7 +140,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
 
         if (interfaces == null || interfaces.size() == 0) {
             final InterfaceType objectInterfaceType = interfaceType.isHome() ? interfaceType.getCounterpart() : interfaceType;
-            interfaces = new ArrayList<Class>(beanContext.getInterfaces(objectInterfaceType));
+            interfaces = new ArrayList<>(beanContext.getInterfaces(objectInterfaceType));
         }
 
         if (mainInterface == null && interfaces.size() == 1) {
@@ -226,12 +227,12 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     private void setMainInterface(final Class referent) {
-        mainInterface = new WeakReference<Class>(referent);
+        mainInterface = new WeakReference<>(referent);
     }
 
     public List<Class> getInterfaces() {
         final Set<Class> classes = interfaces.keySet();
-        final List<Class> list = new ArrayList<Class>();
+        final List<Class> list = new ArrayList<>();
         final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         for (final Class<?> clazz : classes) { // convert interfaces with current classloader -> relevant for remote interfaces
             if (clazz.isInterface() && getBeanContext().getInterfaceType(clazz) == InterfaceType.BUSINESS_REMOTE) {
@@ -248,7 +249,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     private void setInterfaces(final List<Class> interfaces) {
-        this.interfaces = new WeakHashMap<Class, Object>(interfaces.size());
+        this.interfaces = new WeakHashMap<>(interfaces.size());
         for (final Class clazz : interfaces) {
             this.interfaces.put(clazz, null);
         }
@@ -283,14 +284,15 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
         if (method.getDeclaringClass() == Object.class) {
             final String methodName = method.getName();
 
-            if (methodName.equals("toString")) {
-                return toString();
-            } else if (methodName.equals("equals")) {
-                return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
-            } else if (methodName.equals("hashCode")) {
-                return hashCode();
-            } else {
-                throw new UnsupportedOperationException("Unknown method: " + method);
+            switch (methodName) {
+                case "toString":
+                    return toString();
+                case "equals":
+                    return equals(args[0]) ? Boolean.TRUE : Boolean.FALSE;
+                case "hashCode":
+                    return hashCode();
+                default:
+                    throw new UnsupportedOperationException("Unknown method: " + method);
             }
         } else if (method.getDeclaringClass() == IntraVmProxy.class) {
             final String methodName = method.getName();
@@ -537,7 +539,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     protected boolean equalHandler(final BaseEjbProxyHandler other) {
-        return (primaryKey == null ? other.primaryKey == null : primaryKey.equals(other.primaryKey))
+        return (Objects.equals(primaryKey, other.primaryKey))
             && deploymentID.equals(other.deploymentID)
             && getMainInterface().equals(other.getMainInterface());
     }
@@ -663,7 +665,7 @@ public abstract class BaseEjbProxyHandler implements InvocationHandler, Serializ
     }
 
     public void setBeanContext(final BeanContext beanContext) {
-        this.beanContextRef = new WeakReference<BeanContext>(beanContext);
+        this.beanContextRef = new WeakReference<>(beanContext);
     }
 
     public ConcurrentMap getLiveHandleRegistry() {

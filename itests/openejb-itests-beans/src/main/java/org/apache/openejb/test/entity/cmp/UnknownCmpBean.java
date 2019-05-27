@@ -43,7 +43,7 @@ public class UnknownCmpBean implements EntityBean {
 
     /**
      * Maps to BasicCmpHome.sum
-     * <p/>
+     *
      * Adds x and y and returns the result.
      *
      * @param x
@@ -121,7 +121,7 @@ public class UnknownCmpBean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -135,7 +135,7 @@ public class UnknownCmpBean implements EntityBean {
 
     /**
      * Maps to BasicCmpObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

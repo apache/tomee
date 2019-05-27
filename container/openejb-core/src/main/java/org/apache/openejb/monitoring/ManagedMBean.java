@@ -53,8 +53,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.sort;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -62,11 +60,11 @@ public class ManagedMBean implements DynamicMBean {
 
     private static final MBeanNotificationInfo[] EMPTY_NOTIFICATIONS = new MBeanNotificationInfo[0];
 
-    private final List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>();
-    private final List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>();
-    private final Map<String, Member> attributesMap = new HashMap<String, Member>();
-    private final Map<String, MethodMember> operationsMap = new HashMap<String, MethodMember>();
-    private final List<Member> dynamic = new ArrayList<Member>();
+    private final List<MBeanAttributeInfo> attributes = new ArrayList<>();
+    private final List<MBeanOperationInfo> operations = new ArrayList<>();
+    private final Map<String, Member> attributesMap = new HashMap<>();
+    private final Map<String, MethodMember> operationsMap = new HashMap<>();
+    private final List<Member> dynamic = new ArrayList<>();
 
     private Pattern includes = Pattern.compile("");
     private Pattern excludes = Pattern.compile("");
@@ -218,8 +216,8 @@ public class ManagedMBean implements DynamicMBean {
 
     public MBeanInfo getMBeanInfo() {
 
-        final List<MBeanAttributeInfo> attributes = new ArrayList<MBeanAttributeInfo>(this.attributes);
-        final List<MBeanOperationInfo> operations = new ArrayList<MBeanOperationInfo>(this.operations);
+        final List<MBeanAttributeInfo> attributes = new ArrayList<>(this.attributes);
+        final List<MBeanOperationInfo> operations = new ArrayList<>(this.operations);
 
         for (final Member member : dynamic) {
             try {
@@ -244,8 +242,8 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        sort(operations, MBeanFeatureInfoComparator.INSTANCE);
-        sort(attributes, MBeanFeatureInfoComparator.INSTANCE);
+        operations.sort(MBeanFeatureInfoComparator.INSTANCE);
+        attributes.sort(MBeanFeatureInfoComparator.INSTANCE);
 
         if (filterAttributes) {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();

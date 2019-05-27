@@ -22,7 +22,7 @@ import javax.ejb.TimerConfig;
 
 /**
  * Simple object to hold the ScheduleExpression and TimerConfig pair
- * <p/>
+ *
  * Zero or many of these may be associated with a method and available
  * via the MethodSchedule list retrieved from the DeploymentInfo
  *

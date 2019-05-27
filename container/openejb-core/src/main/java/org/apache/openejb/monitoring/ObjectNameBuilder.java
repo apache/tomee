@@ -36,7 +36,7 @@ public class ObjectNameBuilder {
     }
 
     public ObjectNameBuilder(final String domain) {
-        map = new LinkedHashMap<String, String>();
+        map = new LinkedHashMap<>();
         this.domain = domain;
     }
 
@@ -66,7 +66,7 @@ public class ObjectNameBuilder {
 
             return new ObjectName(sb.toString());
         } catch (final MalformedObjectNameException e) {
-            throw new IllegalStateException("Failed to build valid name for: " + sb.toString(), e);
+            throw new IllegalStateException("Failed to build valid name for: " + sb, e);
         }
     }
 

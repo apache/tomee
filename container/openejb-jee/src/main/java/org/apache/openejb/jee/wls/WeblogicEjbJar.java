@@ -30,32 +30,32 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for weblogic-ejb-jar complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="weblogic-ejb-jar">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/>
- *         &lt;element name="weblogic-enterprise-bean" type="{http://www.bea.com/ns/weblogic/90}weblogic-enterprise-bean" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-role-assignment" type="{http://www.bea.com/ns/weblogic/90}security-role-assignment" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="run-as-role-assignment" type="{http://www.bea.com/ns/weblogic/90}run-as-role-assignment" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="security-permission" type="{http://www.bea.com/ns/weblogic/90}security-permission" minOccurs="0"/>
- *         &lt;element name="transaction-isolation" type="{http://www.bea.com/ns/weblogic/90}transaction-isolation" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="message-destination-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-destination-descriptor" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="idempotent-methods" type="{http://www.bea.com/ns/weblogic/90}idempotent-methods" minOccurs="0"/>
- *         &lt;element name="retry-methods-on-rollback" type="{http://www.bea.com/ns/weblogic/90}retry-methods-on-rollback" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="enable-bean-class-redeploy" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="disable-warning" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="work-manager" type="{http://www.bea.com/ns/weblogic/90}work-manager" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="weblogic-compatibility" type="{http://www.bea.com/ns/weblogic/90}weblogic-compatibility" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="weblogic-ejb-jar"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/&gt;
+ *         &lt;element name="weblogic-enterprise-bean" type="{http://www.bea.com/ns/weblogic/90}weblogic-enterprise-bean" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-role-assignment" type="{http://www.bea.com/ns/weblogic/90}security-role-assignment" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="run-as-role-assignment" type="{http://www.bea.com/ns/weblogic/90}run-as-role-assignment" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="security-permission" type="{http://www.bea.com/ns/weblogic/90}security-permission" minOccurs="0"/&gt;
+ *         &lt;element name="transaction-isolation" type="{http://www.bea.com/ns/weblogic/90}transaction-isolation" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="message-destination-descriptor" type="{http://www.bea.com/ns/weblogic/90}message-destination-descriptor" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="idempotent-methods" type="{http://www.bea.com/ns/weblogic/90}idempotent-methods" minOccurs="0"/&gt;
+ *         &lt;element name="retry-methods-on-rollback" type="{http://www.bea.com/ns/weblogic/90}retry-methods-on-rollback" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="enable-bean-class-redeploy" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="disable-warning" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="work-manager" type="{http://www.bea.com/ns/weblogic/90}work-manager" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="weblogic-compatibility" type="{http://www.bea.com/ns/weblogic/90}weblogic-compatibility" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -129,21 +129,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the weblogicEnterpriseBean property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the weblogicEnterpriseBean property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWeblogicEnterpriseBean().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link WeblogicEnterpriseBean }
      */
@@ -156,21 +156,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the securityRoleAssignment property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the securityRoleAssignment property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSecurityRoleAssignment().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SecurityRoleAssignment }
      */
@@ -183,21 +183,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the runAsRoleAssignment property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the runAsRoleAssignment property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRunAsRoleAssignment().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link RunAsRoleAssignment }
      */
@@ -230,21 +230,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the transactionIsolation property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the transactionIsolation property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTransactionIsolation().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TransactionIsolation }
      */
@@ -257,21 +257,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the messageDestinationDescriptor property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the messageDestinationDescriptor property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMessageDestinationDescriptor().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDestinationDescriptor }
      */
@@ -304,21 +304,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the retryMethodsOnRollback property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the retryMethodsOnRollback property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRetryMethodsOnRollback().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link RetryMethodsOnRollback }
      */
@@ -351,21 +351,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the disableWarning property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the disableWarning property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisableWarning().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      */
@@ -378,21 +378,21 @@ public class WeblogicEjbJar {
 
     /**
      * Gets the value of the workManager property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the workManager property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getWorkManager().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link WorkManager }
      */

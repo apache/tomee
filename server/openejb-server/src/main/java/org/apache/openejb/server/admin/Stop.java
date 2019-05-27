@@ -30,7 +30,7 @@ import java.util.Properties;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Stop {
 
-    private static final String helpBase = "META-INF/org.apache.openejb.cli/";
+    private static final String HELP_BASE = "META-INF/org.apache.openejb.cli/";
 
     public static void stop(final String host, final int port) {
 
@@ -116,7 +116,7 @@ public class Stop {
 
         InputStream in = null;
         try {
-            final URL resource = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.help");
+            final URL resource = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "stop.help");
             if (resource != null) {
                 in = resource.openConnection().getInputStream();
 
@@ -151,7 +151,7 @@ public class Stop {
         System.out.println(header);
         InputStream in = null;
         try {
-            final URL resource = Thread.currentThread().getContextClassLoader().getResource(helpBase + "stop.examples");
+            final URL resource = Thread.currentThread().getContextClassLoader().getResource(HELP_BASE + "stop.examples");
             if (resource != null) {
                 in = resource.openConnection().getInputStream();
 

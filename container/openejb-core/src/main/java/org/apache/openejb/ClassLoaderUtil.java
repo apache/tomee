@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 import java.util.zip.ZipFile;
 
@@ -64,6 +65,7 @@ public class ClassLoaderUtil {
     private static final Map<String, List<ClassLoader>> classLoadersByApp = new HashMap<String, List<ClassLoader>>();
     private static final Map<ClassLoader, Set<String>> appsByClassLoader = new HashMap<ClassLoader, Set<String>>();
     private static final UrlCache localUrlCache = new UrlCache();
+    private static final AtomicBoolean skipClearSunJarFile = new AtomicBoolean();
 
     public static void destroyClassLoader(final String appId, final String appPath) {
         destroyClassLoader(appId);
@@ -101,18 +103,10 @@ public class ClassLoaderUtil {
     }
 
     private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
-        List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
-        if (classLoaders == null) {
-            classLoaders = new ArrayList<ClassLoader>(2);
-            classLoadersByApp.put(appId, classLoaders);
-        }
+        List<ClassLoader> classLoaders = classLoadersByApp.computeIfAbsent(appId, k -> new ArrayList<>(2));
         classLoaders.add(classLoader);
 
-        Set<String> apps = appsByClassLoader.get(classLoader);
-        if (apps == null) {
-            apps = new LinkedHashSet<String>(1);
-            appsByClassLoader.put(classLoader, apps);
-        }
+        Set<String> apps = appsByClassLoader.computeIfAbsent(classLoader, k -> new LinkedHashSet<>(1));
         apps.add(appId);
 
         return classLoader;
@@ -174,7 +168,7 @@ public class ClassLoaderUtil {
      */
     private static List<String> getClosedJarFiles(final ClassLoader cl) {
 
-        final List<String> files = new ArrayList<String>();
+        final List<String> files = new ArrayList<>();
 
         if (null != cl && cl instanceof URLClassLoader) {
 
@@ -332,8 +326,7 @@ public class ClassLoaderUtil {
             urls = rawUrls;
         } else {
             final CompositeClassLoaderConfigurer configurer = new CompositeClassLoaderConfigurer(configurer1, configurer2, configurer3);
-            final Collection<URL> list = new ArrayList<URL>();
-            list.addAll(Arrays.asList(rawUrls));
+            final Collection<URL> list = new ArrayList<>(Arrays.asList(rawUrls));
             ClassLoaderConfigurer.Helper.configure(list, configurer);
             urls = list.toArray(new URL[list.size()]);
         }
@@ -362,10 +355,10 @@ public class ClassLoaderUtil {
      * Due to several different implementation changes in various JDK releases the code here is not as
      * straight forward as reflecting debug items in your current runtime. There have even been breaking changes
      * between 1.6 runtime builds, let alone 1.5.
-     * <p/>
+     *
      * If you discover a new issue here please be careful to ensure the existing functionality is 'extended' and not
      * just replaced to match your runtime observations.
-     * <p/>
+     *
      * If you want to look at the mess that leads up to this then follow the source code changes made to
      * the class sun.net.www.protocol.jar.JarFileFactory over several years.
      *
@@ -374,6 +367,9 @@ public class ClassLoaderUtil {
      */
     @SuppressWarnings({"unchecked"})
     private static synchronized void clearSunJarFileFactoryCacheImpl(final String jarLocation, final int attempt) {
+        if (skipClearSunJarFile.get()) {
+            return;
+        }
         logger.debug("Clearing Sun JarFileFactory cache for directory " + jarLocation);
 
         try {
@@ -460,7 +456,6 @@ public class ClassLoaderUtil {
                 }
 
             }
-
         } catch (final ConcurrentModificationException e) {
             if (attempt > 0) {
                 clearSunJarFileFactoryCacheImpl(jarLocation, attempt - 1);
@@ -469,6 +464,12 @@ public class ClassLoaderUtil {
             }
         } catch (final ClassNotFoundException | NoSuchFieldException e) {
             // not a sun vm
+        } catch (final RuntimeException re) {
+            if ("java.lang.reflect.InaccessibleObjectException".equals(re.getClass().getName())) {
+                skipClearSunJarFile.compareAndSet(false, true);
+                return;
+            }
+            throw re;
         } catch (final Throwable e) {
             if (Boolean.getBoolean("openejb.java9.hack")) {
                 return; // reflection fails cause internals are not exported, close() is called and should be fine

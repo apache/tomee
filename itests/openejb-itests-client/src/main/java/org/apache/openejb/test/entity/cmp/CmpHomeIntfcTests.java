@@ -29,7 +29,7 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
-        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) obj;
     }
 
     //===============================
@@ -76,7 +76,7 @@ public class CmpHomeIntfcTests extends BasicCmpTestClient {
             assertEquals("The Collection is not the right size.", keys.length, objects.size());
             final Object[] objs = objects.toArray();
             for (int i = 0; i < objs.length; i++) {
-                ejbObject = (BasicCmpObject) javax.rmi.PortableRemoteObject.narrow(objs[i], BasicCmpObject.class);
+                ejbObject = (BasicCmpObject) objs[i];
                 // This could be problematic, it assumes the order of the collection.
                 assertEquals("The primary keys are not equal.", keys[i], ejbObject.getPrimaryKey());
             }

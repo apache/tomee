@@ -16,7 +16,8 @@
  */
 package org.apache.openejb.arquillian;
 
-import org.apache.sirona.web.servlet.SironaFilter;
+import org.apache.sirona.Role;
+import org.apache.sirona.counters.Unit;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -49,7 +50,7 @@ public class AdditionalLibsTest {
         });
         assertEquals(1, sirona.length); // web
 
-        assertNotNull(new SironaFilter()); // would fail if libs are missing
+        assertNotNull(new Role("test", Unit.UNARY)); // would fail if libs are missing
     }
 
     private static class Tester {

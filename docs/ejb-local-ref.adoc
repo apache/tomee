@@ -1,0 +1,56 @@
+= ejb-local-ref
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Via annotation
+
+Usable by EJB, Interceptor, Servlet, Filter, or Listener
+
+[source,java]
+----
+package org.superbiz.refs;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+
+@Stateless
+@EJB(name = "myFooEjb", beanInterface = FooLocal.class)
+public class MyEjbLocalRefBean implements MyBeanInterface {
+
+    @EJB
+    private BarLocal myBarEjb;
+
+    public void someBusinessMethod() throws Exception {
+        if (myBarEjb == null) throw new NullPointerException("myBarEjb not injected");
+
+        // Both can be looked up from JNDI as well
+        InitialContext context = new InitialContext();
+        FooLocal fooLocal = (FooLocal) context.lookup("java:comp/env/myFooEjb");
+        BarLocal barLocal = (BarLocal) context.lookup("java:comp/env/org.superbiz.refs.MyEjbLocalRefBean/myBarEjb");
+    }
+}
+----
+
+= Via xml
+
+The above `@EJB` annotation usage is 100% equivalent to the following xml.
+
+[source,xml]
+----
+<ejb-local-ref>
+  <ejb-ref-name>myFooEjb</ejb-ref-name>
+  <local>org.superbiz.refs.FooLocal</local>
+</ejb-local-ref>
+
+<ejb-local-ref>
+  <ejb-ref-name>org.superbiz.refs.MyEjbLocalRefBean/myBarEjb</ejb-ref-name>
+  <local>org.superbiz.refs.BarLocal</local>
+  <injection-target>
+    <injection-target-class>org.superbiz.refs.MyEjbLocalRefBean</injection-target-class>
+    <injection-target-name>myBarEjb</injection-target-name>
+  </injection-target>
+</ejb-local-ref>
+----

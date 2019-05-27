@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Annotation that matches the <ejb-deployment> element in the openejb-jar.xml file
+ * Annotation that matches the &lt;ejb-deployment&gt; element in the openejb-jar.xml file
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

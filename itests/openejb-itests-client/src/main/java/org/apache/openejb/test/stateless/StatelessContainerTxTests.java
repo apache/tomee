@@ -16,15 +16,13 @@
  */
 package org.apache.openejb.test.stateless;
 
-import java.util.Properties;
+import org.apache.openejb.test.TestManager;
 
 import javax.ejb.EJBMetaData;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
-import javax.naming.Context;
 import javax.naming.InitialContext;
-
-import org.apache.openejb.test.TestManager;
+import java.util.Properties;
 
 /**
  * [1] Should be run as the first test suite of the StatelessTestClients
@@ -61,7 +59,7 @@ public class StatelessContainerTxTests extends org.apache.openejb.test.NamedTest
 
         /*[1] Get bean */
         final Object obj = initialContext.lookup(jndiEJBHomeEntry);
-        ejbHome = (ContainerTxStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, ContainerTxStatelessHome.class);
+        ejbHome = (ContainerTxStatelessHome) obj;
         ejbObject = ejbHome.create();
 
         /*[2] Create database table */

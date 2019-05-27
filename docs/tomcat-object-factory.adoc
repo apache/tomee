@@ -1,0 +1,17 @@
+= Tomcat Object Factory
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+_The TomcatEjbFactory as discussed in the
+http://www.onjava.com/pub/a/onjava/2003/02/12/ejb_tomcat.html[OnJava
+article "OpenEJB: EJB for Tomcat"] is no longer required._
+
+As of OpenEJB 3.0 references from Servlets to EJBs happen automatically
+with usage of the [`@EJB`
+annotation](openejbx30:injection-of-other-ejbs-example.html) in the
+Servlet, Filter or Listener or with the or declared in the web.xml.
+
+See the openejbx30:tomcat.html[Tomcat Integration] page for the most
+up-to-date details on using OpenEJB inside Tomcat.

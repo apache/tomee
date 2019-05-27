@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class SaajFactoryFinder {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, SaajFactoryFinder.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, SaajFactoryFinder.class);
     private static final String SAAJ_PROVIDER_PROPERTY = "org.apache.openejb.server.webservices.saaj.provider";
 
     private static SaajUniverse.Type DEFAULT_SAAJ_UNIVERSE = null;
@@ -67,17 +67,17 @@ class SaajFactoryFinder {
             }
 
             if (DEFAULT_SAAJ_UNIVERSE != null) {
-                logger.info("Default SAAJ universe: " + DEFAULT_SAAJ_UNIVERSE);
+                LOGGER.info("Default SAAJ universe: " + DEFAULT_SAAJ_UNIVERSE);
             } else {
-                logger.info("Default SAAJ universe not set");
+                LOGGER.info("Default SAAJ universe not set");
             }
         } else {
-            logger.info("Default SAAJ universe not set");
+            LOGGER.info("Default SAAJ universe not set");
         }
     }
 
     private static Map<String, String> createSAAJInfo(String messageFactory, String soapFactory, String soapConnectionFactory, String metaFactory) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("javax.xml.soap.MessageFactory", messageFactory);
         map.put("javax.xml.soap.SOAPFactory", soapFactory);
         map.put("javax.xml.soap.SOAPConnectionFactory", soapConnectionFactory);

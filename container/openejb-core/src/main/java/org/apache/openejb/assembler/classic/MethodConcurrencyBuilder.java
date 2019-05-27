@@ -54,8 +54,8 @@ public class MethodConcurrencyBuilder {
 
         final Logger log = Logger.getInstance(LogCategory.OPENEJB_STARTUP.createChild("attributes"), MethodConcurrencyBuilder.class);
 
-        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<MethodConcurrencyInfo>();
-        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<MethodConcurrencyInfo>();
+        final List<MethodConcurrencyInfo> lockInfos = new ArrayList<>();
+        final List<MethodConcurrencyInfo> accessTimeoutInfos = new ArrayList<>();
 
         MethodConcurrencyBuilder.normalize(methodConcurrencyInfos, lockInfos, accessTimeoutInfos);
 
@@ -105,7 +105,7 @@ public class MethodConcurrencyBuilder {
      * exactly one MethodInfo per MethodConcurrencyInfo.  A single MethodConcurrencyInfo
      * with three MethodInfos would be expanded into three MethodConcurrencyInfo with
      * one MethodInfo each.
-     * <p/>
+     *
      * The MethodConcurrencyInfo list is then sorted from least to most specific.
      *
      * @param infos
@@ -132,10 +132,10 @@ public class MethodConcurrencyBuilder {
         }
 
         Collections.reverse(lockInfos);
-        Collections.sort(lockInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
+        lockInfos.sort(new MethodConcurrencyComparator());
 
         Collections.reverse(accessTimeoutInfos);
-        Collections.sort(accessTimeoutInfos, new MethodConcurrencyBuilder.MethodConcurrencyComparator());
+        accessTimeoutInfos.sort(new MethodConcurrencyComparator());
     }
 
     public static class MethodConcurrencyComparator extends MethodInfoUtil.BaseComparator<MethodConcurrencyInfo> {

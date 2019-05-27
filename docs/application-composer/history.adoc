@@ -1,0 +1,48 @@
+= Application Composer History
+
+ApplicationComposer can look like a long story but following it you'll
+realize it is finally quite natural.
+
+== Internal tool
+
+TomEE (former OpenEJB) is an Application Server. One of the most
+important task writing an Application Server is to ensure the
+implemented features do what is expected. However it is hard to write N
+test applications, in N modules to ensure it works smoothly. In
+particular when you want to test a small part of the whole server.
+
+So you immediately think to mocking what is not needed. It works but has
+a big pitfall: test is often a noop or hide a lot of issues.
+
+So the idea came to be able to shortcut the part we don't care much
+about runtime: the application packaging.
+
+Here what is the ApplicationComposer: an (originally test) API to create
+a EE application programmatically.
+
+== Designs
+
+ApplicationComposer design was aligned on this simple need. An
+ApplicationComposer "test" (browsing other pages you'll see it is much
+more than test today) is composed of mainly 2 parts:
+
+* modules: methods describing a module of an application. It can be a
+persistence.xml, an ejb-jar.xml, a web.xml...but all programmatically.
+* configuration: container configuration allowing to interact with
+container (creating resources for instance)
+
+== Test but not only
+
+ApplicationComposer was originally a JUnit only runner but was pretty
+quickly extended to TestNG too and today you can even use it to write
+`main(String[])` - even in a shade!
+
+API was greatly simplified and it allows you pretty easily to deploy
+with a simple shade a JAXRS/JAXWS/JMS service!
+
+== Going further
+
+If you want to go further you can browse:
+
+* link:getting-started.html[Getting Started]
+* link:advanced.html[Advanced]

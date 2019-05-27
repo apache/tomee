@@ -30,8 +30,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,14 +53,14 @@ public class InterceptorBindingBuilder {
     }
 
     private final ArrayList<InterceptorBindingInfo> bindings;
-    private final Map<String, InterceptorData> interceptors = new HashMap<String, InterceptorData>();
+    private final Map<String, InterceptorData> interceptors = new HashMap<>();
 
     public InterceptorBindingBuilder(final ClassLoader cl, final EjbJarInfo ejbJarInfo) throws OpenEJBException {
-        bindings = new ArrayList<InterceptorBindingInfo>(ejbJarInfo.interceptorBindings);
-        Collections.sort(bindings, new IntercpetorBindingComparator());
+        bindings = new ArrayList<>(ejbJarInfo.interceptorBindings);
+        bindings.sort(new IntercpetorBindingComparator());
         Collections.reverse(bindings);
 
-        packageAndClassBindings = new ArrayList<InterceptorBindingInfo>();
+        packageAndClassBindings = new ArrayList<>();
         for (final InterceptorBindingInfo binding : bindings) {
             final Level level = level(binding);
             if (level == Level.PACKAGE || level == Level.CLASS || level == Level.ANNOTATION_CLASS) {
@@ -108,7 +108,7 @@ public class InterceptorBindingBuilder {
             info.className = clazz.getName();
             final Method createMethod = beanContext.getCreateMethod();
             info.methodName = (createMethod != null) ? createMethod.getName(): "ejbCreate";
-            info.methodParams = new ArrayList<String>();
+            info.methodParams = new ArrayList<>();
 
             try {
                 final Method ejbcreate = MethodInfoUtil.toMethod(clazz, info);
@@ -163,7 +163,7 @@ public class InterceptorBindingBuilder {
     private List<InterceptorData> createInterceptorDatas(final Method method, final String ejbName, final List<InterceptorBindingInfo> bindings) {
         final List<InterceptorBindingInfo> methodBindings = processBindings(method, ejbName, bindings);
         Collections.reverse(methodBindings);
-        final List<InterceptorData> methodInterceptors = new ArrayList<InterceptorData>();
+        final List<InterceptorData> methodInterceptors = new ArrayList<>();
 
         for (final InterceptorBindingInfo info : methodBindings) {
             final List<String> classes = info.interceptorOrder.size() > 0 ? info.interceptorOrder : info.interceptors;
@@ -181,7 +181,7 @@ public class InterceptorBindingBuilder {
 
 
     private List<InterceptorBindingInfo> processBindings(final Method method, final String ejbName, final List<InterceptorBindingInfo> bindings) {
-        final List<InterceptorBindingInfo> methodBindings = new ArrayList<InterceptorBindingInfo>();
+        final List<InterceptorBindingInfo> methodBindings = new ArrayList<>();
 
         // The only critical thing to understand in this loop is that
         // the bindings have already been sorted high to low (first to last)
@@ -206,7 +206,7 @@ public class InterceptorBindingBuilder {
         //    - Any addition for current level and/or exclusion for a lower level
         //   (lowest)
         //
-        final Set<Level> excludes = new HashSet<Level>();
+        final Set<Level> excludes = EnumSet.noneOf(Level.class);
         for (final InterceptorBindingInfo info : bindings) {
             final Level level = level(info);
 
@@ -271,7 +271,7 @@ public class InterceptorBindingBuilder {
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     * <p/>
+     *
      * - @PostConstruct <any-scope> void <method-name>(InvocationContext)
      * - @PreDestroy <any-scope> void <method-name>(InvocationContext)
      * - @PrePassivate <any-scope> void <method-name>(InvocationContext)
@@ -284,7 +284,7 @@ public class InterceptorBindingBuilder {
      * @param callbacks     the collection where the created methods will be placed
      */
     private void toMethods(final Class<?> clazz, final List<CallbackInfo> callbackInfos, final Set<Method> callbacks) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
 
         for (final CallbackInfo callbackInfo : callbackInfos) {
             try {
@@ -321,14 +321,14 @@ public class InterceptorBindingBuilder {
                 logger.warning("Interceptor method not found (skipping): public Object " + callbackInfo.method + "(InvocationContext); in class " + clazz.getName());
             }
         }
-        Collections.sort(methods, new MethodCallbackComparator());
+        methods.sort(new MethodCallbackComparator());
 
         callbacks.addAll(methods);
     }
 
     /**
      * Used for getting the java.lang.reflect.Method objects for the following callbacks:
-     * <p/>
+     *
      * - @PostConstruct <any-scope> void <method-name>()
      * - @PreDestroy <any-scope> void <method-name>()
      * - @PrePassivate <any-scope> void <method-name>()
@@ -336,7 +336,7 @@ public class InterceptorBindingBuilder {
      * - @AfterBegin <any-scope> void <method-name>()
      * - @BeforeCompletion <any-scope> void <method-name>()
      * - @AfterCompletion <any-scope> void <method-name>(boolean)
-     * <p/>
+     *
      * These apply to the bean class only, interceptor methods use InvocationContext as
      * a parameter.  The toMethods method is used for those.
      *
@@ -345,7 +345,7 @@ public class InterceptorBindingBuilder {
      * @param callbacks
      */
     private void toCallback(final Class<?> clazz, final List<CallbackInfo> callbackInfos, final Set<Method> callbacks, final Class<?>... parameterTypes) {
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
 
         for (final CallbackInfo callbackInfo : callbackInfos) {
             Class<?> usedClazz = clazz;
@@ -392,7 +392,7 @@ public class InterceptorBindingBuilder {
                 throw new IllegalStateException(message, e);
             }
         }
-        Collections.sort(methods, new MethodCallbackComparator());
+        methods.sort(new MethodCallbackComparator());
         callbacks.addAll(methods);
     }
 

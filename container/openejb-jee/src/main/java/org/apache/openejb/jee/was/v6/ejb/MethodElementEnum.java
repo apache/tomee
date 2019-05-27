@@ -20,25 +20,25 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p/>
+ *
  * Java class for MethodElementKind.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="MethodElementKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Unspecified"/>
- *     &lt;enumeration value="Remote"/>
- *     &lt;enumeration value="Home"/>
- *     &lt;enumeration value="Local"/>
- *     &lt;enumeration value="LocalHome"/>
- *     &lt;enumeration value="ServiceEndpoint"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="MethodElementKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Unspecified"/&gt;
+ *     &lt;enumeration value="Remote"/&gt;
+ *     &lt;enumeration value="Home"/&gt;
+ *     &lt;enumeration value="Local"/&gt;
+ *     &lt;enumeration value="LocalHome"/&gt;
+ *     &lt;enumeration value="ServiceEndpoint"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

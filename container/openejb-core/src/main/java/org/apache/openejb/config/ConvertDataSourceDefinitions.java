@@ -29,6 +29,7 @@ import org.apache.openejb.util.PropertyPlaceHolderHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -41,14 +42,34 @@ public class ConvertDataSourceDefinitions extends BaseConvertDefinitions {
 
         final List<JndiConsumer> jndiConsumers = collectConsumers(appModule);
 
-        final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<String, DataSource>();
+        final KeyedCollection<String, DataSource> dataSources = new KeyedCollection<>();
+        final KeyedCollection<String, DataSource> dataSourcesFromCompManagedBeans = new KeyedCollection<>();
 
         for (final JndiConsumer consumer : jndiConsumers) {
             if (consumer == null) {
                 continue;
             }
 
+            if (consumer instanceof org.apache.openejb.config.CompManagedBean) {
+                /*
+                 * TOMEE-2053: It may contain invalid datasource definitions
+                 * because it is never updated with content from the ejb-jar.xml
+                 * Wait until all other consumers have been processed, to safely
+                 * decide which data sources to transfer;
+                 */
+
+                dataSourcesFromCompManagedBeans.addAll(consumer.getDataSource());
+                continue;
+            }
             dataSources.addAll(consumer.getDataSource());
+        }
+
+        final Map<String, DataSource> dataSourcesMap = dataSources.toMap();
+        for(DataSource dataSource : dataSourcesFromCompManagedBeans){
+            //Interested only in DataSources that come from non-JndiConsumers
+            if(!dataSourcesMap.containsKey(dataSource.getKey())){
+                dataSources.add(dataSource);
+            }
         }
 
         for (final DataSource dataSource : dataSources) {

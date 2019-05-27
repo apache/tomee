@@ -51,7 +51,7 @@ public class SuperClassInterceptor {
      * For lifecycle callback interceptor methods, if there is no callback method defined on the bean class,
      * the invocation of proceed in the last interceptor method in the chain is a no-op, and null is returned.
      * If there is more than one such interceptor method, the invocation of proceed causes the container to execute those methods in order.
-     * @throws runtime exceptions or application exceptions that are allowed in the throws clause of the business method.
+     * @throws Exception or application exceptions that are allowed in the throws clause of the business method.
      */
     @SuppressWarnings("unchecked")
     @AroundInvoke
@@ -65,7 +65,7 @@ public class SuperClassInterceptor {
      * This should intercept postConstruct of the bean
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     @PostConstruct
     public void superClassInterceptorPostConstruct(final InvocationContext ctx) throws Exception {
@@ -87,7 +87,7 @@ public class SuperClassInterceptor {
      * This should intercept postActivate of the bean
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     @PostActivate
     public void superClassInterceptorPostActivate(final InvocationContext ctx) throws Exception {
@@ -101,7 +101,7 @@ public class SuperClassInterceptor {
      * This should intercept prePassivate of the bean.
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     @PrePassivate
     public void superClassInterceptorPrePassivate(final InvocationContext ctx) throws Exception {
@@ -115,7 +115,7 @@ public class SuperClassInterceptor {
      * This should intercept preDestroy of the bean.
      *
      * @param ctx - InvocationContext
-     * @throws runtime exceptions.
+     * @throws Exception
      */
     @PreDestroy
     public void superClassInterceptorPreDestroy(final InvocationContext ctx) throws Exception {

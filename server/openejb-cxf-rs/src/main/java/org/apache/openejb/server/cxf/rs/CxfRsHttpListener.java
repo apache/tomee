@@ -31,13 +31,16 @@ import org.apache.cxf.jaxrs.JAXRSServiceImpl;
 import org.apache.cxf.jaxrs.ext.ResourceComparator;
 import org.apache.cxf.jaxrs.lifecycle.ResourceProvider;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.apache.cxf.jaxrs.model.ApplicationInfo;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
+import org.apache.cxf.jaxrs.model.URITemplate;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
+import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
@@ -106,6 +109,8 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -281,9 +286,12 @@ public class CxfRsHttpListener implements RsHttpListener {
                 pathInfo = pathInfo.substring(0, indexOf);
             }
         }
-        if ("/".equals(pathInfo) || pathInfo.isEmpty()) { // root is redirected to welcomefiles
+        if (pathInfo.endsWith("/") || pathInfo.isEmpty()) { // root of path is redirected to welcomefiles
+            if (pathInfo.endsWith("/")) {
+              pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
+            }
             for (final String n : welcomeFiles) {
-                final InputStream is = request.getServletContext().getResourceAsStream(n);
+                final InputStream is = request.getServletContext().getResourceAsStream(pathInfo + n);
                 if (is != null) {
                     return is;
                 }
@@ -323,6 +331,61 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
         }
         return true;
+    }
+        
+    private Application findApplication() {
+        try {
+            ApplicationInfo appInfo = (ApplicationInfo)server.getEndpoint().get(Application.class.getName());
+            return (Application)appInfo.getProvider();
+        } catch (final Exception e) {
+        }
+        return null;
+    }
+    
+    private boolean applicationProvidesResources(final Application application) {
+        try {
+            if (application == null) {
+                return false;
+            }
+            if (InternalApplication.class.isInstance(application) && (InternalApplication.class.cast(application).getOriginal() == null)) {
+                return false;
+            }
+            return !application.getClasses().isEmpty() || !application.getSingletons().isEmpty();
+        } catch (final Exception e) {
+            return false;
+        }
+    }
+    
+    public boolean isCXFResource(final HttpServletRequest request) {
+        try {
+            Application application = findApplication();
+            if (!applicationProvidesResources(application)) {
+                JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
+
+                if( service == null ) {
+                    return false;
+                }
+
+                String pathToMatch = HttpUtils.getPathToMatch(request.getServletPath(), pattern, true);
+
+                final List<ClassResourceInfo> resources = service.getClassResourceInfos();
+                for (final ClassResourceInfo info : resources) {
+                    if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
+                        continue;
+                    }
+                   
+                    final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
+                    if (info.getURITemplate().match(pathToMatch, parameters)) {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        } catch (final Exception e) {
+            LOGGER.info("No JAX-RS service");
+        }
+        return false;
     }
 
     @Override
@@ -498,8 +561,10 @@ public class CxfRsHttpListener implements RsHttpListener {
     }
 
     private void addMandatoryProviders(final Collection<Object> instances, final ServiceConfiguration serviceConfiguration) {
-        if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
-            instances.add(new WadlDocumentMessageBodyWriter());
+        if (SystemInstance.get().getProperty("openejb.jaxrs.jsonProviders") == null) {
+            if (!shouldSkipProvider(WadlDocumentMessageBodyWriter.class.getName())) {
+                instances.add(new WadlDocumentMessageBodyWriter());
+            }
         }
         if (!shouldSkipProvider(EJBExceptionMapper.class.getName())) {
             instances.add(new EJBExceptionMapper());
@@ -886,7 +951,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     SystemInstance.get().getProperty("openejb.cxf.rs.bval.active",
                             serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.active", "true")));
             if (factory.getFeatures() == null && bvalActive) {
-                factory.setFeatures(new ArrayList<Feature>());
+                factory.setFeatures(new ArrayList<>());
             } else if (bvalActive) { // check we should activate it and user didn't configure it
                 for (final Feature f : factory.getFeatures()) {
                     if (BeanValidationFeature.class.isInstance(f)) {
@@ -908,7 +973,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
             if (bvalActive) { // bval doesn't need the actual instance so faking it to avoid to lookup the bean
-                final BeanValidationProvider provider = new BeanValidationProvider();
+                final BeanValidationProvider provider = new BeanValidationProvider(); // todo: close the factory
 
                 final BeanValidationInInterceptor in = new JAXRSBeanValidationInInterceptor() {
                     @Override
@@ -926,6 +991,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                         return CxfRsHttpListener.this.getServiceObject(message);
                     }
                 };
+                out.setEnforceOnlyBeanConstraints(true);
                 out.setProvider(provider);
                 out.setServiceObject(FAKE_SERVICE_OBJECT);
                 factory.getOutInterceptors().add(out);

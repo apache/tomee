@@ -17,15 +17,16 @@
 package org.apache.openejb.assembler.classic;
 
 import javax.validation.ValidatorFactory;
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.locks.ReentrantLock;
 
 // TODO: make it generic (LazyDelegate + Factory + refactor LazyValidator)
-public class LazyValidatorFactory implements InvocationHandler {
-    private final ReentrantLock lock = new ReentrantLock();
-    private final ClassLoader loader;
+public class LazyValidatorFactory implements InvocationHandler, Serializable {
+    private final transient ReentrantLock lock = new ReentrantLock();
+    private final transient ClassLoader loader;
     private final ValidationInfo info;
     private volatile ValidatorFactory factory;
 
@@ -50,7 +51,9 @@ public class LazyValidatorFactory implements InvocationHandler {
             l.lock();
             try {
                 if (factory == null) {
-                    factory = ValidatorBuilder.buildFactory(loader, info);
+                    factory = ValidatorBuilder.buildFactory(
+                            loader == null ? Thread.currentThread().getContextClassLoader() : loader,
+                            info == null ? new ValidationInfo() : info);
                 }
             } finally {
                 l.unlock();

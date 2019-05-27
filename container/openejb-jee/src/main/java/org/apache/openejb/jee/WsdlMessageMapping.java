@@ -32,14 +32,14 @@ import javax.xml.namespace.QName;
  * specific message and its part. Together they define uniquely
  * the mapping for a specific parameter. Parts within a message
  * context are uniquely identified with their names.
- * <p/>
+ *
  * The parameter-mode is defined by the mapping to indicate
  * whether the mapping will be IN, OUT, or INOUT..  The presence
  * of the soap-header element indicates that the parameter is
  * mapped to a soap header only.  When absent, it means that the
  * wsdl-message is mapped to a Java parameter. The soap headers
  * are interpreted in the order they are provided in the mapping.
- * <p/>
+ *
  * Used in: method-param-parts-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

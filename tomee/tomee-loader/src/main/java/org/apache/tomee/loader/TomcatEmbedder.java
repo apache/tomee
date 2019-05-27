@@ -1,23 +1,23 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.tomee.loader;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URI;
@@ -27,7 +27,7 @@ import java.util.Properties;
 
 /**
  * Ultimately this class does nothing lasting and just calls {@link TomcatHook#hook}
- * 
+ *
  * This class needs to know the path to the tomee.war file.
  *
  * With that information this class finds the openejb-loader jar in the tomee.war
@@ -44,10 +44,10 @@ public class TomcatEmbedder {
 
     /**Prefix for jar openejb-loader*/
     private static final String OPENEJB_LOADER_PREFIX = "openejb-loader";
-    
+
     /**OpenEJB War name*/
     private static final String TOMEE_WAR_NAME = "tomee.war";
-    
+
     /**
      * Starts to embed process.
      * @param properties this instance contains all System properties as well as all initialization parameters of the LoaderServlet
@@ -73,8 +73,9 @@ public class TomcatEmbedder {
         final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
         // set the ClassLoader to the one which loaded ServletConfig.class i.e. the parent ClassLoader
         Thread.currentThread().setContextClassLoader(catalinaCl);
+        URLClassLoader childCl = null;
         try {
-            final ClassLoader childCl = new URLClassLoader(new URL[] {
+            childCl = new URLClassLoader(new URL[]{
                     getThisJar().toURI().toURL(),
                     findOpenEJBJar(openejbWar, OPENEJB_LOADER_PREFIX).toURI().toURL()
             });
@@ -88,15 +89,22 @@ public class TomcatEmbedder {
         } catch (final Throwable e) {
             e.printStackTrace();
         } finally {
+            if (childCl != null) {
+                try {
+                    childCl.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             Thread.currentThread().setContextClassLoader(oldCl);
         }
     }
-    
+
     /**
      * Return path to jar file that contains this class.
      * <p>
      * Normally, tomee.war/lib/tomee-loader.jar
-     * </p>
+     *
      * @return path to jar file that contains this class
      */
     private static File getThisJar() {
@@ -130,12 +138,12 @@ public class TomcatEmbedder {
 
             uri = new URI(url);
 
-            if (uri.getPath() == null){
+            if (uri.getPath() == null) {
                 uri = new URI(uri.getRawSchemeSpecificPart());
             }
 
             String path = uri.getPath();
-            if (path.contains("!")){
+            if (path.contains("!")) {
                 path = path.substring(0, path.indexOf('!'));
             } else {
                 path = path.substring(0, path.length() - classFileName.length());
@@ -147,7 +155,7 @@ public class TomcatEmbedder {
             throw new IllegalStateException(e);
         }
     }
-    
+
     /**
      * Gets path to jar file that has namePrefix
      * and in the tomee.war/lib location.

@@ -42,7 +42,7 @@ public class BasicJaccProvider extends JaccProvider {
         }
     }
 
-    private final Map<String, BasicPolicyConfiguration> configurations = new HashMap<String, BasicPolicyConfiguration>();
+    private final Map<String, BasicPolicyConfiguration> configurations = new HashMap<>();
 
     private final java.security.Policy systemPolicy;
 

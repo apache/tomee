@@ -16,14 +16,14 @@
  */
 package org.apache.openejb.test;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-
-import org.junit.Assert;
 import junit.framework.Protectable;
 import junit.framework.Test;
 import junit.framework.TestResult;
+import org.junit.Assert;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
 
 public class NumberedTestCase extends Assert implements Test {
 

@@ -30,7 +30,7 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/singleton/BasicSingletonHome");
-        ejbHome = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicSingletonHome.class);
+        ejbHome = (BasicSingletonHome) obj;
         ejbMetaData = ejbHome.getEJBMetaData();
     }
 
@@ -59,7 +59,7 @@ public class SingletonEjbMetaDataTests extends BasicSingletonTestClient {
 
     /**
      * 5.5 Session object identity
-     * <p/>
+     *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,

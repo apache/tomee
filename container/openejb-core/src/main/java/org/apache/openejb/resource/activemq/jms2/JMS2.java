@@ -110,6 +110,6 @@ public final class JMS2 {
         if (StreamMessage.class.isInstance(message10)) {
             return (T) new WrappingStreamMessage(StreamMessage.class.cast(message10));
         }
-        return (T) new DelegateMessage(DelegateMessage.class.cast(message10));
+        return (T) new DelegateMessage(message10);
     }
 }

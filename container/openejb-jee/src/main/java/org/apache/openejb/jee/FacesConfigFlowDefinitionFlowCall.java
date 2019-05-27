@@ -31,33 +31,33 @@ import java.util.List;
 
 /**
  * <p class="changed_added_2_2">Define a call node in a flow graph.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
- * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code> element,
- * which must contain exactly one <code>&lt;flow-id&gt;</code> element.</p>
+ *
+ * <p>This element must contain exactly one <code>&lt;flow-reference&gt;</code&gt; element,
+ * which must contain exactly one <code>&lt;flow-id&gt;</code&gt; element.</p&gt;
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definition-flow-callType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-flow-callType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="flow-reference" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-flow-referenceType"/>
- *         &lt;element name="outbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-outbound-parameterType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-flow-callType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="flow-reference" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-flow-referenceType"/&gt;
+ *         &lt;element name="outbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-call-outbound-parameterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -99,21 +99,21 @@ public class FacesConfigFlowDefinitionFlowCall {
 
     /**
      * Gets the value of the outboundParameter property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the outboundParameter property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOutboundParameter().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFlowCallOutboundParameter }
      */

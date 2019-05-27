@@ -103,6 +103,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
     private final Socket socket;
     private final AsyncEvent event;
     private WebContext context = null;
+    private final String contextPath; // fallback if we don't find the context
     private volatile boolean started = false;
     private volatile boolean committed = false;
     private long timeout = 30000;
@@ -118,6 +119,7 @@ public class OpenEJBAsyncContext implements AsyncContext {
         }
 
         this.request = request;
+        this.contextPath = contextPath;
         if (contextPath != null) {
             for (final AppContext app : SystemInstance.get().getComponent(ContainerSystem.class).getAppContexts()) {
                 for (final WebContext web : app.getWebContexts()) {
@@ -227,7 +229,8 @@ public class OpenEJBAsyncContext implements AsyncContext {
     public void dispatch(final ServletContext context, final String path) {
         final HttpListenerRegistry registry = SystemInstance.get().getComponent(HttpListenerRegistry.class);
         try {
-            final String contextPath = this.context.getContextRoot().startsWith("/") ? this.context.getContextRoot() : ('/' + this.context.getContextRoot());
+            final String contextPath = this.context == null ?
+                    this.contextPath : (this.context.getContextRoot().startsWith("/") ? this.context.getContextRoot() : ('/' + this.context.getContextRoot()));
             final HttpRequestImpl req = new HttpRequestImpl(new URI(request.getRequestURI())) {
                 private String thisPath = path;
                 private String thisContextPath = contextPath;

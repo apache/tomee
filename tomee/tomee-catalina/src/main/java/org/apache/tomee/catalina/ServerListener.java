@@ -54,6 +54,7 @@ public class ServerListener implements LifecycleListener {
 
     private static final AtomicBoolean listenerInstalled = new AtomicBoolean(false);
 
+    @Override
     public void lifecycleEvent(final LifecycleEvent event) {
         if (Lifecycle.BEFORE_INIT_EVENT.equals(event.getType()) && StandardServer.class.isInstance(event.getSource())) {
             installServerInfo();
@@ -199,7 +200,7 @@ public class ServerListener implements LifecycleListener {
             field.setAccessible(true);
             final String tomeeVersion = OpenEjbVersion.get().getVersion();
             final int modifiers = field.getModifiers();
-            if (Modifier.isFinal(modifiers)) {
+            if (Modifier.isFinal(modifiers)) { // this is a bit fragile, we can surely drop this feature at some point
                 final Field modifiersField = Field.class.getDeclaredField("modifiers");
                 modifiersField.setAccessible(true);
                 modifiersField.setInt(field, modifiers & ~Modifier.FINAL);

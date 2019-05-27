@@ -18,6 +18,7 @@
 package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
@@ -52,11 +53,11 @@ import static org.apache.openejb.util.URLs.toFile;
 /**
  * TLD file urls cached on a per classloader basis.  Helps with sharing TLD
  * files between webapps by placing them in a parent classloader.
- * <p/>
+ *
  * Each webapp will be able to retrieve the cached version of the URLs and
  * therefore only needs to scan its own libraries, the parent libraries will
  * already have been scanned.
- * <p/>
+ *
  * For a tiny bit of performance, we will scan the StandardClassloader at boot
  * in a separate thread so it should be primed in advance of any deployment.
  *
@@ -72,6 +73,10 @@ public class TldScanner {
     private static final Map<Integer, Set<URL>> cacheByhashCode = new WeakHashMap<Integer, Set<URL>>();
 
     public static Set<URL> scan(final ClassLoader classLoader) throws OpenEJBException {
+        if (skip()) {
+            return Collections.emptySet();
+        }
+
         if (classLoader == null) {
             return Collections.emptySet();
         }
@@ -87,9 +92,16 @@ public class TldScanner {
         return result;
     }
 
-    public static Set<URL> scanClassLoaderForTagLibs(final ClassLoader classLoader) throws OpenEJBException {
+    private static boolean skip() {
+        return !"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.taglib.scan", "true"));
+    }
 
-        final Set<URL> tldUrls = new HashSet<URL>();
+    public static Set<URL> scanClassLoaderForTagLibs(final ClassLoader classLoader) throws OpenEJBException {
+        if (skip()) {
+            return Collections.emptySet();
+        }
+
+        final Set<URL> tldUrls = new HashSet<>();
 
         if (classLoader == null) {
             return tldUrls;
@@ -113,7 +125,7 @@ public class TldScanner {
                     Math.min(urls.size(), 2 * Runtime.getRuntime().availableProcessors() + 1),
                     new DaemonThreadFactory("OpenEJB-tld-server-scanning"));
 
-            final Collection<Future<Set<URL>>> futures = new ArrayList<Future<Set<URL>>>(urls.size());
+            final Collection<Future<Set<URL>>> futures = new ArrayList<>(urls.size());
             for (URL url : urls) {
                 if (url.getProtocol().equals("jar")) {
                     try {
@@ -123,7 +135,7 @@ public class TldScanner {
                         }
                         url = new URL(path);
                     } catch (final MalformedURLException e) {
-                        DeploymentLoader.logger.warning("JSP tag library location bad: " + url.toExternalForm(), e);
+                        DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + url.toExternalForm(), e);
                         continue;
                     }
                 }
@@ -136,7 +148,7 @@ public class TldScanner {
                 try {
                     file = toFile(url).getCanonicalFile().getAbsoluteFile();
                 } catch (final IOException e) {
-                    DeploymentLoader.logger.warning("JSP tag library location bad: " + url.toExternalForm(), e);
+                    DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + url.toExternalForm(), e);
                     continue;
                 }
 
@@ -165,7 +177,7 @@ public class TldScanner {
     }
 
     static Set<URL> scanWarForTagLibs(final File war) {
-        final Set<URL> urls = new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
 
         final File webInfDir = new File(war, "WEB-INF");
         if (!webInfDir.isDirectory()) {
@@ -174,7 +186,7 @@ public class TldScanner {
 
 
         // skip the lib and classes dir in WEB-INF
-        final LinkedList<File> files = new LinkedList<File>();
+        final LinkedList<File> files = new LinkedList<>();
         final File[] list = webInfDir.listFiles();
         if (list != null) {
             for (final File file : list) {
@@ -212,7 +224,7 @@ public class TldScanner {
                     file = file.getCanonicalFile().getAbsoluteFile();
                     urls.add(file.toURI().toURL());
                 } catch (final IOException e) {
-                    DeploymentLoader.logger.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
+                    DeploymentLoader.LOGGER.warning("JSP tag library location bad: " + file.getAbsolutePath(), e);
                 }
             }
         }
@@ -221,7 +233,7 @@ public class TldScanner {
     }
 
     static Set<URL> scanForTagLibs(final File file) {
-        final Set<URL> tldLocations = new HashSet<URL>();
+        final Set<URL> tldLocations = new HashSet<>();
         try {
             final String location = file.toURI().toURL().toExternalForm();
 
@@ -233,22 +245,20 @@ public class TldScanner {
                 tldLocations.add(url);
             }
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning for JSP tag libraries: " + file.getAbsolutePath(), e);
+            DeploymentLoader.LOGGER.warning("Error scanning for JSP tag libraries: " + file.getAbsolutePath(), e);
         }
 
         return tldLocations;
     }
 
     static Set<URL> scanJarForTagLibs(final File file) {
-        final Set<URL> urls = new HashSet<URL>();
+        final Set<URL> urls = new HashSet<>();
 
         if (!file.isFile()) {
             return urls;
         }
 
-        JarFile jarFile = null;
-        try {
-            jarFile = new JarFile(file);
+        try (JarFile jarFile = new JarFile(file)) {
 
             final URL jarFileUrl = new URL("jar", "", -1, file.toURI().toURL().toExternalForm() + "!/");
             for (final JarEntry entry : Collections.list(jarFile.entries())) {
@@ -260,16 +270,9 @@ public class TldScanner {
                 urls.add(url);
             }
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
-        } finally {
-            if (jarFile != null) {
-                try {
-                    jarFile.close();
-                } catch (final IOException e) {
-                    // exception ignored
-                }
-            }
+            DeploymentLoader.LOGGER.warning("Error scanning jar for JSP tag libraries: " + file.getAbsolutePath(), e);
         }
+        // exception ignored
 
         return urls;
     }
@@ -316,7 +319,7 @@ public class TldScanner {
             try {
                 urlSet = new UrlSet(classLoader);
             } catch (final IOException e) {
-                DeploymentLoader.logger.warning("Error scanning class loader for JSP tag libraries", e);
+                DeploymentLoader.LOGGER.warning("Error scanning class loader for JSP tag libraries", e);
             }
         }
 
@@ -324,10 +327,10 @@ public class TldScanner {
             urlSet = URLs.cullSystemJars(urlSet);
             urlSet = applyBuiltinExcludes(
                     urlSet,
-                    Filters.tokens("openejb-jstl-1.2", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc"),
+                    Filters.tokens("taglibs-standard-impl", "taglibs-standard-jstlel", "javax.faces-2.", "spring-security-taglibs", "spring-webmvc"),
                     Filters.prefixes("commons-jcs-", "myfaces-", "tomcat-websocket.jar")); // myfaces is hardcoded in tomee
         } catch (final IOException e) {
-            DeploymentLoader.logger.warning("Error scanning class loader for JSP tag libraries", e);
+            DeploymentLoader.LOGGER.warning("Error scanning class loader for JSP tag libraries", e);
         }
 
         return urlSet.getUrls();

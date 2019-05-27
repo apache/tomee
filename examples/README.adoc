@@ -1,0 +1,53 @@
+= TomEE Examples
+
+These examples demonstrate particular features of the Java EE ecosystem to help
+developers in the creation of their own applications.
+
+The idea is that each example focuses in a very specific framework feature and
+demonstrates its usage and behaviour in a simple way.
+
+== Rules to create a new example.
+
+* Demo just one feature with simple business logic.
+* Don't use more than 4 names in the example's name.
+Like in the _cdi-basic_ example where @Inject is demontrated in the _Course_ class.
+* If your example has already 1000 lines, consider either simplifying it or split it.
+* Don't define a Parent in maven's _pom.xml_. This will make the project completely self contained and independent,
+making the required dependencies clear.
+* Make sure you only include dependencies that are realy needed.
+* Always include an integration test with Arquillian or ApplicationComposer.
+* Document the bahaviour of each method with javadoc.
+* Include a README file explining the purpose and what's doing on.
+* Make sure you add the new project to the parent project _pom.xml_ modules section.
+
+== Translation
+
+If you want to translate an existing example into another language you just need to:
+
+1. Find two letter code for the language you want to translate to: https://www.loc.gov/standards/iso639-2/php/code_list.php
+
+For example, Spanish: `es` or Portuguese: `pt`
+
+
+2. Create the translated version of the readme file with the suffix:
+
+        README_<TwoDigitLanguageCode>.adoc
+
+For example, Spanish: `README_es.adoc` or Portuguese: `README_pt.adoc`
+
+
+Check https://github.com/apache/tomee/tree/master/examples/access-timeout for an example on how the translation into Spanish looks like.
+
+That's it!, TomEE website generator will pickup the language and update the examples index automatically without any further configuration.
+
+=== Translation best practices
+
+- The preferred format for the README files is  Asciidoc(.adoc), if you found a file originally written in Markdown (.md) please proceed with the translation in Asciidoc. Keep in mind that apart from changing the file extension,  Asciidoc has it's own syntax. You can check for instance this link:https://asciidoctor.org/docs/asciidoc-vs-markdown/[comparison matrix] between both formats.
+- IF you use some translation software, make sure to review the code and narrative from the original example.
+- If the example README file contains inner links for website navigation, it's recommended to also deploy the website locally to double check navigation. You will need to checkout https://github.com/apache/tomee-site-generator and follow it's README file to deploy locally your changes.
+- At the beginning of each .adoc file is used for configuration purposes, the properties should remain in English and it's advised to translate only the values of `index-group` and `title`. Check the following example for an translation into Spanis :
+
+      index-group=Testing Techniques
+      type=page
+      status=published
+      title=Descriptores alternos

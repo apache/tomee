@@ -216,7 +216,7 @@ public class Logger {
     private static final Computable<String, String> heirarchyResolver = new Computable<String, String>() {
         @Override
         public String compute(final String key) throws InterruptedException {
-            final int index = key.lastIndexOf(".");
+            final int index = key.lastIndexOf('.');
             final String parent = key.substring(0, index);
             if (parent.contains(OPENEJB)) {
                 return parent;
@@ -252,12 +252,7 @@ public class Logger {
     /**
      * Creates a MessageFormat object for a message and returns it
      */
-    private static final Computable<String, MessageFormat> messageFormatResolver = new Computable<String, MessageFormat>() {
-        @Override
-        public MessageFormat compute(final String message) throws InterruptedException {
-            return new MessageFormat(message);
-        }
-    };
+    private static final Computable<String, MessageFormat> messageFormatResolver = MessageFormat::new;
 
     /**
      * Cache of parent-child relationships between resource names
@@ -318,7 +313,7 @@ public class Logger {
 
     private static String packageName(final Class clazz) {
         final String name = clazz.getName();
-        return name.substring(0, name.lastIndexOf("."));
+        return name.substring(0, name.lastIndexOf('.'));
     }
 
     private static Boolean isLog4j;
@@ -329,7 +324,7 @@ public class Logger {
 
             isLog4j = false;
 
-            final List<String> locations = new ArrayList<String>();
+            final List<String> locations = new ArrayList<>();
             {
                 final Properties configFile = log4j(loadLoggingProperties());
 
@@ -428,32 +423,39 @@ public class Logger {
     @SuppressWarnings("UnusedDeclaration")
     public boolean isLevelEnable(final String level) {
         final String levelLowerCase = level.toLowerCase(Locale.ENGLISH);
-        if ("info".equals(levelLowerCase)) {
-            return isInfoEnabled();
-        } else if ("debug".equals(levelLowerCase)) {
-            return isDebugEnabled();
-        } else if ("warning".equals(levelLowerCase)) {
-            return isWarningEnabled();
-        } else if ("fatal".equals(levelLowerCase)) {
-            return isFatalEnabled();
-        } else if ("error".equals(levelLowerCase)) {
-            return isErrorEnabled();
+        switch (levelLowerCase) {
+            case "info":
+                return isInfoEnabled();
+            case "debug":
+                return isDebugEnabled();
+            case "warning":
+                return isWarningEnabled();
+            case "fatal":
+                return isFatalEnabled();
+            case "error":
+                return isErrorEnabled();
         }
         return false;
     }
 
     public void log(final String level, final String message) {
         final String levelLowerCase = level.toLowerCase(Locale.ENGLISH);
-        if ("info".equals(levelLowerCase)) {
-            info(message);
-        } else if ("debug".equals(levelLowerCase)) {
-            debug(message);
-        } else if ("warning".equals(levelLowerCase)) {
-            warning(message);
-        } else if ("fatal".equals(levelLowerCase)) {
-            fatal(message);
-        } else if ("error".equals(levelLowerCase)) {
-            error(message);
+        switch (levelLowerCase) {
+            case "info":
+                info(message);
+                break;
+            case "debug":
+                debug(message);
+                break;
+            case "warning":
+                warning(message);
+                break;
+            case "fatal":
+                fatal(message);
+                break;
+            case "error":
+                error(message);
+                break;
         }
     }
 

@@ -25,14 +25,13 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
- * <p/>
+ *
  * URI relativize(URI, URI) added afterwards to deal with the
  * non-functional URI.relativize(URI) method
  */
@@ -41,11 +40,11 @@ public class URISupport {
     /**
      * URI absoluteA = new URI("/Users/dblevins/work/openejb3/container/openejb-jee/apple/");
      * URI absoluteB = new URI("/Users/dblevins/work/openejb3/container/openejb-core/foo.jar");
-     * <p/>
+     *
      * URI relativeB = URISupport.relativize(absoluteA, absoluteB);
-     * <p/>
+     *
      * assertEquals("../../openejb-core/foo.jar", relativeB.toString());
-     * <p/>
+     *
      * URI resolvedB = absoluteA.resolve(relativeB);
      * assertTrue(resolvedB.equals(absoluteB));
      *
@@ -83,7 +82,7 @@ public class URISupport {
             }
         }
 
-        final List<String> path = new ArrayList<String>();
+        final List<String> path = new ArrayList<>();
         for (int x = pathA.size() - lastMatch; x > 0; x--) {
             path.add("..");
         }
@@ -168,17 +167,17 @@ public class URISupport {
 
     public static Map<String, String> parseQuery(final String uri) throws URISyntaxException {
         try {
-            final Map<String, String> rc = new LinkedHashMap<String, String>();
+            final Map<String, String> rc = new LinkedHashMap<>();
             if (uri != null) {
                 final String[] parameters = uri.split("&");
-                for (int i = 0; i < parameters.length; i++) {
-                    final int p = parameters[i].indexOf("=");
+                for (String parameter : parameters) {
+                    final int p = parameter.indexOf('=');
                     if (p >= 0) {
-                        final String name = URLDecoder.decode(parameters[i].substring(0, p), "UTF-8");
-                        final String value = URLDecoder.decode(parameters[i].substring(p + 1), "UTF-8");
+                        final String name = URLDecoder.decode(parameter.substring(0, p), "UTF-8");
+                        final String value = URLDecoder.decode(parameter.substring(p + 1), "UTF-8");
                         rc.put(name, value);
                     } else {
-                        rc.put(parameters[i], null);
+                        rc.put(parameter, null);
                     }
                 }
             }
@@ -227,15 +226,15 @@ public class URISupport {
         }
 
         int p;
-        final int intialParen = ssp.indexOf("(");
+        final int intialParen = ssp.indexOf('(');
         if (intialParen == 0) {
             rc.host = ssp.substring(0, intialParen);
-            p = rc.host.indexOf("/");
+            p = rc.host.indexOf('/');
             if (p >= 0) {
                 rc.path = rc.host.substring(p);
                 rc.host = rc.host.substring(0, p);
             }
-            p = ssp.lastIndexOf(")");
+            p = ssp.lastIndexOf(')');
             componentString = ssp.substring(intialParen + 1, p);
             params = ssp.substring(p + 1).trim();
 
@@ -250,7 +249,7 @@ public class URISupport {
             rc.components[i] = new URI(components[i].trim());
         }
 
-        p = params.indexOf("?");
+        p = params.indexOf('?');
         if (p >= 0) {
             if (p > 0) {
                 rc.path = stripPrefix(params.substring(0, p), "/");
@@ -265,7 +264,7 @@ public class URISupport {
     }
 
     private static String[] splitComponents(final String str) {
-        final ArrayList<String> l = new ArrayList<String>();
+        final ArrayList<String> l = new ArrayList<>();
 
         int last = 0;
         int depth = 0;
@@ -313,14 +312,14 @@ public class URISupport {
             if (options.size() > 0) {
                 final StringBuilder rc = new StringBuilder();
                 boolean first = true;
-                for (final Iterator iter = options.keySet().iterator(); iter.hasNext(); ) {
+                for (Object o : options.keySet()) {
                     if (first) {
                         first = false;
                     } else {
                         rc.append("&");
                     }
 
-                    final String key = (String) iter.next();
+                    final String key = (String) o;
                     final String value = (String) options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
                     rc.append("=");

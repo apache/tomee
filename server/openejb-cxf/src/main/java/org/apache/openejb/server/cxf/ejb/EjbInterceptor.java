@@ -119,7 +119,7 @@ public class EjbInterceptor {
 
             // install default interceptors
             chain.add(new ServiceInvokerInterceptor());
-            chain.add(new OutgoingChainInterceptor());
+            //chain.add(new OutgoingChainInterceptor()); // it is already in the enclosing chain, if we add it there we are in the tx so we write the message in the tx!
 
             // See http://cwiki.apache.org/CXF20DOC/interceptors.html
             // install Holder and Wrapper interceptors
@@ -131,7 +131,7 @@ public class EjbInterceptor {
             chain.add(new LogicalHandlerInInterceptor(binding));
             chain.add(new SOAPHandlerInterceptor(binding));
 
-            // install data binding interceptors
+            // install data binding interceptors - todo: check we need it
             copyDataBindingInterceptors(chain, inMessage.getInterceptorChain());
 
             InterceptorChain oldChain = inMessage.getInterceptorChain();

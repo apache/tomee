@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import static org.junit.Assert.assertFalse;
@@ -30,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 public class FilesTest {
 
-    private final static File file = new File("target/test/foo.jar");
+    private final static File FILE = new File("target/test/foo.jar");
 
     @Test
     public void testDelete() throws Exception {
@@ -49,26 +48,26 @@ public class FilesTest {
         for (int i = 0; i < 20; i++) {
 
             if (remove) {
-                Files.remove(file);
+                Files.remove(FILE);
             } else {
-                Files.delete(file);
+                Files.delete(FILE);
             }
 
-            Files.mkdirs(file.getParentFile());
-            assertTrue(file.createNewFile());
-            assertTrue(file.exists());
+            Files.mkdirs(FILE.getParentFile());
+            assertTrue(FILE.createNewFile());
+            assertTrue(FILE.exists());
         }
 
-        assertTrue(file.getParentFile().exists());
+        assertTrue(FILE.getParentFile().exists());
 
         if (remove) {
-            Files.remove(file.getParentFile());
+            Files.remove(FILE.getParentFile());
         } else {
-            Files.delete(file.getParentFile());
+            Files.delete(FILE.getParentFile());
         }
 
-        assertFalse(file.exists());
-        assertFalse(file.getParentFile().exists());
+        assertFalse(FILE.exists());
+        assertFalse(FILE.getParentFile().exists());
 
         final long time = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, String.format("Completed File.%1$s in %2$sms" , remove ? "remove" : "delete", String.valueOf(time)));

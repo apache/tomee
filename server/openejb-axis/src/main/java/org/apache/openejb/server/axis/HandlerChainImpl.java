@@ -158,7 +158,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
 
     /**
      * Handlers cannot:
-     * <p/>
+     *
      * - re-target a request to a different component.
      * - change the operation
      * - change the message part types

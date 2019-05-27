@@ -23,7 +23,7 @@ import org.apache.openejb.util.Logger;
 import java.util.LinkedList;
 
 public class SaajUniverse {
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_WS, SaajUniverse.class);
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_WS, SaajUniverse.class);
 
     static {
         if (SystemInstance.get().getOptions().get("openejb.soap.override-factory", false)) { // default are far faster than our chain
@@ -47,7 +47,7 @@ public class SaajUniverse {
     public static final Type AXIS1 = Type.AXIS1;
     public static final Type AXIS2 = Type.AXIS2;
 
-    private static final ThreadLocal<LinkedList<Type>> currentUniverse =
+    private static final ThreadLocal<LinkedList<Type>> CURRENT_UNIVERSE =
         new ThreadLocal<LinkedList<Type>>() {
             @Override
             protected LinkedList<Type> initialValue() {
@@ -56,25 +56,25 @@ public class SaajUniverse {
         };
 
     public void set(Type newUniverse) {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENT_UNIVERSE.get();
         universeList.add(newUniverse);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Set universe: " + Thread.currentThread() + " " + newUniverse);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Set universe: " + Thread.currentThread() + " " + newUniverse);
         }
     }
 
     public void unset() {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENT_UNIVERSE.get();
         if (universeList != null && !universeList.isEmpty()) {
             universeList.removeLast();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Restored universe: " + Thread.currentThread());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Restored universe: " + Thread.currentThread());
             }
         }
     }
 
     static Type getCurrentUniverse() {
-        final LinkedList<Type> universeList = currentUniverse.get();
+        final LinkedList<Type> universeList = CURRENT_UNIVERSE.get();
         if (universeList != null && !universeList.isEmpty()) {
             return universeList.getLast();
         }

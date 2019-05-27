@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,10 +34,10 @@ public class Movies {
      * The field name "movieDatabase" matches the DataSource we
      * configure in the TestCase via :
      * p.put("movieDatabase", "new://Resource?type=DataSource");
-     * <p/>
+     *
      * This would also match an equivalent delcaration in an openejb.xml:
      * <Resource id="movieDatabase" type="DataSource"/>
-     * <p/>
+     *
      * If you'd like the freedom to change the field name without
      * impact on your configuration you can set the "name" attribute
      * of the @Resource annotation to "movieDatabase" instead.

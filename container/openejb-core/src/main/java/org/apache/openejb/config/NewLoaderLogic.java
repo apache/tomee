@@ -60,7 +60,7 @@ import static java.util.Arrays.asList;
  */
 public class NewLoaderLogic {
 
-    private static final Logger logger = DeploymentLoader.logger;
+    private static final Logger logger = DeploymentLoader.LOGGER;
     public static final String DEFAULT_EXCLUSIONS_ALIAS = "default-list";
     public static final String ADDITIONAL_EXCLUDES = SystemInstance.get().getOptions().get("openejb.additional.exclude", (String) null);
     public static final String ADDITIONAL_INCLUDE = SystemInstance.get().getOptions().get("openejb.additional.include", (String) null);
@@ -92,9 +92,9 @@ public class NewLoaderLogic {
 
     public static Set<String> callers(final Filter start) {
 
-        final Set<String> callers = new LinkedHashSet<String>();
+        final Set<String> callers = new LinkedHashSet<>();
 
-        final List<StackTraceElement> elements = new ArrayList<StackTraceElement>(Arrays.asList(new Exception().fillInStackTrace().getStackTrace()));
+        final List<StackTraceElement> elements = new ArrayList<>(Arrays.asList(new Exception().fillInStackTrace().getStackTrace()));
 
         // Yank out everything until we find a known ENTRY point
         // if we don't find one, so be it, this is only a convenience
@@ -155,12 +155,7 @@ public class NewLoaderLogic {
                 "sun.reflect."
             );
 
-            final Iterator<String> classes = callers.iterator();
-            while (classes.hasNext()) {
-                if (unwanted.accept(classes.next())) {
-                    classes.remove();
-                }
-            }
+            callers.removeIf(unwanted::accept);
         }
 
         return callers;
@@ -221,13 +216,7 @@ public class NewLoaderLogic {
         getExclusions(); // force init
 
         final List<URL> urls = urlSet.getUrls();
-        final Iterator<URL> iterator = urls.iterator();
-        while (iterator.hasNext()) {
-            final URL url = iterator.next();
-            if (skip(url, includeFilter, excludeFilter)) {
-                iterator.remove();
-            }
-        }
+        urls.removeIf(url -> skip(url, includeFilter, excludeFilter));
 
         return new UrlSet(urls);
     }
@@ -323,7 +312,7 @@ public class NewLoaderLogic {
             exclusions = readDefaultExclusions();
         }
 
-        final List<String> excludes = new ArrayList<String>(exclusions.length + 5);
+        final List<String> excludes = new ArrayList<>(exclusions.length + 5);
         excludes.addAll(Arrays.asList(exclusions));
 
         if (ADDITIONAL_EXCLUDES != null) {
@@ -332,12 +321,7 @@ public class NewLoaderLogic {
         if (ADDITIONAL_INCLUDE != null) { // include = not excluded
             for (final String rawInclude : ADDITIONAL_INCLUDE.split("[ \t\n\n]*,[ \t\n\n]*")) {
                 final String include = rawInclude.trim();
-                final Iterator<String> excluded = excludes.iterator();
-                while (excluded.hasNext()) {
-                    if (excluded.next().startsWith(include)) {
-                        excluded.remove();
-                    }
-                }
+                excludes.removeIf(s -> s.startsWith(include));
             }
         }
 
@@ -390,13 +374,10 @@ public class NewLoaderLogic {
 
     public static String[] readInputStreamList(final InputStream is) {
 
-        final List<String> list = new ArrayList<String>();
-        BufferedReader reader = null;
+        final List<String> list = new ArrayList<>();
+
         String line;
-
-        try {
-
-            reader = new BufferedReader(new InputStreamReader(is));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
 
             while ((line = reader.readLine()) != null) {
                 final String value = line.trim();
@@ -412,15 +393,8 @@ public class NewLoaderLogic {
             }
         } catch (final Throwable e) {
             logger.warning("readInputStreamList: Failed to read provided stream");
-        } finally {
-            if (null != reader) {
-                try {
-                    reader.close();
-                } catch (final Throwable e) {
-                    //Ignore
-                }
-            }
         }
+        //Ignore
 
         return list.toArray(new String[list.size()]);
     }
@@ -452,7 +426,7 @@ public class NewLoaderLogic {
 
             callers.size();
 
-            final Set<String> packages = new HashSet<String>();
+            final Set<String> packages = new HashSet<>();
             for (final String caller : callers) {
                 String[] parts = caller.split("\\.");
                 if (parts.length > 2) {
@@ -573,7 +547,7 @@ public class NewLoaderLogic {
                     "='" +
                     include +
                     "'");
-                final List<String> list = new ArrayList<String>();
+                final List<String> list = new ArrayList<>();
                 for (final URL url : urls) {
                     list.add(url.toExternalForm());
                 }

@@ -6,9 +6,14 @@ target
 *.ipr
 *.iml
 *.log
+*.vscode
 *~
 quick.bat
 /tomee/tomee-plume-webapp/overlays/
 /tomee/tomee-plus-webapp/overlays/
 /temp
 /report.txt
+nb-configuration.xml
+.factorypath
+.history
+**/test/key

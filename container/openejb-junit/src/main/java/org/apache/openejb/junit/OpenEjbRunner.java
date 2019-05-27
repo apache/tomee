@@ -28,7 +28,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.InitializationError;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class OpenEjbRunner extends Runner {
     private final Runner delegate;
@@ -54,7 +54,7 @@ public class OpenEjbRunner extends Runner {
         try {
             delegate = getDelegateRunner(testClazz);
         } catch (final Throwable e) {
-            throw new InitializationError(Arrays.asList(e));
+            throw new InitializationError(Collections.singletonList(e));
         }
     }
 
@@ -88,7 +88,7 @@ public class OpenEjbRunner extends Runner {
      * This accepts a null method. Might make it easier to initialize new contexts
      * from the delegate runner (which calls back here). The cohesion isn't that great
      * but is the best I could come up with for delegating to both JUnit 3 and 4.
-     * <p/>
+     *
      * The alternative was a context factory - though that introduced a new class and
      * made extending it more complex as 3 classes are needed - a runner to identify the
      * factory, a factory and a context. Either that or you need to specify the

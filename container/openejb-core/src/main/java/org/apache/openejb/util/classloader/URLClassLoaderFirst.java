@@ -48,6 +48,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // - will not match anything, that's the desired default behavior
     public static final Collection<String> FORCED_SKIP = new ArrayList<>();
     public static final Collection<String> FORCED_LOAD = new ArrayList<>();
+    public static final Collection<String> FILTERABLE_RESOURCES = new ArrayList<>();
 
     static {
         reloadConfig();
@@ -58,16 +59,25 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static final URL SLF4J_CONTAINER = URLClassLoaderFirst.class.getClassLoader().getResource(SLF4J_BINDER_CLASS);
     private static final String CLASS_EXT = ".class";
     public static final ClassLoader SYSTEM_CLASS_LOADER = ClassLoader.getSystemClassLoader();
+    private static final boolean ALLOW_OPEN_EJB_SYSTEM_LOADING = !Boolean.getBoolean("openejb.classloader.first.disallow-system-loading");
 
     public static void reloadConfig() {
-        list(FORCED_SKIP, "openejb.classloader.forced-skip");
-        list(FORCED_LOAD, "openejb.classloader.forced-load");
+        list(FORCED_SKIP, "openejb.classloader.forced-skip", null);
+        list(FORCED_LOAD, "openejb.classloader.forced-load", null);
+        list(FILTERABLE_RESOURCES, "openejb.classloader.filterable-resources",
+                "META-INF/services/javax.validation.spi.ValidationProvider," +
+                "META-INF/services/javax.ws.rs.client.ClientBuilder," +
+                "META-INF/services/javax.json.spi.JsonProvider," +
+                "META-INF/services/javax.cache.spi.CachingProvider," +
+                "META-INF/javamail.default.providers,META-INF/javamail.default.address.map," +
+                "META-INF/javamail.charset.map,META-INF/mailcap," +
+                SLF4J_BINDER_CLASS);
     }
 
-    private static void list(final Collection<String> list, final String key) {
+    private static void list(final Collection<String> list, final String key, final String def) {
         list.clear();
 
-        final String s = SystemInstance.get().getOptions().get(key, (String) null);
+        final String s = SystemInstance.get().getOptions().get(key, def);
         if (s != null && !s.trim().isEmpty()) {
             list.addAll(Arrays.asList(s.trim().split(",")));
         }
@@ -111,7 +121,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                         }
                         return clazz;
                     }
-                } catch (final ClassNotFoundException ignored) {
+                } catch (final NoClassDefFoundError | ClassNotFoundException ignored) {
                     // no-op
                 }
             }
@@ -187,7 +197,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     // we skip webapp enrichment jars since we want to load them from the webapp or lib
     // Note: this is not a real limitation since it is first fail it will be done later
     public static boolean canBeLoadedFromSystem(final String name) {
-        return !name.startsWith("org.apache.openejb.") || !isWebAppEnrichment(name.substring("org.apache.openejb.".length()));
+        return ALLOW_OPEN_EJB_SYSTEM_LOADING && (!name.startsWith("org.apache.openejb.") || !isWebAppEnrichment(name.substring("org.apache.openejb.".length())));
     }
 
     // making all these call inline if far more costly than factorizing packages
@@ -348,7 +358,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
                     if (myfaces.startsWith("shared.")) {
                         return true;
                     }
-                    if (myfaces.startsWith("ee6.")) {
+                    if (myfaces.startsWith("ee.")) {
                         return true;
                     }
                     if (myfaces.startsWith("lifecycle.")) {
@@ -566,22 +576,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
     public static boolean isFilterableResource(final String name) {
         // currently bean validation, Slf4j, myfaces (because of enrichment)
         return name != null
-            && (
-                // bval
-                "META-INF/services/javax.validation.spi.ValidationProvider".equals(name)
-                // jaxrs 2
-            || "META-INF/services/javax.ws.rs.client.ClientBuilder".equals(name)
-                // jcache
-            || "META-INF/services/javax.cache.spi.CachingProvider".equals(name)
-                // javamail
-            || "META-INF/javamail.default.providers".equals(name)
-            || "META-INF/javamail.default.address.map".equals(name)
-            || "META-INF/javamail.charset.map".equals(name)
-            || "META-INF/mailcap".equals(name)
-                // myfaces
-            || name.startsWith("META-INF/services/org.apache.myfaces.spi")
-                // slf4j
-            || SLF4J_BINDER_CLASS.equals(name));
+            && (FILTERABLE_RESOURCES.contains(name) || name.startsWith("META-INF/services/org.apache.myfaces.spi"));
     }
 
     public static boolean shouldSkipSlf4j(final ClassLoader loader, final String name) {

@@ -75,7 +75,7 @@ public class JdbcConfigTest extends TestCase {
     }
 
     private void verifyManagedConnections(final DataSource dataSource) throws SQLException {
-        final List<Connection> managedConnections = new ArrayList<Connection>();
+        final List<Connection> managedConnections = new ArrayList<>();
         try {
             for (int i = 0; i < 4; i++) {
                 final Connection connection = dataSource.getConnection();
@@ -87,11 +87,8 @@ public class JdbcConfigTest extends TestCase {
                 } catch (final SQLException expected) {
                 }
 
-                final Statement statement = connection.createStatement();
-                try {
+                try (Statement statement = connection.createStatement()) {
                     statement.getQueryTimeout();
-                } finally {
-                    statement.close();
                 }
             }
         } finally {
@@ -102,18 +99,15 @@ public class JdbcConfigTest extends TestCase {
     }
 
     private void verifyUnmanagedConnections(final DataSource dataSource) throws SQLException {
-        final List<Connection> unmanagedConnections = new ArrayList<Connection>();
+        final List<Connection> unmanagedConnections = new ArrayList<>();
         try {
             for (int i = 0; i < 4; i++) {
                 final Connection connection = dataSource.getConnection();
                 unmanagedConnections.add(connection);
                 assertTrue("Expected connection.getAutoCommit() to be true", connection.getAutoCommit());
                 connection.setAutoCommit(true);
-                final Statement statement = connection.createStatement();
-                try {
+                try (Statement statement = connection.createStatement()) {
                     statement.getQueryTimeout();
-                } finally {
-                    statement.close();
                 }
                 connection.commit();
                 connection.setAutoCommit(false);

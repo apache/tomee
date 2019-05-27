@@ -1,0 +1,82 @@
+= TomEE and Intellij
+:index-group: IDE
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software Foundation (ASF)
+under one or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information regarding
+copyright ownership. The ASF licenses this file to you under the Apache
+License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+. http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+Intellij is the preferred editor of most of the developers on Apache
+TomEE. It's fast and light and goes out of its way to guess what you're
+thinking and act accordingly in efforts to save you time and increase
+your enjoyment. In this regard TomEE and Intellij have a lot in common.
+
+While TomEE works with most IDEs via the Tomcat adapter and this covers
+WAR files, JetBrains has stepped up to the plate with a TomEE specific
+adapter to allow deployment of the full range of archives that TomEE
+supports. The evolving TomEE/Intellij integration sets the pace for all
+other IDE integrations.
+http://youtrack.jetbrains.com/issues/IDEA[Feature requests very
+welcome!] TomEE is to Intellij what GlassFish is to NetBeans and your
+feedback is a critcal part of that.
+
+== Getting Started
+
+We will use one of the existing
+https://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/[examples]
+for this demo. Let's import it.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_01.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_02.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_03.png[alt
+text]
+
+Give a minute while Intellij imports the dependencies.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_04.png[alt
+text]
+
+It's time to run the application. Open "Edit Configurations".
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_05.png[alt
+text]
+
+Click the "+" icon and select "TomEE Server" and "Local".
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_06.png[alt
+text]
+
+If your server is still not configured, click the "Configure" button and
+point it to your local TomEE installation.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_07.png[alt
+text]
+
+If you see a warning message like "No artifacts marked for deployment",
+click the "Fix" button and select one of the options.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_08.png[alt
+text]
+
+You can change the "Application Context".
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_09.png[alt
+text]
+
+Now you can run it. Click the "play" button.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_10.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_11.png[alt
+text]
+
+Your application is up and running.
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_12.png[alt
+text]
+image:http://people.apache.org/~tveronezi/tomee/tomee_site/intellij_integration/windows8_13.png[alt
+text]

@@ -33,7 +33,7 @@ public class CorbaTestServer implements TestServer {
 //      log("Before running the OpenEJB test suite on the ");
 //      log("OpenEJB CORBA Server, the MapNamingContext");
 //      log("and CORBA Server must each be started in ");
-//      log("seperate processes.");
+//      log("separate processes.");
 //      log("");
 //      log("1) Execute corba_naming_server.sh or .bat in a process.");
 //      log("2) Execute corba_server.sh or .bat in another process.");

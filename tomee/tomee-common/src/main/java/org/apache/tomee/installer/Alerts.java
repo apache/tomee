@@ -21,9 +21,9 @@ import java.util.List;
 
 public class Alerts {
 
-    private final List<String> errors = new ArrayList<String>();
-    private final List<String> warnings = new ArrayList<String>();
-    private final List<String> infos = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<>();
+    private final List<String> warnings = new ArrayList<>();
+    private final List<String> infos = new ArrayList<>();
 
     public void reset() {
         errors.clear();

@@ -30,7 +30,7 @@ import java.util.logging.LogRecord;
 public class ColorFormatter extends SingleLineFormatter {
     public static final String OPENEJB_LOG_COLOR_PREFIX = "openejb.log.color.";
 
-    private final Map<Level, Ansi.Color> colors = new HashMap<Level, Ansi.Color>();
+    private final Map<Level, Ansi.Color> colors = new HashMap<>();
 
     public ColorFormatter() {
         // until info level  information should be not so import so keep default color

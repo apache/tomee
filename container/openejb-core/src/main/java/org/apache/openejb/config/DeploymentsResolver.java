@@ -55,7 +55,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
     private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
-    private static final Logger logger = DeploymentLoader.logger;
+    private static final Logger logger = DeploymentLoader.LOGGER;
     private static File lib;
 
     static {
@@ -153,7 +153,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
         Files.dir(dir);
         Files.notHidden(dir);
 
-        final Map<String, File> files = new LinkedHashMap<String, File>();
+        final Map<String, File> files = new LinkedHashMap<>();
         final File[] list = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(final File f) {
@@ -208,7 +208,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * Then ignore this resource
      * 3- If the include and exclude class-path patterns are not defined
      * Then load this resource
-     * <p/>
+     *
      * The previous steps are based on the following points:
      * 1- Include class-path pattern has the highest priority
      * This helps in case both patterns are defined using the same values.
@@ -298,7 +298,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 logger.fatal("ADJUST THE EXCLUDE/INCLUDE!!!.  Current settings: " +
                         CLASSPATH_EXCLUDE + "='" + searchResult.exclude + "', " +
                         CLASSPATH_INCLUDE + "='" + searchResult.include + "'");
-                final List<String> list = new ArrayList<String>();
+                final List<String> list = new ArrayList<>();
                 for (final URL url : searchResult.urls) {
                     list.add(url.toExternalForm());
                 }
@@ -464,7 +464,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
                 }
 
                 final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
-                if (!isWindows) {
+                if (!isWindows || !Boolean.parseBoolean(SystemInstance.get().getProperty("openejb.resolver.windows.lowercase-urls", "true"))) {
                     urls = urlSet.getUrls();
                 } else {
                     urls = new ArrayList<>();

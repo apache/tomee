@@ -18,10 +18,32 @@
 package org.apache.openejb.arquillian.embedded;
 
 import javax.ejb.Singleton;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.OperationNotSupportedException;
 
 @Singleton
 public class AnEJB {
     public String test() {
         return "ok";
+    }
+    
+    public String createSubContext() {
+    	try {
+			Context context = new InitialContext();
+			try {
+				Context subContext = context.createSubcontext("sub");
+				if(subContext == null) {
+					return null;
+				} else {
+					return "created";
+				}
+			} catch (OperationNotSupportedException e) {
+				return OperationNotSupportedException.class.getName();
+			}
+		} catch (NamingException e) {
+			return "failure " + e;
+		}
     }
 }

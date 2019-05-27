@@ -26,6 +26,7 @@ import org.apache.openejb.cdi.CompositeBeans;
 import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.WebAppEnricher;
 import org.apache.openejb.config.event.BeforeDeploymentEvent;
+import org.apache.openejb.config.event.EnhanceScannableUrlsEvent;
 import org.apache.openejb.config.sys.Resources;
 import org.apache.openejb.core.EmptyResourcesClassLoader;
 import org.apache.openejb.core.ParentClassLoaderFinder;
@@ -74,6 +75,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -81,6 +83,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -90,18 +93,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-import java.util.Locale;
-
-import static java.util.Arrays.asList;
 
 /**
  * @version $Revision$ $Date$
  */
 public class DeploymentLoader implements DeploymentFilterable {
-    public static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
+    public static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_STARTUP_CONFIG, "org.apache.openejb.util.resources");
     public static final String OPENEJB_ALTDD_PREFIX = "openejb.altdd.prefix";
 
-    private static final String ddDir = "META-INF/";
+    static final String META_INF = "META-INF/";
 
     public static final String EAR_WEBAPP_PERSISTENCE_XML_JARS = "ear-webapp-persistence-xml-jars";
     public static final String EAR_SCOPED_CDI_BEANS = "ear-scoped-cdi-beans_";
@@ -199,7 +199,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String jarLocation = URLs.toFilePath(baseUrl);
                 final ConnectorModule connectorModule = createConnectorModule(jarLocation, jarLocation, getOpenEJBClassLoader(), null);
                 if (connectorModule != null) {
-                    final List<ConnectorModule> connectorModules = new ArrayList<ConnectorModule>();
+                    final List<ConnectorModule> connectorModules = new ArrayList<>();
 
                     // let it be able to deploy the same connector several times
                     final String id = connectorModule.getModuleId();
@@ -264,14 +264,13 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static void addWebModuleDescriptors(final URL baseUrl, final WebModule webModule, final AppModule appModule) throws OpenEJBException {
-        final Map<String, Object> otherDD = new HashMap<String, Object>();
         final List<URL> urls = webModule.getScannableUrls();
         final ResourceFinder finder = new ResourceFinder("", urls.toArray(new URL[urls.size()]));
-        otherDD.putAll(getDescriptors(finder, false));
+        final Map<String, Object> otherDD = new HashMap<>(getDescriptors(finder, false));
 
         // "persistence.xml" is done separately since we manage a list of url and not s single url
         try {
-            final List<URL> persistenceXmls = finder.findAll(ddDir + "persistence.xml");
+            final List<URL> persistenceXmls = finder.findAll(META_INF + "persistence.xml");
             if (persistenceXmls.size() >= 1) {
                 final URL old = (URL) otherDD.get("persistence.xml");
                 if (old != null && !persistenceXmls.contains(old)) {
@@ -313,7 +312,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } catch (final Exception e) {
-                logger.error("error processing url " + url.toExternalForm(), e);
+                LOGGER.error("error processing url " + url.toExternalForm(), e);
             }
         }
 
@@ -343,7 +342,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     }
                 }
             } catch (final Exception e) {
-                logger.error("error processing url " + url.toExternalForm(), e);
+                LOGGER.error("error processing url " + url.toExternalForm(), e);
             }
         }
     }
@@ -357,7 +356,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (otherDD.containsKey(name)) {
             List<URL> persistenceUrls = (List<URL>) appModule.getAltDDs().get(name);
             if (persistenceUrls == null) {
-                persistenceUrls = new ArrayList<URL>();
+                persistenceUrls = new ArrayList<>();
                 appModule.getAltDDs().put(name, persistenceUrls);
             }
 
@@ -399,14 +398,14 @@ public class DeploymentLoader implements DeploymentFilterable {
             // Find all the modules using either the application xml or by searching for all .jar, .war and .rar files.
             //
 
-            final Map<String, URL> ejbModules = new LinkedHashMap<String, URL>();
-            final Map<String, URL> clientModules = new LinkedHashMap<String, URL>();
-            final Map<String, URL> resouceModules = new LinkedHashMap<String, URL>();
-            final Map<String, URL> webModules = new LinkedHashMap<String, URL>();
-            final Map<String, String> webContextRoots = new LinkedHashMap<String, String>();
+            final Map<String, URL> ejbModules = new LinkedHashMap<>();
+            final Map<String, URL> clientModules = new LinkedHashMap<>();
+            final Map<String, URL> resouceModules = new LinkedHashMap<>();
+            final Map<String, URL> webModules = new LinkedHashMap<>();
+            final Map<String, String> webContextRoots = new LinkedHashMap<>();
 
             final URL applicationXmlUrl = appDescriptors.get("application.xml");
-            final List<URL> extraLibs = new ArrayList<URL>();
+            final List<URL> extraLibs = new ArrayList<>();
 
             final Application application;
             if (applicationXmlUrl != null) {
@@ -435,7 +434,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 }
             } else {
                 application = new Application();
-                final HashMap<String, URL> files = new HashMap<String, URL>();
+                final HashMap<String, URL> files = new HashMap<>();
                 scanDir(appDir, files, "", false);
                 files.remove("META-INF/MANIFEST.MF");
 
@@ -476,7 +475,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap(application.getLibraryDirectory());
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from '" + application.getLibraryDirectory() + "' : " + e.getMessage(), e);
             }
 
             // APP-INF/lib/*
@@ -484,7 +483,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap("APP-INF/lib/");
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from 'APP-INF/lib/' : " + e.getMessage(), e);
             }
 
             // META-INF/lib/*
@@ -492,11 +491,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final Map<String, URL> libs = finder.getResourcesMap("META-INF/lib/");
                 extraLibs.addAll(libs.values());
             } catch (final IOException e) {
-                logger.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
+                LOGGER.warning("Cannot load libs from 'META-INF/lib/' : " + e.getMessage(), e);
             }
 
             // All jars nested in the Resource Adapter
-            final HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+            final HashMap<String, URL> rarLibs = new HashMap<>();
             for (final Map.Entry<String, URL> entry : resouceModules.entrySet()) {
                 try {
                     // unpack the resource adapter archive
@@ -542,7 +541,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 appModule.getWatchedResources().add(URLs.toFilePath(applicationXmlUrl));
             }
             if (appDescriptors.containsKey(RESOURCES_XML)) {
-                final Map<String, Object> altDd = new HashMap<String, Object>(appDescriptors);
+                final Map<String, Object> altDd = new HashMap<>(appDescriptors);
                 ReadDescriptors.readResourcesXml(new org.apache.openejb.config.Module(false) {
                     @Override
                     public Map<String, Object> getAltDDs() {
@@ -559,9 +558,9 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             // EJB modules
-            for (final String moduleName : ejbModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : ejbModules.entrySet()) {
                 try {
-                    URL ejbUrl = ejbModules.get(moduleName);
+                    URL ejbUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), ejbUrl)) {
                         try {
@@ -577,14 +576,14 @@ public class DeploymentLoader implements DeploymentFilterable {
                     final EjbModule ejbModule = createEjbModule(ejbUrl, absolutePath, appClassLoader);
                     appModule.getEjbModules().add(ejbModule);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load EJBs from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load EJBs from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Application Client Modules
-            for (final String moduleName : clientModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : clientModules.entrySet()) {
                 try {
-                    URL clientUrl = clientModules.get(moduleName);
+                    URL clientUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), clientUrl)) {
                         try {
@@ -601,14 +600,14 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                     appModule.getClientModules().add(clientModule);
                 } catch (final Exception e) {
-                    logger.error("Unable to load App Client from EAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load App Client from EAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Resource modules
-            for (final String moduleName : resouceModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : resouceModules.entrySet()) {
                 try {
-                    URL rarUrl = resouceModules.get(moduleName);
+                    URL rarUrl = stringURLEntry.getValue();
                     // we should try to use a reference to the temp classloader
                     if (ClassLoaderUtil.isUrlCached(appModule.getJarLocation(), rarUrl)) {
                         try {
@@ -618,22 +617,22 @@ public class DeploymentLoader implements DeploymentFilterable {
                             // no-op
                         }
                     }
-                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, moduleName);
+                    final ConnectorModule connectorModule = createConnectorModule(appId, URLs.toFilePath(rarUrl), appClassLoader, stringURLEntry.getKey());
                     if (connectorModule != null) {
                         appModule.getConnectorModules().add(connectorModule);
                     }
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load RAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load RAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
             // Web modules
-            for (final String moduleName : webModules.keySet()) {
+            for (final Map.Entry<String, URL> stringURLEntry : webModules.entrySet()) {
                 try {
-                    final URL warUrl = webModules.get(moduleName);
-                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(moduleName), null);
+                    final URL warUrl = stringURLEntry.getValue();
+                    addWebModule(appModule, warUrl, appClassLoader, webContextRoots.get(stringURLEntry.getKey()), null);
                 } catch (final OpenEJBException e) {
-                    logger.error("Unable to load WAR: " + appId + ", module: " + moduleName + ". Exception: " + e.getMessage(), e);
+                    LOGGER.error("Unable to load WAR: " + appId + ", module: " + stringURLEntry.getKey() + ". Exception: " + e.getMessage(), e);
                 }
             }
 
@@ -689,7 +688,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             return appModule;
 
         } catch (final OpenEJBException e) {
-            logger.error("Unable to load EAR: " + jarPath, e);
+            LOGGER.error("Unable to load EAR: " + jarPath, e);
             throw e;
         }
     }
@@ -705,7 +704,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 detectAndAddModuleToApplication(appId, tmpClassLoader, ejbModules, clientModules, resouceModules, webModules, entry);
             } catch (final UnsupportedOperationException | UnknownModuleTypeException e) {
                 // Ignore it as per the javaee spec EE.8.4.2 section 1.d.iii
-                logger.info("Ignoring unknown module type: " + entry.getKey());
+                LOGGER.info("Ignoring unknown module type: " + entry.getKey());
             } catch (final Exception e) {
                 throw new OpenEJBException("Unable to determine the module type of " + entry.getKey() + ": Exception: " + e.getMessage(), e);
             }
@@ -834,7 +833,8 @@ public class DeploymentLoader implements DeploymentFilterable {
         {
             final Object pXml = appModule.getAltDDs().get("persistence.xml");
 
-            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml : new ArrayList<>(asList(URL.class.cast(pXml))));
+            List<URL> persistenceXmls = pXml == null ? null : (List.class.isInstance(pXml) ? (List<URL>) pXml :
+                    new ArrayList<>(Collections.singletonList(URL.class.cast(pXml))));
             if (persistenceXmls == null) {
                 persistenceXmls = new ArrayList<>();
                 appModule.getAltDDs().put("persistence.xml", persistenceXmls);
@@ -961,9 +961,8 @@ public class DeploymentLoader implements DeploymentFilterable {
 
         // determine war class path
 
-        final List<URL> webUrls = new ArrayList<>();
         ensureContainerUrls();
-        webUrls.addAll(containerUrls);
+        final List<URL> webUrls = new ArrayList<>(containerUrls);
 
         final SystemInstance systemInstance = SystemInstance.get();
 
@@ -971,14 +970,14 @@ public class DeploymentLoader implements DeploymentFilterable {
         final String externalRepos = systemInstance.getProperty("tomee." + warFile.getName().replace(".war", "") + ".externalRepositories");
         List<URL> externalUrls = null;
         if (externalRepos != null) {
-            externalUrls = new ArrayList<URL>();
+            externalUrls = new ArrayList<>();
             for (final String additional : externalRepos.split(",")) {
                 final String trim = additional.trim();
                 if (!trim.isEmpty()) {
                     try {
                         externalUrls.add(new File(trim).toURI().toURL());
                     } catch (final MalformedURLException e) {
-                        logger.error(e.getMessage());
+                        LOGGER.error(e.getMessage());
                     }
                 }
             }
@@ -988,7 +987,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final Map<String, URL[]> urls = getWebappUrlsAndRars(warFile);
         webUrls.addAll(Arrays.asList(urls.get(URLS_KEY)));
 
-        final List<URL> addedUrls = new ArrayList<URL>();
+        final List<URL> addedUrls = new ArrayList<>();
         for (final URL url : urls.get(RAR_URLS_KEY)) { // eager unpack to be able to use it in classloader
             final File[] files = unpack(URLs.toFile(url)).listFiles();
             if (files != null) {
@@ -997,7 +996,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             addedUrls.add(f.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + f.getAbsolutePath(), e);
+                            LOGGER.warning("War path bad: " + f.getAbsolutePath(), e);
                         }
                     }
                 }
@@ -1069,6 +1068,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
         }
 
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
 
         final WebModule webModule = new WebModule(webApp, contextRoot, warClassLoader, warFile.getAbsolutePath(), moduleName);
         webModule.setUrls(webUrls);
@@ -1124,12 +1124,12 @@ public class DeploymentLoader implements DeploymentFilterable {
                                 }
                             }
                         } catch (final Exception e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     }
                 }
             } else {
-                containerUrls = Collections.emptyList();
+                containerUrls = new ArrayList<>();
             }
         }
     }
@@ -1141,7 +1141,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 final String[] prefixes = NewLoaderLogic.readInputStreamList(exclusions.openStream());
                 excludeFilter = Filters.prefixes(prefixes);
             } catch (final IOException e) {
-                logger.warning("can't read " + exclusions.toExternalForm());
+                LOGGER.warning("can't read " + exclusions.toExternalForm());
             }
         }
 
@@ -1194,7 +1194,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
             doMerge(url, current, beans);
         } catch (final OpenEJBException e) {
-            logger.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
+            LOGGER.error("Unable to read beans.xml from: " + url.toExternalForm(), e);
         }
         return current;
     }
@@ -1206,8 +1206,15 @@ public class DeploymentLoader implements DeploymentFilterable {
         // check is done here since later we lost the data of the origin
         ReadDescriptors.checkDuplicatedByBeansXml(beans, current);
 
-        final String beanDiscoveryMode = beans.getBeanDiscoveryMode();
-        current.getDiscoveryByUrl().put(url, beanDiscoveryMode == null ? "ALL" : beanDiscoveryMode);
+        String beanDiscoveryMode = beans.getBeanDiscoveryMode();
+        if (beanDiscoveryMode == null) {
+            beanDiscoveryMode = "ALL";
+        }
+        else if ("ALL".equalsIgnoreCase(beanDiscoveryMode) && beans.isTrim()) {
+            beanDiscoveryMode = "TRIM";
+        }
+
+        current.getDiscoveryByUrl().put(url, beanDiscoveryMode);
     }
 
     private void addBeansXmls(final AppModule appModule) {
@@ -1236,7 +1243,9 @@ public class DeploymentLoader implements DeploymentFilterable {
         complete.removeDuplicates();
 
         ensureContainerUrls();
-        appModule.getScannableContainerUrls().addAll(containerUrls);
+        final List<URL> scannableUrls = new ArrayList<>(this.containerUrls);
+        SystemInstance.get().fireEvent(new EnhanceScannableUrlsEvent(scannableUrls));
+        appModule.getScannableContainerUrls().addAll(scannableUrls);
 
         IAnnotationFinder finder;
         try {
@@ -1263,13 +1272,13 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static Map<String, URL[]> getWebappUrlsAndRars(final File warFile) {
-        final Set<URL> webClassPath = new HashSet<URL>();
-        final Set<URL> webRars = new HashSet<URL>();
+        final Set<URL> webClassPath = new HashSet<>();
+        final Set<URL> webRars = new HashSet<>();
         final File webInfDir = new File(warFile, "WEB-INF");
         try {
             webClassPath.add(new File(webInfDir, "classes").toURI().toURL());
         } catch (final MalformedURLException e) {
-            logger.warning("War path bad: " + new File(webInfDir, "classes"), e);
+            LOGGER.warning("War path bad: " + new File(webInfDir, "classes"), e);
         }
 
         final File libDir = new File(webInfDir, "lib");
@@ -1282,13 +1291,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                         try {
                             webClassPath.add(file.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + file, e);
+                            LOGGER.warning("War path bad: " + file, e);
                         }
                     } else if (name.endsWith(".rar")) {
                         try {
                             webRars.add(file.toURI().toURL());
                         } catch (final MalformedURLException e) {
-                            logger.warning("War path bad: " + file, e);
+                            LOGGER.warning("War path bad: " + file, e);
                         }
                     }
                 }
@@ -1301,7 +1310,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // create the class loader
-        final Map<String, URL[]> urls = new HashMap<String, URL[]>();
+        final Map<String, URL[]> urls = new HashMap<>();
         urls.put(URLS_KEY, webClassPath.toArray(new URL[webClassPath.size()]));
         urls.put(RAR_URLS_KEY, webRars.toArray(new URL[webRars.size()]));
         return urls;
@@ -1335,12 +1344,12 @@ public class DeploymentLoader implements DeploymentFilterable {
                 moduleUrl = new URL("jar", "", -1, moduleUrl + "!/");
             }
         } catch (final MalformedURLException e) {
-            logger.warning("Invalid module location " + wsModule.getJarLocation());
+            LOGGER.warning("Invalid module location " + wsModule.getJarLocation());
             return;
         }
 
         // parse the webservices.xml file
-        final Map<URL, JavaWsdlMapping> jaxrpcMappingCache = new HashMap<URL, JavaWsdlMapping>();
+        final Map<URL, JavaWsdlMapping> jaxrpcMappingCache = new HashMap<>();
         final Webservices webservices = ReadDescriptors.readWebservices(webservicesUrl);
         wsModule.setWebservices(webservices);
         if ("file".equals(webservicesUrl.getProtocol())) {
@@ -1364,7 +1373,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         wsModule.getWatchedResources().add(URLs.toFilePath(jaxrpcMappingUrl));
                     }
                 } catch (final MalformedURLException e) {
-                    logger.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
+                    LOGGER.warning("Invalid jaxrpc-mapping-file location " + jaxrpcMappingFile);
                 }
             }
         }
@@ -1372,7 +1381,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     private void addTagLibraries(final WebModule webModule) throws OpenEJBException {
-        final Set<URL> tldLocations = new HashSet<URL>();
+        final Set<URL> tldLocations = new HashSet<>();
 
         // web.xml contains tag lib locations in nested jsp config elements
         final File warFile = new File(webModule.getJarLocation());
@@ -1389,7 +1398,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
                         tldLocations.addAll(TldScanner.scanForTagLibs(file));
                     } catch (final IOException e) {
-                        logger.warning("JSP tag library location bad: " + location, e);
+                        LOGGER.warning("JSP tag library location bad: " + location, e);
                     }
                 }
             }
@@ -1429,7 +1438,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         //*************************IMPORTANT*******************************************
         // TODO : kmalhi :: Add support to scrape META-INF/faces-config.xml in jar files
         // look at section 10.4.2 of the JSF v1.2 spec, bullet 1 for details
-        final Set<URL> facesConfigLocations = new HashSet<URL>();
+        final Set<URL> facesConfigLocations = new HashSet<>();
 
         // web.xml contains faces config locations in the context parameter javax.faces.CONFIG_FILES
         final File warFile = new File(webModule.getJarLocation());
@@ -1448,7 +1457,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // convert each file to a URL and add it to facesConfigLocations
                 for (final String location : trimmedConfigFiles) {
                     if (!location.startsWith("/")) {
-                        logger.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
+                        LOGGER.error("A faces configuration file should be context relative when specified in web.xml. Please fix the value of context parameter javax.faces.CONFIG_FILES for the file " + location);
                     }
                     try {
                         final File file = new File(warFile, location).getCanonicalFile().getAbsoluteFile();
@@ -1456,11 +1465,11 @@ public class DeploymentLoader implements DeploymentFilterable {
                         facesConfigLocations.add(url);
 
                     } catch (final IOException e) {
-                        logger.error("Faces configuration file location bad: " + location, e);
+                        LOGGER.error("Faces configuration file location bad: " + location, e);
                     }
                 }
             } else {
-                logger.debug("faces config file is null");
+                LOGGER.debug("faces config file is null");
             }
         }
 
@@ -1500,7 +1509,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         final URL baseUrl;// unpack the rar file
         File rarFile = new File(rarPath);
         if (!rarFile.exists()) {
-            logger.warning(rarPath + " doesn't exist, skipping connector");
+            LOGGER.warning(rarPath + " doesn't exist, skipping connector");
             return null;
         }
         rarFile = unpack(rarFile);
@@ -1519,19 +1528,13 @@ public class DeploymentLoader implements DeploymentFilterable {
         }
 
         // find the nested jar files
-        final HashMap<String, URL> rarLibs = new HashMap<String, URL>();
+        final HashMap<String, URL> rarLibs = new HashMap<>();
         scanDir(rarFile, rarLibs, "");
-        for (final Iterator<Map.Entry<String, URL>> iterator = rarLibs.entrySet().iterator(); iterator.hasNext(); ) {
-            // remove all non jars from the rarLibs
-            final Map.Entry<String, URL> fileEntry = iterator.next();
-            if (!fileEntry.getKey().endsWith(".jar")) {
-                iterator.remove();
-            }
-        }
+        // remove all non jars from the rarLibs
+        rarLibs.entrySet().removeIf(fileEntry -> !fileEntry.getKey().endsWith(".jar"));
 
         // create the class loader
-        final List<URL> classPath = new ArrayList<URL>();
-        classPath.addAll(rarLibs.values());
+        final List<URL> classPath = new ArrayList<>(rarLibs.values());
 
         final ClassLoaderConfigurer configurer = QuickJarsTxtParser.parse(new File(rarFile, "META-INF/" + QuickJarsTxtParser.FILE_NAME));
         if (configurer != null) {
@@ -1564,12 +1567,12 @@ public class DeploymentLoader implements DeploymentFilterable {
             webFragmentUrls = (List<URL>) webModule.getAltDDs().get(WEB_FRAGMENT_XML);
         } catch (final ClassCastException e) {
             final Object value = webModule.getAltDDs().get(WEB_FRAGMENT_XML);
-            webFragmentUrls = new ArrayList<URL>();
+            webFragmentUrls = new ArrayList<>();
             webFragmentUrls.add(URL.class.cast(value));
             webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
         }
         if (webFragmentUrls == null) {
-            webFragmentUrls = new ArrayList<URL>();
+            webFragmentUrls = new ArrayList<>();
             webModule.getAltDDs().put(WEB_FRAGMENT_XML, webFragmentUrls);
         }
 
@@ -1586,7 +1589,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/" + WEB_FRAGMENT_XML)) {
-                    logger.info("AltDD persistence.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence.xml -> " + urlString);
                 }
 
                 webFragmentUrls.add(descriptor);
@@ -1596,7 +1599,7 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     @SuppressWarnings({"unchecked"})
     protected static Collection<URL> addPersistenceUnits(final AppModule appModule, final URL... urls) throws OpenEJBException {
-        final Collection<URL> added = new ArrayList<URL>();
+        final Collection<URL> added = new ArrayList<>();
 
         // OPENEJB-1059: Anything in the appModule.getAltDDs() map has already been
         // processed by the altdd code, so anything in here should not cause OPENEJB-1059
@@ -1608,20 +1611,20 @@ public class DeploymentLoader implements DeploymentFilterable {
             //lets try to get a single object instead
             final Object value = appModule.getAltDDs().get("persistence.xml");
 
-            persistenceUrls = new ArrayList<URL>();
+            persistenceUrls = new ArrayList<>();
             persistenceUrls.add(URL.class.cast(value));
             added.add(persistenceUrls.iterator().next());
 
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
         if (persistenceUrls == null) {
-            persistenceUrls = new ArrayList<URL>();
+            persistenceUrls = new ArrayList<>();
             appModule.getAltDDs().put("persistence.xml", persistenceUrls);
         }
 
         List<URL> persistenceFragmentsUrls = (List<URL>) appModule.getAltDDs().get("persistence-fragment.xml");
         if (persistenceFragmentsUrls == null) {
-            persistenceFragmentsUrls = new ArrayList<URL>();
+            persistenceFragmentsUrls = new ArrayList<>();
             appModule.getAltDDs().put("persistence-fragment.xml", persistenceFragmentsUrls);
         }
 
@@ -1644,7 +1647,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // log if it is an altdd
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/persistence.xml")) {
-                    logger.info("AltDD persistence.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence.xml -> " + urlString);
                 }
 
                 persistenceUrls.add(descriptor);
@@ -1670,7 +1673,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 // log if it is an altdd
                 final String urlString = descriptor.toExternalForm();
                 if (!urlString.contains("META-INF/persistence-fragment.xml")) {
-                    logger.info("AltDD persistence-fragment.xml -> " + urlString);
+                    LOGGER.info("AltDD persistence-fragment.xml -> " + urlString);
                 }
 
                 persistenceFragmentsUrls.add(descriptor);
@@ -1703,13 +1706,13 @@ public class DeploymentLoader implements DeploymentFilterable {
 
     public static Map<String, URL> mapDescriptors(final ResourceFinder finder)
         throws IOException {
-        final Map<String, URL> map = finder.getResourcesMap(ddDir);
+        final Map<String, URL> map = finder.getResourcesMap(META_INF);
 
         if (map.size() == 0) {
 
             for (final String descriptor : KNOWN_DESCRIPTORS) {
 
-                final URL url = finder.getResource(ddDir + descriptor);
+                final URL url = finder.getResource(META_INF + descriptor);
                 if (url != null) {
                     map.put(descriptor, url);
                 }
@@ -1731,10 +1734,10 @@ public class DeploymentLoader implements DeploymentFilterable {
             return map;
         }
 
-        final List<String> list = new ArrayList<String>(Arrays.asList(ALTDD.split(",")));
+        final List<String> list = new ArrayList<>(Arrays.asList(ALTDD.split(",")));
         Collections.reverse(list);
 
-        final Map<String, URL> alts = new HashMap<String, URL>();
+        final Map<String, URL> alts = new HashMap<>();
 
         for (String prefix : list) {
             prefix = prefix.trim();
@@ -1742,7 +1745,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 prefix += ".";
             }
 
-            for (final Map.Entry<String, URL> entry : new HashMap<String, URL>(map).entrySet()) {
+            for (final Map.Entry<String, URL> entry : new HashMap<>(map).entrySet()) {
                 String key = entry.getKey();
                 final URL value = entry.getValue();
                 if (key.startsWith(prefix)) {
@@ -1763,7 +1766,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             if (log) {
-                logger.info("AltDD " + key + " -> " + value.toExternalForm());
+                LOGGER.info("AltDD " + key + " -> " + value.toExternalForm());
             }
             map.put(key, value);
         }
@@ -1772,7 +1775,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public static Map<String, URL> getWebDescriptors(final File warFile) throws IOException {
-        final Map<String, URL> descriptors = new TreeMap<String, URL>();
+        final Map<String, URL> descriptors = new TreeMap<>();
 
         // xbean resource finder has a bug when you use any uri but "META-INF"
         // and the jar file does not contain a directory entry for the uri
@@ -1804,7 +1807,7 @@ public class DeploymentLoader implements DeploymentFilterable {
             }
 
             // handle some few file(s) which can be in META-INF too
-            final File webAppDdDir = new File(webInfDir, "classes/" + ddDir);
+            final File webAppDdDir = new File(webInfDir, "classes/" + META_INF);
             if (webAppDdDir.isDirectory()) {
                 final File[] files = webAppDdDir.listFiles();
                 if (files != null) {
@@ -1813,7 +1816,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                         if (!descriptors.containsKey(name)) {
                             descriptors.put(name, file.toURI().toURL());
                         } else {
-                            logger.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
+                            LOGGER.warning("Can't have a " + name + " in WEB-INF and WEB-INF/classes/META-INF, second will be ignored");
                         }
                     }
                 }
@@ -1888,7 +1891,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                     try {
                         files.put(path + name, file.toURI().toURL());
                     } catch (final MalformedURLException e) {
-                        logger.warning("EAR path bad: " + path + name, e);
+                        LOGGER.warning("EAR path bad: " + path + name, e);
                     }
                 }
             }
@@ -1896,7 +1899,7 @@ public class DeploymentLoader implements DeploymentFilterable {
     }
 
     public Class<? extends DeploymentModule> discoverModuleType(final URL baseUrl, final ClassLoader classLoader, final boolean searchForDescriptorlessApplications) throws IOException, UnknownModuleTypeException {
-        final Set<RequireDescriptors> search = new HashSet<RequireDescriptors>();
+        final Set<RequireDescriptors> search = EnumSet.noneOf(RequireDescriptors.class);
 
         if (!searchForDescriptorlessApplications) {
             search.addAll(Arrays.asList(RequireDescriptors.values()));
@@ -1997,7 +2000,7 @@ public class DeploymentLoader implements DeploymentFilterable {
                 throw new UnknownModuleTypeException("Unknown module type: url=" + path + " which can't be a war.");
             }
 
-            logger.debug("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
+            LOGGER.debug("type for '" + path + "' was not found, defaulting to " + defaultType.getSimpleName());
             return defaultType;
         }
         throw new UnknownModuleTypeException("Unknown module type: url=" + path); // baseUrl can be null
@@ -2049,7 +2052,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         if (scanPotentialEjbModules || scanPotentialClientModules) {
             final AnnotationFinder classFinder = new AnnotationFinder(classLoader, urls);
 
-            final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet<Class<? extends DeploymentModule>>();
+            final Set<Class<? extends DeploymentModule>> otherTypes = new LinkedHashSet<>();
 
             final AnnotationFinder.Filter filter = new AnnotationFinder.Filter() {
                 final String packageName = LocalClient.class.getName().replace("LocalClient", "");
@@ -2089,13 +2092,13 @@ public class DeploymentLoader implements DeploymentFilterable {
                 cls = EjbModule.class;
                 // if it is a war just throw an error
                 try {
-                    if(logger.isWarningEnabled()) {
+                    if(LOGGER.isWarningEnabled()) {
                         final File ar = URLs.toFile(urls);
                         if (!ar.isDirectory() && !ar.getName().endsWith("ar")) { // guess no archive extension, check it is not a hidden war
                             try (JarFile war = new JarFile(ar)) {
                                 final ZipEntry entry = war.getEntry("WEB-INF/");
                                 if (entry != null) {
-                                    logger.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
+                                    LOGGER.warning("you deployed " + urls.toExternalForm() + ", it seems it is a war with no extension, please rename it");
                                 }
                             }
                         }

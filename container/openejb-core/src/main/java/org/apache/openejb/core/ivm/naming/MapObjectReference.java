@@ -31,6 +31,10 @@ public class MapObjectReference extends Reference {
     }
 
     public Object getObject() throws NamingException {
-        return obj.get().get(key);
+        final Map<String, Object> theMap = obj.get();
+        if (theMap == null) {
+            return null;
+        }
+        return theMap.get(key);
     }
 }

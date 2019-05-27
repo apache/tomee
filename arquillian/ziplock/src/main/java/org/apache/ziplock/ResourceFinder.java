@@ -100,14 +100,14 @@ public class ResourceFinder {
     /**
      * Returns a list of resources that could not be loaded in the last invoked findAvailable* or
      * mapAvailable* methods.
-     * <p/>
+     *
      * The list will only contain entries of resources that match the requirements
      * of the last invoked findAvailable* or mapAvailable* methods, but were unable to be
      * loaded and included in their results.
-     * <p/>
+     *
      * The list returned is unmodifiable and the results of this method will change
      * after each invocation of a findAvailable* or mapAvailable* methods.
-     * <p/>
+     *
      * This method is not thread safe.
      */
     public List<String> getResourcesNotLoaded() {
@@ -221,16 +221,16 @@ public class ResourceFinder {
     /**
      * Reads the contents of all non-directory URLs immediately under the specified
      * location and returns them in a map keyed by the file name.
-     * <p/>
+     *
      * Any URLs that cannot be read will cause an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/serializables/one
      * META-INF/serializables/two
      * META-INF/serializables/three
      * META-INF/serializables/four/foo.txt
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAvailableStrings("serializables");
      * map.contains("one");  // true
@@ -258,17 +258,17 @@ public class ResourceFinder {
     /**
      * Reads the contents of all non-directory URLs immediately under the specified
      * location and returns them in a map keyed by the file name.
-     * <p/>
+     *
      * Individual URLs that cannot be read are skipped and added to the
      * list of 'resourcesNotLoaded'
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/serializables/one
      * META-INF/serializables/two      # not readable
      * META-INF/serializables/three
      * META-INF/serializables/four/foo.txt
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAvailableStrings("serializables");
      * map.contains("one");  // true
@@ -321,7 +321,7 @@ public class ResourceFinder {
     /**
      * Executes findAllStrings assuming the strings are
      * the names of a classes that should be loaded and returned.
-     * <p/>
+     *
      * Any URL or class that cannot be loaded will cause an exception to be thrown.
      *
      * @param uri
@@ -342,7 +342,7 @@ public class ResourceFinder {
     /**
      * Executes findAvailableStrings assuming the strings are
      * the names of a classes that should be loaded and returned.
-     * <p/>
+     *
      * Any class that cannot be loaded will be skipped and placed in the
      * 'resourcesNotLoaded' collection.
      *
@@ -368,14 +368,14 @@ public class ResourceFinder {
     /**
      * Executes mapAllStrings assuming the value of each entry in the
      * map is the name of a class that should be loaded.
-     * <p/>
+     *
      * Any class that cannot be loaded will be cause an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/xmlparsers/xerces
      * META-INF/xmlparsers/crimson
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAvailableStrings("xmlparsers");
      * map.contains("xerces");  // true
@@ -403,15 +403,15 @@ public class ResourceFinder {
     /**
      * Executes mapAvailableStrings assuming the value of each entry in the
      * map is the name of a class that should be loaded.
-     * <p/>
+     *
      * Any class that cannot be loaded will be skipped and placed in the
      * 'resourcesNotLoaded' collection.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/xmlparsers/xerces
      * META-INF/xmlparsers/crimson
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAvailableStrings("xmlparsers");
      * map.contains("xerces");  // true
@@ -449,14 +449,14 @@ public class ResourceFinder {
     /**
      * Assumes the class specified points to a file in the classpath that contains
      * the name of a class that implements or is a subclass of the specfied class.
-     * <p/>
+     *
      * Any class that cannot be loaded will be cause an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/java.io.InputStream    # contains the classname org.acme.AcmeInputStream
      * META-INF/java.io.OutputStream
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Class clazz = finder.findImplementation(java.io.InputStream.class);
      * clazz.getName();  // returns "org.acme.AcmeInputStream"
@@ -479,16 +479,16 @@ public class ResourceFinder {
     /**
      * Assumes the class specified points to a file in the classpath that contains
      * the name of a class that implements or is a subclass of the specfied class.
-     * <p/>
+     *
      * Any class that cannot be loaded or assigned to the specified interface will be cause
      * an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/java.io.InputStream    # contains the classname org.acme.AcmeInputStream
      * META-INF/java.io.InputStream    # contains the classname org.widget.NeatoInputStream
      * META-INF/java.io.InputStream    # contains the classname com.foo.BarInputStream
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List classes = finder.findAllImplementations(java.io.InputStream.class);
      * classes.contains("org.acme.AcmeInputStream");  // true
@@ -514,16 +514,16 @@ public class ResourceFinder {
     /**
      * Assumes the class specified points to a file in the classpath that contains
      * the name of a class that implements or is a subclass of the specfied class.
-     * <p/>
+     *
      * Any class that cannot be loaded or are not assignable to the specified class will be
      * skipped and placed in the 'resourcesNotLoaded' collection.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/java.io.InputStream    # contains the classname org.acme.AcmeInputStream
      * META-INF/java.io.InputStream    # contains the classname org.widget.NeatoInputStream
      * META-INF/java.io.InputStream    # contains the classname com.foo.BarInputStream
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List classes = finder.findAllImplementations(java.io.InputStream.class);
      * classes.contains("org.acme.AcmeInputStream");  // true
@@ -556,16 +556,16 @@ public class ResourceFinder {
     /**
      * Assumes the class specified points to a directory in the classpath that holds files
      * containing the name of a class that implements or is a subclass of the specfied class.
-     * <p/>
+     *
      * Any class that cannot be loaded or assigned to the specified interface will be cause
      * an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/java.net.URLStreamHandler/jar
      * META-INF/java.net.URLStreamHandler/file
      * META-INF/java.net.URLStreamHandler/http
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAllImplementations(java.net.URLStreamHandler.class);
      * Class jarUrlHandler = map.get("jar");
@@ -593,16 +593,16 @@ public class ResourceFinder {
     /**
      * Assumes the class specified points to a directory in the classpath that holds files
      * containing the name of a class that implements or is a subclass of the specfied class.
-     * <p/>
+     *
      * Any class that cannot be loaded or are not assignable to the specified class will be
      * skipped and placed in the 'resourcesNotLoaded' collection.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/java.net.URLStreamHandler/jar
      * META-INF/java.net.URLStreamHandler/file
      * META-INF/java.net.URLStreamHandler/http
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Map map = finder.mapAllImplementations(java.net.URLStreamHandler.class);
      * Class jarUrlHandler = map.get("jar");
@@ -642,11 +642,11 @@ public class ResourceFinder {
 
     /**
      * Finds the corresponding resource and reads it in as a properties file
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/widget.properties
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * Properties widgetProps = finder.findProperties("widget.properties");
      *
@@ -667,15 +667,15 @@ public class ResourceFinder {
 
     /**
      * Finds the corresponding resources and reads them in as a properties files
-     * <p/>
+     *
      * Any URL that cannot be read in as a properties file will cause an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/app.properties
      * META-INF/app.properties
      * META-INF/app.properties
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List<Properties> appProps = finder.findAllProperties("app.properties");
      *
@@ -699,16 +699,16 @@ public class ResourceFinder {
 
     /**
      * Finds the corresponding resources and reads them in as a properties files
-     * <p/>
+     *
      * Any URL that cannot be read in as a properties file will be added to the
      * 'resourcesNotLoaded' collection.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/app.properties
      * META-INF/app.properties
      * META-INF/app.properties
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List<Properties> appProps = finder.findAvailableProperties("app.properties");
      *
@@ -737,15 +737,15 @@ public class ResourceFinder {
 
     /**
      * Finds the corresponding resources and reads them in as a properties files
-     * <p/>
+     *
      * Any URL that cannot be read in as a properties file will cause an exception to be thrown.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      - META-INF/jdbcDrivers/oracle.properties
      - META-INF/jdbcDrivers/mysql.props
      - META-INF/jdbcDrivers/derby
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List<Properties> driversList = finder.findAvailableProperties("jdbcDrivers");
      * Properties oracleProps = driversList.get("oracle.properties");
@@ -771,16 +771,16 @@ public class ResourceFinder {
 
     /**
      * Finds the corresponding resources and reads them in as a properties files
-     * <p/>
+     *
      * Any URL that cannot be read in as a properties file will be added to the
      * 'resourcesNotLoaded' collection.
-     * <p/>
+     *
      * Example classpath:
-     * <p/>
+     *
      * META-INF/jdbcDrivers/oracle.properties
      * META-INF/jdbcDrivers/mysql.props
      * META-INF/jdbcDrivers/derby
-     * <p/>
+     *
      * ResourceFinder finder = new ResourceFinder("META-INF/");
      * List<Properties> driversList = finder.findAvailableProperties("jdbcDrivers");
      * Properties oracleProps = driversList.get("oracle.properties");

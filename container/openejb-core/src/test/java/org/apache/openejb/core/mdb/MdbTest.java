@@ -57,7 +57,7 @@ public class MdbTest extends JmsTest {
             connection.start();
 
             // create request
-            final Map<String, Object> request = new TreeMap<String, Object>();
+            final Map<String, Object> request = new TreeMap<>();
             request.put("args", new Object[]{"cheese"});
 
             // create a new temp response queue
@@ -160,7 +160,7 @@ public class MdbTest extends JmsTest {
                 final String returnValue = "test-" + args[0];
 
                 // create response map
-                final Map<String, Object> response = new TreeMap<String, Object>();
+                final Map<String, Object> response = new TreeMap<>();
                 response.put("return", returnValue);
 
                 // create response message

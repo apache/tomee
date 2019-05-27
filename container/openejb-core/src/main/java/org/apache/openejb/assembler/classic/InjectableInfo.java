@@ -24,7 +24,7 @@ import java.util.List;
  * @version $Rev$ $Date$
  */
 public class InjectableInfo extends InfoObject {
-    public final List<InjectionInfo> targets = new ArrayList<InjectionInfo>();
+    public final List<InjectionInfo> targets = new ArrayList<>();
     public String referenceName;
 
     public ReferenceLocationInfo location;

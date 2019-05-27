@@ -19,12 +19,11 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -32,6 +31,9 @@
   <name>OpenEJB :: TomEE :: Plus Webapp</name>
   <packaging>war</packaging>
 
+  <properties>
+    <tomee.build.name>${project.groupId}.tomee.plus.webapp</tomee.build.name>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -145,6 +147,11 @@
       <version>${jcs.version}</version>
       <scope>runtime</scope>
     </dependency>
+    <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>1.2.1</version>
+    </dependency>      
 
     <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>
@@ -160,6 +167,13 @@
       <scope>runtime</scope>
     </dependency>
     -->
+
+    <!-- MicroProfile -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>mp-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

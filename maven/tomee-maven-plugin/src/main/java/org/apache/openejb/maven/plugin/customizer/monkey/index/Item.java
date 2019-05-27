@@ -18,32 +18,68 @@ package org.apache.openejb.maven.plugin.customizer.monkey.index;
 
 import java.io.File;
 
+/**
+ * The type Item.
+ */
 public class Item implements Comparable<Item> {
+    /**
+     * The enum Action.
+     */
     public enum Action {
-        ADD_OR_UPDATE, REMOVE;
+        /**
+         * Add or update action.
+         */
+        ADD_OR_UPDATE,
+        /**
+         * Remove action.
+         */
+        REMOVE;
     }
 
     private final String path;
     private final File file;
     private final Action action;
 
+    /**
+     * Instantiates a new Item.
+     *
+     * @param path   the path
+     * @param file   the file
+     * @param action the action
+     */
     Item(final String path, final File file, final Action action) {
         this.path = path;
         this.file = file;
         this.action = action;
     }
 
+    /**
+     * Gets action.
+     *
+     * @return the action
+     */
     public Action getAction() {
         return action;
     }
 
+    /**
+     * Gets path.
+     *
+     * @return the path
+     */
     public String getPath() {
         return path;
     }
 
+    /**
+     * Gets file.
+     *
+     * @return the file
+     */
     public File getFile() {
         return file;
     }
+
 
     @Override
     public int compareTo(final Item o) {

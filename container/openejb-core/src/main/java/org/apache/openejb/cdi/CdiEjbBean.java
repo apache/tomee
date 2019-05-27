@@ -36,6 +36,7 @@ import org.apache.webbeans.intercept.InterceptorResolutionService;
 import org.apache.webbeans.portable.InjectionTargetImpl;
 import org.apache.webbeans.util.GenericsUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -70,7 +71,7 @@ import javax.interceptor.Interceptor;
 import javax.transaction.UserTransaction;
 
 public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, DeploymentValidationService.BeanInterceptorInfoProvider {
-    private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<Integer, Object>();
+    private final Map<Integer, Object> dependentSFSBToBeRemoved = new ConcurrentHashMap<>();
 
     private final BeanContext beanContext;
     private final boolean isDependentAndStateful;
@@ -161,7 +162,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
     @Override
     public List<Class<?>> getBusinessLocalInterfaces() {
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final List<Class<?>> classes = new ArrayList<>();
         for (final Type t : getTypes()) {
             if (Class.class.isInstance(t)) {
                 classes.add(Class.class.cast(t));
@@ -210,7 +211,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
     }
 
     private List<Method> findRemove(final Class<?> beanClass, final Class<?> beanInterface) {
-        final List<Method> toReturn = new ArrayList<Method>();
+        final List<Method> toReturn = new ArrayList<>();
 
         // Get all the public methods of the bean class and super class
         final Method[] methods = beanClass.getMethods();
@@ -326,7 +327,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public EJBBeanAttributesImpl(final BeanContext bc, final BeanAttributes<T> beanAttributes) {
             super(beanAttributes, false);
             this.beanContext = bc;
-            this.ejbTypes = new HashSet<Type>();
+            this.ejbTypes = new HashSet<>();
             initTypes();
         }
 
@@ -399,7 +400,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
 
         @Override
         public InjectionTarget<T> createInjectionTarget(final Bean<T> bean) {
-            final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<T>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
+            final EjbInjectionTargetImpl<T> injectionTarget = new EjbInjectionTargetImpl<>(getAnnotatedType(), createInjectionPoints(bean), getWebBeansContext());
             final InjectionTarget<T> it = getWebBeansContext().getWebBeansUtil().fireProcessInjectionTargetEvent(injectionTarget, getAnnotatedType()).getInjectionTarget();
 
             for (final InjectionPoint ip : it.getInjectionPoints()) {
@@ -412,7 +413,7 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
             }
 
             if (!EjbInjectionTargetImpl.class.isInstance(it)) {
-                return new EjbInjectionTargetImpl<T>(injectionTarget, it);
+                return new EjbInjectionTargetImpl<>(injectionTarget, it);
             }
             return it;
         }
@@ -522,7 +523,30 @@ public class CdiEjbBean<T> extends BaseEjbBean<T> implements InterceptedMarker, 
         public T createNewPojo(final CreationalContext<T> creationalContext) {
             final CreationalContextImpl<T> ccImpl = CreationalContextImpl.class.cast(creationalContext);
             // super.produce(cc) will not work since we need the unproxied instance - decorator case
-            return (T) super.produce(super.createInterceptorInstances(ccImpl), ccImpl);
+            final Map<javax.enterprise.inject.spi.Interceptor<?>, Object> interceptorInstances
+                    = webBeansContext.getInterceptorResolutionService().createInterceptorInstances(getInterceptorInfo(), ccImpl);
+            final InterceptorResolutionService.BeanInterceptorInfo interceptorInfo = super.getInterceptorInfo();
+            if (interceptorInfo != null) {
+                final Map<Constructor<?>, InterceptorResolutionService.BusinessMethodInterceptorInfo> constructorInterceptorInfos =
+                        interceptorInfo.getConstructorInterceptorInfos();
+                if (!constructorInterceptorInfos.isEmpty()) { // were missed by OWB
+                    final javax.enterprise.inject.spi.Interceptor<?>[] ejbInterceptors = constructorInterceptorInfos.values().iterator().next().getEjbInterceptors();
+
+                    if (null != ejbInterceptors) {
+                        for (final javax.enterprise.inject.spi.Interceptor interceptorBean : ejbInterceptors) {
+                            if (!interceptorInstances.containsKey(interceptorBean)) {
+                                ccImpl.putContextual(interceptorBean);
+                                interceptorInstances.put(interceptorBean, interceptorBean.create(ccImpl));
+                            }
+                        }
+                    }
+                }
+            }
+            final T produce = super.produce(interceptorInstances, ccImpl);
+            if (produce == null) { // user didnt call ic.proceed() in @AroundConstruct
+                return super.newInstance(ccImpl);
+            }
+            return (T) produce;
         }
 
         private static boolean isDynamicBean(final Bean<?> bean) {

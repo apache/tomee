@@ -1,0 +1,108 @@
+= FAQ
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+== 
+ General
+
+ 
+
+=== What spec version does OpenEJB support?
+
+OpenEJB supports the Enterprise JavaBeans 3.0 specification and previous
+versions 2.1, 2.0 and 1.1.
+
+=== I don't plan to use EJBs, so why would I embed OpenEJB into Tomcat.
+
+Adding OpenEJB to Tomcat gives servlets several new Java EE 5
+capabilities such as JPA, JAX-WS, JMS, J2EE Connectors, transactions,
+and more as well as enhancing the injection features of Tomcat 6 to now
+support injection of JavaEE objects like Topics, Queues, EntityManagers,
+JMS ConnectionFactories, JavaMail Sessions, as well as simpler data
+types such as Dates, Classes, URI, URL, List, Map, Set, Properties, and
+more. In the case of Tomcat 5.5 which doesn't support dependency
+injection at all, even more is gained.
+
+=== Can I run OpenEJB with a JVM for any vendor?
+
+The Sun, Mac, and IBM vms are regularly tested, however any vm should
+work.
+
+=== Which version of Java is required to run OpenEJB?
+
+Java versions 5 or 6, aka Java 1.5 or 1.6.
+
+=== Do I need Apache Maven to work with OpenEJB?
+
+Definitely not. Most of the examples include both Maven and Ant build
+files. OpenEJB is usable as a plain library, much like an embedded
+database like Derby, so it is usable in any application regardless if
+that application is run via Maven, Ant, Intellij, Eclipse, NetBeans,
+JUnit, TestNG, etc.
+
+== Can I start and stop OpenEJB from an IDE? If yes, which IDE is
+
+supported by OpenEJB?
+
+The short answer is yes. The basic approach for all embedding scenarios
+is to 1) add OpenEJB to your classpath, and 2) construct your
+InitialContext using
+org.apache.openejb.client.LocalInitialContextFactory. The
+LocalInitialContextFactory will boot OpenEJB in your vm and all ejb
+applications visible in the classpath will be deployed. See
+http://tomee.apache.org/embedding-openejb.html for details on how to
+embed openejb in your application and IDE. See
+openejbx30:application-discovery-via-the-classpath.html[Application
+discovery via the classpath] for various ways to have your applications
+discovered.
+
+== During embedded testing, how can I externalize all my DataSource
+
+configuration?
+
+Create an openejb.xml file in any directory that gets added to your test
+classpath. For maven, something that winds up directly under
+"target/classes/" or "target/test-classes/" will work just fine. Then in
+your test case do this:
+
+[source,java]
+----
+   protected void setUp() throws Exception {
+       Properties properties = new Properties();
+       properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, 
+----
+
+"org.apache.openejb.client.LocalInitialContextFactory");
+
+[source,properties]
+----
+       URL config =
+----
+
+this.getClass().getClassLoader().getResource("openejb.xml");
+properties.setProperty("openejb.configuration",
+config.toExternalForm());
+
+[source,java]
+----
+       initialContext = new InitialContext(properties);
+   }
+----
+
+The file itself doesn't have to be called "openejb.xml", you could have
+a few different files like that for different testing scenarios each
+with a name that describes the basic setup.
+
+== Container-Managed Persistence
+
+=== What engine does OpenEJB use for CMP?
+
+The CMP engine is written as a layer over JPA with OpenJPA doing the
+persistence work.
+
+=== What is the format for the CMP mapping files?
+
+The standard JPA mapping file and annotations are also used for CMP
+mappings.

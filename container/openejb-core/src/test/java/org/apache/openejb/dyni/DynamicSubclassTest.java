@@ -34,12 +34,12 @@ import java.net.URLClassLoader;
 
 /**
  * Implementation of methods and constructors:
- * <p/>
+ *
  * - Ensure all abstract methods were implemented to delegate to the InvocationHandler method
  * - Ensure all constructors were carried forward to subclass
- * <p/>
+ *
  * Preservation of annotations
- * <p/>
+ *
  * - Ensure all annotations from the immediate parent class were copied
  * - Ensure all annotations from parent constructors and constructor params were copied
  * - Ensure all annotations from abstract ancestor methods and method params were copied
@@ -57,7 +57,7 @@ public class DynamicSubclassTest extends Assert {
         final Class subclass = DynamicSubclass.createSubclass(Blue.class, loader);
 
         final Constructor constructor = subclass.getConstructor(long.class);
-        final Blue blue = (Blue) constructor.newInstance(1l);
+        final Blue blue = (Blue) constructor.newInstance(1L);
 
         final Class<?> generatedClass = blue.getClass();
         assertNotEquals(Blue.class, generatedClass);

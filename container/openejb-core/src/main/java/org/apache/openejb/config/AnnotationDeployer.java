@@ -981,7 +981,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private Class<?> getWrapper(final String primitiveType) {
-            final Map<String, Class<?>> builtInMap = new HashMap<String, Class<?>>();
+            final Map<String, Class<?>> builtInMap = new HashMap<>();
             {
                 builtInMap.put("int", Integer.class);
                 builtInMap.put("long", Long.class);
@@ -1101,7 +1101,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webModule.setWebApp(webApp);
             }
 
-            final List<String> existingServlets = new ArrayList<String>();
+            final List<String> existingServlets = new ArrayList<>();
             for (final Servlet servlet : webApp.getServlet()) {
                 if (servlet.getServletClass() != null) {
                     existingServlets.add(servlet.getServletClass());
@@ -1109,7 +1109,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             final IAnnotationFinder finder = webModule.getFinder();
-            final List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<>();
             classes.addAll(finder.findAnnotatedClasses(WebService.class));
             classes.addAll(finder.findAnnotatedClasses(WebServiceProvider.class));
 
@@ -1201,7 +1201,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
-                final Set<String> convertedClasses = new HashSet<String>();
+                final Set<String> convertedClasses = new HashSet<>();
 
                 if (parentFinder != null) {
                     final List<Annotated<Class<?>>> foundParent = parentFinder.findMetaAnnotatedClasses(clazz);
@@ -1773,7 +1773,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     }
 
                     // just keep the potential ones to not load all classes during boot
-                    notManaged.put(entry.getKey(), new ArrayList<String>(beans));
+                    notManaged.put(entry.getKey(), new ArrayList<>(beans));
                 }
             }
         }
@@ -1811,14 +1811,12 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return url;
             }
 
-            URLClassLoader loader = null;
-            try {
-                loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader());
+            try (URLClassLoader loader = new URLClassLoader(new URL[]{url}, new EmptyResourcesClassLoader())) {
                 final String[] paths = {
-                    "META-INF/beans.xml",
-                    "WEB-INF/beans.xml",
-                    "/WEB-INF/beans.xml",
-                    "/META-INF/beans.xml",
+                        "META-INF/beans.xml",
+                        "WEB-INF/beans.xml",
+                        "/WEB-INF/beans.xml",
+                        "/META-INF/beans.xml",
                 };
 
                 for (final String path : paths) {
@@ -1829,15 +1827,8 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } catch (final Exception e) {
                 // no-op
-            } finally {
-                try {
-                    if (loader != null) {
-                        loader.close();
-                    }
-                } catch (final IOException e) {
-                    // no-op
-                }
             }
+            // no-op
             if (ddMapper != null) {
                 final File asFile = URLs.toFile(url);
                 if (asFile.isDirectory()) {
@@ -1942,7 +1933,7 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         // no need of meta currently since JPA providers doesn't support it
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final List<Class<?>> classes = new ArrayList<>();
         classes.addAll(finder.findAnnotatedClasses(Entity.class));
         classes.addAll(finder.findAnnotatedClasses(Embeddable.class));
         classes.addAll(finder.findAnnotatedClasses(MappedSuperclass.class));
@@ -2042,7 +2033,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 client = new ApplicationClient();
             }
 
-            final Set<Class> remoteClients = new HashSet<Class>();
+            final Set<Class> remoteClients = new HashSet<>();
 
             if (clientModule.getMainClass() != null) {
                 final String className = realClassName(clientModule.getMainClass());
@@ -2206,7 +2197,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * Classes added to this set will be scanned for annotations
              */
-            final Set<Class> classes = new HashSet<Class>();
+            final Set<Class> classes = new HashSet<>();
 
 
             final ClassLoader classLoader = webModule.getClassLoader();
@@ -2479,7 +2470,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final String ejbClassName = realClassName(bean.getEjbClass());
 
                 if (ejbClassName == null) {
-                    final List<String> others = new ArrayList<String>();
+                    final List<String> others = new ArrayList<>();
                     for (final EnterpriseBean otherBean : enterpriseBeans) {
                         others.add(otherBean.getEjbName());
                     }
@@ -2607,7 +2598,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 for (final InterceptorBinding binding : assemblyDescriptor.getInterceptorBinding()) {
                     final EjbJar ejbJar = ejbModule.getEjbJar();
 
-                    final List<String> list = new ArrayList<String>(binding.getInterceptorClass());
+                    final List<String> list = new ArrayList<>(binding.getInterceptorClass());
 
                     if (binding.getInterceptorOrder() != null) {
                         list.clear();
@@ -2927,7 +2918,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                      * Determine the MessageListener interface
                      */
                     if (mdb.getMessagingType() == null) {
-                        final List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                        final List<Class<?>> interfaces = new ArrayList<>();
                         for (final Class<?> intf : clazz.getInterfaces()) {
                             final String name = intf.getName();
                             if (!name.equals("java.io.Serializable") &&
@@ -2939,12 +2930,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                         }
 
                         if (interfaces.size() != 1) {
-                            String msg = "When annotating a bean class as @MessageDriven without declaring messageListenerInterface, the bean must implement exactly one interface, no more and no less. beanClass=" + clazz.getName() + " interfaces=";
+                            StringBuilder msg = new StringBuilder("When annotating a bean class as @MessageDriven without" +
+                                    " declaring messageListenerInterface, the bean must implement exactly one interface, no more and" +
+                                    " no less. beanClass=" + clazz.getName() + " interfaces=");
                             for (final Class<?> intf : interfaces) {
-                                msg += intf.getName() + ", ";
+                                msg.append(intf.getName()).append(", ");
                             }
                             // TODO: Make this a validation failure, not an exception
-                            throw new IllegalStateException(msg);
+                            throw new IllegalStateException(msg.toString());
                         }
                         mdb.setMessagingType(interfaces.get(0).getName());
                     }
@@ -3090,7 +3083,7 @@ public class AnnotationDeployer implements DynamicDeployer {
              * We will subtract these from the interfaces implemented
              * by the bean and do annotation scanning on the remainder.
              */
-            final List<String> descriptor = new ArrayList<String>();
+            final List<String> descriptor = new ArrayList<>();
             descriptor.add(sessionBean.getHome());
             descriptor.add(sessionBean.getRemote());
             descriptor.add(sessionBean.getLocalHome());
@@ -3125,7 +3118,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             all.local.addAll(xml.local);
             all.remote.addAll(xml.remote);
 
-            final List<Class<?>> classes = strict ? new ArrayList(Arrays.asList(beanClass)) : Classes.ancestors(beanClass);
+            final List<Class<?>> classes = strict ? new ArrayList(Collections.singletonList(beanClass)) : Classes.ancestors(beanClass);
 
             for (final Class<?> clazz : classes) {
 
@@ -3149,7 +3142,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
                         final String className = webService.endpointInterface();
 
-                        if (!className.equals("")) {
+                        if (!className.isEmpty()) {
                             sessionBean.setServiceEndpoint(className);
                         } else {
                             sessionBean.setServiceEndpoint(defaultEndpoint.getName());
@@ -3167,7 +3160,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * java.io.Externalizable
                  * javax.ejb.*
                  */
-                final List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                final List<Class<?>> interfaces = new ArrayList<>();
                 if (!clazz.isInterface()) { // dynamic proxy implementation
                     for (final Class<?> interfce : clazz.getInterfaces()) {
                         final String name = interfce.getName();
@@ -3240,7 +3233,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                          * Cannot imply either @Local or @Remote and list multiple interfaces
                          */
                         // Need to extract the class names and append .class to them to show proper validation level 3 message
-                        final List<String> interfaceNames = new ArrayList<String>();
+                        final List<String> interfaceNames = new ArrayList<>();
                         for (final Class<?> intrfce : interfaces) {
                             interfaceNames.add(intrfce.getName() + ".class");
                         }
@@ -3443,8 +3436,8 @@ public class AnnotationDeployer implements DynamicDeployer {
         }
 
         private static class BusinessInterfaces {
-            private final Set<Class> local = new LinkedHashSet<Class>();
-            private final Set<Class> remote = new LinkedHashSet<Class>();
+            private final Set<Class> local = new LinkedHashSet<>();
+            private final Set<Class> remote = new LinkedHashSet<>();
 
             public void addLocals(final Collection<String> names, final ClassLoader loader) {
                 add(loader, names, local);
@@ -3564,7 +3557,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             /*
              * Process annotations at the method level
              */
-            final List<Method> seen = new ArrayList<Method>();
+            final List<Method> seen = new ArrayList<>();
 
             /*
              * @RolesAllowed
@@ -3609,7 +3602,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Validation
-         * <p/>
+         *
          * Conflicting use of @RolesAllowed, @PermitAll, and @DenyAll
          *
          * @param method
@@ -3624,7 +3617,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 seen.add(method.get());
             }
 
-            final List<String> annotations = new ArrayList<String>();
+            final List<String> annotations = new ArrayList<>();
             for (final Class<? extends Annotation> annotation : Arrays.asList(RolesAllowed.class, PermitAll.class, DenyAll.class)) {
                 if (method.getAnnotation(annotation) != null) {
                     annotations.add("@" + annotation.getSimpleName());
@@ -3641,14 +3634,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 return;
             }
             final TimerConsumer timerConsumer = (TimerConsumer) bean;
-            final Set<Annotated<Method>> scheduleMethods = new HashSet<Annotated<Method>>();
+            final Set<Annotated<Method>> scheduleMethods = new HashSet<>();
             scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedules.class));
             scheduleMethods.addAll(annotationFinder.findMetaAnnotatedMethods(Schedule.class));
 
             final List<Timer> timers = timerConsumer.getTimer();
 
             // TODO : The NamedMethod object implements equals and hashCode, so we could rely on that rather than collecting strings
-            final Set<String> methodsConfiguredInDeploymentXml = new HashSet<String>();
+            final Set<String> methodsConfiguredInDeploymentXml = new HashSet<>();
             for (final Timer timer : timers) {
                 final NamedMethod namedMethod = timer.getTimeoutMethod();
                 methodsConfiguredInDeploymentXml.add(namedMethod.getMethodName() + (namedMethod.getMethodParams() == null ? "" : Join.join("", namedMethod.getMethodParams().getMethodParam())));
@@ -3662,7 +3655,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     continue;
                 }
 
-                final List<Schedule> scheduleAnnotationList = new ArrayList<Schedule>();
+                final List<Schedule> scheduleAnnotationList = new ArrayList<>();
 
                 final Schedules schedulesAnnotation = method.getAnnotation(Schedules.class);
                 if (schedulesAnnotation != null) {
@@ -3814,7 +3807,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                     final InitMethod initMethod = new InitMethod(method.get());
 
                     final Init init = method.getAnnotation(Init.class);
-                    if (init.value() != null && !init.value().equals("")) {
+                    if (init.value() != null && !init.value().isEmpty()) {
                         initMethod.setCreateMethod(init.value());
                     }
 
@@ -3825,7 +3818,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                  * @Remove
                  */
                 final List<Annotated<Method>> removeMethods = sortMethods(annotationFinder.findMetaAnnotatedMethods(Remove.class));
-                final Map<NamedMethod, RemoveMethod> declaredRemoveMethods = new HashMap<NamedMethod, RemoveMethod>();
+                final Map<NamedMethod, RemoveMethod> declaredRemoveMethods = new HashMap<>();
                 for (final RemoveMethod removeMethod : session.getRemoveMethod()) {
                     declaredRemoveMethods.put(removeMethod.getBeanMethod(), removeMethod);
                 }
@@ -3866,7 +3859,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // @EJB
             //
 
-            final List<EJB> ejbList = new ArrayList<EJB>();
+            final List<EJB> ejbList = new ArrayList<>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(EJBs.class)) {
                 final EJBs ejbs = clazz.getAnnotation(EJBs.class);
                 ejbList.addAll(Arrays.asList(ejbs.value()));
@@ -3900,7 +3893,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // @Resource
             //
 
-            final List<Resource> resourceList = new ArrayList<Resource>();
+            final List<Resource> resourceList = new ArrayList<>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(Resources.class)) {
                 final Resources resources = clazz.getAnnotation(Resources.class);
                 resourceList.addAll(Arrays.asList(resources.value()));
@@ -3942,7 +3935,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // @WebServiceRef
             //
 
-            final List<WebServiceRef> webservicerefList = new ArrayList<WebServiceRef>();
+            final List<WebServiceRef> webservicerefList = new ArrayList<>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(WebServiceRefs.class)) {
                 final WebServiceRefs webServiceRefs = clazz.getAnnotation(WebServiceRefs.class);
                 webservicerefList.addAll(Arrays.asList(webServiceRefs.value()));
@@ -3979,7 +3972,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // @PersistenceUnit
             //
 
-            final List<PersistenceUnit> persistenceUnitList = new ArrayList<PersistenceUnit>();
+            final List<PersistenceUnit> persistenceUnitList = new ArrayList<>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceUnits.class)) {
                 final PersistenceUnits persistenceUnits = clazz.getAnnotation(PersistenceUnits.class);
                 persistenceUnitList.addAll(Arrays.asList(persistenceUnits.value()));
@@ -4007,7 +4000,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             //
 
             final PersistenceContextAnnFactory pcFactory = new PersistenceContextAnnFactory();
-            final List<PersistenceContext> persistenceContextList = new ArrayList<PersistenceContext>();
+            final List<PersistenceContext> persistenceContextList = new ArrayList<>();
             for (final Annotated<Class<?>> clazz : annotationFinder.findMetaAnnotatedClasses(PersistenceContexts.class)) {
                 final PersistenceContexts persistenceContexts = clazz.getAnnotation(PersistenceContexts.class);
                 persistenceContextList.addAll(Arrays.asList(persistenceContexts.value()));
@@ -4117,7 +4110,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             final String name = consumer.getJndiConsumerName();
             if (member == null) {
                 boolean shouldReturn = false;
-                if (ejb.name().equals("")) {
+                if (ejb.name().isEmpty()) {
                     fail(name, "ejbAnnotation.onClassWithNoName");
                     shouldReturn = true;
                 }
@@ -4207,21 +4200,21 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Set the ejb-link, if any
             String ejbName = ejb.beanName();
-            if (ejbName.equals("")) {
+            if (ejbName.isEmpty()) {
                 ejbName = null;
             }
             ejbRef.setEjbLink(ejbName);
 
             // Set the mappedName, if any
             String mappedName = ejb.mappedName();
-            if (mappedName.equals("")) {
+            if (mappedName.isEmpty()) {
                 mappedName = null;
             }
             ejbRef.setMappedName(mappedName);
 
             // Set lookup name, if any
             String lookupName = getLookupName(ejb);
-            if (lookupName.equals("")) {
+            if (lookupName.isEmpty()) {
                 lookupName = null;
             }
             ejbRef.setLookupName(lookupName);
@@ -4254,6 +4247,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
                 if (ref.getMappedName() == null) {
                     ref.setMappedName(ejbLocalRef.getMappedName());
+                }
+                if(ref.getEjbLink() == null){
+                    ref.setEjbLink(ejbLocalRef.getEjbLink());
                 }
                 ref.getInjectionTarget().addAll(ejbLocalRef.getInjectionTarget());
                 return;
@@ -4342,7 +4338,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             // Get the ref-name
             String refName = resource.name();
-            if (refName.equals("")) {
+            if (refName.isEmpty()) {
                 refName = member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
@@ -4394,7 +4390,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                      * Add an env-entry via @Resource if 'lookup' attribute is set.
                      */
                     final String lookupName = getLookupName(resource);
-                    if (!lookupName.equals("")) {
+                    if (!lookupName.isEmpty()) {
                         final EnvEntry envEntry = new EnvEntry();
                         envEntry.setName(refName);
                         consumer.getEnvEntry().add(envEntry);
@@ -4475,14 +4471,14 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             // Override the mapped name if not set
-            if (reference.getMappedName() == null && !resource.mappedName().equals("")) {
+            if (reference.getMappedName() == null && !resource.mappedName().isEmpty()) {
                 reference.setMappedName(resource.mappedName());
             }
 
             // Override the lookup name if not set
             if (reference.getLookupName() == null) {
                 final String lookupName = getLookupName(resource);
-                if (!lookupName.equals("")) {
+                if (!lookupName.isEmpty()) {
                     reference.setLookupName(lookupName);
                 }
             }
@@ -4601,14 +4597,14 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().equals("")) {
+            if (persistenceUnitRef.getPersistenceUnitName() == null && !persistenceUnit.unitName().isEmpty()) {
                 persistenceUnitRef.setPersistenceUnitName(persistenceUnit.unitName());
             }
         }
 
         /**
          * Process @PersistenceContext into <persistence-context> for the specified member (field or method)
-         * <p/>
+         *
          * Refer 16.11.2.1 Overriding Rules of EJB Core Spec for overriding rules
          *
          * @param consumer
@@ -4689,7 +4685,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
             List<Property> persistenceProperties = persistenceContextRef.getPersistenceProperty();
             if (persistenceProperties == null) {
-                persistenceProperties = new ArrayList<Property>();
+                persistenceProperties = new ArrayList<>();
                 persistenceContextRef.setPersistenceProperty(persistenceProperties);
             }
 
@@ -4898,7 +4894,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             ServiceRef serviceRef;
 
             String refName = webService.name();
-            if (refName.equals("")) {
+            if (refName.isEmpty()) {
                 if (member == null) {
                     //TODO fail
                     return;
@@ -4959,7 +4955,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // Set the mappedName
             if (serviceRef.getMappedName() == null) {
                 String mappedName = webService.mappedName();
-                if (mappedName.equals("")) {
+                if (mappedName.isEmpty()) {
                     mappedName = null;
                 }
                 serviceRef.setMappedName(mappedName);
@@ -4968,7 +4964,7 @@ public class AnnotationDeployer implements DynamicDeployer {
             // wsdl file
             if (serviceRef.getWsdlFile() == null) {
                 final String wsdlLocation = webService.wsdlLocation();
-                if (!wsdlLocation.equals("")) {
+                if (!wsdlLocation.isEmpty()) {
                     serviceRef.setWsdlFile(wsdlLocation);
                 }
             }
@@ -5105,7 +5101,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         private List<String> getDeclaredClassPermissions(final AssemblyDescriptor assemblyDescriptor, final String ejbName) {
             final List<MethodPermission> permissions = assemblyDescriptor.getMethodPermission();
-            final List<String> classPermissions = new ArrayList<String>();
+            final List<String> classPermissions = new ArrayList<>();
             for (final MethodPermission permission : permissions) {
                 for (final org.apache.openejb.jee.Method method : permission.getMethod()) {
                     if (!method.getEjbName().equals(ejbName)) {
@@ -5183,14 +5179,10 @@ public class AnnotationDeployer implements DynamicDeployer {
             }
 
             public Map<String, List<MethodAttribute>> getExistingDeclarations() {
-                final Map<String, List<MethodAttribute>> declarations = new HashMap<String, List<MethodAttribute>>();
+                final Map<String, List<MethodAttribute>> declarations = new HashMap<>();
                 final List<ConcurrentMethod> methods = bean.getConcurrentMethod();
                 for (final ConcurrentMethod method : methods) {
-                    List<MethodAttribute> list = declarations.get(method.getMethod().getMethodName());
-                    if (list == null) {
-                        list = new ArrayList<MethodAttribute>();
-                        declarations.put(method.getMethod().getMethodName(), list);
-                    }
+                    List<MethodAttribute> list = declarations.computeIfAbsent(method.getMethod().getMethodName(), k -> new ArrayList<>());
                     list.add(new MethodAttribute(null, bean.getEjbName(), method.getMethod()));
                 }
                 return declarations;
@@ -5427,7 +5419,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @return
          */
         private AnnotationFinder createFinder(final Class<?>... classes) {
-            final Set<Class<?>> parents = new HashSet<Class<?>>();
+            final Set<Class<?>> parents = new HashSet<>();
             for (final Class<?> clazz : classes) {
                 parents.addAll(Classes.ancestors(clazz));
             }
@@ -5441,7 +5433,7 @@ public class AnnotationDeployer implements DynamicDeployer {
          * @return
          */
         private String[] asStrings(final Class[] types) {
-            final List<String> names = new ArrayList<String>();
+            final List<String> names = new ArrayList<>();
             for (final Class clazz : types) {
                 names.add(clazz.getName());
             }
@@ -5487,7 +5479,7 @@ public class AnnotationDeployer implements DynamicDeployer {
 
         /**
          * Checks that the values specified via @Local and @Remote are *not*:
-         * <p/>
+         *
          * - classes
          * - derived from javax.ejb.EJBObject
          * - derived from javax.ejb.EJBHome
@@ -5659,7 +5651,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Annotated<Class<?>>> sortClasses(final List<Annotated<Class<?>>> list) {
-        Collections.sort(list, new Comparator<Annotated<Class<?>>>() {
+        list.sort(new Comparator<Annotated<Class<?>>>() {
             @Override
             public int compare(final Annotated<Class<?>> o1, final Annotated<Class<?>> o2) {
                 return compareClasses(o1.get(), o2.get());
@@ -5669,7 +5661,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Class<?>> sortClassesParentFirst(final List<Class<?>> list) {
-        Collections.sort(list, new Comparator<Class<?>>() {
+        list.sort(new Comparator<Class<?>>() {
             @Override
             public int compare(final Class<?> o1, final Class<?> o2) {
                 return compareClasses(o2, o1);
@@ -5679,7 +5671,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static List<Annotated<Method>> sortMethods(final List<Annotated<Method>> list) {
-        Collections.sort(list, new Comparator<Annotated<Method>>() {
+        list.sort(new Comparator<Annotated<Method>>() {
             @Override
             public int compare(final Annotated<Method> o1, final Annotated<Method> o2) {
                 return compareClasses(o1.get().getDeclaringClass(), o2.get().getDeclaringClass());
@@ -5703,7 +5695,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     public static Collection<String> findRestClasses(final WebModule webModule, final IAnnotationFinder finder) {
-        final Collection<String> classes = new HashSet<String>();
+        final Collection<String> classes = new HashSet<>();
 
         // annotations on classes
         final List<Annotated<Class<?>>> annotatedClasses = finder.findMetaAnnotatedClasses(Path.class);
@@ -5717,9 +5709,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             } else if (clazz.isInterface()) {
                 final Class api = clazz;
-                final List<Class> impl = finder.findImplementations(api);
+                final List impl = finder.findImplementations((Class<?>)api);
                 if (impl != null && impl.size() == 1) { // single impl so that's the service
-                    final Class implClass = impl.iterator().next();
+                    final Class implClass = (Class) impl.iterator().next();
                     final String name = implClass.getName();
                     if (!isEJB(implClass)) {
                         classes.add(name);
@@ -5779,7 +5771,7 @@ public class AnnotationDeployer implements DynamicDeployer {
     }
 
     private static Collection<Class<?>> metaToClass(final List<Annotated<Class<?>>> found) {
-        final Collection<Class<?>> classes = new ArrayList<Class<?>>(found.size());
+        final Collection<Class<?>> classes = new ArrayList<>(found.size());
         for (final Annotated<Class<?>> clazz : found) {
             classes.add(clazz.get());
         }
@@ -5805,11 +5797,7 @@ public class AnnotationDeployer implements DynamicDeployer {
                 }
             }
 
-            Set<String> list = classes.get(url);
-            if (list == null) {
-                list = new HashSet<String>();
-                classes.put(url, list);
-            }
+            Set<String> list = classes.computeIfAbsent(url, k -> new HashSet<>());
 
             // saving class url
             // first try the file approach (if the same class is in several classloaders it avoids weird errors)

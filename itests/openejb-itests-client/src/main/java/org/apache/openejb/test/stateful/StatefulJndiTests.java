@@ -29,7 +29,7 @@ public class StatefulJndiTests extends BasicStatefulTestClient {
     public void test01_Jndi_lookupHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulHome");
-            ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+            ejbHome = (BasicStatefulHome) obj;
             assertNotNull("The EJBHome is null", ejbHome);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());

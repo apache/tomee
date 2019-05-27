@@ -17,7 +17,6 @@
  */
 package org.apache.openejb.test.entity.cmr;
 
-import org.junit.Assert;
 import junit.framework.AssertionFailedError;
 import org.apache.openejb.test.TestFailureException;
 import org.apache.openejb.test.entity.cmr.cmrmapping.ManyOwningSideLocal;
@@ -26,6 +25,7 @@ import org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocal;
 import org.apache.openejb.test.entity.cmr.cmrmapping.OneInverseSideLocalHome;
 import org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocal;
 import org.apache.openejb.test.entity.cmr.cmrmapping.OneOwningSideLocalHome;
+import org.junit.Assert;
 
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.transaction.HeuristicMixedException;

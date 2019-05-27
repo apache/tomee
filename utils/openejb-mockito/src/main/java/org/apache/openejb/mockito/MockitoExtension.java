@@ -21,7 +21,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.webbeans.annotation.AnyLiteral;
 import org.apache.webbeans.annotation.DefaultLiteral;
 import org.apache.webbeans.annotation.NamedLiteral;
-import org.mockito.cglib.proxy.Factory;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
@@ -31,6 +30,8 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.Prioritized;
+import javax.interceptor.Interceptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
@@ -60,7 +61,7 @@ public class MockitoExtension implements Extension {
         }
     }
 
-    private static class MockBean<T> implements Bean<T> {
+    private static class MockBean<T> implements Bean<T>, Prioritized {
         protected static final Set<Annotation> QUALIFIERS = new HashSet<Annotation>(2) {{
             add(DEFAULT_ANNOTATION);
             add(ANY_ANNOTATION);
@@ -84,7 +85,7 @@ public class MockitoExtension implements Extension {
                     }
                 }
                 for (Class<?> itf : clazz.getInterfaces()) {
-                    if (Factory.class.isAssignableFrom(itf)) {
+                    if (itf.getName().startsWith("org.mockito")) {
                         continue;
                     }
 
@@ -126,7 +127,7 @@ public class MockitoExtension implements Extension {
         }
 
         public boolean isAlternative() {
-            return true;
+            return false;
         }
 
         public T create(final CreationalContext<T> context) {
@@ -135,6 +136,11 @@ public class MockitoExtension implements Extension {
 
         public void destroy(final T instance, final CreationalContext<T> context) {
             // no-op
+        }
+
+        @Override
+        public int getPriority() {
+            return Interceptor.Priority.PLATFORM_AFTER+1000;
         }
     }
 

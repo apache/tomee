@@ -34,7 +34,7 @@ import java.util.List;
 public class JaxWsProviderWrapperTest extends TestCase {
 
     public void test() throws Exception {
-        System.setProperty(Provider.JAXWSPROVIDER_PROPERTY, MockProvider.class.getName());
+        System.setProperty(Provider.class.getName(), MockProvider.class.getName());
         Provider provider = Provider.provider();
         assertNotNull("provider is null", provider);
         assertFalse("provider should not be an instance of ProviderWrapper", provider instanceof JaxWsProviderWrapper);

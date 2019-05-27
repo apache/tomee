@@ -25,30 +25,30 @@ import javax.xml.bind.annotation.XmlType;
  * @since J2EE1.3 The ejb-local-refType is used by ejb-local-ref elements for
  * the declaration of a reference to an enterprise bean's local home. The
  * declaration consists of:
- * <p/>
+ *
  * - an optional description - the EJB reference name used in the code of
  * the Deployment Component that's referencing the enterprise bean - the
  * expected type of the referenced enterprise bean - the expected local
  * home and local interfaces of the referenced enterprise bean - optional
  * ejb-link information, used to specify the referenced enterprise bean
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for EJBLocalRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="EJBLocalRef">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}EjbRef">
- *       &lt;attribute name="local" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="localHome" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EJBLocalRef"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}EjbRef"&gt;
+ *       &lt;attribute name="local" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="localHome" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

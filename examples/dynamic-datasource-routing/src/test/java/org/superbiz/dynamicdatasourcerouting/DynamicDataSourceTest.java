@@ -32,8 +32,8 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * If you are using openejb.xml the test properties are:
- * <p/>
- * <p/>
+ *
+ *
  * <!-- Router and datasource -->
  * <Resource id="My Router" type="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter" provider="org.routertest:DeterminedRouter">
  * DatasourceNames = database1 database2 database3
@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
  * <Resource id="Routed Datasource" type="org.apache.openejb.resource.jdbc.Router" provider="org.router:RoutedDataSource">
  * Router = My Router
  * </Resource>
- * <p/>
+ *
  * <!-- real datasources -->
  * <Resource id="database1" type="DataSource">
  * JdbcDriver = org.hsqldb.jdbcDriver

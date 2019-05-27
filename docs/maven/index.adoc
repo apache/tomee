@@ -1,0 +1,178 @@
+= TomEE Maven Plugin
+:index-group: TomEE Maven Plugin
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+Inspired by the Jetty Maven Plugin, the TomEE Maven Plugin is a
+feature-rich plugin that allows for:
+
+* Easy provisioning of a TomEE server
+* Server start and stop
+* Application deployment and undeployment
+
+Simply add the following to the , and optionally the ), section of your
+`pom.xml`
+
+[source,xml]
+----
+<plugins>
+    <plugin>
+      <groupId>org.apache.openejb.maven</groupId>
+      <artifactId>tomee-maven-plugin</artifactId>
+      <version>1.7.1</version>
+      <configuration>
+        <tomeeVersion>1.7.1</tomeeVersion>
+        <tomeeClassifier>plus</tomeeClassifier>
+      </configuration>
+    </plugin>
+</plugins>
+----
+
+== Plugin Goals
+
+Goal
+
+Description
+
+tomee:build
+
+Create TomEE, but do not run it.
+
+tomee:configtest
+
+Run the Apache Tomcat `configtest` command.
+
+tomee:debug
+
+Same as `run` but with debug activated on the default or specified port.
+
+tomee:deploy
+
+Deploy an application in a running TomEE.
+
+tomee:exec
+
+Undocumented.
+
+tomee:help
+
+Display help information on the tomee-maven-plugin. Call mvn tomee:help
+-Ddetail=true -Dgoal=<goal-name> to display parameter details.
+
+tomee:list
+
+Largely inspired by the OpenEJB command helper, but with some
+differences. List deployed EJB's in a running TomEE.
+
+tomee:run
+
+Start and wait for TomEE.
+
+tomee:start
+
+Start TomEE and continue.
+
+tomee:stop
+
+Stop a TomEE started with start command.
+
+tomee:undeploy
+
+Undeploy an application in a running TomEE
+
+Note that for the tomee:deploy and tomee:undeploy goals, the path can
+either be specified within the section of the `pom.xml` using the
+parameter, or it can be passed via the user property
+tomee-plugin.archive. If a relative path is passed for the deploy path
+archive, this must be relative to the TomEE server.
+
+Note 2: running tomee maven plugin you can type 'quit' directly in the
+console to shutdown correctly the server. 'reload' is also available
+when internal openejb application is deployed.
+
+###More Tweaks
+
+The lib tag allows to enrich the container with some additional
+libraries.
+
+Some interesting patterns in addition to the default maven formats are
+supported.
+
+* remove:<some prefix of jar in lib folder>: remove all jar starting
+with the specified prefix
+* unzip:<some maven zip>: extract the zip in lib folder
+* ?name=<new-name>: rename the libary once copied in lib folder
+
+Note: the name tweak can be used to rename applications too
+
+###Provisioning Example
+
+This plugin is also usable in projects which are not war. For instance
+you can use it in a pom project to setup a TomEE install, add libraries,
+deploy apps then run the server.
+
+[source,xml]
+----
+  <plugin>
+    <groupId>org.apache.openejb.maven</groupId>
+    <artifactId>tomee-maven-plugin</artifactId>
+    <version>1.7.1</version>
+    <configuration>
+      <tomeeVersion>1.7.1</tomeeVersion>
+      <tomeeClassifier>plus</tomeeClassifier>
+      <debug>false</debug>
+      <debugPort>5005</debugPort>
+      <args>-Dfoo=bar</args>
+      <config>${project.basedir}/src/test/tomee/conf</config>
+      <libs>
+        <lib>mysql:mysql-connector-java:5.1.20</lib>
+      </libs>
+      <webapps>
+         <webapp>org.superbiz:myapp:4.3?name=ROOT</webapp>
+         <webapp>org.superbiz:api:1.1</webapp>
+      </webapps>
+      <apps>
+          <app>org.superbiz:mybugapp:3.2:ear</app>
+      </apps>
+      <libs>
+          <lib>mysql:mysql-connector-java:5.1.21</lib>
+          <lib>unzip:org.superbiz:hibernate-bundle:4.1.0.Final:zip</lib>
+          <lib>remove:openjpa-</lib>
+      </libs>
+    </configuration>
+  </plugin>
+----
+
+###Auto Reloading Example
+
+[source,xml]
+----
+<plugin>
+  <groupId>org.apache.openejb.maven</groupId>
+  <artifactId>tomee-maven-plugin</artifactId>
+  <version>1.7.1</version>
+  <configuration>
+    <synchronization>
+      <extensions>
+        <extension>.class</extension> <!-- if you want to update each time you build with mvn compile -->
+      </extensions>
+    </synchronization>
+    <reloadOnUpdate>true</reloadOnUpdate>
+  </configuration>
+</plugin>
+----
+
+The Synchronization block supports the following configuration options:
+
+* resourcesDir (default src/main/webapp)
+* binariesDir (default target/classes)
+* targetBinariesDir (default tomee/webapps/finalName/WEB-INF/classes)
+* targetResourcesDir (default tomee/webapps/finalName)
+* updateInterval (default 5 - in second)
+* extensions (default html, xhtml, js and css)
+* regex: a regex should match files to take into account when updating
+
+reloadOnUpdate means to reload the entire context (webapp). This means
+undeploying/redeploying the application.

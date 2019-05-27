@@ -33,9 +33,11 @@ import org.jboss.arquillian.test.api.ArquillianResource
 import org.jboss.shrinkwrap.api.ShrinkWrap
 import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@Ignore("tomcat 8.5.13 bug in org.apache.tomcat.util.modeler.ManagedBean.createOperationKey(java.lang.String, java.lang.String[]) where params are ignored")
 @RunWith(Arquillian)
 class SessionTest {
 

@@ -16,7 +16,12 @@
  */
 package org.apache.openejb.client;
 
-import com.sun.net.httpserver.*;
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpsConfigurator;
+import com.sun.net.httpserver.HttpsParameters;
+import com.sun.net.httpserver.HttpsServer;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -29,7 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-public class HttpsSimpleServer {
+public class HttpsSimpleServer implements AutoCloseable {
+
+    private final HttpsServer server;
 
     public HttpsSimpleServer(int serverPort, final String storePath, final String storePassword) throws IOException, KeyManagementException, NoSuchAlgorithmException {
         final Map<String, String> params = new HashMap<String, String>() {
@@ -41,7 +48,7 @@ public class HttpsSimpleServer {
             }
         };
 
-        HttpsServer server = HttpsServer.create(new InetSocketAddress(serverPort), 5);
+        server = HttpsServer.create(new InetSocketAddress(serverPort), 5);
         SSLContext sslContext = new SSLContextBuilder(params).build();
 
         final SSLEngine m_engine = sslContext.createSSLEngine();
@@ -56,6 +63,11 @@ public class HttpsSimpleServer {
         server.createContext("/secure", new MyHandler());
         server.setExecutor(Executors.newCachedThreadPool());
         server.start();
+    }
+
+    @Override
+    public void close() {
+        server.stop(0);
     }
 
 

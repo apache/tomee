@@ -18,13 +18,13 @@
 package org.apache.openejb.util;
 
 import org.apache.openejb.config.DeploymentsResolver;
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.Attribute;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassVisitor;
-import org.apache.xbean.asm5.FieldVisitor;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.Attribute;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassVisitor;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
 import org.apache.xbean.finder.UrlSet;
 
 import java.io.BufferedInputStream;
@@ -36,7 +36,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -48,11 +47,11 @@ import java.util.jar.JarInputStream;
 /**
  * ClassFinder searches the classpath of the specified classloader for
  * packages, classes, constructors, methods, or fields with specific annotations.
- * <p/>
+ *
  * For security reasons ASM is used to find the annotations.  Classes are not
  * loaded unless they match the requirements of a called findAnnotated* method.
  * Once loaded, these classes are cached.
- * <p/>
+ *
  * The getClassesNotLoaded() method can be used immediately after any find*
  * method to get a list of classes which matched the find requirements (i.e.
  * contained the annotation), but were unable to be loaded.
@@ -63,19 +62,19 @@ public class AnnotationFinder {
     private static final int ASM_FLAGS = ClassReader.SKIP_CODE + ClassReader.SKIP_DEBUG + ClassReader.SKIP_FRAMES;
 
     private final ClassLoader classLoader;
-    private final List<String> classesNotLoaded = new ArrayList<String>();
+    private final List<String> classesNotLoaded = new ArrayList<>();
     private final List<String> classNames;
 
     /**
      * Creates a ClassFinder that will search the urls in the specified classloader
      * excluding the urls in the classloader's parent.
-     * <p/>
+     *
      * To include the parent classloader, use:
-     * <p/>
+     *
      * new ClassFinder(classLoader, false);
-     * <p/>
+     *
      * To exclude the parent's parent, use:
-     * <p/>
+     *
      * new ClassFinder(classLoader, classLoader.getParent().getParent());
      *
      * @param classLoader source of classes to scan
@@ -109,12 +108,12 @@ public class AnnotationFinder {
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final URL url) {
-        this(classLoader, Arrays.asList(url));
+        this(classLoader, Collections.singletonList(url));
     }
 
     public AnnotationFinder(final ClassLoader classLoader, final Collection<URL> urls) {
         this.classLoader = classLoader;
-        classNames = new ArrayList<String>();
+        classNames = new ArrayList<>();
         for (final URL location : urls) {
             if (location == null) {
                 continue;
@@ -141,13 +140,13 @@ public class AnnotationFinder {
 
     /**
      * Returns a list of classes that could not be loaded in last invoked findAnnotated* method.
-     * <p/>
+     *
      * The list will only contain entries of classes whose byte code matched the requirements
      * of last invoked find* method, but were unable to be loaded and included in the results.
-     * <p/>
+     *
      * The list returned is unmodifiable.  Once obtained, the returned list will be a live view of the
      * results from the last findAnnotated* method call.
-     * <p/>
+     *
      * This method is not thread safe.
      *
      * @return an unmodifiable live view of classes that could not be loaded in previous findAnnotated* call.
@@ -190,7 +189,7 @@ public class AnnotationFinder {
 
     @SuppressWarnings("deprecation")
     private static List<String> file(final URL location) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
         File dir;
         try {
             dir = new File(URLDecoder.decode(location.getPath(), "UTF-8"));
@@ -231,7 +230,7 @@ public class AnnotationFinder {
     private static List<String> jar(final URL location) throws IOException, URISyntaxException {
         String jarPath = location.getFile();
         if (jarPath.contains("!")) {
-            jarPath = jarPath.substring(0, jarPath.indexOf("!"));
+            jarPath = jarPath.substring(0, jarPath.indexOf('!'));
         }
         final URL url = new URL(jarPath);
         if ("file".equals(url.getProtocol())) { // ZipFile is faster than ZipInputStream
@@ -244,13 +243,17 @@ public class AnnotationFinder {
                 final JarInputStream jarStream = new JarInputStream(in);
                 return jar(jarStream);
             } finally {
-                in.close();
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    //no-op
+                }
             }
         }
     }
 
     private static List<String> jar(final JarFile jarFile) {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         final Enumeration<? extends JarEntry> jarEntries = jarFile.entries();
         while (jarEntries.hasMoreElements()) {
@@ -262,7 +265,7 @@ public class AnnotationFinder {
     }
 
     private static List<String> jar(final JarInputStream jarStream) throws IOException {
-        final List<String> classNames = new ArrayList<String>();
+        final List<String> classNames = new ArrayList<>();
 
         JarEntry entry;
         while ((entry = jarStream.getNextJarEntry()) != null) {
@@ -327,7 +330,7 @@ public class AnnotationFinder {
         private final Filter filter;
 
         public Visitor(final Filter filter) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM7);
             this.filter = filter;
 
             try {

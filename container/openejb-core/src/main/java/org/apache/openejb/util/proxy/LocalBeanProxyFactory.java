@@ -17,12 +17,15 @@
 
 package org.apache.openejb.util.proxy;
 
+
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm5.ClassWriter;
-import org.apache.xbean.asm5.Label;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.Type;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -46,6 +49,8 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LocalBeanProxyFactory implements Opcodes {
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, LocalBeanProxyFactory.class);
 
     public static final InvocationHandler NON_BUSINESS_HANDLER = new NonBusinessHandler();
 
@@ -169,7 +174,7 @@ public class LocalBeanProxyFactory implements Opcodes {
         cw.visitField(ACC_FINAL + ACC_PRIVATE, BUSSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
         cw.visitField(ACC_FINAL + ACC_PRIVATE, NON_BUSINESS_HANDLER_NAME, "Ljava/lang/reflect/InvocationHandler;", null, null).visitEnd();
 
-        final Map<String, List<Method>> methodMap = new HashMap<String, List<Method>>();
+        final Map<String, List<Method>> methodMap = new HashMap<>();
 
         getNonPrivateMethods(classToProxy, methodMap);
 
@@ -215,7 +220,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
                 List<Method> methods = methodMap.get(method.getName());
                 if (methods == null) {
-                    methods = new ArrayList<Method>();
+                    methods = new ArrayList<>();
                     methods.add(method);
                     methodMap.put(method.getName(), methods);
                 } else {
@@ -671,7 +676,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                 String className = parameterType.getCanonicalName();
 
                 if (parameterType.isMemberClass()) {
-                    final int lastDot = className.lastIndexOf(".");
+                    final int lastDot = className.lastIndexOf('.');
                     className = className.substring(0, lastDot) + "$" + className.substring(lastDot + 1);
                 }
 
@@ -700,7 +705,7 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // sun.misc.Unsafe
         private static final Object unsafe;
-        private static final Method defineClass;
+        private static final Method unsafeDefineClass;
         private static final Method allocateInstance;
         private static final Method putObject;
         private static final Method objectFieldOffset;
@@ -774,7 +779,7 @@ public class LocalBeanProxyFactory implements Opcodes {
                     }
                 }
             });
-            defineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
+            unsafeDefineClass = AccessController.doPrivileged(new PrivilegedAction<Method>() {
                 @Override
                 public Method run() {
                     try {
@@ -782,13 +787,14 @@ public class LocalBeanProxyFactory implements Opcodes {
                         mtd.setAccessible(true);
                         return mtd;
                     } catch (final Exception e) {
-                        throw new IllegalStateException("Cannot get sun.misc.Unsafe.defineClass", e);
+                        LOGGER.debug("Unsafe's defineClass not available, will use classloader's defineClass");
+                        return null;
                     }
                 }
             });
         }
 
-        private static Object allocateInstance(final Class clazz) {
+        public static Object allocateInstance(final Class clazz) {
             try {
                 return allocateInstance.invoke(unsafe, clazz);
             } catch (final IllegalAccessException e) {
@@ -816,8 +822,31 @@ public class LocalBeanProxyFactory implements Opcodes {
 
         // it is super important to pass a classloader as first parameter otherwise if API class is in a "permanent" classloader then it will leak
         public static Class defineClass(final ClassLoader loader, final Class<?> clsToProxy, final String proxyName, final byte[] proxyBytes) throws IllegalAccessException, InvocationTargetException {
-            return (Class<?>) defineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
+            if (unsafeDefineClass != null) {
+                return (Class<?>) unsafeDefineClass.invoke(unsafe, proxyName, proxyBytes, 0, proxyBytes.length, loader, clsToProxy.getProtectionDomain());
+            } else {
+                return (Class) getClassLoaderDefineClassMethod(loader).invoke(loader, proxyName, proxyBytes, 0, proxyBytes.length, clsToProxy.getProtectionDomain());
+            }
         }
+
+        private static Method getClassLoaderDefineClassMethod(ClassLoader classLoader) {
+            Class<?> clazz = classLoader.getClass();
+            Method defineClassMethod = null;
+            do {
+                try {
+                    defineClassMethod = clazz.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
+                } catch (NoSuchMethodException e) {
+                    // do nothing, we need to search the superclass
+                }
+                clazz = clazz.getSuperclass();
+            } while (defineClassMethod == null && clazz != Object.class);
+
+            if (defineClassMethod != null && !defineClassMethod.isAccessible()) {
+                defineClassMethod.setAccessible(true);
+            }
+            return defineClassMethod;
+        }
+
     }
 
     @Target(ElementType.TYPE)

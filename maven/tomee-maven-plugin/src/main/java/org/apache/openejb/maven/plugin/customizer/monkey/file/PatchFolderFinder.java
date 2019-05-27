@@ -18,7 +18,16 @@ package org.apache.openejb.maven.plugin.customizer.monkey.file;
 
 import java.io.File;
 
+/**
+ * The type Patch folder finder.
+ */
 public class PatchFolderFinder {
+    /**
+     * Find the target file.
+     *
+     * @param base the base
+     * @return the file
+     */
     public File findTarget(final File base) {
         File current = base;
         while (current != null && !isTarget(current)) {
@@ -29,6 +38,7 @@ public class PatchFolderFinder {
         }
         throw new IllegalArgumentException("target not found from " + base);
     }
+
 
     private boolean isTarget(final File current) {
         return "target".equals(current.getName());

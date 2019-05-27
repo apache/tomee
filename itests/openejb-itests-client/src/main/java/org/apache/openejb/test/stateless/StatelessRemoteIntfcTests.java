@@ -29,7 +29,7 @@ public class StatelessRemoteIntfcTests extends BasicStatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbObject = ejbHome.createObject();
     }
 
@@ -94,7 +94,7 @@ public class StatelessRemoteIntfcTests extends BasicStatelessTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * This one seems to fail. we should double-check the spec on this.
      */
     public void TODO_test05_invokeAfterSystemException() {

@@ -21,13 +21,13 @@ import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Debug;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.ClassVisitor;
-import org.apache.xbean.asm5.ClassWriter;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.Type;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.ClassVisitor;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,6 +61,10 @@ public class DynamicSubclass implements Opcodes {
     }
 
     public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl) {
+        return createSubclass(abstractClass, cl, false);
+    }
+
+    public static Class createSubclass(final Class<?> abstractClass, final ClassLoader cl, boolean proxyNonAbstractMethods) {
         final String proxyName = getSubclassName(abstractClass);
 
         try {
@@ -80,7 +84,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            return LocalBeanProxyFactory.Unsafe.defineClass(cl, abstractClass, proxyName, generateBytes(abstractClass));
+            return LocalBeanProxyFactory.Unsafe.defineClass(cl, abstractClass, proxyName, generateBytes(abstractClass, proxyNonAbstractMethods));
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
@@ -101,7 +105,7 @@ public class DynamicSubclass implements Opcodes {
         }
     }
 
-    private static byte[] generateBytes(final Class<?> classToProxy) throws ProxyGenerationException {
+    private static byte[] generateBytes(final Class<?> classToProxy, final boolean proxyNonAbstractMethods) throws ProxyGenerationException {
 
         final Map<String, MethodVisitor> visitors = new HashMap<>();
 
@@ -134,7 +138,7 @@ public class DynamicSubclass implements Opcodes {
         for (final Map.Entry<String, List<Method>> entry : methodMap.entrySet()) {
 
             for (final Method method : entry.getValue()) {
-                if (Modifier.isAbstract(method.getModifiers())) {
+                if (Modifier.isAbstract(method.getModifiers()) || (proxyNonAbstractMethods && Modifier.isPublic(method.getModifiers()))) {
                     final MethodVisitor visitor = LocalBeanProxyFactory.visit(cw, method, proxyClassFileName, "this$handler");
                     visitors.put(method.getName() + Type.getMethodDescriptor(method), visitor);
                 }
@@ -259,7 +263,7 @@ public class DynamicSubclass implements Opcodes {
         return out.toByteArray();
     }
 
-    private static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
+    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
         // Move all the annotations onto the newly implemented methods
         // Ensures CDI and JAX-RS and JAX-WS still work
         Class clazz = classToProxy;
@@ -291,7 +295,7 @@ public class DynamicSubclass implements Opcodes {
         private final MethodVisitor newMethod;
 
         public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM5, movedMethod);
+            super(Opcodes.ASM7, movedMethod);
             this.newMethod = newMethod;
         }
 
@@ -317,7 +321,7 @@ public class DynamicSubclass implements Opcodes {
         private final ClassVisitor newClass;
 
         public CopyClassAnnotations(final ClassVisitor newClass) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM7);
             this.newClass = newClass;
         }
 
@@ -331,7 +335,7 @@ public class DynamicSubclass implements Opcodes {
         private final Map<String, MethodVisitor> visitors;
 
         public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM7);
             this.visitors = visitors;
         }
 

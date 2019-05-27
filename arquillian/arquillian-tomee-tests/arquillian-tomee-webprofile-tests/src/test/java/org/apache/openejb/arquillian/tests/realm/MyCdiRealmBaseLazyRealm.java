@@ -26,11 +26,6 @@ import static java.util.Arrays.asList;
 // no scope cause RealmBase is not proxyable, realm impl would put a scope + implement Realm, Lifecycle
 public class MyCdiRealmBaseLazyRealm extends RealmBase {
     @Override
-    protected String getName() {
-        return "user";
-    }
-
-    @Override
     protected String getPassword(final String username) {
         return "pwd";
     }

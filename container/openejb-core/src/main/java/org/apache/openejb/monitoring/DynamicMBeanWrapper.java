@@ -63,11 +63,11 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
 
     private static final Map<Class<?>, CacheInfo> CACHE = new HashMap<Class<?>, CacheInfo>();
 
-    private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<Class<?>, Class<? extends Annotation>>();
+    private static final Map<Class<?>, Class<? extends Annotation>> OPENEJB_API_TO_JAVAX = new HashMap<>();
 
     static {
         final ClassLoader loader = DynamicMBeanWrapper.class.getClassLoader();
-        try {
+        try { // all these dont work on java 9 cause of java.management module
             OPENEJB_API_TO_JAVAX.put(MBean.class, (Class<? extends Annotation>) loader.loadClass("javax.management.MBean"));
             OPENEJB_API_TO_JAVAX.put(Description.class, (Class<? extends Annotation>) loader.loadClass("javax.management.Description"));
             OPENEJB_API_TO_JAVAX.put(ManagedOperation.class, (Class<? extends Annotation>) loader.loadClass("javax.management.ManagedOperation"));
@@ -80,9 +80,9 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
     }
 
     private final MBeanInfo info;
-    private final Map<String, Method> getters = new HashMap<String, Method>();
-    private final Map<String, Method> setters = new HashMap<String, Method>();
-    private final Map<String, Method> operations = new HashMap<String, Method>();
+    private final Map<String, Method> getters = new HashMap<>();
+    private final Map<String, Method> setters = new HashMap<>();
+    private final Map<String, Method> operations = new HashMap<>();
     private final Object instance;
     private final ClassLoader classloader;
 
@@ -106,9 +106,9 @@ public class DynamicMBeanWrapper implements DynamicMBean, MBeanRegistration {
         final CacheInfo cache = CACHE.get(annotatedMBean);
         if (cache == null) {
             final String description;
-            final List<MBeanAttributeInfo> attributeInfos = new ArrayList<MBeanAttributeInfo>();
-            final List<MBeanOperationInfo> operationInfos = new ArrayList<MBeanOperationInfo>();
-            final List<MBeanNotificationInfo> notificationInfos = new ArrayList<MBeanNotificationInfo>();
+            final List<MBeanAttributeInfo> attributeInfos = new ArrayList<>();
+            final List<MBeanOperationInfo> operationInfos = new ArrayList<>();
+            final List<MBeanNotificationInfo> notificationInfos = new ArrayList<>();
 
             // class
             final Description classDescription = findAnnotation(annotatedMBean, Description.class);

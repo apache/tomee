@@ -54,9 +54,19 @@ import org.apache.xbean.finder.MetaAnnotatedClass;
 import javax.naming.Context;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.ParamConverter;
+import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.ext.ReaderInterceptor;
+import javax.ws.rs.ext.WriterInterceptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -100,6 +110,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+        if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
+            return;
+        }
+
         final WebContext webContext = containerSystem.getWebContextByHost(webApp.moduleId, webApp.host != null ? webApp.host : virtualHost);
         if (webContext == null) {
             return;
@@ -155,8 +169,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
-                    application = "true".equalsIgnoreCase(appInfo.properties.getProperty("openejb.cxf-rs.cache-application", "true"))
-                            ? new InternalApplication(application) /* caches singletons and classes */ : application;
+                    application = "true".equalsIgnoreCase(
+                            appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
+                                                           SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
+                                  ?
+                                  new InternalApplication(application) /* caches singletons and classes */ :
+                                  application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
@@ -289,7 +307,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
-    private void addAppProvidersIfNeeded(AppInfo appInfo, WebAppInfo webApp, ClassLoader classLoader, Collection<Object> additionalProviders) {
+    private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
         if (useDiscoveredProviders(appInfo)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
@@ -545,7 +563,17 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private static <T> boolean isProvider(final Class<T> clazz) {
-        return new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
+        return MessageBodyReader.class.isAssignableFrom(clazz) ||
+                MessageBodyWriter.class.isAssignableFrom(clazz) ||
+                ParamConverter.class.isAssignableFrom(clazz) ||
+                ContainerRequestFilter.class.isAssignableFrom(clazz) ||
+                ContainerResponseFilter.class.isAssignableFrom(clazz) ||
+                ReaderInterceptor.class.isAssignableFrom(clazz) ||
+                WriterInterceptor.class.isAssignableFrom(clazz) ||
+                ParamConverterProvider.class.isAssignableFrom(clazz) ||
+                ContextResolver.class.isAssignableFrom(clazz) ||
+                Feature.class.isAssignableFrom(clazz) ||
+                new MetaAnnotatedClass<>(clazz).isAnnotationPresent(Provider.class);
     }
 
     private boolean hasEjbAndIsNotAManagedBean(final Map<String, EJBRestServiceInfo> restEjbs, final String clazz) {

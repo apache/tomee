@@ -17,8 +17,8 @@
     </dep:dependencies>
   </dep:environment>
   <properties>
-    module.property.b=valueb
     module.property.a=valuea
+    module.property.b=valueb
   </properties>
   <enterprise-beans>
     <session>
@@ -28,8 +28,8 @@
       <jndi interface="LocalHome" name="loldstyle"/>
       <jndi interface="RemoteHome" name="roldstyle"/>
       <properties>
-        bean.property.b=valueb
         bean.property.a=valuea
+        bean.property.b=valueb
       </properties>
     </session>
   </enterprise-beans>

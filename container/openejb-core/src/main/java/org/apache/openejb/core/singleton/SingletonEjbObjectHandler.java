@@ -52,7 +52,7 @@ public class SingletonEjbObjectHandler extends EjbObjectProxyHandler {
     protected Object isIdentical(final Method method, final Object[] args, final Object proxy) throws Throwable {
         try {
             final EjbObjectProxyHandler handler = (EjbObjectProxyHandler) ProxyManager.getInvocationHandler(args[0]);
-            return new Boolean(deploymentID.equals(handler.deploymentID)); //NOPMD
+            return deploymentID.equals(handler.deploymentID);
         } catch (final Throwable t) {
             return Boolean.FALSE;
         }

@@ -44,8 +44,17 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+/**
+ * The type UpdatableTomEEMojo.
+ */
 public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
+    /**
+     * The constant INITIAL_DELAY.
+     */
     public static final int INITIAL_DELAY = 5000;
+    /**
+     * The constant RELOAD_CMD.
+     */
     public static final String RELOAD_CMD = "reload";
 
     @Parameter
@@ -63,6 +72,9 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private Timer timer;
     private SynchronizerRedeployer task;
 
+    /**
+     * Update the TomEE
+     */
     @Override
     protected void run() {
         if (synchronization != null) {
@@ -153,10 +165,15 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         super.addShutdownHooks(server);
     }
 
+    /**
+     * Start synchronizers boolean.
+     *
+     * @return the boolean
+     */
     protected boolean startSynchronizers() {
         timer = new Timer("tomee-maven-plugin-synchronizer");
 
-        final Collection<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
+        final Collection<Synchronizer> synchronizers = new ArrayList<>();
 
         long interval = 5000; // max of all sync interval
 
@@ -189,7 +206,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     @Override
     protected Collection<String> availableCommands() {
-        final Collection<String> cmds = new ArrayList<String>();
+        final Collection<String> cmds = new ArrayList<>();
         cmds.addAll(super.availableCommands());
         cmds.add(RELOAD_CMD);
         return cmds;
@@ -217,6 +234,9 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         return RELOAD_CMD.equalsIgnoreCase(line);
     }
 
+    /**
+     * Reload.
+     */
     public synchronized void reload() {
         if (deployOpenEjbApplication) {
             String path = deployedFile.getAbsolutePath();
@@ -234,6 +254,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private class SynchronizerRedeployer extends TimerTask {
         private final Collection<Synchronizer> delegates;
 
+        /**
+         * Instantiates a new Synchronizer redeployer.
+         *
+         * @param synchronizers the synchronizers
+         */
         public SynchronizerRedeployer(final Collection<Synchronizer> synchronizers) {
             delegates = synchronizers;
         }
@@ -263,6 +288,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
         private final AbstractSynchronizable synchronization;
         private long lastUpdate = System.currentTimeMillis();
 
+        /**
+         * Instantiates a new Synchronizer.
+         *
+         * @param synch the synch
+         */
         public Synchronizer(final AbstractSynchronizable synch) {
             synchronization = synch;
             updateOnlyFilter = new SuffixesFileFilter(synchronization.getUpdateOnlyExtenions());
@@ -372,6 +402,11 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private static class SuffixesFileFilter implements FileFilter {
         private final String[] suffixes;
 
+        /**
+         * Instantiates a new Suffixes file filter.
+         *
+         * @param extensions the extensions
+         */
         public SuffixesFileFilter(final List<String> extensions) {
             if (extensions == null) {
                 suffixes = new String[0];
@@ -399,6 +434,12 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     private class SuffixesAndRegexFileFilter extends SuffixesFileFilter {
         private final Pattern pattern;
 
+        /**
+         * Instantiates a new Suffixes and regex file filter.
+         *
+         * @param extensions the extensions
+         * @param pattern    the pattern
+         */
         public SuffixesAndRegexFileFilter(final List<String> extensions, final Pattern pattern) {
             super(extensions);
             this.pattern = pattern;

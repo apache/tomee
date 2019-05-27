@@ -19,12 +19,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.ClassReader;
-import org.apache.xbean.asm5.FieldVisitor;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.ClassReader;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.shade.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;
@@ -55,8 +55,8 @@ public class PersistenceContextAnnFactory {
         useAsm = !isPersistenceContextAnnotationValid;
     }
 
-    public Map<String, AsmPersistenceContext> contexts = new HashMap<String, AsmPersistenceContext>();
-    private final Set<String> processed = new HashSet<String>();
+    public Map<String, AsmPersistenceContext> contexts = new HashMap<>();
+    private final Set<String> processed = new HashSet<>();
 
     public void addAnnotations(final Class c) throws OpenEJBException {
         if (!useAsm) {
@@ -84,7 +84,7 @@ public class PersistenceContextAnnFactory {
             }
 
             String name = persistenceContext.name();
-            if (name == null || name.equals("")) {
+            if (name == null || name.isEmpty()) {
                 name = member == null ? null : member.getDeclaringClass().getName() + "/" + member.getName();
             }
 
@@ -130,7 +130,7 @@ public class PersistenceContextAnnFactory {
         }
 
         public Map<String, String> properties() {
-            final Map<String, String> properties = new LinkedHashMap<String, String>();
+            final Map<String, String> properties = new LinkedHashMap<>();
             for (final PersistenceProperty property : persistenceContext.properties()) {
                 properties.put(property.name(), property.value());
             }
@@ -147,7 +147,7 @@ public class PersistenceContextAnnFactory {
         public String unitName;
         public String type;
         public String synchronization = SynchronizationType.SYNCHRONIZED.name(); // default
-        public final Map<String, String> properties = new LinkedHashMap<String, String>();
+        public final Map<String, String> properties = new LinkedHashMap<>();
 
         public String name() {
             return name;
@@ -248,7 +248,7 @@ public class PersistenceContextAnnFactory {
         private final AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(final String className, final String memberName, final Map<String, AsmPersistenceContext> contexts) {
-            super(Opcodes.ASM5);
+            super(Opcodes.ASM7);
             this.contexts = contexts;
             persistenceContext.name = className + "/" + memberName;
         }

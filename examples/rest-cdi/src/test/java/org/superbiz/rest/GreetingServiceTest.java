@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,6 +65,7 @@ public class GreetingServiceTest {
     public void postXml() throws IOException {
         final String message = WebClient.create("http://localhost:" + port).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_XML_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }
@@ -81,6 +82,7 @@ public class GreetingServiceTest {
     public void postJson() throws IOException {
         final String message = WebClient.create("http://localhost:" + port, asList(new JohnzonProvider<GreetingService.Greet>())).path("/test/greeting/")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
+                .type(MediaType.APPLICATION_JSON_TYPE)
                 .post(new Request("Hi REST!"), GreetingService.Greet.class).getMessage();
         assertEquals("hi rest!", message);
     }

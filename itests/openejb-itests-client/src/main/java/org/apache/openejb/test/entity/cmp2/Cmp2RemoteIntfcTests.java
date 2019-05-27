@@ -31,7 +31,7 @@ public class Cmp2RemoteIntfcTests extends BasicCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/BasicCmpHome");
-        ejbHome = (BasicCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicCmpHome.class);
+        ejbHome = (BasicCmpHome) obj;
         ejbObject = ejbHome.createObject("Forth Bean");
     }
 
@@ -96,7 +96,7 @@ public class Cmp2RemoteIntfcTests extends BasicCmp2TestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * The Remote Server fails this one, that should be fixed.
      */
     public void BUG_test05_invokeAfterSystemException() {

@@ -27,7 +27,7 @@ public class StatelessPojoHandleTests extends BasicStatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/BasicStatelessPojoHome");
-        ejbHome = (BasicStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatelessHome.class);
+        ejbHome = (BasicStatelessHome) obj;
         ejbObject = ejbHome.createObject();
         ejbHandle = ejbObject.getHandle();
     }
@@ -52,17 +52,17 @@ public class StatelessPojoHandleTests extends BasicStatelessTestClient {
 
     /**
      * <B>3.6.6 Client view of session object's life cycle</B>
-     * <p/>
+     *
      * ....It is invalid to reference a session object that does
      * not exist. Attempted invocations on a session object
      * that does not exist result in java.rmi.NoSuchObjectException.
-     * </P>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * This remove method of the EJBHome is placed hear as it
      * is more a test on the handle then on the remove method
      * itself.
-     * </P>
+     *
      */
     public void test02_EJBHome_remove() {
         try {

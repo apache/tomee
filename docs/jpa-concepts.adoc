@@ -1,0 +1,227 @@
+= JPA Concepts
+:index-group: JPA
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= JPA 101
+
+If there's one thing you have to understand to successfully use JPA
+(Java Persistence API) it's the concept of a _Cache_. Almost everything
+boils down to the Cache at one point or another. Unfortunately the Cache
+is an internal thing and not exposed via the JPA API classes, so it not
+easy to touch or feel from a coding perspective.
+
+Here's a quick cheat sheet of the JPA world:
+
+* A *Cache* is a *copy of data*, copy meaning pulled from but living
+outside the database.
+* *Flushing* a Cache is the act of putting modified data back into the
+database.
+* A *PersistenceContext* is essentially a Cache. It also tends to have
+it's own non-shared database connection.
+* An *EntityManager* represents a PersistenceContext (and therefore a
+Cache)
+* An *EntityManagerFactory* creates an EntityManager (and therefore a
+PersistenceContext/Cache)
+
+Comparing `RESOURCE_LOCAL` and `JTA` persistence contexts
+
+With <persistence-unit transaction-type="*RESOURCE_LOCAL*"> *you* are
+responsible for EntityManager (PersistenceContext/Cache) creating and
+tracking...
+
+* You *must* use the *EntityManagerFactory* to get an EntityManager
+* The resulting *EntityManager* instance *is* a PersistenceContext/Cache
+* An *EntityManagerFactory* can be injected via the *@PersistenceUnit*
+annotation only (not `@PersistenceContext`)
+* You are *not* allowed to use @PersistenceContext to refer to a unit of
+type RESOURCE_LOCAL
+* You *must* use the *EntityTransaction* API to begin/commit around
+*every* call to your EntityManger
+* Calling entityManagerFactory.createEntityManager() twice results in
+*two* separate EntityManager instances and therefor *two* separate
+PersistenceContexts/Caches.
+* It is *almost never* a good idea to have more than one *instance* of
+an EntityManager in use (don't create a second one unless you've
+destroyed the first)
+
+With <persistence-unit transaction-type="*JTA*"> the *container* will do
+EntityManager (PersistenceContext/Cache) creating and tracking...
+
+* You *cannot* use the *EntityManagerFactory* to get an EntityManager
+* You can only get an *EntityManager* supplied by the *container*
+* An *EntityManager* can be injected via the *@PersistenceContext*
+annotation only (not `@PersistenceUnit`)
+* You are *not* allowed to use @PersistenceUnit to refer to a unit of
+type JTA
+* The *EntityManager* given by the container is a *reference* to the
+PersistenceContext/Cache associated with a JTA Transaction.
+* If no JTA transaction is in progress, the EntityManager *cannot be
+used* because there is no PersistenceContext/Cache.
+* Everyone with an EntityManager reference to the *same unit* in the
+*same transaction* will automatically have a reference to the *same
+PersistenceContext/Cache*
+* The PersistenceContext/Cache is *flushed* and cleared at JTA *commit*
+time
+
+# Cache == PersistenceContext
+
+The concept of a database cache is an extremely important concept to be
+aware of. Without a copy of the data in memory (i.e. a cache) when you
+call account.getBalance() the persistence provider would have to go read
+the value from the database. Calling account.getBalance() several times
+would cause several trips to the database. This would obviously be a big
+waste of resources. The other side of having a cache is that when you
+call account.setBalance(5000) it also doesn't hit the database
+(usually). When the cache is "flushed" the data in it is sent to the
+database via as many SQL updates, inserts and deletes as are required.
+That is the basics of java persistence of any kind all wrapped in a
+nutshell. If you can understand that, you're good to go in nearly any
+persistence technology java has to offer.
+
+Complications can arise when there is more than one
+PersistenceContext/Cache relating the same data in the same transaction.
+In any given transaction you want exactly one PersistenceContext/Cache
+for a given set of data. Using a JTA unit with an EntityManager created
+by the container will always guarantee that this is the case. With a
+RESOURCE_LOCAL unit and an EntityManagerFactory you should create and
+use exactly one EntityManager instance in your transaction to ensure
+there is only one active PersistenceContext/Cache for the given set of
+data active against the current transaction.
+
+# Caches and Detaching
+
+Detaching is the concept of a persistent object *leaving* the
+PersistenceContext/Cache. Leaving means that any updates made to the
+object are *not* reflected in the PersistenceContext/Cache. An object
+will become Detached if it somehow *lives longer* or is *used outside*
+the scope of the PersistenceContext/Cache.
+
+For a JTA unit, the PersistenceContext/Cache will live as long as the
+transaction does. When a transaction completes (commits or rollsback)
+all objects that were in the PersistenceContext/Cache are Detached. You
+can still use them, but they are no longer associated with a
+PersistenceContext/Cache and modifications on them will *not* be
+reflected in a PersistenceContext/Cache and therefore not the database
+either.
+
+Serializing objects that are currently in a PersistenceContext/Cache
+will also cause them to Detach.
+
+In some cases objects or collections of objects that become Detached may
+not have all the data you need. This can be because of lazy loading.
+With lazy loading, data isn't pulled from the database and into the
+PersistenceContext/Cache until it is requested in code. In many cases
+the Collections of persistent objects returned from an
+javax.persistence.Query.getResultList() call are completely empty until
+you iterate over them. A side effect of this is that if the Collection
+becomes Detached before it's been fully read it will be permanently
+empty and of no use and calling methods on the Detached Collection can
+cause strange errors and exceptions to be thrown. If you wish to Detach
+a Collection of persistent objects it is always a good idea to iterate
+over the Collection at least once.
+
+You *cannot* call EntityManager.persist() or EntityManager.remove() on a
+Detached object.
+
+Calling EntityManager.merge() will re-attach a Detached object.
+
+# Valid RESOURCE_LOCAL Unit usage
+
+Servlets and EJBs can use RESOURCE_LOCAL persistence units through the
+EntityManagerFactory as follows:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+  <!-- Tutorial "unit" -->
+  <persistence-unit name="Tutorial" transaction-type="RESOURCE_LOCAL">
+    <non-jta-data-source>myNonJtaDataSource</non-jta-data-source>
+    <class>org.superbiz.jpa.Account</class>
+  </persistence-unit>
+
+</persistence>
+----
+
+And referenced as follows
+
+[source,java]
+----
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceUnit;
+
+public class MyEjbOrServlet ... {
+
+    @PersistenceUnit(unitName="Tutorial")
+    private EntityManagerFactory factory;
+
+    // Proper exception handling left out for simplicity
+    public void ejbMethodOrServletServiceMethod() throws Exception {
+        EntityManager entityManager = factory.createEntityManager();
+
+        EntityTransaction entityTransaction = entityManager.getTransaction();
+
+        entityTransaction.begin();
+
+        Account account = entityManager.find(Account.class, 12345);
+
+        account.setBalance(5000);
+
+        entityTransaction.commit();
+    }
+
+    ...
+}
+----
+
+== Valid JTA Unit usage
+
+EJBs can use JTA persistence units through the EntityManager as follows:
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+  <!-- Tutorial "unit" -->
+  <persistence-unit name="Tutorial" transaction-type="JTA">
+    <jta-data-source>myJtaDataSource</jta-data-source>
+    <non-jta-data-source>myNonJtaDataSource</non-jta-data-source>
+    <class>org.superbiz.jpa.Account</class>
+  </persistence-unit>
+    
+</persistence>
+----
+
+And referenced as follows
+
+[source,java]
+----
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+@Stateless
+public class MyEjb implements MyEjbInterface {
+
+    @PersistenceContext(unitName = "Tutorial")
+    private EntityManager entityManager;
+
+    // Proper exception handling left out for simplicity
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void ejbMethod() throws Exception {
+
+    Account account = entityManager.find(Account.class, 12345);
+
+    account.setBalance(5000);
+
+    }
+}
+----

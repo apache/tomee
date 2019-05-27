@@ -20,13 +20,13 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * [10] Should be run as the nineth test suite of the BasicStatefulTestClients
- * <p/>
+ *
  * <PRE>
  * =========================================================================
  * Operations allowed in the methods of a stateful SessionBean with
  * bean-managed transaction demarcation
  * =========================================================================
- * <p/>
+ *
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
  * |
@@ -70,7 +70,7 @@ public class BMTStatefulAllowedOperationsTests extends BasicStatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/BeanManagedBasicStatefulHome");
-        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+        ejbHome = (BasicStatefulHome) obj;
         ejbObject = ejbHome.createObject("Fifth Bean");
         ejbHandle = ejbObject.getHandle();
         /* These tests will only work if the specified

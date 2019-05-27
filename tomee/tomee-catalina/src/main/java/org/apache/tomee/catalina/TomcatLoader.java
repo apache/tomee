@@ -66,32 +66,26 @@ import java.util.logging.Logger;
 
 /**
  * <h1>Prerequisites</h1>
- * <p/>
  * System properties that must be set:
  * <ul>
- * <li/>openejb.home -> catalina.home
- * <li/>openejb.base -> catalina.base
- * <li/>tomee.war -> $tomee.war
- * <li/>tomcat.version if not set
- * <li/>tomcat.built if not set
+ * <li>openejb.home -> catalina.home</li>
+ * <li>openejb.base -> catalina.base</li>
+ * <li>tomee.war -> $tomee.war</li>
+ * <li>tomcat.version if not set</li>
+ * <li>tomcat.built if not set</li>
  * </ul>
- * <p/>
  * <h1>Integration Actions</h1>
- * <p/>
  * <ul>
- * <li/>Setup ServiceJar: set openejb.provider.default -> org.apache.tomee
- * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml
- * <li/>Init SystemInstance and OptionsLog
- * <li/>
- * <li/>
+ * <li>Setup ServiceJar: set openejb.provider.default -> org.apache.tomee
+ * We therefore will load this file: META-INF/org.apache.openejb.tomcat/service-jar.xml</li>
+ * <li>Init SystemInstance and OptionsLog</li>
  * </ul>
- * <p/>
  * See {@link org.apache.openejb.config.ServiceUtils#DEFAULT_PROVIDER_URL}
  *
  * @version $Revision: 617255 $ $Date: 2008-01-31 13:58:36 -0800 (Thu, 31 Jan 2008) $
  */
 public class TomcatLoader implements Loader {
-    private static final Logger logger = Logger.getLogger(TomcatLoader.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TomcatLoader.class.getName());
     public static final String TOMEE_NOSHUTDOWNHOOK_PROP = "tomee.noshutdownhook";
 
     /**
@@ -107,7 +101,9 @@ public class TomcatLoader implements Loader {
     /**
      * other services
      */
-    private static final List<ServerService> services = new ArrayList<ServerService>();
+    private static final List<ServerService> services = new ArrayList<>();
+
+    private static final TomcatThreadContextListener threadContextListener = new TomcatThreadContextListener();
 
     /**
      * this method will be split in two to be able to use SystemInstance in between both invocations
@@ -193,7 +189,7 @@ public class TomcatLoader implements Loader {
         System.setProperty("openejb.base", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
         // Install tomcat thread context listener
-        ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
+        ThreadContext.addThreadContextListener(threadContextListener);
 
         // set ignorable libraries from a tomee property instead of using the standard openejb one
         // don't ignore standard openejb exclusions file
@@ -220,6 +216,8 @@ public class TomcatLoader implements Loader {
 
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
+
+        optionalService(properties, "org.apache.tomee.microprofile.TomEEMicroProfileService");
 
         // tomee webapp enricher
         final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();
@@ -277,7 +275,7 @@ public class TomcatLoader implements Loader {
             try {
                 manager = clazz == null ? new TomEEServiceManager() : (ServiceManager) cl.loadClass(clazz).newInstance();
             } catch (final ClassNotFoundException cnfe) {
-                logger.severe("can't find the service manager " + clazz + ", the TomEE one will be used");
+                LOGGER.severe("can't find the service manager " + clazz + ", the TomEE one will be used");
                 manager = new TomEEServiceManager();
             }
             manager.init();
@@ -292,7 +290,7 @@ public class TomcatLoader implements Loader {
             } catch (final ClassNotFoundException ignored) {
                 // no-op
             } catch (final Exception e) {
-                logger.log(Level.SEVERE, "Webservices failed to start", e);
+                LOGGER.log(Level.SEVERE, "Webservices failed to start", e);
             }
 
             // REST
@@ -304,7 +302,7 @@ public class TomcatLoader implements Loader {
             } catch (final ClassNotFoundException ignored) {
                 // no-op
             } catch (final Exception e) {
-                logger.log(Level.SEVERE, "REST failed to start", e);
+                LOGGER.log(Level.SEVERE, "REST failed to start", e);
             }
         }
 
@@ -338,7 +336,7 @@ public class TomcatLoader implements Loader {
         } catch (final ClassNotFoundException e) {
             // no-op: logger.info("Optional service not installed: " + className);
         } catch (final Exception e) {
-            logger.log(Level.SEVERE, "Failed to start: " + className, e);
+            LOGGER.log(Level.SEVERE, "Failed to start: " + className, e);
         }
         return false;
     }

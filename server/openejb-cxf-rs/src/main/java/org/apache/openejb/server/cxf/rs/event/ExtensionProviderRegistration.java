@@ -28,9 +28,9 @@ public class ExtensionProviderRegistration {
     private final List<Object> providers;
     private final AppContext appContext;
 
-    public ExtensionProviderRegistration(final AppContext ctx, final List<Object> existings) {
+    public ExtensionProviderRegistration(final AppContext ctx, final List<Object> providers) {
         this.appContext = ctx;
-        this.providers = existings;
+        this.providers = providers;
     }
 
     public AppContext getAppContext() {

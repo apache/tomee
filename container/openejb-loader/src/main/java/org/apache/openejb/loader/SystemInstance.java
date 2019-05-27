@@ -21,108 +21,24 @@ import org.apache.openejb.loader.event.ComponentRemoved;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.observer.ObserverManager;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Arrays.asList;
-
 /**
- * This class aims to be the one and only static in the entire system
- * A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
- * <p/>
+ * This class aims to be the one and only static in the entire SYSTEM
+ A static, singleton, instance of this class can be created with the {@link #init(Properties)} method
+ *
  * It is assumed that only one singleton per classloader is possible in any given VM
  * Thus loading this instance in a classloader will mean there can only be one OpenEJB
  * instance for that classloader and all children classloaders.
  *
  * @version $Revision$ $Date$
- * @org.apache.xbean.XBean element="system"
  */
 public final class SystemInstance {
-    static { // preload API to not fall into module hell on JVM >= 9
-        final String version = System.getProperty("java.version", "-");
-        final boolean j9hacks = (!version.startsWith("1.") || version.startsWith("1.9.")) && !Boolean.getBoolean("openejb.java9.skip-hacks");
-        System.setProperty("openejb.java9.hack", Boolean.toString(j9hacks));
-        if (j9hacks) {
-            ClassLoader loader = Thread.currentThread().getContextClassLoader();
-            if (loader == null) {
-                loader = ClassLoader.getSystemClassLoader();
-            }
-            Method defineClass = null;
-            for (final String clazz : asList(
-                    // JTA - rt.jar API
-                    "javax.transaction.HeuristicCommitException",
-                    "javax.transaction.HeuristicMixedException",
-                    "javax.transaction.HeuristicRollbackException",
-                    "javax.transaction.NotSupportedException",
-                    "javax.transaction.RollbackException",
-                    "javax.transaction.Status",
-                    "javax.transaction.Synchronization",
-                    "javax.transaction.SystemException",
-                    "javax.transaction.Transaction",
-                    "javax.transaction.Transactional",
-                    "javax.transaction.TransactionalException",
-                    "javax.transaction.TransactionManager",
-                    "javax.transaction.TransactionScoped",
-                    "javax.transaction.TransactionSynchronizationRegistry",
-                    "javax.transaction.UserTransaction",
-                    // javax.annotation - rt.jar
-                    "javax.annotation.security.DeclareRoles",
-                    "javax.annotation.security.DenyAll",
-                    "javax.annotation.security.PermitAll",
-                    "javax.annotation.security.RolesAllowed",
-                    "javax.annotation.security.RunAs",
-                    "javax.annotation.sql.DataSourceDefinition",
-                    "javax.annotation.sql.DataSourceDefinitions",
-                    "javax.annotation.ManagedBean",
-                    "javax.annotation.Priority"
-            )) {
-                try {
-                    loader.loadClass(clazz);
-                } catch (final ClassNotFoundException e) {
-                    // DONT CALL LOGGER THERE
-                    final URL url = loader.getResource(clazz.replace('.', '/') + ".class");
-                    if (url == null) {
-                        e.printStackTrace();
-                        continue;
-                    }
-                    try {
-                        if (defineClass == null) {
-                            Class<?> type = loader.getClass();
-                            do {
-                                try {
-                                    defineClass = type.getDeclaredMethod("defineClass", String.class, byte[].class, int.class, int.class);
-                                } catch (final NoSuchMethodException ignore) {
-                                    // do nothing, we need to search the superclass
-                                }
-                                type = type.getSuperclass();
-                            } while (defineClass == null && type != Object.class);
-                            defineClass.setAccessible(true);
-                        }
-                        try (final InputStream is = url.openStream()) {
-                            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            IO.copy(is, out);
-
-                            final byte[] bytes = out.toByteArray();
-                            defineClass.invoke(loader, clazz, bytes, 0, bytes.length);
-
-                            loader.loadClass(clazz);
-                        }
-                    } catch (final Throwable oops) {
-                        e.printStackTrace(); // no logger!
-                    }
-                }
-            }
-        }
-    }
-
     private static final String PROFILE_PROP = "openejb.profile";
     private static final String DEFAULT_PROFILE = "development";
 
@@ -143,9 +59,9 @@ public final class SystemInstance {
     private final ObserverManager observerManager = new ObserverManager();
 
     private SystemInstance(final Properties properties) {
-        this.components = new HashMap<Class, Object>();
+        this.components = new HashMap<>();
 
-        // import JVM system property config (if a resource/container/... is set through this way)
+        // import JVM SYSTEM property config (if a resource/container/... is set through this way)
         for (final String key : System.getProperties().stringPropertyNames()) {
             if (key.startsWith("sun.")) {
                 continue;
@@ -346,7 +262,7 @@ public final class SystemInstance {
         return removed;
     }
 
-    private static final AtomicReference<SystemInstance> system = new AtomicReference<SystemInstance>();
+    private static final AtomicReference<SystemInstance> SYSTEM = new AtomicReference<>();
 
     static {
         reset();
@@ -361,7 +277,7 @@ public final class SystemInstance {
     public static synchronized void reset() {
         try {
             System.clearProperty("openejb.loader");
-            system.set(new SystemInstance(new Properties())); // don't put system properties here, it is already done
+            SYSTEM.set(new SystemInstance(new Properties())); // don't put SYSTEM properties here, it is already done
             initialized = false;
         } catch (final Exception e) {
             throw new LoaderRuntimeException("Failed to create default instance of SystemInstance", e);
@@ -372,7 +288,7 @@ public final class SystemInstance {
         if (initialized) {
             return;
         }
-        system.set(new SystemInstance(properties));
+        SYSTEM.set(new SystemInstance(properties));
         // WARNING: reverse order since we don't overwrite existing entries
         readSystemProperties(get().currentProfile());
         readSystemProperties();
@@ -380,7 +296,7 @@ public final class SystemInstance {
 
 
         // if the user read System.getProperties() instead of our properties, used in bval-tomee tck for instance
-        System.getProperties().putAll(system.get().getProperties());
+        System.getProperties().putAll(SYSTEM.get().getProperties());
 
         initialized = true;
         get().setProperty("openejb.profile.custom", Boolean.toString(!get().isDefaultProfile()));
@@ -389,7 +305,7 @@ public final class SystemInstance {
     }
 
     private static void initDefaultComponents() {
-        system.get().components.put(ProvisioningResolver.class, new ProvisioningResolver());
+        SYSTEM.get().components.put(ProvisioningResolver.class, new ProvisioningResolver());
     }
 
     private static void readUserSystemProperties() {
@@ -400,7 +316,7 @@ public final class SystemInstance {
     public File getConf(final String subPath) {
 
         File conf = null;
-        final FileUtils base = system.get().getBase();
+        final FileUtils base = SYSTEM.get().getBase();
 
         try {
             conf = base.getDirectory("conf");
@@ -434,7 +350,7 @@ public final class SystemInstance {
         }
 
         // Read in and apply the conf/system.properties
-        final File conf = system.get().getConf(completePrefix + "system.properties");
+        final File conf = SYSTEM.get().getConf(completePrefix + "system.properties");
         if (conf != null && conf.exists()) {
             addSystemProperties(conf);
         }
@@ -457,17 +373,17 @@ public final class SystemInstance {
         }
 
         for (final String key : systemProperties.stringPropertyNames()) {
-            final SystemInstance systemInstance = system.get();
+            final SystemInstance systemInstance = SYSTEM.get();
             if (systemInstance.getProperty(key) == null) {
                 systemInstance.setProperty(key, systemProperties.getProperty(key));
             }
         }
-        // don't override system props
-        // system.getProperties().putAll(systemProperties);
+        // don't override SYSTEM props
+        // SYSTEM.getProperties().putAll(systemProperties);
     }
 
     public static SystemInstance get() {
-        return system.get();
+        return SYSTEM.get();
     }
 
     public String currentProfile() {

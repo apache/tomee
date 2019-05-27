@@ -38,10 +38,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CoreContainerSystem implements ContainerSystem {
 
-    private final Map<Object, AppContext> apps = new ConcurrentHashMap<Object, AppContext>();
-    private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<Object, BeanContext>();
-    private final Map<Object, Container> containers = new ConcurrentHashMap<Object, Container>();
-    private final Map<String, List<WebContext>> webDeployments = new ConcurrentHashMap<String, List<WebContext>>();
+    private final Map<Object, AppContext> apps = new ConcurrentHashMap<>();
+    private final Map<Object, BeanContext> deployments = new ConcurrentHashMap<>();
+    private final Map<Object, Container> containers = new ConcurrentHashMap<>();
+    private final Map<String, List<WebContext>> webDeployments = new ConcurrentHashMap<>();
     private final Context jndiContext;
 
     /**
@@ -150,11 +150,7 @@ public class CoreContainerSystem implements ContainerSystem {
 
     public void addWebContext(final WebContext webDeployment) {
         final String id = webDeployment.getId();
-        List<WebContext> list = this.webDeployments.get(id);
-        if (list == null) {
-            list = new ArrayList<WebContext>();
-            this.webDeployments.put(id, list);
-        }
+        List<WebContext> list = this.webDeployments.computeIfAbsent(id, k -> new ArrayList<>());
         list.add(webDeployment);
     }
 
@@ -169,7 +165,7 @@ public class CoreContainerSystem implements ContainerSystem {
 
     @Override
     public List<AppContext> getAppContexts() {
-        return new ArrayList<AppContext>(apps.values());
+        return new ArrayList<>(apps.values());
     }
 
     @Override

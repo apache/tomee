@@ -16,18 +16,21 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-remote</artifactId>
   <packaging>jar</packaging>
 
   <name>OpenEJB :: Arquillian Adaptors Parent :: Remote</name>
+
+  <properties>
+    <tomee.build.name>${project.groupId}.arquillian.tomee.remote</tomee.build.name>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -92,7 +95,7 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>apache-tomee</artifactId>
       <type>zip</type>
-      <version>7.0.3-SNAPSHOT</version>
+      <version>8.0.0-SNAPSHOT</version>
       <classifier>webprofile</classifier>
       <scope>provided</scope>
     </dependency>
@@ -121,7 +124,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-tomee-common</artifactId>
-      <version>7.0.3-SNAPSHOT</version>
+      <version>8.0.0-SNAPSHOT</version>
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
@@ -148,13 +151,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>arquillian-common</artifactId>
-      <version>7.0.3-SNAPSHOT</version>
+      <version>8.0.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>${org.apache.openwebbeans.version}</version>
+      <version>${openwebbeans.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -166,8 +169,20 @@
 
     <dependency>
       <groupId>org.apache.sirona</groupId>
-      <artifactId>sirona-web</artifactId>
-      <version>0.2-incubating</version>
+      <artifactId>sirona-api</artifactId>
+      <version>0.3-incubating</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.testdriven</groupId>
+      <artifactId>cfgagent</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.10.1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -216,7 +231,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.17</version>
+        <version>${surefire.version}</version>
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>

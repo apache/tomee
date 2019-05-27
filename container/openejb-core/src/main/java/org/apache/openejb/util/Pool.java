@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -48,12 +47,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
- * <p/>
+ *
  * A pop() call that returns null is considered successful.  A null indicates
  * that the calling code has a permit to create a poolable object and call
  * {@link Pool#push(Object)}.  This is the only situation in which that method
  * may be called.
- * <p/>
+ *
  * To simply fill the pool without a corresponding pop(), the add() method
  * must be used.  This method will attempt to aquire a permit to add to the pool.
  *
@@ -152,15 +151,15 @@ public class Pool<T> {
     }
 
     public void stop() {
-        final ScheduledFuture<?> future = this.future.get();
-        if (future != null && this.future.compareAndSet(future, null)
+        final ScheduledFuture<?> future = this.future.getAndSet(null);
+        if (future != null
                 && !future.isDone() && !future.isCancelled()
                 && !future.cancel(false)) {
             Logger.getLogger(Pool.class.getName()).log(Level.WARNING, "Pool scheduler task termination timeout expired");
         }
 
-        final ScheduledExecutorService scheduler = this.scheduler.get();
-        if (scheduler != null && this.scheduler.compareAndSet(scheduler, null)) {
+        final ScheduledExecutorService scheduler = this.scheduler.getAndSet(null);
+        if (scheduler != null) {
             scheduler.shutdown();
             try {
                 if (!scheduler.awaitTermination(10, SECONDS)) { // should last something like 0s max since we killed the task
@@ -178,8 +177,8 @@ public class Pool<T> {
 
     private Executor createExecutor() {
         final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(3, 10,
-            60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
+                60L, SECONDS,
+                new LinkedBlockingQueue<>(2), new DaemonThreadFactory("org.apache.openejb.util.Pool", hashCode()));
 
         threadPoolExecutor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -187,12 +186,12 @@ public class Pool<T> {
 
                 if (null == r || null == tpe || tpe.isShutdown() || tpe.isTerminated() || tpe.isTerminating()) {
                     return;
-    }
+                }
 
                 try {
-                    if (!tpe.getQueue().offer(r, 20, TimeUnit.SECONDS)) {
+                    if (!tpe.getQueue().offer(r, 20, SECONDS)) {
                         org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources")
-                            .warning("Default pool executor failed to run asynchronous process: " + r);
+                                .warning("Default pool executor failed to run asynchronous process: " + r);
                     }
                 } catch (final InterruptedException e) {
                     //Ignore
@@ -215,7 +214,7 @@ public class Pool<T> {
 
     /**
      * Any successful pop() call requires a corresponding push() or discard() call
-     * <p/>
+     *
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
@@ -231,7 +230,7 @@ public class Pool<T> {
 
     /**
      * Any successful pop() call requires a corresponding push() or discard() call
-     * <p/>
+     *
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
@@ -321,7 +320,7 @@ public class Pool<T> {
     /**
      * Never call this method without having successfully called
      * {@link #pop(long, TimeUnit)} beforehand.
-     * <p/>
+     *
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj object to push onto the pool
@@ -334,7 +333,7 @@ public class Pool<T> {
     /**
      * Never call this method without having successfully called
      * {@link #pop(long, TimeUnit)} beforehand.
-     * <p/>
+     *
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj    object to push onto the pool
@@ -370,7 +369,7 @@ public class Pool<T> {
 
         try {
             if (entry == null) {
-                return added;
+                return false;
             }
 
             if (!sweeper) {
@@ -467,34 +466,38 @@ public class Pool<T> {
 
     public boolean close(final long timeout, final TimeUnit unit) throws InterruptedException {
 
+        // Stop the sweeper thread
+        stop();
+
         // drain all keys so no new instances will be accepted into the pool
         while (instances.tryAcquire()) {
             Thread.yield();
         }
+
         while (minimum.tryAcquire()) {
             Thread.yield();
         }
-        instances.drainPermits();
-        minimum.drainPermits();
 
         // flush and sweep
         flush();
+
         try {
             sweeper.run();
-        } catch (final RejectedExecutionException e) {
-            //Ignore
+        } catch (final Exception ignore) {
+            //no-op
         }
-
-        // Stop the sweeper thread
-        stop();
 
         // Drain all leases
         if (!(available instanceof Overdraft)) {
             while (available.tryAcquire()) {
                 Thread.yield();
             }
+
             available.drainPermits();
         }
+
+        instances.drainPermits();
+        minimum.drainPermits();
 
         // Wait for any pending discards
         return out.await(timeout, unit);
@@ -503,10 +506,10 @@ public class Pool<T> {
     /**
      * This internal method allows us to "swap" the status
      * of two entries before returning them to the pool.
-     * <p/>
+     *
      * This allows us to elect a replacement in the min pool
      * without ever loosing loosing pool consistency.
-     * <p/>
+     *
      * Neither argument is allowed to be null.
      *
      * @param hard the "min" pool item that will be discarded
@@ -523,7 +526,7 @@ public class Pool<T> {
     }
 
     private static long now() {
-        return TimeUnit.MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
+        return MILLISECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
     }
 
     public final class Entry {
@@ -531,18 +534,18 @@ public class Pool<T> {
         private long used;
         private final int version;
         private final SoftReference<Instance> soft;
-        private final AtomicReference<Instance> hard = new AtomicReference<Instance>();
+        private final AtomicReference<Instance> hard = new AtomicReference<>();
 
         // Added this so the soft reference isn't collected
         // after the Entry instance is returned from a "pop" method
         // Also acts as an "inUse" boolean
-        private final AtomicReference<Instance> active = new AtomicReference<Instance>();
+        private final AtomicReference<Instance> active = new AtomicReference<>();
 
         /**
          * Constructor is private so that it is impossible for an Entry object
          * to exist without there being a corresponding permit issued for the
          * object wrapped by this Entry.
-         * <p/>
+         *
          * This helps ensure that when an Entry is returned to the pool it is
          * always safe to call {@link Semaphore#release()} which increases the
          * permit size by one.
@@ -556,8 +559,8 @@ public class Pool<T> {
             }
             final Instance instance = new Instance(obj);
             this.soft = garbageCollection ?
-                new SoftReference<Instance>(instance) :
-                new HardReference<Instance>(instance);
+                    new SoftReference<>(instance) :
+                    new HardReference<>(instance);
             this.version = poolVersion.get();
             this.active.set(instance);
             this.created = now() + offset;
@@ -597,11 +600,11 @@ public class Pool<T> {
         public String toString() {
             final long now = now();
             return "Entry{" +
-                "min=" + (hard.get() != null) +
-                ", age=" + (now - created) +
-                ", idle=" + (now - used) +
-                ", bean=" + soft.get() +
-                '}';
+                    "min=" + (hard.get() != null) +
+                    ", age=" + (now - created) +
+                    ", idle=" + (now - used) +
+                    ", bean=" + soft.get() +
+                    '}';
         }
 
         private class Discarded implements Runnable {
@@ -672,14 +675,14 @@ public class Pool<T> {
 
             final long now = now();
 
-            final List<Entry> entries = new ArrayList<Entry>(max);
+            final List<Entry> entries = new ArrayList<>(max);
 
             // Pull all the entries from the pool
             try {
                 while (true) {
                     final Entry entry = pop(0, MILLISECONDS, false);
                     if (entry == null) {
-                        push(entry, true);
+                        push(null, true);
                         break;
                     }
                     entries.add(entry);
@@ -690,7 +693,7 @@ public class Pool<T> {
                 // pool has been drained
             }
 
-            final List<Expired> expiredList = new ArrayList<Expired>(max);
+            final List<Expired> expiredList = new ArrayList<>(max);
 
             { // Expire aged instances, enforce pool "versioning"
 
@@ -780,7 +783,7 @@ public class Pool<T> {
             // If there are any "min" pool instances left over
             // we need to queue up creation of a replacement
 
-            final List<Expired> replace = new ArrayList<Expired>();
+            final List<Expired> replace = new ArrayList<>();
 
             for (final Expired expired : expiredList) {
                 executor.execute(expired.entry.active().discard(expired.event));
@@ -791,14 +794,14 @@ public class Pool<T> {
             }
 
             for (int i = 0; i < replace.size(); i++) {
-                final long offset = maxAge > 0 ? (long) (maxAge / replace.size() * i * maxAgeOffset) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / replace.size() * i * maxAgeOffset) % maxAge : 0L;
                 executor.execute(new Replace(replace.get(i).entry, offset));
             }
         }
 
     }
 
-    public static enum Event {
+    public enum Event {
         FULL, IDLE, AGED, FLUSHED, GC
     }
 
@@ -1114,7 +1117,7 @@ public class Pool<T> {
         private Duration maxAge = new Duration(0, MILLISECONDS);
         private double maxAgeOffset = -1;
         private Duration idleTimeout = new Duration(0, MILLISECONDS);
-        private Duration interval = new Duration(5 * 60, TimeUnit.SECONDS);
+        private Duration interval = new Duration(5 * 60, SECONDS);
         private Supplier<T> supplier;
         private Executor executor;
         private ScheduledExecutorService scheduledExecutorService;
@@ -1233,6 +1236,7 @@ public class Pool<T> {
             this.scheduledExecutorService = scheduledExecutorService;
         }
 
+        @SuppressWarnings("unchecked")
         public Pool<T> build() {
             //noinspection unchecked
             final Pool pool = new Pool(max, min, strict, maxAge.getTime(MILLISECONDS), idleTimeout.getTime(MILLISECONDS), interval.getTime(MILLISECONDS), executor, supplier, replaceAged, maxAgeOffset, this.garbageCollection, replaceFlushed);

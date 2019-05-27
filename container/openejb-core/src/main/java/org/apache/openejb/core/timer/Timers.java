@@ -71,6 +71,9 @@ public final class Timers {
     public static TimerService getTimerService(final Object pk, final BeanContext beanContext, final boolean nullIfNotRelevant) throws IllegalStateException {
         final EjbTimerService timerService = beanContext.getEjbTimerService();
         if (timerService == null) {
+            if (nullIfNotRelevant) {
+                return null;
+            }
             throw new IllegalStateException("This ejb does not support timers " + beanContext.getDeploymentID());
         } else if (beanContext.getEjbTimeout() == null) {
 

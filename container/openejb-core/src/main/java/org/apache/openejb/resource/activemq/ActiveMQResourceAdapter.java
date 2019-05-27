@@ -22,8 +22,12 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
+import org.apache.activemq.ra.ActiveMQEndpointActivationKey;
+import org.apache.activemq.ra.ActiveMQEndpointWorker;
 import org.apache.activemq.ra.ActiveMQManagedConnection;
 import org.apache.activemq.ra.MessageActivationSpec;
+import org.apache.openejb.BeanContext;
+import org.apache.openejb.core.mdb.MdbContainer;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.resource.AutoConnectionTracker;
 import org.apache.openejb.resource.activemq.jms2.TomEEConnectionFactory;
@@ -38,9 +42,12 @@ import org.apache.openejb.util.reflection.Reflections;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.management.ObjectName;
 import javax.naming.NamingException;
+import javax.resource.ResourceException;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -48,7 +55,9 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -58,6 +67,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
     private String useDatabaseLock;
     private String startupTimeout = "60000";
     private BootstrapContext bootstrapContext;
+    private final Map<BeanContext, ObjectName> mbeanNames = new ConcurrentHashMap<>();
 
     public String getDataSource() {
         return dataSource;
@@ -160,6 +170,17 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
         }
     }
 
+    private ActiveMQEndpointWorker getWorker(final BeanContext beanContext) throws ResourceException {
+        final Map<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> workers = Map.class.cast(Reflections.get(
+                MdbContainer.class.cast(beanContext.getContainer()).getResourceAdapter(), "endpointWorkers"));
+        for (final Map.Entry<ActiveMQEndpointActivationKey, ActiveMQEndpointWorker> entry : workers.entrySet()) {
+            if (entry.getKey().getMessageEndpointFactory() == beanContext.getContainerData()) {
+                return entry.getValue();
+            }
+        }
+        throw new IllegalStateException("No worker for " + beanContext.getDeploymentID());
+    }
+
     @Override
     public BootstrapContext getBootstrapContext() {
         return this.bootstrapContext;
@@ -214,18 +235,27 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
                         Connection connection = connectionFactory.createConnection();
                         if (Proxy.isProxyClass(connection.getClass())) { // not great, we should find a better want without bypassing ra layer
                             final InvocationHandler invocationHandler = Proxy.getInvocationHandler(connection);
-                            if (AutoConnectionTracker.ConnectionInvocationHandler.class.isInstance(invocationHandler)) {
-                                final Object handle = Reflections.get(invocationHandler, "handle");
-                                if (TomEEManagedConnectionProxy.class.isInstance(handle)) {
-                                    final ActiveMQManagedConnection c = ActiveMQManagedConnection.class.cast(Reflections.get(handle, "connection"));
-                                    final ActiveMQConnection physicalConnection = ActiveMQConnection.class.cast(Reflections.get(c, "physicalConnection"));
-                                    final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
-                                    if (redeliveryPolicy != null) {
-                                        physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
-                                    }
+                            final ActiveMQConnection physicalConnection = getActiveMQConnection(activationSpec, invocationHandler);
+                            if (physicalConnection != null) {
+                                return physicalConnection;
+                            }
+                        }
+
+                        // see if this is a dynamic subclass as opposed to a regular proxy
+                        try {
+                            final Field handler = connection.getClass().getDeclaredField("this$handler");
+                            handler.setAccessible(true);
+                            final Object o = handler.get(connection);
+
+                            if (InvocationHandler.class.isInstance(o)) {
+                                final InvocationHandler invocationHandler = InvocationHandler.class.cast(o);
+                                final ActiveMQConnection physicalConnection = getActiveMQConnection(activationSpec, invocationHandler);
+                                if (physicalConnection != null) {
                                     return physicalConnection;
                                 }
                             }
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            // ignore, this is not a dynamic subclass
                         }
 
                         /*
@@ -244,6 +274,22 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             }
         }
         return super.makeConnection(activationSpec);
+    }
+
+    private ActiveMQConnection getActiveMQConnection(MessageActivationSpec activationSpec, InvocationHandler invocationHandler) {
+        if (AutoConnectionTracker.ConnectionInvocationHandler.class.isInstance(invocationHandler)) {
+            final Object handle = Reflections.get(invocationHandler, "handle");
+            if (TomEEManagedConnectionProxy.class.isInstance(handle)) {
+                final ActiveMQManagedConnection c = ActiveMQManagedConnection.class.cast(Reflections.get(handle, "connection"));
+                final ActiveMQConnection physicalConnection = ActiveMQConnection.class.cast(Reflections.get(c, "physicalConnection"));
+                final RedeliveryPolicy redeliveryPolicy = activationSpec.redeliveryPolicy();
+                if (redeliveryPolicy != null) {
+                    physicalConnection.setRedeliveryPolicy(redeliveryPolicy);
+                }
+                return physicalConnection;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateless;
 
-import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.TestManager;
 
 /**
  * [4] Should be run as the fourth test suite of the EncStatelessTestClients
@@ -34,7 +34,7 @@ public class StatelessPojoContextLookupTests extends StatelessTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateless/ContextLookupStatelessPojoBean");
-        ejbHome = (EncStatelessHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatelessHome.class);
+        ejbHome = (EncStatelessHome) obj;
         ejbObject = ejbHome.create();
 
         /*[2] Create database table */

@@ -18,5 +18,6 @@
 package org.apache.openejb.assembler.classic;
 
 public class ContainerInfo extends ServiceInfo {
-
+    public String originAppName; // if define by an app
+    public boolean applicationWide;
 }

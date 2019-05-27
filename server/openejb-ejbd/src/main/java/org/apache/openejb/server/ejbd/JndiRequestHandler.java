@@ -51,7 +51,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.proxy.ProxyManager;
-import org.omg.CORBA.ORB;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Topic;
@@ -82,8 +81,19 @@ import java.util.Set;
 import static org.apache.openejb.server.ejbd.ClientObjectFactory.convert;
 
 class JndiRequestHandler extends RequestHandler {
+    private static final Class<?> ORB_CLASS;
 
-    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
+    static {
+        Class<?> orb;
+        try {
+            orb = JndiRequestHandler.class.getClassLoader().loadClass("org.omg.CORBA.ORB");
+        } catch (final ClassNotFoundException e) {
+            orb = null;
+        }
+        ORB_CLASS = orb;
+    }
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_SERVER_REMOTE.createChild("jndi"), "org.apache.openejb.server.util.resources");
 
     private Context clientJndiTree;
 
@@ -106,7 +116,7 @@ class JndiRequestHandler extends RequestHandler {
     }
 
     public boolean isDebug() {
-        return logger.isDebugEnabled();
+        return LOGGER.isDebugEnabled();
     }
 
     protected BasicClusterableRequestHandler newClusterableRequestHandler() {
@@ -115,7 +125,7 @@ class JndiRequestHandler extends RequestHandler {
 
     @Override
     public Logger getLogger() {
-        return logger;
+        return LOGGER;
     }
 
     @Override
@@ -139,7 +149,7 @@ class JndiRequestHandler extends RequestHandler {
             namingException.setRootCause(e);
             res.setResult(new ThrowableArtifact(namingException));
 
-            if (logger.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 try {
                     logRequestResponse(req, res);
                 } catch (Exception ignore) {
@@ -191,10 +201,10 @@ class JndiRequestHandler extends RequestHandler {
                     res.setMetaData(metaData);
                     res.writeExternal(out);
                 } catch (Throwable e) {
-                    logger.fatal("Could not write JndiResponse to output stream", e);
+                    LOGGER.fatal("Could not write JndiResponse to output stream", e);
                 }
 
-                if (logger.isDebugEnabled()) {
+                if (LOGGER.isDebugEnabled()) {
                     try {
                         out.flush(); // force it to as correct as possible response size
                         logRequestResponse(req, res);
@@ -205,7 +215,7 @@ class JndiRequestHandler extends RequestHandler {
             }
 
         } else {
-            logger.error("JndiRequestHandler cannot process an instance of: " + response.getClass().getName());
+            LOGGER.error("JndiRequestHandler cannot process an instance of: " + response.getClass().getName());
         }
     }
 
@@ -214,7 +224,7 @@ class JndiRequestHandler extends RequestHandler {
         final InputStream cis = info.getInputStream();
         final OutputStream cos = info.getOutputStream();
 
-        logger.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? CountingInputStream.class.cast(cis).getCount() : 0)
+        LOGGER.debug("JNDI REQUEST: " + req + " (size = " + (null != cis ? CountingInputStream.class.cast(cis).getCount() : 0)
             + "b, remote-ip =" + info.ip
             + ") -- RESPONSE: " + res + " (size = " + (null != cos ? CountingOutputStream.class.cast(cos).getCount() : 0) + "b)");
     }
@@ -291,9 +301,9 @@ class JndiRequestHandler extends RequestHandler {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
                 res.setResult(ConnectionFactory.class.getName());
                 return;
-            } else if (object instanceof ORB) {
+            } else if (ORB_CLASS != null && ORB_CLASS.isInstance(object)) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
-                res.setResult(ORB.class.getName());
+                res.setResult(ORB_CLASS.getName());
                 return;
             } else if (object instanceof ValidatorFactory) {
                 res.setResponseCode(ResponseCodes.JNDI_RESOURCE);
@@ -385,7 +395,7 @@ class JndiRequestHandler extends RequestHandler {
                 }
 
                 // add port refs
-                final Map<QName, PortRefMetaData> portsByQName = new HashMap<QName, PortRefMetaData>();
+                final Map<QName, PortRefMetaData> portsByQName = new HashMap<>();
                 for (final PortRefData portRef : serviceRef.getPortRefs()) {
                     final PortRefMetaData portRefMetaData = new PortRefMetaData();
                     portRefMetaData.setQName(portRef.getQName());
@@ -528,7 +538,7 @@ class JndiRequestHandler extends RequestHandler {
     }
 
     private void log(final EJBMetaDataImpl metaData) {
-        if (logger.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             final StringBuilder sb = new StringBuilder();
             sb.append("Sending Ejb(");
 
@@ -543,7 +553,7 @@ class JndiRequestHandler extends RequestHandler {
                 sb.delete(sb.length() - delimiter.length(), sb.length());
             }
             sb.append("])");
-            logger.debug(sb.toString());
+            LOGGER.debug(sb.toString());
         }
     }
 

@@ -38,7 +38,7 @@ public class ServiceUtils {
 
     /**
      * Default service provider package.  This value is choosen as follows:
-     * </p>
+     *
      * 1. System property "openejb.provider.default" </br>
      * 2. If in a full server containing a "conf" directory "org.apache.tomee" </br>
      * 3. Embedded mode "org.apache.openejb.embedded" </br>
@@ -134,7 +134,7 @@ public class ServiceUtils {
 
 
     public static List<ServiceProvider> getServiceProvidersByServiceType(final String type) throws OpenEJBException {
-        final ArrayList<ServiceProvider> providers = new ArrayList<ServiceProvider>();
+        final ArrayList<ServiceProvider> providers = new ArrayList<>();
         if (type == null) {
             return providers;
         }
@@ -237,12 +237,12 @@ public class ServiceUtils {
         String providerName = null;
         String serviceName = null;
 
-        if (id.indexOf("#") != -1) {
-            providerName = id.substring(0, id.indexOf("#"));
-            serviceName = id.substring(id.indexOf("#") + 1);
-        } else if (id.indexOf(":") != -1) {
-            providerName = id.substring(0, id.indexOf(":"));
-            serviceName = id.substring(id.indexOf(":") + 1);
+        if (id.indexOf('#') != -1) {
+            providerName = id.substring(0, id.indexOf('#'));
+            serviceName = id.substring(id.indexOf('#') + 1);
+        } else if (id.indexOf(':') != -1) {
+            providerName = id.substring(0, id.indexOf(':'));
+            serviceName = id.substring(id.indexOf(':') + 1);
         } else {
             providerName = currentDefaultProviderUrl(DEFAULT_PROVIDER_URL);
             serviceName = id;

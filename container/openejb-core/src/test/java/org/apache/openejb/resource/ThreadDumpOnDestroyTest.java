@@ -69,7 +69,7 @@ public class ThreadDumpOnDestroyTest {
         Logger.getLogger("OpenEJB.startup").removeHandler(h);
         assertEquals("Can't destroy test in 3 seconds, giving up.", records.get(1) /*0 is "undeploying..."*/);
         assertTrue(records.get(2).contains("\"openejb-resource-destruction-test - 1\" suspended=false state=TIMED_WAITING"));
-        assertTrue(records.get(2).contains("at org.apache.openejb.resource.ThreadDumpOnDestroyTest$WillFail.destroy"));
+        assertTrue(records.get(2).contains("org.apache.openejb.resource.ThreadDumpOnDestroyTest$WillFail.destroy"));
     }
 
     public static class WillFail {

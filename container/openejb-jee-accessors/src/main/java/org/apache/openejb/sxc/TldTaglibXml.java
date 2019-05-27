@@ -62,22 +62,21 @@ public class TldTaglibXml {
         }
 
         protected String fixLocalName(final String localName) {
-            if (localName.equals("tlibversion")) {
-                return "tlib-version";
-            } else if (localName.equals("jspversion")) {
-                return "jsp-version";
-            } else if (localName.equals("shortname")) {
-                return "short-name";
-            } else if (localName.equals("tagclass")) {
-                return "tag-class";
-            } else if (localName.equals("teiclass")) {
-                return "tei-class";
-            } else if (localName.equals("bodycontent")) {
-                return "body-content";
-            } else if (localName.equals("jspversion")) {
-                return "jsp-version";
-            } else if (localName.equals("info")) {
-                return "description";
+            switch (localName) {
+                case "tlibversion":
+                    return "tlib-version";
+                case "jspversion":
+                    return "jsp-version";
+                case "shortname":
+                    return "short-name";
+                case "tagclass":
+                    return "tag-class";
+                case "teiclass":
+                    return "tei-class";
+                case "bodycontent":
+                    return "body-content";
+                case "info":
+                    return "description";
             }
             return localName;
         }

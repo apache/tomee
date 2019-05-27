@@ -26,10 +26,12 @@ import javax.xml.soap.SOAPFactory;
 
 public class SaajMetaFactoryImpl extends SAAJMetaFactory {
 
+    @Override
     protected MessageFactory newMessageFactory(String arg0) throws SOAPException {
         return (MessageFactory) callFactoryMethod("newMessageFactory", arg0);
     }
 
+    @Override
     protected SOAPFactory newSOAPFactory(String arg0) throws SOAPException {
         return (SOAPFactory) callFactoryMethod("newSOAPFactory", arg0);
     }

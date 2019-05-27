@@ -1,0 +1,102 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
+= EJB Remote Call 2
+
+
+## Greetings
+
+
+    public interface Greetings extends javax.ejb.SessionBean {
+
+        String morning(String name);
+
+        String afternoon(String name);
+
+        String hello(String input) throws GreetingsException;
+    }
+
+
+    public class DefaultGreetings implements Greetings {
+
+
+        @Override
+        public String morning(String name) {
+            return "Good Morning: " + name;
+        }
+
+        @Override
+        public String afternoon(String name) {
+            return "Good Afternoon: " + name;
+        }
+
+        @Override
+        public String hello(final String input) throws GreetingsException {
+            if ("CHECKED".equals(input)) {
+                throw new GreetingsException("This is a checked exception");
+            }
+
+            if ("RUNTIME".equals(input)) {
+                throw new RuntimeException("This is a runtime exception");
+            }
+
+            if (input == null) {
+                return "Input was null";
+            }
+
+            return "Input was: " + input;
+        }
+
+
+        @Override
+        public void ejbActivate() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void ejbPassivate() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void ejbRemove() throws EJBException, RemoteException {
+
+        }
+
+        @Override
+        public void setSessionContext(SessionContext ctx) throws EJBException, RemoteException {
+
+        }
+    }
+
+## web.xml
+
+    <web-app xmlns="http://java.sun.com/xml/ns/javaee"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+             metadata-complete="false"
+             version="2.5">
+    
+    </web-app>
+    
+
+## ejb-jar.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+		  http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
+         version="3.0">
+    <enterprise-beans>
+        <session>
+            <ejb-name>Greetings</ejb-name>
+            <mapped-name>ejb/Greetings</mapped-name>
+            <business-local>org.superbiz.remote.Greetings</business-local>
+            <business-remote>org.superbiz.remote.Greetings</business-remote>
+            <ejb-class>org.superbiz.remote.DefaultGreetings</ejb-class>
+            <session-type>Stateless</session-type>
+            <transaction-type>Container</transaction-type>
+        </session>
+    </enterprise-beans>
+</ejb-jar>

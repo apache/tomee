@@ -175,6 +175,9 @@
 
           <!-- CDDL licensed -->
           <exclude name="container/openejb-jee/src/main/resources/META-INF/schema/*.xsd"/>
+
+          <!-- MIT licensed -->
+          <exclude name="utils/livereload-tomee/src/main/resources/js/livereload.js"/>
         </patternset>
       </fileset> 
     </rat:report> 

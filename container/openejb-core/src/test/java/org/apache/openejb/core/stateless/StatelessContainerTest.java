@@ -74,8 +74,7 @@ public class StatelessContainerTest extends TestCase {
             assertSame("lifecycle", lifecycle, WidgetBean.lifecycle);
 
             // Check the lifecycle of the bean
-            final List localBeanExpected = new ArrayList();
-            localBeanExpected.addAll(expected);
+            final List localBeanExpected = new ArrayList(expected);
             assertEquals(join("\n", localBeanExpected), join("\n", lifecycle));
         }
         {

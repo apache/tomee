@@ -1,0 +1,232 @@
+= Singleton Beans
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Singleton Overview For the first time in years EJB has a new
+bean type, the _`@Singleton_`. In my opinion, the javax.ejb.Singleton will
+replace a lot of what people are using `@Stateless` for today.
+
+The Singleton is essentially what you get if you take a Stateless bean
+and adjust the pool size to be exactly 1 resulting in there being
+exactly one instance of the Singleton bean in the application which can
+be invoked concurrently by multiple threads, like a servlet. It can do
+everything a Stateless can do such as support local and remote business
+interfaces, web services, security, transactions, and more.
+Additionally, the Singleton can have its `@PostConstruct` method called
+with the application starts up and its `@PreDestroy` method called when
+the application shuts down. This allows it to serve as an application
+lifecycle listener which is something only Servlets could do before. It
+has an _`@Startup_` annotation which is similar in concept to the servlet
+, but unlike servlets it doesn't take a number as an argument. Instead,
+you can use an _`@DependsOn_` annotation to say which other Singletons you
+need and the container will ensure they start before you.
+
+See the link:singleton-example.html[Singleton Example] for sample bean
+code and client.
+
+== Concurrency
+
+Singletons support two modes of concurrent access, Container-Managed
+Concurrency (the default) and Bean-Managed Concurrency.
+
+=== Bean-Managed Concurrency
+
+With Bean-Managed Concurrency, annotated as
+_@ConcurrencyManagement(BEAN)_, the container sends all invocations into
+the bean and lets the Singleton bean instance decide how and when to
+synchronize access, if at all. Here the 'synchronization' keyword is
+allowed as well as the full javax.util.concurrent set of libraries.
+
+=== Container-Managed Concurrency
+
+With Container-Managed Concurrency, annotated as
+_@ConcurrencyManagement(CONTAINER)_, the container will enforce
+concurrency for you via locking method access to the bean. Two modes,
+called locks exist and can be assigned to both the bean class and
+methods of the bean class.
+
+==== Lock type
+
+The first and the default is a "write" lock, annotated as
+_@Lock(WRITE)_. Essentially, with a write lock the caller holds an
+exclusive lock on the bean for the duration of the method call and all
+other threads for that or any other method must wait.
+
+The second option is a "read" lock, annotated as _`@Lock`(READ)_. The read
+lock allows full concurrent access to the methods (assuming no write
+locks are held). The default mode of "write" essentially makes your bean
+a single-threaded bean, which is very slow. The more conservative
+@Lock(WRITE) was chosen as the default as this is how all the other bean
+types work (only a single thread may access a bean instance at any given
+time). Those that are aware of how to handle concurrent access can
+easily put `@Lock`(READ) on their bean class, thus changing the default,
+and then `@Lock`(WRITE) on specific methods if needed.
+
+The locking modes of Container-Managed Concurrency map directly to the
+_http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReadWriteLock.html[java.util.concurrent.ReadWriteLock]
+_ API which looks like this:
+
+[source,java]
+----
+public interface ReadWriteLock {
+   /**
+    * Returns the lock used for reading.
+    *
+    * @return the lock used for reading.
+    */
+   Lock readLock();
+
+   /**
+    * Returns the lock used for writing.
+    *
+    * @return the lock used for writing.
+    */
+   Lock writeLock();
+}
+----
+
+Literally 100% of the Singleton locking we're talking about is taken
+from this interface and its javadoc is a great source of information.
+It's safe to imagine that under the covers the Singleton Container has
+an instance of ReadWriteLock which it uses to enforce the locking for
+all the Singleton bean's methods. Essentially:
+
+* @Lock(READ) == theSingletonReadWriteLock.readLock().lock()
+* @Lock(WRITE) == theSingletonReadWriteLock.writeLock().lock()
+
+The EJB container may use something other than ReadWriteLock but the
+semantics of a ReadWriteLock must be followed. Internally, we use an
+instance of
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReentrantReadWriteLock.html[java.util.concurrent.ReentrantReadWriteLock]
+which supports correct memory synchronization, some reentrancy, lock
+downgrading, and
+[more|http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/ReentrantReadWriteLock.html]
+.
+
+==== Acquiring the Lock
+
+The _`@AccessTimetout_` annotation can configure how long a thread will
+wait to acquire the read or write lock. This annotation can be used on
+the bean class or individual methods. The annotation maps directly to
+the
+http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/locks/Lock.html[java.util.concurrent.locks.Lock]
+interface.
+
+[source,java]
+----
+public interface Lock {
+
+    /**
+     * Blocks (potentially) forever
+     *
+     * @AccessTimout with a value of -1
+     */
+    void lock();
+
+    /**
+     * Non-blocking
+     *
+     * @AccessTimout with a value of 0
+     */
+    boolean tryLock();
+
+    /**
+     * Blocks (potentially) up to a limit
+     * 
+     * @AccessTimout(30, TimeUnit.SECONDS)
+     */
+    boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
+
+}
+----
+
+In the event it is not possible to acquire the lock a
+_javax.ejb.ConcurrentAccessException_ or
+_javax.ejb.ConcurrentAccessTimeoutException_ will be thrown.
+
+==== Default Timeout
+
+The default value of _`@AccessTimeout_` annotation is vendor specific. In
+OpenEJB it defaults to the value of the _AccessTimeout_ property which
+can be configured in many different scopes. Here is the order of
+preference:
+
+[arabic]
+. bean-level in openejb-jar.xml///
+. jar-level in openejb-jar.xml//
+. container-level in openejb.xml//
+. boot-level via InitialContext(Properties) or
+EJBContainer.createEjbContainer(Map<Object,Object>)
+. system-level in System.getProperties()
+
+The value of the property can be phrased in plain english such as "1
+hour and 23 minutes and 17 seconds" see
+link:configuring-durations.html[Configuring Durations] for details.
+
+== Startup and Startup Ordering
+
+Singletons have an _`@Startup_` annotation which can be applied to the
+bean class. When used, the Container will instantiate the Singleton
+instance _eagerly_ when the application starts up, otherwise the
+Container will instantiate the Singleton instance _lazily_ when the bean
+is first accessed.
+
+If one Singleton refers to another Singleton in the `@PostConstruct` or
+@PreDestroy method, there must be some measure taken to ensure the other
+Singleton exists and is started. This sort of ordering is achieved with
+the _`@DependsOn_` annotation which can be used to list the names of
+Singleton beans that must be started before the Singleton bean using the
+annotation.
+
+[source,java]
+----
+@DependsOn({"SingletonB", "SingletonC"})
+@Singleton
+public class SingletonA {
+
+}
+----
+
+Circular references are not supported. If BeanA uses `@DependsOn` to point
+to BeanB and BeanB also uses `@DependsOn` to point at BeanA, the result is
+a deployment exception. Be aware that circular references can happen in
+less trivial ways such as A referring to B which refers to C which
+refers to D which refers back to A. We will detect and print all
+circular dependencies (called circuits) at deploy time.
+
+Note that `@DependsOn` is only required (and should only be used) if a
+Singleton _uses_ another Singleton in its `@PostConstruct` method or
+@PreDestroy method. Simply having a reference to another Singleton and
+using it in other business methods does not require an `@DependsOn`
+declaration. The `@DependsOn` allows the Container to calculate the
+correct startup order and shutdown order so that it can guarantee the
+Singletons you need are available in your `@PostConstruct` or `@PreDestroy`
+methods. All Singletons will automatically be available to your business
+methods regardless if `@DependsOn` is used. Because of the greater chance
+of creating circular dependencies, it is better not to use the
+@DependsOn annotation "just in case" and should only be used when truly
+needed.
+
+= XML and Annotation Overriding
+
+Singletons can be declared in the ejb-jar.xml as follows:
+
+[source,xml]
+----
+<ejb-jar>
+  <enterprise-beans>
+    <session>
+      <ejb-name>MySingletonBean</ejb-name>
+      <ejb-class>org.superbiz.MySingletonBean</ejb-class>
+      <session-type>Singleton</session-type>
+      <load-on-startup/>
+      <depends-on>
+          <ejb-name>SingletonFoo</ejb-name>
+          <ejb-name>SingletonBar</ejb-name>
+      </depends-on>
+    </session>
+  </enterprise-beans>
+</ejb-jar>
+----

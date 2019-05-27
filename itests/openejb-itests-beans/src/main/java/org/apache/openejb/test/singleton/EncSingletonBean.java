@@ -16,31 +16,32 @@
  */
 package org.apache.openejb.test.singleton;
 
-import java.rmi.RemoteException;
-import java.sql.Connection;
+import junit.framework.AssertionFailedError;
+import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.entity.bmp.BasicBmpHome;
+import org.apache.openejb.test.entity.bmp.BasicBmpObject;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessLocal;
+import org.apache.openejb.test.stateful.BasicStatefulBusinessRemote;
+import org.apache.openejb.test.stateful.BasicStatefulHome;
+import org.apache.openejb.test.stateful.BasicStatefulObject;
+import org.apache.openejb.test.stateful.BasicStatefulPojoBean;
+import org.junit.Assert;
 
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
 import javax.ejb.SessionContext;
-import javax.naming.InitialContext;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.MessageProducer;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.MessageProducer;
 import javax.jms.TopicConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.JMSException;
-
-import org.junit.Assert;
-import junit.framework.AssertionFailedError;
-
-import org.apache.openejb.test.TestFailureException;
-import org.apache.openejb.test.entity.bmp.BasicBmpHome;
-import org.apache.openejb.test.entity.bmp.BasicBmpObject;
-import org.apache.openejb.test.stateful.*;
+import javax.naming.InitialContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.rmi.RemoteException;
 
 public class EncSingletonBean implements javax.ejb.SessionBean {
 
@@ -65,7 +66,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicBmpHome home = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/bmp_entity"), BasicBmpHome.class);
+                final BasicBmpHome home = (BasicBmpHome) ctx.lookup("java:comp/env/singleton/beanReferences/bmp_entity");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicBmpObject object = home.createObject("Enc Bean");
@@ -84,7 +85,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulHome home = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/stateful"), BasicStatefulHome.class);
+                final BasicStatefulHome home = (BasicStatefulHome) ctx.lookup("java:comp/env/singleton/beanReferences/stateful");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicStatefulObject object = home.createObject("Enc Bean");
@@ -103,7 +104,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicSingletonHome home = (BasicSingletonHome) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/singleton"), BasicSingletonHome.class);
+                final BasicSingletonHome home = (BasicSingletonHome) ctx.lookup("java:comp/env/singleton/beanReferences/singleton");
                 Assert.assertNotNull("The EJBHome looked up is null", home);
 
                 final BasicSingletonObject object = home.createObject();
@@ -158,7 +159,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicSingletonBusinessRemote object = (BasicSingletonBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/singleton-business-remote"), BasicSingletonBusinessRemote.class);
+                final BasicSingletonBusinessRemote object = (BasicSingletonBusinessRemote) ctx.lookup("java:comp/env/singleton/beanReferences/singleton-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -174,7 +175,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-local"), BasicStatefulBusinessLocal.class);
+                final BasicStatefulBusinessLocal object = (BasicStatefulBusinessLocal) ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-local");
                 Assert.assertNotNull("The EJB BusinessLocal is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -190,7 +191,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulPojoBean object = (BasicStatefulPojoBean) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-localbean"), BasicStatefulPojoBean.class);
+                final BasicStatefulPojoBean object = (BasicStatefulPojoBean) ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-localbean");
                 Assert.assertNotNull("The EJB BusinessLocalBean is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());
@@ -206,7 +207,7 @@ public class EncSingletonBean implements javax.ejb.SessionBean {
                 final InitialContext ctx = new InitialContext();
                 Assert.assertNotNull("The InitialContext is null", ctx);
 
-                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) javax.rmi.PortableRemoteObject.narrow(ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-remote"), BasicStatefulBusinessRemote.class);
+                final BasicStatefulBusinessRemote object = (BasicStatefulBusinessRemote) ctx.lookup("java:comp/env/singleton/beanReferences/stateful-business-remote");
                 Assert.assertNotNull("The EJB BusinessRemote is null", object);
             } catch (final Exception e) {
                 Assert.fail("Received Exception " + e.getClass() + " : " + e.getMessage());

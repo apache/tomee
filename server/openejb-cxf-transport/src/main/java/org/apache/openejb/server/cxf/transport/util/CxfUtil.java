@@ -33,6 +33,7 @@ import org.apache.cxf.management.InstrumentationManager;
 import org.apache.cxf.management.counters.CounterRepository;
 import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.transport.http.CXFAuthenticator;
 import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
@@ -124,10 +125,21 @@ public final class CxfUtil {
 
             SystemInstance.get().addObserver(new LifecycleManager());
 
+            initAuthenticators();
+
             return bus; // we keep as internal the real bus and just expose to cxf the client aware bus to be able to cast it easily
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }
+    }
+
+    private static void initAuthenticators() { // TODO: drop when we get a fully supporting java 9 version of CXF
+/*      Removing to bump to CXF 3.3.0 which supports Java 11  
+        try {
+            CXFAuthenticator.addAuthenticator();
+        } catch (final RuntimeException re) {
+            // we swallow it while cxf doesnt support java 9, this workaround is enough to make most of cases passing
+        }*/
     }
 
     public static Bus getBus() {

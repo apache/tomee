@@ -10,12 +10,13 @@ import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.OptionsLog;
-import sun.net.util.IPAddressUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
@@ -50,9 +51,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -61,7 +62,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfManaging {
 
-    private static final Logger log = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipulse"), MulticastPulseAgent.class);
+    private static final Logger LOG = Logger.getInstance(LogCategory.OPENEJB_SERVER.createChild("discovery").createChild("multipulse"), MulticastPulseAgent.class);
     private static NetworkInterface[] interfaces = null;
     private static ExecutorService executor = null;
     private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -73,10 +74,10 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     public static final String EMPTY = "NoService";
 
     private final ReentrantLock lock = new ReentrantLock();
-    private final Set<String> ignore = Collections.synchronizedSet(new HashSet<String>());
-    private final Set<URI> uriSet = new HashSet<URI>();
+    private final Set<String> ignore = Collections.synchronizedSet(new HashSet<>());
+    private final Set<URI> uriSet = new HashSet<>();
     private final AtomicBoolean running = new AtomicBoolean(false);
-    final ArrayList<Future> futures = new ArrayList<Future>();
+    final ArrayList<Future> futures = new ArrayList<>();
     private MulticastSocket[] sockets = null;
     private InetSocketAddress address = null;
 
@@ -92,13 +93,13 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
      * On receipt of a valid pulse the agent responds with its own pulse for
      * a defined amount of time and rate. A client can deliver a pulse as often as
      * required until it is happy of the server response.
-     * <p/>
+     *
      * Both server and client deliver crafted information payloads.
-     * <p/>
+     *
      * The client pulse contains OpenEJB.MCP.Client:(group or *)[:BadUri:URI]
      * The server will only respond to a request for it's own group or *
      * The optional :BadUri: is used by clients to notify a server that it is sending out unreachable URI's
-     * <p/>
+     *
      * The server response pulse contains OpenEJB.MCP.Server:(Service|Service)|(Comma separated host list)
      */
     public MulticastPulseAgent() {
@@ -130,7 +131,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     @Override
     public void init(final Properties p) throws Exception {
         final Options o = new Options(p);
-        o.setLogger(new OptionsLog(log));
+        o.setLogger(new OptionsLog(LOG));
 
         this.ignore.add("localhost");
         this.ignore.add("::1");
@@ -144,7 +145,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 }
             }
         } catch (final Exception e) {
-            log.warning("Invalid ignore parameter. Should be a lowercase single host or comma seperated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
+            LOG.warning("Invalid ignore parameter. Should be a lowercase single host or comma seperated list of hosts to ignore like: ignore=host1,host2,ipv4,ipv6");
         }
 
         this.multicast = o.get("bind", this.multicast);
@@ -190,12 +191,12 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
             final byte[] bytes = (sb.toString()).getBytes(UTF8);
             this.response = new DatagramPacket(bytes, bytes.length, this.address);
 
-            if (log.isDebugEnabled()) {
-                log.debug("MultiPulse packet is: " + sb);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("MultiPulse packet is: " + sb);
             }
 
             if (bytes.length > 2048) {
-                log.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
+                LOG.warning("MultiPulse packet is larger than 2048 bytes, clients will not be able to read the packet" +
                         "\n - You should define the 'ignore' property to filter out unreachable addresses: " + sb);
             }
         } finally {
@@ -297,7 +298,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 try {
                     socketKey = socket.getNetworkInterface().toString();
                 } catch (final SocketException e) {
-                    log.error("Failed to get network interface name on: " + socket, e);
+                    LOG.error("Failed to get network interface name on: " + socket, e);
                     continue;
                 }
 
@@ -347,7 +348,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                                         //Remove it and rebuild our broadcast packet
                                                         if (agent.ignore.add(badUri)) {
                                                             agent.buildPacket();
-                                                            log.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
+                                                            LOG.warning("This server has removed the unreachable host '" + badUri + "' from discovery, you should consider adding" +
                                                                     " this to the 'ignore' property in the multipulse.properties file");
                                                         }
                                                     } finally {
@@ -364,16 +365,16 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                                                 if (isLoopBackOnly && !MulticastPulseAgent.isLocalAddress(client, false)) {
                                                     //We only have local services, so make sure the request is from a local source else ignore it
-                                                    if (log.isDebugEnabled()) {
-                                                        log.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
+                                                    if (LOG.isDebugEnabled()) {
+                                                        LOG.debug(String.format("Ignoring remote client %1$s pulse request for group: %2$s - No remote services available",
                                                                 client,
                                                                 req));
                                                     }
                                                 } else {
 
                                                     //We have received a valid pulse request
-                                                    if (log.isDebugEnabled()) {
-                                                        log.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
+                                                    if (LOG.isDebugEnabled()) {
+                                                        LOG.debug(String.format("Answering client '%1$s' pulse request for group: '%2$s' on '%3$s'", client, req, socketKey));
                                                     }
 
                                                     //Renew response pulse
@@ -385,8 +386,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                                 }
 
                             } catch (final Exception e) {
-                                if (log.isDebugEnabled()) {
-                                    log.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("MulticastPulseAgent request error: " + e.getMessage(), e);
                                 }
                             }
                         }
@@ -525,7 +526,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private static MulticastSocket[] getSockets(final InetAddress ia, final int port) throws Exception {
 
-        final ArrayList<MulticastSocket> list = new ArrayList<MulticastSocket>();
+        final ArrayList<MulticastSocket> list = new ArrayList<>();
 
         for (final NetworkInterface ni : getInterfaces()) {
 
@@ -544,7 +545,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
                 list.add(ms);
 
-                log.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", ia.getHostName(), port, ni));
+                LOG.debug(String.format("Created MulticastSocket for '%1$s:%2$s' on network adapter: %3$s", ia.getHostName(), port, ni));
 
             } catch (final Throwable e) {
 
@@ -563,7 +564,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
 
     private static NetworkInterface[] getNetworkInterfaces() {
 
-        final HashSet<NetworkInterface> list = new HashSet<NetworkInterface>();
+        final HashSet<NetworkInterface> list = new HashSet<>();
 
         try {
             final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -631,6 +632,13 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
     private static String getHosts(final Set<String> ignore) {
 
         final Set<String> hosts = new TreeSet<String>(new Comparator<String>() {
+            private boolean isIPv4LiteralAddress(final InetAddress val) {
+                return Inet4Address.class.isInstance(val);
+            }
+
+            private boolean isIPv6LiteralAddress(final InetAddress val) {
+                return Inet6Address.class.isInstance(val);
+            }
 
             @Override
             public int compare(final String h1, final String h2) {
@@ -638,12 +646,21 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 //Sort by hostname, IPv4, IPv6
 
                 try {
-                    if (IPAddressUtil.isIPv4LiteralAddress(h1)) {
-                        if (IPAddressUtil.isIPv6LiteralAddress(h2.replace("[", "").replace("]", ""))) {
+                    InetAddress address1 = null;
+                    InetAddress address2 = null;
+                    try {
+                        address1 = InetAddress.getByName(h1);
+                        address2 = InetAddress.getByName(h2);
+                    } catch(final UnknownHostException e) {
+                        // no-op
+                    }
+
+                    if (isIPv4LiteralAddress(address1)) {
+                        if (isIPv6LiteralAddress(address2)) {
                             return -1;
                         }
-                    } else if (IPAddressUtil.isIPv6LiteralAddress(h1.replace("[", "").replace("]", ""))) {
-                        if (IPAddressUtil.isIPv4LiteralAddress(h2)) {
+                    } else if (isIPv6LiteralAddress(address1)) {
+                        if (isIPv4LiteralAddress(address2)) {
                             return 1;
                         }
                     } else if (0 != h1.compareTo(h2)) {
@@ -675,7 +692,7 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                 }
             }
         } catch (final UnknownHostException e) {
-            log.warning("Failed to list machine hosts", e);
+            LOG.warning("Failed to list machine hosts", e);
         }
 
         final StringBuilder sb = new StringBuilder();
@@ -726,8 +743,8 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
                     try {
                         this.socket.send(this.agent.getResponsePacket());
                     } catch (final Exception e) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("MulticastPulseAgent client error: " + e.getMessage(), e);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("MulticastPulseAgent client error: " + e.getMessage(), e);
                         }
                     }
 

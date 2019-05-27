@@ -184,7 +184,7 @@ public class HsqldbTestDatabase implements TestDatabase {
         try {
             /* Create database */
             obj = initialContext.lookup(databaseHomeJndiName);
-            databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+            databaseHome = DatabaseHome.class.cast(obj);
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot find " + databaseHomeJndiName + ": " + e.getClass().getName() + " " + e.getMessage());
         }

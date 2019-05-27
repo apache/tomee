@@ -54,6 +54,10 @@ public class CoreUserTransaction implements UserTransaction, Serializable {
         ERROR.set(old);
     }
 
+    public static RuntimeException error() {
+        return ERROR.get();
+    }
+
     private TransactionManager transactionManager() {
         if (transactionManager == null) {
             transactionManager = OpenEJB.getTransactionManager();

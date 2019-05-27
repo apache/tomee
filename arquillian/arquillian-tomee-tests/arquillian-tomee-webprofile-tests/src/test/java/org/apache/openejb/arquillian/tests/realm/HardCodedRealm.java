@@ -26,12 +26,6 @@ import static java.util.Arrays.asList;
 public class HardCodedRealm extends RealmBase
 {
     @Override
-    protected String getName()
-    {
-        return "hard-coded";
-    }
-
-    @Override
     protected String getPassword(final String username)
     {
         return "tom".equals(username)? "ee" : null;

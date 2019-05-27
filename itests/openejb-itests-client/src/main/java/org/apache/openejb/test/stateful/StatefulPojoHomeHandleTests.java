@@ -27,7 +27,7 @@ public class StatefulPojoHomeHandleTests extends BasicStatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/BasicStatefulPojoHome");
-        ejbHome = (BasicStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicStatefulHome.class);
+        ejbHome = (BasicStatefulHome) obj;
         ejbHomeHandle = ejbHome.getHomeHandle();
     }
 

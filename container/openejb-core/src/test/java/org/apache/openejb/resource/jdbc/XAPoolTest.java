@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class XAPoolTest {
 
             .p("txMgr", "new://TransactionManager?type=TransactionManager")
             .p("txMgr.txRecovery", "true")
-            .p("txMgr.logFileDir", "target/test/xa/howl")
+            .p("txMgr.logFileDir", "target/test/xa/howl_XAPoolTest")
 
                 // real XA datasources
             .p("xa", "new://Resource?class-name=" + JDBCXADataSource.class.getName())

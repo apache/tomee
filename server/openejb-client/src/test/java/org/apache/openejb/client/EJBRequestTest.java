@@ -17,7 +17,6 @@
 package org.apache.openejb.client;
 
 import junit.framework.TestCase;
-import org.omg.CORBA.UserException;
 
 import javax.ejb.EJBHome;
 import javax.ejb.EJBObject;
@@ -42,7 +41,7 @@ public class EJBRequestTest extends TestCase {
 
     static interface FooObject extends EJBObject {
 
-        String businessMethod(String param) throws UserException;
+        String businessMethod(String param);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class EJBRequestTest extends TestCase {
 
     public void testEJBHomeCreate() throws Exception {
         final RequestMethodCode requestMethod = RequestMethodCode.EJB_HOME_CREATE;
-        final Method method = FooHome.class.getMethod("create", new Class[]{});
+        final Method method = FooHome.class.getMethod("create", new Class[0]);
         final Object[] args = new Object[]{};
 
         invoke(requestMethod, method, args);

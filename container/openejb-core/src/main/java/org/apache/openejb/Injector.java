@@ -64,7 +64,7 @@ public class Injector {
     }
 
     private static <T> void cdiInjections(final BeanContext context, final T object) {
-        if (context.getWebBeansContext() == null) {
+        if (context == null || context.getWebBeansContext() == null) {
             return;
         }
 

@@ -37,24 +37,24 @@ import java.util.Set;
 /**
  * This test verifies that no architectural constraints have been violated
  * in the Info Object tree.  Basically those are:
- * <p/>
+ *
  * - Only public fields of basic data types are allowed.
- * <p/>
+ *
  * So this means *no*
  * - methods
  * - constructors
  * - Complex data types (Class, ClassLoader, etc)
- * <p/>
+ *
  * Keeps the Info Objects inline with the concept of a basic AST (Abstract Syntax Tree)
  * which is produced by the ConfigurationFactory and built by the Assembler,
- * <p/>
+ *
  * See http://tomee.apache.org/configuration-and-assembly.html
  *
  * @version $Rev$ $Date$
  */
 public class OpenEjbConfigurationValidationTest extends TestCase {
 
-    private final List<Class> seen = new ArrayList<Class>();
+    private final List<Class> seen = new ArrayList<>();
 
     public void testValidate() throws Exception {
         seen.add(Object.class);

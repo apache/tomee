@@ -1,0 +1,224 @@
+= Dynamic Datasource
+:index-group: Datasource
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= OpenEJB dynamic datasource
+
+== Goal
+
+The openejb dynamic datasource api aims to allow to use multiple data
+sources as one.
+
+It can be useful for technical reasons (load balancing for example) or
+functionnal reasons (filtering, aggregation, enriching...).
+
+== The API
+
+The interface Router (_org.apache.openejb.resource.jdbc.Router_) have
+only one method to get the datasource to use:
+
+[source,java]
+----
+Router.getDataSource()
+----
+
+The _org.apache.openejb.resource.jdbc.RoutedDataSource_ wraps a
+classical data source. It has to be used to declare your datasource.
+
+You can implement all the policy you want in your Router implementation.
+
+A class called _org.apache.openejb.resource.jdbc.AbstractRouter_ is
+available to ease router development.
+
+== Known limitation(s)
+
+You have to use the same kind of databases (same version, same
+configuration...).
+
+All database have to be created when you use the router. The way to do
+it automatically can depend of your JPA provider.
+
+=== OpenJPA
+
+OpenJPA initializes its database when the entitymanager is called for
+the first time so you need to initialize all your proxied datasource
+before using the other one. It can be done using an Init EJB doing a
+find() on each proxied datasource.
+
+=== Hibernate
+
+Hibernate initializes the database when it starts so if you declare a
+persistence unit by database all databases will be initialized at the
+start up.
+
+== Example
+
+=== The story (the unit test example)
+
+You want to use only one datasource in the code but you have a criteria
+to set to choose the real database to use between three.
+
+So in your code you want something like:
+
+[source,java]
+----
+public class RoutedEJBBean {
+    @PersistenceContext(unitName = "router")
+    private EntityManager em;
+
+    // this router is not automatic, we
+    // need it to select the database to use
+    @Resource(name = "My Router")
+    private DeterminedRouter router;
+
+    public void persist(int id, String name, String clientDatasource) {
+        router.setDataSource(clientDatasource);
+        em.persist(new Person(id, name));
+    }
+}
+----
+
+== The router implementation
+
+The router will simply manage a map to store proxied datasources and a
+field to store the datasource used in the current thread (ThreadLocal).
+
+[source,java]
+----
+public class DeterminedRouter implements Router {
+    private String dataSourceNames; // used to store configuration (openejb.xml)
+    private String defaultDataSourceName; // defautl data source name
+    private Map<String, DataSource> dataSources = null; // proxied data sources
+    private ThreadLocal<DataSource> currentDataSource = new ThreadLocal<DataSource>(); // the datasource to use or null
+
+    /**
+     * @param datasourceList datasource resource name, separator is a space
+     */
+    public void setDataSourceNames(String datasourceList) {
+        dataSourceNames = datasourceList;
+    }
+
+    /**
+     * lookup datasource in openejb resources
+     */
+    private void init() { // looking up datasources declared as proxied
+        dataSources = new ConcurrentHashMap<String, DataSource>();
+        for (String ds : dataSourceNames.split(" ")) {
+            ContainerSystem containerSystem = SystemInstance.get().getComponent(ContainerSystem.class);
+
+            Object o = null;
+            Context ctx = containerSystem.getJNDIContext();
+            try {
+                o = ctx.lookup("openejb:Resource/" + ds);
+                if (o instanceof DataSource) {
+                    dataSources.put(ds, (DataSource) o);
+                }
+            } catch (NamingException ignore) {
+            }
+        }
+    }
+
+    /**
+     * @return the user selected data source if it is set
+     *         or the default one
+     *  @throws IllegalArgumentException if the data source is not found
+     */
+    public DataSource getDataSource() {
+        // lazy init of routed datasources
+        if (dataSources == null) {
+            init();
+        }
+
+        // if no datasource is selected use the default one
+        if (currentDataSource.get() == null) {
+            if (dataSources.containsKey(defaultDataSourceName)) {
+                return dataSources.get(defaultDataSourceName);
+
+            } else {
+                throw new IllegalArgumentException("you have to specify at least one datasource");
+            }
+        }
+
+        // the developper set the datasource to use
+        return currentDataSource.get();
+    }
+
+    /**
+     *
+     * @param datasourceName data source name
+     */
+    public void setDataSource(String datasourceName) {
+        if (dataSources == null) {
+            init();
+        }
+        if (!dataSources.containsKey(datasourceName)) {
+            throw new IllegalArgumentException("data source called " + datasourceName + " can't be found.");
+        }
+        DataSource ds = dataSources.get(datasourceName);
+        currentDataSource.set(ds);
+    }
+
+    public void setDefaultDataSourceName(String name) {
+        this.defaultDataSourceName = name;
+    }
+}
+----
+
+== Creation of the service provider for the router
+
+To be able to use your router add a file called service-jar.xml under
+META-INF/. For example META-INF/org.router.
+
+This file will contain something like:
+
+[source,xml]
+----
+<ServiceJar>
+  <ServiceProvider id="DeterminedRouter" service="Resource"
+           type="org.apache.openejb.resource.jdbc.Router" class-name="implementation class">
+    Param defaultValue
+    ParamWithNoDefaultValue
+  </ServiceProvider>
+</ServiceJar>
+----
+
+== openejb.xml
+
+In the openejb.xml file, you have to declare your dynamic database and
+in our example it needs the proxied datasources too:
+
+[source,xml]
+----
+<Resource id="router" type="<your implementation>" provider="<your provider>">
+  Param value
+</Resource>
+
+<Resource id="route db" type="DataSource" provider="RoutedDataSource">
+  Router router
+</Resource>
+
+<!–- real databases – for our example -->
+<Resource id="db1" type="DataSource">
+  JdbcDriver org.hsqldb.jdbcDriver
+  JdbcUrl jdbc:hsqldb:mem:db1
+  UserName sa
+  Password
+  JtaManaged true
+</Resource>
+<Resource id="db2" type="DataSource">
+  JdbcDriver org.hsqldb.jdbcDriver
+  JdbcUrl jdbc:hsqldb:mem:db2
+  UserName sa
+  Password
+  JtaManaged true
+</Resource>
+<Resource id="db3" type="DataSource">
+  JdbcDriver org.hsqldb.jdbcDriver
+  JdbcUrl jdbc:hsqldb:mem:db3
+  UserName sa
+  Password
+  JtaManaged true
+</Resource>
+----

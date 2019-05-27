@@ -1,0 +1,65 @@
+= Generating EJB 3 annotations
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Generating EJB 3 annotations
+
+The OpenEJB Eclipse plugin is able to provide some assistance in helping
+you migrate EJB 2.x projects to EJB 3.0, by analyzing your ejb-jar.xml
+file, and adding EJB annotations to your source code. This page will
+show you how to use this functionality.
+
+First of all you will need to add the EJB 3.0 API jars to the classpath
+of your project. If you are using Maven, you can add the following to
+your POM (you will need to update your Eclipse project using mvn
+eclipse:eclipse afterwards)
+
+[source,xml]
+----
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>5.0-1</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+----
+
+Alternatively, import the API jars into your project, and add them to
+your build path.
+
+Next, click the 'OpenEJB' menu on the menubar, and select 'Generate
+Annotations'.
+
+!http://www.jrg.me.uk/openejb/annotations_step_1.jpg!
+
+Select the project you would like to work with, if it isn't already
+selected. Click 'Next'.
+
+!http://www.jrg.me.uk/openejb/annotations_step_2.jpg!
+
+Select your ejb-jar.xml and (optionally) your openejb-jar.xml files.
+Select or deselect the other options as appropriate, and select 'Next'.
+
+Options:
+
+[source,java]
+----
+* Alter SessionBean interfaces - This option makes your session beans
+----
+
+implement your remote / local interfaces as opposed to
+javax.ejb.SessionBean, and stops your remote / local interfaces
+extending javax.ejb.EJBObject. * Add `@Remote` and `@RemoteHome` annotations
+- This adds `@Remote` and `@RemoteHome` annotations appropriately * Convert
+entity beans to POJOs - This options converts abstract CMP classes to
+POJOs generating simple getters and setters.
+
+!http://www.jrg.me.uk/openejb/annotations_step_3.jpg!
+
+Review the changes that the plugin will make to your source code.
+Uncheck any changes you don't want to apply, and click 'Finish'.

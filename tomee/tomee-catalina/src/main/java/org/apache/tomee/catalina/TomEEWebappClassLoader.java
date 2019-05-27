@@ -98,7 +98,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
     }
 
@@ -107,8 +107,12 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         hashCode = construct();
         setJavaseClassLoader(getSystemClassLoader());
         containerClassLoader = ParentClassLoaderFinder.Helper.get();
-        isEar = getParent() != null && !getParent().equals(containerClassLoader) && defaultEarBehavior();
+        isEar = getInternalParent() != null && !getInternalParent().equals(containerClassLoader) && defaultEarBehavior();
         originalDelegate = getDelegate();
+    }
+
+    public ClassLoader getInternalParent() {
+        return getParent();
     }
 
     private int construct() {
@@ -187,8 +191,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
                 final boolean filter = filter(name, true);
                 filterTempCache.put(name, filter); // will be called again by super.loadClass() so cache it
                 if (!filter) {
-                    if (URLClassLoaderFirst.class.isInstance(getParent())) { // true
-                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getParent());
+                    if (URLClassLoaderFirst.class.isInstance(getInternalParent())) { // true
+                        final URLClassLoaderFirst urlClassLoaderFirst = URLClassLoaderFirst.class.cast(getInternalParent());
                         Class<?> c = urlClassLoaderFirst.findAlreadyLoadedClass(name);
                         if (c != null) {
                             return c;
@@ -244,7 +248,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     protected boolean filter(final String inName, final boolean isClassName) {
-        final String name = inName == null ||isClassName ? inName : inName.replace('/', '.').replace(".class", "");
+        final String name = inName == null || isClassName ? inName : inName.replace('/', '.').replace(".class", "");
         if ("org.apache.tomee.mojarra.TomEEInjectionProvider".equals(name)) {
             return false;
         }
@@ -417,7 +421,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     @Override
     public InputStream getResourceAsStream(final String name) {
         if (!getState().isAvailable()) {
-            return null;
+            final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
+            return loader == null ? null : loader.getResourceAsStream(name);
         }
         try {
             return super.getResourceAsStream(name);
@@ -438,7 +443,8 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     @Override
     public Enumeration<URL> getResources(final String name) throws IOException {
         if (!getState().isAvailable()) {
-            return null;
+            final ClassLoader loader = ParentClassLoaderFinder.Helper.get();
+            return loader == null ? Collections.<URL>emptyEnumeration() : loader.getResources(name);
         }
 
         if ("META-INF/services/javax.servlet.ServletContainerInitializer".equals(name)) {
@@ -499,7 +505,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     @Override
     public TomEEWebappClassLoader copyWithoutTransformers() {
-        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getParent());
+        final TomEEWebappClassLoader result = new TomEEWebappClassLoader(getInternalParent());
         result.additionalRepos = additionalRepos;
         result.configurer = configurer;
         super.copyStateWithoutTransformers(result);
@@ -573,7 +579,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             if (WEB_INF_CLASSES.equals(path)) {
                 return "/";
             }
-            return path.startsWith(WEB_INF_CLASSES)? path.substring(WEB_INF_CLASSES.length()) : path;
+            return path.startsWith(WEB_INF_CLASSES) ? path.substring(WEB_INF_CLASSES.length()) : path;
         }
     }
 }

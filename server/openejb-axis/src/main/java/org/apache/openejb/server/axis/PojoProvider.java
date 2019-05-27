@@ -26,11 +26,32 @@ import javax.xml.rpc.holders.IntHolder;
 import java.lang.reflect.Method;
 
 public class PojoProvider extends RPCProvider {
+
+    /**
+     *
+     * @param msgContext msgContext
+     * @param service service
+     * @param clsName clsName
+     * @param scopeHolder scopeHolder
+     * @return
+     * @throws Exception
+     */
+    @Override
     public Object getServiceObject(MessageContext msgContext, Handler service, String clsName, IntHolder scopeHolder) throws Exception {
         HttpRequest request = (HttpRequest) msgContext.getProperty(AxisWsContainer.REQUEST);
         return request.getAttribute(WsConstants.POJO_INSTANCE);
     }
 
+    /**
+     *
+     * @param msgContext msgContext
+     * @param interfaceMethod interfaceMethod
+     * @param pojo pojo
+     * @param arguments arguments
+     * @return
+     * @throws Exception
+     */
+    @Override
     protected Object invokeMethod(MessageContext msgContext, Method interfaceMethod, Object pojo, Object[] arguments) throws Exception {
         Class pojoClass = pojo.getClass();
 

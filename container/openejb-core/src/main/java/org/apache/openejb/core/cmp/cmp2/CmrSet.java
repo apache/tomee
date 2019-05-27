@@ -90,8 +90,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
     public boolean addAll(final Collection c) {
         final Set<Bean> entityBeans = getEntityBeans(c, relatedLocal);
         boolean changed = false;
-        for (final Iterator<Bean> iterator = entityBeans.iterator(); iterator.hasNext(); ) {
-            final Bean bean = iterator.next();
+        for (final Bean bean : entityBeans) {
             changed = add(bean) || changed;
         }
         return changed;
@@ -214,7 +213,7 @@ public class CmrSet<Bean extends EntityBean, Proxy extends EJBLocalObject> exten
             return null;
         }
 
-        final Set<Bean> entities = new HashSet<Bean>();
+        final Set<Bean> entities = new HashSet<>();
         for (final Object value : proxies) {
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalArgumentException("Object is not an instance of " + type.getName() +

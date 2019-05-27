@@ -22,14 +22,16 @@ import org.apache.openejb.util.Join;
 
 import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
-import javax.naming.NameClassPair;
 import javax.naming.NamingException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.naming.OperationNotSupportedException;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.SystemException;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 
 /**
  * @version $Rev$ $Date$
@@ -58,7 +60,7 @@ public class IvmContextTest extends TestCase {
             visit(context, name, new Visitor() {
                 public void visit(final Context context, final String name, final String parentName) throws NamingException {
 
-                    final Map<String, Object> expected = new TreeMap<String, Object>();
+                    final Map<String, Object> expected = new TreeMap<>();
 
                     for (final Map.Entry<String, Integer> entry : map.entrySet()) {
                         String key = entry.getKey();
@@ -77,7 +79,7 @@ public class IvmContextTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        map = new LinkedHashMap<String, Integer>();
+        map = new LinkedHashMap<>();
         map.put("color/orange", 1);
         map.put("color/blue", 2);
         map.put("color/red/scarlet", 3);
@@ -95,11 +97,7 @@ public class IvmContextTest extends TestCase {
         final Map<String, Object> map = Debug.contextToMap(context);
 
         // Prune the context entries out
-        final Iterator<Map.Entry<String, Object>> iterator = map.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<String, Object> entry = iterator.next();
-            if (entry.getValue() instanceof Context) iterator.remove();
-        }
+        map.entrySet().removeIf(entry -> entry.getValue() instanceof Context);
 
         return map;
     }
@@ -230,14 +228,14 @@ public class IvmContextTest extends TestCase {
     public void test() throws Exception {
 
         final IvmContext context = new IvmContext();
-        context.bind("comp/env/rate/work/doc/lot/pop", new Integer(1));
-        context.bind("comp/env/rate/work/doc/lot/price", new Integer(2));
-        context.bind("comp/env/rate/work/doc/lot/break/story", new Integer(3));
+        context.bind("comp/env/rate/work/doc/lot/pop", 1);
+        context.bind("comp/env/rate/work/doc/lot/price", 2);
+        context.bind("comp/env/rate/work/doc/lot/break/story", 3);
 
         final Object o = context.lookup("comp/env/rate/work/doc/lot/pop");
         assertNotNull(o);
         assertTrue(o instanceof Integer);
-        assertEquals(o, new Integer(1));
+        assertEquals(o, 1);
 
         context.unbind("comp/env/rate/work/doc/lot/pop");
 
@@ -251,6 +249,139 @@ public class IvmContextTest extends TestCase {
         final Map<String, Object> map = list(context);
         assertFalse("name should not appear in bindings list", map.containsKey("comp/env/rate/work/doc/lot/pop"));
     }
+
+    public void testReadOnlyThrowsExceptionByDefault() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        final IvmContext context = new IvmContext();
+        context.setReadOnly(true);
+
+        try {
+            context.bind("global/foo/Bar", "Bar");
+            fail();
+        } catch (OperationNotSupportedException e) {
+            // ok
+        }
+     }
+     
+     public void testReadOnlyNoException() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        final IvmContext context = new IvmContext();
+        context.setReadOnly(true);
+
+        String originalValue = System.getProperty(IvmContext.JNDI_EXCEPTION_ON_FAILED_WRITE);
+        System.setProperty(IvmContext.JNDI_EXCEPTION_ON_FAILED_WRITE, Boolean.FALSE.toString());
+        try {
+            Context subContext = context.createSubcontext("global/foo/Bar");
+            assertNull(subContext);
+        } finally {
+            if(originalValue == null) {
+                System.clearProperty(IvmContext.JNDI_EXCEPTION_ON_FAILED_WRITE);
+            } else {
+                System.setProperty(IvmContext.JNDI_EXCEPTION_ON_FAILED_WRITE, originalValue);
+            }
+            SystemInstance.reset();
+        }
+     }
+     
+     public void testReadOnlyAppliedRecursively() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        final IvmContext context = new IvmContext();
+        Context subContext = context.createSubcontext("global/foo/Bar");
+
+        context.setReadOnly(true);
+        if(IvmContext.class.isInstance(subContext)) {
+            assertTrue(IvmContext.class.cast(subContext).readOnly);
+        } else { 
+            throw new IllegalStateException("Naming context " + subContext + " not instance of " + IvmContext.class) ;
+        }
+
+    }
+     
+     /*
+      * NameNode#getBinding returns new IvmContext wrapping current read-only context in some cases
+      * This test checks whether the "wrapper" is also read only if the current is 
+      */
+     public void testGetBindingPropagatesReadOnlyFlag() throws NamingException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        final IvmContext context = new IvmContext("comp");
+        context.bind("env/test", "test");
+
+        context.setReadOnly(true);
+        Object result = context.lookup("env");
+
+        if(IvmContext.class.isInstance(result)) {
+            assertTrue(IvmContext.class.cast(result).readOnly);
+        } else { 
+            throw new IllegalStateException("Naming context " + result + " not instance of " + IvmContext.class) ;
+        }
+
+    }
+     
+     /*
+      * NameNode#resolve returns new IvmContext wrapping current read-only context on lookup of name bound only in federated context
+      * This test checks whether the "wrapper" is also read only if the current is 
+      */
+     public void testGetFromFederatedContextPropagatesReadOnlyFlag() throws NamingException {
+        final IvmContext context = new IvmContext();
+        final IvmContext federatedContext = new IvmContext("comp");
+        federatedContext.bind("env/test", "test");
+        context.bind("", federatedContext);
+
+        context.setReadOnly(true);
+        Object result = context.lookup("env");
+
+        if(IvmContext.class.isInstance(result)) {
+            assertTrue(IvmContext.class.cast(result).readOnly);
+        } else { 
+            throw new IllegalStateException("Naming context " + result + " not instance of " + IvmContext.class) ;
+        }
+    }
+
+    public void testCloseNoExceptionByDefault() throws NamingException {
+        final IvmContext context = new IvmContext();
+        try {
+            context.close();
+        } catch (OperationNotSupportedException e) {
+            fail();
+        }
+    }
+
+    public void testCloseThrowsExceptionIfReadOnly() throws NamingException {
+        final IvmContext context = new IvmContext();
+        context.setReadOnly(true);
+        try {
+            context.close();
+            fail();
+        } catch (OperationNotSupportedException e) {
+            //ok
+        }
+    }
+    
+   public void testListContextListsAllFederatedContextBindings() throws SystemException, NamingException {
+	   //mimic logic from EnterpriseBeanBuilder.build, create compJndiContext and bind in it module, app, global 
+	   Context compContext = new IvmContext();
+        compContext.bind("java:comp/env/dummy", "dummy");
+
+        Context moduleContext = new IvmContext();
+        moduleContext.bind("module/env/test", String.class);
+        moduleContext.bind("module/env/sub/test2", String.class);
+        Context originalModuleSubContext = (IvmContext)moduleContext.lookup("module");
+        compContext.bind("module", originalModuleSubContext);
+
+        Context referencedModuleEnvSubContext = (IvmContext)compContext.lookup("module/env");
+        NamingEnumeration<NameClassPair> referencedEnvLookupResult = referencedModuleEnvSubContext.list("");
+
+        boolean testFound= false;
+        boolean subFound = false;
+        while(referencedEnvLookupResult.hasMore()) {
+            String currentName = referencedEnvLookupResult.next().getName();
+            if("test".equals(currentName)) {
+                testFound = true;
+            } else if("sub".equals(currentName)) {
+                subFound = true;
+            } else {
+                fail();
+            }
+        }
+        assertTrue(testFound);
+        assertTrue(subFound);
+     }
 
     private void assertContextEntry(final Context context, final String s, final Object expected) throws javax.naming.NamingException {
         assertLookup(context, s, expected);

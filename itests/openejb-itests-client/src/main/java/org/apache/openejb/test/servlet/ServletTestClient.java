@@ -16,21 +16,21 @@
  */
 package org.apache.openejb.test.servlet;
 
+import org.apache.openejb.test.TestClient;
+import org.apache.openejb.test.TestManager;
+
+import javax.naming.InitialContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.Authenticator;
 import java.net.MalformedURLException;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.util.Properties;
-import javax.naming.InitialContext;
-
-import org.apache.openejb.test.TestClient;
-import org.apache.openejb.test.TestManager;
 
 public abstract class ServletTestClient extends TestClient {
     protected URL serverUrl;

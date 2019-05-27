@@ -1,0 +1,58 @@
+= The TomEE ClassLoader
+:jbake-date: 2016-03-16
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+TomEE ClassLoading is directly mapped to Tomcat one.
+
+ifndef::backend-pdf[]
+
+[#filetree.col-md-3]
+[
+    {
+        label: 'JVM',
+        description: 'The JVM classloader launching tomcat main(String[])',
+        children: [
+            {
+                label:'common.loader',
+                description:'Customizable in conf/catalina.properties, the common loader is the Tomcat classloader',
+                children: [
+                    {
+                        label:'shared.loader',
+                        description:'Optional layer where you can add libraries for the web applications not seen by Tomcat. It is generally not used and not encouraged since Tomcat 6',
+                        children: [
+                            {
+                                label:'webapp1',
+                                description:'loader of one of your wars, it container WEB-INF/classes, WEB-INF/lib/*.jar'
+                            },
+                            {
+                                label:'webapp2',
+                                description:'loader of another one of your wars, it container WEB-INF/classes, WEB-INF/lib/*.jar'
+                            },
+                            {
+                                label:'application1',
+                                description:'loader of another application, it can be an ear, it contains lib and ejbmodules of the ear',
+                                children: [
+                                    {
+                                        label:'earwebapp1',
+                                        description:'loader of one of the wars of the ear'
+                                    },
+                                    {
+                                        label:'earwebapp2',
+                                        description:'loader of the other webapp of the ear'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+[#filetreedetail.col-md-8.bs-callout.bs-callout-primary]
+Click on the tree (JVM) on the left to see the detail there.
+
+endif::[]

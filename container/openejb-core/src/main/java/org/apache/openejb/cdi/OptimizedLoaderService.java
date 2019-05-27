@@ -113,7 +113,7 @@ public class OptimizedLoaderService implements LoaderService {
 
         if ("true".equals(OptimizedLoaderService.this.config.getProperty("openejb.cdi.extensions.sorted",
                 SystemInstance.get().getProperty("openejb.cdi.extensions.sorted")))) {
-            Collections.sort(list, new Comparator<Extension>() {
+            list.sort(new Comparator<Extension>() {
                 @Override
                 public int compare(final Extension o1, final Extension o2) {
                     final int val1 = getVal(o1);
@@ -223,7 +223,7 @@ public class OptimizedLoaderService implements LoaderService {
         private static final String SERVICE_CONFIG = "META-INF/services/" + Extension.class.getName();
         private static final String FILE_ENCODING = "UTF-8";
 
-        private List<Class<?>> foundServiceClasses = new ArrayList<Class<?>>();
+        private List<Class<?>> foundServiceClasses = new ArrayList<>();
         private ClassLoader loader;
 
         private List<Extension> loadServiceImplementations() {

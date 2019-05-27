@@ -22,7 +22,6 @@ import org.apache.openejb.test.entity.ejbql.QueryDataLocal;
 import org.apache.openejb.test.entity.ejbql.QueryDataRemote;
 import org.apache.openejb.test.entity.ejbql.QueryHome;
 
-import javax.rmi.PortableRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,9 +39,9 @@ public class EjbqlLocalTest extends Cmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         Object obj = initialContext.lookup("client/tests/entity/ejbql/Query");
-        queryHome = (QueryHome) PortableRemoteObject.narrow(obj, QueryHome.class);
+        queryHome = (QueryHome) obj;
         obj = initialContext.lookup("client/tests/entity/ejbql/QueryData");
-        final QueryDataHome queryDataHome = (QueryDataHome) PortableRemoteObject.narrow(obj, QueryDataHome.class);
+        final QueryDataHome queryDataHome = (QueryDataHome) obj;
 
         queryDataHome.create(0);
         queryDataHome.create(1);

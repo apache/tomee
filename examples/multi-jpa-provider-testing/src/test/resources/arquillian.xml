@@ -25,6 +25,7 @@
         # force classes to be loaded from webapp classloader and not from system classloader
         # only relevant for embedded tests
         openejb.classloader.forced-load = org.superbiz.model
+        hsqldb.reconfig_logging = false
       </property>
     </configuration>
   </container>

@@ -22,6 +22,7 @@ import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.AppModule;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.OutputGeneratedDescriptors;
 import org.apache.openejb.config.ValidationContext;
 import org.apache.openejb.config.ValidationFailedException;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.apache.openejb.config.rules.ValidationAssertions.assertErrors;
 import static org.apache.openejb.config.rules.ValidationAssertions.assertFailures;
@@ -49,6 +51,8 @@ import static org.junit.Assert.fail;
  * This Statement is the one which runs the test.
  */
 public class InvokeMethod extends Statement {
+    private static final String[] ORIGINAL_EXCLUSIONS = NewLoaderLogic.getExclusions();
+
     private ConfigurationFactory config;
     private Assembler assembler;
     // The test method
@@ -127,6 +131,12 @@ public class InvokeMethod extends Statement {
     }
 
     private void setUp() throws Exception {
+        SystemInstance.reset();
+        // we use it in a bunch of other tests but not here
+        NewLoaderLogic.setExclusions(
+                Stream.concat(Stream.of(ORIGINAL_EXCLUSIONS),
+                        Stream.of("openejb-itest", "failover-ejb"))
+                      .toArray(String[]::new));
         config = new ConfigurationFactory();
         assembler = new Assembler();
         assembler.createTransactionManager(config.configureService(TransactionServiceInfo.class));
@@ -134,6 +144,8 @@ public class InvokeMethod extends Statement {
     }
 
     private void tearDown() {
+        NewLoaderLogic.setExclusions(ORIGINAL_EXCLUSIONS);
+        SystemInstance.reset();
     }
 
     /**
@@ -148,7 +160,7 @@ public class InvokeMethod extends Statement {
     private Map<Integer, List<String>> validateKeys() throws Exception {
         final Keys annotation = testMethod.getAnnotation(Keys.class);
         final Key[] keys = annotation.value();
-        final ArrayList<String> wrongKeys = new ArrayList<String>();
+        final ArrayList<String> wrongKeys = new ArrayList<>();
         for (final Key key : keys) {
             if (allKeys.contains("1." + key.value())) {
                 continue;
@@ -157,10 +169,10 @@ public class InvokeMethod extends Statement {
             }
         }
         if (wrongKeys.isEmpty()) {
-            final Map<Integer, List<String>> validKeys = new HashMap<Integer, List<String>>();
-            final ArrayList<String> failureKeys = new ArrayList<String>();
-            final ArrayList<String> warningKeys = new ArrayList<String>();
-            final ArrayList<String> errorKeys = new ArrayList<String>();
+            final Map<Integer, List<String>> validKeys = new HashMap<>();
+            final ArrayList<String> failureKeys = new ArrayList<>();
+            final ArrayList<String> warningKeys = new ArrayList<>();
+            final ArrayList<String> errorKeys = new ArrayList<>();
             for (final Key key : keys) {
                 for (int i = 0; i < key.count(); i++) {
                     switch (key.type()) {

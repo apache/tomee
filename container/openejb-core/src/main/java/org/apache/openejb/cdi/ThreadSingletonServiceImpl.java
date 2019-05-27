@@ -21,8 +21,15 @@ import org.apache.openejb.AppContext;
 import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.cdi.transactional.TransactionContext;
+import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.loader.event.ComponentAdded;
+import org.apache.openejb.loader.event.ComponentRemoved;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.threads.impl.ManagedExecutorServiceImpl;
+import org.apache.openejb.threads.impl.ManagedThreadFactoryImpl;
 import org.apache.openejb.util.AppFinder;
+import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.MultipleClassLoader;
@@ -53,6 +60,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @version $Rev:$ $Date:$
@@ -69,6 +78,25 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
     //this needs to be static because OWB won't tell us what the existing SingletonService is and you can't set it twice.
     private static final ThreadLocal<WebBeansContext> contexts = new ThreadLocal<WebBeansContext>();
     private static final Map<ClassLoader, WebBeansContext> contextByClassLoader = new ConcurrentHashMap<ClassLoader, WebBeansContext>();
+
+    private OWBContextThreadListener contextThreadListener;
+
+    public void threadSingletonServiceAdded(@Observes ComponentAdded<ThreadSingletonService> componentAdded) {
+        if (componentAdded.getComponent() != this) {
+            return;
+        }
+
+        contextThreadListener = new OWBContextThreadListener();
+        ThreadContext.addThreadContextListener(contextThreadListener);
+    }
+
+    public void threadSingletonServiceRemoved(@Observes ComponentRemoved componentRemoved) {
+        if (componentRemoved.getComponent() != this) {
+            return;
+        }
+
+        ThreadContext.removeThreadContextListener(contextThreadListener);
+    }
 
     @Override
     public void initialize(final StartupObject startupObject) {
@@ -119,10 +147,45 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.put(ContextsService.class.getName(), CdiAppContextsService.class.getName());
         properties.put(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
         properties.put(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
+        properties.put("org.apache.webbeans.component.PrincipalBean.proxy", "false");
+
 
         // NOTE: ensure user can extend/override all the services = set it only if not present in properties, see WebBeansContext#getService()
         final Map<Class<?>, Object> services = new HashMap<>();
         services.put(AppContext.class, appContext);
+        if (!properties.containsKey(Executor.class.getName())) {
+            services.put(Executor.class, new Executor() {
+                // lazy to create threads only for apps requiring it
+                private final AtomicReference<Executor> delegate = new AtomicReference<>();
+
+                @Override
+                public void execute(final Runnable command) {
+                    Executor executor = delegate.get();
+                    if (executor == null) {
+                        synchronized (this) {
+                            final Executor alreadyUpdated = delegate.get();
+                            if (alreadyUpdated == null) {
+                                executor = new ManagedExecutorServiceImpl(
+                                        new ExecutorBuilder()
+                                                .size(3)
+                                                .threadFactory(new ManagedThreadFactoryImpl(appContext.getId() + "-cdi-fireasync-"))
+                                                .prefix("CDIAsyncPool")
+                                                .build(appContext.getOptions()));
+                                delegate.compareAndSet(null, executor);
+                            } else {
+                                executor = alreadyUpdated;
+                            }
+                        }
+                    }
+                    executor.execute(command);
+                }
+
+                @Override
+                public String toString() {
+                    return "CDIAsyncEventExecutor(app=" + appContext.getId() + ")";
+                }
+            });
+        }
         if (!properties.containsKey(ApplicationBoundaryService.class.getName())) {
             services.put(ApplicationBoundaryService.class, new DefaultApplicationBoundaryService());
         }

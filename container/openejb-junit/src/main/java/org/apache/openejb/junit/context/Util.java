@@ -70,7 +70,7 @@ public final class Util {
      * Parses an @Property value and adds it to the specified Hashtable
      *
      * @param env
-     * @param value
+     * @param property
      */
     public static void addProperty(final Hashtable env, String property) {
         if (property == null || property.length() == 0) {
@@ -106,9 +106,8 @@ public final class Util {
     /**
      * Finds the setter method for a given field in the test class
      *
-     * @param allowStatic
-     * @param typeClass
-     * @param propertyName
+     * @param testClazz
+     * @param field
      * @param propertyValue
      * @return setter Method or NULL if not found
      */
@@ -177,13 +176,13 @@ public final class Util {
      * Returns the most specific of the 2 methods. When calling this method both should
      * already match as valid calls, so the most specific will be the one where subtype
      * relation holds against the other.
-     * <p/>
+     *
      * We also assume that the only difference between the method signatures is the type
      * of it's first argument, and thus that their first arguments can't be of the
      * same type.
      *
-     * @param unpreferredValidMethod
-     * @param clazzMethod
+     * @param method1
+     * @param method2
      * @return most specific method
      */
     public static Method getMostSpecificMethod(final Method method1, final Method method2) {

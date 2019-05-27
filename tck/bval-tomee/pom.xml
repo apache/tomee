@@ -15,12 +15,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,8 +28,7 @@
 
   <properties>
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>
-    <tck.version>1.1.4.Final</tck.version>
-    <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+    <suiteFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteFile>
   </properties>
 
   <dependencies>
@@ -70,11 +68,21 @@
       <artifactId>arquillian-tomee-remote</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.shrinkwrap</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate.beanvalidation.tck</groupId>
       <artifactId>beanvalidation-tck-tests</artifactId>
-      <version>${tck.version}</version>
+      <version>${bval-tck.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -87,24 +95,6 @@
       <groupId>org.jboss.arquillian.protocol</groupId>
       <artifactId>arquillian-protocol-servlet</artifactId>
       <version>${version.arquillian}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-      <artifactId>shrinkwrap-descriptors-spi</artifactId>
-      <version>${version.shrinkwrap.descriptor}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-api</artifactId>
-      <version>${version.shrinkwrap.shrinkwrap}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-impl-base</artifactId>
-      <version>${version.shrinkwrap.shrinkwrap}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -173,11 +163,12 @@
           </execution>
         </executions>
         <configuration>
+          <trimStackTrace>false</trimStackTrace>
           <systemPropertyVariables>
-            <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
+            <validation.provider>${validation.provider}</validation.provider>
           </systemPropertyVariables>
           <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/dependency/beanvalidation-tck-tests-suite.xml</suiteXmlFile>
+            <suiteXmlFile>${suiteFile}</suiteXmlFile>
           </suiteXmlFiles>
           <parallel>classes</parallel>
           <threadCount>1</threadCount>

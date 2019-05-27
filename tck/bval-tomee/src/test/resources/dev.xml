@@ -19,7 +19,7 @@
 <suite name="BVal-TCK" verbose="1">
     <test name="BVal-TCK">
       <classes>
-        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.ConfigurationTest" />
+        <class name="org.hibernate.beanvalidation.tck.tests.bootstrap.customprovider.BootstrapCustomProviderDefinedInServiceFileTest" />
       </classes>
     </test>
 </suite>

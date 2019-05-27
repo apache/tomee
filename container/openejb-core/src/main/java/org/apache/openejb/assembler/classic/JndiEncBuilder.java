@@ -23,6 +23,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.SystemException;
 import org.apache.openejb.core.CoreUserTransaction;
 import org.apache.openejb.core.JndiFactory;
+import org.apache.openejb.core.ParentClassLoaderFinder;
 import org.apache.openejb.core.TransactionSynchronizationRegistryWrapper;
 import org.apache.openejb.core.ivm.naming.ClassReference;
 import org.apache.openejb.core.ivm.naming.CrossClassLoaderJndiReference;
@@ -51,20 +52,7 @@ import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.InjectableBeanManager;
-import org.omg.CORBA.ORB;
 
-import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJBContext;
 import javax.ejb.TimerService;
@@ -85,6 +73,7 @@ import javax.transaction.UserTransaction;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.ws.rs.container.ResourceContext;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Request;
@@ -94,6 +83,18 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Providers;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebServiceContext;
+import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 /**
  * TODO: This class is essentially an over glorified sym-linker.  The names we were linking to are no longer guaranteed to be what we assume them to be.  We need to come up with a
@@ -192,7 +193,7 @@ public class JndiEncBuilder {
     }
 
     public Map<String, Object> buildMap(final JndiScope scope) throws OpenEJBException {
-        final Map<String, Object> bindings = new TreeMap<String, Object>(); // let it be sorted for real binding
+        final Map<String, Object> bindings = new TreeMap<>(); // let it be sorted for real binding
 
         // get JtaEntityManagerRegistry
         final JtaEntityManagerRegistry jtaEntityManagerRegistry = SystemInstance.get().getComponent(JtaEntityManagerRegistry.class);
@@ -264,7 +265,7 @@ public class JndiEncBuilder {
                     obj = new Byte(entry.value);
                 } else if (type == Character.class) {
                     final StringBuilder sb = new StringBuilder(entry.value + " ");
-                    obj = new Character(sb.charAt(0));
+                    obj = sb.charAt(0);
                 } else if (type == URL.class) {
                     obj = new URL(entry.value);
                 } else if (type == Class.class) {
@@ -341,10 +342,11 @@ public class JndiEncBuilder {
                     reference = new ObjectReference(ThreadLocalContextManager.RESOURCE_CONTEXT);
                 } else if (Configuration.class.equals(type)) {
                     reference = new ObjectReference(ThreadLocalContextManager.CONFIGURATION);
+                } else if (Application.class.equals(type)) {
+                    reference = new ObjectReference(ThreadLocalContextManager.APPLICATION);
                 } else {
                     reference = new MapObjectReference(ThreadLocalContextManager.OTHERS, referenceInfo.referenceType);
                 }
-
                 bindings.put(normalize(referenceInfo.referenceName), reference);
             }
         }
@@ -482,7 +484,7 @@ public class JndiEncBuilder {
             }
 
             // port refs
-            final List<PortRefData> portRefs = new ArrayList<PortRefData>(referenceInfo.portRefs.size());
+            final List<PortRefData> portRefs = new ArrayList<>(referenceInfo.portRefs.size());
             for (final PortRefInfo portRefInfo : referenceInfo.portRefs) {
                 final PortRefData portRef = new PortRefData();
                 portRef.setQName(portRefInfo.qname);
@@ -554,7 +556,11 @@ public class JndiEncBuilder {
         // bind TransactionSynchronizationRegistry
         bindings.put("comp/TransactionSynchronizationRegistry", new TransactionSynchronizationRegistryWrapper());
 
-        bindings.put("comp/ORB", new SystemComponentReference(ORB.class));
+        try {
+            bindings.put("comp/ORB", new SystemComponentReference(ParentClassLoaderFinder.Helper.get().loadClass("org.omg.CORBA.ORB")));
+        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            // no corba, who does recall what it is today anyway :D
+        }
         bindings.put("comp/HandleDelegate", new SystemComponentReference(HandleDelegate.class));
 
         // bind bean validation objects

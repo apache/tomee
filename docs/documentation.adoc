@@ -1,0 +1,103 @@
+= Documentation
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+See also the link:examples-trunk/index.html[examples page] for
+downloadable, executable and code-focused view of Java EE and TomEE. You
+can also find us on IRC freenode.org #openejb and #tomee
+
+\{row
+
+\{span-one-third ###IDE link:tomee-and-intellij.html[Get started with
+Intellij], link:contrib/debug/debug-intellij.html[Debugging in
+Intellij] +
+link:tomee-and-eclipse.html[Get started with Eclipse (WTP)] +
+link:getting-started-with-eclipse-and-webby.html[Get started with
+Eclipse (m2e-Webby)] +
+link:tomee-and-netbeans.html[Get started with Netbeans]
+
+== General Informations link:comparison.html[Comparison: OpenEJB, TomEE,
+TomEE+] +
+link:tomee-directory-structure.html[TomEE Directory structure] +
+link:deploying-in-tomee.html[Deploying in TomEE] +
+link:tomee-webapp.html[The 'tomee' webapp] +
+link:refcard/refcard.html[TomEE Reference Card] +
+link:application-composer/index.html[ApplicationComposer] +
+} \{span-one-third ###Configuration link:system-properties.html[System
+Properties] +
+link:deployments.html[Deployments] +
+link:Configuring-in-tomee.html[Configuring Resources] +
+link:configuring-datasources.html[Configuring DataSources] +
+link:containers-and-resources.html[Containers and Resources] +
+link:jms-resources-and-mdb-container.html[JMS Resources and MDB
+Container] +
+link:configuring-javamail.html[Configuring JavaMail] +
+link:tomee-and-security.html[TomEE Security] +
+link:security.html[Security How To] +
+link:clients.html[EJB Clients] +
+link:ejb-over-ssl.html[EJB over SSL] +
+link:jndi-names.html[JNDI Names] +
+link:changing-jms-implementations.html[Changing JMS implementations] +
+link:tomee-and-hibernate.html[Changing JPA to Hibernate] +
+} \{span-one-third ###Testing Techniques
+link:application-discovery-via-the-classpath.html[Application discovery
+via the classpath] +
+link:embedded-configuration.html[Embedded Configuration] +
+link:configuring-datasources-in-tests.html[Configuring DataSources in
+Tests] +
+link:configuring-persistenceunits-in-tests.html[Configuring
+PersistenceUnits in Tests] +
+link:configuring-containers-in-tests.html[Configuring Containers in
+Tests] +
+link:configuring-logging-in-tests.html[Configuring Logging in Tests] +
+link:alternate-descriptors.html[Alternate Descriptors] +
+link:unit-testing-transactions.html[Unit Testing Transactions] +
+link:testcase-with-testbean-inner-class.html[TestCase with TestBean
+inner-class] +
+[TestCase Injection (`@LocalClient`)](local-client-injection.html) +
+} } \{row
+
+\{span-one-third ###Discovery and Failover
+link:ejb-failover.html[Overview] +
+link:multicast-discovery.html[Multicast Discovery (UDP)] +
+link:multipulse-discovery.html[Multipulse Discovery (UDP)] +
+link:multipoint-discovery.html[Multipoint Discovery (TCP)] +
+link:multipoint-considerations.html[Multipoint Considerations] +
+link:multipoint-recommendations.html[Multipoint Recommendations] +
+link:failover-logging.html[Logging Events] +
+} \{span-one-third
+
+== OpenEJB Standalone Server
+link:understanding-the-directory-layout.html[Understanding the Directory
+Layout] +
+link:startup.html[Startup] +
+link:deploy-tool.html[Deploy Tool] +
+link:properties-tool.html[Properties Tool] +
+} \{span-one-third ###Spring link:spring-and-openejb-3.0.html[Spring and
+OpenEJB 3.0] +
+link:spring.html[Spring and OpenEJB 3.1 and later] +
+link:spring-ejb-and-jpa.html[Spring, EJB and JPA example] +
+} } \{row
+
+\{span-one-third ###Arquillian
+link:arquillian-getting-started.html[Arquillian Primer - What you need
+to know] +
+link:arquillian-available-adapters.html[Using the TomEE Arquillian
+adapters] +
+} \{span-one-third ###TomEE Maven Plugin
+link:tomee-mp-getting-started.html[Getting started] +
+link:maven/index.html[tomee-maven-plugin reference documentation] +
+link:tomee-embedded-maven-plugin.html[tomee-embedded-maven-plugin
+reference documentation] +
+link:tomee-mp-getting-started.html[TomEE simple webapp archetype
+documentation] +
+} \{span-one-third ###Tips and Tricks
+link:installation-drop-in-war.html[Install TomEE using the drop-in
+WAR] +
+link:tip-concurrency.html[Global Concurrency Management] +
+link:tip-weblogic.html[WebLogic Lookup] +
+link:tip-jersey-client.html[Jersey Client] +
+} }

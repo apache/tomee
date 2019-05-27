@@ -42,12 +42,12 @@ import java.util.Arrays;
  * dataset.  The default value, INFINITE_WINDOW, puts no limit on the size of
  * the dataset.  This value should be used with caution, as the backing store
  * will grow without bound in this case.  For very large datasets,
- * {@link org.apache.commons.math.stat.descriptive.SummaryStatistics}, which does not store the dataset, should be used
+ * {@link org.apache.commons.math3.stat.descriptive.SummaryStatistics}, which does not store the dataset, should be used
  * instead of this class. If <code>windowSize</code> is not INFINITE_WINDOW and
  * more values are added than can be stored in the dataset, new values are
  * added in a "rolling" manner, with new values replacing the "oldest" values
  * in the dataset.
- * <p/>
+ *
  * <p>Note: this class is not threadsafe.  Use
  * {@link SynchronizedDescriptiveStatistics} if concurrent access from multiple
  * threads is required.</p>
@@ -414,9 +414,9 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
      * <p>
      * The implementation provided here follows the first estimation procedure presented
      * <a href="http://www.itl.nist.gov/div898/handbook/prc/section2/prc252.htm">here.</a>
-     * </p><p>
+     * <p>
      * <strong>Preconditions</strong>:<ul>
-     * <li><code>0 &lt; p &le; 100</code> (otherwise an
+     * <li><code>0 &lt; p &le; 100</code&gt; (otherwise an
      * <code>IllegalArgumentException</code> is thrown)</li>
      * <li>at least one value must be stored (returns <code>Double.NaN
      * </code> otherwise)</li>
@@ -435,7 +435,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
             try {
                 percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                     new Class[]{Double.TYPE}).invoke(percentileImpl,
-                    new Object[]{Double.valueOf(p)});
+                    new Object[]{p});
             } catch (final NoSuchMethodException e1) { // Setter guard should prevent
                 throw MathRuntimeException.createIllegalArgumentException(
                     UNSUPPORTED_METHOD_MESSAGE,
@@ -619,7 +619,7 @@ public class DescriptiveStatistics implements StatisticalSummary, Serializable {
         try {
             percentileImpl.getClass().getMethod(SET_QUANTILE_METHOD_NAME,
                 new Class[]{Double.TYPE}).invoke(percentileImpl,
-                new Object[]{Double.valueOf(50.0d)});
+                new Object[]{50.0d});
         } catch (final NoSuchMethodException e1) {
             throw MathRuntimeException.createIllegalArgumentException(
                 "percentile implementation {0} does not support setQuantile",

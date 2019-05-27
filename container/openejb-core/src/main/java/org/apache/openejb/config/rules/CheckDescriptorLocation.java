@@ -40,7 +40,7 @@ public class CheckDescriptorLocation extends ValidationBase {
     @Override
     public void validate(final AppModule appModule) {
 
-        final List<String> validated = new ArrayList<String>();
+        final List<String> validated = new ArrayList<>();
 
         for (final WebModule webModule : safe(appModule.getWebModules())) {
             validated.add(webModule.getModuleId());
@@ -91,7 +91,7 @@ public class CheckDescriptorLocation extends ValidationBase {
     }
 
     private static Map<String, URL> retrieveDescriptors(final List<String> descriptorsToSearch, final URL... locationsToSearch) {
-        final Map<String, URL> descriptorAndWrongLocation = new HashMap<String, URL>();
+        final Map<String, URL> descriptorAndWrongLocation = new HashMap<>();
         final ResourceFinder finder = new ResourceFinder(locationsToSearch);
         for (final String descriptor : descriptorsToSearch) {
             final URL resource = finder.getResource(descriptor);

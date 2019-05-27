@@ -18,12 +18,12 @@
 package org.apache.openejb.core.cmp.cmp2;
 
 import org.apache.openejb.OpenEJBRuntimeException;
-import org.apache.xbean.asm5.ClassWriter;
-import org.apache.xbean.asm5.FieldVisitor;
-import org.apache.xbean.asm5.Label;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Opcodes;
-import org.apache.xbean.asm5.Type;
+import org.apache.xbean.asm7.ClassWriter;
+import org.apache.xbean.asm7.FieldVisitor;
+import org.apache.xbean.asm7.Label;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm7.Type;
 
 import javax.ejb.EntityContext;
 import java.lang.reflect.Field;
@@ -48,11 +48,11 @@ public class Cmp2Generator implements Opcodes {
     private final String implClassName;
     private final String beanClassName;
     private final ClassWriter cw;
-    private final Map<String, CmpField> cmpFields = new LinkedHashMap<String, CmpField>();
-    private final Collection<CmrField> cmrFields = new ArrayList<CmrField>();
+    private final Map<String, CmpField> cmpFields = new LinkedHashMap<>();
+    private final Collection<CmrField> cmrFields = new ArrayList<>();
     private final CmpField pkField;
     private final Class primKeyClass;
-    private final List<Method> selectMethods = new ArrayList<Method>();
+    private final List<Method> selectMethods = new ArrayList<>();
     private final Class beanClass;
     private final PostCreateGenerator postCreateGenerator;
     private static final String DELETED = "openejb_deleted";
@@ -558,15 +558,15 @@ public class Cmp2Generator implements Opcodes {
      * Create a simple internal method for obtaining the
      * primary key.  There are 2 possibilities for handling
      * the primary key here:
-     * <p/>
+     *
      * 1)  There is a defined primary key field.  The
      * contents of that field are returned.
-     * <p/>
+     *
      * 2)  The primary key is provided by the container.
      * This is a long value stored in a private, generated
      * field.  This field is returned as a generated
      * wrappered Long.
-     * <p/>
+     *
      * 3)  A primary key class has been provided.  An instance
      * of this class is instantiated, and code is generated
      * that will copy all of the CMP fields from the EJB
@@ -1066,7 +1066,7 @@ public class Cmp2Generator implements Opcodes {
     }
 
     private static String[] getExceptionTypes(final Method method) {
-        final List<String> types = new ArrayList<String>(method.getExceptionTypes().length);
+        final List<String> types = new ArrayList<>(method.getExceptionTypes().length);
         for (final Class<?> exceptionType : method.getExceptionTypes()) {
             types.add(Type.getInternalName(exceptionType));
         }
@@ -1130,7 +1130,7 @@ public class Cmp2Generator implements Opcodes {
         /**
          * Handle a conversion from one object type to another.  If
          * There are 3 possible conversions:
-         * <p/>
+         *
          * 1)  The to class is Object.  This can be handled
          * without conversion.  This option is a NOP.
          * 2)  The to class is a reference type (non-primitive).  This conversion

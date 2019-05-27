@@ -1,5 +1,4 @@
-/**
- *
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -23,6 +22,8 @@ import org.apache.openejb.loader.SystemInstance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarFile;
 
 public class Installer implements InstallerInterface {
@@ -31,39 +32,47 @@ public class Installer implements InstallerInterface {
     private final Paths paths;
     private Status status = Status.NONE;
     private boolean force;
+    private Map<String, String> properties;
 
-    private static final boolean listenerInstalled;
-    private static final boolean agentInstalled;
+    private static final boolean LISTENER_INSTALLED;
+    private static final boolean AGENT_INSTALLED;
     static {
         final Options opts = SystemInstance.get().getOptions();
         // is the OpenEJB listener installed
-        listenerInstalled = "OpenEJBListener".equals(opts.get("openejb.embedder.source", ""))
+        LISTENER_INSTALLED = "OpenEJBListener".equals(opts.get("openejb.embedder.source", ""))
                 || "ServerListener".equals(opts.get("openejb.embedder.source", ""));
 
         // is the OpenEJB javaagent installed
-        agentInstalled = InstallerTools.invokeStaticNoArgMethod(
+        AGENT_INSTALLED = InstallerTools.invokeStaticNoArgMethod(
                 "org.apache.openejb.javaagent.Agent", "getInstrumentation") != null;
     }
 
     public static boolean isListenerInstalled() {
-        return listenerInstalled;
+        return LISTENER_INSTALLED;
     }
 
     public static boolean isAgentInstalled() {
-        return agentInstalled;
+        return AGENT_INSTALLED;
     }
 
     public Installer(final Paths paths) {
         this.paths = paths;
 
-        if (listenerInstalled && agentInstalled) {
+        if (LISTENER_INSTALLED && AGENT_INSTALLED) {
             status = Status.INSTALLED;
         }
+
+        this.properties = new HashMap<>();
     }
 
     public Installer(final Paths paths, final boolean force) {
         this(paths);
         this.force = force;
+    }
+
+    public Installer(final Paths paths, final Map<String, String> properties, final boolean force) {
+        this(paths, force);
+        this.properties = properties;
     }
 
     @Override
@@ -377,7 +386,7 @@ public class Installer implements InstallerInterface {
     }
 
     public void installListener(final String listener) {
-        if (listenerInstalled && !force) {
+        if (LISTENER_INSTALLED && !force) {
             // OpenEJB Listener already installed
             return;
         }
@@ -460,7 +469,7 @@ public class Installer implements InstallerInterface {
     //       the geronimo locator to find the implementation
     //       because it needs some OSGi API we don't want to add
     public void installJavaagent() {
-        if (agentInstalled && !force) {
+        if (AGENT_INSTALLED && !force) {
             // OpenEJB Agent already installed"
             return;
         }
@@ -780,6 +789,8 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# openejb.jaxrs.application = \n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreRequests = false\n");
                 systemPropertiesWriter.write("# openejb.cxf-rs.wadl-generator.ignoreMessageWriters = true\n");
+                systemPropertiesWriter.write("# Replace the Jonhzon JSON Providers with the following classes [comma seperated, no spaces]\n");
+                systemPropertiesWriter.write("# openejb.jaxrs.jsonProviders =\n");
 
                 systemPropertiesWriter.write("#\n");
                 systemPropertiesWriter.write("# These properties are only for cxf service (SOAP webservices) and TomEE+\n");
@@ -788,6 +799,14 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPFactory = com.sun.xml.messaging.saaj.soap.ver1_1.SOAPFactory1_1Impl\n");
                 systemPropertiesWriter.write("# javax.xml.soap.SOAPConnectionFactory = com.sun.xml.messaging.saaj.client.p2p.HttpSOAPConnectionFactory\n");
                 systemPropertiesWriter.write("# javax.xml.soap.MetaFactory = com.sun.xml.messaging.saaj.soap.SAAJMetaFactoryImpl\n");
+
+                final String flavour = properties.getOrDefault("tomee.webapp", "");
+                if (flavour.contains("microprofile")) {
+                    systemPropertiesWriter.write("#\n");
+                    systemPropertiesWriter.write("# MicroProfile\n");
+                    systemPropertiesWriter.write("tomee.mp.scan = all\n");
+                }
+
             } catch (final IOException e) {
                 // ignored, this file is far to be mandatory
             } finally {

@@ -159,7 +159,7 @@ public class XmlOverridesTest extends TestCase {
 
     private <T extends InjectableInfo> Map<String, T> map(final List<T> list) {
         try {
-            final Map<String, T> entries = new HashMap<String, T>();
+            final Map<String, T> entries = new HashMap<>();
             for (final T envEntry : list) {
                 entries.put("java:" + envEntry.referenceName, envEntry);
             }

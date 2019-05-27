@@ -20,14 +20,13 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.0.3-SNAPSHOT</version>
+    <version>8.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -35,6 +34,7 @@
   <name>OpenEJB :: Container :: Core</name>
 
   <properties>
+    <tomee.build.name>${project.groupId}.container.core</tomee.build.name>
     <openejb.osgi.import.pkg>
       javax.annotation;version="[1.1.0,2.0.0)",
       javax.annotation.security;version="[1.1.0,2.0.0)",
@@ -195,8 +195,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm5;version="[3.1,5)",
-      org.apache.xbean.asm5.commons;version="[3.1,5)",
+      org.apache.xbean.asm7;version="[3.1,5)",
+      org.apache.xbean.asm7.commons;version="[3.1,5)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",
@@ -226,6 +226,7 @@
       org.apache.openejb*;version=${openejb.osgi.export.version},
       org.apache.openejb;version=${openejb.osgi.export.version}
     </openejb.osgi.export>
+    <jacocoArgLine />
   </properties>
 
   <build>
@@ -236,9 +237,9 @@
         <excludes>
           <!--
           This file is encoded in UTF-16LE so it causes trouble
-          as the default encoding is UTF-8. However as it's 
+          as the default encoding is UTF-8. However as it's
           obviously only used as an input file for the corresponding
-          properties we're just ignoring it here. 
+          properties we're just ignoring it here.
           -->
           <exclude>**/Messages_hi_input.txt</exclude>
         </excludes>
@@ -315,12 +316,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.17</version>
+        <version>${surefire.version}</version>
         <configuration>
+          <childDelegation>true</childDelegation>
           <reuseForks>false</reuseForks>
-          <forkCount>2</forkCount>
+          <forkCount>1</forkCount>
           <testNGArtifactName>none:none</testNGArtifactName>
           <argLine>
+            ${jacocoArgLine}
             -javaagent:${project.basedir}/target/openejb-javaagent-${project.version}.jar
             -Dopenejb.classloader.forced-skip=org.apache.openejb.jee.,org.apache.openejb.api.
             -Dopenejb.classloader.forced-load=org.apache.openejb
@@ -376,12 +379,10 @@
             <configuration>
               <target>
                 <tstamp>
-                  <format property="TSTAMP" pattern="hh:mm"/>
+                  <format property="TSTAMP" pattern="hh:mm" />
                 </tstamp>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}"/>
-                <replace file="target/classes/openejb-version.properties"
-                         token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}"/>
+                <replace file="target/classes/openejb-version.properties" token="@DATE-REPLACED-BY-MAVEN@" value="${DSTAMP}" />
+                <replace file="target/classes/openejb-version.properties" token="@TIME-REPLACED-BY-MAVEN@" value="${TSTAMP}" />
               </target>
             </configuration>
           </execution>
@@ -391,14 +392,15 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <archive>
+          <archive combine.children="append">
             <manifest>
               <mainClass>org.apache.openejb.cli.Bootstrap</mainClass>
               <!--<addClasspath>true</addClasspath>-->
             </manifest>
             <manifestEntries>
+              <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
               <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
-                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm5-shaded-${xbeanVersion}.jar
+                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm7-shaded-${xbeanVersion}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory
@@ -422,6 +424,7 @@
       </plugin>
     </plugins>
   </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -556,7 +559,7 @@
     <!-- End: JavaMail -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm5-shaded</artifactId>
+      <artifactId>xbean-asm7-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -688,19 +691,13 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.bval</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>bval-jsr</artifactId>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->
       <groupId>org.fusesource.jansi</groupId>
       <artifactId>jansi</artifactId>
-      <version>1.8</version>
       <scope>provided</scope>
     </dependency>
 
@@ -710,7 +707,9 @@
       <version>${batchee.version}</version>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
+
   <profiles>
     <profile>
       <id>openejb.debug</id>
@@ -733,6 +732,20 @@
                 <openejb.home>${project.basedir}/target/test-classes</openejb.home>
               </systemPropertyVariables>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>coverage</id>
+      <properties>
+        <jacocoArgLine>@{argLine}</jacocoArgLine>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>

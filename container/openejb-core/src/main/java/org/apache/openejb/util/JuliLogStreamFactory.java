@@ -24,7 +24,9 @@ import org.apache.openejb.log.SingleLineFormatter;
 import org.apache.openejb.util.reflection.Reflections;
 import org.apache.webbeans.logger.WebBeansLoggerFacade;
 
-import java.io.OutputStreamWriter;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.LogManager;
@@ -204,8 +206,36 @@ public class JuliLogStreamFactory implements LogStreamFactory {
     public static class OpenEJBSimpleLayoutHandler extends ConsoleHandler {
         public OpenEJBSimpleLayoutHandler() {
             setFormatter(new SingleLineFormatter());
-            //setOutputStream(System.out); // don't do it otherwise you'll lost exception etc in the console
-            Reflections.set(this, "writer", new OutputStreamWriter(System.out));
+        }
+
+        @Override
+        protected synchronized void setOutputStream(final OutputStream out) throws SecurityException {
+            super.setOutputStream(new FilterOutputStream(System.out) { // don't close System.out to not loose important things like exceptions
+                @Override
+                public void write(final int b) throws IOException {
+                    System.out.write(b);
+                }
+
+                @Override
+                public void write(final byte[] b) throws IOException {
+                    System.out.write(b);
+                }
+
+                @Override
+                public void write(final byte[] b, final int off, final int len) throws IOException {
+                    System.out.write(b, off, len);
+                }
+
+                @Override
+                public void flush() throws IOException {
+                    System.out.flush();
+                }
+
+                @Override
+                public void close() throws IOException {
+                    flush();
+                }
+            });
         }
     }
 

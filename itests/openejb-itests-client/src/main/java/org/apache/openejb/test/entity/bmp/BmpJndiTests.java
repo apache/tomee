@@ -29,7 +29,7 @@ public class BmpJndiTests extends BasicBmpTestClient {
     public void test01_Jndi_lookupHome() {
         try {
             final Object obj = initialContext.lookup("client/tests/entity/bmp/BasicBmpHome");
-            ejbHome = (BasicBmpHome) javax.rmi.PortableRemoteObject.narrow(obj, BasicBmpHome.class);
+            ejbHome = (BasicBmpHome) obj;
             assertNotNull("The EJBHome is null", ejbHome);
         } catch (final Exception e) {
             fail("Received Exception " + e.getClass() + " : " + e.getMessage());

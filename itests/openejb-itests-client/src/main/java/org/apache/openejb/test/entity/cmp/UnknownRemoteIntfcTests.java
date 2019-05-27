@@ -17,8 +17,6 @@
  */
 package org.apache.openejb.test.entity.cmp;
 
-import javax.rmi.PortableRemoteObject;
-
 /**
  * [5] Should be run as the fifth test suite of the UnknownCmpTestClients
  */
@@ -31,7 +29,7 @@ public class UnknownRemoteIntfcTests extends UnknownCmpTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp/UnknownCmpHome");
-        ejbHome = (UnknownCmpHome) PortableRemoteObject.narrow(obj, UnknownCmpHome.class);
+        ejbHome = (UnknownCmpHome) obj;
         ejbObject = ejbHome.createObject("Forth Bean");
     }
 
@@ -96,7 +94,7 @@ public class UnknownRemoteIntfcTests extends UnknownCmpTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * The Remote Server fails this one, that should be fixed.
      */
     public void BUG_test05_invokeAfterSystemException() {

@@ -22,7 +22,6 @@ import org.apache.openejb.test.entity.cmp.ComplexCmpBeanPk;
 import org.apache.openejb.test.entity.cmp.ComplexCmpHome;
 import org.apache.openejb.test.entity.cmp.ComplexCmpObject;
 
-import javax.rmi.PortableRemoteObject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,7 +38,7 @@ public class Complex2HomeIntfcTests extends ComplexCmp2TestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/entity/cmp2/ComplexCmpHome");
-        ejbHome = (ComplexCmpHome) javax.rmi.PortableRemoteObject.narrow(obj, ComplexCmpHome.class);
+        ejbHome = (ComplexCmpHome) obj;
     }
 
     //===============================
@@ -84,7 +83,7 @@ public class Complex2HomeIntfcTests extends ComplexCmp2TestClient {
             assertNotNull("The Collection is null", objects);
             assertEquals("The Collection is not the right size.", keys.size(), objects.size());
             for (final Object object : objects) {
-                ejbObject = (ComplexCmpObject) PortableRemoteObject.narrow(object, ComplexCmpObject.class);
+                ejbObject = (ComplexCmpObject) object;
 
                 // This could be problematic, it assumes the order of the collection.
                 final ComplexCmpBeanPk foundKey = (ComplexCmpBeanPk) ejbObject.getPrimaryKey();

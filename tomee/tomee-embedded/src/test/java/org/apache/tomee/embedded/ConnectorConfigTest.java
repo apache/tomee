@@ -34,7 +34,7 @@ public class ConnectorConfigTest {
         try {
             new Container(new Configuration()
                     .property("connector.xpoweredBy", "true")
-                    .property("connector.attributes.compression", "true")
+                    .property("connector.attributes.compression", "on")
                     .property("connector.attributes.maxHeaderCount", "2016")) {
 
                 @Override
@@ -52,7 +52,7 @@ public class ConnectorConfigTest {
             assertNotNull(c);
             assertTrue(c.getXpoweredBy());
             assertEquals(2016, AbstractHttp11Protocol.class.cast(c.getProtocolHandler()).getMaxHeaderCount());
-            assertEquals("true", AbstractHttp11Protocol.class.cast(c.getProtocolHandler()).getCompression());
+            assertEquals("on", AbstractHttp11Protocol.class.cast(c.getProtocolHandler()).getCompression());
         }
     }
 }

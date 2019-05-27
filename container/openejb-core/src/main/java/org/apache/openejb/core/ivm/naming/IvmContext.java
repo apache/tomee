@@ -23,6 +23,7 @@ import org.apache.openejb.core.ivm.IntraVmProxy;
 import org.apache.openejb.core.ivm.naming.java.javaURLContextFactory;
 import org.apache.openejb.core.ivm.naming.openejb.openejbURLContextFactory;
 import org.apache.openejb.loader.IO;
+import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.xbean.naming.context.ContextUtil;
 
@@ -71,7 +72,8 @@ public class IvmContext implements Context, Serializable {
     private static final long serialVersionUID = -626353930051783641L;
     Hashtable<String, Object> myEnv;
     boolean readOnly;
-    Map<String, Object> fastCache = new ConcurrentHashMap<String, Object>();
+    Map<String, Object> fastCache = new ConcurrentHashMap<>();
+    static final String JNDI_EXCEPTION_ON_FAILED_WRITE = "openejb.jndiExceptionOnFailedWrite";
     public NameNode mynode;
 
     public static IvmContext createRootContext() {
@@ -87,7 +89,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     public IvmContext(final NameNode node) {
+        this(node, false);
+    }
+    
+    public IvmContext(final NameNode node, final boolean isReadOnly) {
         mynode = node;
+        readOnly = isReadOnly;
 //        mynode.setMyContext(this);
     }
 
@@ -102,12 +109,12 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Object lookup(final String compositName) throws NamingException {
-        if (compositName.equals("")) {
+        if (compositName.isEmpty()) {
             return this;
         }
 
         final String compoundName;
-        final int index = compositName.indexOf(":");
+        final int index = compositName.indexOf(':');
         if (index > -1) {
 
             final String prefix = compositName.substring(0, index);
@@ -147,7 +154,7 @@ public class IvmContext implements Context, Serializable {
         Object obj = fastCache.get(compoundName);
         if (obj == null) {
             try {
-                obj = mynode.resolve(new ParsedName(compoundName));
+                obj = mynode.resolve(new ParsedName(compoundName), readOnly);
             } catch (final NameNotFoundException nnfe) {
                 obj = federate(compositName);
             }
@@ -173,7 +180,11 @@ public class IvmContext implements Context, Serializable {
              *
              * A Reference type can also carry out dynamic resolution of references if necessary.
              */
-            obj = ((Reference) obj).getObject();
+
+            // TODO: JRG - this needs a test
+            while (obj instanceof Reference) {
+                obj = ((Reference)obj).getObject();
+            }
         } else if (obj instanceof LinkRef) {
             obj = lookup(((LinkRef) obj).getLinkName());
         }
@@ -204,7 +215,7 @@ public class IvmContext implements Context, Serializable {
 
     public static ObjectFactory[] getFederatedFactories() throws NamingException {
         if (federatedFactories == null) {
-            final Set<ObjectFactory> factories = new HashSet<ObjectFactory>();
+            final Set<ObjectFactory> factories = new HashSet<>();
             final String urlPackagePrefixes = getUrlPackagePrefixes();
             if (urlPackagePrefixes == null) {
                 return new ObjectFactory[0];
@@ -293,8 +304,10 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void bind(String name, final Object obj) throws NamingException {
-        checkReadOnly();
-        final int indx = name.indexOf(":");
+        if(checkReadOnly()) {
+            return;
+        }
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -305,9 +318,13 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            final ParsedName parsedName = new ParsedName(name);
+            final ParsedName parsedName = getParsedNameFor(name);
             mynode.bind(parsedName, obj);
         }
+    }
+
+    private ParsedName getParsedNameFor(String name){
+        return new ParsedName(mynode.getAtomicName() + "/" + name);
     }
 
     public void bind(final Name name, final Object obj) throws NamingException {
@@ -328,8 +345,10 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void unbind(String name) throws NamingException {
-        checkReadOnly();
-        final int indx = name.indexOf(":");
+        if(checkReadOnly()) {
+            return;
+        }
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
              The ':' character will be in the path if its an absolute path name starting with the schema
@@ -340,7 +359,7 @@ public class IvmContext implements Context, Serializable {
         fastCache.clear();
         mynode.clearCache();
 
-        mynode.unbind(new ParsedName(name));
+        mynode.unbind(getParsedNameFor(name));
     }
 
     public void unbind(final Name name) throws NamingException {
@@ -399,8 +418,11 @@ public class IvmContext implements Context, Serializable {
     }
 
     public Context createSubcontext(String name) throws NamingException {
-        checkReadOnly();
-        final int indx = name.indexOf(":");
+        if(checkReadOnly()) {
+            //TODO: null is fine if there is a one time - 10 calls will log a single time - log line (warning?)
+            return null;
+        }
+        final int indx = name.indexOf(':');
         if (indx > -1) {
             /*
           The ':' character will be in the path if its an absolute path name starting with the schema
@@ -411,7 +433,7 @@ public class IvmContext implements Context, Serializable {
         if (fastCache.containsKey(name)) {
             throw new NameAlreadyBoundException();
         } else {
-            return mynode.createSubcontext(new ParsedName(name));
+            return mynode.createSubcontext(getParsedNameFor(name), readOnly);
         }
     }
 
@@ -449,7 +471,7 @@ public class IvmContext implements Context, Serializable {
 
     public Object addToEnvironment(final String propName, final Object propVal) throws NamingException {
         if (myEnv == null) {
-            myEnv = new Hashtable<String, Object>(5);
+            myEnv = new Hashtable<>(5);
         }
         return myEnv.put(propName, propVal);
     }
@@ -475,11 +497,36 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void close() throws NamingException {
+        checkReadOnly();
     }
 
-    protected void checkReadOnly() throws OperationNotSupportedException {
+    /*
+     * return false if current naming context is not marked as read only
+     * return true if current naming context is marked as read only and system property jndiExceptionOnFailedWrite is set to false
+     * 
+     * throws OperationNotSupportedException if naming context:
+     *   - is marked as read only and
+     *   - system property jndiExceptionOnFailedWrite is set to true
+     *   
+     * jndiExceptionOnFailedWrite property is defined by tomcat and is used in similar context for web app components
+     * https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#jndiExceptionOnFailedWrite
+     * 
+     */
+    protected boolean checkReadOnly() throws OperationNotSupportedException {
         if (readOnly) {
-            throw new OperationNotSupportedException();
+            //alignment with tomcat behavior
+            if("true".equals(SystemInstance.get().getProperty(JNDI_EXCEPTION_ON_FAILED_WRITE,"true"))) {
+                throw new OperationNotSupportedException();
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public void setReadOnly(boolean isReadOnly) {
+        this.readOnly = isReadOnly;
+        if(mynode != null) {
+            mynode.setReadOnly(readOnly);
         }
     }
 
@@ -532,25 +579,26 @@ public class IvmContext implements Context, Serializable {
                 vect.addElement(node);
             }
 
-            gatherNodes(node, vect);
+            gatherNodes(parentNode, node, vect);
 
             buildEnumeration(vect);
         }
 
         protected abstract void buildEnumeration(Vector<NameNode> vect);
 
-        protected void gatherNodes(final NameNode node, final Vector vect) {
-            addInListIfNeeded(mynode, node.getLessTree(), vect);
-            addInListIfNeeded(mynode, node.getGrtrTree(), vect);
-            addInListIfNeeded(mynode, node.getSubTree(), vect);
-            if (NameNode.Federation.class.isInstance(mynode.getObject())) { // tomcat mainly
-                for (final Context c : NameNode.Federation.class.cast(mynode.getObject())) {
+        protected void gatherNodes(NameNode initiallyRequestedNode, final NameNode node, final Vector vect) {
+            addInListIfNeeded(initiallyRequestedNode, node.getLessTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getGrtrTree(), vect);
+            addInListIfNeeded(initiallyRequestedNode, node.getSubTree(), vect);
+
+            if (NameNode.Federation.class.isInstance(initiallyRequestedNode.getObject())) { // tomcat mainly
+                for (final Context c : NameNode.Federation.class.cast(initiallyRequestedNode.getObject())) {
                     if (c == IvmContext.this || !IvmContext.class.isInstance(c)) {
                         continue;
                     }
 
                     final IvmContext ctx = IvmContext.class.cast(c);
-                    if (ctx.mynode == mynode || vect.contains(ctx.mynode)) {
+                    if (ctx.mynode == node || vect.contains(ctx.mynode)) {
                         continue;
                     }
 
@@ -566,24 +614,21 @@ public class IvmContext implements Context, Serializable {
                 return;
             }
             vect.addElement(node);
-            gatherNodes(node, vect);
+            gatherNodes(parent, node, vect);
         }
 
         private boolean isMyChild(final NameNode parent, final NameNode node) {
             if (node.getParent() == parent) {
                 return true;
             }
-            if (node.getParentTree() == node.getParent()) { // no need to browse the tree
-                return false;
+
+            /*
+             * Handle the special case of the top-level contexts like global, module, app, etc
+             */
+            if (null == node.getParent() && null == parent.getParentTree()) {
+                return true;
             }
 
-            NameNode current = node.getParentTree();
-            while (current != null) {
-                if (current == parent) {
-                    return true;
-                }
-                current = current.getParentTree();
-            }
             return false;
         }
 

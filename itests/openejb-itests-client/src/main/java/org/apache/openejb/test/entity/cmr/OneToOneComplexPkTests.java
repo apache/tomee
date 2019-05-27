@@ -17,19 +17,19 @@
 package org.apache.openejb.test.entity.cmr;
 
 
-import org.apache.openejb.test.entity.cmr.onetoone.PersonLocal;
-import org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome;
 import org.apache.openejb.test.entity.cmr.onetoone.LicenseLocal;
 import org.apache.openejb.test.entity.cmr.onetoone.LicenseLocalHome;
-import org.apache.openejb.test.entity.cmr.onetoone.PersonPk;
 import org.apache.openejb.test.entity.cmr.onetoone.LicensePk;
+import org.apache.openejb.test.entity.cmr.onetoone.PersonLocal;
+import org.apache.openejb.test.entity.cmr.onetoone.PersonLocalHome;
+import org.apache.openejb.test.entity.cmr.onetoone.PersonPk;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @version $Revision$ $Date$

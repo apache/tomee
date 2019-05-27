@@ -270,7 +270,7 @@ public class PojoSerialization implements Serializable {
     }
 
     protected void write(final ObjectOutput out) throws IOException {
-        final List<Class> classes = new ArrayList<Class>();
+        final List<Class> classes = new ArrayList<>();
         Class c = object.getClass();
         while (c != null && !c.equals(Object.class)) {
             classes.add(c);
@@ -314,21 +314,21 @@ public class PojoSerialization implements Serializable {
         try {
             if (type.isPrimitive()) {
                 if (type.equals(Integer.TYPE)) {
-                    putInt.invoke(unsafe, object, offset, ((Integer) value).intValue());
+                    putInt.invoke(unsafe, object, offset, (Integer) value);
                 } else if (type.equals(Long.TYPE)) {
-                    putLong.invoke(unsafe, object, offset, ((Long) value).longValue());
+                    putLong.invoke(unsafe, object, offset, (Long) value);
                 } else if (type.equals(Short.TYPE)) {
-                    putShort.invoke(unsafe, object, offset, ((Short) value).shortValue());
+                    putShort.invoke(unsafe, object, offset, (Short) value);
                 } else if (type.equals(Character.TYPE)) {
-                    putChar.invoke(unsafe, object, offset, ((Character) value).charValue());
+                    putChar.invoke(unsafe, object, offset, (Character) value);
                 } else if (type.equals(Byte.TYPE)) {
-                    putByte.invoke(unsafe, object, offset, ((Byte) value).byteValue());
+                    putByte.invoke(unsafe, object, offset, (Byte) value);
                 } else if (type.equals(Float.TYPE)) {
-                    putFloat.invoke(unsafe, object, offset, ((Float) value).floatValue());
+                    putFloat.invoke(unsafe, object, offset, (Float) value);
                 } else if (type.equals(Double.TYPE)) {
-                    putDouble.invoke(unsafe, object, offset, ((Double) value).doubleValue());
+                    putDouble.invoke(unsafe, object, offset, (Double) value);
                 } else if (type.equals(Boolean.TYPE)) {
-                    putBoolean.invoke(unsafe, object, offset, ((Boolean) value).booleanValue());
+                    putBoolean.invoke(unsafe, object, offset, (Boolean) value);
                 } else {
                     throw new IllegalStateException("Unknown primitive type: " + type.getName());
                 }

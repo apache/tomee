@@ -137,7 +137,7 @@ public class PostgreSqlTestDatabase implements TestDatabase {
 
             /* Create database */
             final Object obj = initialContext.lookup("client/tools/DatabaseHome");
-            final DatabaseHome databaseHome = (DatabaseHome) javax.rmi.PortableRemoteObject.narrow(obj, DatabaseHome.class);
+            final DatabaseHome databaseHome = (DatabaseHome) obj;
             database = databaseHome.create();
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot start database: " + e.getClass().getName() + " " + e.getMessage());

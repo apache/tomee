@@ -95,14 +95,12 @@ class SetupCommand {
 
 
         Paths paths = new Paths(new File("${catalinaHome}/webapps/tomee" as String))
-        Installer installer = new Installer(paths, true)
+        Installer installer = new Installer(paths, properties, true)
         installer.installFull()
 
         // clean up duplicate jars since in TomEE it is useless
         // = gain of space ;)
-        deleteWithRetry(file: paths.getJAXBImpl())
         deleteWithRetry(file: paths.getOpenEJBTomcatLoaderJar())
-        deleteWithRetry(file: paths.findTomEELibJar('jaxb-impl'))
         deleteWithRetry(file: paths.findTomEELibJar("openejb-javaagent-${tomeeVersion}.jar" as String))
         // we need the one without version
 

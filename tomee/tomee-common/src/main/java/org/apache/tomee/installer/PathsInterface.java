@@ -58,8 +58,6 @@ public interface PathsInterface {
 
     File getJavaEEAPIJar();
 
-    File getJAXBImpl();
-
     File getOpenEJBJavaagentJar();
 
     File getOpenEJBCoreJar();

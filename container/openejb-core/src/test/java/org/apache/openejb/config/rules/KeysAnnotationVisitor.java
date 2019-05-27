@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.xbean.asm5.AnnotationVisitor;
-import org.apache.xbean.asm5.MethodVisitor;
-import org.apache.xbean.asm5.Type;
-import org.apache.xbean.asm5.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm7.AnnotationVisitor;
+import org.apache.xbean.asm7.MethodVisitor;
+import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm7.shade.commons.EmptyVisitor;
 
 import java.util.HashSet;
 
@@ -88,7 +88,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
 
         public ClassInfo(final String clazz) {
             this.clazz = clazz;
-            methuds = new HashSet<MethodInfo>();
+            methuds = new HashSet<>();
         }
 
         @Override
@@ -123,7 +123,7 @@ public class KeysAnnotationVisitor extends EmptyVisitor {
 
         public MethodInfo(final String methud) {
             this.methud = methud;
-            keys = new HashSet<String>();
+            keys = new HashSet<>();
         }
 
         @Override

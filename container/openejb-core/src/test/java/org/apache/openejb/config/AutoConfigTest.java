@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.config;
 
+import org.apache.openejb.assembler.classic.ContainerInfo;
 import org.apache.openejb.config.sys.Resource;
 import org.apache.openejb.jee.EjbJar;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Properties;
 
 public class AutoConfigTest {
@@ -428,7 +430,7 @@ public class AutoConfigTest {
             appModule.getResources().add(new Resource(s, "DataSource"));
         }
 
-        final AutoConfig.AppResources resources = new AutoConfig.AppResources(appModule);
+        final AutoConfig.AppResources resources = new AutoConfig.AppResources(appModule, Collections.<ContainerInfo>emptyList());
 
         final Method m = ac.getClass().getDeclaredMethod("firstMatching", String.class, String.class, Properties.class, AutoConfig.AppResources.class);
         m.setAccessible(true);

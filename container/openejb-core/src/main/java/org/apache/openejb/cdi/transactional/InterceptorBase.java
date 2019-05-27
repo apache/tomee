@@ -30,6 +30,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.interceptor.InvocationContext;
 import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionRequiredException;
 import javax.transaction.Transactional;
 import javax.transaction.TransactionalException;
 import java.io.Serializable;
@@ -120,7 +121,10 @@ public abstract class InterceptorBase implements Serializable {
                 }
             }
 
-            throw new TransactionalException(e.getMessage(), error);
+            if (error == null || TransactionRequiredException.class.isInstance(error)) {
+                throw new TransactionalException(e.getMessage(), error);
+            }
+            throw error;
         } finally {
             if (forbidsUt) {
                 CoreUserTransaction.resetError(oldEx);
@@ -154,11 +158,11 @@ public abstract class InterceptorBase implements Serializable {
         return OpenEJB.getTransactionManager();
     }
 
-    private static final class ExceptionPriotiryRules {
+    protected static final class ExceptionPriotiryRules {
         private final Class<?>[] includes;
         private final Class<?>[] excludes;
 
-        private ExceptionPriotiryRules(final Class<?>[] includes, final Class<?>[] excludes) {
+        protected ExceptionPriotiryRules(final Class<?>[] includes, final Class<?>[] excludes) {
             this.includes = includes;
             this.excludes = excludes;
         }
@@ -174,7 +178,7 @@ public abstract class InterceptorBase implements Serializable {
             if (excludeScore < 0) {
                 return includeScore >= 0 || isNotChecked(e, exceptionTypes);
             }
-            return includeScore - excludeScore >= 0;
+            return includeScore - excludeScore > 0;
         }
 
         private static int contains(final Class<?>[] list, final Exception e) {

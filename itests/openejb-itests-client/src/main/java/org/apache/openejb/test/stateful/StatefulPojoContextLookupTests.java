@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.test.stateful;
 
-import org.apache.openejb.test.TestManager;
 import org.apache.openejb.test.TestFailureException;
+import org.apache.openejb.test.TestManager;
 
 /**
  * [4] Should be run as the fourth test suite of the StatefulTestClients
@@ -34,7 +34,7 @@ public class StatefulPojoContextLookupTests extends StatefulTestClient {
     protected void setUp() throws Exception {
         super.setUp();
         final Object obj = initialContext.lookup("client/tests/stateful/ContextLookupStatefulPojoBean");
-        ejbHome = (EncStatefulHome) javax.rmi.PortableRemoteObject.narrow(obj, EncStatefulHome.class);
+        ejbHome = (EncStatefulHome) obj;
         ejbObject = ejbHome.create("Enc Bean");
 
         /*[2] Create database table */

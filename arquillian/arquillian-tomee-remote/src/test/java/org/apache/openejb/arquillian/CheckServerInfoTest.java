@@ -37,6 +37,7 @@ public class CheckServerInfoTest {
 
     @Test
     public void checkServerInfo() {
-        assertTrue(ServerInfo.getServerInfo().startsWith("Apache Tomcat (TomEE)/"));
+        final String serverInfo = ServerInfo.getServerInfo();
+        assertTrue(serverInfo, serverInfo.startsWith("Apache Tomcat"));
     }
 }

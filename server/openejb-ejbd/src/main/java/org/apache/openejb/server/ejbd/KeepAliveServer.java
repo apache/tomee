@@ -18,10 +18,10 @@ package org.apache.openejb.server.ejbd;
 
 import org.apache.openejb.client.FlushableGZIPOutputStream;
 import org.apache.openejb.client.KeepAliveStyle;
-import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
 import org.apache.openejb.server.ServicePool;
+import org.apache.openejb.server.Unwrappable;
 import org.apache.openejb.server.context.RequestInfos;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -57,7 +57,7 @@ public class KeepAliveServer implements ServerService {
     private final long timeout = (1000 * 10);
 
     private final AtomicBoolean running = new AtomicBoolean(false);
-    private final ConcurrentHashMap<Thread, Session> sessions = new ConcurrentHashMap<Thread, Session>();
+    private final ConcurrentHashMap<Thread, Session> sessions = new ConcurrentHashMap<>();
     private BlockingQueue<Runnable> threadQueue;
     private Timer timer;
     private final boolean gzip;
@@ -130,7 +130,7 @@ public class KeepAliveServer implements ServerService {
     public void closeSessions() {
 
         // Close the ones we can
-        final List<Session> current = new ArrayList<Session>();
+        final List<Session> current = new ArrayList<>();
         current.addAll(this.sessions.values());
 
         for (final Session session : current) {
@@ -161,7 +161,7 @@ public class KeepAliveServer implements ServerService {
     private BlockingQueue<Runnable> getQueue() {
         if (this.threadQueue == null) {
             // this can be null if timer fires before service is fully initialized
-            final ServicePool incoming = SystemInstance.get().getComponent(ServicePool.class);
+            final ServicePool incoming = Unwrappable.class.isInstance(service) ? Unwrappable.class.cast(service).unwrap(ServicePool.class) : null;
             if (incoming == null) {
                 return null;
             }
@@ -171,10 +171,20 @@ public class KeepAliveServer implements ServerService {
         return this.threadQueue;
     }
 
+    /**
+     *
+     * @param session
+     * @return
+     */
     public Session addSession(final Session session) {
         return this.sessions.put(session.thread, session);
     }
 
+    /**
+     *
+     * @param session
+     * @return
+     */
     public Session removeSession(final Session session) {
         return this.sessions.remove(session.thread);
     }

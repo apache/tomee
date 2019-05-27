@@ -1,0 +1,153 @@
+= MicroProfile Rest Client
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+This is a basic example on how to configure and use MicroProfile Rest
+Client in TomEE.
+
+=== Run the tests for different scenarios related with JWT validation
+
+....
+mvn clean test 
+....
+
+=== Requirementes and configuration
+
+To use MicroProfile Rest Client you need 3 changes in your project:
+
+[arabic]
+. Add the to the `pom.xml` the dependency:
++
+....
+ <dependency>
+     <groupId>org.eclipse.microprofile.rest.client</groupId>
+     <artifactId>microprofile-rest-client-api</artifactId>
+     <version>${microprofile.rest-client.version}</version>
+     <scope>provided</scope>
+ </dependency>
+....
+. Provide configuration files: `microprofile-config.properties`
++
+....
+ org.superbiz.rest.BookResourceClient/mp-rest/url=http://localhost:4444
+....
+. Provide an interface that you can build from the JAX-RS resource you
+want to consume: `BookResourceClient.java`
++
+....
+ package org.superbiz.rest;
+
+ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+ import javax.enterprise.context.Dependent;
+ import javax.ws.rs.*;
+ import javax.ws.rs.core.MediaType;
+ import java.util.List;
+
+ @Dependent
+ @RegisterRestClient
+ @Path("/test/api/library")
+ @Produces(MediaType.APPLICATION_JSON)
+ @Consumes(MediaType.APPLICATION_JSON)
+ public interface BookResourceClient {
+
+     @GET
+     String status();
+
+     @POST
+     @Path("/books")
+     void addBook(Book newBook);
+
+     @DELETE
+     @Path("/books/{id}")
+     void deleteBook(@PathParam("id") int id);
+
+     @PUT
+     @Path("/books")
+     void updateBook(Book updatedBook);
+
+     @GET
+     @Path("/books/{id}")
+     Book getBook(@PathParam("id") int id);
+
+     @GET
+     @Path("/books")
+     List<Book> getListOfBooks();
+
+ }
+....
+
+=== Use of MicroProfile Rest Client in TomEE
+
+The class `BookResourceTest.java` shows how easy is to use the type-safe
+approach provided by MicroProfile Rest Client to consume an existing
+JAX-RS resource.
+
+....
+package org.superbiz.rest;
+
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertTrue;
+
+@RunWith(Arquillian.class)
+public class BookResourceTest {
+
+    @Deployment()
+    public static WebArchive createDeployment() {
+        final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+                .addClass(BookResource.class)
+                .addClass(Book.class)
+                .addClass(BookBean.class)
+                .addClass(BookResourceClient.class)
+                .addClass(ApplicationConfig.class)
+                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
+                .addAsResource("META-INF/microprofile-config.properties");
+        return webArchive;
+    }
+
+
+    @Inject
+    @RestClient
+    private BookResourceClient bookResourceClient;
+
+    @Test()
+    public void testServerStatus(){
+        bookResourceClient.addBook(new Book(1,"TomEE Book"));
+    }
+
+    @Test
+    public void testBookResource(){
+        bookResourceClient.addBook(new Book(1, "TomEE and MicroProfile Adventures"));
+        bookResourceClient.addBook(new Book(2, "Top 10 Tomee Configuraiton Tips"));
+
+
+        assertTrue(bookResourceClient.getListOfBooks().size() == 2);
+        assertTrue(bookResourceClient.getBook(1).getName().equalsIgnoreCase("TomEE and MicroProfile Adventures"));
+
+        bookResourceClient.deleteBook(1);
+        assertTrue(bookResourceClient.getListOfBooks().size() == 1);
+        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 10 Tomee Configuraiton Tips"));
+
+        bookResourceClient.updateBook(new Book(2, "Top 3 Tomee Configuraiton Tips"));
+        assertTrue(bookResourceClient.getListOfBooks().size() == 1);
+        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 3 Tomee Configuraiton Tips"));
+    }
+
+}
+....
+
+=== About the Test architecture
+
+The test cases from this project are built using Arquillian and TomEE
+Remote. The arquillian configuration can be found in
+`src/test/resources/arquillian.xml`

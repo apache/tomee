@@ -66,7 +66,7 @@ public class ThreadLocalHttpHeaders extends AbstractRestThreadLocalProxy<HttpHea
 
     @Override
     public MultivaluedMap<String, String> getRequestHeaders() {
-        return new MultivaluedMapWithCaseInsensitiveKeySet<String>(get().getRequestHeaders());
+        return new MultivaluedMapWithCaseInsensitiveKeySet<>(get().getRequestHeaders());
     }
 
     @Override

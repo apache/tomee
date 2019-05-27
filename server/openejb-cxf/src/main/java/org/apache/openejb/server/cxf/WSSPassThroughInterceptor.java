@@ -30,7 +30,7 @@ import java.util.Set;
  * adds the {@link org.apache.cxf.binding.soap.interceptor.MustUnderstandInterceptor}. OpenEJB now supports
  * WS Security out of the box, so it must indicates WS Security headers have been treated. That is simply done
  * using that fake interceptor.
- * <p/>
+ *
  * $Id$
  */
 public class WSSPassThroughInterceptor extends AbstractSoapInterceptor {

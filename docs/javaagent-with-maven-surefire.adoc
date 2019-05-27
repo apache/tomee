@@ -1,0 +1,38 @@
+= JavaAgent with Maven Surefire
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+== Maven2
+
+In maven2 you can enable the javaagent for your tests by adding this to
+your pom.xml file:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <!-- this configures the surefire plugin to run your tests with the
+----
+
+javaagent enabled --> org.apache.maven.plugins maven-surefire-plugin
+pertest
+
+-javaagent:latexmath:[${basedir}/target/openejb-javaagent-3.0.jar</argLine>  <workingDirectory>$]\{basedir}/target
+
+[source,xml]
+----
+    <!-- this tells maven to copy the openejb-javaagent jar into your
+----
+
+target/ directory --> org.apache.maven.plugins maven-dependency-plugin
+copy process-resources copy org.apache.openejb openejb-javaagent 3.0
+
+$\{project.build.directory}
+
+[source,xml]
+----
+  </plugins>
+</build>
+----
