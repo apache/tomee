@@ -27,9 +27,9 @@ public @interface ContextConfig {
      * in the annotated class' classpath. If both a method/class has this value specified,
      * then the class' file will be loaded first, and thus properties in the method's file
      * will overwrite those from the class'.
-     * <p/>
+     *
      * If the file is not found a FileNotFoundException will be raised.
-     * <p/>
+     *
      * Using the {@link OpenEjbRunner} runner, this will be a reference to a standard properties file.
      */
     String configFile() default "";
@@ -37,10 +37,10 @@ public @interface ContextConfig {
     /**
      * Array of properties. The properties file has precedency in being loaded, so
      * any properties listed here will overwrite those loaded from the properties file.
-     * <p/>
+     *
      * Again, a Method's properties are loaded after a class' properties, so will
      * overwrite those from the method.
-     * <p/>
+     *
      * If you specify both a properties file and properties for both a method and a class,
      * first the class' file and properties will be loaded, then the method's file
      * and properties, so the precedency is effectively the following:
@@ -50,7 +50,7 @@ public @interface ContextConfig {
      * <li>Method properties file
      * <li>Method properties
      * </ol>
-     * <p/>
+     *
      * If any property's names are null, then the property will simply be ignored.
      */
     Property[] properties() default {};

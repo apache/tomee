@@ -461,7 +461,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         final CounterBean bean = deploy("testAccessTimeouts", properties);
 
-        assertAttribute("AccessTimeouts", 0l);
+        assertAttribute("AccessTimeouts", 0L);
 
         final Checkout checkout = checkout(bean, 10);
 
@@ -475,7 +475,7 @@ public class StatelessPoolStatsTest extends TestCase {
 
         checkout.release();
 
-        assertAttribute("AccessTimeouts", 7l);
+        assertAttribute("AccessTimeouts", 7L);
     }
 
     /**
@@ -487,13 +487,13 @@ public class StatelessPoolStatsTest extends TestCase {
      */
     public void testSweeps() throws Exception {
         final Properties properties = new Properties();
-        properties.setProperty("SweepInterval", "100");
+        properties.setProperty("SweepInterval", "100 MS");
 
         final Date expectedDate = new Date(); // now
 
         deploy("testSweeps", properties);
 
-        Thread.sleep(200);
+        Thread.sleep(300);
 
         final Long sweeps = (Long) (server.getAttribute(objectName, "Sweeps"));
         assertTrue("sweeps=" + sweeps, sweeps >= 1L);
@@ -609,13 +609,13 @@ public class StatelessPoolStatsTest extends TestCase {
     /**
      * convenience method for checking out a specific number of instances.
      * Can be used like so:
-     * <p/>
+     *
      * // checkout some instances from the pool
      * CountDownLatch startingPistol = checkout(bean, 7);
-     * <p/>
+     *
      * // Look at pool stats
      * ...
-     * <p/>
+     *
      * // Release them all back into the pool
      * startingPistol.countDown();
      *

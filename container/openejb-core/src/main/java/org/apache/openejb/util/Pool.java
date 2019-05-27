@@ -47,12 +47,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Any successful pop() call requires a corresponding push() or discard() call.
- * <p/>
+ *
  * A pop() call that returns null is considered successful.  A null indicates
  * that the calling code has a permit to create a poolable object and call
  * {@link Pool#push(Object)}.  This is the only situation in which that method
  * may be called.
- * <p/>
+ *
  * To simply fill the pool without a corresponding pop(), the add() method
  * must be used.  This method will attempt to aquire a permit to add to the pool.
  *
@@ -214,7 +214,7 @@ public class Pool<T> {
 
     /**
      * Any successful pop() call requires a corresponding push() or discard() call
-     * <p/>
+     *
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
@@ -230,7 +230,7 @@ public class Pool<T> {
 
     /**
      * Any successful pop() call requires a corresponding push() or discard() call
-     * <p/>
+     *
      * A pop() call that returns null is considered successful.
      *
      * @param timeout time to block while waiting for an instance
@@ -320,7 +320,7 @@ public class Pool<T> {
     /**
      * Never call this method without having successfully called
      * {@link #pop(long, TimeUnit)} beforehand.
-     * <p/>
+     *
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj object to push onto the pool
@@ -333,7 +333,7 @@ public class Pool<T> {
     /**
      * Never call this method without having successfully called
      * {@link #pop(long, TimeUnit)} beforehand.
-     * <p/>
+     *
      * Failure to do so will increase the max pool size by one.
      *
      * @param obj    object to push onto the pool
@@ -506,10 +506,10 @@ public class Pool<T> {
     /**
      * This internal method allows us to "swap" the status
      * of two entries before returning them to the pool.
-     * <p/>
+     *
      * This allows us to elect a replacement in the min pool
      * without ever loosing loosing pool consistency.
-     * <p/>
+     *
      * Neither argument is allowed to be null.
      *
      * @param hard the "min" pool item that will be discarded
@@ -545,7 +545,7 @@ public class Pool<T> {
          * Constructor is private so that it is impossible for an Entry object
          * to exist without there being a corresponding permit issued for the
          * object wrapped by this Entry.
-         * <p/>
+         *
          * This helps ensure that when an Entry is returned to the pool it is
          * always safe to call {@link Semaphore#release()} which increases the
          * permit size by one.

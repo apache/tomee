@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 
 /**
  * registered as service in openejb.xml, tomee.xml, resources.xml or openejb system properties:
- * <p/>
+ *
  * listener = new://Service?class-name=org.superbiz.event.MyListener
  * listener.logAllEvent = true
  */

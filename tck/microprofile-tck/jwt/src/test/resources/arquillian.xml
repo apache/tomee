@@ -31,9 +31,6 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
-      <property name="properties">
-        org.apache.webbeans.component.PrincipalBean.proxy=false
-      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plus">
@@ -47,7 +44,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        org.apache.webbeans.component.PrincipalBean.proxy=false
+        tomee.mp.scan = all
       </property>
     </configuration>
   </container>
@@ -62,7 +59,7 @@
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
-        org.apache.webbeans.component.PrincipalBean.proxy=false
+        tomee.mp.scan = all
       </property>
     </configuration>
   </container>

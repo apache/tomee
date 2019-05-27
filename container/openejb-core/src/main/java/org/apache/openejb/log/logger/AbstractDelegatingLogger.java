@@ -372,8 +372,8 @@ public abstract class AbstractDelegatingLogger extends Logger {
             if (parameters == null || parameters.length == 0) {
                 return format;
             }
-            if (format.indexOf("{0") >= 0 || format.indexOf("{1") >= 0
-                || format.indexOf("{2") >= 0 || format.indexOf("{3") >= 0) {
+            if (format.contains("{0") || format.contains("{1")
+                || format.contains("{2") || format.contains("{3")) {
                 return MessageFormat.format(format, parameters);
             }
             return format;

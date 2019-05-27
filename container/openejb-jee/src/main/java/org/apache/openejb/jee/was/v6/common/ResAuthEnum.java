@@ -20,22 +20,22 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p/>
+ *
  * Java class for ResAuthTypeBase.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="ResAuthTypeBase">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="Container"/>
- *     &lt;enumeration value="Application"/>
- *     &lt;enumeration value="SERVLET"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ResAuthTypeBase"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="Container"/&gt;
+ *     &lt;enumeration value="Application"/&gt;
+ *     &lt;enumeration value="SERVLET"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

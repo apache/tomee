@@ -90,7 +90,7 @@ public class MulticastPulseAgentTest {
 
     /**
      * Most of this code is identical to org.apache.openejb.client.MulticastPulseClient#discoverURIs
-     * <p/>
+     *
      * The MulticastPulseClient class is not shared or available here so the test has to emulate it.
      *
      * @throws Exception On error

@@ -21,5 +21,6 @@ package org.apache.openejb.loader.provisining;
 //
 // ex: mvn delegates to http if the archive is not found locally
 public interface ProvisioningResolverAware {
+
     void setResolver(ProvisioningResolver resolver);
 }

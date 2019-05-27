@@ -63,9 +63,7 @@ public class Util {
             }
 
             throw new NoSuchMethodException(methodName);
-        } catch (final NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (final ClassNotFoundException e) {
+        } catch (final NoSuchMethodException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

@@ -1,0 +1,77 @@
+= MicroProfile JWT JWKs
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+This is an example on how to use MicroProfile JWT in TomEE by using the
+public key as JWKs.
+
+== Run the application:
+
+[source, bash]
+----
+mvn clean install tomee:run
+----
+
+This example is a CRUD application for products available.
+
+== Requirments and configuration
+
+For usage of MicroProfile JWT we have to change the following to our
+project:
+
+[arabic]
+. Add the dependency to our `pom.xml` file:
++
+....
+<dependency>
+    <groupId>org.eclipse.microprofile.jwt</groupId>
+    <artifactId>microprofile-jwt-auth-api</artifactId>
+    <version>${mp-jwt.version}</version>
+    <scope>provided</scope>
+</dependency>
+....
+. Annotate our `Application.class` with `@LoginConfig(authMethod = "MP-JWT")`
+
+. Provide public  key for validation of the JWT. And specify the location of the public key and the issuer in our
+`microprofile-config.properties` file. The public key is then used for verification of the signature in the
+JWT.
++
+[source,properties]
+----
+mp.jwt.verify.publickey.location=/jwks.pem
+mp.jwt.verify.issuer=https://example.com
+----
+
+. Define `@RolesAllowed()` on the endpoints we want to protect.
+
+== About the application architecture
+
+The application enables us to manipulate and view products with specific users. We have two users
+`Alice Wonder` and `John Doe`. They can read, create, edit and delete specific entries.
+
+`jwt-john.json`
+
+[source,json]
+----
+{
+  "iss": "https://example.com",
+  "sub": "24400320",
+  "name": "John Doe",
+  "upn": "john.doe@example.com",
+  "preferred_username": "john",
+  "groups": [
+    "guest", "admin"
+  ]
+}
+----
+
+== Access the endpoints with JWT token
+
+We access endpoints from our test class by creating a `JWT` with the help of
+our `TokenUtils.generateJWTString(String jsonResource, String keyId)` which signs our user
+data in json format with the help of our `src/test/resources/{keyId}` private key.
+
+We can also generate new `privateKey.pem` and `publicKey.pem` with the
+`GenerateKeyUtils.generateKeyPair(String keyAlgorithm, int keySize)` method which
+then creates the `publicKey.pem` also in `JWK` format.

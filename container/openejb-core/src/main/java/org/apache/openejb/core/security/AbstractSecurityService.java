@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void destroyResource() {
-        // no-op
+        ThreadContext.removeThreadContextListener(this);
     }
 
     public void onLogout(final HttpServletRequest request) {
@@ -420,12 +421,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         @SuppressWarnings("unchecked")
         public SecurityContext(final Subject subject) {
             this.subject = subject;
-            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, new PrivilegedAction() {
-                @Override
-                public Object run() {
-                    return AccessController.getContext();
-                }
-            }, null);
+            this.acc = (AccessControlContext) Subject.doAsPrivileged(subject, (PrivilegedAction) AccessController::getContext, null);
         }
     }
 
@@ -512,7 +508,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             }
 
             final User user = User.class.cast(o);
-            return !(name != null ? !name.equals(user.name) : user.name != null);
+            return !(!Objects.equals(name, user.name));
 
         }
 

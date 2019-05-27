@@ -1,9 +1,8 @@
-index-group=Traced
-type=page
-status=in progress
-~~~~~~
+= MicroProfile OpenTracing @Traced
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
 
-== Microprofile OpenTracing @Traced
 
 This is an example on how to use the @Traced annotation in TomEE.
 

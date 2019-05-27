@@ -44,7 +44,7 @@ public class DeployMojo extends AbstractDeployMojo {
      * The System variables.
      */
     @Parameter
-    protected Map<String, String> systemVariables = new HashMap<String, String>();
+    protected Map<String, String> systemVariables = new HashMap<>();
 
     @Parameter(property = "tomee-plugin.binary", defaultValue = "false")
     private boolean useBinaries;

@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
  * The Client test suite needs the following environment variables
  * to be set before it can be run.
- * <p/>
+ *
  * <code>test.home</code>
  * <code>server.classpath</code>
  */

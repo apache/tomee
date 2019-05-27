@@ -28,42 +28,42 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://jboss.org}ejb-name"/>
- *         &lt;element ref="{http://jboss.org}datasource" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}datasource-mapping" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}create-table" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}remove-table" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}post-table-create" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}row-locking" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}pk-constraint" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-ahead" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}list-cache-max" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}clean-read-ahead-on-load" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}fetch-size" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}table-name" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}cmp-field" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}load-groups" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}eager-load-group" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}lazy-load-groups" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}unknown-pk" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}entity-command" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}optimistic-locking" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}audit" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://jboss.org}ejb-name"/&gt;
+ *         &lt;element ref="{http://jboss.org}datasource" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}datasource-mapping" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}create-table" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}remove-table" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}post-table-create" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}row-locking" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}pk-constraint" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-ahead" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}list-cache-max" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}clean-read-ahead-on-load" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}fetch-size" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}table-name" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}cmp-field" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}load-groups" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}eager-load-group" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}lazy-load-groups" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}query" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}unknown-pk" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}entity-command" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}optimistic-locking" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}audit" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -444,21 +444,21 @@ public class Entity {
 
     /**
      * Gets the value of the cmpField property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the cmpField property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCmpField().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link CmpField }
      */
@@ -531,21 +531,21 @@ public class Entity {
 
     /**
      * Gets the value of the query property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the query property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getQuery().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Query }
      */

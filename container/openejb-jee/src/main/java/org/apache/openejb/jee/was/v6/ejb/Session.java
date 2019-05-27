@@ -28,7 +28,7 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
 
 /**
  * The session-beanType declares an session bean. The declaration consists of:
- * <p/>
+ *
  * - an optional description - an optional display name - an optional icon
  * element that contains a small and a large icon file name - a name assigned to
  * the enterprise bean in the deployment description - the names of the session
@@ -45,37 +45,37 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * declaration of the bean's resource manager connection factory references - an
  * optional declaration of the bean's resource environment references. - an
  * optional declaration of the bean's message destination references
- * <p/>
+ *
  * The elements that are optional are "optional" in the sense that they are
  * omitted when if lists represented by them are empty.
- * <p/>
+ *
  * Either both the local-home and the local elements or both the home and the
  * remote elements must be specified for the session bean.
- * <p/>
+ *
  * The service-endpoint element may only be specified if the bean is a stateless
  * session bean.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Session complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Session">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="serviceEndpoint" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="serviceEndpoint" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="sessionType" type="{ejb.xmi}SessionType" />
- *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Session"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="serviceEndpoint" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="serviceEndpoint" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="sessionType" type="{ejb.xmi}SessionType" /&gt;
+ *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,22 +93,22 @@ public class Session extends EnterpriseBean {
 
     /**
      * Gets the value of the serviceEndpoints property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the serviceEndpoints property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getServiceEndpoints().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */

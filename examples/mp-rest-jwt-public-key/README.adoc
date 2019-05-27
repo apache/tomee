@@ -1,0 +1,110 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MP REST JWT with Public key from MP Config
+
+This is an example of how to configure and use MicroProfile JWT 1.1 in TomEE.
+
+== Run the test
+
+This project includes a sample application and an Arquillian test to showcase role based access control (RBAC) with JWT in MicroProfile.
+In order to run the scenario, you can execute the following command:
+
+[source, bash]
+----
+mvn clean test
+----
+
+The application represents a book store REST resource with a few endpoints.
+They all expect that the client provides a valid JSON web token (JWT) representing a user having certain roles.
+The Arquillian test is responsible for generating the JWTs and attaching them to the HTTP requests.
+
+== Configuration in TomEE
+
+In order to enable JWT at all, you need to annotate your REST application class with the `org.eclipse.microprofile.auth.LoginConfig` annotation.
+In this example, the class is `ApplicationConfig`.
+
+Another thing that needs to be done is configuring the public key to verify the signature of the JWT that is attached in the `Authorization` header.
+It is signed upon creation with the issuer private key.
+This is done to avoid tempering with the token while it travels from the caller to the endpoint.
+Usually the JWT issuing happens in a special module or microservice responsible for authenticating the users.
+In this sample project this happens in the `BookstoreTest`.
+
+Each MicroProfile JWT supporting runtime should be able to check whether the signature is correct and whether the signed content is not changed along the way.
+In order to do that, it needs to have access to a public key.
+This public key may be in PKCS#8 PEM, JWK or JWKS format.
+Since MP JWT 1.1 (which is supported by TomEE), the key may be provided as a string in the `mp.jwt.verify.publickey` config property or as a file location or URL specified in the `mp.jwt.verify.publickey.location` config property.
+
+In this sample project you can see the first option.
+The file `src/main/resource/META-INF/microprofile-config.properties` contains the following entry:
+
+[source,properties]
+----
+mp.jwt.verify.publickey=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlivFI8qB4D0y2jy0CfEqFyy46R0o7S8TKpsx5xbHKoU1VWg6QkQm+ntyIv1p4kE1sPEQO73+HY8+Bzs75XwRTYL1BmR1w8J5hmjVWjc6R2BTBGAYRPFRhor3kpM6ni2SPmNNhurEAHw7TaqszP5eUF/F9+KEBWkwVta+PZ37bwqSE4sCb1soZFrVz/UT/LF4tYpuVYt3YbqToZ3pZOZ9AX2o1GCG3xwOjkc4x0W7ezbQZdC9iftPxVHR8irOijJRRjcPDtA6vPKpzLl6CyYnsIYPd99ltwxTHjr3npfv/3Lw50bAkbT4HeLFxTx4flEoZLKO/g0bAoV2uqBhkA9xnQIDAQAB
+----
+
+== Working with JWT
+
+The `BookResource` class in this sample project shows two cases where you can use the MP JWT spec: obtaining the value of a JWT claim and role based access control of REST endpoints.
+
+=== Obtaining claim values
+
+The JSON web token (JWT) attached in the `Authorization` HTTP header is essentially a JSON object containing various attributes.
+Those attributes are called _claims_.
+You can obtain the value of each claim inside a CDI bean by injecting it and qualifying it with the `@Claim` annotation.
+
+For example, if you want to retrieve the preferred username claim, you can do it like that:
+
+[source,java]
+----
+    @Inject
+    @Claim(standard = Claims.preferred_username)
+    private String userName;
+----
+
+Note that you cannot inject claims this way in a REST resource class that contains unauthenticated endpoints too.
+TomEE will nevertheless try to extract the claim from the JWT.
+So if there is no JWT or if the claim is not there, the request will fail.
+
+=== Role based access control (RBAC)
+
+One of the standard claims defined in the MP JWT specification is `groups`.
+It contains a list of strings, which represent the groups to which the caller belongs.
+The specification does not distinguish user roles and user groups.
+So the `groups` claim may also contain the roles assigned to a given user.
+
+In this regard, MP JWT has great integration with the existing Java EE security mechanisms, such as the `@RolesAllowed` annotation.
+So the following `BookResource` method can be called by users that are either in the `reader` or in the `manager` role (or in both):
+
+[source,java]
+----
+    @GET
+    @Path("/{id}")
+    @RolesAllowed({"manager", "reader"})
+    public Book getBook(@PathParam("id") int id) {
+        return booksBean.getBook(id);
+    }
+----
+
+However, the method below will result in HTTP code 403 if called by a user that lacks the `manager` role in its `groups` claim:
+
+[source,java]
+----
+    @POST
+    @RolesAllowed("manager")
+    public void addBook(Book newBook) {
+        booksBean.addBook(newBook);
+    }
+----
+
+== The bookstore test
+
+The sample project contains an Arquillian test (`org.superbiz.bookstore.BookstoreTest`) used for a couple of reasons:
+
+* Generating the JSON web token (JWT)
+* Showcasing the behavior of TomEE in different situations
+** Retrieving a claim value
+** Calling REST endpoints with appropriate roles
+** Calling a REST endpoint with a wrong role (resulting in HTTP status code 403)
+** Calling a REST endpoint without JWT (resulting in HTTP status code 401)

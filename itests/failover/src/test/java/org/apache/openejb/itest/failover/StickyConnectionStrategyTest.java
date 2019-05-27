@@ -49,7 +49,7 @@ import static org.junit.Assert.assertFalse;
  * one dedicated multipoint root server which does
  * no other function other than to serve as a central
  * hub for making multipoint introductions.
- * <p/>
+ *
  * This dedicate root server will not serve applications
  * and not be added to the list of servers that can
  * service EJB requests.

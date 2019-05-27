@@ -35,15 +35,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * The entity-mappings element is the root element of a mapping
  * file. It contains the following four types of elements:
- * <p/>
+ *
  * 1. The persistence-unit-metadata element contains metadata
  * for the entire persistence unit. It is undefined if this element
  * occurs in multiple mapping files within the same persistence unit.
- * <p/>
+ *
  * 2. The package, schema, catalog and access elements apply to all of
  * the entity, mapped-superclass and embeddable elements defined in
  * the same file in which they occur.
- * <p/>
+ *
  * 3. The sequence-generator, table-generator, named-query,
  * named-native-query and sql-result-set-mapping elements are global
  * to the persistence unit. It is undefined to have more than one
@@ -52,42 +52,42 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * undefined to have more than one named-query, named-native-query, or
  * result-set-mapping of the same name in the same or different mapping
  * files in a persistence unit.
- * <p/>
+ *
  * 4. The entity, mapped-superclass and embeddable elements each define
  * the mapping information for a managed persistent class. The mapping
  * information contained in these elements may be complete or it may
  * be partial.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="persistence-unit-metadata" type="{http://java.sun.com/xml/ns/persistence/orm}persistence-unit-metadata" minOccurs="0"/>
- *         &lt;element name="package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="schema" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" minOccurs="0"/>
- *         &lt;element name="sequence-generator" type="{http://java.sun.com/xml/ns/persistence/orm}sequence-generator" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="table-generator" type="{http://java.sun.com/xml/ns/persistence/orm}table-generator" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="named-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="named-native-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="sql-result-set-mapping" type="{http://java.sun.com/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="mapped-superclass" type="{http://java.sun.com/xml/ns/persistence/orm}mapped-superclass" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="entity" type="{http://java.sun.com/xml/ns/persistence/orm}entity" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="embeddable" type="{http://java.sun.com/xml/ns/persistence/orm}embeddable" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/persistence/orm}versionType" fixed="2.0" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="persistence-unit-metadata" type="{http://java.sun.com/xml/ns/persistence/orm}persistence-unit-metadata" minOccurs="0"/&gt;
+ *         &lt;element name="package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="schema" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="catalog" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="access" type="{http://java.sun.com/xml/ns/persistence/orm}access-type" minOccurs="0"/&gt;
+ *         &lt;element name="sequence-generator" type="{http://java.sun.com/xml/ns/persistence/orm}sequence-generator" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="table-generator" type="{http://java.sun.com/xml/ns/persistence/orm}table-generator" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="named-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-query" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="named-native-query" type="{http://java.sun.com/xml/ns/persistence/orm}named-native-query" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="sql-result-set-mapping" type="{http://java.sun.com/xml/ns/persistence/orm}sql-result-set-mapping" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="mapped-superclass" type="{http://java.sun.com/xml/ns/persistence/orm}mapped-superclass" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="entity" type="{http://java.sun.com/xml/ns/persistence/orm}entity" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="embeddable" type="{http://java.sun.com/xml/ns/persistence/orm}embeddable" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="version" use="required" type="{http://java.sun.com/xml/ns/persistence/orm}versionType" fixed="2.0" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -258,21 +258,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the sequenceGenerator property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sequenceGenerator property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSequenceGenerator().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SequenceGenerator }
      */
@@ -285,21 +285,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the tableGenerator property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the tableGenerator property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTableGenerator().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TableGenerator }
      */
@@ -312,21 +312,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the namedQuery property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedQuery property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedQuery().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NamedQuery }
      */
@@ -339,21 +339,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the namedNativeQuery property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedNativeQuery property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedNativeQuery().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link NamedNativeQuery }
      */
@@ -366,21 +366,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the sqlResultSetMapping property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sqlResultSetMapping property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSqlResultSetMapping().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link SqlResultSetMapping }
      */
@@ -393,21 +393,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the mappedSuperclass property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mappedSuperclass property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMappedSuperclass().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MappedSuperclass }
      */
@@ -424,21 +424,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the entity property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the entity property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEntity().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Entity }
      */
@@ -455,21 +455,21 @@ public class EntityMappings {
 
     /**
      * Gets the value of the embeddable property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the embeddable property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEmbeddable().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Embeddable }
      */

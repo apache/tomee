@@ -1,0 +1,7 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT, Bean Validation and Strongly-Typed Annotations
+
+TODO

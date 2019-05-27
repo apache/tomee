@@ -63,27 +63,27 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * descriptor if the entity's persistence-type is Container and the cmp-version
  * is 1.x, and none must not be present if the entity's persistence-type is
  * Bean.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for Entity complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Entity">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="primaryKey" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="primaryKey" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="reentrant" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Entity"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="primaryKey" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="primaryKey" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="reentrant" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -99,22 +99,22 @@ public class Entity extends EnterpriseBean {
 
     /**
      * Gets the value of the primaryKeys property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the primaryKeys property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getPrimaryKeys().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */

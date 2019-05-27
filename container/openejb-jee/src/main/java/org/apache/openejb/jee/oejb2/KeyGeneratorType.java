@@ -25,29 +25,29 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Primary Key generation element.
- * <p/>
+ *
  * If this is present, a key generator GBean will be created
  * and configured to generate IDs for the surrounding object.
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for key-generatorType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="key-generatorType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;element name="uuid" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType"/>
- *         &lt;element name="sequence-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sequence-tableType"/>
- *         &lt;element name="auto-increment-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}auto-increment-tableType"/>
- *         &lt;element name="sql-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sql-generatorType"/>
- *         &lt;element name="custom-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}custom-generatorType"/>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="key-generatorType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;element name="uuid" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType"/&gt;
+ *         &lt;element name="sequence-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sequence-tableType"/&gt;
+ *         &lt;element name="auto-increment-table" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}auto-increment-tableType"/&gt;
+ *         &lt;element name="sql-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}sql-generatorType"/&gt;
+ *         &lt;element name="custom-generator" type="{http://tomee.apache.org/xml/ns/pkgen-2.1}custom-generatorType"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -25,24 +25,25 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="jar" type="{http://www.openejb.org/System/Configuration}JarFileLocation" />
- *       &lt;attribute name="jndi" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string"&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="jar" type="{http://www.openejb.org/System/Configuration}JarFileLocation" /&gt;
+ *       &lt;attribute name="jndi" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -139,7 +140,7 @@ public class Resource extends AbstractService {
 
         final Resource resource = (Resource) o;
 
-        if (jndi != null ? !jndi.equals(resource.jndi) : resource.jndi != null) {
+        if (!Objects.equals(jndi, resource.jndi)) {
             return false;
         }
 

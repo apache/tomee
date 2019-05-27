@@ -1,0 +1,46 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT with Bean Validation
+
+TomEE has a fun feature that allows the use of Bean Validation as an alternative or compliment to the `@RolesAllowed` annotation.  The motivation of the feature is that `JsonWebToken` is effectively a bean and a security check is ultimately an act of producing a boolean result using some minimal input.  It is a perfect problem for Bean Validation.
+
+The feature ultimately allows you to implement a method like this:
+
+[source,java]
+----
+@Override
+public boolean isValid(final JsonWebToken jsonWebToken, final ConstraintValidatorContext context) {
+    // your code here
+    return ...;
+}
+----
+
+And attach that logic to any annotation of your creation, say `@Issuer`.  You then use that annotation on your methods, and the above code will run each time the JAX-RS service is invoked.
+
+[source,java]
+----
+@GET
+@Issuer("https://movies.example.com")
+@RolesAllowed({"manager", "user"})
+public List<Movie> getAllMovies() {
+    return new ArrayList<>(store.values());
+}
+----
+
+If you want people to pass you information via the annotation, you override this method.
+
+[source,java]
+----
+    @Override
+    public void initialize(final Issuer issuer) {
+        this.issuer = issuer;
+    }
+----
+
+Here, Issuer is an annotation made up in the app code.
+
+You could validate `roles` claim, custom claims like `email` or any data in the token you want.  The `JsonWebToken` interface can give you the full encoded JWT or individual claims.  So sky is the limit.  If you can put it in a token, you can validate it.
+
+Bean Validation allows you to have many validating annotations.  One annotation can reuse another, so you can even have one validation annotation made from several smaller validation annotations, all of which you create.

@@ -20,13 +20,13 @@ import org.apache.openejb.test.object.OperationsPolicy;
 
 /**
  * [10] Should be run as the nineth test suite of the BasicStatefulTestClients
- * <p/>
+ *
  * <PRE>
  * =========================================================================
  * Operations allowed in the methods of a stateful SessionBean with
  * bean-managed transaction demarcation
  * =========================================================================
- * <p/>
+ *
  * Bean method           | Bean method can perform the following operations
  * ______________________|__________________________________________________
  * |

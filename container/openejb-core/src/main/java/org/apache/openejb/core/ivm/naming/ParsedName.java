@@ -82,13 +82,7 @@ public class ParsedName implements Serializable {
     }
 
     public int compareTo(final int otherHash) {
-        if (hashcode == otherHash) {
-            return 0;
-        } else if (hashcode > otherHash) {
-            return 1;
-        } else {
-            return -1;
-        }
+        return Integer.compare(hashcode, otherHash);
     }
 
     public int getComponentHashCode() {

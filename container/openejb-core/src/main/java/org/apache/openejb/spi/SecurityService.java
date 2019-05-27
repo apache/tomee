@@ -63,7 +63,7 @@ public interface SecurityService<T> extends Service {
     /**
      * Implementors are encouraged to return a java.security.Principal
      * object that implements org.apache.openejb.spi.CallerPrincipal
-     * <p/>
+     *
      * JAAS LoginModule implementors are encouraged to use the CallerPrincipal
      * interface to denote the best fitting Principal for getCallerPrincipal.
      */

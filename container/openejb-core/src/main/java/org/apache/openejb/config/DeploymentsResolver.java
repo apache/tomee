@@ -55,7 +55,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
 
     private static final String EXCLUDE_INCLUDE_ORDER = SystemInstance.get().getOptions().get("openejb.exclude-include.order", "include-exclude");
     private static final String[] ignoreDirs = SystemInstance.get().getProperty("openejb.ignore.directories", ".svn,_svn,cvs,.git,.hg").split(",");
-    private static final Logger logger = DeploymentLoader.logger;
+    private static final Logger logger = DeploymentLoader.LOGGER;
     private static File lib;
 
     static {
@@ -208,7 +208,7 @@ public class DeploymentsResolver implements DeploymentFilterable {
      * Then ignore this resource
      * 3- If the include and exclude class-path patterns are not defined
      * Then load this resource
-     * <p/>
+     *
      * The previous steps are based on the following points:
      * 1- Include class-path pattern has the highest priority
      * This helps in case both patterns are defined using the same values.

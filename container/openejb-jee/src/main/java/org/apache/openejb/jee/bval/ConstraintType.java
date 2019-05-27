@@ -32,19 +32,19 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="constraintType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="message" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="groups" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupsType" minOccurs="0"/>
- *         &lt;element name="payload" type="{http://jboss.org/xml/ns/javax/validation/mapping}payloadType" minOccurs="0"/>
- *         &lt;element name="element" type="{http://jboss.org/xml/ns/javax/validation/mapping}elementType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="annotation" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="constraintType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="message" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="groups" type="{http://jboss.org/xml/ns/javax/validation/mapping}groupsType" minOccurs="0"/&gt;
+ *         &lt;element name="payload" type="{http://jboss.org/xml/ns/javax/validation/mapping}payloadType" minOccurs="0"/&gt;
+ *         &lt;element name="element" type="{http://jboss.org/xml/ns/javax/validation/mapping}elementType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="annotation" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

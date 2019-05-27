@@ -125,11 +125,7 @@ public class EjbResolver {
     }
 
     private void addInterfaces(final Interfaces interfaces) {
-        List<Interfaces> similar = this.interfaces.get(interfaces);
-        if (similar == null) {
-            similar = new ArrayList<>();
-            this.interfaces.put(interfaces, similar);
-        }
+        List<Interfaces> similar = this.interfaces.computeIfAbsent(interfaces, k -> new ArrayList<>());
         similar.add(interfaces);
     }
 

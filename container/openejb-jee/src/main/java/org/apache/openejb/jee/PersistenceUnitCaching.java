@@ -22,21 +22,21 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * persistence_2_0.xsd
- * <p/>
+ *
  * <p>Java class for persistence-unit-caching-type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="persistence-unit-caching-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="ALL"/>
- *     &lt;enumeration value="NONE"/>
- *     &lt;enumeration value="ENABLE_SELECTIVE"/>
- *     &lt;enumeration value="DISABLE_SELECTIVE"/>
- *     &lt;enumeration value="UNSPECIFIED"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="persistence-unit-caching-type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="ALL"/&gt;
+ *     &lt;enumeration value="NONE"/&gt;
+ *     &lt;enumeration value="ENABLE_SELECTIVE"/&gt;
+ *     &lt;enumeration value="DISABLE_SELECTIVE"/&gt;
+ *     &lt;enumeration value="UNSPECIFIED"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlType(name = "persistence-unit-caching-type", namespace = "http://java.sun.com/xml/ns/persistence")

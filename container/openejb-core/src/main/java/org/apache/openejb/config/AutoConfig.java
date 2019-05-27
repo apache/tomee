@@ -2429,11 +2429,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 final MdbContainerInfo mdbContainerInfo = MdbContainerInfo.class.cast(containerInfo);
                 final String messageListenerInterface = mdbContainerInfo.properties.getProperty("MessageListenerInterface");
                 if (messageListenerInterface != null) {
-                    List<String> containerIds = containerIdsByType.get(messageListenerInterface);
-                    if (containerIds == null) {
-                        containerIds = new ArrayList<>();
-                        containerIdsByType.put(messageListenerInterface, containerIds);
-                    }
+                    List<String> containerIds = containerIdsByType.computeIfAbsent(messageListenerInterface, k -> new ArrayList<>());
                     containerIds.add(containerInfo.id);
                 }
             }
@@ -2466,11 +2462,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             resourceId = connectorModule.getModuleId() + "-" + type;
                         }
 
-                        List<String> resourceIds = resourceIdsByType.get(type);
-                        if (resourceIds == null) {
-                            resourceIds = new ArrayList<>();
-                            resourceIdsByType.put(type, resourceIds);
-                        }
+                        List<String> resourceIds = resourceIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                         resourceIds.add(resourceId);
                     }
                 }
@@ -2489,11 +2481,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                             containerId = connectorModule.getModuleId() + "-" + type;
                         }
 
-                        List<String> containerIds = containerIdsByType.get(type);
-                        if (containerIds == null) {
-                            containerIds = new ArrayList<>();
-                            containerIdsByType.put(type, containerIds);
-                        }
+                        List<String> containerIds = containerIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                         containerIds.add(containerId);
                     }
                 }
@@ -2510,11 +2498,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                         resourceEnvId = connectorModule.getModuleId() + "-" + type;
                     }
 
-                    List<String> resourceEnvIds = resourceEnvIdsByType.get(type);
-                    if (resourceEnvIds == null) {
-                        resourceEnvIds = new ArrayList<>();
-                        resourceEnvIdsByType.put(type, resourceEnvIds);
-                    }
+                    List<String> resourceEnvIds = resourceEnvIdsByType.computeIfAbsent(type, k -> new ArrayList<>());
                     resourceEnvIds.add(resourceEnvId);
                 }
             }
@@ -2524,11 +2508,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 if (type != null) {
                     final String[] types = type.trim().split(",");
                     for (final String t : types) {
-                        List<String> ids = resourceIdsByType.get(t);
-                        if (ids == null) {
-                            ids = new ArrayList<>();
-                            resourceIdsByType.put(t, ids);
-                        }
+                        List<String> ids = resourceIdsByType.computeIfAbsent(t, k -> new ArrayList<>());
                         ids.add(r.getId());
                         if (r.getJndi() != null) {
                             ids.add(r.getJndi());

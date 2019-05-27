@@ -32,10 +32,10 @@ import java.util.List;
  * The service-endpoint-interface-mapping defines a tuple
  * to specify Service Endpoint Interfaces to
  * WSDL port types and WSDL bindings.
- * <p/>
+ *
  * An interface may be mapped to a port-type and binding multiple
  * times. This happens rarely.
- * <p/>
+ *
  * Used in: java-wsdl-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -31,33 +31,33 @@ import org.apache.openejb.jee.was.v6.ecore.EClassifier;
  * the component type will be specified directly. This would require
  * instantiating a chain of component types such as
  * String[][][][]->String[][][]->String[][]->String[]->String.
- * <p/>
+ *
  * The component type relationship will be computed if the finalComponentType
  * and array dimensions is specified.
- * <p/>
+ *
  * For this reason, the preferred way to create is through the JavaRefFactory
  * factory method: createArrayType(JavaClass finalComponentType, int dimensions)
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ArrayType complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ArrayType">
- *   &lt;complexContent>
- *     &lt;extension base="{java.xmi}JavaClass">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="componentType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/>
- *       &lt;/choice>
- *       &lt;attribute name="arrayDimensions" type="{http://www.w3.org/2001/XMLSchema}int" />
- *       &lt;attribute name="componentType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ArrayType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{java.xmi}JavaClass"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="componentType" type="{http://www.eclipse.org/emf/2002/Ecore}EClassifier"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="arrayDimensions" type="{http://www.w3.org/2001/XMLSchema}int" /&gt;
+ *       &lt;attribute name="componentType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,22 +73,22 @@ public class ArrayType extends JavaClass {
 
     /**
      * Gets the value of the componentTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the componentTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getComponentTypes().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EClassifier }
      */

@@ -20,14 +20,20 @@ import org.apache.openejb.assembler.classic.AppInfo;
 import org.apache.openejb.assembler.classic.WebAppInfo;
 import org.apache.openejb.observer.Event;
 
+import javax.servlet.ServletContext;
+
 @Event
 public class AfterApplicationCreated {
     private final AppInfo app;
     private final WebAppInfo web;
+    private final ServletContext context;
 
-    public AfterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+    public AfterApplicationCreated(final AppInfo appInfo,
+                                   final WebAppInfo webApp,
+                                   final ServletContext servletContext) {
         app = appInfo;
         web = webApp;
+        context = servletContext;
     }
 
     public AppInfo getApp() {
@@ -38,6 +44,9 @@ public class AfterApplicationCreated {
         return web;
     }
 
+    public ServletContext getContext() {
+        return context;
+    }
 
     @Override
     public String toString() {

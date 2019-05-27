@@ -6,7 +6,7 @@
 
 == Administration
 - link:admin/configuration/index.html[Server Configuration]
-- link:admin/directory-structure.html[Directory Structure]
+- link:admin/file-layout.html[Directory Structure]
 - link:admin/cluster/index.html[Clustering and High Availability (HA)]
 
 == Developers

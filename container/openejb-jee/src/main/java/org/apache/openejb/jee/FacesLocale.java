@@ -24,17 +24,17 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * web-facesconfig_2_0.xsd
- * <p/>
+ *
  * <p>Java class for faces-config-localeType simple type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="faces-config-localeType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;pattern value="[a-z]{2}(_|-)?([\p{L}\-\p{Nd}]{2})?"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="faces-config-localeType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;pattern value="[a-z]{2}(_|-)?([\p{L}\-\p{Nd}]{2})?"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -103,18 +103,10 @@ public class ClassLoaderUtil {
     }
 
     private static URLClassLoader cacheClassLoader(final String appId, final URLClassLoader classLoader) {
-        List<ClassLoader> classLoaders = classLoadersByApp.get(appId);
-        if (classLoaders == null) {
-            classLoaders = new ArrayList<>(2);
-            classLoadersByApp.put(appId, classLoaders);
-        }
+        List<ClassLoader> classLoaders = classLoadersByApp.computeIfAbsent(appId, k -> new ArrayList<>(2));
         classLoaders.add(classLoader);
 
-        Set<String> apps = appsByClassLoader.get(classLoader);
-        if (apps == null) {
-            apps = new LinkedHashSet<>(1);
-            appsByClassLoader.put(classLoader, apps);
-        }
+        Set<String> apps = appsByClassLoader.computeIfAbsent(classLoader, k -> new LinkedHashSet<>(1));
         apps.add(appId);
 
         return classLoader;
@@ -363,10 +355,10 @@ public class ClassLoaderUtil {
      * Due to several different implementation changes in various JDK releases the code here is not as
      * straight forward as reflecting debug items in your current runtime. There have even been breaking changes
      * between 1.6 runtime builds, let alone 1.5.
-     * <p/>
+     *
      * If you discover a new issue here please be careful to ensure the existing functionality is 'extended' and not
      * just replaced to match your runtime observations.
-     * <p/>
+     *
      * If you want to look at the mess that leads up to this then follow the source code changes made to
      * the class sun.net.www.protocol.jar.JarFileFactory over several years.
      *

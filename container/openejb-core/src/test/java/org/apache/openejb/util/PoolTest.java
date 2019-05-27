@@ -708,7 +708,7 @@ public class PoolTest extends TestCase {
 
     /**
      * What happens if we fail to create a "min" instance after a flush?
-     * <p/>
+     *
      * The pool should naturally balance itself out by promoting regular instances
      * to "min" instance as things are popped and pushed to and from the pool.
      *
@@ -863,7 +863,7 @@ public class PoolTest extends TestCase {
 
     /**
      * What happens if we fail to create a "min" instance after a maxAge expiration?
-     * <p/>
+     *
      * The pool should naturally balance itself out by promoting regular instances
      * to "min" instance as things are popped and pushed to and from the pool.
      *
@@ -1020,7 +1020,7 @@ public class PoolTest extends TestCase {
     /**
      * When an item is in use, it should still be flushed
      * upon return to the pool if the pool was flushed
-     * <p/>
+     *
      * Active items should still be flushed the moment they
      * become inactive (returned to the pool).
      *
@@ -1163,7 +1163,7 @@ public class PoolTest extends TestCase {
     /**
      * When an item is in use, it should still be expired
      * upon return to the pool if the item has lived too long
-     * <p/>
+     *
      * Active items that have lived too long should still be
      * expired the moment they become inactive (returned to the pool).
      *

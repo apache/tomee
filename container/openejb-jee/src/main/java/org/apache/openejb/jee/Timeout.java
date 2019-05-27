@@ -30,44 +30,44 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * class that combines the access-timeoutType and session-timeoutType xml types which have the same structure.
- * <p/>
+ *
  * <p>Java class for access-timeoutType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="access-timeoutType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/>
- *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="access-timeoutType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/&gt;
+ *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
- * <p/>
- * <p/>
+ *
+ *
  * <p>Java class for stateful-timeoutType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="stateful-timeoutType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/>
- *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="stateful-timeoutType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="timeout" type="{http://java.sun.com/xml/ns/javaee}xsdIntegerType"/&gt;
+ *         &lt;element name="unit" type="{http://java.sun.com/xml/ns/javaee}time-unit-typeType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

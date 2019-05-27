@@ -30,10 +30,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 
@@ -217,7 +217,7 @@ public class MethodInfoUtil {
      * exactly one MethodInfo per MethodPermissionInfo.  A single MethodPermissionInfo
      * with three MethodInfos would be expanded into three MethodPermissionInfo with
      * one MethodInfo each.
-     * <p/>
+     *
      * The MethodPermissionInfo list is then sorted from least to most specific.
      *
      * @param infos
@@ -238,31 +238,32 @@ public class MethodInfoUtil {
             }
         }
 
-        Collections.sort(normalized, new MethodPermissionComparator());
+        normalized.sort(new MethodPermissionComparator());
 
         return normalized;
     }
 
     private static Class getClassForParam(final String className, final ClassLoader cl) throws ClassNotFoundException {
 
-        if (className.equals("int")) {
-            return Integer.TYPE;
-        } else if (className.equals("double")) {
-            return Double.TYPE;
-        } else if (className.equals("long")) {
-            return Long.TYPE;
-        } else if (className.equals("boolean")) {
-            return Boolean.TYPE;
-        } else if (className.equals("float")) {
-            return Float.TYPE;
-        } else if (className.equals("char")) {
-            return Character.TYPE;
-        } else if (className.equals("short")) {
-            return Short.TYPE;
-        } else if (className.equals("byte")) {
-            return Byte.TYPE;
-        } else {
-            return Class.forName(className, false, cl);
+        switch (className) {
+            case "int":
+                return Integer.TYPE;
+            case "double":
+                return Double.TYPE;
+            case "long":
+                return Long.TYPE;
+            case "boolean":
+                return Boolean.TYPE;
+            case "float":
+                return Float.TYPE;
+            case "char":
+                return Character.TYPE;
+            case "short":
+                return Short.TYPE;
+            case "byte":
+                return Byte.TYPE;
+            default:
+                return Class.forName(className, false, cl);
         }
 
     }
@@ -403,7 +404,7 @@ public class MethodInfoUtil {
             if (!method.equals(that.method)) {
                 return false;
             }
-            if (view != null ? !view.equals(that.view) : that.view != null) {
+            if (!Objects.equals(view, that.view)) {
                 return false;
             }
 
@@ -468,13 +469,7 @@ public class MethodInfoUtil {
         }
 
         // Remove methods that cannot be controlled by the user
-        final Iterator<Method> iterator = methods.iterator();
-        while (iterator.hasNext()) {
-            final Method method = iterator.next();
-            if (containerMethod(method)) {
-                iterator.remove();
-            }
-        }
+        methods.removeIf(MethodInfoUtil::containerMethod);
 
         return methods;
     }

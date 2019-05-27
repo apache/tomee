@@ -25,7 +25,7 @@ public class ShrinkwrapBridge {
     private static final Class<?>[] STRING_PARAM = new Class[]{String.class};
     private static final Object[] NO_ARG = new Object[0];
 
-    public File resolve(final String rawLocation) throws Exception {
+    public static File resolve(final String rawLocation) throws Exception {
         final Class<?> mvn = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.shrinkwrap.resolver.api.maven.Maven");
         /*
         return Maven.configureResolver().workOffline()
@@ -45,7 +45,7 @@ public class ShrinkwrapBridge {
             "asSingleFile", NO_PARAM, NO_ARG));
     }
 
-    private String toSwFormat(final String rawLocation) {
+    private static String toSwFormat(final String rawLocation) {
         final String[] segments = rawLocation.split(":");
         if (!"mvn".equals(segments[0])) {
             throw new IllegalArgumentException("Only mvn prefix is supported: " + rawLocation);

@@ -30,24 +30,24 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for applicationType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="applicationType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment"/>
- *         &lt;element name="module" type="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}moduleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="ext-module" type="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}ext-moduleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}security" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="application-name" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="applicationType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment"/&gt;
+ *         &lt;element name="module" type="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}moduleType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="ext-module" type="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}ext-moduleType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}security" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="application-name" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,21 +95,21 @@ public class ApplicationType {
 
     /**
      * Gets the value of the module property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the module property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getModule().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ModuleType }
      */
@@ -122,21 +122,21 @@ public class ApplicationType {
 
     /**
      * Gets the value of the extModule property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the extModule property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExtModule().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ExtModuleType }
      */
@@ -169,21 +169,21 @@ public class ApplicationType {
 
     /**
      * Gets the value of the service property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the service property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getService().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link GbeanType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}

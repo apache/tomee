@@ -23,22 +23,22 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for lock-mode-type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="lock-mode-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="READ"/>
- *     &lt;enumeration value="WRITE"/>
- *     &lt;enumeration value="OPTIMISTIC"/>
- *     &lt;enumeration value="OPTIMISTIC_FORCE_INCREMENT"/>
- *     &lt;enumeration value="PESSIMISTIC_READ"/>
- *     &lt;enumeration value="PESSIMISTIC_WRITE"/>
- *     &lt;enumeration value="PESSIMISTIC_FORCE_INCREMENT"/>
- *     &lt;enumeration value="NONE"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="lock-mode-type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="READ"/&gt;
+ *     &lt;enumeration value="WRITE"/&gt;
+ *     &lt;enumeration value="OPTIMISTIC"/&gt;
+ *     &lt;enumeration value="OPTIMISTIC_FORCE_INCREMENT"/&gt;
+ *     &lt;enumeration value="PESSIMISTIC_READ"/&gt;
+ *     &lt;enumeration value="PESSIMISTIC_WRITE"/&gt;
+ *     &lt;enumeration value="PESSIMISTIC_FORCE_INCREMENT"/&gt;
+ *     &lt;enumeration value="NONE"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlType(name = "lock-mode-type")

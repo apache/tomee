@@ -32,25 +32,25 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="default-validated-executable-typesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="executable-type" maxOccurs="unbounded">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;enumeration value="NONE"/>
- *               &lt;enumeration value="CONSTRUCTORS"/>
- *               &lt;enumeration value="NON_GETTER_METHODS"/>
- *               &lt;enumeration value="GETTER_METHODS"/>
- *               &lt;enumeration value="ALL"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="default-validated-executable-typesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="executable-type" maxOccurs="unbounded"&gt;
+ *           &lt;simpleType&gt;
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *               &lt;enumeration value="NONE"/&gt;
+ *               &lt;enumeration value="CONSTRUCTORS"/&gt;
+ *               &lt;enumeration value="NON_GETTER_METHODS"/&gt;
+ *               &lt;enumeration value="GETTER_METHODS"/&gt;
+ *               &lt;enumeration value="ALL"/&gt;
+ *             &lt;/restriction&gt;
+ *           &lt;/simpleType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

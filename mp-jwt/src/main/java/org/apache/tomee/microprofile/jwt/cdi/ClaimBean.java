@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.openejb.cdi.ManagedSecurityService;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
@@ -23,7 +25,6 @@ import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
@@ -42,6 +43,7 @@ import javax.json.JsonValue;
 import javax.json.bind.Jsonb;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.security.Principal;
 import java.util.Collection;
@@ -51,13 +53,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Vetoed
 public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
-    private static final Logger logger = Logger.getLogger(MPJWTCDIExtension.class.getName());
+    private static final Logger logger = Logger.getLogger(ClaimBean.class.getName());
 
     private static final Set<Annotation> QUALIFIERS = new HashSet<>();
 
@@ -73,6 +75,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
     private final Set<Type> types;
     private final String id;
     private final Class<? extends Annotation> scope;
+    private final PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry();
 
     public ClaimBean(final BeanManager bm, final Type type) {
         this.bm = bm;
@@ -81,6 +84,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         rawType = getRawType(type);
         this.id = "ClaimBean_" + types;
         scope = Dependent.class;
+        propertyEditorRegistry.registerDefaults();
     }
 
     private Class getRawType(final Type type) {
@@ -196,39 +200,27 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
 
                     final ClaimValueWrapper claimValueWrapper = new ClaimValueWrapper(key);
                     if (ParameterizedType.class.isInstance(claimValueType) && isOptional(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return Optional.ofNullable(claimValue);
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return Optional.ofNullable(claimValue);
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isSet(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else if (ParameterizedType.class.isInstance(claimValueType) && isList(ParameterizedType.class.cast(claimValueType))) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else if (Class.class.isInstance(claimValueType)) {
-                        claimValueWrapper.setValue(new Supplier() {
-                            @Override
-                            public Object get() {
-                                final T claimValue = ClaimBean.this.getClaimValue(key);
-                                return claimValue;
-                            }
+                        claimValueWrapper.setValue(() -> {
+                            final T claimValue = ClaimBean.this.getClaimValue(key);
+                            return claimValue;
                         });
 
                     } else {
@@ -259,12 +251,17 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             return (T) toJson(key);
 
         } else if (PropertyEditors.canConvert((Class<?>) ip.getType())) {
+            final Class<?> type = (Class<?>) ip.getType();
             try {
-                final Class<?> type = (Class<?>) ip.getType();
-                final String claimValue = getClaimValue(key).toString();
-                return (T) PropertyEditors.getValue(type, claimValue);
-            } catch (Exception e) {
+                final Object claimObject = getClaimValue(key);
+                if (claimObject == null) {
+                    return null;
+                }
+                return (T) propertyEditorRegistry.getValue(type, String.valueOf(claimObject));
+            } catch (final Exception e) {
+                logger.log(Level.WARNING, String.format("Cannot convert claim %s into type %s", key, type), e);
             }
+
         } else {
             // handle Raw types
             return getClaimValue(key);
@@ -277,18 +274,31 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
         return claim.standard() == Claims.UNKNOWN ? claim.value() : claim.standard().name();
     }
 
+    // some JAX RS classes may have public classes. Make sure to not log warnings when no principal exists
+    // it may be because we have a public method and we did not receive a JWT
     private T getClaimValue(final String name) {
         final Bean<?> bean = bm.resolve(bm.getBeans(Principal.class));
         final Principal principal = Principal.class.cast(bm.getReference(bean, Principal.class, null));
 
         if (principal == null) {
-            logger.warning(String.format("Can't retrieve claim %s. No active principal.", name));
+            logger.fine(String.format("Can't retrieve claim %s. No active principal.", name));
             return null;
         }
 
+        // TomEE sometimes wraps the principal with a proxy so we may have a non null principal even if we aren't authenticated
+        // we could merge this test with previous sanity check, but it would make it less readable
+        final boolean isProxy = Proxy.isProxyClass(principal.getClass())
+                && ManagedSecurityService.PrincipalInvocationHandler.class.isInstance(Proxy.getInvocationHandler(principal));
+        if (isProxy) {
+            if (!ManagedSecurityService.PrincipalInvocationHandler.class.cast(Proxy.getInvocationHandler(principal)).isLogged()) {
+                logger.fine(String.format("Can't retrieve claim %s. No active principal.", name));
+                return null;
+            }
+        }
+
         JsonWebToken jsonWebToken = null;
-        if (! JsonWebToken.class.isInstance(principal)) {
-            logger.warning(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
+        if (!JsonWebToken.class.isInstance(principal)) {
+            logger.fine(String.format("Can't retrieve claim %s. Active principal is not a JWT.", name));
             return null;
         }
 

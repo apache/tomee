@@ -42,8 +42,15 @@ public class TomEEConfigSource implements ConfigSource {
                                          .split(","));
 
             if (mpIgnoredApps.stream().anyMatch(s -> s.equalsIgnoreCase(appContextOrWeb.getId()))) {
-                configuration.put("geronimo.opentracing.filter.active", "false");
+                openTracingFilterActive(false);
+                metricsJaxRsActive(false);
             }
+        }
+
+        final String mpScan = SystemInstance.get().getOptions().get("tomee.mp.scan", "none");
+        if (mpScan.equals("none")) {
+            openTracingFilterActive(false);
+            metricsJaxRsActive(false);
         }
     }
 
@@ -60,5 +67,13 @@ public class TomEEConfigSource implements ConfigSource {
     @Override
     public String getName() {
         return TomEEConfigSource.class.getSimpleName();
+    }
+
+    public void openTracingFilterActive(final boolean active) {
+        configuration.put("geronimo.opentracing.filter.active", Boolean.toString(active));
+    }
+
+    public void metricsJaxRsActive(final boolean active) {
+        configuration.put("geronimo.metrics.jaxrs.activated", Boolean.toString(active));
     }
 }

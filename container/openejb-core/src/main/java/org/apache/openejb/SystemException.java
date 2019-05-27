@@ -23,10 +23,10 @@ package org.apache.openejb;
  * A breakdown in communication with one of the primary services or a
  * RuntimeException thrown within the container (not by a bean) is are good
  * examples.
- * <p/>
+ *
  * The org.apache.openejb.SystemException represents a serious problem with the
  * Container or request.
- * <p/>
+ *
  * NOTE: This exception bears no resemblence to the unchecked exceptions and
  * errors that an enterprise bean instance may throw during the
  * execution of a session or entity bean business method, a message-driven bean

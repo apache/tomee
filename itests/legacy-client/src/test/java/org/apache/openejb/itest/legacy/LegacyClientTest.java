@@ -185,6 +185,10 @@ public class LegacyClientTest {
 
         final InitialContext context = new InitialContext(environment);
         final Calculator bean = (Calculator) context.lookup("CalculatorBeanRemote");
+        // Lets restart one server. This will change the cluster configuration so when we call
+        // 'bean' business methods new ClusterMetaDataUpdated event will be triggered
+        servers.get("red").kill();
+        servers.get("red").start(1, TimeUnit.MINUTES);
 
         for (final Map.Entry<String, StandaloneServer> entry : servers.entrySet()) {
             final String name = entry.getKey();

@@ -79,7 +79,7 @@ public abstract class AbstractSynchronizable {
      */
     public List<String> getExtensions() {
         if (extensions == null) {
-            extensions = new ArrayList<String>();
+            extensions = new ArrayList<>();
         }
         return extensions;
     }
@@ -118,7 +118,7 @@ public abstract class AbstractSynchronizable {
      */
     public List<String> getUpdateOnlyExtenions() {
         if (updateOnlyExtensions == null) {
-            updateOnlyExtensions = new ArrayList<String>();
+            updateOnlyExtensions = new ArrayList<>();
         }
         return updateOnlyExtensions;
     }
