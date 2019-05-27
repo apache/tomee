@@ -102,9 +102,8 @@ public class WeatherServiceTest {
         assertNotNull(metric);
 
         JsonObject metricJson = Json.createReader(new StringReader(metric)).readObject();
-        JsonObject weatherDayTemperature = metricJson.getJsonObject("weather_day_temperature");
-        assertNotNull(weatherDayTemperature);
-        assertEquals(weatherDayTemperature.getInt("value"), 30);
+        final int temperature = metricJson.getInt("weather_day_temperature");
+        assertEquals(temperature, 30);
     }
 
     @Test
