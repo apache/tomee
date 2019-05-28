@@ -53,6 +53,13 @@ public class ValidationConstraints {
 
         if (constraintsClazz == null) return null;
 
+        final Set<Method> original = ValidationGenerator.getConstrainedMethods(componentClass);
+        final Set<Method> generated = ValidationGenerator.getConstrainedMethods(constraintsClazz);
+
+        if (original.size() != generated.size()) {
+            throw new GeneratedConstraintsMissingException(original, generated);
+        }
+
         final Object instance;
         try {
             instance = constraintsClazz.newInstance();

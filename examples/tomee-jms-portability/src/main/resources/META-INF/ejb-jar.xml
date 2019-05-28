@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!-- Note that version 3.1 is required if you dont want to get your annotations 
+  to be ignored -->
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+          http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+  version="3.1">
+
+  <enterprise-beans>
+
+    <message-driven>
+
+      <ejb-name>AMQReadBean</ejb-name>
+      <ejb-class>com.company.tutorial.service.AMQReadBean</ejb-class>
+
+      <messaging-type>javax.jms.MessageListener</messaging-type>
+
+      <activation-config>
+        <activation-config-property>
+          <activation-config-property-name>destination</activation-config-property-name>
+          <activation-config-property-value>AMQReadBean</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>destinationType</activation-config-property-name>
+          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+        </activation-config-property>
+      </activation-config>
+
+    </message-driven>
+
+
+    <message-driven>
+
+      <ejb-name>AMQReadBean2</ejb-name>
+      <ejb-class>com.company.tutorial.service.AMQReadBean</ejb-class>
+
+      <messaging-type>javax.jms.MessageListener</messaging-type>
+
+      <activation-config>
+        <activation-config-property>
+          <activation-config-property-name>destination</activation-config-property-name>
+          <activation-config-property-value>AMQReadBean2</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>destinationType</activation-config-property-name>
+          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+        </activation-config-property>
+      </activation-config>
+
+    </message-driven>
+
+    <!-- WMQReadBean -->
+    <message-driven>
+      <ejb-name>WMQReadBean</ejb-name>
+      <ejb-class>com.company.tutorial.service.WMQReadBean</ejb-class>
+      <messaging-type>javax.jms.MessageListener</messaging-type>
+      <transaction-type>Container</transaction-type>
+      <activation-config>
+        <activation-config-property>
+          <activation-config-property-name>destinationType</activation-config-property-name>
+          <activation-config-property-value>javax.jms.Queue</activation-config-property-value>
+        </activation-config-property>
+        <!-- Important to note that this is activation config for IBM MQ and thus supports a JNDI destination value
+        JNDI based names are currently not supported for AMQ (default tomee activation config) -->
+        <activation-config-property>
+          <activation-config-property-name>destination</activation-config-property-name>
+          <activation-config-property-value>openejb:Resource/simple-tomee-1.0/imq.bar</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>useJNDI</activation-config-property-name>
+          <activation-config-property-value>true</activation-config-property-value>
+        </activation-config-property>
+        <!-- This is an important property, which can be commented here and but 
+          needs to be provided via -D properties -->
+        <activation-config-property>
+          <activation-config-property-name>HostName</activation-config-property-name>
+          <activation-config-property-value>1.1.1.1</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>Port</activation-config-property-name>
+          <activation-config-property-value>1414</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>QueueManager</activation-config-property-name>
+          <activation-config-property-value>XXXXXXX</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>Channel</activation-config-property-name>
+          <activation-config-property-value>CLIENT.T.EICOM9</activation-config-property-value>
+        </activation-config-property>
+        <activation-config-property>
+          <activation-config-property-name>TransportType</activation-config-property-name>
+          <activation-config-property-value>CLIENT</activation-config-property-value>
+        </activation-config-property>
+      </activation-config>
+    </message-driven>
+    <!-- Note that ChatBean is not declared here as it uses annotations -->
+  </enterprise-beans>
+
+</ejb-jar>

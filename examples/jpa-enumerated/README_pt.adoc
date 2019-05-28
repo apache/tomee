@@ -1,0 +1,260 @@
+= JPA and Enums via @Enumerated
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+Às vezes pode ser desejável ter um tipo `enum` do Java para representar uma coluna específica em um banco de dados. A JPA oferece suporte à conversão dos dados de um banco de dados para ou a partir de um tipo `enum` do Java por meio da anotação  `@javax.persistence.Enumerated`.
+
+Esse exemplo mostrará o uso básico do `@Enumerated` em um campo de uma `@Entity`, bem como ``enum`` como parâmetro de uma `Query`.  
+Também veremos que a representação de um banco de dados real pode ser `String` ou `int`.
+
+== Enum
+
+Para o nosso exemplo, vamos aproveitar a familiar entidade `Movie` e adicionar um novo campo para representar a classificação MPAA.org do filme.  Isso é definido por meio de um `enum` simples que não requer anotações específicas da JPA.
+
+ public enum Rating {
+     UNRATED,
+     G,
+     PG,
+     PG13,
+     R,
+     NC17
+ }
+
+== @Enumerated
+
+Em nossa entidade `Movie`, nós adicionamos um campo `rating` do enum do tipo `Rating` e anotamos com `@Enumerated(EnumType.STRING)` para declarar que seu valor deve ser convertido do que é efetivamente uma `String` no banco de dados para o tipo `Rating`.
+
+....
+@Entity
+public class Movie {
+
+    @Id
+    @GeneratedValue
+    private int id;
+    private String director;
+    private String title;
+    private int year;
+
+    @Enumerated(EnumType.STRING)
+    private Rating rating;
+
+    public Movie() {
+    }
+
+    public Movie(String director, String title, int year, Rating rating) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+        this.rating = rating;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
+}
+....
+
+O código acima é suficiente e estará efetivamente feito. Por uma questão de completude, mostraremos um exemplo de uma `Query`
+
+== Enum em uma Query JPQL
+
+Observe o método `findByRating` que cria uma `Query` com um parâmetro denominado `rating`. A principal coisa a notar é que a instância do enum `rating` propriamente dita é passada para o método
+ `query.setParameter`, *não* `rating.name()` ou `rating.ordinal()`.
+
+Independentemente se você usar `EnumType.STRING` ou `EnumType.ORDINAL`, você ainda sempre tem que passar o enum propriamente dito em chamadas para `query.setParameter`.
+
+....
+@Stateful
+public class Movies {
+
+    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
+    private EntityManager entityManager;
+
+    public void addMovie(Movie movie) {
+        entityManager.persist(movie);
+    }
+
+    public void deleteMovie(Movie movie) {
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> findByRating(Rating rating) {
+        final Query query = entityManager.createQuery("SELECT m FROM Movie as m WHERE m.rating = :rating");
+        query.setParameter("rating", rating);
+        return query.getResultList();
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        return query.getResultList();
+    }
+
+}
+....
+
+== EnumType.STRING vs EnumType.ORDINAL
+
+É uma questão de estilo como você gostaria que seus dados `enum` representados no banco de dados.  Qualquer um deles `name()` ou `ordinal()` são suportados:
+
+* `@Enumerated(EnumType.STRING) Rating rating` o valor de `rating.name()` é gravado e lido a partir da coluna correspondente no banco de dados; por exemplo `G`, `PG`, `PG13`
+* `@Enumerated(EnumType.ORDINAL) Rating rating` o valor de `rating.ordinal()` é gravado e lido a partir da coluna correspondente no banco de dados; por exemplo `0`, `1`, `2`
+
+O padrão é `EnumType.ORDINAL`
+
+Essas são as vantagens e desvantagens de cada.
+
+=== Desvantagem do EnumType.ORDINAL
+
+A desvantagem do `EnumType.ORDINAL` é o efeito do tempo e o desejo de manter `enums` em uma ordem lógica.  Com `EnumType.ORDINAL` quaisquer novos elementos enum devem ser adicionados ao
+*final* da lista ou você irá alterar acidentalmente o significado de todos os seus registros.
+
+Vamos usar o nosso enum `Rating` e ver como ele teria que evoluir ao longo do tempo para acompanhar as mudanças no sistema de classificações MPAA.org.
+
+*1980*
+
+ public enum Rating {
+     G,
+     PG,
+     R,
+     UNRATED
+ }
+
+*1984* PG-13 é adicionado
+
+ public enum Rating {
+     G,
+     PG,
+     R,
+     UNRATED,
+     PG13
+ }
+
+*1990* NC-17 é adicionado
+
+ public enum Rating {
+     G,
+     PG,
+     R,
+     UNRATED,
+     PG13,
+     NC17
+ }
+
+Se `EnumType.STRING` foi usado, em seguida, o enum poderia ser reordenado a qualquer momento e, em vez disso, olhar como nós o definimos originalmente com classificações começando em `G` e aumentando em severidade para `NC17` e, eventualmente, `UNRATED`.  Com `EnumType.ORDINAL` a ordenação lógica não teria resistido o teste de tempo como novos valores foram adicionados.
+
+Se a ordem dos valores enum for significativa para seu código, evite `EnumType.ORDINAL`
+
+== Testando Unitariamente a JPA @Enumerated
+
+....
+public class MoviesTest extends TestCase {
+
+    public void test() throws Exception {
+
+        final Properties p = new Properties();
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+        EJBContainer container = EJBContainer.createEJBContainer(p);
+        final Context context = container.getContext();
+
+        final Movies movies = (Movies) context.lookup("java:global/jpa-scratch/Movies");
+
+        movies.addMovie(new Movie("James Frawley", "The Muppet Movie", 1979, Rating.G));
+        movies.addMovie(new Movie("Jim Henson", "The Great Muppet Caper", 1981, Rating.G));
+        movies.addMovie(new Movie("Frank Oz", "The Muppets Take Manhattan", 1984, Rating.G));
+        movies.addMovie(new Movie("James Bobin", "The Muppets", 2011, Rating.PG));
+
+        assertEquals("List.size()", 4, movies.getMovies().size());
+
+        assertEquals("List.size()", 3, movies.findByRating(Rating.G).size());
+
+        assertEquals("List.size()", 1, movies.findByRating(Rating.PG).size());
+
+        assertEquals("List.size()", 0, movies.findByRating(Rating.R).size());
+
+        container.close();
+    }
+}
+....
+
+= Executando
+
+Para executar o exemplo via maven:
+
+ cd jpa-enumerated
+ mvn clean install
+
+Que irá gerar saída semelhante ao seguinte:
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.jpa.enums.MoviesTest
+Apache OpenEJB 4.0.0-beta-2    build: 20120115-08:26
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/openejb/examples/jpa-enumerated
+INFO - openejb.base = /Users/dblevins/openejb/examples/jpa-enumerated
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/openejb/examples/jpa-enumerated/target/classes
+INFO - Beginning load: /Users/dblevins/openejb/examples/jpa-enumerated/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/openejb/examples/jpa-enumerated
+INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.jpa.enums.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring PersistenceUnit(name=movie-unit)
+INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+INFO - Enterprise application "/Users/dblevins/openejb/examples/jpa-enumerated" loaded.
+INFO - Assembling app: /Users/dblevins/openejb/examples/jpa-enumerated
+INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 406ms
+INFO - Jndi(name="java:global/jpa-enumerated/Movies!org.superbiz.jpa.enums.Movies")
+INFO - Jndi(name="java:global/jpa-enumerated/Movies")
+INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Deployed Application(path=/Users/dblevins/openejb/examples/jpa-enumerated)
+INFO - Undeploying app: /Users/dblevins/openejb/examples/jpa-enumerated
+INFO - Closing DataSource: movieDatabase
+INFO - Closing DataSource: movieDatabaseNonJta
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.831 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

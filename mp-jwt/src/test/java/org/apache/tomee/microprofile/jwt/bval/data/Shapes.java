@@ -19,11 +19,13 @@ package org.apache.tomee.microprofile.jwt.bval.data;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 
+import javax.ws.rs.PathParam;
+
 public class Shapes {
 
     @Issuer("http://foo.bar.com")
     @Audience("joe")
-    public void square() {
+    public void square(@PathParam("id") int id) {
     }
 
     @Audience("jane")

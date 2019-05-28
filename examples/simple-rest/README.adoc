@@ -1,22 +1,16 @@
 :index-group: REST
 :jbake-type: page
 :jbake-status: status=published
+
 = Simple REST
 
-Defining a REST service is pretty easy, simply ad @Path annotation to a
-class then define on methods the HTTP method to use (@GET, @POST, …).
+Defining a REST service is pretty easy, simply ad ``@Path`` annotation to a class then define on methods the HTTP method to use (``@GET``, ``@POST``, …).
 
-#The Code
+= The Code
 
-== The REST service: @Path, @GET, @POST
+== The REST service: ``@Path``, ``@GET``, ``@POST``
 
-Here we see a bean that uses the Bean-Managed Concurrency option as well
-as the @Startup annotation which causes the bean to be instantiated by
-the container when the application starts. Singleton beans with
-@ConcurrencyManagement(BEAN) are responsible for their own
-thread-safety. The bean shown is a simple properties ``registry'' and
-provides a place where options could be set and retrieved by all beans
-in the application.
+Here we have a simple REST, we annotate the class with ``@Path("/greeting")`` to indicate the route corresponding to class ``GreetingService``. So we define ``message()`` as ``@GET`` and ``lowerCase()`` as ``@POST`` for this ``/greeting`` route. There we have a service, pretty simple huh?
 
 ....
 package org.superbiz.rest;
@@ -45,17 +39,11 @@ public class GreetingService {
 
 The test uses the OpenEJB ApplicationComposer to make it trivial.
 
-The idea is first to activate the jaxrs services. This is done using
-@EnableServices annotation.
+The idea is first to activate the ``jaxrs`` services. This is done using ``@EnableServices`` annotation.
 
-Then we create on the fly the application simply returning an object
-representing the web.xml. Here we simply use it to define the context
-root but you can use it to define your REST Application too. And to
-complete the application definition we add @Classes annotation to define
-the set of classes to use in this app.
+Then we create on the fly the application simply returning an object representing the ``web.xml``. Here we simply use it to define the context root but you can use it to define your REST Application too. And to complete the application definition we add ``@Classes`` annotation to define the set of classes to use in this app.
 
-Finally to test it we use cxf client API to call the REST service in
-get() and post() methods.
+Finally to test it we use cxf client API to call the REST service in ``get()`` and ``post()`` methods.
 
 ....
 package org.superbiz.rest;
@@ -94,10 +82,9 @@ public class GreetingServiceTest {
 }
 ....
 
-#Running
+= Running
 
-Running the example is fairly simple. In the ``simple-rest'' directory
-run:
+Running the example is fairly simple. In the ``simple-rest`` directory run:
 
 ....
 $ mvn clean install

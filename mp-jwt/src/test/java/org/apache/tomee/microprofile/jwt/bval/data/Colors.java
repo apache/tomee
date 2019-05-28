@@ -16,9 +16,12 @@
  */
 package org.apache.tomee.microprofile.jwt.bval.data;
 
+import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 
 public class Colors {
+
+    @Audience("bar")
     @Issuer("http://foo.bar.com")
     public void red() {
     }

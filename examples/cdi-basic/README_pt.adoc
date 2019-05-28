@@ -1,0 +1,169 @@
+= CDI @Inject
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+Para usar @Inject, a primeira coisa que você precisa de um arquivo META-INF/beans.xml no modulo
+ou um jar. Isso efetivamente ativa o CDI e permite que as referências @Inject funcionem.
+Sem o arquivo META-INF/beans.xml não tem injeção, ponto final. Isso pode parecer excessivamente rigoroso,
+mas não é sem razão. A API CDI é um pouco gananciosa e consome uma quantidade justa de recursos por projeto.
+
+Quando o container constrói um bean com uma referência @Inject,
+ele irá primeiro encontrar ou criar o objeto que será injetado. Por uma questão de simplicidade,
+o exemplo é um pojo Faculty básico com um construtor no-arg. Qualquer um que faça 
+referência a @Inject Faculty receberá sua própria instância de Faculty. Se o desejo é compartilhar 
+a mesma instância do Faculty, veja o conceito de scopes - isto é exatamente para que serve os escopos.
+
+== Exemplo
+
+Neste exemplo, nós temos um Stateless bean Course com uma referência @Inject a um objeto do tipo Faculty.
+Quando Course é criado, o contêiner também criará um instância do Faculty. O @PostConstruct será chamado no 
+Faculty, então a instância Faculty será injetada no Course bean. Finalmente, o @PostConstruct será invocado 
+no Course e ​​pronto. Todas as instâncias serão criadas.
+
+O caso de teste CourseTest impulsiona este processo de criação tendo o Course injetado em seu método @Setup.
+Quando nosso método @Test for invocado, todo o trabalho real deve ser feito e devemos estar prontos.
+No caso de teste, fazemos algumas afirmações básicas para garantir que tudo foi construído, 
+todos os métodos @PostConstruct chamados e tudo será injetado.
+
+=== Faculty +++<small>+++um pojo injetável básicoo+++</small>+++
+
+....
+public class Faculty {
+
+    private List<String> facultyMembers;
+
+    private String facultyName;
+
+    @PostConstruct
+    public void initialize() {
+        this.facultyMembers = new ArrayList<String>();
+        facultyMembers.add("Ian Schultz");
+        facultyMembers.add("Diane Reyes");
+        facultyName = "Computer Science";
+    }
+
+    public List<String> getFacultyMembers() {
+        return facultyMembers;
+    }
+
+    public String getFacultyName() {
+        return facultyName;
+    }
+
+}
+....
+
+=== Course +++<small>+++a simple session bean+++</small>+++
+
+....
+@Stateless
+public class Course {
+
+    @Inject
+    private Faculty faculty;
+
+    private String courseName;
+
+    private int capacity;
+
+    @PostConstruct
+    private void init() {
+        assert faculty != null;
+
+        // These strings can be externalized
+        // We'll see how to do that later
+        this.courseName = "CDI 101 - Introduction to CDI";
+        this.capacity = 100;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+}
+....
+
+== Caso de Teste
+
+....
+public class CourseTest extends TestCase {
+
+    @EJB
+    private Course course;
+
+    @Before
+    public void setUp() throws Exception {
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
+    }
+
+    @Test
+    public void test() {
+
+        // Was the EJB injected?
+        assertTrue(course != null);
+
+        // Was the Course @PostConstruct called?
+        assertNotNull(course.getCourseName());
+        assertTrue(course.getCapacity() > 0);
+
+        // Was a Faculty instance injected into Course?
+        final Faculty faculty = course.getFaculty();
+        assertTrue(faculty != null);
+
+        // Was the @PostConstruct called on Faculty?
+        assertEquals(faculty.getFacultyName(), "Computer Science");
+        assertEquals(faculty.getFacultyMembers().size(), 2);
+    }
+}
+....
+
+== Running
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.cdi.basic.CourseTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/cdi-basic
+INFO - openejb.base = /Users/dblevins/examples/cdi-basic
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/cdi-basic/target/classes
+INFO - Beginning load: /Users/dblevins/examples/cdi-basic/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/cdi-basic
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean cdi-basic.Comp: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+INFO - Auto-creating a container for bean Course: Container(type=STATELESS, id=Default Stateless Container)
+INFO - Enterprise application "/Users/dblevins/examples/cdi-basic" loaded.
+INFO - Assembling app: /Users/dblevins/examples/cdi-basic
+INFO - Jndi(name="java:global/cdi-basic/cdi-basic.Comp!org.apache.openejb.BeanContext$Comp")
+INFO - Jndi(name="java:global/cdi-basic/cdi-basic.Comp")
+INFO - Jndi(name="java:global/cdi-basic/Course!org.superbiz.cdi.basic.Course")
+INFO - Jndi(name="java:global/cdi-basic/Course")
+INFO - Jndi(name="java:global/EjbModule1833350875/org.superbiz.cdi.basic.CourseTest!org.superbiz.cdi.basic.CourseTest")
+INFO - Jndi(name="java:global/EjbModule1833350875/org.superbiz.cdi.basic.CourseTest")
+INFO - Created Ejb(deployment-id=Course, ejb-name=Course, container=Default Stateless Container)
+INFO - Created Ejb(deployment-id=cdi-basic.Comp, ejb-name=cdi-basic.Comp, container=Default Managed Container)
+INFO - Created Ejb(deployment-id=org.superbiz.cdi.basic.CourseTest, ejb-name=org.superbiz.cdi.basic.CourseTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=Course, ejb-name=Course, container=Default Stateless Container)
+INFO - Started Ejb(deployment-id=cdi-basic.Comp, ejb-name=cdi-basic.Comp, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=org.superbiz.cdi.basic.CourseTest, ejb-name=org.superbiz.cdi.basic.CourseTest, container=Default Managed Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/cdi-basic)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.126 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

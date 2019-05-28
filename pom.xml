@@ -18,8 +18,7 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -89,10 +88,12 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
-
+    <!-- allows release plugin to be overriden -->
+    <arguments />
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -113,18 +114,18 @@
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.12</xbeanVersion>
+    <xbeanVersion>4.14</xbeanVersion>
 
     <!-- OSGi bundles properties -->
-    <openejb.bundle.activator/>
+    <openejb.bundle.activator />
     <openejb.osgi.import.pkg>*</openejb.osgi.import.pkg>
     <openejb.osgi.import>${openejb.osgi.import.pkg}</openejb.osgi.import>
     <openejb.osgi.export.pkg>org.apache.tomee</openejb.osgi.export.pkg>
     <openejb.osgi.export>${openejb.osgi.export.pkg}*;version=${openejb.osgi.export.version}</openejb.osgi.export>
-    <openejb.osgi.fragment/>
-    <openejb.osgi.require/>
+    <openejb.osgi.fragment />
+    <openejb.osgi.require />
     <openejb.osgi.private.pkg>!*</openejb.osgi.private.pkg>
-    <openejb.osgi.dynamic.import.pkg/>
+    <openejb.osgi.dynamic.import.pkg />
     <openejb.osgi.export.version>${project.version}</openejb.osgi.export.version>
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
@@ -135,7 +136,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.19</tomcat.version>
+    <tomcat.version>9.0.20</tomcat.version>
 
     <cxf.version>3.3.1</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -178,7 +179,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.3.3</myfaces.version>
+    <myfaces.version>2.3.4</myfaces.version>
     <mojarra.version>2.3.3</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -411,8 +412,9 @@
           <!-- the following settings are important when working with git -->
           <localCheckout>true</localCheckout>
           <pushChanges>false</pushChanges>
-          <releaseProfiles></releaseProfiles>
+          <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
+          <arguments>-Pmain,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
         </configuration>
       </plugin>
 
@@ -845,6 +847,17 @@
       </snapshots>
     </repository>
     <repository>
+      <id>tomee-bval-patch</id>
+      <name>BVal Patch Repository</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1134/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>sonatype-snapshots</id>
       <name>Sonatype OSS Snapshots Repository</name>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -951,7 +964,7 @@
       <dependency>
         <groupId>org.apache.tomee.patch</groupId>
         <artifactId>bval-jsr</artifactId>
-        <version>${bval.version}</version>
+        <version>2.0.2-69c36fa8-1</version>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
