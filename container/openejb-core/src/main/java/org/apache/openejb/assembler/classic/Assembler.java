@@ -2259,6 +2259,8 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
         }
     }
 
+    // @todo Remove this method in next release
+    @Deprecated
     public void destroyApplication(final AppContext appContext) throws UndeployException {
 
         final ReentrantLock l = lock;
