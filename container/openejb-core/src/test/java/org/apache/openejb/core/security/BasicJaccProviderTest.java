@@ -33,7 +33,7 @@ import java.security.Policy;
 @ContainerProperties(
         @ContainerProperties.Property(
                 name = "javax.security.jacc.policy.provider",
-                value = "org.apache.openejb.core.security.BasicJaccProviderTest.MyPolicy"))
+                value = "org.apache.openejb.core.security.BasicJaccProviderTest$MyPolicy"))
 public class BasicJaccProviderTest {
 
     @EJB
@@ -41,6 +41,7 @@ public class BasicJaccProviderTest {
 
     @Test
     public void run() throws Exception {
+        Assert.assertNotNull("Singleton bean could not be created", myBean);
         Assert.assertEquals("tset", myBean.reverse("test"));
     }
 
@@ -67,4 +68,3 @@ public class BasicJaccProviderTest {
         }
     }
 }
-
