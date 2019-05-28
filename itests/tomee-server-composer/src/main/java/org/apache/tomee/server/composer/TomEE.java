@@ -25,6 +25,7 @@ import org.tomitribe.util.hash.XxHash64;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,14 +37,18 @@ import java.util.stream.Stream;
 
 public class TomEE {
 
+    private final Stats stats;
     private final File home;
     private final int port;
     private final Process process;
+    private final CleanOnExit cleanOnExit;
 
-    private TomEE(final File home, final int port, final Process process) {
+    private TomEE(final File home, final int port, final Process process, final Stats stats, final CleanOnExit cleanOnExit) {
         this.home = home;
         this.port = port;
         this.process = process;
+        this.stats = stats;
+        this.cleanOnExit = cleanOnExit;
     }
 
     public URI toURI() {
@@ -64,18 +69,13 @@ public class TomEE {
 
     public void shutdown() {
         try {
-            final ProcessBuilder builder = new ProcessBuilder()
-                    .directory(home)
-                    .command(Files.file(home, "bin", "shutdown.sh").getAbsolutePath());
-
-            final Process start = builder.start();
-            Pipe.pipe(start.getErrorStream(), System.err);
-            Pipe.pipe(start.getInputStream(), System.out);
-
+            process.destroy();
             process.waitFor();
+            cleanOnExit.clean();
         } catch (Exception e) {
             throw new IllegalStateException("Shutdown failed", e);
         }
+        if (home.exists()) shutdown();
     }
 
     public static Builder plus() throws Exception {
@@ -90,15 +90,59 @@ public class TomEE {
         return of("org.apache.tomee:apache-tomee:tar.gz:webprofile:" + Version.VERSION);
     }
 
+    public Stats getStats() {
+        return stats;
+    }
+
+    public static class Stats {
+        private final long extracted;
+        private final long startup;
+
+        public Stats(final long extracted, final long startup) {
+            this.extracted = extracted;
+            this.startup = startup;
+        }
+
+        public long getExtracted() {
+            return extracted;
+        }
+
+        public long getStartup() {
+            return startup;
+        }
+    }
+
     public static Builder of(final String mavenCoordinates) throws Exception {
+        return new Builder(mavenCoordinates);
+    }
+
+    public static Builder from(final File mavenCoordinates) throws Exception {
         return new Builder(mavenCoordinates);
     }
 
     public static class Builder extends ServerBuilder<Builder> {
 
+        private PrintStream err = System.err;
+        private PrintStream out = System.out;
+
         public Builder(final String mavenCoordinates) throws IOException {
             super(mavenCoordinates);
             filter(Excludes::webapps);
+        }
+
+        public Builder(final File mavenCoordinates) throws IOException {
+            super(mavenCoordinates);
+            filter(Excludes::webapps);
+        }
+
+        public Builder err(PrintStream err) {
+            this.err = err;
+            return this;
+        }
+
+        public Builder out(PrintStream out) {
+            this.out = out;
+            return this;
         }
 
         public Builder update() {
@@ -143,10 +187,14 @@ public class TomEE {
             final File tmpdir = cleanOnExit.clean(Files.tmpdir());
 
             final File home;
+            final long extracted;
             { // extract the server
                 home = new File(tmpdir, "server");
                 Files.mkdir(home);
+
+                final long start = System.nanoTime();
                 TarGzs.untargz(archive, home, true, filter);
+                extracted = System.nanoTime() - start;
             }
 
             { // make scripts executable
@@ -182,6 +230,7 @@ public class TomEE {
 
             if (list) Files.visit(tmpdir, TomEE::print);
 
+            final long start = System.nanoTime();
             final Process process = cleanOnExit.clean(builder.start());
 
             final CountDownLatch startup = new CountDownLatch(1);
@@ -198,8 +247,8 @@ public class TomEE {
                 watch.accept(errorStream);
             }
 
-            final Future<Pipe> stout = Pipe.pipe(inputStream.get(), System.out);
-            final Future<Pipe> sterr = Pipe.pipe(errorStream.get(), System.err);
+            final Future<Pipe> stout = Pipe.pipe(inputStream.get(), out);
+            final Future<Pipe> sterr = Pipe.pipe(errorStream.get(), err);
 
             try {
                 if (!startup.await(await.getTime(), await.getUnit())) {
@@ -208,8 +257,9 @@ public class TomEE {
             } catch (InterruptedException e) {
                 throw new StartupFailedException(e);
             }
+            final long startTime = System.nanoTime() - start;
 
-            return new TomEE(home, http, process);
+            return new TomEE(home, http, process, new Stats(extracted, startTime), cleanOnExit);
         }
     }
 
