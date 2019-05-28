@@ -70,14 +70,14 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
 
         if (retValue instanceof Collection) {
             final Object[] proxyInfos = ((Collection) retValue).toArray();
-            final Vector proxies = new Vector();
+            final Vector<Object> proxies = new Vector<>();
             for (Object proxyInfo1 : proxyInfos) {
                 final ProxyInfo proxyInfo = (ProxyInfo) proxyInfo1;
                 proxies.addElement(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
             return proxies;
         } else if (retValue instanceof ArrayEnumeration) {
-            final ArrayEnumeration enumeration = (ArrayEnumeration) retValue;
+            @SuppressWarnings("unchecked") final ArrayEnumeration<Object> enumeration = (ArrayEnumeration<Object>) retValue;
             for (int i = enumeration.size() - 1; i >= 0; --i) {
                 final ProxyInfo proxyInfo = (ProxyInfo) enumeration.get(i);
                 enumeration.set(i, createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
@@ -86,12 +86,12 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         } else if (retValue instanceof Enumeration) {
             final Enumeration enumeration = (Enumeration) retValue;
 
-            final List proxies = new ArrayList();
+            final List<Object> proxies = new ArrayList<>();
             while (enumeration.hasMoreElements()) {
                 final ProxyInfo proxyInfo = (ProxyInfo) enumeration.nextElement();
                 proxies.add(createProxy(proxyInfo.getPrimaryKey(), getMainInterface()));
             }
-            return new ArrayEnumeration(proxies);
+            return new ArrayEnumeration<>(proxies);
         } else {
             final ProxyInfo proxyInfo = (ProxyInfo) retValue;
 
@@ -135,7 +135,7 @@ public class EntityEjbHomeHandler extends EjbHomeProxyHandler {
         container.invoke(deploymentID, interfaceType, interfce, method, args, primKey);
 
         /* 
-        * This operation takes care of invalidating all the EjbObjectProxyHanders associated with 
+        * This operation takes care of invalidating all the EjbObjectProxyHandlers associated with
         * the same RegistryId. See this.createProxy().
         */
         invalidateAllHandlers(EntityEjbObjectHandler.getRegistryId(container, deploymentID, primKey));
