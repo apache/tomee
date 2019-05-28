@@ -145,4 +145,4 @@ An important part for this configuration is the inclusion of Jettison jar during
 <property name="additionalLibs">mvn:org.codehaus.jettison:jettison:1.3.7</property>
 ....
 
-If a version > 1.3.7 is used, the JSON output start to change into a moder default format: Boolean and numeric values are not longer surrounded with double quotes.
+If a version > 1.3.7 is used, the JSON output start to change into a modern default format: Boolean and numeric values are not longer surrounded with double quotes.
