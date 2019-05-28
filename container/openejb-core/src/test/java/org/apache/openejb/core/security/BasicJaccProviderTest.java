@@ -16,27 +16,55 @@
  */
 package org.apache.openejb.core.security;
 
-import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.ContainerProperties;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertTrue;
+import javax.ejb.EJB;
+import javax.ejb.Singleton;
+import java.security.Policy;
 
-@Classes
+
+@Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
 @ContainerProperties(
         @ContainerProperties.Property(
-                name = "org.apache.openejb.core.security.JaccProvider",
-                value = "org.apache.openejb.core.security.AbstractSecurityServiceTest$MyJaacProv"))
+                name = "javax.security.jacc.policy.provider",
+                value = "org.apache.openejb.core.security.BasicJaccProviderTest.MyPolicy"))
 public class BasicJaccProviderTest {
+
+    @EJB
+    private SimpleSingleton myBean;
+
     @Test
-    public void run() {
-        assertTrue(MyJaacProv.class.isInstance(JaccProvider.get()));
+    public void run() throws Exception {
+        Assert.assertEquals("tset", myBean.reverse("test"));
     }
 
-    public static class MyJaacProv extends BasicJaccProvider {
+    public static class MyPolicy extends Policy {
+    }
+
+    @Singleton
+    public static class SimpleSingleton {
+        public String reverse(final String input) {
+            if (input == null) {
+                return null;
+            }
+
+            if (input.length() == 0) {
+                return "";
+            }
+
+            char[] chars = new char[input.length()];
+            for (int i = 0; i < input.length(); i++) {
+                chars[i] = input.charAt((input.length() - 1) - i);
+            }
+
+            return new String(chars);
+        }
     }
 }
+
