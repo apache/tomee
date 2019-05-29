@@ -1,0 +1,87 @@
+= MessageDrivenContainer Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A MessageDrivenContainer can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<Container id="myMessageDrivenContainer" type="MESSAGE">
+    activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
+    instanceLimit = 10
+    messageListenerInterface = javax.jms.MessageListener
+    resourceAdapter = Default JMS Resource Adapter
+</Container>
+----
+
+Alternatively, a MessageDrivenContainer can be declared via properties
+in the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+myMessageDrivenContainer = new://Container?type=MESSAGE
+myMessageDrivenContainer.activationSpecClass = org.apache.activemq.ra.ActiveMQActivationSpec
+myMessageDrivenContainer.instanceLimit = 10
+myMessageDrivenContainer.messageListenerInterface = javax.jms.MessageListener
+myMessageDrivenContainer.resourceAdapter = Default JMS Resource Adapter
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared
+MessageDrivenContainer a warning will be logged. If a
+MessageDrivenContainer is needed by the application and one is not
+declared, TomEE will create one dynamically using default settings.
+Multiple MessageDrivenContainer declarations are allowed. # Supported
+Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+activationSpecClass
+
+String
+
+org.apache.activemq.ra.ActiveMQActivationSpec
+
+Specifies the activation spec class
+
+instanceLimit
+
+int
+
+10
+
+Specifies the maximum number of bean instances that are allowed to exist
+for each MDB deployment.
+
+messageListenerInterface
+
+String
+
+javax.jms.MessageListener
+
+Specifies the message listener interface handled by this container
+
+resourceAdapter
+
+String
+
+Default JMS Resource Adapter
+
+The resource adapter delivers messages to the container

@@ -1,0 +1,87 @@
+= Installing TomEE
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software Foundation (ASF) under
+one or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information regarding
+copyright ownership. The ASF licenses this file to you under the Apache
+License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+. http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+== Downloading a Distribution Archive
+
+Download a distribution archive of the latest TomEE release from the
+link:downloads.html[Downloads] page. If you are not sure which one to
+use, take apache-tomee-webprofile-x.y.z.zip.
+
+If you want to try out the latest development snapshot (e.g. to test a
+bugfix which has not yet been released), then download an archive
+directly from the
+https://repository.apache.org/content/groups/snapshots/org/apache/openejb/apache-tomee[Apache
+Maven Snapshots Repository] instead.
+
+The instructions on this page work with the webprofile distribution but
+apply to all TomEE distributions (webprofile, jaxrs or plus). If you
+work with the jaxrs or plus distribution, simply replace the name where
+appropriate.
+
+== Unpacking the Archive
+
+Unpack the archive in any directory. The top-level directory of the
+unpacked archive is called apache-tomee-webprofile-x.y.z/. We refer to
+this directory as $CATALINA_HOME in the following.
+
+== Prerequisites for Running TomEE
+
+* A Java 6 or 7 runtime environment is in your PATH.
+* TCP ports 8080, 8005 and 8009 are free.
+
+== Starting TomEE
+
+To start TomEE as a background process, invoke
+
+[source,java]
+----
+$CATALINA_HOME/bin/startup.sh
+----
+
+To start TomEE in foreground, invoke
+
+[source,java]
+----
+$CATALINA_HOME/bin/catalina.sh run
+----
+
+== Log Messages
+
+When running TomEE in foreground, it will print all log messages to the
+console.
+
+When running TomEE in background, it will only print a couple of
+environment variables. The log messages go to a file
+
+[source,java]
+----
+$CATALINA_HOME/logs/catalina.out
+----
+
+== Stopping TomEE
+
+To stop TomEE, invoke
+
+[source,java]
+----
+$CATALINA_HOME/bin/shutdown.sh
+----
+
+If you started TomEE in foreground via `catalina.sh run`, it is safe to
+simply type `Ctrl-C`.
