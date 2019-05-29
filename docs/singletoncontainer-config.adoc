@@ -1,0 +1,71 @@
+= SingletonContainer Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A SingletonContainer can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<Container id="mySingletonContainer" type="SINGLETON">
+    accessTimeout = 30 seconds
+</Container>
+----
+
+Alternatively, a SingletonContainer can be declared via properties in
+the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+mySingletonContainer = new://Container?type=SINGLETON
+mySingletonContainer.accessTimeout = 30 seconds
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared SingletonContainer a
+warning will be logged. If a SingletonContainer is needed by the
+application and one is not declared, TomEE will create one dynamically
+using default settings. Multiple SingletonContainer declarations are
+allowed. # Supported Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+accessTimeout
+
+time
+
+30 seconds
+
+Specifies the maximum time an invocation could wait for the `@Singleton`
+bean instance to become available before giving up.
+
+== accessTimeout
+
+Specifies the maximum time an invocation could wait for the `@Singleton`
+bean instance to become available before giving up.
+
+After the timeout is reached a
+`javax.ejb.ConcurrentAccessTimeoutException` will be thrown.
+
+Usable time units: nanoseconds, microsecons, milliseconds, seconds,
+minutes, hours, days. Or any combination such as
+`1 hour and 27 minutes and 10 seconds`
+
+Any usage of the `javax.ejb.AccessTimeout` annotation will override this
+setting for the bean or method where the annotation is used.
