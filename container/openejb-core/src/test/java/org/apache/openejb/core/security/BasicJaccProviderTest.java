@@ -17,8 +17,9 @@
 package org.apache.openejb.core.security;
 
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testing.ContainerProperties;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,18 +27,26 @@ import org.junit.runner.RunWith;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import java.security.Policy;
+import java.util.Properties;
 
 
-@Classes(innerClassesAsBean = true)
 @RunWith(ApplicationComposer.class)
-@ContainerProperties(
-        @ContainerProperties.Property(
-                name = "javax.security.jacc.policy.provider",
-                value = "org.apache.openejb.core.security.BasicJaccProviderTest$MyPolicy"))
 public class BasicJaccProviderTest {
 
     @EJB
     private SimpleSingleton myBean;
+
+    @Module
+    public Class<?>[] beans() {
+        return new Class<?>[]{SimpleSingleton.class};
+    }
+
+    @Configuration
+    public Properties config() {
+        return new PropertiesBuilder()
+            .p("javax.security.jacc.policy.provider", "org.apache.openejb.core.security.BasicJaccProviderTest$MyPolicy")
+            .build();
+    }
 
     @Test
     public void run() throws Exception {
