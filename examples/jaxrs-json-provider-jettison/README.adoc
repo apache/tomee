@@ -1,0 +1,148 @@
+= JAX-RS JSON Provider With Jettison
+:index-group: REST
+:jbake-type: page
+:jbake-status: status=published
+
+This is a example on how to configure on TomEE  7.x or later the legacy JSON provider, Jettison, used by TomEE 1.7.x .
+
+
+This scenario is useful when REST applications are migrated from TomEE 1.7.x into TomEE  7.x or later and you want to keep the lecacy JSON output from Jettison 1.3.7.
+
+
+=== Run the tests
+This example contains 2 test cases, one using Jettison and one with out it for comparison purposes.
+
+....
+mvn clean test 
+....
+
+
+=== Enabling Jettison as Json Provider
+
+You need to provide the following 2 files in your `WEB-INF` folder:
+
+* openejb-jar.xml
+....
+<?xml version="1.0" encoding="UTF-8"?>
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+    <pojo-deployment class-name="org.superbiz.JAXRSApplication">
+        <properties>
+            cxf.jaxrs.providers = json
+        </properties>
+    </pojo-deployment>
+</openejb-jar>
+
+....
+
+* resources.xml
+
+....
+
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <Service id="json" class-name="org.apache.cxf.jaxrs.provider.json.JSONProvider">
+        SkipJaxbChecks = true
+        DropRootElement = false
+        SupportUnwrapped = true
+        SingleJaxbContext = true
+    </Service>
+</resources>
+
+....
+
+And finally make sure the Jettison JAR 1.3.7 is available in TomEE /lib folder.
+
+=== Comparing outputs
+
+`Item.java` is the POJO we are going to process:
+
+....
+package org.superbiz;
+
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name = "book")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Item {
+
+    @XmlValue
+    private String name;
+
+    @XmlAttribute
+    private int id;
+
+    @XmlAttribute
+    private String availableSince;
+
+    @XmlAttribute
+    private boolean available = false;
+
+    public Item() {
+    }
+
+    public Item(String name, int id, String availableSince, boolean available) {
+        this.name = name;
+        this.id = id;
+        this.availableSince = availableSince;
+        this.available = available;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getAvailableSince() {
+        return availableSince;
+    }
+
+    public void setAvailableSince(String availableSince) {
+        this.availableSince = availableSince;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+}
+....
+
+
+Legacy JSON output using Jettison 1.3.7:
+....
+{"book":{"@id":"134","@availableSince":"2019-05-27 15:27:16.878","@available":"false","$":"TomEE Tutorial"}}
+....
+
+Current JSON output:
+
+....
+{"available":false,"availableSince":"2019-05-27 15:27:16.878","id":134,"name":"TomEE Tutorial"}
+....
+
+=== About the Test architecture
+
+The test cases from this project are built using Arquillian and TomEE
+Remote. The arquillian configuration can be found in
+`src/test/resources/arquillian.xml`
+
+An important part for this configuration is the inclusion of Jettison jar during test execution:
+
+....
+<property name="additionalLibs">mvn:org.codehaus.jettison:jettison:1.3.7</property>
+....
+
+If a version > 1.3.7 is used, the JSON output start to change into a modern default format: Boolean and numeric values are not longer surrounded with double quotes.
