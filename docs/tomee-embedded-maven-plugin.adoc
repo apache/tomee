@@ -20,7 +20,7 @@ with microservices.
 
 Full name:
 
-- `org.apache.tomee.maven:tomee-embedded-maven-plugin:8.0.0-SNAPSHOT:run`
+- `org.apache.tomee.maven:tomee-embedded-maven-plugin:8.0.0-M3:run`
 
 Description:
 
