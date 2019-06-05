@@ -28,7 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>7.1.1-SNAPSHOT</tomee.version>
+    <tomee.version>7.1.1</tomee.version>
     <version.openjpa>2.4.0</version.openjpa>
   </properties>
 
@@ -79,7 +79,7 @@
         <version>7.1.1-SNAPSHOT</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <tomeeVersion>7.1.1-SNAPSHOT</tomeeVersion>
+          <tomeeVersion>7.1.1</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
