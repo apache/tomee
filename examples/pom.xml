@@ -95,6 +95,7 @@
     <module>javamail</module>
     <module>java-modules</module>
     <module>jaxrs-filter</module>
+    <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
@@ -148,6 +149,7 @@
     <module>schedule-methods-meta</module>
     <module>schedule-methods</module>
     <module>server-events</module>
+    <module>singleton-startup-ordering</module>
     <module>simple-cdi-interceptor</module>
     <module>simple-ear</module>
     <module>simple-cmp2</module>

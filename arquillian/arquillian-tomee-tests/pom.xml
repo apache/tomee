@@ -270,6 +270,23 @@
                 </configuration>
               </execution>
               <execution>
+                <id>test-tomee-remote-secpol</id>
+                <phase>test</phase>
+                <goals>
+                  <goal>test</goal>
+                </goals>
+                <configuration>
+                  <skip>${skip.remote.webprofile}</skip>
+                  <systemPropertyVariables>
+                    <openejb.arquillian.debug>true</openejb.arquillian.debug>
+                    <tomee.version>${project.version}</tomee.version>
+                    <tomee.classifier>webprofile</tomee.classifier>
+                    <arquillian.launch>tomee-remote-secpol</arquillian.launch>
+                    <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
+                  </systemPropertyVariables>
+                </configuration>
+              </execution>
+              <execution>
                 <id>test-tomee-embedded</id>
                 <phase>test</phase>
                 <goals>
