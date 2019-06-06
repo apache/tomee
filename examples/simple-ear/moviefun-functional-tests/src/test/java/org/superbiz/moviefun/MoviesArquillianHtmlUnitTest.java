@@ -37,7 +37,7 @@ public class MoviesArquillianHtmlUnitTest {
 
     @Deployment
     public static EnterpriseArchive createDeployment() {
-        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:7.1.1")
+        final EnterpriseArchive enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:7.1.2-SNAPSHOT")
                 .withoutTransitivity().asSingle(EnterpriseArchive.class);
 
         System.out.println(enterpriseArchive.toString(true));
