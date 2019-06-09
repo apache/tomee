@@ -197,12 +197,17 @@ public class TomEE {
                 extracted = System.nanoTime() - start;
             }
 
-            { // make scripts executable
-                Stream.of(new File(home, "bin").listFiles())
-                        .filter(file1 -> file1.getName().endsWith(".sh"))
-                        .forEach(file2 -> file2.setExecutable(true));
+            String os = System.getProperty("os.name").toLowerCase();
+            String extension = ".sh";
+            if (!os.contains("win")) {
+                { // make scripts executable
+                    Stream.of(new File(home, "bin").listFiles())
+                            .filter(file1 -> file1.getName().endsWith(".sh"))
+                            .forEach(file2 -> file2.setExecutable(true));
+                }
+            } else {
+                extension = ".bat";
             }
-
             applyModifications(home);
 
             final int http;
@@ -220,7 +225,7 @@ public class TomEE {
 
             applyHomeConsumers(home);
 
-            final File catalinaSh = Files.file(home, "bin", "catalina.sh");
+            final File catalinaSh = Files.file(home, "bin", "catalina" + extension);
 
             final ProcessBuilder builder = new ProcessBuilder()
                     .directory(home)
