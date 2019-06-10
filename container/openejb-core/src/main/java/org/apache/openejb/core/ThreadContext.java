@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core;
 
+import org.apache.commons.collections4.set.ListOrderedSet;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.util.LogCategory;
@@ -24,16 +25,16 @@ import org.apache.openejb.util.Logger;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ThreadContext {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<>();
-    private static final List<ThreadContextListener> listeners = new CopyOnWriteArrayList<>();
+    private static final ListOrderedSet<ThreadContextListener> listeners = ListOrderedSet.listOrderedSet(new CopyOnWriteArraySet<>(), new CopyOnWriteArrayList<>());
     private static final ThreadLocal<AtomicBoolean> asynchronousCancelled = new ThreadLocal<>();
 
     public static ThreadContext getThreadContext() {
