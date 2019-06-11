@@ -1,4 +1,6 @@
 = Java Compatibility with TomEE 7.1.x
 :index-group: General Information
+:jbake-type: page
+:jbake-status: published
 
 TomEE 7.1.0 is Java EE 7, Java 8 and limited MicroProfile 1.2 (JWT, Config, HealthCheck).  Any OS that supports Java 8 works
