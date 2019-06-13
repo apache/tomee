@@ -63,7 +63,7 @@ public class RequestScopedThreadContextListener implements ThreadContextListener
         }
 
         destroyContext.contextsService.endContext(RequestScoped.class, CdiAppContextsService.EJB_REQUEST_EVENT);
-        CdiAppContextsService.class.cast(destroyContext.contextsService).removeThreadLocals();
+        destroyContext.contextsService.removeThreadLocals();
     }
 
     private static final class DestroyContext {
