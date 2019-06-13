@@ -1,0 +1,6 @@
+= Java Compatibility with TomEE 8.0.x
+:index-group: General Information
+:jbake-type: page
+:jbake-status: published
+
+TomEE 8.0.x is Java EE 7, Java 8 & Java 10. Any OS that supports Java 10 works
