@@ -1,4 +1,4 @@
-= Java Compatibility with TomEE 8.0.x
+= Java Compatibility with TomEE 8.0.0
 :index-group: General Information
 :jbake-type: page
 :jbake-status: published
