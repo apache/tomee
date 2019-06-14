@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>xa-datasource</artifactId>
-  <packaging>jar</packaging>
+  <packaging>war</packaging>
   <version>8.0.0-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: XA Datasource configuration and usage</name>
   <properties>
@@ -41,6 +41,13 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
     </plugins>
