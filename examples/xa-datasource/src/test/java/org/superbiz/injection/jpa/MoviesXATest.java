@@ -60,12 +60,8 @@ public class MoviesXATest {
 
         final Properties p = new Properties();
 
-        p.put("movieDatabaseXA", "new://Resource?type=javax.sql.XADataSource&class-name=org.apache.derby.jdbc.EmbeddedXADataSource");
-        p.put("movieDatabaseXA.DatabaseName", db);
-        p.put("movieDatabaseXA.CreateDatabase", "create");
-
         p.put("movieDatabase", "new://Resource?type=DataSource");
-        p.put("movieDatabase.XaDataSource", "movieDatabaseXA");
+        p.put("movieDatabase.JdbcDriver", "org.apache.derby.jdbc.EmbeddedXADataSource");
         p.put("movieDatabase.JtaManaged", "true");
         p.put("movieDatabase.UserName", "admin");
         p.put("movieDatabase.Password", "admin");
@@ -81,6 +77,8 @@ public class MoviesXATest {
         p.put("movieDatabase.PoolPreparedStatements", "true");
         p.put("movieDatabase.MaxOpenPreparedStatements", "1024");
         p.put("movieDatabase.ValidationQuery", "values 1");
+        p.put("movieDatabase.DatabaseName", db);
+        p.put("movieDatabase.CreateDatabase", "create");
 
         p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
         p.put("movieDatabaseUnmanaged.LogSql", "true");

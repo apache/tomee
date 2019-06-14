@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
@@ -38,6 +39,9 @@ public class MoviesXA {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Resource(name = "movieDatabase")
+    private DataSource ds;
 
     @Resource
     private TransactionManager transactionManager;
