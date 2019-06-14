@@ -206,6 +206,7 @@
     <module>vaadin-vxx-simple</module>
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
+    <module>xa-datasource</module>
   </modules>
 
   <dependencies>
