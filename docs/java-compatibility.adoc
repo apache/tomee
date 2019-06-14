@@ -3,4 +3,4 @@
 :jbake-type: page
 :jbake-status: published
 
-TomEE 8.0.x is Java EE 8 & Java 10. Any OS that supports Java 10 works
+TomEE 8.0.x is Java EE 8 & Java 11. Any OS that supports Java 11 works
