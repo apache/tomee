@@ -215,3 +215,33 @@ When we run our test case we should see output similar to the following.
     
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
+## Performance testing
+
+### Prerequisites
+
+
+- Oralce DB
+    - Place the `ojdbc6-11.2.0.4.jar` (or the version you will use) in the folder: `repo/com/oracle/ojdbc6/11.2.0.4/`
+    - Make sure you have the correct dependency in the project `pom.xml` file:
+           
+           <dependency>
+             <groupId>com.oracle</groupId>
+             <artifactId>ojdbc6</artifactId>
+             <version>11.2.0.4</version>
+             <scope>provided</scope>
+           </dependency> 
+           
+### Run the application
+From a terminal
+    
+    mvn clean install tomee:run
+    
+### Run Grinder console
+On a new terminal execute:
+               
+    ./grinder.sh
+ 
+ Once the console UI is available, press the button `Start the worker processes`
+ 
+ The load test will continue until you press on the console the button `Stop the worker processes and the agent processes`
+                   
