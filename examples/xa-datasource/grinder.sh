@@ -20,7 +20,7 @@ grinder.numberOfOldLogs 0
 (
 cd $(dirname "$0")/grinder/
 java -cp grinder.jar net.grinder.Console &
-sleep 1
+sleep 10
 )
 (
 cd $(dirname "$0")/grinder/
