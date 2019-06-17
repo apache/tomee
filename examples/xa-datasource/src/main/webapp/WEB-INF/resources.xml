@@ -1,0 +1,27 @@
+<resources>
+
+  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+    XaDataSource demo/jdbc/XADataSourceXA
+    JdbcDriver  oracle.jdbc.OracleDriver
+    JdbcUrl jdbc:oracle:thin:@localhost:1521:xe
+    UserName system
+    Password WiAA82ElhDY=1
+    ValidationQuery=select null from dual
+    InitialSize=20
+    MaxActive=128
+    MaxIdle=35
+    MinIdle=20
+    TestWhileIdle=true
+    TestOnBorrow=true
+    TestOnReturn=false
+    AccessToUnderlyingConnectionAllowed=true
+    TimeBetweenEvictionRuns=1 minute
+    MaxWaitTime=0 seconds
+    JtaManaged=true
+  </Resource>
+
+  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="oracle.jdbc.xa.client.OracleXADataSource">
+    Url jdbc:oracle:thin:@localhost:1521:xe
+  </Resource>
+
+</resources>

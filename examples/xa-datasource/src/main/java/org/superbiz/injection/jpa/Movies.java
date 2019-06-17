@@ -41,13 +41,18 @@ public class Movies {
     }
 
     public List<Movie> getMovies() throws Exception {
-        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        final Query query = entityManager.createQuery("SELECT m from Movie as m");
         return query.getResultList();
     }
 
     public void deleteAll() throws Exception {
-        Query query = entityManager.createQuery("DELETE from Movie");
+        final Query query = entityManager.createQuery("DELETE from Movie");
         query.executeUpdate();
+    }
+
+    public long count() throws Exception {
+        final Query query = entityManager.createQuery("select count(m) from Movie as m");
+        return (Long) query.getSingleResult();
     }
 
 }

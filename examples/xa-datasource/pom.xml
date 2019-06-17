@@ -30,8 +30,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <derby.version>10.12.1.1</derby.version>
+    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
   </properties>
+
+
   <build>
+    <finalName>dbtest</finalName>
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
@@ -50,15 +54,72 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <!-- this is used for inheritance merges -->
+            <phase>package</phase>
+            <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/tests.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.maven</groupId>
+        <artifactId>tomee-maven-plugin</artifactId>
+        <version>${tomee.version}</version>
+        <configuration>
+          <tomeeVersion>${tomee.version}</tomeeVersion>
+          <tomeeClassifier>webprofile</tomeeClassifier>
+          <tomeeHttpPort>9080</tomeeHttpPort>
+          <tomeeShutdownPort>9005</tomeeShutdownPort>
+          <libs>
+            <lib>com.oracle:ojdbc6:11.2.0.4</lib>
+          </libs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+
+
     </plugins>
   </build>
+
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>local-repo</id>
+      <name>local</name>
+      <url>file://${project.basedir}/repo</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+        <checksumPolicy>ignore</checksumPolicy>
+      </releases>
+    </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -101,7 +162,33 @@
       <version>${derby.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.tomitribe</groupId>
+      <artifactId>tomitribe-util</artifactId>
+      <version>1.1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <version>4.5.7</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <!--<version>12.1.0.1</version>-->
+      <version>11.2.0.4</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
+
+
+
+
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
