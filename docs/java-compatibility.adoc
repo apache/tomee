@@ -3,10 +3,11 @@
 :jbake-type: page
 :jbake-status: published
 
-TomEE 8.0.0-M3 is Java EE 8 & Java 11. Any OS that supports Java 11 works
+TomEE 8.0.0-M3 is Java EE 8 only. Any OS that supports Java 8 works
 
 
+*Note*:
 
-*Note*: Please note the `8.0.0-M3` release is a milestone release intended for evaluation purposes and should not be used in production
-
+. Please note the `8.0.0-M3` release is a milestone release intended for evaluation purposes and should not be used in production
+. As of now TomEE `8.0.0-M3` is not fully compatible with `Java 11`. `Java 11` will be compatible if all issues are resolved and pass all tests
 
