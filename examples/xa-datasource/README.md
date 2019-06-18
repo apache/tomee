@@ -312,7 +312,7 @@ When we run our test case we should see output similar to the following.
     ```
     
     
-    For further Oracle JDBC Maven setup you can check [Oracle Article](https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides)
+   For further Oracle JDBC Maven setup you can check [Oracle Article](https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides)
     
            
 ### Run the application
