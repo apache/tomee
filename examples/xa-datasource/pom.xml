@@ -350,9 +350,6 @@
           <tomeeClassifier>webprofile</tomeeClassifier>
           <tomeeHttpPort>9080</tomeeHttpPort>
           <tomeeShutdownPort>9005</tomeeShutdownPort>
-          <libs>
-            <lib>com.oracle:ojdbc6:11.2.0.4</lib>
-          </libs>
         </configuration>
       </plugin>
     </plugins>
