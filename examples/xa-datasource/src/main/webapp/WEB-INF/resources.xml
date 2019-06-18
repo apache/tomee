@@ -1,27 +1,46 @@
 <resources>
 
-  <Resource id="demo/jdbc/XADataSource" type="DataSource">
-    XaDataSource demo/jdbc/XADataSourceXA
-    JdbcDriver  oracle.jdbc.OracleDriver
-    JdbcUrl jdbc:oracle:thin:@localhost:1521:xe
-    UserName system
-    Password WiAA82ElhDY=1
-    ValidationQuery=select null from dual
-    InitialSize=20
+  <Resource id="movieDatabase" type="DataSource">
+    JdbcDriver  org.apache.derby.jdbc.EmbeddedXADataSource
+    JdbcUrl  jdbc:derby:testdb;create=true
+    UserName admin
+    Password admin
+    ValidationQuery=values 1
+    InitialSize=2
     MaxActive=128
-    MaxIdle=35
-    MinIdle=20
+    MaxIdle=25
+    MinIdle=10
     TestWhileIdle=true
-    TestOnBorrow=true
+    TestOnBorrow=false
     TestOnReturn=false
     AccessToUnderlyingConnectionAllowed=true
     TimeBetweenEvictionRuns=1 minute
     MaxWaitTime=0 seconds
     JtaManaged=true
+    PoolPreparedStatements=true
+    MaxOpenPreparedStatements=1024
+    User=admin
+    DatabaseName=testdb
+    CreateDatabase=true
   </Resource>
-
-  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="oracle.jdbc.xa.client.OracleXADataSource">
-    Url jdbc:oracle:thin:@localhost:1521:xe
+  <Resource id="movieDatabaseUnmanaged" type="DataSource">
+    JdbcDriver  org.apache.derby.jdbc.EmbeddedDriver
+    JdbcUrl  jdbc:derby:testdb;create=true
+    UserName admin
+    Password admin
+    ValidationQuery=values 1
+    InitialSize=2
+    MaxActive=128
+    MaxIdle=25
+    MinIdle=10
+    TestWhileIdle=true
+    TestOnBorrow=false
+    TestOnReturn=false
+    AccessToUnderlyingConnectionAllowed=true
+    TimeBetweenEvictionRuns=1 minute
+    MaxWaitTime=0 seconds
+    JtaManaged=false
+    PoolPreparedStatements=true
+    MaxOpenPreparedStatements=1024
   </Resource>
-
 </resources>

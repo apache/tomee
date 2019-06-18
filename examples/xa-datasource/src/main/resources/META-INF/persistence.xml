@@ -25,7 +25,8 @@
     <class>org.superbiz.injection.jpa.Movie</class>
 
     <properties>
-      <!--<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>-->
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+      <property name="openjpa.Log" value="DefaultLevel=INFO, MetaData=TRACE, SQL=TRACE"/>
     </properties>
   </persistence-unit>
 </persistence>
