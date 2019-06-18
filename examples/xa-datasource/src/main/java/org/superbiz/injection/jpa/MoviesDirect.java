@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Singleton
 public class MoviesDirect {
@@ -30,18 +31,44 @@ public class MoviesDirect {
     private DataSource ds;
 
     public int count() {
-        try (final Connection connection = ds.getConnection()) {
-            try (final PreparedStatement ps = connection.prepareStatement("select count(1) from movie")) {
-                try (final ResultSet rs = ps.executeQuery()) {
-                    if (rs != null && rs.next()) {
-                        return rs.getInt(1);
-                    } else {
-                        return 0;
-                    }
-                }
+        Connection connection = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            connection  = ds.getConnection();
+            ps = connection.prepareStatement("select count(1) from movie");
+            rs = ps.executeQuery();
+
+            if (rs != null && rs.next()) {
+                return rs.getInt(1);
+            } else {
+                return 0;
             }
         } catch (final Exception e) {
             throw new RuntimeException("Unable to execute query against the database");
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    // ignore
+                }
+            }
         }
     }
 }

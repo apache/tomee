@@ -20,16 +20,27 @@ package org.superbiz.injection.jpa;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlRootElement
 public class Movie {
 
     @Id
     @GeneratedValue
     private long id;
 
+    @XmlElement
     private String director;
+
+    @XmlElement
     private String title;
+
+    @XmlElement
     private int year;
 
     public Movie() {
