@@ -23,23 +23,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p/>
+ *
  * Java class for EModelElement complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="EModelElement">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EObject">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="eAnnotations" type="{http://www.eclipse.org/emf/2002/Ecore}EAnnotation"/>
- *       &lt;/choice>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="EModelElement"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}EObject"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="eAnnotations" type="{http://www.eclipse.org/emf/2002/Ecore}EAnnotation"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -50,22 +50,22 @@ public class EModelElement extends EObject {
 
     /**
      * Gets the value of the eAnnotations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the eAnnotations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getEAnnotations().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EAnnotation }
      */

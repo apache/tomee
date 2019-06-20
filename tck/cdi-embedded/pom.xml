@@ -15,8 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
@@ -115,6 +114,14 @@
       <version>${cdi.tck.20.version}</version>
       <exclusions>
         <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>javax.enterprise</groupId>
           <artifactId>cdi-api</artifactId>
         </exclusion>
@@ -134,6 +141,10 @@
           <groupId>javax.transaction</groupId>
           <artifactId>jta</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>        
       </exclusions>
     </dependency>
     <dependency>

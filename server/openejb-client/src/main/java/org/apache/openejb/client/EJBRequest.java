@@ -234,10 +234,10 @@ public class EJBRequest implements ClusterableRequest {
 
     /**
      * Changes to this method must observe the optional {@link #metaData} version
-     * <p/>
+     *
      * When the Request externalizes itself, it will reset
      * the appropriate values so that this instance can be used again.
-     * <p/>
+     *
      * There will be one request instance for each handler
      */
     @Override

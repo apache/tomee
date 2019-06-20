@@ -51,9 +51,9 @@ import java.util.concurrent.locks.ReentrantLock;
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -93,13 +93,13 @@ public class MulticastPulseAgent implements DiscoveryAgent, ServerService, SelfM
      * On receipt of a valid pulse the agent responds with its own pulse for
      * a defined amount of time and rate. A client can deliver a pulse as often as
      * required until it is happy of the server response.
-     * <p/>
+     *
      * Both server and client deliver crafted information payloads.
-     * <p/>
+     *
      * The client pulse contains OpenEJB.MCP.Client:(group or *)[:BadUri:URI]
      * The server will only respond to a request for it's own group or *
      * The optional :BadUri: is used by clients to notify a server that it is sending out unreachable URI's
-     * <p/>
+     *
      * The server response pulse contains OpenEJB.MCP.Server:(Service|Service)|(Comma separated host list)
      */
     public MulticastPulseAgent() {

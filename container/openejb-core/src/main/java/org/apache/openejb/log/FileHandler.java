@@ -40,9 +40,9 @@ import java.util.logging.SimpleFormatter;
 /**
  * Implementation of <b>Handler</b> that appends log messages to a file
  * named {prefix}{date}{suffix} in a configured directory.
- * <p/>
+ *
  * <p>The following configuration properties are available:</p>
- * <p/>
+ *
  * <ul>
  * <li><code>directory</code> - The directory where to create the log file.
  * If the path is not absolute, it is relative to the current working
@@ -60,7 +60,7 @@ import java.util.logging.SimpleFormatter;
  * <li><code>suffix</code> - The trailing part of the log file name. Default value: <code>.log</code></li>
  * <li><code>bufferSize</code> - Configures buffering. The value of <code>0</code>
  * uses system default buffering (typically an 8K buffer will be used). A
- * value of <code>&lt;0</code> forces a writer flush upon each log write. A
+ * value of <code>&lt;0</code&gt; forces a writer flush upon each log write. A
  * value <code>&gt;0</code> uses a BufferedOutputStream with the defined
  * value but note that the system default buffering will also be
  * applied. Default value: <code>-1</code></li>

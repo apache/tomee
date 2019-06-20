@@ -1,0 +1,47 @@
+= MVC-CXF-Hibernate
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
+
+
+Simples exemplo usando o link:http://mvc-spec.org[http://mvc-spec.org] juntamente com Deltaspike-Data para fazer operações de CRUD .
+
+=== Passos para executar o exemplo
+
+Build e iniciando a demo:
+
+    mvn clean install tomee:run
+
+Abra:
+
+    http://localhost:8080/mvc-cxf
+
+==== Introdução ao Eclipse Krazo
+    
+https://projects.eclipse.org/proposals/eclipse-krazo[Eclipse-Krazo] é uma implementação baseada em ações da especificação de MVC 1.0 (JSR-371). 
+
+Ela se baseia no JAX-RS e atualmente contém suporte para RESTEasy, Jersey e CXF com um SPI bem definido para outras implementações.
+
+==== Uso do Hibernate
+
+Esté exemplo é similar ao `mvc-cxf` em termos de código e funcionalidade, mas usa Hibernate para persistencia ao invés do OpenJPA
+ou do EclipseLink. O TomEE Maven plugin é configurado adcionando os seguintes artifacts para TomEE:
+
+            org.hibernate:hibernate-entitymanager:4.3.9.Final
+            org.hibernate:hibernate-core:4.3.9.Final
+            org.hibernate.common:hibernate-commons-annotations:4.0.5.Final
+            antlr:antlr:2.7.7
+            org.jboss:jandex:1.1.0.Final
+            org.jboss.logging:jboss-logging:3.1.3.GA
+            org.jboss.logging:jboss-logging-annotations:1.2.0.Beta1
+            dom4j:dom4j:1.6.1
+            org.javassist:javassist:3.18.1-GA
+
+e removemos o OpenJPA.
+
+Executando:
+
+    mvn clean install tomee:build
+
+será gerado um TomEE compactado com as bibliotecas apropriadas no diretório lib e esse aplicativo de exemplo na pasta webapps.
+

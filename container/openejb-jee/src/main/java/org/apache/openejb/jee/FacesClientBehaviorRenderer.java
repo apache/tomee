@@ -24,22 +24,22 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * web-facesconfig_2_0.xsd
- * <p/>
+ *
  * <p>Java class for faces-config-client-behavior-rendererType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-client-behavior-rendererType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="client-behavior-renderer-type" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="client-behavior-renderer-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-client-behavior-rendererType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="client-behavior-renderer-type" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="client-behavior-renderer-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -23,6 +23,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -31,6 +32,7 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 @RunWith(Arquillian.class)
 public class AppComposerTest {
     @Deployment(testable = false)

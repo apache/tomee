@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * The port-mapping defines the mapping of the WSDL port name attribute
  * to the Java name used to generate the Generated Service Interface
  * method get{java-name}.
- * <p/>
+ *
  * Used in: service-interface-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

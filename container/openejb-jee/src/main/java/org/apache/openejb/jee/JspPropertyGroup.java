@@ -33,34 +33,34 @@ import java.util.Map;
 
 /**
  * jsp_2_2.xsd
- * <p/>
+ *
  * <p>Java class for jsp-property-groupType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="jsp-property-groupType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="url-pattern" type="{http://java.sun.com/xml/ns/javaee}url-patternType" maxOccurs="unbounded"/>
- *         &lt;element name="el-ignored" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="page-encoding" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="scripting-invalid" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="is-xml" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="include-prelude" type="{http://java.sun.com/xml/ns/javaee}pathType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="include-coda" type="{http://java.sun.com/xml/ns/javaee}pathType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="deferred-syntax-allowed-as-literal" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="trim-directive-whitespaces" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="default-content-type" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="buffer" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="error-on-undeclared-namespace" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="jsp-property-groupType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="url-pattern" type="{http://java.sun.com/xml/ns/javaee}url-patternType" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="el-ignored" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="page-encoding" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="scripting-invalid" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="is-xml" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="include-prelude" type="{http://java.sun.com/xml/ns/javaee}pathType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="include-coda" type="{http://java.sun.com/xml/ns/javaee}pathType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="deferred-syntax-allowed-as-literal" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="trim-directive-whitespaces" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="default-content-type" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="buffer" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="error-on-undeclared-namespace" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -27,34 +27,34 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface AssociationOverride {
  * String name();
  * JoinColumn[] joinColumns() default{};
  * JoinTable joinTable() default @JoinTable;
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for association-override complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="association-override">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;choice>
- *           &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/>
- *           &lt;element name="join-table" type="{http://java.sun.com/xml/ns/persistence/orm}join-table" minOccurs="0"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="association-override"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="join-column" type="{http://java.sun.com/xml/ns/persistence/orm}join-column" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;element name="join-table" type="{http://java.sun.com/xml/ns/persistence/orm}join-table" minOccurs="0"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -95,21 +95,21 @@ public class AssociationOverride {
 
     /**
      * Gets the value of the joinColumn property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the joinColumn property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJoinColumn().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JoinColumn }
      */

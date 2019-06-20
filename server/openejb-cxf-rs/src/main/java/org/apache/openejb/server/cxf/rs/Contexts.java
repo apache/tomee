@@ -125,7 +125,7 @@ public final class Contexts {
     /**
      * Using a set ensures we don't set the thread local twice or more,
      * there may be super classes with injection points of identical types
-     * <p/>
+     *
      * Also allows us to get context references from other sources such as interceptors
      *
      * @param exchange Exchange

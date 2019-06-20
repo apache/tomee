@@ -29,7 +29,7 @@ public class PassthroughFactory {
      * Despite explicitly setting the 'static Object create(Object)'
      * method as the factory method, sometimes xbean instead would
      * invoke the 'static ObjectRecipe recipe(Object)' method.
-     * <p/>
+     *
      * Splitting the two methods into different classes seems to
      * eliminate the chances that xbean-reflect will pick the wrong
      * static method.

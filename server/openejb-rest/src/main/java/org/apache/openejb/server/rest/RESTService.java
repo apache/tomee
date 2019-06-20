@@ -110,6 +110,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
+        if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
+            return;
+        }
+
         final WebContext webContext = containerSystem.getWebContextByHost(webApp.moduleId, webApp.host != null ? webApp.host : virtualHost);
         if (webContext == null) {
             return;
@@ -256,12 +260,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                     }
                 }
 
-                /*
-                boolean isMicroProfileOnlyEndpoints =
-                        webApp.restClass.stream().allMatch(name -> name.startsWith("org.apache.geronimo.microprofile"));
-                */
-
-                if (webApp.restApplications.isEmpty() /*&& !isMicroProfileOnlyEndpoints*/) {
+                if (webApp.restApplications.isEmpty()) {
                     final Application application = new InternalApplication(null);
                     for (final String clazz : webApp.restClass) {
                         try {

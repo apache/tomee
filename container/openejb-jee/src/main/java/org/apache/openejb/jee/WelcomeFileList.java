@@ -30,22 +30,22 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for welcome-file-listType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="welcome-file-listType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="welcome-file" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="welcome-file-listType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="welcome-file" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

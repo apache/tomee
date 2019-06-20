@@ -27,6 +27,7 @@
             <property name="ajpPort">-1</property>
             <property name="classifier">microprofile</property>
             <property name="simpleLog">true</property>
+            <property name="debug">false</property>
             <property name="cleanOnStartUp">true</property>
             <property name="dir">target/server</property>
             <property name="appWorkingDir">target/arquillian</property>

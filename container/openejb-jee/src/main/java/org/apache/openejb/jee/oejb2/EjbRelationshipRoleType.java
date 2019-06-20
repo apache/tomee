@@ -26,64 +26,64 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ejb-relationship-roleType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ejb-relationship-roleType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="ejb-relationship-role-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="relationship-role-source">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="cmr-field" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="cmr-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="foreign-key-column-on-source" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/>
- *         &lt;element name="role-mapping">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="cmr-field-mapping" maxOccurs="unbounded">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ejb-relationship-roleType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="ejb-relationship-role-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="relationship-role-source"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="cmr-field" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="cmr-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="foreign-key-column-on-source" type="{http://www.w3.org/2001/XMLSchema}anyType" minOccurs="0"/&gt;
+ *         &lt;element name="role-mapping"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="cmr-field-mapping" maxOccurs="unbounded"&gt;
+ *                     &lt;complexType&gt;
+ *                       &lt;complexContent&gt;
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                           &lt;sequence&gt;
+ *                             &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                           &lt;/sequence&gt;
+ *                         &lt;/restriction&gt;
+ *                       &lt;/complexContent&gt;
+ *                     &lt;/complexType&gt;
+ *                   &lt;/element&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -210,19 +210,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="cmr-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="cmr-field-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -259,19 +259,19 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="ejb-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -308,30 +308,30 @@ public class EjbRelationshipRoleType {
 
     /**
      * <p>Java class for anonymous complex type.
-     * <p/>
+     *
      * <p>The following schema fragment specifies the expected content contained within this class.
-     * <p/>
+     *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="cmr-field-mapping" maxOccurs="unbounded">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence>
-     *                   &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="cmr-field-mapping" maxOccurs="unbounded"&gt;
+     *           &lt;complexType&gt;
+     *             &lt;complexContent&gt;
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                 &lt;sequence&gt;
+     *                   &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                 &lt;/sequence&gt;
+     *               &lt;/restriction&gt;
+     *             &lt;/complexContent&gt;
+     *           &lt;/complexType&gt;
+     *         &lt;/element&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -345,21 +345,21 @@ public class EjbRelationshipRoleType {
 
         /**
          * Gets the value of the cmrFieldMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list,
          * not a snapshot. Therefore any modification you make to the
          * returned list will be present inside the JAXB object.
          * This is why there is not a <CODE>set</CODE> method for the cmrFieldMapping property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
          * <pre>
          *    getCmrFieldMapping().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link EjbRelationshipRoleType.RoleMapping.CmrFieldMapping }
          */
@@ -373,20 +373,20 @@ public class EjbRelationshipRoleType {
 
         /**
          * <p>Java class for anonymous complex type.
-         * <p/>
+         *
          * <p>The following schema fragment specifies the expected content contained within this class.
-         * <p/>
+         *
          * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence>
-         *         &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
+         * &lt;complexType&gt;
+         *   &lt;complexContent&gt;
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *       &lt;sequence&gt;
+         *         &lt;element name="key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="foreign-key-column" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *       &lt;/sequence&gt;
+         *     &lt;/restriction&gt;
+         *   &lt;/complexContent&gt;
+         * &lt;/complexType&gt;
          * </pre>
          */
         @XmlAccessorType(XmlAccessType.FIELD)

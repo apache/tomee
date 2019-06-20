@@ -19,23 +19,23 @@ package org.apache.openejb.jee.was.v6.java;
 import javax.xml.bind.annotation.XmlEnum;
 
 /**
- * <p/>
+ *
  * Java class for TypeKind.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="TypeKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="UNDEFINED"/>
- *     &lt;enumeration value="CLASS"/>
- *     &lt;enumeration value="INTERFACE"/>
- *     &lt;enumeration value="EXCEPTION"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="TypeKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="UNDEFINED"/&gt;
+ *     &lt;enumeration value="CLASS"/&gt;
+ *     &lt;enumeration value="INTERFACE"/&gt;
+ *     &lt;enumeration value="EXCEPTION"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

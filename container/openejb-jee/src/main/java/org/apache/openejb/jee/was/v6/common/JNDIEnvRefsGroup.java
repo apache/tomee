@@ -27,45 +27,45 @@ import org.apache.openejb.jee.was.v6.wsclient.ServiceRef;
 /**
  * @since J2EE1.4 This group keeps the usage of the contained JNDI environment
  * reference elements consistent across J2EE deployment descriptors.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for JNDIEnvRefsGroup complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="JNDIEnvRefsGroup">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="environmentProperties" type="{common.xmi}EnvEntry"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="resourceRefs" type="{common.xmi}ResourceRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbRefs" type="{common.xmi}EjbRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="resourceEnvRefs" type="{common.xmi}ResourceEnvRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="ejbLocalRefs" type="{common.xmi}EJBLocalRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messageDestinationRefs" type="{common.xmi}MessageDestinationRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceRefs" type="{webservice_client.xmi}ServiceRef"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="JNDIEnvRefsGroup"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="environmentProperties" type="{common.xmi}EnvEntry"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="resourceRefs" type="{common.xmi}ResourceRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbRefs" type="{common.xmi}EjbRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="resourceEnvRefs" type="{common.xmi}ResourceEnvRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="ejbLocalRefs" type="{common.xmi}EJBLocalRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messageDestinationRefs" type="{common.xmi}MessageDestinationRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceRefs" type="{webservice_client.xmi}ServiceRef"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -84,22 +84,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the environmentProperties property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the environmentProperties property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getEnvironmentProperties().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link EnvEntry }
      */
     public List<EnvEntry> getEnvironmentProperties() {
@@ -111,22 +111,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the resourceRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the resourceRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getResourceRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceRef }
      */
@@ -139,22 +139,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the ejbRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the ejbRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getEjbRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link EjbRef }
      */
     public List<EjbRef> getEjbRefs() {
@@ -166,22 +166,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the resourceEnvRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the resourceEnvRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getResourceEnvRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ResourceEnvRef }
      */
@@ -194,22 +194,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the ejbLocalRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the ejbLocalRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getEjbLocalRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EJBLocalRef }
      */
@@ -222,22 +222,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the messageDestinationRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the messageDestinationRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getMessageDestinationRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDestinationRef }
      */
@@ -250,22 +250,22 @@ public class JNDIEnvRefsGroup extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the serviceRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the serviceRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getServiceRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ServiceRef }
      */

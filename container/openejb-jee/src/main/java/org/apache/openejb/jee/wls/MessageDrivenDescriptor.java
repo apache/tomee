@@ -29,49 +29,49 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for message-driven-descriptor complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="message-driven-descriptor">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="pool" type="{http://www.bea.com/ns/weblogic/90}pool" minOccurs="0"/>
- *         &lt;element name="timer-descriptor" type="{http://www.bea.com/ns/weblogic/90}timer-descriptor" minOccurs="0"/>
- *         &lt;choice>
- *           &lt;sequence>
- *             &lt;element name="resource-adapter-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *           &lt;/sequence>
- *           &lt;sequence>
- *             &lt;choice>
- *               &lt;sequence>
- *                 &lt;element name="destination-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;element name="initial-context-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;element name="provider-url" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;element name="connection-factory-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *               &lt;/sequence>
- *               &lt;sequence>
- *                 &lt;element name="destination-resource-link" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;element name="connection-factory-resource-link" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *               &lt;/sequence>
- *             &lt;/choice>
- *             &lt;element name="jms-polling-interval-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *             &lt;element name="jms-client-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *             &lt;element name="generate-unique-jms-client-id" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *             &lt;element name="durable-subscription-deletion" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *             &lt;element name="max-messages-in-transaction" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *             &lt;element name="distributed-destination-connection" type="{http://www.bea.com/ns/weblogic/90}distributed-destination-connection" minOccurs="0"/>
- *           &lt;/sequence>
- *         &lt;/choice>
- *         &lt;element name="init-suspend-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="max-suspend-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="security-plugin" type="{http://www.bea.com/ns/weblogic/90}security-plugin" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="message-driven-descriptor"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="pool" type="{http://www.bea.com/ns/weblogic/90}pool" minOccurs="0"/&gt;
+ *         &lt;element name="timer-descriptor" type="{http://www.bea.com/ns/weblogic/90}timer-descriptor" minOccurs="0"/&gt;
+ *         &lt;choice&gt;
+ *           &lt;sequence&gt;
+ *             &lt;element name="resource-adapter-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *           &lt;/sequence&gt;
+ *           &lt;sequence&gt;
+ *             &lt;choice&gt;
+ *               &lt;sequence&gt;
+ *                 &lt;element name="destination-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;element name="initial-context-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;element name="provider-url" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;element name="connection-factory-jndi-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *               &lt;/sequence&gt;
+ *               &lt;sequence&gt;
+ *                 &lt;element name="destination-resource-link" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;element name="connection-factory-resource-link" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *               &lt;/sequence&gt;
+ *             &lt;/choice&gt;
+ *             &lt;element name="jms-polling-interval-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *             &lt;element name="jms-client-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *             &lt;element name="generate-unique-jms-client-id" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *             &lt;element name="durable-subscription-deletion" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *             &lt;element name="max-messages-in-transaction" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *             &lt;element name="distributed-destination-connection" type="{http://www.bea.com/ns/weblogic/90}distributed-destination-connection" minOccurs="0"/&gt;
+ *           &lt;/sequence&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element name="init-suspend-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="max-suspend-seconds" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="security-plugin" type="{http://www.bea.com/ns/weblogic/90}security-plugin" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -263,7 +263,7 @@ public class DynamicSubclass implements Opcodes {
         return out.toByteArray();
     }
 
-    private static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
+    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
         // Move all the annotations onto the newly implemented methods
         // Ensures CDI and JAX-RS and JAX-WS still work
         Class clazz = classToProxy;

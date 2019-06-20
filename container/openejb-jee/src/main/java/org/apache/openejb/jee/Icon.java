@@ -30,24 +30,24 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for iconType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="iconType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="small-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
- *         &lt;element name="large-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="iconType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="small-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/&gt;
+ *         &lt;element name="large-icon" type="{http://java.sun.com/xml/ns/javaee}pathType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute ref="{http://www.w3.org/XML/1998/namespace}lang"/&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

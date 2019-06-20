@@ -32,42 +32,42 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * <p class="changed_added_2_2">Top level element for a flow
  * definition.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
- * <p>If there is no <code>&lt;start-node&gt;</code> element declared, it
- * is assumed to be <code>&lt;flowName&gt;.xhtml</code>.</p>
- * <p/>
+ *
+ * <p>If there is no <code>&lt;start-node&gt;</code&gt; element declared, it
+ * is assumed to be <code>&lt;flowName&gt;.xhtml</code&gt;.</p&gt;
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-flow-definitionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definitionType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="start-node" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/>
- *         &lt;element name="view" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-viewType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="switch" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switchType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="flow-return" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-returnType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="navigation-rule" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-navigation-ruleType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="flow-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-callType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="method-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-callType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="initializer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-initializerType" minOccurs="0"/>
- *         &lt;element name="finalizer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-finalizerType" minOccurs="0"/>
- *         &lt;element name="inbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-inbound-parameterType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definitionType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://xmlns.jcp.org/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="start-node" type="{http://xmlns.jcp.org/xml/ns/javaee}java-identifierType" minOccurs="0"/&gt;
+ *         &lt;element name="view" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-viewType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="switch" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-switchType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="flow-return" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-returnType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="navigation-rule" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-navigation-ruleType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="flow-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-flow-callType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="method-call" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-faces-method-callType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="initializer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-initializerType" minOccurs="0"/&gt;
+ *         &lt;element name="finalizer" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-finalizerType" minOccurs="0"/&gt;
+ *         &lt;element name="inbound-parameter" type="{http://xmlns.jcp.org/xml/ns/javaee}faces-config-flow-definition-inbound-parameterType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -117,21 +117,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the description property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the description property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDescription().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Description }
      */
@@ -144,21 +144,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the displayName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the displayName property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getDisplayName().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link DisplayName }
      */
@@ -171,21 +171,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the icon property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the icon property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getIcon().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Icon }
      */
@@ -218,21 +218,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the view property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the view property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getView().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionView }
      */
@@ -245,21 +245,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the switch property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the switch property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSwitch().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionSwitch }
      */
@@ -272,21 +272,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the flowReturn property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the flowReturn property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFlowReturn().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFlowReturn }
      */
@@ -299,21 +299,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the navigationRule property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the navigationRule property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNavigationRule().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigNavigationRuleExtension }
      */
@@ -326,21 +326,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the flowCall property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the flowCall property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFlowCall().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFlowCall }
      */
@@ -353,21 +353,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the methodCall property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the methodCall property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMethodCall().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionFacesMethodCall }
      */
@@ -420,21 +420,21 @@ public class FacesConfigFlowDefinition {
 
     /**
      * Gets the value of the inboundParameter property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the inboundParameter property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getInboundParameter().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesConfigFlowDefinitionInboundParameter }
      */

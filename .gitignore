@@ -16,3 +16,5 @@ quick.bat
 nb-configuration.xml
 .factorypath
 .history
+**/test/key
+tck/**/temp

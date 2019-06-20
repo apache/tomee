@@ -31,26 +31,26 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for methodType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="methodType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/>
- *         &lt;element name="method-intf" type="{http://java.sun.com/xml/ns/javaee}method-intfType" minOccurs="0"/>
- *         &lt;element name="method-name" type="{http://java.sun.com/xml/ns/javaee}method-nameType"/>
- *         &lt;element name="method-params" type="{http://java.sun.com/xml/ns/javaee}method-paramsType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="methodType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-name" type="{http://java.sun.com/xml/ns/javaee}ejb-nameType"/&gt;
+ *         &lt;element name="method-intf" type="{http://java.sun.com/xml/ns/javaee}method-intfType" minOccurs="0"/&gt;
+ *         &lt;element name="method-name" type="{http://java.sun.com/xml/ns/javaee}method-nameType"/&gt;
+ *         &lt;element name="method-params" type="{http://java.sun.com/xml/ns/javaee}method-paramsType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -154,16 +154,16 @@ public class Method {
      * ejb-jar file's deployment descriptor. The name must be
      * unique among the names of the enterprise beans in the same
      * ejb-jar file.
-     * <p/>
+     *
      * There is no architected relationship between the used
      * ejb-name in the deployment descriptor and the JNDI name that
      * the Deployer will assign to the enterprise bean's home.
-     * <p/>
+     *
      * The name for an entity bean must conform to the lexical
      * rules for an NMTOKEN.
-     * <p/>
+     *
      * Example:
-     * <p/>
+     *
      * <ejb-name>EmployeeService</ejb-name>
      */
     public void setEjbName(final String value) {

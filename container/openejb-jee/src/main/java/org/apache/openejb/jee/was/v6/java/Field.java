@@ -27,28 +27,28 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.openejb.jee.was.v6.ecore.ETypedElement;
 
 /**
- * <p/>
+ *
  * Java class for Field complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Field">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="initializer" type="{java.xmi}Block"/>
- *       &lt;/choice>
- *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="javaVisibility" type="{java.xmi}JavaVisibilityKind" />
- *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Field"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eclipse.org/emf/2002/Ecore}ETypedElement"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="initializer" type="{java.xmi}Block"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="final" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="javaVisibility" type="{java.xmi}JavaVisibilityKind" /&gt;
+ *       &lt;attribute name="static" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="transient" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *       &lt;attribute name="volatile" type="{http://www.w3.org/2001/XMLSchema}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,22 +70,22 @@ public class Field extends ETypedElement {
 
     /**
      * Gets the value of the initializers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the initializers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getInitializers().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Block }
      */
     public List<Block> getInitializers() {

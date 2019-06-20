@@ -29,29 +29,29 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for anonymous complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://jboss.org}ejb-relation-name"/>
- *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/>
- *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element ref="{http://jboss.org}foreign-key-mapping"/>
- *           &lt;element ref="{http://jboss.org}relation-table-mapping"/>
- *         &lt;/choice>
- *         &lt;sequence minOccurs="0">
- *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/>
- *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/>
- *         &lt;/sequence>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://jboss.org}ejb-relation-name"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-only" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://jboss.org}read-time-out" minOccurs="0"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element ref="{http://jboss.org}foreign-key-mapping"/&gt;
+ *           &lt;element ref="{http://jboss.org}relation-table-mapping"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;sequence minOccurs="0"&gt;
+ *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/&gt;
+ *           &lt;element ref="{http://jboss.org}ejb-relationship-role"/&gt;
+ *         &lt;/sequence&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -73,31 +73,31 @@ public class EjbRelation {
 
     /**
      * Gets the rest of the content model.
-     * <p/>
-     * <p/>
+     *
+     *
      * You are getting this "catch-all" property because of the following reason:
      * The field name "EjbRelationshipRole" is used by two different parts of a schema. See:
      * line 476 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
      * line 475 of file:/Users/dblevins/work/openejb3/jbosscmp-jdbc_4_0.xsd
-     * <p/>
+     *
      * To get rid of this property, apply a property customization to one
      * of both of the following declarations to change their names:
      * Gets the value of the content property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the content property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getContent().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EjbRelationshipRole }
      * {@link EjbRelationName }

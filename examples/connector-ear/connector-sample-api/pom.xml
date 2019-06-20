@@ -34,10 +34,10 @@
   <name>OpenEJB :: Connector Examples :: Connector in EAR :: API</name>
 
   <dependencies>
-      <dependency>
-        <groupId>org.apache.openejb</groupId>
-        <artifactId>javaee-api</artifactId>
-        <scope>provided</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.apache.openejb</groupId>
+      <artifactId>javaee-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 </project>

@@ -29,7 +29,7 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
 /**
  * The message-driven element declares a message-driven bean. The declaration
  * consists of:
- * <p/>
+ *
  * - an optional description - an optional display name - an optional icon
  * element that contains a small and a large icon file name. - a name assigned
  * to the enterprise bean in the deployment descriptor - the message-driven
@@ -46,42 +46,42 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * manager connection factory references - an optional declaration of the bean's
  * resource environment references. - an optional declaration of the bean's
  * message destination references
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for MessageDriven complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="MessageDriven">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}EnterpriseBean">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="destination" type="{ejb.xmi}MessageDrivenDestination"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="activationConfig" type="{ejb.xmi}ActivationConfig"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messageDestination" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="messagingType" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="acknowledgeMode" type="{ejb.xmi}AcknowledgeMode" />
- *       &lt;attribute name="link" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messageDestination" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messageSelector" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="messagingType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="MessageDriven"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}EnterpriseBean"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="destination" type="{ejb.xmi}MessageDrivenDestination"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="activationConfig" type="{ejb.xmi}ActivationConfig"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messageDestination" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="messagingType" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="acknowledgeMode" type="{ejb.xmi}AcknowledgeMode" /&gt;
+ *       &lt;attribute name="link" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messageDestination" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messageSelector" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="messagingType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="transactionType" type="{ejb.xmi}TransactionType" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -112,22 +112,22 @@ public class MessageDriven extends EnterpriseBean {
 
     /**
      * Gets the value of the destinations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the destinations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDestinations().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDrivenDestination }
      */
@@ -140,22 +140,22 @@ public class MessageDriven extends EnterpriseBean {
 
     /**
      * Gets the value of the activationConfigs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the activationConfigs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getActivationConfigs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link ActivationConfig }
      */
@@ -168,22 +168,22 @@ public class MessageDriven extends EnterpriseBean {
 
     /**
      * Gets the value of the messageDestinations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the messageDestinations property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getMessageDestinations().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */
@@ -196,22 +196,22 @@ public class MessageDriven extends EnterpriseBean {
 
     /**
      * Gets the value of the messagingTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the messagingTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getMessagingTypes().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */

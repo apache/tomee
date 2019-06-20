@@ -34,24 +34,24 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * web-facesconfig_2_0.xsd
- * <p/>
+ *
  * <p>Java class for faces-config-facetType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-facetType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="facet-name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="facet-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-facet-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-facetType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="facet-name" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="facet-extension" type="{http://java.sun.com/xml/ns/javaee}faces-config-facet-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -146,21 +146,21 @@ public class FacesFacet {
 
     /**
      * Gets the value of the facetExtension property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the facetExtension property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFacetExtension().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FacesFacetExtension }
      */

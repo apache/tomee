@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * The service-interface-mapping element defines how a Java type for
  * the service interface maps to a WSDL service.
- * <p/>
+ *
  * Used in: java-wsdl-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

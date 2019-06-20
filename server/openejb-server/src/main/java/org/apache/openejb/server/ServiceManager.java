@@ -321,7 +321,7 @@ public abstract class ServiceManager {
 
     /**
      * Start the services managed by this instance.
-     * <p/>
+     *
      * Services should not be started if {@link #stop()} has already been called,
      * in which case a ServiceException should be thrown
      *

@@ -29,17 +29,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for faces-config-flow-definition-faces-method-call-methodType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-flow-definition-faces-method-call-methodType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>faces-config-el-expressionType">
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-flow-definition-faces-method-call-methodType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;faces-config-el-expressionType"&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -220,11 +220,11 @@ public class OpenEJBContextConfig extends ContextConfig {
     }
 
     @Override
-    protected void processContextConfig(final Digester digester, final URL contextXml) {
+    protected void processContextConfig(final Digester digester, final URL contextXml, final InputStream stream) {
         try {
-            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml));
+            super.processContextConfig(digester, replaceKnownRealmsByTomEEOnes(contextXml), stream);
         } catch (final MalformedURLException e) {
-            super.processContextConfig(digester, contextXml);
+            super.processContextConfig(digester, contextXml, stream);
         }
     }
 

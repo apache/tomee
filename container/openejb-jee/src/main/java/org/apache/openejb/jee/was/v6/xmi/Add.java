@@ -25,22 +25,22 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p/>
+ *
  * Java class for Add complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Add">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.omg.org/XMI}Difference">
- *       &lt;attribute name="addition" type="{http://www.w3.org/2001/XMLSchema}IDREFS" />
- *       &lt;attribute name="position" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Add"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.omg.org/XMI}Difference"&gt;
+ *       &lt;attribute name="addition" type="{http://www.w3.org/2001/XMLSchema}IDREFS" /&gt;
+ *       &lt;attribute name="position" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,22 +55,22 @@ public class Add extends Difference {
 
     /**
      * Gets the value of the additions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the additions property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getAdditions().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Object }
      */
     public List<Object> getAdditions() {

@@ -42,14 +42,14 @@ public class SingletonPojoEjbLocalHomeTests extends BasicSingletonLocalTestClien
      * 5.3.2 Removing a session object
      * A client may remove a session object using the remove() method on the javax.ejb.EJBObject
      * interface, or the remove(Handle handle) method of the javax.ejb.EJBHome interface.
-     * <p/>
+     *
      * Because session objects do not have primary keys that are accessible to clients, invoking the
      * javax.ejb.EJBHome.remove(Object primaryKey) method on a session results in the
      * javax.ejb.RemoveException.
-     * <p/>
+     *
      * ------------------------------------
      * 5.5 Session object identity
-     * <p/>
+     *
      * Session objects are intended to be private resources used only by the
      * client that created them. For this reason, session objects, from the
      * client's perspective, appear anonymous. In contrast to entity objects,
@@ -60,10 +60,10 @@ public class SingletonPojoEjbLocalHomeTests extends BasicSingletonLocalTestClien
      * method is invoked on a EJBMetaData object for a Session bean, the method throws
      * the java.lang.RuntimeException.
      * ------------------------------------
-     * <p/>
+     *
      * Sections 5.3.2 and 5.5 conflict.  5.3.2 says to throw javax.ejb.RemoveException, 5.5 says to
      * throw java.rmi.RemoteException.
-     * <p/>
+     *
      * For now, we are going with java.rmi.RemoteException.
      * ==============================================================================================
      * TODO - MNour: Please add related sections from EJB3.0 Core contracts and requirements specification

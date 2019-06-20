@@ -23,18 +23,18 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for trans-attributeType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="trans-attributeType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="trans-attributeType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee&gt;string"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 public enum TransAttribute {

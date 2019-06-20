@@ -23,18 +23,18 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for message-destination-usageType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="message-destination-usageType">
- *   &lt;simpleContent>
- *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee>string">
- *     &lt;/restriction>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="message-destination-usageType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;restriction base="&lt;http://java.sun.com/xml/ns/javaee&gt;string"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 public enum MessageDestinationUsage {

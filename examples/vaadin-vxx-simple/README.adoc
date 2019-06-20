@@ -1,0 +1,47 @@
+== Latest Vaadin Platform - Simple WebApp in Java
+
+This demo will show how to start with a simple Vaadin Flow webapp, based
+on pure Java API running on TomEE (webprofile). The current Vaadin Flow
+version, that is used in this demo is the latest one. If you are looking
+for LTS versions, have a look at the Vaadin Examples in this repository
+with the prefix LTS.
+
+The Vaadin Platform is OpenSource and available at
+https://github.com/vaadin/platform[Github]
+
+=== Build this example
+
+To build this example, just run _mvn clean install tomee:run_ You will
+find the app running under http://localhost:8080/
+
+=== Implementation
+
+This implementation is using the https://vaadin.com/flow[Flow API] from
+the Vaadin Platform.
+
+[source,java]
+----
+@Route("")
+public class HelloVaadinV10 extends Composite<Div> {
+    public HelloVaadinV10() {
+        final VerticalLayout layout = new VerticalLayout();
+        layout
+            .add(new Button("click me",
+                            event -> layout.add(new Label("clicked again"))
+            ));
+        //set the main Component
+        getContent().add(layout);
+    }
+}
+----
+
+The documentation of the current Vaadin Platform is available
+https://vaadin.com/docs/[here]
+
+=== Support Information’s
+
+As of Vaadin 10, Vaadin is moving to a release train model with four
+major releases every year. This allows them to ship new features faster
+to developers. Vaadin is continuing their commitment to long-term
+stability with long-term support (LTS) releases. The LTS releases will
+come out approximately every two years and offer 5 years of support.

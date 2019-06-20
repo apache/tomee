@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@ package org.superbiz.enventries;
  * With a java.beans.PropertyEditor, you can go way beyond the built-in
  * types that OpenEJB supports and can extend dependency injection to
  * just about anywhere.
- * <p/>
+ *
  * In the world of electric guitars, two types of pickups are used: humbucking, and single-coil.
  * Guitarists often refer to their guitars as HSS, meaning a guitar with 1 humbucker and
  * 2 single coil pickups, and so on.  This little PropertyEditor supports that shorthand notation.

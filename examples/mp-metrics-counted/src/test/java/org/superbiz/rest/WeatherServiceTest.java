@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -87,7 +87,8 @@ public class WeatherServiceTest {
                 .request()
                 .accept(MediaType.TEXT_PLAIN)
                 .get(String.class);
-        assertEquals("# TYPE application:weather_day_status counter\napplication:weather_day_status 1.0\n", metric);
+        assertEquals("# TYPE application:weather_day_status counter\n" +
+                "application:weather_day_status{weather=\"day\"} 1.0\n", metric);
     }
 
     private void assertJsonFormat(final String metricPath) {

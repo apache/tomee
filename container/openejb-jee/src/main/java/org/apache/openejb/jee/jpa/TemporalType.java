@@ -23,17 +23,17 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for temporal-type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="temporal-type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="DATE"/>
- *     &lt;enumeration value="TIME"/>
- *     &lt;enumeration value="TIMESTAMP"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="temporal-type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="DATE"/&gt;
+ *     &lt;enumeration value="TIME"/&gt;
+ *     &lt;enumeration value="TIMESTAMP"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlType(name = "temporal-type")

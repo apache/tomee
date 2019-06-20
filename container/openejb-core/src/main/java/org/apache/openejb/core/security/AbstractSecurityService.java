@@ -50,6 +50,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
 
     @Override
     public void destroyResource() {
-        // no-op
+        ThreadContext.removeThreadContextListener(this);
     }
 
     public void onLogout(final HttpServletRequest request) {
@@ -358,7 +359,19 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
 
-        final String policyProvider = SystemInstance.get().getOptions().get("javax.security.jacc.policy.provider", JaccProvider.Policy.class.getName());
+        // check the system provided provider first - if for some reason it isn't loaded, load it
+        final String systemPolicyProvider = SystemInstance.get().getOptions().getProperties().getProperty("javax.security.jacc.policy.provider");
+        if (systemPolicyProvider != null && Policy.getPolicy() == null) {
+            installPolicy(systemPolicyProvider);
+        }
+
+        if (! JaccProvider.Policy.class.getName().equals(Policy.getPolicy().getClass().getName())) {
+            // this should delegate to the policy installed above
+            installPolicy(JaccProvider.Policy.class.getName());
+        }
+    }
+
+    private static void installPolicy(String policyProvider) {
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             final Class policyClass = Class.forName(policyProvider, true, classLoader);
@@ -369,6 +382,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             throw new IllegalStateException("Could not install JACC Policy Provider: " + policyProvider, e);
         }
     }
+
 
     protected Subject createSubject(final String name, final String groupName) {
         if (name == null) {
@@ -507,7 +521,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             }
 
             final User user = User.class.cast(o);
-            return !(name != null ? !name.equals(user.name) : user.name != null);
+            return !(!Objects.equals(name, user.name));
 
         }
 

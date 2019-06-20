@@ -35,40 +35,40 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * JAX-RPC mappings, an optional QName for the service element, an optional set
  * of Service Endpoint Interfaces to be resolved by the container to a WSDL
  * port, and an optional set of handlers.
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * Java class for ServiceRef complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="ServiceRef">
- *   &lt;complexContent>
- *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceInterface" type="{java.xmi}JavaClass"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="portComponentRefs" type="{webservice_client.xmi}PortComponentRef"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="handlers" type="{webservice_client.xmi}Handler"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="serviceQname" type="{common.xmi}QName"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attribute name="jaxrpcMappingFile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="serviceInterface" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="serviceRefName" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="wsdlFile" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="ServiceRef"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{common.xmi}CompatibilityDescriptionGroup"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceInterface" type="{java.xmi}JavaClass"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="portComponentRefs" type="{webservice_client.xmi}PortComponentRef"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="handlers" type="{webservice_client.xmi}Handler"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="serviceQname" type="{common.xmi}QName"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="jaxrpcMappingFile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="serviceInterface" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="serviceRefName" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="wsdlFile" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -93,22 +93,22 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the serviceInterfaces property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the serviceInterfaces property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getServiceInterfaces().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */
@@ -121,22 +121,22 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the portComponentRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the portComponentRefs property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getPortComponentRefs().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link PortComponentRef }
      */
@@ -149,22 +149,22 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the handlers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the handlers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getHandlers().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Handler }
      */
     public List<Handler> getHandlers() {
@@ -176,22 +176,22 @@ public class ServiceRef extends CompatibilityDescriptionGroup {
 
     /**
      * Gets the value of the serviceQnames property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the serviceQnames property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getServiceQnames().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link QName }
      */
     public List<QName> getServiceQnames() {

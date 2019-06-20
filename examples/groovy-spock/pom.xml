@@ -17,8 +17,7 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
@@ -74,15 +73,15 @@
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
-      <snapshots/>
+      <snapshots />
     </repository>
   </repositories>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -96,9 +95,15 @@
       <version>1.0.1</version>
     </dependency>
     <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>2.1.13</version>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.2</version>
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <artifactId>jakarta.activation</artifactId>
+          <groupId>jakarta.activation-api</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

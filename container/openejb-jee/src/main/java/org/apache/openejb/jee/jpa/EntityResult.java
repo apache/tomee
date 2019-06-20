@@ -27,31 +27,31 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({}) @Retention(RUNTIME)
+ * Target({}) @Retention(RUNTIME)
  * public @interface EntityResult {
  * Class entityClass();
  * FieldResult[] fields() default {};
  * String discriminatorColumn() default "";
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for entity-result complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="entity-result">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="field-result" type="{http://java.sun.com/xml/ns/persistence/orm}field-result" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="discriminator-column" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="entity-class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="entity-result"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="field-result" type="{http://java.sun.com/xml/ns/persistence/orm}field-result" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="discriminator-column" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="entity-class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -69,21 +69,21 @@ public class EntityResult {
 
     /**
      * Gets the value of the fieldResult property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the fieldResult property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFieldResult().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link FieldResult }
      */

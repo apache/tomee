@@ -23,16 +23,16 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for importType.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="importType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="classes"/>
- *     &lt;enumeration value="services"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="importType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="classes"/&gt;
+ *     &lt;enumeration value="services"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

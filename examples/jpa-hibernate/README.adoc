@@ -6,9 +6,19 @@
 This example shows the persist, remove and creation a query in JPA Hibernate.
 The Java Persistence API (JPA) is a Java specification for accessing, persisting, and managing data between Java objects / classes and a relational database.
 
+To exemplify the use of JPA, we will persist an Object (Movie) in the database.
+
+Links to the documentation have been added in key parts of the example for the case of doubts and as a way to encourage their reading for details.
+
 == Movie
 
-Define the class Movie as an entity with de annotation @Entity
+Here we have a class with some details. See the annotation 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Entity.html[@Entity] 
+above the declaration, with it we are saying that this class is an entity (a table in the database). We still have two more annotations above the attribute id, one of them is 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/Id.html[@Id] 
+annotation, it indicates that this attribute is the identifier of the entity and the other annotation 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
+indicates that the unique identifier value generation of the entity will be managed by the persistence provider.
 
 ....
 package org.superbiz.injection.h3jpa;
@@ -67,8 +77,18 @@ public class Movie {
 
 == Movies
 
-@PersistenceContext A persistence context is a set of entities such that for any persistent identity there is a unique entity instance.
-@EntityManager is associated with a persistence context. Is at the core of JPA, supported by some methods: persist, remove,merge, find,
+Now we have two important things: 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext] 
+annotation and the 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+declaration.
+The 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+is the interface with the core methods of JPA like persist, remove, merge, find and others...
+We annotate the 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
+with 
+link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], a persistence context is an entity management where  every persistence context associated with a persistence unit, we will create a persistence.xml soon for this.
 
 ....
 package org.superbiz.injection.h3jpa;
@@ -103,6 +123,8 @@ public class Movies {
 
 == persistence.xml
 
+Here we define which database will persist our movies, and we perform other configurations such as: define a persistence-unit with the name movie-unit, followed by the definition of the JPA provider/implementation (in this case Hibernate) and we set some properties for hibernate:
+
  <persistence version="1.0"
               xmlns="http://java.sun.com/xml/ns/persistence"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -119,6 +141,8 @@ public class Movies {
  </persistence>
 
 == MoviesTest
+
+Now we do a test, persisting three films, then we perform a search and finally we delete them.
 
 ....
 package org.superbiz.injection.h3jpa;
@@ -164,8 +188,14 @@ public class MoviesTest extends TestCase {
 
 To run the example via maven:
 
+Access the project folder:
+....
 cd jpa-hibernate
+....
+And execute:
+....
 mvn clean install
+....
 
 Which will generate output similar to the following:
 

@@ -32,18 +32,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="constraint-mappingsType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="default-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="bean" type="{http://jboss.org/xml/ns/javax/validation/mapping}beanType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="constraint-definition" type="{http://jboss.org/xml/ns/javax/validation/mapping}constraint-definitionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="version" type="{http://jboss.org/xml/ns/javax/validation/mapping}versionType" fixed="1.1" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="constraint-mappingsType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="default-package" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="bean" type="{http://jboss.org/xml/ns/javax/validation/mapping}beanType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="constraint-definition" type="{http://jboss.org/xml/ns/javax/validation/mapping}constraint-definitionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="version" type="{http://jboss.org/xml/ns/javax/validation/mapping}versionType" fixed="1.1" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

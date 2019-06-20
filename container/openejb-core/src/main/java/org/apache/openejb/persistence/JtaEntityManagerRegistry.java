@@ -68,7 +68,7 @@ public class JtaEntityManagerRegistry {
     /**
      * Gets an entity manager instance from the transaction registry, extended registry or for a transaction scoped
      * entity manager, creates a new one when an existing instance is not found.
-     * </p>
+     *
      * It is important that a component adds extended scoped entity managers to this registry when the component is
      * entered and removes them when exited.  If this registration is not performed, an IllegalStateException will
      * be thrown when entity manger is fetched.

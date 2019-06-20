@@ -32,27 +32,27 @@ import java.util.Map;
 
 /**
  * web-facelettaglibary_2_0.xsd
- * <p/>
+ *
  * <p>Java class for functionType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="functionType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/>
- *         &lt;element name="function-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/>
- *         &lt;element name="function-signature" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="example" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="function-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="functionType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="name" type="{http://java.sun.com/xml/ns/javaee}tld-canonical-nameType"/&gt;
+ *         &lt;element name="function-class" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType"/&gt;
+ *         &lt;element name="function-signature" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="example" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="function-extension" type="{http://java.sun.com/xml/ns/javaee}tld-extensionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

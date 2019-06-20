@@ -89,7 +89,7 @@ public class JUnit4Runner extends BlockJUnit4ClassRunner {
     /**
      * Create a method statement that executes the test for each of the specified
      * roles, both doing authorized and unauthorized tests.
-     * <p/>
+     *
      * Unauthorized roles are configured to fail with EJBAccessExceptions.
      *
      * @param method

@@ -27,27 +27,27 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 /**
- * <p/>
+ *
  * Java class for XMI complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="XMI">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;any/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}LinkAttribs"/>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}IdentityAttribs"/>
- *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" />
- *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" fixed="2.0" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="XMI"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;any/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}LinkAttribs"/&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}IdentityAttribs"/&gt;
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}QName" /&gt;
+ *       &lt;attribute name="version" use="required" type="{http://www.w3.org/2001/XMLSchema}string" fixed="2.0" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -72,22 +72,22 @@ public class XMI {
 
     /**
      * Gets the value of the elements property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the elements property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getElements().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Object }
      */
     public List<Object> getElements() {

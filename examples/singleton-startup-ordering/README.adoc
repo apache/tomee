@@ -1,0 +1,203 @@
+= Singleton Startup Ordering
+:index-group: Session Beans
+:jbake-type: page
+:jbake-status: status=published
+
+This examples shows in practice the  `@Startup` and `@DependsOn` annotations on `singleton` EJB's.
+
+
+
+=== Run the tests
+....
+mvn clean test 
+....
+
+
+
+=== The scenario
+
+* The example is composed by three singleton beans: `SingletonA`, `SingletonB`, `SingletonC`.
+* The three EJB's contains a `@PostConstruct` annotation for the `init` method that is executed after dependency injection is done to perform any initialization. This method is invoked before the class is put into service.
+* The `init` method store the name of the bean class that is been initialized in the `Supervisor` bean.
+* The `Supervisor` bean is annotated with `@ApplicationScoped` to be able to share the list of bean names stored in the `records` attribute.
+* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initilized until the bean is going to be used in later injection point.
+* `SingletonB` is annotated with `@DependsOn("SingletonA")` to enforce a initialization order with respect to `SingletonA`.
+
+
+
+`SingletonA.java`: Singleton EJB annotated with  `@Startup`. It depends on the EJB `Supervisor`.
+
+....
+package org.foo;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
+import java.util.logging.Logger;
+
+@Singleton
+@Startup
+public class SingletonA {
+
+    @Inject
+    Supervisor supervisor;
+
+    private final static Logger LOGGER = Logger.getLogger(SingletonA.class.getName());
+
+
+    @PostConstruct
+    public void init() {
+        LOGGER.info("Hi from init in class: " + this.getClass().getName());
+        supervisor.addRecord(this.getClass().getSimpleName());
+    }
+}
+....
+
+
+`SingletonB.java`: Singleton EJB annotated with  `@Startup` and `DependsOn`. It depends on the EJB `Supervisor`.
+
+....
+package org.foo;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
+import java.util.logging.Logger;
+
+@Singleton
+@Startup
+@DependsOn("SingletonA")
+public class SingletonB {
+
+    @Inject
+    Supervisor supervisor;
+
+    private final static Logger LOGGER = Logger.getLogger(SingletonB.class.getName());
+
+    @PostConstruct
+    public void init() {
+        LOGGER.info("Hi from init in class: " + this.getClass().getName());
+        supervisor.addRecord(this.getClass().getSimpleName());
+    }
+}
+....
+
+
+`SingletonC.java`: Singleton EJB. It depends on the EJB `Supervisor`.
+
+....
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+import java.util.logging.Logger;
+
+@Singleton
+public class SingletonC {
+    @Inject
+    Supervisor supervisor;
+
+    private final static Logger LOGGER = Logger.getLogger(SingletonC.class.getName());
+
+    @PostConstruct
+    public void init() {
+        LOGGER.info("Hi from init in class: " + this.getClass().getName());
+        supervisor.addRecord(this.getClass().getSimpleName());
+
+    }
+
+    public String hello() {
+        return "Hello from SingletonC.class";
+    }
+}
+....
+
+
+`Supervisor.java`: Applicaiton scoped Bean that keep track of a list of Bean Names.
+
+....
+import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
+import java.util.List;
+
+@ApplicationScoped
+public class Supervisor {
+    private final List<String> records = new ArrayList<>();
+
+    public void addRecord(String beanClass){
+        records.add(beanClass);
+    }
+
+    public String getRecord(){
+        return records.toString();
+    }
+}
+....
+
+
+=== The tests
+
+* The class `TestSingletonStartupOrder.java` contains two test that are executed in order via the annotation `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
+* `firstTest`: assert true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initilized since it's not annotated with `@Startup`.
+* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
+
+`TestSingletonStartupOrder.java`
+....
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.foo.SingletonA;
+import org.foo.SingletonB;
+import org.foo.SingletonC;
+import org.foo.Supervisor;
+
+import java.util.logging.Logger;
+
+import static junit.framework.TestCase.assertTrue;
+
+
+@RunWith(Arquillian.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestSingletonStartupOrder {
+    private final static Logger LOGGER = Logger.getLogger(TestSingletonStartupOrder.class.getName());
+
+    @Deployment()
+    public static WebArchive createDeployment() {
+        final WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+                                                .addClass(SingletonA.class)
+                                                .addClass(SingletonB.class)
+                                                .addClass(SingletonC.class)
+                                                .addClass(Supervisor.class)
+                                                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml");
+        return webArchive;
+    }
+
+
+    @Test
+    public void firstTest(Supervisor supervisor) {
+        LOGGER.info("SUPERVISOR: [" + supervisor.getRecord() + "]");
+        assertTrue(supervisor.getRecord().equals("[SingletonA, SingletonB]"));
+    }
+
+    @Test
+    public void secondTest(Supervisor supervisor, SingletonC singletonC) {
+        LOGGER.info(singletonC.hello());
+        LOGGER.info("SUPERVISOR: [" + supervisor.getRecord() + "]");
+        assertTrue(supervisor.getRecord().equals("[SingletonA, SingletonB, SingletonC]"));
+    }
+}
+....
+
+=== About the Test architecture
+
+The test cases from this project are built using Arquillian and TomEE
+Remote. The arquillian configuration can be found in
+`src/test/resources/arquillian.xml`

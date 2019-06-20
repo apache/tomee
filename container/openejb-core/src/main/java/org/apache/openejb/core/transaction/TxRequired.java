@@ -25,14 +25,14 @@ import javax.transaction.TransactionManager;
 
 /**
  * 17.6.2.2 Required
- * <p/>
+ *
  * The Container must invoke an enterprise Bean method whose transaction
  * attribute is set to Required with a valid transaction context.
- * <p/>
+ *
  * If a client invokes the enterprise Bean's method while the client is
  * associated with a transaction context, the container invokes the enterprise
  * Bean's method in the client's transaction context.
- * <p/>
+ *
  * If the client invokes the enterprise Bean's method while the client is not
  * associated with a transaction context, the container automatically starts a
  * new transaction before delegating a method call to the enterprise Bean

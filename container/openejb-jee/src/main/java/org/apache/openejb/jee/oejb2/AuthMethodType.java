@@ -23,18 +23,18 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * <p>Java class for auth-methodType.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;simpleType name="auth-methodType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="BASIC"/>
- *     &lt;enumeration value="DIGEST"/>
- *     &lt;enumeration value="CLIENT-CERT"/>
- *     &lt;enumeration value="NONE"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="auth-methodType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="BASIC"/&gt;
+ *     &lt;enumeration value="DIGEST"/&gt;
+ *     &lt;enumeration value="CLIENT-CERT"/&gt;
+ *     &lt;enumeration value="NONE"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

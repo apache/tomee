@@ -53,13 +53,17 @@ public final class ScanUtil {
 
         @Override
         public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
-            if (qName.equals("class")) {
-                current = classes;
-            } else if (qName.equals("package")) {
-                current = packages;
-            } else if (qName.equals("scan")) {
-                final String optimized = attributes.getValue("optimized");
-                this.optimized = optimized == null || Boolean.parseBoolean(optimized);
+            switch (qName) {
+                case "class":
+                    current = classes;
+                    break;
+                case "package":
+                    current = packages;
+                    break;
+                case "scan":
+                    final String optimized = attributes.getValue("optimized");
+                    this.optimized = optimized == null || Boolean.parseBoolean(optimized);
+                    break;
             }
         }
 

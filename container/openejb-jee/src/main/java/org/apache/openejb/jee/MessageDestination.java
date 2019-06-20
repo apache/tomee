@@ -35,25 +35,25 @@ import java.util.Map;
 
 /**
  * javaee6.xsd
- * <p/>
+ *
  * <p>Java class for message-destinationType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="message-destinationType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/>
- *         &lt;element name="message-destination-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *         &lt;element name="lookup-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="message-destinationType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}descriptionGroup"/&gt;
+ *         &lt;element name="message-destination-name" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="mapped-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *         &lt;element name="lookup-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

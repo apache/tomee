@@ -34,27 +34,27 @@ import org.apache.openejb.jee.was.v6.java.JavaClass;
  * set accessor methods for the relationship. The CMRField::type element
  * is used only for collection-valued CMRFields. It specifies the type of
  * the collection that is used (a java class name).
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * Java class for CMRField complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained
  * within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="CMRField">
- *   &lt;complexContent>
- *     &lt;extension base="{ejb.xmi}CMPAttribute">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="collectionType" type="{java.xmi}JavaClass"/>
- *       &lt;/choice>
- *       &lt;attribute name="collectionType" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CMRField"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{ejb.xmi}CMPAttribute"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="collectionType" type="{java.xmi}JavaClass"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="collectionType" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -68,22 +68,22 @@ public class CMRField extends CMPAttribute {
 
     /**
      * Gets the value of the collectionTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the collectionTypes property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getCollectionTypes().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JavaClass }
      */

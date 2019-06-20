@@ -30,23 +30,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for activation-config-propertyType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="activation-config-propertyType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="activation-config-property-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
- *         &lt;element name="activation-config-property-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="activation-config-propertyType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="activation-config-property-name" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/&gt;
+ *         &lt;element name="activation-config-property-value" type="{http://java.sun.com/xml/ns/javaee}xsdStringType"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

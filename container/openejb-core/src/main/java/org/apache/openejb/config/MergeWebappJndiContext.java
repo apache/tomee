@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * In a webapp all ejbs will share the JNDI namespace of the servlets
  * This means no private namespace for each EJB.
- * <p/>
+ *
  * To make this happen we merge the JNDI entries of each ejb into
  *
  * @version $Rev$ $Date$

@@ -196,10 +196,10 @@ public class StatelessInstanceManager {
     /**
      * Removes an instance from the pool and returns it for use
      * by the container in business methods.
-     * <p/>
+     *
      * If the pool is at it's limit the StrictPooling flag will
      * cause this thread to wait.
-     * <p/>
+     *
      * If StrictPooling is not enabled this method will create a
      * new stateless bean instance performing all required injection
      * and callbacks before returning it in a method ready state.
@@ -255,10 +255,10 @@ public class StatelessInstanceManager {
     /**
      * All instances are removed from the pool in getInstance(...).  They are only
      * returned by the StatelessContainer via this method under two circumstances.
-     * <p/>
+     *
      * 1.  The business method returns normally
      * 2.  The business method throws an application exception
-     * <p/>
+     *
      * Instances are not returned to the pool if the business method threw a system
      * exception.
      *
@@ -547,7 +547,7 @@ public class StatelessInstanceManager {
         public void run() {
             final Instance obj = supplier.create();
             if (obj != null) {
-                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0l;
+                final long offset = maxAge > 0 ? (long) (maxAge / maxAgeOffset * min * iteration) % maxAge : 0L;
                 data.getPool().add(obj, offset);
             }
         }
