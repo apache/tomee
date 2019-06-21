@@ -8,15 +8,14 @@ O CDI permite estender o código de negócios pelo padrão Notificador / Observa
 Para fazer isso, basta injetar um campo `Event` na classe notifier. Essa classe é um modelo e o tipo de parâmetro é o tipo de objeto a ser disparado. Então, quando você quiser notificar observadores, você simplesmente chamará o método fire do objeto de evento passando como parâmetro o próprio evento.
 (sua própria classe!)
 
-On the other side you annotated a method parameter `@Observes` and the parameter type is the sent type
-by the notifier.
+Do outro lado, você anotou um parâmetro de método `@ Observes` e o tipo de parâmetro é o tipo enviado pelo notificador.
 
 NOTE: Você pode adicionar qualificadores para ser mais preciso em seus eventos.
 
 == Exemplo
 
 O exemplo é bem simples: um ejb usa a anotação `@ Schedule` para receber uma notificação a cada segundo.
-A cada secondo este EJB enviará a data atual por meio de eventos do CDI.
+A cada segundo este EJB enviará a data atual por meio de eventos do CDI.
 
 Este é o nosso código de "negócios". É um comportamento simples (nada).
 
