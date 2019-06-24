@@ -165,7 +165,9 @@ public class MoviesXA {
                     state = XA_STATE_STARTED;
                 }
             });
-        } catch (final RollbackException | SystemException e) {
+        } catch (final RollbackException e) {
+            throw new IllegalStateException(e);
+        } catch (final SystemException e) {
             throw new IllegalStateException(e);
         }
     }
