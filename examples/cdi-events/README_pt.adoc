@@ -1,4 +1,4 @@
-= CDI Events - Loose Coupling and Extensibility
+= CDI Events - Acoplamento Solto e Extensibilidade
 :index-group: CDI
 :jbake-type: page
 :jbake-status: published
