@@ -11,7 +11,7 @@ ifdef::env-github[]
 endif::[]
 
 == Indrodução
-Qualquer anotação que recebe parâmetros podem se beneficiar das meta-anotações. Aquí observamos como `@AccessTimeout` pode ser mais facíl de entender e administrar mediante meta-anotações.
+Qualquer anotação que recebe parâmetros podem se beneficiar das meta-anotações. Aquí observamos como `@AccessTimeout` pode ser mais fácil de entender e administrar mediante meta-anotações.
 Usaremos [access-timeout](../access-timeout/README.html) como nosso exemplo de caso de uso.
 
 O valor dos parâmetros do fornecido para o `@AccessTimeout` tem um efeito dramático em que a anotação realmente faz. Além disso, `@ AccessTimeout` tem um desses designs
@@ -29,13 +29,13 @@ Com respeito as melhores práticas, colocaremos nossas meta-anotações em um pa
 A ideia básica é ter um pacote onde anotações "aprovadas" sejam usadas e proibir uso de versões não-meta-anotações. Toda a configuração
 estará centralizada no pacote `api` e alterações nos valores de tempo limite estarão localizadas nesse pacote e refletidas automaticamente em todo o aplicativo.
 
-Um efeito secundario interesante desta abordagem é que se o pacote `api` onde as definições de meta-anotação existem localizados em um jar separado, então efetivamente alguem
+Um efeito secundário interessante desta abordagem é que se o pacote `api` onde as definições de meta-anotação existem localizados em um jar separado, então efetivamente alguém
 pode trocar toda a configuração de uma aplicação simplesmente substituindo o jar `api`.
 
 
 === @Metatype [.small]#A Meta-Anotação "root"#
 
-Como todo o uso de meta-anotação, primeiro devemos criar mossa própria meta-anotaçaõ "root". Isto é tão facil como criar uma anotação
+Como todo o uso de meta-anotação, primeiro devemos criar nossa própria meta-anotação "root". Isto é tão facil como criar uma anotação
 chamada `Metatype` que esta anotada com esta mesma anotação e tem um `ElementType.ANNOTATION_TYPE` como seu objetivo.
 
 
@@ -146,11 +146,11 @@ das meta-anotações -- mas isto podería trocar o significado da anotação. Ce
 ## Nomes de operação  [.small]#descrevendo o código#
 
 A abordagem alternativa é chamar as meta-anotações depois de **operações** a que se aplica. Brevemente descrever, descrever o próprio código e não a configuração. Assim que,
-nomes como `@OrderCheckTimeout` ou `@TwitterUpdateTimeout`. Estes nomes são ptovas de troca de configuração. Isso não mudará se a configuração mudar e, de fato, eles podem facilitar o controle de
+nomes como `@OrderCheckTimeout` ou `@TwitterUpdateTimeout`. Estes nomes são provas de troca de configuração. Isso não mudará se a configuração mudar e, de fato, eles podem facilitar o controle de
 localizador de grãos sobre a configuração do aplicativo.
 
-Os **contras** desta abordagem é que requer muito mais deliberação e condideração, se, mencionar mais anotações. Suas habilidades como arquiteto, designer e capacidade de pensar como
-administrador serão postas a prova. Você tem que ser bom para usar o chapéu dev-opts.
+Os **contras** desta abordagem é que requer muito mais deliberação e consideração, se, mencionar mais anotações. Suas habilidades como arquiteto, designer e capacidade de pensar como
+administrador serão postas a prova. Você tem que ser bom para usar o chapéu dev-ops.
 
 
 ## Pragmatismo  [.small]#o melhor dos dois mundos#
