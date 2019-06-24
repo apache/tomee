@@ -4,11 +4,11 @@
 :jbake-status: published
 
 
-Ver  link:../../../alternate-descriptors.html[Descritores alternativos] para todos os detalhes de como funciona esta característica.
+Ver link:../../../alternate-descriptors.html[Descritores alternativos] para todos os detalhes de como funciona esta característica.
 
 
 Para nosso exemplo usaremos o código padrão "moviefun" que tem uma entidade `Movie` e um bean de sessão `Movies`.
-Para variar o modo de como testar e demonstrar os descritores alternativos , criaremos um interceptor que só será usado em nossos casos de teste.
+Para variar o modo de como testar e demonstrar os descritores alternativos, criaremos um interceptor que só será usado em nossos casos de teste.
 
 Para adicionar isso a nossa aplicação, somente precisamos de um `test.ejb-jar.xml` na mesma localização que o `ejb-jar.xml`.
 
@@ -107,7 +107,7 @@ public class MoviesTest extends TestCase {
 }
 ----
 
-Como se pode notar no link:../../../alternate-descriptors.html[Descritores alternativos], se podem usar muitos prefixos ao mesmo tempo.
+Como se pode notar no link:../../../alternate-descriptors.html[Descritores alternativos], podem usar muitos prefixos ao mesmo tempo.
 
 == Testando
 
