@@ -1,4 +1,4 @@
-= @AccessTimeout la forma  Meta-Annotation 
+= @AccessTimeout a forma Meta-anotação 
 :index-group: Meta-Annotations
 :jbake-type: page
 :jbake-status: status=published
