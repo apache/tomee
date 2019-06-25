@@ -62,6 +62,7 @@ public class MoviesXATest {
 
         p.put("movieDatabase", "new://Resource?type=DataSource");
         p.put("movieDatabase.JdbcDriver", "org.apache.derby.jdbc.EmbeddedXADataSource");
+        p.put("movieDatabase.JdbcUrl", "jdbc:derby:" + db + ";create=true");
         p.put("movieDatabase.JtaManaged", "true");
         p.put("movieDatabase.UserName", "admin");
         p.put("movieDatabase.Password", "admin");
