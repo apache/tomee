@@ -18,15 +18,15 @@
 -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     <persistence-unit name="cmp" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>My DataSource</jta-data-source>
         <non-jta-data-source>My Unmanaged DataSource</non-jta-data-source>
         <mapping-file>META-INF/openejb-cmp-generated-orm.xml</mapping-file>
         <class>openejb.org.apache.openejb.arquillian.tests.cmp.sample.Movie</class>
         <class>openejb.org.apache.openejb.arquillian.tests.cmp.sample.Actor</class>
         <properties>
-            <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)"/>
-            <property name="openjpa.Log" value="DefaultLevel=INFO"/>
-            <property name="eclipselink.ddl-generation" value="create-tables"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true" />
         </properties>
     </persistence-unit>
 </persistence>
