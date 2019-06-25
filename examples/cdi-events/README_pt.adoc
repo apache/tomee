@@ -1,0 +1,32 @@
+= CDI Events - Acoplamento Solto e Extensibilidade
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+O CDI permite estender o código de negócios pelo padrão Notificador / Observador.
+
+Para fazer isso, basta injetar um campo `Event` na classe notifier. Essa classe é um modelo e o tipo de parâmetro é o tipo de objeto a ser disparado. Então, quando você quiser notificar observadores, você simplesmente chamará o método fire do objeto de evento passando como parâmetro o próprio evento.
+(sua própria classe!)
+
+Do outro lado, você anotou um parâmetro de método `@ Observes` e o tipo de parâmetro é o tipo enviado pelo notificador.
+
+NOTE: Você pode adicionar qualificadores para ser mais preciso em seus eventos.
+
+== Exemplo
+
+O exemplo é bem simples: um ejb usa a anotação `@ Schedule` para receber uma notificação a cada segundo.
+A cada segundo este EJB enviará a data atual por meio de eventos do CDI.
+
+Este é o nosso código de "negócios". É um comportamento simples (nada).
+
+Em nosso teste (que é considerado como uma extensão) criamos um observador (classe `Observer`)
+que simplesmente armazena e registra cada data recebida.
+
+O teste em si (`EventTest`) simplesmente verifica as datas que foram recebidas.
+
+== Conclusão
+
+CDI permite implementar facilmente plugins através deste mecanismo de eventos.
+
+Se você for mais longe e olhar para a API do plugin CDI, perceberá que é simplesmente o mesmo tipo
+de eventos. Os eventos do CDI são realmente a base do CDI.
