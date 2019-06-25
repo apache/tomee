@@ -51,7 +51,7 @@ public class CustomOrmXmlEarTest {
 
         final JavaArchive ejbJar = ShrinkWrap.create(JavaArchive.class, "ejb-jar.jar")
                 .addClasses(ActorBean.class, MovieBean.class, MovieDetails.class, MoviesBusinessBean.class)
-                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/custom-orm.xml")
+                .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/custom-orm.xml"), "META-INF/openejb-cmp-generated-orm.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/persistence.xml"), "META-INF/persistence.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/openejb-jar.xml"), "META-INF/openejb-jar.xml")
                 .addAsResource(new ClassLoaderAsset("org/apache/openejb/arquillian/tests/cmp/sample/ejb-jar.xml"), "META-INF/ejb-jar.xml");

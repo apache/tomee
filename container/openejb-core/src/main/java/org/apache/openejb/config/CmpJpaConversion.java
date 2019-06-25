@@ -103,6 +103,7 @@ class CmpJpaConversion implements DynamicDeployer {
             "pcDetachedState",
             "serialVersionUID"
     )));
+    public static final String GENERATED_ORM_XML = "META-INF/openejb-cmp-generated-orm.xml";
 
     private static EntityMappings readEntityMappings(final String location, final AppModule appModule) {
 
@@ -192,7 +193,10 @@ class CmpJpaConversion implements DynamicDeployer {
         if (!cmpMappings.getEntity().isEmpty()) {
             final PersistenceUnit persistenceUnit = getCmpPersistenceUnit(appModule);
 
-            persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
+            if (! persistenceUnit.getMappingFile().contains(GENERATED_ORM_XML)) {
+                persistenceUnit.getMappingFile().add(GENERATED_ORM_XML);
+            }
+
             for (final Entity entity : cmpMappings.getEntity()) {
                 if (!persistenceUnit.getClazz().contains(entity.getClazz())) {
                     persistenceUnit.getClazz().add(entity.getClazz());
