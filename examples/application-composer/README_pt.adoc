@@ -1,13 +1,13 @@
-= Application Composer
+= Compositor de Aplicações
 :index-group: Testing Techniques
 :jbake-type: page
 :jbake-status: published
 
-The `org.apache.openejb.junit.ApplicationComposer` is JUnit test runner modeled after the way we've done testing internally in OpenEJB for years (since about 2006).
-It involves no classpath scanning at all.  If you want something to be in the app, you must build it directly in your testcase.
+O `org.apache.openejb.junit.ApplicationComposer` é o corredor de testes JUnit modelado de acordo com a forma como fizemos testes internos no OpenEJB por anos (desde 2006).
+Isto não envolve o escaneamento de toda a classpath.  Se você quiser alguma coisa na aplicação, você deve construí-lo diretamente no seu testcase.
 
-With the `ApplicationComposer` you can do identical testing that OpenEJB uses internally, but with limited dependency on OpenEJB itself.  The main dependency is on the code
-that is used to build the actual applications:
+Com o `ApplicationComposer` você pode fazer testes idênticos ao OpenEJB que usa internamente, mas com dependência limitada do próprio OpenEJB.  A principal dependência está no código
+que é usado para construir as aplicações atuais:
 
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -15,15 +15,15 @@ that is used to build the actual applications:
       <version>4.0.0-beta-1</version>
     </dependency>
 
-== Composing an Application
+== Compondo um aplicativo
 
-The main difference to the embedded `EJBContainer` API is building the application in the test code.  This is done with one or more methods in the test case annotated
-with `org.apache.openejb.testing.Module` using the following format:
+A principal diferença para a API incorporada `EJBContainer` é construir o aplicativo no código de teste. Isso é feito com um ou mais métodos no caso de teste anotado
+com `org.apache.openejb.testing.Module` usando o seguinte formato:
 
     @Module
     public <return-value> <module-name>() {
 
-Where **module-name** is the name you wish to use for that module and **return-value** can be any one of the following:
+onde **module-name** é o nome que você deseja usar para esse módulo e **return-value** pode ser qualquer um dos deles:
 
  - java.lang.Class
  - java.lang.Class[]
@@ -35,9 +35,9 @@ Where **module-name** is the name you wish to use for that module and **return-v
  - org.apache.openejb.jee.jpa.unit.Persistence
  - org.apache.openejb.jee.jpa.unit.PersistenceUnit
 
-== Example
+== Exemplo
 
-Used in an actual testcase, that might look like so:
+Usado em um testcase atual, pode ser assim:
 [source,java,numbered]
 ----
     import junit.framework.TestCase;
@@ -122,7 +122,7 @@ Used in an actual testcase, that might look like so:
     }
 ----
 
-# Running
+== Executando
 ```
     -------------------------------------------------------
      T E S T S
