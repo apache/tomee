@@ -1,54 +1,54 @@
-= CDI Alternative and Stereotypes
+= Alternativas e Estereótipos do CDI
 :index-group: CDI
 :jbake-type: page
-:jbake-status: published
+:jbake-status: published  mocking
 
-== Introduction
-CDI is a revolution for the Java EE world. This specification is the best one to avoid coupling between classes.
+== Introdução
+CDI é uma revolução para o mundo Java EE. Está especificação é a melhor para evitar acoplamento entre classes.
 
-This example simply aims to override bindings at runtime to simplify mocking work.
+Este exemplo simplesmente pretende substituir ligações em tempo de execução para simplificar o trabalho de mocking.
 
-It uses two kind of mocks:
+Aqui usamos dois tipos de mocks:
 
-1) a mock with no implementation in the classloader
+1) um mock com nenhuma implementação no classloader
 
-2) a mock with an implementation in the classloader
+2) um mock com uma implementação no classloader
 
-The mock answer from CDI is called _alternative_.
+A resposta mock do CDI é chamada de _alternative_.
 
-Annotating `@Alternative` a class will mean it will used as the implementation if there is no other implementation
-or if it is forced (through `META-INF/beans.xml`).
+Anotando com o `@Alternative` uma classe significa que será usado como implementação se não houver outra implementação
+ou se for forçado (através do `META-INF/beans.xml`).
 
-== Code Explanation
+== Explicação do Código
 
-=== Main Code
+=== Código Principal
 
-We use an EJB `Journey` to modelize a journey where the vehicle and the society can change. Here an EJB is used
-because it simplifies the test. A jouney wraps the vehicle and society information.
+Nós usamos um EJB `Journey` para modelar um journey onde o vehicle e society pode mudar. Aqui um EJB é usado
+por que istó simplifica o teste. Uma journey envolve a informação de vehicle e society .
 
-We define two interfaces to inject into the `Journey` EJB: `Vehicle` and `Society`.
+Nós definimos duas interfaces para injetar no EJB `Journey`:` Vehicle` e `Society`.
 
-Finally we add an implementation for `Society` interface: `LowCostCompanie`.
+Finalmente, adicionamos uma implementação para a interface `Society`:` LowCostCompanie`.
 
-If we stop here, the `Journey` object will not be able to be created because there is no `Vehicle` implementation is available.
+Se paramos aqui, o objeto `Journey` não poderá ser criado porque não há uma implementação `Vehicle` acessível.
 
-NOTE: if we do have a `Vehicle` implementation, the injected Society should be `LowCostCompanie`.
+NOTE: se tivermos uma implementação de `Vehicle`, a Society injetada deverá ser `LowCostCompanie`.
 
-=== Test Code
+=== Código de Teste
 
-The goal here is to test our `Journey` EJB. So we have to provide a `Vehicle` implementation: `SuperCar`.
+O objetivo aqui é para testar o nosso EJB `Journey`. Portanto, temos que fornecer uma implementação de `Vehicle`:` SuperCar`.
 
-We want to force the `Society` interface to be the `AirOpenEJB` implementation for our test.
+Queremos forçar a interface `Society` a ser a implementação do `AirOpenEJB` para o nosso teste.
 
-One solution could simply be to add `@Alternative` annotation on `AirOpenEJB` and activate it through
-the `META-INF/beans.xml` file.
+Uma solução poderia ser simplesmente adicionar a anotação `@ Alternative` no` AirOpenEJB` e ativá-la através do
+arquivo `META-INF / beans.xml`.
 
-Here we want to write more explicit code. So we want to replace the `@Alternative` annotation by `@Mock` one.
+Aqui queremos escrever um código mais explícito. Então, queremos substituir a anotação `@Alternative` por uma` `@Mock`.
 
-So we define an `@Mock` annotation for classes, resolvable at runtime as a stereotype (`@Stereotype`)
-that replaces `@Alternative`.
+Então nós definimos uma anotação `@Mock` para classes, resolvíveis em tempo de execução como um estereótipo (` @Stereotype`)
+que substitui o `@Alternative`.
 
-Here is the annotation:
+Aqui a anotação:
 
 [source,java,numbered]
 ----
@@ -59,12 +59,12 @@ Here is the annotation:
  public @interface Mock {}
 ----
 
-NOTE: you can add more CDI annotations after `@Alternative` and it will get the behavior expected (the scope for instance).
+NOTE: você pode adicionar mais anotações CDI após `@Alternative` e obterá o comportamento esperado (o escopo para a instância).
 
-So now we have our `@Mock` annotation which is a stereotype able to replace the `@Alternative` annotation when it
-added to our mocks.
+Então agora temos a nossa anotação `@ Mock`, que é um estereótipo capaz de substituir a anotação` @ Alternative` quando
+adicionado às nossas mocks.
 
-If you run it now you'll have this exception:
+Se você executar isso agora, nós receberemos está exceção:
 
 [source,java,numbered]
 ----
@@ -75,15 +75,16 @@ If you run it now you'll have this exception:
  Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
 ----
 
-It means the stereotype is not activated. To do it simply add it to your `META-INF/beans.xml`:
+Isso significa que o estereótipo não está ativado. Para fazer isso basta adicioná-lo ao seu `META-INF / beans.xml`:
 
+----
  <alternatives>
    <stereotype>org.superbiz.cdi.stereotype.Mock</stereotype>
  </alternatives>
+----
+NOTE: se você não especificar `AirOpenEJB` como` @ Alternative` (feito através de nossa anotação mock) você receberá está exceção:
 
-NOTE: if you don't specify `AirOpenEJB` as `@Alternative` (done through our mock annotation) you'll get this exception:
-
-source,java,numbered]
+[source,java,numbered]
 ----
  Caused by: javax.enterprise.inject.AmbiguousResolutionException: 
  There is more than one api type with : org.superbiz.cdi.stereotype.Society with qualifiers : 
@@ -100,21 +101,21 @@ API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.LowCo
 Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
 ----
 
-which simply means two implementations are available for the same injection point (`Journey.society`).
+o que significa simplesmente que duas implementações estão disponíveis para o mesmo ponto de injeção (`Journey.society`).
 
-== Conclusion
+== Conclusão
 
-With CDI it is really easy to define annotations with a strong meaning. You can define business annotations
-or simply technical annotations to simplify your code (as we did with the mock annotation).
+Com o CDI é realmente fácil definir anotações com um forte significado. Você pode definir anotações de negócios
+ou simplesmente anotações técnicas para simplificar seu código (como fizemos com a anotação mock).
 
-NOTE: if you used qualifiers to inject `Society` objects you could have put all these qualifiers on
-the mock class or defined a `@SocietyMock` annotation to be able to inject the same implementation for
-all qualifiers in your tests.
+NOTE: se você usou qualificadores para injetar objetos `Society` você poderia ter colocado todos esses qualificadores em
+a classe mock ou definiu uma anotação `@SocietyMock` para poder injetar a mesma implementação para
+todos os qualificadores em seus testes.
 
-== Output
+== Saída
 
 ----
-Running org.superbiz.cdi.stereotype.StereotypeTest
+ Running org.superbiz.cdi.stereotype.StereotypeTest
  Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111030-07:54
  http://tomee.apache.org/
  INFO - openejb.home = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
