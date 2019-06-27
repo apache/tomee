@@ -19,7 +19,7 @@ El cliente también esperaría cuando un bean anotado con `@Stateful` está en u
 
 === Bean sin estado (Stateless Bean)
 
-Si hay 20 instancias de un bean en la la pila (pool) y todas están ocupadas. Cuando llegue la próxima solicitud, el procesamiento * podría esperar * a que un bean esté disponible en la pila. (Nota: la semántica de la pila, si existe, no está cubierta por la especificación. La semántica de pila del proveedor puede o no implicar una condición de espera)
+Si hay 20 instancias de un bean en la la pila (pool) y todas están ocupadas. Cuando llegue la próxima solicitud, el procesamiento *podría esperar* a que un bean esté disponible en la pila. (Nota: la semántica de la pila, si existe, no está cubierta por la especificación. La semántica de pila del proveedor puede o no implicar una condición de espera)
 
 === Singleton Bean
 
