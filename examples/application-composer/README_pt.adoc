@@ -3,10 +3,10 @@
 :jbake-type: page
 :jbake-status: published
 
-O `org.apache.openejb.junit.ApplicationComposer` é o corredor de testes JUnit modelado de acordo com a forma como fizemos testes internos no OpenEJB por anos (desde 2006).
+O `org.apache.openejb.junit.ApplicationComposer` é o executor de testes JUnit modelado de acordo com a forma como fizemos testes internos no OpenEJB por anos (desde 2006).
 Isto não envolve o escaneamento de toda a classpath.  Se você quiser alguma coisa na aplicação, você deve construí-lo diretamente no seu testcase.
 
-Com o `ApplicationComposer` você pode fazer testes idênticos ao OpenEJB que usa internamente, mas com dependência limitada do próprio OpenEJB.  A principal dependência está no código
+Com o `ApplicationComposer` você pode fazer testes idênticos ao que o OpenEJB usa internamente, mas com dependência limitada do próprio OpenEJB.  A principal dependência está no código
 que é usado para construir as aplicações atuais:
 
     <dependency>
