@@ -31,7 +31,7 @@
                 <column name="movie_name" length="250"/>
             </basic>
             <basic name="genre"/>
-            <many-to-many mapped-by="movies" name="actors" />
+            <many-to-many mapped-by="movies" name="actors" target-entity="openejb.org.apache.openejb.arquillian.tests.cmp.sample.Actor" access="FIELD"/>
         </attributes>
     </entity>
     <entity class="openejb.org.apache.openejb.arquillian.tests.cmp.sample.Actor" name="Actor">
@@ -47,7 +47,7 @@
             <basic name="name">
                 <column name="actor_name" length="250"/>
             </basic>
-            <many-to-many name="movies"/>
+            <many-to-many name="movies" target-entity="openejb.org.apache.openejb.arquillian.tests.cmp.sample.Movie" access="FIELD"/>
         </attributes>
     </entity>
 </entity-mappings>
