@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-# Declarnado um @ApplicationException
+# Declarando um @ApplicationException
 ```
     import javax.ejb.ApplicationException;
 
