@@ -24,7 +24,7 @@ ou se for forçado (através do `META-INF/beans.xml`).
 === Código Principal
 
 Nós usamos um EJB `Journey` para modelar um journey onde o vehicle e society pode mudar. Aqui um EJB é usado
-por que istó simplifica o teste. Uma journey envolve a informação de vehicle e society .
+por que isto simplifica o teste. Uma journey envolve a informação de vehicle e society .
 
 Nós definimos duas interfaces para injetar no EJB `Journey`:` Vehicle` e `Society`.
 
