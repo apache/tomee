@@ -19,10 +19,13 @@ package org.apache.openejb.resource.jdbc;
 import org.apache.geronimo.transaction.manager.GeronimoTransactionManager;
 import org.apache.openejb.resource.GeronimoTransactionManagerFactory;
 import org.apache.openejb.resource.TransactionManagerWrapper;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.junit.Test;
 
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -51,9 +54,7 @@ import javax.sql.DataSource;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ManagedConnectionBehaviorTest {
     @Test
@@ -123,7 +124,72 @@ public class ManagedConnectionBehaviorTest {
             assertTrue(myDs.connections.iterator().next().commit);
             myDs.connections.clear();
         }
+        { // 2 connections, same TX
+            mgr.begin();
+            final Connection connection1 = ds.getConnection();
 
+            assertTrue(myDs.connections.isEmpty()); // not yet needed
+            connection1.createBlob(); // just to call something
+
+            // second connection should be the same as it comes from the tx registry
+            final Connection connection2 = ds.getConnection();
+            connection2.createBlob(); // just to call something
+
+            assertEquals(connection1, connection2);
+
+            for (final MyConn conn : myDs.connections) {
+                assertFalse(conn.closed);
+            }
+
+            mgr.commit();
+
+            for (final MyConn conn : myDs.connections) {
+                assertTrue(conn.closed);
+                assertTrue(conn.commit);
+                assertFalse(conn.rollback);
+            }
+
+            myDs.connections.clear();
+        }
+        { // 2 connections, same TX
+            final Connection connection1 = ds.getConnection();
+            final Connection connection2 = ds.getConnection();
+
+            assertNotEquals(connection1, connection2);
+
+            mgr.begin();
+            assertTrue(myDs.connections.isEmpty()); // not yet needed
+            connection1.createBlob(); // just to call something
+            connection2.createBlob(); // just to call something
+
+            for (final MyConn conn : myDs.connections) {
+                assertFalse(conn.closed);
+            }
+
+            final ManagedConnection mc1 = (ManagedConnection) Proxy.getInvocationHandler(connection1);
+            final ManagedConnection mc2 = (ManagedConnection) Proxy.getInvocationHandler(connection2);
+
+            assertEquals(getFieldValue(mc1, "xaConnection"), getFieldValue(mc2, "xaConnection"));
+            assertEquals(getFieldValue(mc1, "xaResource"), getFieldValue(mc2, "xaResource"));
+            assertEquals(getFieldValue(mc1, "delegate"), getFieldValue(mc2, "delegate"));
+
+            mgr.commit();
+
+            for (final MyConn conn : myDs.connections) {
+                assertTrue(conn.closed);
+                assertTrue(conn.commit);
+                assertFalse(conn.rollback);
+            }
+
+            myDs.connections.clear();
+        }
+
+    }
+
+    private Object getFieldValue(final Object object, final String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        final Field xaConnectionField = object.getClass().getDeclaredField(fieldName);
+        xaConnectionField.setAccessible(true);
+        return xaConnectionField.get(object);
     }
 
     public static class MyDs implements DataSource {
