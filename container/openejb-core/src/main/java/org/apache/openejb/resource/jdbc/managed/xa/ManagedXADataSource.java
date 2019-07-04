@@ -18,8 +18,6 @@
 package org.apache.openejb.resource.jdbc.managed.xa;
 
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
-import org.apache.openejb.util.LogCategory;
-import org.apache.openejb.util.Logger;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
@@ -30,7 +28,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 public class ManagedXADataSource extends ManagedDataSource {
 
-    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedXADataSource.class);
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     private final TransactionManager txMgr;
