@@ -17,8 +17,6 @@
 
 package org.apache.openejb.resource.jdbc.managed.xa;
 
-import org.apache.openejb.resource.jdbc.managed.local.Key;
-import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
@@ -27,8 +25,6 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.CommonDataSource;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
