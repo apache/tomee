@@ -17,16 +17,24 @@
 
 package org.apache.openejb.resource.jdbc.managed.xa;
 
+import org.apache.openejb.resource.jdbc.managed.local.Key;
+import org.apache.openejb.resource.jdbc.managed.local.ManagedConnection;
 import org.apache.openejb.resource.jdbc.managed.local.ManagedDataSource;
+import org.apache.openejb.util.LogCategory;
+import org.apache.openejb.util.Logger;
 
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.CommonDataSource;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 public class ManagedXADataSource extends ManagedDataSource {
+
+    private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedXADataSource.class);
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     private final TransactionManager txMgr;
@@ -47,6 +55,10 @@ public class ManagedXADataSource extends ManagedDataSource {
     }
 
     private Connection managedXA(final String u, final String p) throws SQLException {
+        final Connection resource = getTxConnection(delegate, u, p, transactionManager, registry);
+        if (resource != null) {
+            return resource;
+        }
         return Connection.class.cast(Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS,
                 new ManagedXAConnection(delegate, txMgr, registry, u, p)));
     }
