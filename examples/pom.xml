@@ -26,7 +26,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.1.1-TT.4</version>
+    <version>7.1.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>examples</artifactId>
@@ -98,6 +98,11 @@
     <module>mbean-auto-registration</module>
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
+    <module>mp-config-example</module>
+    <module>mp-config-source-database</module>
+    <module>mp-faulttolerance-fallback</module>
+    <module>mp-faulttolerance-retry</module>
+    <module>mp-opentracing-traced</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
