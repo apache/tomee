@@ -1,4 +1,14 @@
-= TomEE EAP 7.1.1-TT.4
+= TomEE EAP 7.1.2-TT.1
+
+=== Changes in TomEE EAP 7.1.2-TT.1
+
+* TOMEE-2531 update Commons-Daemon
+* Fix for system policy being set
+* Improvements for running under Java 11
+* XBean 4.14 dependency upgrade
+* Fixes for defining custom ORM metadata when using CMP
+* Update to ASM7
+* TOMEE-2547 update to Tomcat 8.5.42
 
 === Changes in TomEE EAP 7.1.1-TT.4
 
