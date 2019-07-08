@@ -1,0 +1,125 @@
+= MicroProfile Fault Tolerance - Fallback
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+This is an example of how to use Microprofile @Fallback in TomEE.
+
+== Fallback Feature
+Fault Tolerance Fallback provides an alternative execution in case of failure. This alternative will be called when
+`Retry` or `CircuitBreaker` has failed.
+
+To use this feature you need to annotate the method with `@Fallback`.
+
+The Fallback policy allows to configure :
+
+* **value**: A class which implements `FallbackHandler`
+* **fallbackMethod**: a method which will be executed.
+
+The parameters `value` and `fallbackMethod` cannot be specified at the same time.
+
+Check the http://download.eclipse.org/microprofile/microprofile-fault-tolerance-1.1/microprofile-fault-tolerance-spec.html[specification] for more details.
+
+== Examples
+
+=== Run the application
+
+    mvn clean install tomee:run   
+    
+=== Example 1
+
+The method `statusOfDay` will always fail throwing a `WeatherException` and as the
+`@CircuitBreaker` annotation is configured to `failOn` in case of that exception, the fallback,
+`WeatherDayStatusFallbackHandler#handle` will be invoked.
+
+```java
+@RequestScoped
+public class WeatherService {
+   ...
+   @GET
+   @Path("/day/status")
+   @CircuitBreaker(failOn = WeatherException.class)
+   @Fallback(WeatherDayStatusFallbackHandler.class)
+   public String dayStatus() {
+       throw new WeatherException();
+   }
+   ...
+ }
+
+public class WeatherDayStatusFallbackHandler implements FallbackHandler<String> {
+
+   @Override
+   public String handle(ExecutionContext executionContext) {
+       return "Hi, today is a sunny day!";
+   }
+}
+```
+
+Day status call
+
+    GET http://localhost:8080/mp-faulttolerance-fallback/weather/day/status
+    
+Server log
+```
+SEVERE [http-nio-8080-exec-2] org.superbiz.rest.WeatherDayStatusFallbackHandler.handle WeatherDayStatusFallbackHandler was triggered due a fail
+```
+
+Response
+``` 
+Hi, today is a sunny day!
+```
+
+=== Example 2
+
+The method `statusOfDay` will always fail throwing a `WeatherException` and as the
+`@Retry` annotation is configured to `maxRetries = 1` in case of fail, the fallback method,
+`fallbackForWeekStatus` will be invoked after retrying once.
+
+```java
+@RequestScoped
+public class WeatherService {
+  ...
+  @GET
+  @Path("/week/status")
+  @Retry(maxRetries = 1)
+  @Fallback(fallbackMethod = "fallbackForWeekStatus")
+  public String weekStatus() {
+      throw new WeatherException();
+  }
+
+  public String fallbackForWeekStatus() {
+      return "Hi, week will be mostly sunny!";
+  }
+  ...
+}
+```
+
+Week status call
+
+    GET http://localhost:8080/mp-faulttolerance-fallback/weather/week/status
+
+Server log
+
+```
+SEVERE [http-nio-8080-exec-2] org.superbiz.rest.WeatherService.fallbackForWeekStatus Fallback was triggered due a fail
+
+```
+
+Response
+``` 
+Hi, week will be mostly sunny!
+```
+
+
+=== Run the tests
+
+You can also try it out using the link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] available in the project.
+
+    mvn clean test
+    
+```
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+```
+
