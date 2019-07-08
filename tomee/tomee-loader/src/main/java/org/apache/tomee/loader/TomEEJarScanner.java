@@ -73,10 +73,12 @@ public class TomEEJarScanner extends StandardJarScanner {
             final String cp = System.getProperty("java.class.path");
             final Collection<URL> urls = new HashSet<>();
             for (final String jar : cp.split(File.pathSeparator)) {
-                try {
-                    urls.add(new File(jar).toURI().toURL());
-                } catch (MalformedURLException e) {
-                    // no-op
+                if(!jar.isEmpty()){
+                    try {
+                        urls.add(new File(jar).toURI().toURL());
+                    } catch (MalformedURLException e) {
+                        // no-op
+                    }
                 }
             }
             doScan(scanType, callback, new LinkedList<>(urls));
