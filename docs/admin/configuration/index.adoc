@@ -13,6 +13,7 @@ However for convenience it also provides a hybrid XML alternative a.k.a. `conf/t
 - link:server.html[Server Configuration: Properties].
 - link:resources.html[Resources]
 - link:containers.html[Containers]
+- link:log4j2.html[Using log4j2]
 
 == Application
 

@@ -1,4 +1,5 @@
 = Log4j2 Configuration
+:index-group: Configuration
 :jbake-date: 2019-07-09
 :jbake-type: page
 :jbake-status: published
