@@ -5,8 +5,7 @@
 
 == Bean Validation - Design por Contrato
 
-O Bean Validation (também conhecida como JSR 303) contém um apêndice opcional
-método de validação.
+O Bean Validation (também conhecida como JSR 303) contém um apêndice opcional que lida com validação de método.
 
 Algumas implementações desta JSR implementam este apêndice (Apache bval,
 Hibernate validator por exemplo).
@@ -17,7 +16,7 @@ fazer o design por contrato.
 == Design por contrato
 
 O objetivo é ser capaz de configurar com um grão mais fino seu contrato. No
-exemplo você especificar os centímetros mínimos de um homem do esporte deve pular
+exemplo você pode especificar os centímetros mínimos de um homem do esporte que deve pular
 no salto com vara:
 
 ....
