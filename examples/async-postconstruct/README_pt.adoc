@@ -3,20 +3,19 @@
 :jbake-status: status=published
 = @Asynchronous @PostConstruct
 
-Placing `@Asynchronous` on the `@PostConstruct` of an EJB is not a
-supported part of Java EE, but this example shows a pattern which works
-just as well with little effort.
+Colocar `@ Asynchronous` no `@ PostConstruct` de um EJB não é uma
+parte suportada do Java EE, mas neste exemplo mostraremos um padrão que funciona
+tão bem com pouco esforço.
 
-The heart of this pattern is to:
+O coração deste padrão é para:
 
-* pass the construction ``logic`` to an `@Asynchronous` method via a
+* passar a construção `` logic`` para um método `@ Asynchronous` através de um
 `java.util.concurrent.Callable`
-* ensure the bean does not process invocations till construction is
-complete via an `@AroundInvoke` method on the bean and the
+* garantir que o bean não processe invocações até que a construção seja
+completada através de um método `@ AroundInvoke` no bean e no
 `java.util.concurrent.Future`
 
-Simple and effective. The result is a faster starting application that
-is still thread-safe.
+Simples e efetiva. O resultado é um inicialização rápida da aplicação que ainda é thread-safe.
 
 ....
 package org.superbiz.asyncpost;
@@ -74,10 +73,9 @@ public class SlowStarter {
 }
 ....
 
-The `Executor` is a simple pattern, useful for many things, which
-exposes an interface functionally equivalent to
-`java.util.concurrent.ExecutorService`, but with the underlying thread
-pool controlled by the container.
+O `Executor` é um simples padrão, útil para muitas coisas, que expõe uma 
+interface funcionalmente equivalente a `java.util.concurrent.ExecutorService`, 
+mas com o conjunto de encadeamentos subjacente controlado pelo contêiner.
 
 ....
 package org.superbiz.asyncpost;
@@ -102,8 +100,8 @@ public class Executor {
 }
 ....
 
-Finally a test case shows the usefulness of `@AroundInvoke` call in our
-bean that calls `construct.get()`
+Finalmente um caso de teste mostrando a  utilidade do `@AroundInvoke` chamado no nosso
+bean que chama o `construct.get()`
 
 ....
 package org.superbiz.asyncpost;
@@ -122,11 +120,11 @@ public class SlowStarterTest {
     @Test
     public void test() throws Exception {
 
-        // Start the Container
+        // Inicia o Container
         EJBContainer.createEJBContainer().getContext().bind("inject", this);
 
-        // Immediately access the fields initialized in the PostConstruct
-        // This will fail without the @AroundInvoke call to construct.get()
+        // Imaediatamente acessa os campos inicializado no PostConstruct
+        // Isso falhará sem a chamada @AroundInvoke para construct.get ()
         Assert.assertEquals("orange", slowStarter.getColor());
         Assert.assertEquals("circle", slowStarter.getShape());
     }
