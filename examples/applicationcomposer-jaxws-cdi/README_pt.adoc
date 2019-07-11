@@ -11,12 +11,12 @@ Neste exemplo, vamos usar o `@ApplicationComposer` no contexto de uma aplicaçã
 
 == Exemplo
 
-Este exemplo é uma aplicação de planejamemento de reuniões. É um aplicativo JAX-WS e aceita requisições para a reserva de reuniões. A aplicação primeiro verifica se a requisão pode ser reservada, se possivel, ela é reservada e retorna para o cliente se o pedido foi reservado (um valor booleano). Esta é uma aplicação simples, com propósito de demonstração, por isso é bastante simplificado. Uma solicitação de reserva é representada apenas pela data de início da reunião (um valor `java.util.Date`).
+Este exemplo é uma aplicação de planejamento de reuniões. É um aplicativo JAX-WS e aceita requisições para a reserva de reuniões. A aplicação primeiro verifica se a requisão pode ser reservada, se possivel, ela é reservada e retorna para o cliente se o pedido foi reservado (um valor booleano). Esta é uma aplicação simples, com propósito de demonstração, por isso é bastante simplificado. Uma solicitação de reserva é representada apenas pela data de início da reunião (um valor `java.util.Date`).
 Uma solicitação de reserva pode ser reservada se começar após a data atual.
 
 A logica de negócio é implementada usando uma classe `MeetingPlannerImpl` (implementando` MeetingPlanner`). Esta classe é um serviço JAX-WS, expondo o seguinte método: `boolean book (final Date date)`.
 O cliente vai enviar uma requisição, contendo uma data; o serviço vai retornar true ou false, se o pedido pode ser reservado. O serviço JAX-WS exposto usa, além disso, uma característica diferente, CDI, injetar uma
-classe de serviço de lógica de negócios, verificando se a solicitação pode ser reservada. Então, quando chegar a hora de testar a anotação `@ ApplicationComposer`, verificaremos se o CDI funcionou em nossa aplicação e se o serviço JAX-WS esta em execução (ou funcionando).
+classe de serviço de lógica de negócios, verificando se a solicitação pode ser reservada. Então, quando chegar a hora de testar a anotação `@ ApplicationComposer`, verificaremos se o CDI funcionou em nossa aplicação e se o serviço JAX-WS está em execução (ou funcionando).
 
 A lógica de negócios que verifica se uma solicitação é registrável é definida pela seguinte interface:
 
