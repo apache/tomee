@@ -28,6 +28,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.deltaspike>1.9.0</version.deltaspike>
   </properties>
 
   <build>
@@ -61,12 +62,12 @@
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-impl</artifactId>
-      <version>1.0.0</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.deltaspike.core</groupId>
       <artifactId>deltaspike-core-api</artifactId>
-      <version>1.0.0</version>
+      <version>${version.deltaspike}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

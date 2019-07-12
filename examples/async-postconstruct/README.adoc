@@ -9,7 +9,7 @@ just as well with little effort.
 
 The heart of this pattern is to:
 
-* pass the construction ``logic'' to an `@Asynchronous` method via a
+* pass the construction ``logic`` to an `@Asynchronous` method via a
 `java.util.concurrent.Callable`
 * ensure the bean does not process invocations till construction is
 complete via an `@AroundInvoke` method on the bean and the
@@ -75,7 +75,7 @@ public class SlowStarter {
 ....
 
 The `Executor` is a simple pattern, useful for many things, which
-exposes an interface functionaly equivalent to
+exposes an interface functionally equivalent to
 `java.util.concurrent.ExecutorService`, but with the underlying thread
 pool controlled by the container.
 

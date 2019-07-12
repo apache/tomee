@@ -17,6 +17,14 @@
 
 package org.apache.openejb.resource.jdbc.managed.local;
 
+import org.apache.openejb.util.LogCategory;
+
+import javax.sql.CommonDataSource;
+import javax.sql.DataSource;
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.ObjectStreamException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -25,12 +33,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
-import javax.transaction.TransactionManager;
-import javax.transaction.TransactionSynchronizationRegistry;
 
 public class ManagedDataSource implements DataSource, Serializable {
+    private static final org.apache.openejb.util.Logger LOGGER = org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, ManagedDataSource.class);
     private static final Class<?>[] CONNECTION_CLASS = new Class<?>[]{Connection.class};
 
     protected final CommonDataSource delegate;
@@ -95,8 +100,29 @@ public class ManagedDataSource implements DataSource, Serializable {
     }
 
     private Connection managed(final String u, final String p) {
+        final Connection resource = getTxConnection(delegate, u, p, transactionManager, registry);
+        if (resource != null) {
+            return resource;
+        }
+
         return (Connection) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), CONNECTION_CLASS,
                 new ManagedConnection(delegate, transactionManager, registry, u, p));
+    }
+
+    protected static Connection getTxConnection(final CommonDataSource delegate, final String u, final String p, final TransactionManager transactionManager, final TransactionSynchronizationRegistry registry) {
+        try {
+            final Transaction transaction = transactionManager.getTransaction();
+            if (transaction != null && ManagedConnection.isUnderTransaction(transaction.getStatus())) {
+                final Object resource = registry.getResource(new Key(delegate, u, p));
+                if (Connection.class.isInstance(resource)) {
+                    return Connection.class.cast(resource);
+                }
+            }
+        } catch (SystemException e) {
+            // we wouldn't expect this to happen, but lets log it and fall through to the previous behaviour
+            LOGGER.warning("Attempting to get the current transaction failed with an error: " + e.getMessage(), e);
+        }
+        return null;
     }
 
     public CommonDataSource getDelegate() {

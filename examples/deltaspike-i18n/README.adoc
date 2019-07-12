@@ -24,7 +24,7 @@ public interface MessageHelper {
 ....
 
 === MessageHelper property file
-It will lookup for the string "openejb.and.deltaspik" (without the curly brackets "{}") in a property file with the same name of the interface but with the extension .properties instead of .java or .class.
+It will lookup for the string "openejb.and.deltaspike" (without the curly brackets "{}") in a property file with the same name of the interface but with the extension .properties instead of .java or .class.
 
 MessageHelper.properties
 

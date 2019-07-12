@@ -1,0 +1,132 @@
+:index-group: EJB
+:jbake-type: page
+:jbake-status: status=published
+= @Asynchronous @PostConstruct
+
+Colocar `@ Asynchronous` no `@ PostConstruct` de um EJB não é uma
+parte suportada do Java EE, mas neste exemplo mostraremos um padrão que funciona
+tão bem com pouco esforço.
+
+O coração deste padrão é para:
+
+* passar a construção `` logic`` para um método `@ Asynchronous` através de um
+`java.util.concurrent.Callable`
+* garantir que o bean não processe invocações até que a construção seja
+completada através de um método `@ AroundInvoke` no bean e no
+`java.util.concurrent.Future`
+
+Simples e efetiva. O resultado é um inicialização rápida da aplicação que ainda é thread-safe.
+
+....
+package org.superbiz.asyncpost;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+@Singleton
+@Lock(LockType.READ)
+public class SlowStarter {
+
+    @EJB
+    private Executor executor;
+
+    private Future construct;
+
+    private String color;
+    private String shape;
+
+    @PostConstruct
+    private void construct() throws Exception {
+        construct = executor.submit(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                Thread.sleep(SECONDS.toMillis(10));
+                SlowStarter.this.color = "orange";
+                SlowStarter.this.shape = "circle";
+                return null;
+            }
+        });
+    }
+
+    @AroundInvoke
+    private Object guaranteeConstructionComplete(InvocationContext context) throws Exception {
+        construct.get();
+        return context.proceed();
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getShape() {
+        return shape;
+    }
+}
+....
+
+O `Executor` é um simples padrão, útil para muitas coisas, que expõe uma 
+interface funcionalmente equivalente a `java.util.concurrent.ExecutorService`, 
+mas com o conjunto de encadeamentos subjacente controlado pelo contêiner.
+
+....
+package org.superbiz.asyncpost;
+
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
+@Singleton
+@Lock(LockType.READ)
+public class Executor {
+
+    @Asynchronous
+    public <T> Future<T> submit(Callable<T> task) throws Exception {
+        return new AsyncResult<T>(task.call());
+    }
+
+}
+....
+
+Finalmente um caso de teste mostrando a  utilidade do `@AroundInvoke` chamado no nosso
+bean que chama o `construct.get()`
+
+....
+package org.superbiz.asyncpost;
+
+import junit.framework.Assert;
+import org.junit.Test;
+
+import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
+
+public class SlowStarterTest {
+
+    @EJB
+    private SlowStarter slowStarter;
+
+    @Test
+    public void test() throws Exception {
+
+        // Inicia o Container
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
+
+        // Imaediatamente acessa os campos inicializado no PostConstruct
+        // Isso falhará sem a chamada @AroundInvoke para construct.get ()
+        Assert.assertEquals("orange", slowStarter.getColor());
+        Assert.assertEquals("circle", slowStarter.getShape());
+    }
+}
+....

@@ -29,6 +29,7 @@
     <version.javaee-api>8.0</version.javaee-api>
     <version.microprofile>2.0.1</version.microprofile>
     <version.arquillian>1.1.13.Final</version.arquillian>
+    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
   </properties>
 
   <dependencies>
@@ -56,7 +57,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>${project.version}</version>
+      <version>${tomee.version}</version>
       <type>zip</type>
       <classifier>microprofile</classifier>
       <scope>test</scope>
@@ -72,7 +73,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>${project.version}</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -86,7 +87,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>arquillian-tomee-remote</artifactId>
-      <version>${project.version}</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -111,7 +112,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <version>${tomee.version}</version>
         <configuration>
           <tomeeClassifier>microprofile</tomeeClassifier>
           <context>${project.artifactId}</context>

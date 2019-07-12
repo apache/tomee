@@ -751,7 +751,7 @@ public class Cmp2Generator implements Opcodes {
 
         // return this.${cmrField.name}Cmr.get(this.${cmdField.name});  
         // this takes the value stored in the CMR field (which might be a single value or 
-        // a Set or Collection), and hands it to the appropriate accessor. 
+        // a Set or Collection), and hands it to the appropriate accessor.
         mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "get", cmrField.getCmrStyle().getGetterDescriptor(), false);
         // if the style is a single value, then we're going to need to cast this 
         // to the target class before returning.  

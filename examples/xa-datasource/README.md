@@ -215,3 +215,117 @@ When we run our test case we should see output similar to the following.
     
     Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
+## Performance testing
+
+### Prerequisites
+
+
+- Oralce DB
+   
+   * Update your maven `setings.xml` file to contains in the `<servers>` section the following entry:
+
+    ```xml   
+        <server>
+            <id>maven.oracle.com </id>
+            <username>YourOracleAccountUsername</username>
+            <password>YourOracleAccountPassword</password>
+            <configuration>
+                <basicAuthScope>
+                <host>ANY </host>
+                <port>ANY </port>
+                <realm>OAM 11g </realm>
+                </basicAuthScope>
+                <httpConfiguration>
+                <all>
+                <params>
+                <property>
+                <name>http.protocol.allow-circular-redirects </name>
+                <value>%b,true </value>
+                </property>
+                </params>
+                </all>
+                </httpConfiguration>
+            </configuration>
+        </server>
+    ```
+            
+   * Update file `pom.xml`, section `<dependency>` with the following:
+    
+    ```xml
+        <dependency>
+          <groupId>com.oracle.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>18.3.0.0</version>
+          <scope>provided</scope>
+        </dependency>
+    ```
+    
+   * Update file `pom.xml`, section `<repositories>` with the following:    
+ 
+    ```xml               
+        <repository>
+          <id>maven.oracle.com</id>
+          <name>oracle-maven-repo</name>
+          <url>https://maven.oracle.com</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </releases>
+        </repository>
+    ```
+    
+   * Update file `pom.xml`, after `</repositories>` section, add the following:
+
+    ```xml        
+        <pluginRepositories>
+            <pluginRepository>
+              <id>maven.oracle.com</id>
+              <name>oracle-maven-repo</name>
+              <url>https://maven.oracle.com</url>
+              <layout>default</layout>
+              <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+              </releases>
+            </pluginRepository>
+        </pluginRepositories>   
+    ```
+
+   * Update file `pom.xml`, add the type of JDBC jar for the tomee-maven-plugin:
+
+    ```xml        
+          <plugin>
+            <groupId>org.apache.tomee.maven</groupId>
+            <artifactId>tomee-maven-plugin</artifactId>
+            <version>${tomee.version}</version>
+            <configuration>
+              <tomeeVersion>${tomee.version}</tomeeVersion>
+              <tomeeClassifier>plume</tomeeClassifier>
+              <tomeeHttpPort>9080</tomeeHttpPort>
+              <tomeeShutdownPort>9005</tomeeShutdownPort>
+              <libs>
+                <lib>com.oracle.jdbc:ojdbc8:18.3.0.0</lib>
+              </libs>
+            </configuration>
+          </plugin>
+    ```
+    
+    
+   For further Oracle JDBC Maven setup you can check [Oracle Article](https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides)
+    
+           
+### Run the application
+From a terminal
+    
+    mvn clean install tomee:run
+    
+### Run Grinder console
+On a new terminal execute:
+               
+    ./grinder.sh
+ 
+ Once the console UI is available, press the button `Start the worker processes`
+ 
+ The load test will continue until you press on the console the button `Stop the worker processes and the agent processes`
+                   

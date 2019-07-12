@@ -61,7 +61,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <vaadin.version>8.6.3</vaadin.version>
+    <vaadin.version>8.8.2</vaadin.version>
   </properties>
 
   <dependencyManagement>
