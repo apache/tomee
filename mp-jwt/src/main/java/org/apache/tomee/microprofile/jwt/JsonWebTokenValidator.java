@@ -56,7 +56,7 @@ public class JsonWebTokenValidator {
     }
 
     public JsonWebToken validate(final String token) throws ParseException {
-        final JWTAuthConfiguration authContextInfo = verificationKey == null ? JWTAuthConfiguration.authContextInfo(verificationKey, issuer) : JWTAuthConfiguration.authContextInfo(verificationKeys, issuer);
+        final JWTAuthConfiguration authConfiguration = verificationKey == null ? JWTAuthConfiguration.authConfiguration(verificationKey, issuer) : JWTAuthConfiguration.authConfiguration(verificationKeys, issuer);
         JWTCallerPrincipal principal;
 
         try {
@@ -72,19 +72,19 @@ public class JsonWebTokenValidator {
                                     AlgorithmIdentifiers.RSA_USING_SHA512
                             ));
 
-            if (authContextInfo.getIssuer() != null) {
-                builder.setExpectedIssuer(authContextInfo.getIssuer());
+            if (authConfiguration.getIssuer() != null) {
+                builder.setExpectedIssuer(authConfiguration.getIssuer());
             }
-            if (authContextInfo.getExpGracePeriodSecs() > 0) {
-                builder.setAllowedClockSkewInSeconds(authContextInfo.getExpGracePeriodSecs());
+            if (authConfiguration.getExpGracePeriodSecs() > 0) {
+                builder.setAllowedClockSkewInSeconds(authConfiguration.getExpGracePeriodSecs());
             } else {
                 builder.setEvaluationTime(NumericDate.fromSeconds(0));
             }
 
-            if (authContextInfo.isSingleKey()) {
-                builder.setVerificationKey(authContextInfo.getPublicKey());
+            if (authConfiguration.isSingleKey()) {
+                builder.setVerificationKey(authConfiguration.getPublicKey());
             } else {
-                builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authContextInfo.getPublicKeys()));
+                builder.setVerificationKeyResolver(new JwksVerificationKeyResolver(authConfiguration.getPublicKeys()));
             }
 
             final JwtConsumer jwtConsumer = builder.build();

@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.Logger;
@@ -127,7 +128,7 @@ public class MPJWTFilter implements Filter {
             return Optional.of(authContextInfo.get());
         }
 
-        return jwtAuthConfigurationProperties.getJWTAuthContextInfo();
+        return jwtAuthConfigurationProperties.getJWTAuthConfiguration();
     }
 
     private static Function<HttpServletRequest, JsonWebToken> token(final HttpServletRequest httpServletRequest, final JWTAuthConfiguration authContextInfo) {
@@ -269,12 +270,12 @@ public class MPJWTFilter implements Filter {
     public static class ValidateJSonWebToken {
 
         private final HttpServletRequest httpServletRequest;
-        private final JWTAuthConfiguration authContextInfo;
+        private final JWTAuthConfiguration jwtAuthConfiguration;
         private JsonWebToken jsonWebToken;
 
         public ValidateJSonWebToken(final HttpServletRequest httpServletRequest, final JWTAuthConfiguration authContextInfo) {
             this.httpServletRequest = httpServletRequest;
-            this.authContextInfo = authContextInfo;
+            this.jwtAuthConfiguration = authContextInfo;
         }
 
 
@@ -286,18 +287,20 @@ public class MPJWTFilter implements Filter {
                 return jsonWebToken;
             }
 
-            final String authorizationHeader = httpServletRequest.getHeader("Authorization");
+            final String headerName = jwtAuthConfiguration.getHeaderName();
+            final String authorizationHeader = httpServletRequest.getHeader(headerName);
             if (authorizationHeader == null || authorizationHeader.isEmpty()) {
                 throw new MissingAuthorizationHeaderException();
             }
 
-            if (!authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith("bearer ")) {
+            final String headerScheme = jwtAuthConfiguration.getHeaderScheme() + " ";
+            if (headerScheme.trim().length() > 0 &&  !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
                 throw new BadAuthorizationPrefixException(authorizationHeader);
             }
 
-            final String token = authorizationHeader.substring("bearer ".length());
+            final String token = authorizationHeader.substring(headerScheme.length());
             try {
-                jsonWebToken = parse(token, authContextInfo);
+                jsonWebToken = parse(token, jwtAuthConfiguration);
 
             } catch (final ParseException e) {
                 throw new InvalidTokenException(token, e);
