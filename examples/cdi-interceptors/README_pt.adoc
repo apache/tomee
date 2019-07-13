@@ -37,7 +37,6 @@ Garanta que voce não esqueceu a anotação `@InterceptorBinding` acima! Agora n
 Aqui esta nosso interceptor de log. Um método `@AroundInvoke` e estamos quase terminando.
 
  @Interceptor
- @Log  //binding the interceptor here. now any method annotated with @Log would be intercepted by logMethodEntry
  @Log  //Vinculando com o interceptador aqui. Agora todo método anotado com @Log ira ser interceptado pelo logMethodEntry
  public class BookForAShowLoggingInterceptor implements Serializable {
      private static final long serialVersionUID = 8139854519874743530L;
