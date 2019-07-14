@@ -5,7 +5,7 @@
 
 This example shows how to secure access to a web resource provided by a servlet. For this, we will use realms.
 
-A https://docs.oracle.com/javaee/6/tutorial/doc/bnbxj.html[realm], in JEE world, is a security policy domain defined for a web or application server.
+A https://javaee.github.io/tutorial/security-intro005.html#BNBXJ[realm], in JEE world, is a security policy domain defined for a web or application server.
 A realm contains a collection of users, who may or may not be assigned to a group.
 
 A realm, basically, specifies a list of users and roles. I's a "database" of users with associated passwords and possible roles.
@@ -16,7 +16,7 @@ In TomEE application server, the mechanism used by Tomcat to define a realm for 
 
 == Example
 
-This example shows a servlet secured using a realm. The secured servlet has a simple functionality, just for ilustrating the concepts explained here:
+This example shows a servlet secured using a realm. The secured servlet has a simple functionality, just for illustrating the concepts explained here:
 
 ....
 import javax.servlet.ServletException;
