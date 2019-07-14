@@ -3,17 +3,23 @@
 :jbake-type: page
 :jbake-status: published
 
-Esté exemplo demostra como as anotaçõẽs @Produces e @Disposes trabalham. Um LogFactory cria uma instância do LogHandler
+Esté exemplo demostra como as anotações @Produces e @Disposes trabalham. Um LogFactory cria uma instância do LogHandler
 dependendo de um atributo "type". Para o propósito deste exemplo, o type é hard-coded para especificar um valor.
-Uma implementação Logger deve contér uma lista de LogHandlers. Teremos três implementações da interface LogHandler.
+Uma implementação Logger deve conter uma lista de LogHandlers.
+
+ Teremos três implementações da interface LogHandler: 
 
 * Uma DatabaseHandler
 * Uma FileHandler
 * Uma ConsoleHandler
 
-O DatabaseHandler aparentemente gravar os logs em um banco de dados. O FileHandler aparentemente gravar os logs em um arquivo.
-O ConsoleHandler seria apenas imprimir os logs para um console (saída padrão). Esté exemplo é apenas uma ilustração de como
-os conceitos dentro do CDI trabalha e é não destina-se a fornecer uma implementação/design de um framework de log.
+O DatabaseHandler aparentemente gravaria os logs em um banco de dados. 
+
+O FileHandler gravaria os logs em um arquivo.
+
+O ConsoleHandler apenas imprimiria os logs para um console (saída padrão). 
+
+Esté exemplo é apenas uma ilustração de como os conceitos dentro do CDI funcionam e não destina-se a fornecer uma implementação/design de um framework de log.
 
 
 == ConsoleHandler
