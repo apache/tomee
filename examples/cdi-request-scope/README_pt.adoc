@@ -16,7 +16,7 @@ que entrega para o visitante.
 === Waiter (garçom)
 
 O `Waiter` session bean recebe uma requisição através do método `orderSoup()` da classe de teste.
-Uma instancia de `Soup` sera criada nesse método e ela sera compartilhada em toda a requisição com o 
+Uma instância de `Soup` será criada nesse método e ela será compartilhada em toda a requisição com o 
 bean `Chef`. O método passa o request para o bean `Chef`. Ele então retorna o nome da sopa para a 
 classe de teste.
 
@@ -40,7 +40,7 @@ public class Waiter {
 === Soup (sopa)
 
 A classe `Soup` é um POJO injetável, definida como `@RequestScoped`. Isso significa que uma instância 
-sera criada apenas uma vez para cada request e sera compartilhada por todos os beans que a injetam.
+será criada apenas uma vez para cada request e será compartilhada por todos os beans que a injetam.
 
 ....
 @RequestScoped
@@ -118,7 +118,7 @@ public class RestaurantTest {
 
 == Executando
 
-Na saida voce pode ver que existem duas instancias de `Soup` criadas - uma para cada requisição.
+Na saida você pode ver que existem duas instâncias de `Soup` criadas - uma para cada requisição.
 
 ....
 -------------------------------------------------------
