@@ -13,7 +13,7 @@ beans that inject it throughout the same HTTPSession.
 	
 == Example
 
-This example has an end point wherein a user provides a request parameter 'name' which is persisted as a feild in a session scoped bean SessionBean and 
+This example has an endpoint wherein a user provides a request parameter `name` which is persisted as a field in a session scoped bean `SessionBean` and 
 then retrieved through another endpoint.
 
 == Request
@@ -22,7 +22,7 @@ GET http://localhost:8080/cdi-session-scope/set-name?name=Puneeth
 
 == Response
 
-done, go to /name servlet 
+`done, go to /name servlet`
 
 == Request
 
@@ -34,7 +34,7 @@ name = {Puneeth}
  
 == SessionBean
 
-The annotation @SessionScoped specifies that a bean is session scoped ie there will be only one instance of the class associated with a particular HTTPSession.  
+The annotation `@SessionScoped` specifies that a bean is session scoped ie there will be only one instance of the class associated with a particular HTTPSession.  
 
 [source,java]
 ----
@@ -55,8 +55,8 @@ public class SessionBean implements Serializable {
 
 == InputServlet
 
-InputServlet is a generic servlet which is mapped to the url pattern '/set-name'.
-The session scoped bean 'SessionBean' has been injected into this servlet, and the incoming request parameter is set to the feild name of the bean. 
+`InputServlet` is a generic servlet which is mapped to the url pattern `/set-name`.
+The session scoped bean `SessionBean` has been injected into this servlet, and the incoming request parameter is set to the field `name` of the bean. 
 
 [source,java]
 ----
@@ -83,7 +83,8 @@ public class InputServlet extends HttpServlet {
 
 == AnswerBean
 
-AnswerBean is a request scoped bean with an injected 'SessionBean'. It has an postconstruct method wherein the value from the sessionBean is retrieved and set to a feild.
+`AnswerBean` is a request scoped bean with an injected `SessionBean`. It has an `@PostConstruct` method 
+wherein the value from the `SessionBean` is retrieved and set to a field.
 
 [source,java]
 ----
@@ -107,7 +108,7 @@ public class AnswerBean {
 
 == OutputServlet
 
-OutputServlet is another servlet with  'AnswerBean' as an injected feild. When '/name' is called the value from 'Answerbean' is read and written to the response.
+`OutputServlet` is another servlet with  `AnswerBean` as an injected field. When `/name` is called the value from `AnswerBean` is read and written to the response.
 
 [source,java]
 ----
