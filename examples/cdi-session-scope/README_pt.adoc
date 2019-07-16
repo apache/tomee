@@ -1,0 +1,138 @@
+= CDI @SessionScoped
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo mostra o uso da anotação `@SessionScoped` para objetos injetados. Um objeto que é definido 
+como `@SessionScoped` é criado para cada HTTPSession e é compartilhado por todos os beans que o injetam 
+através do mesmo HTTPSession.
+
+== Execute a aplicação:
+
+    mvn clean install tomee:run 
+	
+== Exemplo
+
+Este exemplo tem um endpoint em que um usuário fornece um `name` no parâmetro da requisição, que é 
+persistido como um field em um session scoped bean chamado `SessionBean` e então é recuperado por outro 
+endpoint.
+
+== Requisição
+
+GET http://localhost:8080/cdi-session-scope/set-name?name=Puneeth
+
+== Resposta
+
+`done, go to /name servlet`
+
+== Requisição
+
+GET http://localhost:8080/cdi-session-scope/name
+
+== Resposta
+
+name = {Puneeth} 
+ 
+== SessionBean
+
+A anotação `@SessionScoped` especifica que este bean tem escopo de sessão, então haverá apenas uma 
+instância dessa classe associada a uma HTTPSession particular.
+
+[source,java]
+----
+@SessionScoped
+public class SessionBean implements Serializable {
+
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}  
+----
+
+== InputServlet
+
+`InputServlet` é um servlet genérico que é mapeado pela url `/set-name`. O bean de escopo de sessão 
+`SessionBean` foi injetado neste servlet, e o parâmetro de entrada da requisição sera atribuído ao field 
+`name` do bean.
+
+[source,java]
+----
+@WebServlet(name = "input-servlet", urlPatterns = {"/set-name"})
+public class InputServlet extends HttpServlet {
+
+    @Inject
+    private SessionBean bean;
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp 
+    throws ServletException, IOException {
+        final String name = req.getParameter("name");
+        if (name == null || name.isEmpty()) {
+            resp.getWriter().write("please add a parameter name=xxx");
+        } else {
+            bean.setName(name);
+            resp.getWriter().write("done, go to /name servlet");
+        }
+
+    }
+}
+----
+
+== AnswerBean
+
+O bean `AnswerBean` tem escopo de requisição com um `SessionBean` injetado. Ele contem um método 
+`@PostConstruct` em que o valor do campo `name` do `SessionBean` é recuperado e atribuído ao campo `value`.
+
+[source,java]
+----
+public class AnswerBean {
+
+    @Inject
+    private SessionBean bean;
+
+    private String value;
+
+    @PostConstruct
+    public void init() {
+        value = '{' + bean.getName() + '}';
+    }
+
+    public String value() {
+        return value;
+    }
+}
+----
+
+== OutputServlet
+
+`OutputServlet` é outro servlet com o `AnswerBean` injetado. Quando `/name` é chamado o valor do `AnswerBean` 
+é lido e escrito na resposta.
+
+[source,java]
+----
+@WebServlet(name = "output-servlet", urlPatterns = {"/name"})
+public class OutputServlet extends HttpServlet {
+
+    @Inject
+    private AnswerBean bean;
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp)
+     throws ServletException, IOException {
+        final String name = bean.value();
+        if (name == null || name.isEmpty()) {
+            resp.getWriter().write("please go to servlet /set-name please");
+        } else {
+            resp.getWriter().write("name = " + name);
+        }
+    }
+}
+
+----
+
