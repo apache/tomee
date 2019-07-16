@@ -67,7 +67,7 @@ The appId is the identification of the app service.
 
 === Configure Maven
 
-You could continue just using the Azure CLI for authentication but we can also do it permanently with maven.
+You could continue just using the Azure CLI for authentication but we can also do it permanently with Maven.
 
 In that case we need to edit Maven's settings.xml so the azure-webapp-maven-plugin can authenticate against Azure:
 

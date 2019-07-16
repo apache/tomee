@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este exemplo usa um aplicativo de eco básico, implantado com o TomEE incorporado na nuvem do Azure.
+Este exemplo usa um aplicativo de echo básico, implantado com o TomEE incorporado na nuvem do Azure.
 
 Usamos o plugin do maven do TomEE para empacotar o aplicativo com o TomEE Embedded
 a fim de gerar um fat jar. Este jar é então escolhido e deployado pelo azure-webapp-maven-plugin.
@@ -16,8 +16,8 @@ Então, em sua máquina de desenvolvimento, instale a interface da linha de coma
 antes que você possa implantar seu aplicativo.
 
 - Crie uma conta Azure, se você não tem uma, faça aqui https://azure.microsoft.com/en-us
-- Use a opção free, se disponível ou https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade[adicionar uma assinatura].
-- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Instalar] o Azure (CLI) de acordo com o sistema operacional do computador que você está usando para desenvolver.
+- Use a opção free, se disponível ou https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade[adicione uma assinatura].
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Instale] o Azure (CLI) de acordo com o sistema operacional do computador que você está usando para desenvolver.
 
 - Finalmente, você pode configurar seu computador de desenvolvimento.
 
@@ -47,8 +47,7 @@ O TenantId é alguém que pode registrar e gerenciar aplicativos por conta próp
 
 
 === Criando um service principal
-Um Azure service principal é uma identidade de segurança usada por aplicativos, serviços e
-e ferramentas de automação para acessar recursos específicos do Azure:
+Um Azure service principal é uma identidade de segurança usada por aplicativos, serviços e ferramentas de automação para acessar recursos específicos do Azure:
 
 ----
 az ad sp create-for-rbac --name  http://<seu-sub-domínio> --password <password para este aplicativo>
@@ -61,13 +60,13 @@ az ad sp create-for-rbac --name  http://<seu-sub-domínio> --password <password 
   "tenant": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb"
 }
 ----
-O <seu-sub-domínio>, também chamado de service principal na documentação do Azure.
-Neste exemplo "http://cloud-tomee-azure". Tem que ser exclusivo no Azure.
+O <seu-sub-domínio>, também é chamado de service principal name (nome principal do serviço) na documentação do Azure.
+Neste exemplo "http://cloud-tomee-azure" tem que ser exclusivo no Azure.
 O appId é a identificação do serviço de aplicativo.
 
-=== Configurando o  Maven
+=== Configurando o Maven
 
-Você pode continuar usando apenas a CLI do Azure para autenticação, mas também podemos fazê-lo permanentemente com o maven.
+Você pode continuar usando apenas a CLI do Azure para autenticação, mas também podemos fazê-lo permanentemente com o Maven.
 
 Nesse caso, precisamos editar o arquivo settings.xml do Maven para que o plugin azure-webapp-maven possa autenticar no Azure:
 
@@ -98,9 +97,9 @@ O URL final será semelhante a:
 
 No momento da criação deste exemplo, há um erro no azure com o JAVA_HOME que impede a implementação.
 Verificar: https://github.com/Azure-App-Service/java/issues/11
-A solução é definir o Env. variável no console da Web do Azure e reinicie o aplicativo.
+A solução é definir a variável de ambiente no console da Web do Azure e reiniciar o aplicativo.
 
-Para implantar o aplicativo de eco localmente, você pode executar:
+Para implantar o aplicativo de echo localmente, você pode executar:
 
 `mvn tomee:run`
 
