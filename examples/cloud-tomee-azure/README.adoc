@@ -1,5 +1,7 @@
-
 = TomEE deployment on Azure
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: published
 
 This example uses a basic echo application, deployed with embedded TomEE on the Azure Cloud.
 
@@ -9,7 +11,7 @@ in order to generate a fat jar. This jar is then picked up and deployed by the a
 == Azure Setup
 
 In order for the Azure plugin to work, you will need to have an Azure account and add a subscription to it.
-Then, on yor development machine, install the Azure command-line interface (CLI) and authenticate with the command
+Then, on your development machine, install the Azure command-line interface (CLI) and authenticate with the command
 line, before you can deploy your application.
 
 - Create an Azure Account, if you don't have one, at https://azure.microsoft.com/en-us
@@ -65,7 +67,7 @@ The appId is the identification of the app service.
 
 === Configure Maven
 
-You could continue just using the Azure CLI for authentication but we can also do it permanently with maven.
+You could continue just using the Azure CLI for authentication but we can also do it permanently with Maven.
 
 In that case we need to edit Maven's settings.xml so the azure-webapp-maven-plugin can authenticate against Azure:
 
