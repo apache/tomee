@@ -36,7 +36,7 @@ public class MPJWTInitializer implements ServletContainerInitializer {
     public void onStartup(final Set<Class<?>> classes, final ServletContext ctx) throws ServletException {
 
         if (classes == null || classes.isEmpty()) {
-            return; // no classe having @LoginConfig on it
+            return; // no class having @LoginConfig on it
         }
 
         for (Class<?> clazz : classes) {

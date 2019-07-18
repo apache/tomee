@@ -3,20 +3,26 @@
 :jbake-type: page
 :jbake-status: published
 
-This example shows how to secure access to a web resource provided by a servlet. For this, we will use realms.
+Este exemplo mostra como proteger o acesso a um web resource fornecido por um servlet. Para isso, 
+usaremos realms.
 
-A https://javaee.github.io/tutorial/security-intro005.html#BNBXJ[realm], in JEE world, is a security policy domain defined for a web or application server.
-A realm contains a collection of users, who may or may not be assigned to a group.
+Um https://javaee.github.io/tutorial/security-intro005.html#BNBXJ[realm], no ecossistema JavaEE, é 
+um domínio de politica de segurança definido para um web server ou um application server. Um realm 
+contém uma coleção de usuários, que podem ou não ser atribuídos a um grupo.
 
-A realm, basically, specifies a list of users and roles. I's a "database" of users with associated passwords and possible roles.
-The Servlet Specification doesn't specifies an API for specifying such a list of users and roles for a given application.
-For this reason, Tomcat servlet container defines an interface, `org.apache.catalina.Realm`. More information can be found https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html[here].
+Um realm, basicamente, especifica uma lista de usuários e funções. É um "banco de dados" de usuários 
+com senhas associadas e possíveis papeis. A especificação de servlet não especifica uma API para 
+definir uma lista de usuários e funções para um determinado aplicativo. Por essa razão, o Tomcat 
+servlet container define uma interface, `org.apache.catalina.Realm`. Mais informações podem ser 
+encontradas https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html[aqui].
 
-In TomEE application server, the mechanism used by Tomcat to define a realm for a servlet is reused and enhanced. More information can be found https://www.tomitribe.com/blog/tomee-security-episode-1-apache-tomcat-and-apache-tomee-security-under-the-covers[here].
+No servidor de aplicação TomEE, o mecanismo usado pelo Tomcat para definir um realm para um servlet 
+é reutilizado e aprimorado. Mais informações podem ser encontradas https://www.tomitribe.com/blog/tomee-security-episode-1-apache-tomcat-and-apache-tomee-security-under-the-covers[aqui].
 
-== Example
+== Exemplo
 
-This example shows a servlet secured using a realm. The secured servlet has a simple functionality, just for illustrating the concepts explained here:
+Este exemplo mostra um secured servlet (servlet seguro/protegido) usando um realm. O secured servlet 
+tem uma funcionalidade simples, apenas ilustrar os conceitos aqui explicados:
 
 ....
 import javax.servlet.ServletException;
@@ -35,7 +41,7 @@ public class SecuredServlet extends HttpServlet {
 }
 ....
 
-For securing this servlet, we will add the following class:
+Para proteger este servlet, adicionaremos a seguinte classe:
 
 ....
 import javax.enterprise.context.RequestScoped;
@@ -70,9 +76,9 @@ public class AuthBean {
 }
 ....
 
-The class defines 2 methods: `authenticate` and `hasRole`.
-Both these methods will be used by a class, `LazyRealm`, implemented in TomEE application server.
-In the file `webapp/META-INF/context.xml` this realm is configured:
+A classe define dois métodos: `authenticate` e `hasRole`.
+Ambos métodos vão ser utilizados pela classe `LazyRealm`, implementada no servidor de aplicação TomEE.
+Este realm é configurado no arquivo `webapp/META-INF/context.xml`:
 
 ....
 <Context preemptiveAuthentication="true">
@@ -82,10 +88,12 @@ In the file `webapp/META-INF/context.xml` this realm is configured:
 </Context>
 ....
 
-The class `AuthBean` defines a "database" with 2 users: userA (having role admin) and userB (having role user), both having the password test.
-Class `org.apache.tomee.catalina.realm.LazyRealm` will load our `AuthBean` class and will use it to check if a user has access to the content provided by our servlet.
+A classe `AuthBean` define um "banco de dados" com dois usuários: userA (papel de admin) e 
+userB (papel de usuário), ambos possuem a senha test.
+A classe `org.apache.tomee.catalina.realm.LazyRealm` vai carregar nossa classe `AuthBean` e vai usa-la 
+para verificar se um usuário tem acesso ao conteúdo fornecido pelo nosso servlet.
 
-== Tests
+== Testes
 
 ....
 import org.apache.http.HttpHost;
@@ -174,8 +182,9 @@ public class AuthBeanTest {
 }
 ....
 
-The test uses Arquillian to start an application server and load the servlet.
-There are two tests methods: `success`, where our servlet is accessed with the correct username and password, and `failure`, where our servlet is accessed with an incorrect password.
+O teste usa o Arquillian para iniciar o servidor de aplicação e carregar o servlet.
+Existem dois métodos de teste: `success`, onde nosso servlet é acessado com o usuário e senha corretos,
+e `failure`, onde nosso servlet é acessado com uma senha incorreta.
 
-Full example can be found https://github.com/apache/tomee/tree/master/examples/cdi-realm[here].
-It's a maven project, and the test can be run with `mvn clean install` command.
+O exemplo completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/cdi-realm[aqui].
+É um projeto Maven, e o teste pode ser executado com o comando `mvn clean install`.

@@ -1,15 +1,11 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: status=published
-= Change JAXWS URL
+= Alterar JAXWS URL
 
-_Help us document this example! Click the blue pencil icon in the upper
-right to edit this page._
+Para alterar a URI de um web service, uma solução é usar o arquivo `openejb-jar.xml`.
 
-To change a web service deployment URI one solution is to use
-`openejb-jar.xml`.
-
-In this sample we have a web service through the class `Rot13`:
+Neste exemplo temos um web service através da classe `Rot13`:
 
 ....
 package org.superbiz.jaxws;
@@ -41,9 +37,9 @@ public class Rot13 {
 }
 ....
 
-We decide to deploy to `/tool/rot13` url.
+Decidimos fazer o deploy na url `/tool/rot13`.
 
-To do so we first define it in `openejb-jar.xml`:
+Para fazer isso, primeiro temos que definir a rota no arquivo `openejb-jar.xml`:
 
 ....
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,12 +53,13 @@ To do so we first define it in `openejb-jar.xml`:
 </openejb-jar>
 ....
 
-It is not enough since by default TomEE deploys the webs ervices in a
-subcontext called `webservices`. To skip it simply set the system property
-`tomee.jaxws.subcontext` to `/` (done in `arquillian.xml` for our test).
+Isto não é o bastante, por que, por padrão o TomEE faz o deploy do web service 
+com um subcontexto chamado `webservices`. Para evitar isto simplesmente informe 
+a propriedade `tomee.jaxws.subcontext` para `/` (feito no arquivo `arquillian.xml` 
+para nosso teste).
 
-Then now our `Rot13` web service is deployed as expected to `/tool/rot13` and
-we check it with Arquillian and TomEE embedded:
+Agora fizemos o deploy do nosso web service `Rot13` como esperado no contexto 
+`/tool/rot13` e vamos verificar isto com o Arquillian e o TomEE embedded:
 
 ....
  package org.superbiz.jaxws;

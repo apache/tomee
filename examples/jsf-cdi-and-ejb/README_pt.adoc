@@ -3,29 +3,26 @@
 :jbake-status: status=published
 = JSF-CDI-EJB
 
-The simple application contains a CDI managed bean `CalculatorBean`,
-which uses the `Calculator` EJB to add two numbers and display the
-results to the user. The EJB is injected in the managed bean using
-@Inject annotation.
+Aplicação simples que contém um CDI managed bean `CalculatorBean`,
+que usa o EJB `Calculator` para adicionar dois números e mostrar os resultados para o usuário. O EJB é injetado no managed bean usando a anotação
+@Inject.
 
-You could run this in the latest Apache TomEE
+Você poderia executar isso no último Apache TomEE
 https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/[snapshot]
 
-The complete source code is below but lets break down to look at some
-smaller snippets and see how it works.
+O código completo está abaixo, mas vamos quebrá-lo para olhar para alguns trechos menores e ver como ele funciona.
 
-A little note on the setup:
+Uma pequena nota sobre a configuração:
 
-As for the libraries, myfaces-api and myfaces-impl are provided in
-tomee/lib and hence they should not be a part of the war. In maven
-terms, they would be with scope `provided'
+Quanto as bibliotecas, myfaces-api e myfaces-impl são fornecidas em
+tomee/lib e, portanto não devem ser parte do war. Nos termos do Maven, eles estariam com o escopo `provided'
 
-Also note that we use servlet 2.5 declaration in web.xml
+Observe também que nós usamos a declaração servlet 2.5 no web.xml
 
-And we use 2.0 version of faces-config
+E nós usamos a versão 2.0 do faces-config
 
-To make this a cdi-aware-archive (i.e bean archive) an empty beans.xml
-is added in WEB-INF
+Para tornar este em um cdi-aware-archive (ou seja, arquivo Bean) um beans.xml vazio
+é adicionado no WEB-INF
 
 ....
    <?xml version="1.0" encoding="UTF-8"?>
@@ -36,7 +33,7 @@ is added in WEB-INF
    </beans>
 ....
 
-We’ll first declare the FacesServlet in the web.xml
+Nós primeiro vamos declarar o FacesServlet no web.xml
 
 ....
   <servlet>
@@ -46,9 +43,9 @@ We’ll first declare the FacesServlet in the web.xml
   </servlet>
 ....
 
-FacesServlet acts as the master controller.
+FacesServlet atua como o controlador mestre.
 
-We’ll then create the calculator.xhtml file.
+Em seguida criaremos o arquivo calculator.xhtml.
 
 ....
        <h:outputText value='Enter first number'/>
@@ -58,32 +55,25 @@ We’ll then create the calculator.xhtml file.
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
 ....
 
-Notice how we’ve used the bean here. By default, the bean name would be
-the simple name of the bean class with the first letter in lower case.
+Observe como usamos o bean aqui. Por padrão, o nome do bean seria o nome simples da classe bean com a primeira letra minúscula 
 
-We’ve annotated the `CalculatorBean` with `@RequestScoped`. So when a
-request comes in, the bean is instantiated and placed in the request
-scope.
+Nós temos o `CalculatorBean` anotado com `@RequestScoped`. Então quando uma requisição vem, o bean é instanciado e colocado no escopo da requisição.
 
-Here, getX() method of calculatorBean is invoked and the resulting value
-is displayed. x being a Double, we rightly should see 0.0 displayed.
+Aqui, o método getX() do calculatorBean é invocado e valor do resultado é apresentado. x sendo um Double, nós devemos ver justamente 0.0 sendo exibido.
 
-When you change the value and submit the form, these entered values are
-bound using the setters in the bean and then the commandButton-action
-method is invoked.
+Quando você modifica o valor e submete o formulário, esses valores inseridos são vinculados no bean usando os setters e então o método commandButton-action é invocado. 
 
-In this case, CalculatorBean#add() is invoked.
+Neste caso, CalculatorBean#add() é invocado.
 
-Calculator#add() delegates the work to the ejb, gets the result, stores
-it and then returns what view is to be rendered.
+Calculator#add() delega o trabalho para o ejb, obtém o resultado, armazena-o e, em seguida, retorna qual view deve ser processada.
 
-The return value `success` is checked up in faces-config
-navigation-rules and the respective page is rendered.
 
-In our case, `result.xhtml` page is rendered where use EL and display
-the result from the request-scoped `calculatorBean`.
+O valor de retorno `success` é verificado no faces-config
+navigation-rules e a respectiva página é renderizada.
 
-# Source Code
+No nosso caso, a página `result.xhtml` é renderizada onde usar EL e mostra o resultado do request-scoped `calculatorBean`.
+
+# Código-fonte
 
 == CalculatorBean
 

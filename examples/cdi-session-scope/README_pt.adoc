@@ -3,38 +3,40 @@
 :jbake-type: page
 :jbake-status: published
 
-This example show the use of `@SessionScoped` annotation for injected objects. An object
-which is defined as `@SessionScoped` is created once for every HTTPSession and is shared by all the
-beans that inject it throughout the same HTTPSession.
+Este exemplo mostra o uso da anotação `@SessionScoped` para objetos injetados. Um objeto que é definido 
+como `@SessionScoped` é criado para cada HTTPSession e é compartilhado por todos os beans que o injetam 
+através do mesmo HTTPSession.
 
-== Run the application:
+== Execute a aplicação:
 
     mvn clean install tomee:run 
 	
-== Example
+== Exemplo
 
-This example has an endpoint wherein a user provides a request parameter `name` which is persisted as a field in a session scoped bean `SessionBean` and 
-then retrieved through another endpoint.
+Este exemplo tem um endpoint em que um usuário fornece um `name` no parâmetro da requisição, que é 
+persistido como um field em um session scoped bean chamado `SessionBean` e então é recuperado por outro 
+endpoint.
 
-== Request
+== Requisição
 
 GET http://localhost:8080/cdi-session-scope/set-name?name=Puneeth
 
-== Response
+== Resposta
 
 `done, go to /name servlet`
 
-== Request
+== Requisição
 
 GET http://localhost:8080/cdi-session-scope/name
 
-== Response
+== Resposta
 
 name = {Puneeth} 
  
 == SessionBean
 
-The annotation `@SessionScoped` specifies that a bean is session scoped ie there will be only one instance of the class associated with a particular HTTPSession.  
+A anotação `@SessionScoped` especifica que este bean tem escopo de sessão, então haverá apenas uma 
+instância dessa classe associada a uma HTTPSession particular.
 
 [source,java]
 ----
@@ -55,8 +57,9 @@ public class SessionBean implements Serializable {
 
 == InputServlet
 
-`InputServlet` is a generic servlet which is mapped to the url pattern `/set-name`.
-The session scoped bean `SessionBean` has been injected into this servlet, and the incoming request parameter is set to the field `name` of the bean. 
+`InputServlet` é um servlet genérico que é mapeado pela url `/set-name`. O bean de escopo de sessão 
+`SessionBean` foi injetado neste servlet, e o parâmetro de entrada da requisição sera atribuído ao field 
+`name` do bean.
 
 [source,java]
 ----
@@ -83,8 +86,8 @@ public class InputServlet extends HttpServlet {
 
 == AnswerBean
 
-`AnswerBean` is a request scoped bean with an injected `SessionBean`. It has an `@PostConstruct` method 
-wherein the value from the `SessionBean` is retrieved and set to a field.
+O bean `AnswerBean` tem escopo de requisição com um `SessionBean` injetado. Ele contem um método 
+`@PostConstruct` em que o valor do campo `name` do `SessionBean` é recuperado e atribuído ao campo `value`.
 
 [source,java]
 ----
@@ -108,7 +111,8 @@ public class AnswerBean {
 
 == OutputServlet
 
-`OutputServlet` is another servlet with  `AnswerBean` as an injected field. When `/name` is called the value from `AnswerBean` is read and written to the response.
+`OutputServlet` é outro servlet com o `AnswerBean` injetado. Quando `/name` é chamado o valor do `AnswerBean` 
+é lido e escrito na resposta.
 
 [source,java]
 ----
