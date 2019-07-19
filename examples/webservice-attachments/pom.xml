@@ -82,6 +82,45 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>active-on-jdk-11</id>
+      <activation>
+        <jdk>11</jdk>
+      </activation>
+      <dependencies>
+        <!--
+         Java EE API replacements for JDK 11
+        -->
+        <!-- JAXB for Java 11 -->
+        <dependency>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+          <version>2.4.0-b180830.0438</version>
+        </dependency>
+        <!-- CXF does not support 4.1 that comes with Sun WS implementation -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>stax2-api</artifactId>
+          <!--<version>4.1</version>-->
+          <version>3.1.4</version>
+        </dependency>
+        <!-- JAXWS for Java 11 -->
+        <dependency>
+          <groupId>com.sun.xml.ws</groupId>
+          <artifactId>jaxws-rt</artifactId>
+          <version>2.3.1</version>
+          <type>pom</type>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.xml.ws</groupId>
+          <artifactId>rt</artifactId>
+          <version>2.3.1</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

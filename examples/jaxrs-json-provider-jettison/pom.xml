@@ -112,4 +112,24 @@
     </plugins>
   </build>
 
+  <profiles>
+    <profile>
+      <id>active-on-jdk-11</id>
+      <activation>
+        <jdk>11</jdk>
+      </activation>
+      <dependencies>
+        <!--
+         Java EE API replacements for JDK 11
+        -->
+        <!-- JAXB for Java 11 -->
+        <dependency>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-runtime</artifactId>
+          <version>2.4.0-b180830.0438</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
 </project>
