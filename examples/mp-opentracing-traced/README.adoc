@@ -1,0 +1,63 @@
+= MicroProfile OpenTracing @Traced
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+
+This is an example on how to use the @Traced annotation in TomEE.
+
+NOTE: This example is a work in progress.
+
+===== Run the application:
+
+    mvn clean install tomee:run
+
+
+NOTE: Add text here for information about the endpoint.
+
+===== Request:
+
+    curl -X GET http://localhost:8080/mp-opentracing-traced/...
+
+NOTE: Complete the URL for the above `curl` command.
+
+===== Response:
+
+NOTE: Add the response from the example application
+
+==== @Traced Feature
+
+NOTE: Add text here to include how to implement and some source code.
+
+===== For the traced status:
+
+    GET http://localhost:8080/mp-opentracing-traced/...
+
+NOTE: Complete the URL for the above `curl` command.
+
+===== Reponse:
+
+
+===== Expected Prometheus format:
+
+===== Request:
+
+    curl -X GET http://localhost:8080/mp-opentracing-traced/...
+
+NOTE: Complete the URL for the above `curl` command.
+
+===== Response:
+
+==== Metric Metadata:
+
+===== Request:
+
+    curl -X OPTIONS http://localhost:8080/mp-opentracing/traced/...
+
+NOTE: Complete the URL for the above `curl` command.
+
+===== Response:
+
+===== Test the application:
+
+    mvn test
