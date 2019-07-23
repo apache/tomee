@@ -64,6 +64,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
+import org.apache.xbean.finder.ResourceFinder;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Field;
@@ -108,7 +109,7 @@ class CmpJpaConversion implements DynamicDeployer {
     private static EntityMappings readEntityMappings(final String location, final AppModule appModule) {
 
         try {
-            URL url = EntityMappingURLFinder.INSTANCE.apply(location, appModule);
+            final URL url = new ResourceFinder("", appModule.getClassLoader()).getResource(location);
             if (Objects.isNull(url)) {
                 return null;
             }
