@@ -20,7 +20,7 @@
     <persistence-unit name="cmp" transaction-type="JTA">
         <jta-data-source>My DataSource</jta-data-source>
         <non-jta-data-source>My Unmanaged DataSource</non-jta-data-source>
-        <mapping-file>META-INF/openejb-cmp-generated-orm.xml</mapping-file>
+        <mapping-file>META-INF/custom-orm.xml</mapping-file>
         <class>openejb.org.apache.openejb.arquillian.tests.cmp.sample.Movie</class>
         <class>openejb.org.apache.openejb.arquillian.tests.cmp.sample.Actor</class>
         <properties>
