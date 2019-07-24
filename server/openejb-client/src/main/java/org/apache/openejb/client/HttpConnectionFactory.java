@@ -29,13 +29,12 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
-
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
 /**
  * @version $Revision$ $Date$
@@ -86,7 +85,8 @@ public class HttpConnectionFactory implements ConnectionFactory {
                 throw new IllegalArgumentException("You can't set basic.* properties AND authorization on the provider url");
             }
             if (authorization == null && basicUsername != null) {
-                authorization = "Basic " + printBase64Binary((basicUsername + (basicPassword != null ? ":" + basicPassword : "")).getBytes(StandardCharsets.UTF_8));
+                final String encoded = new String(Base64.getEncoder().encode((basicUsername + (basicPassword != null ? ":" + basicPassword : "")).getBytes(StandardCharsets.UTF_8)));
+                authorization = "Basic " + encoded;
             }
 
             final String newUrl =
