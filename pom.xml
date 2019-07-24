@@ -131,9 +131,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.42</tomcat.version>
+    <tomcat.version>8.5.43</tomcat.version>
 
-    <cxf.version>3.1.17</cxf.version>
+    <cxf.version>3.1.18</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.arquillian>1.1.13.Final</version.arquillian>
