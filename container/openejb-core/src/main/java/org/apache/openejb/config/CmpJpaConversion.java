@@ -78,7 +78,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
@@ -110,7 +109,7 @@ class CmpJpaConversion implements DynamicDeployer {
 
         try {
             final URL url = new ResourceFinder("", appModule.getClassLoader()).getResource(location);
-            if (Objects.isNull(url)) {
+            if (url == null) {
                 return null;
             }
             return (EntityMappings) JaxbJavaee.unmarshal(EntityMappings.class, IO.read(url));
@@ -275,11 +274,12 @@ class CmpJpaConversion implements DynamicDeployer {
 
     private String getPersistenceModuleId(final AppModule appModule) {
         if (appModule.getModuleId() != null) {
-            return Optional.ofNullable(appModule.getModuleUri().toString()).orElse(appModule.getModuleId());
+            return appModule.getModuleUri() != null ? appModule.getModuleUri().toString() : appModule.getModuleId();
         }
+
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             if (ejbModule.getModuleId() != null) {
-                return Optional.ofNullable(ejbModule.getModuleUri().toString()).orElse(ejbModule.getModuleId());
+                return ejbModule.getModuleUri() != null ? ejbModule.getModuleUri().toString() : ejbModule.getModuleId();
             }
         }
         throw new IllegalStateException("Comp must be in an ejb module, this one has none: " + appModule);
