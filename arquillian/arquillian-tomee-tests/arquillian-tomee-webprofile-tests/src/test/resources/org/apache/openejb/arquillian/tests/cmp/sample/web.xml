@@ -24,12 +24,12 @@
          id="WebApp_ID" version="2.5">
 
     <servlet>
-        <servlet-name>RosterServlet</servlet-name>
+        <servlet-name>MoviesServlet</servlet-name>
         <servlet-class>org.apache.openejb.arquillian.tests.cmp.sample.MoviesServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>RosterServlet</servlet-name>
+        <servlet-name>MoviesServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
