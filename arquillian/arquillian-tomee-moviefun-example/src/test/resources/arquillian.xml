@@ -28,6 +28,9 @@
                <property name="openejbVersion">${tomee.version}</property>
                <property name="dir">target/apache-tomee-remote</property>
                <property name="appWorkingDir">target/arquillian-test-working-dir</property>
+               <property name="additionalLibs">
+                 ${java11.additionalLibs}
+               </property>
            </configuration>
        </container>
        

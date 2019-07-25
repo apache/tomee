@@ -225,6 +225,9 @@
     <javadoc.version>3.0.1</javadoc.version>
     <asciidoclet.version>1.5.0</asciidoclet.version>
 
+    <!-- by default it's fine, see profile bellow -->
+    <java11.additionalLibs/>
+
   </properties>
 
   <build>
@@ -564,9 +567,16 @@
       <activation>
         <jdk>11</jdk>
       </activation>
-      <!--<properties>-->
-        <!--<surefire.argline>-Duser.language=en -Duser.region=US &#45;&#45;add-opens java.base/jdk.internal.loader=ALL-UNNAMED</surefire.argline>-->
-      <!--</properties>-->
+      <properties>
+        <java11.additionalLibs>
+          mvn:org.codehaus.woodstox:stax-api:4.1.4
+          mvn:org.apache.geronimo.specs:geronimo-jaxb_2.2_spec:1.0.1
+          mvn:org.glassfish.jaxb:jaxb-runtime:2.3.2
+          mvn:org.glassfish.corba:glassfish-corba-omgapi:4.2.1
+          mvn:com.sun.xml.ws:jaxws-rt:2.3.2
+          mvn:com.sun.xml.messaging.saaj:saaj-impl:1.4.0-b03
+        </java11.additionalLibs>
+      </properties>
     </profile>
     <profile>
       <id>main</id>
