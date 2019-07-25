@@ -32,7 +32,7 @@ Tenha certeza que você não esqueceu da anotação `@InterceptorBinding` acima!
 Agora que nossa anotação customizada foi criada, vamos anexa-la (ou "vincula-la") 
 a um interceptador.
 
-Aqui esta nosso interceptador de log. Um método `@AroundInvoke` e estamos quase 
+Aqui está nosso interceptador de log. Um método `@AroundInvoke` e estamos quase 
 terminando.
 
 ....
@@ -48,7 +48,7 @@ public class LoggingInterceptor {
 }
 ....
 
-Agora a anotação `@Log` que criamos esta vinculada a este interceptador.
+Agora a anotação `@Log` que criamos está vinculada a este interceptador.
 
 Tudo pronto, vamos anotar em nível de classe ou método e nos divertir interceptando !
 
@@ -73,7 +73,7 @@ public class BookShow implements Serializable {
 A anotação `@Log` aplicada em nível de classe diz que todos os métodos desta 
 classe devem ser interceptados pelo `LoggingInterceptor`.
 
-Antes de dizer-mos "tudo pronto" temos que fazer uma ultima coisa! Habilitar 
+Antes de dizermos "tudo pronto" temos que fazer uma última coisa! Habilitar 
 os interceptadores! 
 
 Vamos criar rapidamente um arquivo `beans.xml` na pasta `META-INF`
