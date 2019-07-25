@@ -36,6 +36,8 @@ import javax.websocket.Session;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -43,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Arrays.asList;
-import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 import static org.junit.Assert.assertEquals;
 
 @RunAsClient
@@ -102,7 +103,8 @@ public class WebSocketResourceTest {
 
         ClientEndpointConfig.Configurator configurator = new ClientEndpointConfig.Configurator() {
             public void beforeRequest(Map<String, List<String>> headers) {
-                headers.put("Authorization", asList("Basic " + printBase64Binary("tomee:tomee".getBytes())));
+                final String encoded = Base64.getEncoder().encodeToString("tomee:tomee".getBytes(StandardCharsets.UTF_8));
+                headers.put("Authorization", asList("Basic " + encoded));
             }
         };
 

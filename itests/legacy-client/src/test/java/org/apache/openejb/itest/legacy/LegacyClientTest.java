@@ -86,6 +86,7 @@ public class LegacyClientTest {
         root = new StandaloneServer(roothome, roothome);
 
         root.killOnExit();
+        root.setVerbose(true);
         root.getJvmOpts().add("-Dopenejb.classloader.forced-load=org.apache.openejb");
         root.ignoreOut();
         root.setProperty("name", rootname);

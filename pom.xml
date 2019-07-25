@@ -564,9 +564,9 @@
       <activation>
         <jdk>11</jdk>
       </activation>
-      <properties>
-        <surefire.argline>-Duser.language=en -Duser.region=US --add-opens java.base/jdk.internal.loader=ALL-UNNAMED</surefire.argline>
-      </properties>
+      <!--<properties>-->
+        <!--<surefire.argline>-Duser.language=en -Duser.region=US &#45;&#45;add-opens java.base/jdk.internal.loader=ALL-UNNAMED</surefire.argline>-->
+      <!--</properties>-->
     </profile>
     <profile>
       <id>main</id>
