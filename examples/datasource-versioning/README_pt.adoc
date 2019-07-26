@@ -9,7 +9,7 @@ Este exemplo mostra como usar DataSources com versão do mesmo provedor usando o
 
 A configuração do DataSource pode ser feita de várias maneiras e aqui nós mostramos
 dois métodos comuns na forma de testes unitários. Antes de começarmos, se você
-der uma olhada no pom.xml e procurar por maven-dependencia-plugin em uso, você verá que nós puxamos em dois
+der uma olhada no pom.xml e procurar pelo uso do maven-dependency-plugin, você verá que nós puxamos em dois
 arquivos de driver completamente diferentes para este exemplo. 
 
 == AlternateDataSourceTest.java
