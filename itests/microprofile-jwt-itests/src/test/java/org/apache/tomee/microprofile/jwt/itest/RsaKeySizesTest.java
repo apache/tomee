@@ -55,6 +55,7 @@ public class RsaKeySizesTest {
                 .add("webapps/test/WEB-INF/beans.xml", "")
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
 //                .update()
+                .env("JAVA_OPTS", "-Duser.language=en -Duser.region=US")
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());

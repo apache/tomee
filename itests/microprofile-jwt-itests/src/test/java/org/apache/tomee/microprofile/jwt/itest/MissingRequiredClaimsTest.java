@@ -47,6 +47,7 @@ public class MissingRequiredClaimsTest {
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)
 //                .update()
+                .env("JAVA_OPTS", "-Duser.language=en -Duser.region=US")
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
@@ -87,6 +88,7 @@ public class MissingRequiredClaimsTest {
                 .add("webapps/test/WEB-INF/lib/app.jar", appJar)
                 .watch("org.apache.tomee.microprofile.jwt.", "\n", output::add)
 //                .update()
+                .env("JAVA_OPTS", "-Duser.language=en -Duser.region=US")
                 .build();
 
         final WebClient webClient = createWebClient(tomee.toURI().resolve("/test").toURL());
