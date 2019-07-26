@@ -1,4 +1,4 @@
-= Utilitários de Concorrência para o Java EE
+= Utilitário de Concorrência para o Java EE
 :index-group: Other Features
 :jbake-type: page
 :jbake-status: published
@@ -7,7 +7,7 @@ Neste exemplo será usado o https://docs.oracle.com/javaee/7/tutorial/concurrenc
 
 Esse padrão permite que os desenvolvedores de aplicativos usem utilitários de concorrência gerenciados pelo servidor de aplicação.
 Dessa forma, o desenvolvedor não tem mais a responsabilidade de gerenciar manualmente pesquisas de thread ou threads.
-Além disso, em um objeto de thread não gerenciado, o contêiner não pode garantir que outros serviços da plataforma JEE funcionem corretamente. Por esses motivos, é recomendável o uso threads gerenciados sempre que a necessidade surgir.
+Além disso, em um objeto de thread não gerenciado, o contêiner não pode garantir que outros serviços da plataforma JEE funcionem corretamente. Por esses motivos, é recomendável o uso de threads gerenciadas sempre que a necessidade surgir.
 Mais informações podem ser encontradas https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[aqui].
 
 == Principais Componentes do Utilitário de Concorrência
@@ -16,7 +16,7 @@ O padrão especifica os componentes principais do utilitário de concorrência. 
 
 === ManagedExecutorService
 
-Um `ManagedExecutorService` é um objeto que permite ao desenvolvedor do aplicativo enviem tarefas de forma assíncrona. As tarefas são executadas em threads que são gerenciadas pelo contêiner.
+Um `ManagedExecutorService` é um objeto que permite ao desenvolvedor do aplicativo enviar tarefas de forma assíncrona. As tarefas são executadas em threads que são gerenciadas pelo contêiner.
 
 ==== Exemplo
 
@@ -68,7 +68,7 @@ Esse exemplo simula uma computação de longa execução, definida no método `l
 
 As capacidades do `ManagedExecutorService` são exemplificadas nos métodos `asyncTask` e `asyncTaskWithException`.
 Os dois métodos invocam o método `longTask`definido acima; cada execução do `longTask` é feita em uma thread gerenciada pela aplicação.
-O método `asyncTask` simula uma execução bem sucedida, enquanti o `asyncTaskWithException` simula uma execução que vai lançar uma exceção.
+O método `asyncTask` simula uma execução bem sucedida, enquanto o `asyncTaskWithException` simula uma execução que vai lançar uma exceção.
 
 Os métodos são usados na seguinte classe de teste  (exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedServiceTest.java[aqui]):
 ....
@@ -259,7 +259,7 @@ public class ManagedScheduledServiceTest {
 
 === ManagedThreadFactory
 
-Um `ManagedThreadFactory` é um objeto que permite aos  desenvolvedores criar threads gerenciados por contêiner.
+Um `ManagedThreadFactory` é um objeto que permite aos  desenvolvedores criar threads gerenciadas por contêiner.
 
 ==== Exemplo
 
@@ -331,8 +331,8 @@ public class ThreadFactoryService {
 
 Esse exemplo define uma classe que implementa `Runnable`, executando uma tarefa de longa duração no método `run`.
 
-O método `asyncTask` apenas cria uma thread gerenciada (usando o `ManagedThreadFactory` injetado) em seguida, o inicia.
-O método `asyncHangingTask` também cria uma thread gerenciada, o inicia, mas também o para.
+O método `asyncTask` apenas cria uma thread gerenciada (usando o `ManagedThreadFactory` injetado) em seguida, a inicia.
+O método `asyncHangingTask` também cria uma thread gerenciada, a inicia, mas também a para.
 
 A seguinte classe testa esses métodos (código completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ThreadFactoryServiceTest.java[aqui]):
 
