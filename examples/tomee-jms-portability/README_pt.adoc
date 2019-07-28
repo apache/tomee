@@ -44,7 +44,7 @@ Este arquivo (localizado em tomee_home/conf é deixado em branco, pois gostaría
 
 
 ### catalina.properties
-Este arquivo pode ser usado para fornecer convinentemente argumentos java -D como uma entrada para tomee. No entanto, no mundo real, esses parâmetros seriam configurados usando variáveis de ambiente para evitar a adição de propriedades específicas do aplicativo no tomee conf (Arquivo não incluído neste repositório git).
+Este arquivo pode ser usado para fornecer convenientemente argumentos java -D como uma entrada para tomee. No entanto, no mundo real, esses parâmetros seriam configurados usando variáveis de ambiente para evitar a adição de propriedades específicas do aplicativo no tomee conf (Arquivo não incluído neste repositório git).
 
 [source,xml]
 ----
