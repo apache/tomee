@@ -7,7 +7,7 @@ In this example will be used https://docs.oracle.com/javaee/7/tutorial/concurren
 
 This standard allows application developers to use concurrency utilities managed by the application server.
 In this way, the developer no longer has the responsibility to manually manage thread polls or threads.
-Also, in a non-managed Thread object, the container cannot guarantee that other JEE platform services work correctly. For these reasons, it is recommended the usage of managed threads whenever the need arise.
+Also, in a non-managed Thread object, the container cannot guarantee that other Java EE platform services work correctly. For these reasons, it is recommended the usage of managed threads whenever the need arise.
 More information can be found https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[here].
 
 == Main Components of the Concurrency Utilities
@@ -377,4 +377,4 @@ public class ThreadFactoryServiceTest {
 ....
 
 Full project example can be found https://github.com/apache/tomee/tree/master/examples/concurrency-utils[here].
-It's a maven project, and all the tests can be executed by running `mvn clean install` command.
+It's a Maven project, and all the tests can be executed by running `mvn clean install` command.

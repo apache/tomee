@@ -7,7 +7,7 @@ Neste exemplo será usado o https://docs.oracle.com/javaee/7/tutorial/concurrenc
 
 Esse padrão permite que os desenvolvedores de aplicativos usem utilitários de concorrência gerenciados pelo servidor de aplicação.
 Dessa forma, o desenvolvedor não tem mais a responsabilidade de gerenciar manualmente pesquisas de thread ou threads.
-Além disso, em um objeto de thread não gerenciado, o contêiner não pode garantir que outros serviços da plataforma JEE funcionem corretamente. Por esses motivos, é recomendável o uso de threads gerenciadas sempre que a necessidade surgir.
+Além disso, em um objeto de thread não gerenciado, o contêiner não pode garantir que outros serviços da plataforma Java EE funcionem corretamente. Por esses motivos, é recomendável o uso de threads gerenciadas sempre que a necessidade surgir.
 Mais informações podem ser encontradas https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[aqui].
 
 == Principais Componentes do Utilitário de Concorrência
