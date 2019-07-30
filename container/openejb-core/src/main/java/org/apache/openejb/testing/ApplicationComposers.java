@@ -988,6 +988,7 @@ public class ApplicationComposers {
         }
 
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
         final List<URL> classpathAppsUrls = new ArrayList<>(8);
         if (jarsAnnotation.excludeDefaults()) {
             DeploymentsResolver.loadFromClasspath(null, classpathAppsUrls, classLoader);

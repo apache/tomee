@@ -29,7 +29,6 @@ import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 import org.apache.wss4j.dom.WSConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
-import org.junit.Ignore;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -45,7 +44,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@Ignore("java11")
 public class CalculatorTest extends TestCase {
 
     //START SNIPPET: setup

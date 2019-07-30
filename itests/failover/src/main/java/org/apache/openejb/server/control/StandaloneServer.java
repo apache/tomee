@@ -47,7 +47,6 @@ public class StandaloneServer {
 
     private final File home;
     private final File base;
-    private final File javaHome;
     private final File java;
     private final File openejbJar;
     private boolean debug;
@@ -74,7 +73,7 @@ public class StandaloneServer {
         openejbJar = readable(file(select(lib, "openejb-core.*.jar")));
         final File javaagentJar = readable(file(select(lib, "openejb-javaagent.*.jar")));
 
-        javaHome = readable(dir(exists(new File(System.getProperty("java.home")))));
+        final File javaHome = readable(dir(exists(new File(System.getProperty("java.home")))));
 
         final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
 
@@ -82,13 +81,6 @@ public class StandaloneServer {
 
         jvmOpts.add("-XX:+HeapDumpOnOutOfMemoryError");
         jvmOpts.add("-javaagent:" + javaagentJar.getAbsolutePath());
-
-        // the openejb-loader uses the classloader, so we need to open the package
-        final File jmods = Files.path(javaHome, "jmods");
-        if (jmods.isDirectory() && jmods.exists()) {
-            jvmOpts.add("--add-opens");
-            jvmOpts.add("java.base/jdk.internal.loader=ALL-UNNAMED");
-        }
     }
 
     /**
@@ -288,17 +280,6 @@ public class StandaloneServer {
 
             final ProcessBuilder builder = new ProcessBuilder(args);
             builder.redirectErrorStream(true);
-            final Map<String, String> environment = builder.environment();
-            environment.put("JAVA_HOME", javaHome.getAbsolutePath());
-
-            final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
-            if (isWindows) {
-                environment.put("PATH", "%JAVA_HOME%/bin:%PATH%");
-
-            } else {
-                environment.put("PATH", "$JAVA_HOME/bin:$PATH");
-
-            }
 
             if (verbose) {
                 System.out.println(Join.join("\n", args));
