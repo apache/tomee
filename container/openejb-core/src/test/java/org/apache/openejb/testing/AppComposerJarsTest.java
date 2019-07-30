@@ -19,7 +19,6 @@ package org.apache.openejb.testing;
 import org.apache.openejb.itest.failover.ejb.Calculator;
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,7 +28,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(ApplicationComposer.class)
-@Ignore("java11")
 public class AppComposerJarsTest {
     @Module
     @Jars("failover-ejb-")

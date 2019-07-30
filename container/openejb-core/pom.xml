@@ -712,30 +712,6 @@
 
   <profiles>
     <profile>
-      <id>active-on-jdk-11</id>
-      <activation>
-        <jdk>11</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jaxb_2.2_spec</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-runtime</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.ws</groupId>
-          <artifactId>jaxws-rt</artifactId>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.messaging.saaj</groupId>
-          <artifactId>saaj-impl</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
-    <profile>
       <id>openejb.debug</id>
       <build>
         <plugins>

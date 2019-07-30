@@ -17,12 +17,10 @@
 package org.superbiz.mtom;
 
 import javax.activation.DataHandler;
-import java.io.ByteArrayInputStream;
 
 public class AbstractService {
 
     public Response convertToBytes(final Request request) {
-        final ByteArrayInputStream bais = new ByteArrayInputStream(request.getMessage().getBytes());
-        return new Response(new DataHandler(bais, "application/octet-stream"));
+        return new Response(new DataHandler(request.getMessage().getBytes(), "application/octet-stream"));
     }
 }

@@ -292,8 +292,8 @@
             <version>2.3.2</version>
             <exclusions>
               <exclusion> <!-- Is already included in java-ee-api -->
-                <groupId>jakarta.activation</groupId>
-                <artifactId>jakarta.activation-api</artifactId>
+                <artifactId>jakarta.activation</artifactId>
+                <groupId>jakarta.activation-api</groupId>
               </exclusion>
             </exclusions>
           </dependency>
