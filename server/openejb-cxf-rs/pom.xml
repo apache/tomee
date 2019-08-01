@@ -91,6 +91,10 @@
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.5_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-javamail_1.4_spec</artifactId>
         </exclusion>
         <exclusion>

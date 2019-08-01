@@ -18,3 +18,4 @@ nb-configuration.xml
 .history
 **/test/key
 tck/**/temp
+examples/jaxrs-json-provider-jettison/temp/

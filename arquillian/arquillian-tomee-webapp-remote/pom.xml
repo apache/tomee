@@ -168,6 +168,10 @@
           <groupId>org.objectweb.howl</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>geronimo-javamail_1.5_mail</artifactId>
+          <groupId>org.apache.geronimo.javamail</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>geronimo-javamail_1.4_mail</artifactId>
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
