@@ -5,7 +5,7 @@
 == Spring Data With Meta sample
 
 This example simply simplifies the usage of spring-data sample providing
-a meta annotation `@SpringRepository` to do all the dynamic procy EJB job.
+a meta annotation `@SpringRepository` to do all the dynamic proxy EJB job.
 
 It replaces @Proxy and @Stateless annotations.
 
