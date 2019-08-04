@@ -4,8 +4,7 @@
 
 == Amostra Spring Data
 
-Este exemplo usa ganchos OpenEJB para substituir uma implementação EJB por um 
-proxy usa o Spring Data no seu contêiner preferido.
+Este exemplo usa ganchos OpenEJB para substituir uma implementação EJB por um proxy para usar o Spring Data no seu contêiner preferido.
 
 É bem simples: Simplesmente prover para o OpenEJB uma InvocationHandler
 usando delegação para o Spring-Data e pronto!
