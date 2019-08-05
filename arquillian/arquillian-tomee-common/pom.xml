@@ -183,7 +183,7 @@
         </exclusion>
         <exclusion>
           <artifactId>bval-jsr</artifactId>
-          <groupId>org.apache.tomee.patch</groupId>
+          <groupId>org.apache.bval</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openjpa</artifactId>
