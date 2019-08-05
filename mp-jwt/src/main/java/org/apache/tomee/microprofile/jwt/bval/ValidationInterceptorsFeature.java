@@ -26,6 +26,12 @@ public class ValidationInterceptorsFeature implements DynamicFeature {
 
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
+        /**
+         * Temporarily disable this feature till we are post BVal 2.0.2 upgrade
+         */
+    }
+
+    private void disabled(final ResourceInfo resourceInfo, final FeatureContext context) {
 
         final Class<?> resourceClass = resourceInfo.getResourceClass();
 
