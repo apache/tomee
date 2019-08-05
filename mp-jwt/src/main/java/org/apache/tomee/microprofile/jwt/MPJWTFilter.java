@@ -293,7 +293,7 @@ public class MPJWTFilter implements Filter {
                 throw new MissingAuthorizationHeaderException();
             }
 
-            final String headerScheme = jwtAuthConfiguration.getHeaderScheme() + " ";
+            final String headerScheme = (jwtAuthConfiguration.getHeaderScheme() + " ").toLowerCase(Locale.ENGLISH);
             if (headerScheme.trim().length() > 0 &&  !authorizationHeader.toLowerCase(Locale.ENGLISH).startsWith(headerScheme)) {
                 throw new BadAuthorizationPrefixException(authorizationHeader);
             }
