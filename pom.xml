@@ -848,17 +848,6 @@
       </snapshots>
     </repository>
     <repository>
-      <id>tomee-bval-patch</id>
-      <name>BVal Patch Repository</name>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1134/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
       <id>sonatype-snapshots</id>
       <name>Sonatype OSS Snapshots Repository</name>
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
