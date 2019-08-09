@@ -1,0 +1,48 @@
+= Async Servlet
+:index-group: Servlet
+:jbake-type: page
+:jbake-status: published
+
+== Async Servlet
+
+Servlets can be run asynchronously - this can be useful if your servlet performs long-running operations, such as calling
+other services using an asynchronous client.
+
+Mark your servlet as `asyncSupported`, and call Request.startAsync(). This will return an AsyncContext object. Your
+code will need to call AsyncContext.complete() when it is finished.
+
+[source,java,numbered]
+----
+@WebServlet(urlPatterns = "/*", asyncSupported = true)
+public class CalcServlet extends HttpServlet {
+
+	private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+	@Override
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+
+		final AsyncContext asyncContext = req.startAsync();
+		asyncContext.setTimeout(timeout);
+		executorService.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// do work
+				} catch (final Exception e) {
+                    // handle exceptions
+				} finally {
+					asyncContext.complete();
+				}
+			}
+		});
+	}
+
+
+}
+
+----
+
+Steps to replicate:
+
+   1. Run `mvn clean install`. The Servlet is tested using Arquillian.
+
