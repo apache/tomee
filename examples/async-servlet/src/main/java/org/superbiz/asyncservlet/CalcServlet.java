@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -100,8 +101,10 @@ public class CalcServlet extends HttpServlet {
 			// ignore
 		}
 
+		final PrintWriter writer = resp.getWriter();
+
 		if (! async) {
-			process(operation, x, y, resp);
+			process(operation, x, y, writer);
 			return;
 		}
 
@@ -111,6 +114,7 @@ public class CalcServlet extends HttpServlet {
 		executorService.submit(new Runnable() {
 			@Override
 			public void run() {
+
 				try {
 					Thread.sleep(threadDelay);
 				} catch (final InterruptedException e) {
@@ -118,7 +122,7 @@ public class CalcServlet extends HttpServlet {
 				}
 
 				try {
-					process(operation, x, y, resp);
+					process(operation, x, y, writer);
 				} catch (final Exception e) {
 
 				} finally {
@@ -129,15 +133,15 @@ public class CalcServlet extends HttpServlet {
 		});
 	}
 
-	private void process(final String operation, final int x, final int y, final HttpServletResponse resp) throws IOException {
+	private void process(final String operation, final int x, final int y, final PrintWriter writer) throws IOException {
 		if ("ADD".equals(operation.toUpperCase())) {
-			resp.getWriter().print(bean.add(x, y));
+			writer.print(bean.add(x, y));
 		} else if ("SUBTRACT".equals(operation.toUpperCase())) {
-			resp.getWriter().print(bean.subtract(x, y));
+			writer.print(bean.subtract(x, y));
 		} else if ("MULTIPLY".equals(operation.toUpperCase())) {
-			resp.getWriter().print(bean.multiply(x, y));
+			writer.print(bean.multiply(x, y));
 		} else if ("DIVIDE".equals(operation.toUpperCase())) {
-			resp.getWriter().print(bean.divide(x, y));
+			writer.print(bean.divide(x, y));
 		}
 	}
 
