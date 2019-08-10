@@ -1,0 +1,26 @@
+:index-group: Unrevised :jbake-type: page :jbake-status:
+status=published = Websocket TLS Basic Auth
+
+== websocket-tls-basic-auth
+
+Projeto de exemplo de Websocket usando SSL e autenticação básica.
+
+Isto foi originalmente criado para o TomEE 8.0.0. usando o Java EE 8 e o Websocket
+API 1.1.
+
+O exemplo foi criado com um servidor para o tipo de conexão do servidor em mente. 
+Para conexões do navegador ao servidor, você precisará consultar um
+framework frontend de sua escolha, mas muitas configurações do lado do servidor aqui
+pode ser reutilizado.
+
+Existe um teste Arquillian que executará autenticação básica usando
+o nome de usuário e senha configurados no _…/conf/tomcat-users.xml_.
+
+O arquivo _…/conf/server.xml_ usado no teste Arquillian pode servir como um
+ponto de partida para uma configuração real do servidor.
+
+O _…/conf/keystore.jks_ é um certificado auto-assinado criado para propósitos de demostração.
+
+Para obter informações adicionais sobre websockets e keystores com o TomEE,
+por favor, olhe para esta postagem do blog:
+https://www.tomitribe.com/blog/tomee-ssl-tls-secured-websockets/
