@@ -209,7 +209,6 @@ public class CxfRSService extends RESTService {
                     // no-op
                 }
             }
-            hacksOn();
             initCxfProviders(bus);
         } finally {
             if (oldLoader != null) {
@@ -267,10 +266,6 @@ public class CxfRSService extends RESTService {
                 throw new IllegalStateException(e);
             }
         }
-    }
-
-    private void hacksOn() {
-        CxfHacks.initCxfClassHelper();
     }
 
     @Override
