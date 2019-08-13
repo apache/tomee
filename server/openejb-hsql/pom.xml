@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-hsql</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: Hsql</name>
+  <name>TomEE :: Server :: Hsql</name>
   <properties>
     <tomee.build.name>${project.groupId}.server.hsql</tomee.build.name>
   </properties>

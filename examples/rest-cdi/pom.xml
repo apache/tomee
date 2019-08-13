@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-cdi</artifactId>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: REST CDI</name>
+  <name>TomEE :: Examples :: REST CDI</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>microprofile-metrics-tck</artifactId>
-  <name>OpenEJB :: TCK :: MicroProfile Metrics TCK</name>
+  <name>TomEE :: TCK :: MicroProfile Metrics TCK</name>
 
   <build>
     <plugins>

@@ -29,7 +29,7 @@
   <groupId>org.apache.openejb.itests</groupId>
   <artifactId>failover</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Failover</name>
+  <name>TomEE :: iTests :: Failover</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.failover</tomee.build.name>

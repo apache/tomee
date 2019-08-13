@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-mockito</artifactId>
-  <name>OpenEJB :: Utils :: Mockito</name>
+  <name>TomEE :: Utils :: Mockito</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.util.mockito</tomee.build.name>

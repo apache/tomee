@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>mvc-resteasy</artifactId>
   <packaging>war</packaging>
-  <name>OpenEJB :: Examples :: MVC (RestEasy-based)</name>
+  <name>TomEE :: Examples :: MVC (RestEasy-based)</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - RestEasy</description>
   <version>8.0.0-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>

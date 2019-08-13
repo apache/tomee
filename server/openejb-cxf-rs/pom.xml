@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-rs</artifactId>
-  <name>OpenEJB :: Server :: CXF RS</name>
+  <name>TomEE :: Server :: CXF RS</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf.rs</tomee.build.name>

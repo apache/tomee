@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>openejb-core-hibernate</artifactId>
-  <name>OpenEJB :: Utils :: Core Hibernate</name>
+  <name>TomEE :: Utils :: Core Hibernate</name>
   <packaging>pom</packaging>
 
   <properties>

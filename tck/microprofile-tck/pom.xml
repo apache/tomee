@@ -27,7 +27,7 @@
 
   <artifactId>microprofile-tck</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: TCK :: MicroProfile</name>
+  <name>TomEE :: TCK :: MicroProfile</name>
 
   <modules>
     <module>config</module>

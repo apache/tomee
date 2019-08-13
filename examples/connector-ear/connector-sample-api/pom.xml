@@ -31,7 +31,7 @@
 
   <artifactId>connector-sample-api</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Connector Examples :: Connector in EAR :: API</name>
+  <name>TomEE :: Connector Examples :: Connector in EAR :: API</name>
 
   <dependencies>
     <dependency>

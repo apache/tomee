@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-business-logic</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Examples :: Simple EAR :: Business Logic</name>
+  <name>TomEE :: Examples :: Simple EAR :: Business Logic</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

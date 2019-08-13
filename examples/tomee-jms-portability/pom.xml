@@ -24,7 +24,7 @@
   <artifactId>simple-tomee</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>OpenEJB :: TomEE :: IBM MQ AMQ Portability Examples :: MDB Example</name>
+  <name>TomEE :: TomEE :: IBM MQ AMQ Portability Examples :: MDB Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

@@ -7,7 +7,7 @@
   <artifactId>mp-jsonb-configuration</artifactId>
   <version>8.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>OpenEJB :: Examples :: Microprofile JSONB Configuration</name>
+  <name>TomEE :: Examples :: Microprofile JSONB Configuration</name>
 
   <properties>
     <version.javaee-api>8.0</version.javaee-api>

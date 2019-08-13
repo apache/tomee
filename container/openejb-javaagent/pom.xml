@@ -24,7 +24,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-javaagent</artifactId>
-  <name>OpenEJB :: Container :: Java Agent</name>
+  <name>TomEE :: Container :: Java Agent</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.container.javaagent</tomee.build.name>

@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: CXF</name>
+  <name>TomEE :: Server :: CXF</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>

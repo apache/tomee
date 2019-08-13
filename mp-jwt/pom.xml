@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mp-jwt</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Microprofile JWT</name>
+  <name>TomEE :: Microprofile JWT</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.microprofile.jwt</tomee.build.name>

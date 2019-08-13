@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>bval-embedded</artifactId>
-  <name>OpenEJB :: TCK :: Bean Validation Embedded</name>
+  <name>TomEE :: TCK :: Bean Validation Embedded</name>
 
   <dependencies>
     <dependency>

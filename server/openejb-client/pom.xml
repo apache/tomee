@@ -31,7 +31,7 @@
 
   <artifactId>openejb-client</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: Client</name>
+  <name>TomEE :: Server :: Client</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.client</tomee.build.name>

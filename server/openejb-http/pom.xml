@@ -31,7 +31,7 @@
 
   <artifactId>openejb-http</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: Http</name>
+  <name>TomEE :: Server :: Http</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.http</tomee.build.name>

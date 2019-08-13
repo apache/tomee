@@ -30,7 +30,7 @@
   
   <artifactId>tomee</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: TomEE</name>
+  <name>TomEE :: TomEE</name>
 
   <modules>
     <module>tomee-config</module>

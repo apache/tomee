@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-jee</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Container :: Java EE</name>
+  <name>TomEE :: Container :: Java EE</name>
 
 
   <properties>

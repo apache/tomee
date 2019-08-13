@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>polling-mdb</artifactId>
-  <name>OpenEJB :: Examples :: Polling :: MDB</name>
+  <name>TomEE :: Examples :: Polling :: MDB</name>
   <packaging>war</packaging>
 
   <dependencies>

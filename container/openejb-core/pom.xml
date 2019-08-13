@@ -31,7 +31,7 @@
 
   <artifactId>openejb-core</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Container :: Core</name>
+  <name>TomEE :: Container :: Core</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.container.core</tomee.build.name>

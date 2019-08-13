@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-jpa-integration</artifactId>
-  <name>OpenEJB :: Container :: JPA Integration</name>
+  <name>TomEE :: Container :: JPA Integration</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.container.jpa</tomee.build.name>

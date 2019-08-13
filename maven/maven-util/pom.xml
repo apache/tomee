@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>maven-util</artifactId>
-  <name>OpenEJB :: Maven Plugins :: Util</name>
+  <name>TomEE :: Maven Plugins :: Util</name>
 
   <dependencies>
     <dependency>

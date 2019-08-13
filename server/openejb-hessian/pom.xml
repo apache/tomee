@@ -27,7 +27,7 @@ limitations under the License.
   </parent>
 
   <artifactId>openejb-hessian</artifactId>
-  <name>OpenEJB :: Server :: Hessian</name>
+  <name>TomEE :: Server :: Hessian</name>
 
     <properties>
         <tomee.build.name>${project.groupId}.server.hessian</tomee.build.name>

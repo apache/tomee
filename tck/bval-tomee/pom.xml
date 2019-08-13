@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>bval-tomee</artifactId>
-  <name>OpenEJB :: TCK :: Bean Validation TomEE</name>
+  <name>TomEE :: TCK :: Bean Validation TomEE</name>
 
   <properties>
     <openejb.home>${project.build.directory}${file.separator}apache-tomee-webprofile-${project.version}</openejb.home>

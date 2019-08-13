@@ -27,7 +27,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-mojarra</artifactId>
-  <name>OpenEJB :: TomEE :: Mojarra</name>
+  <name>TomEE :: TomEE :: Mojarra</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.mojorra</tomee.build.name>

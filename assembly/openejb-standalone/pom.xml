@@ -31,7 +31,7 @@
 
   <artifactId>openejb-standalone</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Assembly :: Standalone</name>
+  <name>TomEE :: Assembly :: Standalone</name>
 
   <build>
     <resources>

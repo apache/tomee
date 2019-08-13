@@ -30,7 +30,7 @@
 
   <artifactId>openejb-itests-app</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: App</name>
+  <name>TomEE :: iTests :: App</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.app</tomee.build.name>

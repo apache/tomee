@@ -21,7 +21,7 @@
   </parent>
   <artifactId>tomee-webaccess</artifactId>
   <packaging>war</packaging>
-  <name>OpenEJB :: TomEE :: webaccess</name>
+  <name>TomEE :: TomEE :: webaccess</name>
   <properties>
     <tomee.build.name>${project.groupId}.tomee.webaccess</tomee.build.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>log4j2-tomee</artifactId>
-  <name>OpenEJB :: Utils :: Log4j2</name>
+  <name>TomEE :: Utils :: Log4j2</name>
   <description>Add this module if you use log4j2 in TomEE/lib and rely on shutdown hook and don't want to loose logs.</description>
 
   <properties>

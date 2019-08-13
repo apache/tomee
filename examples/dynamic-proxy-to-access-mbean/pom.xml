@@ -21,7 +21,7 @@
   <artifactId>dynamic-proxy-to-access-mbean</artifactId>
   <packaging>jar</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Dynamic MBean Proxy</name>
+  <name>TomEE :: Examples :: Dynamic MBean Proxy</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

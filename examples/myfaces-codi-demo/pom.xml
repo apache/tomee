@@ -13,7 +13,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>myfaces-codi-demo</artifactId>
 
-  <name>OpenEJB :: Examples :: JSF2/CDI/BV/JPA/CODI</name>
+  <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/CODI</name>
   <version>8.0.0-SNAPSHOT</version>
 
   <packaging>war</packaging>

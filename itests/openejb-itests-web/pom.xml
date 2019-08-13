@@ -30,7 +30,7 @@
 
   <artifactId>openejb-itests-web</artifactId>
   <packaging>war</packaging>
-  <name>OpenEJB :: iTests :: Web</name>
+  <name>TomEE :: iTests :: Web</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.web</tomee.build.name>

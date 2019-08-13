@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>tomee-config</artifactId>
-  <name>OpenEJB :: TomEE :: Config</name>
+  <name>TomEE :: TomEE :: Config</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.config</tomee.build.name>

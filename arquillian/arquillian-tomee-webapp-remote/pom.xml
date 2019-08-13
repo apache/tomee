@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
+  <name>TomEE :: Arquillian Adaptors Parent :: Webapp Remote</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.arquillian.tomee.webapp.remote</tomee.build.name>

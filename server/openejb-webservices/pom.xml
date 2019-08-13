@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webservices</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: Webservices</name>
+  <name>TomEE :: Server :: Webservices</name>
   <properties>
     <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
   </properties>

@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>microprofile-fault-tolerance-tck</artifactId>
-  <name>OpenEJB :: TCK :: MicroProfile Fault Tolerance TCK</name>
+  <name>TomEE :: TCK :: MicroProfile Fault Tolerance TCK</name>
 
   <build>
     <plugins>

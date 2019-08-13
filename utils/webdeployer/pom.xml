@@ -27,7 +27,7 @@
 
   <artifactId>webdeployer</artifactId>
 
-  <name>OpenEJB :: Utils :: TomEE Webapps-based Deployer EJB</name>
+  <name>TomEE :: Utils :: TomEE Webapps-based Deployer EJB</name>
   <packaging>jar</packaging>
 
   <properties>

@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-transport</artifactId>
-  <name>OpenEJB :: Server :: CXF Transport</name>
+  <name>TomEE :: Server :: CXF Transport</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf.transport</tomee.build.name>

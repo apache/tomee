@@ -31,7 +31,7 @@
 
   <artifactId>openejb-ejbd</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: EJBd</name>
+  <name>TomEE :: Server :: EJBd</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.ejbd</tomee.build.name>

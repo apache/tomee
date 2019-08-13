@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>connector-sample-ear</artifactId>
   <packaging>ear</packaging>
-  <name>OpenEJB :: Connector Examples :: Connector in EAR :: EAR Packaging</name>
+  <name>TomEE :: Connector Examples :: Connector in EAR :: EAR Packaging</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

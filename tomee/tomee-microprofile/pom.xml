@@ -25,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tomee-microprofile</artifactId>
-    <name>OpenEJB :: TomEE :: MicroProfile</name>
+    <name>TomEE :: TomEE :: MicroProfile</name>
     <packaging>pom</packaging>
 
     <modules>

@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>mbean-annotation-api</artifactId>
-  <name>OpenEJB :: Container :: MBean Annotation API</name>
+  <name>TomEE :: Container :: MBean Annotation API</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.container.mbean.api</tomee.build.name>
