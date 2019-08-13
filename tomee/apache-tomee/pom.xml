@@ -256,10 +256,14 @@
             <version>${version.javaee-api}</version>
           </dependency>
           <dependency>
-            <groupId>org.apache.tomee.bom</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>${project.version}</version>
-            <type>pom</type>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jaxb_2.2_spec</artifactId>
+            <version>1.0.1</version>
+          </dependency>
+          <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.11</version>
           </dependency>
           <dependency>
             <groupId>${project.groupId}</groupId>
