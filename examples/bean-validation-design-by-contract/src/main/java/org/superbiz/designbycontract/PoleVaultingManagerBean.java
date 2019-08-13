@@ -17,12 +17,12 @@
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
+import javax.validation.constraints.Min;
 
 @Stateless
-public class PoleVaultingManagerBean implements PoleVaultingManager {
+public class PoleVaultingManagerBean {
 
-    @Override
-    public int points(int centimeters) {
+    public int points(@Min(120) int centimeters) {
         return centimeters - 120;
     }
 }
