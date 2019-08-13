@@ -62,24 +62,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>      
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
+      <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <exclusions>
-        <exclusion> <!-- Is already included in java-ee-api -->
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
