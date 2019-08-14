@@ -1,0 +1,55 @@
+= Async Servlet
+:index-group: Servlet
+:jbake-type: page
+:jbake-status: published
+
+== Async Servlet
+
+Servlets can be run asynchronously - this can be useful if your servlet performs long-running operations, such as calling
+other services using an asynchronous client.
+
+Mark your servlet as `asyncSupported`, and call Request.startAsync(). This will return an AsyncContext object. Your
+code will need to call AsyncContext.dispatch() when it is finished.
+
+WARNING:
+
+Section 2.3.3.4 of Servlet 3.0 Spec says "Other than the startAsync and complete methods, implementations of the request and response objects are not guaranteed to be thread safe. This means that they should either only be used within the scope of the request handling thread or the application must ensure that access to the request and response objects are thread safe."
+
+If you write to the response directly from your Runnable (#1 below), you risk a race condition with another thread using the response.
+This is particularly noticeable when Async requests timeout, as containers will recycle the Request and Response object to use for another request.
+
+[source,java,numbered]
+----
+@WebServlet(urlPatterns = "/*", asyncSupported = true)
+public class CalcServlet extends HttpServlet {
+
+	private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+	@Override
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+
+		final AsyncContext asyncContext = req.startAsync();
+		asyncContext.setTimeout(timeout);
+		asyncContext.start(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// do work <!-- 1 -->
+				} catch (final Exception e) {
+                    // handle exceptions
+				} finally {
+					asyncContext.dispatch();
+				}
+			}
+		});
+	}
+
+
+}
+
+----
+
+Steps to replicate:
+
+   1. Run `mvn clean install`. The Servlet is tested using Arquillian.
+

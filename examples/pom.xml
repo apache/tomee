@@ -169,6 +169,7 @@
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
     <module>simple-webservice-without-interface</module>
+    <module>async-servlet</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
     <module>struts</module>
