@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-1</version.javaee-api>
+    <version.javaee-api>8.0-2-SNAPSHOT</version.javaee-api>
 
     <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.9</openwebbeans.version>
