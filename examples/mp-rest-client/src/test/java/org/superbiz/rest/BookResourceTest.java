@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
@@ -59,19 +60,19 @@ public class BookResourceTest {
     @Test
     public void testBookResource(){
         bookResourceClient.addBook(new Book(1, "TomEE and MicroProfile Adventures"));
-        bookResourceClient.addBook(new Book(2, "Top 10 Tomee Configuraiton Tips"));
+        bookResourceClient.addBook(new Book(2, "Top 10 Tomee Configuration Tips"));
 
 
-        assertTrue(bookResourceClient.getListOfBooks().size() == 2);
+        assertEquals(2, bookResourceClient.getListOfBooks().size());
         assertTrue(bookResourceClient.getBook(1).getName().equalsIgnoreCase("TomEE and MicroProfile Adventures"));
 
         bookResourceClient.deleteBook(1);
-        assertTrue(bookResourceClient.getListOfBooks().size() == 1);
-        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 10 Tomee Configuraiton Tips"));
+        assertEquals(1, bookResourceClient.getListOfBooks().size());
+        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 10 Tomee Configuration Tips"));
 
-        bookResourceClient.updateBook(new Book(2, "Top 3 Tomee Configuraiton Tips"));
-        assertTrue(bookResourceClient.getListOfBooks().size() == 1);
-        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 3 Tomee Configuraiton Tips"));
+        bookResourceClient.updateBook(new Book(2, "Top 3 Tomee Configuration Tips"));
+        assertEquals(1, bookResourceClient.getListOfBooks().size());
+        assertTrue(bookResourceClient.getBook(2).getName().equalsIgnoreCase("Top 3 Tomee Configuration Tips"));
     }
 
 }

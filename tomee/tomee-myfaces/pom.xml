@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>tomee-myfaces</artifactId>
-  <name>OpenEJB :: TomEE :: MyFaces</name>
+  <name>TomEE :: TomEE :: MyFaces</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.myfaces</tomee.build.name>

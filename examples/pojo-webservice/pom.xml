@@ -22,7 +22,7 @@
   <artifactId>pojo-webservice</artifactId>
   <packaging>war</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Web Examples :: Pojo WS</name>
+  <name>TomEE :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>

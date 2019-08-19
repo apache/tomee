@@ -15,7 +15,7 @@ that is used to build the actual applications:
       <version>4.0.0-beta-1</version>
     </dependency>
 
-# Composing an Application
+== Composing an Application
 
 The main difference to the embedded `EJBContainer` API is building the application in the test code.  This is done with one or more methods in the test case annotated
 with `org.apache.openejb.testing.Module` using the following format:
@@ -35,7 +35,7 @@ Where **module-name** is the name you wish to use for that module and **return-v
  - org.apache.openejb.jee.jpa.unit.Persistence
  - org.apache.openejb.jee.jpa.unit.PersistenceUnit
 
-# Example
+== Example
 
 Used in an actual testcase, that might look like so:
 [source,java,numbered]

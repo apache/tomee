@@ -24,7 +24,7 @@
   <artifactId>vaadin-lts-v10-simple</artifactId>
   <version>8.0.0-SNAPSHOT</version>
 
-  <name>OpenEJB :: Examples :: Vaadin LTS V10</name>
+  <name>TomEE :: Examples :: Vaadin LTS V10</name>
   <packaging>war</packaging>
 
   <!--
@@ -51,7 +51,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <vaadin.version>10.0.9</vaadin.version>
+    <vaadin.version>10.0.16</vaadin.version>
 
     <transpilation.output>${project.build.directory}/build</transpilation.output>
     <webapp.directory>src/main/webapp</webapp.directory>

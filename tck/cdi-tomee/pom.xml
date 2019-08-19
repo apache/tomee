@@ -24,7 +24,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-tomee</artifactId>
-  <name>OpenEJB :: TCK :: CDI TomEE</name>
+  <name>TomEE :: TCK :: CDI TomEE</name>
 
   <!--
    * debug the server side by adding -Dopenejb.server.debug=true

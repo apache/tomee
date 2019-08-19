@@ -36,6 +36,8 @@ public class JWTAuthConfiguration {
     private Map<String, Key> publicKeys;
     private String issuer;
     private int expGracePeriodSecs = 60;
+    private String headerName = "Authorization";
+    private String headerScheme = "Bearer";
 
     private JWTAuthConfiguration(final Key publicKey, final String issuer) {
         this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
@@ -52,11 +54,11 @@ public class JWTAuthConfiguration {
         this.issuer = issuer;
     }
 
-    public static JWTAuthConfiguration authContextInfo(final Key publicKey, final String issuer) {
+    public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer) {
         return new JWTAuthConfiguration(publicKey, issuer);
     }
 
-    public static JWTAuthConfiguration authContextInfo(final Map<String, Key> publicKeys, final String issuer) {
+    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer) {
         return new JWTAuthConfiguration(publicKeys, issuer);
     }
 
@@ -87,5 +89,25 @@ public class JWTAuthConfiguration {
 
     public int getExpGracePeriodSecs() {
         return expGracePeriodSecs;
+    }
+
+    public void setExpGracePeriodSecs(final int expGracePeriodSecs) {
+        this.expGracePeriodSecs = expGracePeriodSecs;
+    }
+
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(final String headerName) {
+        this.headerName = headerName;
+    }
+
+    public String getHeaderScheme() {
+        return headerScheme;
+    }
+
+    public void setHeaderScheme(final String headerScheme) {
+        this.headerScheme = headerScheme;
     }
 }

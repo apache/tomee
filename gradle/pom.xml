@@ -25,7 +25,7 @@
 
   <groupId>org.apache.tomee.gradle</groupId>
   <artifactId>gradle</artifactId>
-  <name>OpenEJB :: Gradle Plugins</name>
+  <name>TomEE :: Gradle Plugins</name>
   <packaging>pom</packaging>
 
   <modules>

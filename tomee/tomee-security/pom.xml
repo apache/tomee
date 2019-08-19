@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-security</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Security</name>
+  <name>TomEE :: TomEE :: Security</name>
   <description>Implementation of Java EE Security JSR-375</description>
 
   <properties>

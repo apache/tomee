@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Webapp</name>
+  <name>TomEE :: TomEE :: Webapp</name>
   <properties>
     <tomee.build.name>${project.groupId}.tomee.webapp</tomee.build.name>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -140,7 +140,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.4_mail</artifactId>
+      <artifactId>geronimo-javamail_1.5_mail</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>

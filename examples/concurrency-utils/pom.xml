@@ -7,7 +7,7 @@
   <artifactId>concurrency-utils</artifactId>
   <version>8.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Examples :: Concurrency utilities example</name>
+  <name>TomEE :: Examples :: Concurrency utilities example</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

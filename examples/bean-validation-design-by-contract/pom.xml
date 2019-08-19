@@ -22,7 +22,7 @@
   <artifactId>bean-validation-design-by-contract</artifactId>
   <packaging>jar</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Bean Validation Design By Contract</name>
+  <name>TomEE :: Examples :: Bean Validation Design By Contract</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -30,7 +30,7 @@
 
   <artifactId>openejb-itests-interceptor-beans</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Interceptor Beans</name>
+  <name>TomEE :: iTests :: Interceptor Beans</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.interceptors</tomee.build.name>

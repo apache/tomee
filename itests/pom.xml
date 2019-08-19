@@ -30,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>itests</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: iTests</name>
+  <name>TomEE :: iTests</name>
 
   <modules>
     <module>tomee-server-composer</module>

@@ -29,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-cxf</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: CXF</name>
+  <name>TomEE :: Server :: CXF</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
@@ -67,7 +67,19 @@
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.5_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.javamail</groupId>
+          <artifactId>geronimo-javamail_1.5_mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.javamail</groupId>
+          <artifactId>geronimo-javamail_1.4_mail</artifactId>
         </exclusion>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
@@ -131,24 +143,9 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <exclusions>
-        <exclusion> <!-- Is already included in java-ee-api -->
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
+      <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <exclusions>
-        <exclusion> <!-- Is already included in java-ee-api -->
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -173,6 +170,10 @@
         <exclusion>
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.5_spec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>

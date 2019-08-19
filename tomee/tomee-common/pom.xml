@@ -28,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-common</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Common</name>
+  <name>TomEE :: TomEE :: Common</name>
   <description>This module contains the classes that will be added to the common class loader</description>
   <properties>
     <tomee.build.name>${project.groupId}.tomee.common</tomee.build.name>

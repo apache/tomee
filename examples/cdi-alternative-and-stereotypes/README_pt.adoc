@@ -1,0 +1,155 @@
+= Alternativas e Estereótipos do CDI
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published  mocking
+
+== Introdução
+CDI é uma revolução para o mundo Java EE. Está especificação é a melhor para evitar acoplamento entre classes.
+
+Este exemplo simplesmente pretende substituir ligações em tempo de execução para simplificar o trabalho de mocking.
+
+Aqui usamos dois tipos de mocks:
+
+1) um mock com nenhuma implementação no classloader
+
+2) um mock com uma implementação no classloader
+
+A resposta mock do CDI é chamada de _alternative_.
+
+Anotando com o `@Alternative` uma classe significa que será usado como implementação se não houver outra implementação
+ou se for forçado (através do `META-INF/beans.xml`).
+
+== Explicação do Código
+
+=== Código Principal
+
+Nós usamos um EJB `Journey` para modelar um journey onde o vehicle e society pode mudar. Aqui um EJB é usado
+por que isto simplifica o teste. Uma journey envolve a informação de vehicle e society .
+
+Nós definimos duas interfaces para injetar no EJB `Journey`:` Vehicle` e `Society`.
+
+Finalmente, adicionamos uma implementação para a interface `Society`:` LowCostCompanie`.
+
+Se paramos aqui, o objeto `Journey` não poderá ser criado porque não há uma implementação `Vehicle` acessível.
+
+NOTE: se tivermos uma implementação de `Vehicle`, a Society injetada deverá ser `LowCostCompanie`.
+
+=== Código de Teste
+
+O objetivo aqui é para testar o nosso EJB `Journey`. Portanto, temos que fornecer uma implementação de `Vehicle`:` SuperCar`.
+
+Queremos forçar a interface `Society` a ser a implementação do `AirOpenEJB` para o nosso teste.
+
+Uma solução poderia ser simplesmente adicionar a anotação `@ Alternative` no` AirOpenEJB` e ativá-la através do
+arquivo `META-INF / beans.xml`.
+
+Aqui queremos escrever um código mais explícito. Então, queremos substituir a anotação `@Alternative` por uma` `@Mock`.
+
+Então nós definimos uma anotação `@Mock` para classes, resolvíveis em tempo de execução como um estereótipo (` @Stereotype`)
+que substitui o `@Alternative`.
+
+Aqui a anotação:
+
+[source,java,numbered]
+----
+ @Stereotype // we define a stereotype
+ @Retention(RUNTIME) // resolvable at runtime
+ @Target(TYPE) // this annotation is a class level one
+ @Alternative // it replace @Alternative
+ public @interface Mock {}
+----
+
+NOTE: você pode adicionar mais anotações CDI após `@Alternative` e obterá o comportamento esperado (o escopo para a instância).
+
+Então agora temos a nossa anotação `@ Mock`, que é um estereótipo capaz de substituir a anotação` @ Alternative` quando
+adicionado às nossas mocks.
+
+Se você executar isso agora, nós receberemos está exceção:
+
+[source,java,numbered]
+----
+ javax.enterprise.inject.UnsatisfiedResolutionException: Api type [org.superbiz.cdi.stereotype.Vehicle] is not found with the qualifiers
+ Qualifiers: [@javax.enterprise.inject.Default()]
+ for injection into Field Injection Point, field name :  vehicle, 
+ Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, API Types:[java.lang.Object,org.superbiz.cdi.stereotype.Journey], 
+ Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
+----
+
+Isso significa que o estereótipo não está ativado. Para fazer isso basta adicioná-lo ao seu `META-INF / beans.xml`:
+
+----
+ <alternatives>
+   <stereotype>org.superbiz.cdi.stereotype.Mock</stereotype>
+ </alternatives>
+----
+NOTE: se você não especificar `AirOpenEJB` como` @ Alternative` (feito através de nossa anotação mock) você receberá está exceção:
+
+[source,java,numbered]
+----
+ Caused by: javax.enterprise.inject.AmbiguousResolutionException: 
+ There is more than one api type with : org.superbiz.cdi.stereotype.Society with qualifiers : 
+ Qualifiers: [@javax.enterprise.inject.Default()] for injection into Field Injection Point, field name :  society, 
+ Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, 
+ API Types:[org.superbiz.cdi.stereotype.Journey,java.lang.Object], 
+ Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
+ found beans:
+ AirOpenEJB, Name:null, WebBeans Type:MANAGED, 
+API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.AirOpenEJB,java.lang.Object], 
+Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
+ LowCostCompanie, Name:null, WebBeans Type:MANAGED, 
+API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.LowCostCompanie,java.lang.Object], 
+Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
+----
+
+o que significa simplesmente que duas implementações estão disponíveis para o mesmo ponto de injeção (`Journey.society`).
+
+== Conclusão
+
+Com o CDI é realmente fácil definir anotações com um forte significado. Você pode definir anotações de negócios
+ou simplesmente anotações técnicas para simplificar seu código (como fizemos com a anotação mock).
+
+NOTE: se você usou qualificadores para injetar objetos `Society` você poderia ter colocado todos esses qualificadores em
+a classe mock ou definiu uma anotação `@SocietyMock` para poder injetar a mesma implementação para
+todos os qualificadores em seus testes.
+
+== Saída
+
+----
+ Running org.superbiz.cdi.stereotype.StereotypeTest
+ Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111030-07:54
+ http://tomee.apache.org/
+ INFO - openejb.home = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
+ INFO - openejb.base = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
+ INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+ INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+ INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+ INFO - Found EjbModule in classpath: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes/target/test-classes
+ INFO - Found EjbModule in classpath: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes/target/classes
+ INFO - Beginning load: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes/target/test-classes
+ INFO - Beginning load: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes/target/classes
+ INFO - Configuring enterprise application: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
+ INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+ INFO - Auto-creating a container for bean cdi-alternative-and-stereotypes_test.Comp: Container(type=MANAGED, id=Default Managed Container)
+ INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+ INFO - Auto-creating a container for bean Journey: Container(type=SINGLETON, id=Default Singleton Container)
+ INFO - Enterprise application "/opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes" loaded.
+ INFO - Assembling app: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/cdi-alternative-and-stereotypes_test.Comp!org.apache.openejb.BeanContext$Comp")
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/cdi-alternative-and-stereotypes_test.Comp")
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/cdi-alternative-and-stereotypes.Comp!org.apache.openejb.BeanContext$Comp")
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/cdi-alternative-and-stereotypes.Comp")
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/Journey!org.superbiz.cdi.stereotype.Journey")
+ INFO - Jndi(name="java:global/cdi-alternative-and-stereotypes/Journey")
+ INFO - Jndi(name="java:global/EjbModule162291475/org.superbiz.cdi.stereotype.StereotypeTest!org.superbiz.cdi.stereotype.StereotypeTest")
+ INFO - Jndi(name="java:global/EjbModule162291475/org.superbiz.cdi.stereotype.StereotypeTest")
+ INFO - Created Ejb(deployment-id=cdi-alternative-and-stereotypes_test.Comp, ejb-name=cdi-alternative-and-stereotypes_test.Comp, container=Default Managed Container)
+ INFO - Created Ejb(deployment-id=cdi-alternative-and-stereotypes.Comp, ejb-name=cdi-alternative-and-stereotypes.Comp, container=Default Managed Container)
+ INFO - Created Ejb(deployment-id=org.superbiz.cdi.stereotype.StereotypeTest, ejb-name=org.superbiz.cdi.stereotype.StereotypeTest, container=Default Managed Container)
+ INFO - Created Ejb(deployment-id=Journey, ejb-name=Journey, container=Default Singleton Container)
+ INFO - Started Ejb(deployment-id=cdi-alternative-and-stereotypes_test.Comp, ejb-name=cdi-alternative-and-stereotypes_test.Comp, container=Default Managed Container)
+ INFO - Started Ejb(deployment-id=cdi-alternative-and-stereotypes.Comp, ejb-name=cdi-alternative-and-stereotypes.Comp, container=Default Managed Container)
+ INFO - Started Ejb(deployment-id=org.superbiz.cdi.stereotype.StereotypeTest, ejb-name=org.superbiz.cdi.stereotype.StereotypeTest, container=Default Managed Container)
+ INFO - Started Ejb(deployment-id=Journey, ejb-name=Journey, container=Default Singleton Container)
+ INFO - Deployed Application(path=/opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes)
+ INFO - Undeploying app: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
+----

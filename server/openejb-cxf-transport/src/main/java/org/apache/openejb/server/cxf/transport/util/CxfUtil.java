@@ -121,6 +121,16 @@ public final class CxfUtil {
                     }
                     return c == Object.class ? aClass : c;
                 }
+
+                @Override
+                public Class<?> getRealClassFromClass(Class<?> aClass) {
+                    return aClass;
+                }
+
+                @Override
+                public Object getRealObject(Object o) {
+                    return o;
+                }
             });
 
             SystemInstance.get().addObserver(new LifecycleManager());

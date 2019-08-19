@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-ssh</artifactId>
-  <name>OpenEJB :: Server :: SSH</name>
+  <name>TomEE :: Server :: SSH</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.ssh</tomee.build.name>

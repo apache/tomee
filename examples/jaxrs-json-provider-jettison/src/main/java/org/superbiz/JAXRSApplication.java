@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.superbiz.designbycontract;
+package org.superbiz;
 
-import javax.ejb.Local;
-import javax.validation.constraints.Min;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
-@Local
-public interface PoleVaultingManager {
+@ApplicationPath("api")
+public class JAXRSApplication extends Application {
 
-    int points(@Min(120) int centimeters);
 }

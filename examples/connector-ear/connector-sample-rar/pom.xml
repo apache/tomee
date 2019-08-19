@@ -31,7 +31,7 @@
 
   <artifactId>connector-sample-rar</artifactId>
   <packaging>rar</packaging>
-  <name>OpenEJB :: Connector Examples :: Connector in EAR :: RAR Packaging</name>
+  <name>TomEE :: Connector Examples :: Connector in EAR :: RAR Packaging</name>
 
   <dependencies>
     <dependency>

@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Webapp Remote</name>
+  <name>TomEE :: Arquillian Adaptors Parent :: Webapp Remote</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.arquillian.tomee.webapp.remote</tomee.build.name>
@@ -168,6 +168,10 @@
           <groupId>org.objectweb.howl</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>geronimo-javamail_1.5_mail</artifactId>
+          <groupId>org.apache.geronimo.javamail</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>geronimo-javamail_1.4_mail</artifactId>
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
@@ -197,7 +201,7 @@
         </exclusion>
         <exclusion>
           <artifactId>bval-jsr</artifactId>
-          <groupId>org.apache.tomee.patch</groupId>
+          <groupId>org.apache.bval</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openjpa</artifactId>

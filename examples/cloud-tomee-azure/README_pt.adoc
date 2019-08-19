@@ -1,0 +1,110 @@
+= Implantação de TomEE no Azure
+:index-group: Cloud
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo usa um aplicativo de echo básico, implantado com o TomEE incorporado na nuvem do Azure.
+
+Usamos o plugin do maven do TomEE para empacotar o aplicativo com o TomEE Embedded
+a fim de gerar um fat jar. Este jar é então escolhido e deployado pelo azure-webapp-maven-plugin.
+
+== Configuração do Azure
+
+Para que o plug-in do Azure funcione, você precisará ter uma conta do Azure e adicionar uma assinatura a ela.
+
+Então, em sua máquina de desenvolvimento, instale a interface da linha de comandos (CLI) do Azure e faça a autenticação com a linha de comando, 
+antes que você possa implantar seu aplicativo.
+
+- Crie uma conta Azure, se você não tem uma, faça aqui https://azure.microsoft.com/en-us
+- Use a opção free, se disponível ou https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade[adicione uma assinatura].
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Instale] o Azure (CLI) de acordo com o sistema operacional do computador que você está usando para desenvolver.
+
+- Finalmente, você pode configurar seu computador de desenvolvimento.
+
+=== Fazendo login no Azure
+
+`az login`
+
+O resultado:
+
+----
+[
+   {
+     "cloudName": "AzureCloud",
+     "id": "aaaaaaaa-aaaa-aaaa-aaaaa-aaaaaaaaaa",
+     "isDefault": true,
+     "name": "Pay-As-You-Go",
+     "state": "Enabled",
+     "tenantId": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb",
+     "user": {
+       "name": "<o email da sua conta azure>",
+       "type": "user"
+     }
+   }
+ ]
+----
+O TenantId é alguém que pode registrar e gerenciar aplicativos por conta própria. Você precisará disso para mais tarde.
+
+
+=== Criando um service principal
+Um Azure service principal é uma identidade de segurança usada por aplicativos, serviços e ferramentas de automação para acessar recursos específicos do Azure:
+
+----
+az ad sp create-for-rbac --name  http://<seu-sub-domínio> --password <password para este aplicativo>
+
+{
+  "appId": "cccccccc-cccc-cccc-cccc-ccccccccccccccc",
+  "displayName": "cloud-tomee-azure",
+  "name": "http://cloud-tomee-azure",
+  "password": "<password for this app>",
+  "tenant": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb"
+}
+----
+O <seu-sub-domínio>, também é chamado de service principal name (nome principal do serviço) na documentação do Azure.
+Neste exemplo "http://cloud-tomee-azure" tem que ser exclusivo no Azure.
+O appId é a identificação do serviço de aplicativo.
+
+=== Configurando o Maven
+
+Você pode continuar usando apenas a CLI do Azure para autenticação, mas também podemos fazê-lo permanentemente com o Maven.
+
+Nesse caso, precisamos editar o arquivo settings.xml do Maven para que o plugin azure-webapp-maven possa autenticar no Azure:
+
+Você pode adicionar um novo servidor em `~ / .m2 / settings.xml` assim:
+
+----
+<server>
+  <id>azure-auth</id>
+  <configuration>
+     <client>cccccccc-cccc-cccc-cccc-ccccccccccccccc</client>
+     <tenant>bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb</tenant>
+     <key><password para este aplicativo></key>
+     <environment>AZURE</environment>
+   </configuration>
+</server>
+----
+É isso aí. Agora você pode criar o exemplo e implantá-lo no Azure usando o Maven:
+
+`mvn clean install -Pazure-single-jar azure-webapp:deploy`
+
+O azure-webapp é explicitamente chamado porque depende de sua conta do Azure. O build padrão do TomEE não usará uma conta do Azure.
+
+O URL final será semelhante a:
+
+`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+
+==== Notas
+
+No momento da criação deste exemplo, há um erro no azure com o JAVA_HOME que impede a implementação.
+Verificar: https://github.com/Azure-App-Service/java/issues/11
+A solução é definir a variável de ambiente no console da Web do Azure e reiniciar o aplicativo.
+
+Para implantar o aplicativo de echo localmente, você pode executar:
+
+`mvn tomee:run`
+
+Você pode testar o aplicativo chamando `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+
+Ele retornará send-this-back.
+
+O aplicativo echo também está disponível com um arquivo war simples que você pode implantar no TomEE manualmente, para fins de teste.

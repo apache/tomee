@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>arquillian-openejb-transaction-provider</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Transaction Provider</name>
+  <name>TomEE :: Arquillian Adaptors Parent :: Transaction Provider</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.arquillian.openejb.transaction.provider</tomee.build.name>

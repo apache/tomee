@@ -28,7 +28,7 @@
 
   <artifactId>server</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Server</name>
+  <name>TomEE :: Server</name>
 
   <modules>
     <module>openejb-ejbd</module>

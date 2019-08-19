@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-rest</artifactId>
-  <name>OpenEJB :: Server :: REST</name>
+  <name>TomEE :: Server :: REST</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.rest</tomee.build.name>

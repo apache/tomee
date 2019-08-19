@@ -25,7 +25,6 @@ import org.apache.openejb.util.Logger;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,7 +32,7 @@ public class ThreadContext {
 
     private static final Logger log = Logger.getInstance(LogCategory.OPENEJB, "org.apache.openejb.util.resources");
     private static final ThreadLocal<ThreadContext> threadStorage = new ThreadLocal<>();
-    private static final Set<ThreadContextListener> listeners = new CopyOnWriteArraySet<>();
+    private static final CopyOnWriteArraySet<ThreadContextListener> listeners = new CopyOnWriteArraySet<>();
     private static final ThreadLocal<AtomicBoolean> asynchronousCancelled = new ThreadLocal<>();
 
     public static ThreadContext getThreadContext() {

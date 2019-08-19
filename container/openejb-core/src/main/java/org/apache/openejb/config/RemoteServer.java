@@ -52,7 +52,7 @@ import java.util.Locale;
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class RemoteServer {
 
-    private static final Options options = new Options(JavaSecurityManagers.getSystemProperties());
+    private static final Options systemPropertiesOptions = new Options(JavaSecurityManagers.getSystemProperties());
     public static final String SERVER_DEBUG_PORT = "server.debug.port";
     public static final String SERVER_SHUTDOWN_PORT = "server.shutdown.port";
     public static final String SERVER_SHUTDOWN_HOST = "server.shutdown.host";
@@ -62,10 +62,16 @@ public class RemoteServer {
     public static final String START = "start";
     public static final String STOP = "stop";
 
-    private boolean debug = options.get(OPENEJB_SERVER_DEBUG, false);
-    private final boolean profile = options.get("openejb.server.profile", false);
+    // instance variables in constructors
+    private final Options options;
+    private final boolean profile;
+    private final String javaOpts;
     private final boolean tomcat;
-    private final String javaOpts = JavaSecurityManagers.getSystemProperty("java.opts");
+    private final int ejbPort;
+    private final String ejbPproviderUrl;
+
+    // mutable configuration
+    private boolean debug;
     private String additionalClasspath;
 
     /**
@@ -73,7 +79,6 @@ public class RemoteServer {
      */
     private boolean serverHasAlreadyBeenStarted = true;
 
-    private Properties properties;
     private final AtomicReference<Process> server = new AtomicReference<>();
     private final int tries;
     private final boolean verbose;
@@ -85,12 +90,20 @@ public class RemoteServer {
     private final int connectTimeout;
 
     public RemoteServer() {
-        this(options.get("connect.tries", 60), options.get("verbose", false));
+        this(systemPropertiesOptions.get("connect.tries", 60), systemPropertiesOptions.get("verbose", false));
     }
 
     public RemoteServer(final int tries, final boolean verbose) {
+        this (new Properties(), tries, verbose);
+    }
+
+    public RemoteServer(final Properties overrides, final int tries, final boolean verbose) {
         this.tries = (tries < 1 ? 1 : (tries > 3600 ? 3600 : tries)); //Wait at least 1 second to start or stop, but not more than an hour.
         this.verbose = verbose;
+
+        // makes it possible to override default and static system properties
+        options = new Options(overrides, RemoteServer.systemPropertiesOptions);
+
         home = getHome();
         tomcat = (home != null) && (new File(new File(home, "bin"), "catalina.sh").exists());
 
@@ -99,14 +112,16 @@ public class RemoteServer {
         command = options.get(SERVER_SHUTDOWN_COMMAND, "SHUTDOWN");
         host = options.get(SERVER_SHUTDOWN_HOST, "localhost");
         connectTimeout = options.get(SOCKET_TIMEOUT, 1000);
+        debug = options.get(OPENEJB_SERVER_DEBUG, false);
+        profile = options.get("openejb.server.profile", false);
+        javaOpts = options.get("java.opts", (String) null);
+        ejbPort = options.get("ejbd.port", 4201);
+        ejbPproviderUrl = options.get("java.naming.provider.url", "127.0.0.1:" + ejbPort);
     }
 
     public void init(final Properties props) {
-        properties = props;
-
         props.put("java.naming.factory.initial", "org.apache.openejb.client.RemoteInitialContextFactory");
-        final int port = options.get("ejbd.port", 4201);
-        props.put("java.naming.provider.url", options.get("java.naming.provider.url", "127.0.0.1:" + port));
+        props.put("java.naming.provider.url", ejbPproviderUrl);
         props.put("java.naming.security.principal", "testuser");
         props.put("java.naming.security.credentials", "testpassword");
     }
@@ -140,10 +155,6 @@ public class RemoteServer {
 
     public void setPortStartup(final int portStartup) {
         this.portStartup = portStartup;
-    }
-
-    public Properties getProperties() {
-        return this.properties;
     }
 
     public void destroy() {
@@ -188,11 +199,13 @@ public class RemoteServer {
                 }
 
                 final File home = getHome();
-                final String javaVersion = JavaSecurityManagers.getSystemProperty("java.version");
+                final String javaVersion = options.get("java.version", (String) null);
+                final String javaHome = options.get("java.home", (String) null);
                 if (verbose) {
                     System.out.println("OPENEJB_HOME = " + home.getAbsolutePath());
-                    final String systemInfo = "Java " + javaVersion + "; " +
-                            JavaSecurityManagers.getSystemProperty("os.name") + "/" + JavaSecurityManagers.getSystemProperty("os.version");
+                    final String systemInfo = "Java " + javaVersion + "; "
+                            + options.get("os.name", (String) null) + "/"
+                            + options.get("os.version", (String) null);
                     System.out.println("SYSTEM_INFO  = " + systemInfo);
                 }
 
@@ -211,16 +224,13 @@ public class RemoteServer {
                 final File conf = new File(home, "conf");
                 final File loggingProperties = new File(conf, "logging.properties");
 
-                //File openejbJar = new File(lib, "openejb-core-" + version + ".jar");
-
                 final String java;
-                final boolean isWindows = JavaSecurityManagers.getSystemProperty("os.name", "unknown")
-                        .toLowerCase(Locale.ENGLISH).startsWith("windows");
+                final boolean isWindows = options.get("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows");
                 if (isWindows && START.equals(cmd) && options.get("server.windows.fork", false)) {
                     // run and forget
-                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/javaw").getAbsolutePath();
+                    java = new File(javaHome, "bin/javaw").getAbsolutePath();
                 } else {
-                    java = new File(JavaSecurityManagers.getSystemProperty("java.home"), "bin/java").getAbsolutePath();
+                    java = new File(javaHome, "bin/java").getAbsolutePath();
                 }
 
                 final List<String> argsList = new ArrayList<>(20);
@@ -427,7 +437,7 @@ public class RemoteServer {
     }
 
     public void kill3UNIX() { // debug purpose only
-        if (JavaSecurityManagers.getSystemProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
+        if (options.get("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             return;
         }
 
@@ -489,7 +499,7 @@ public class RemoteServer {
     }
 
     private void addIfSet(final List<String> argsList, final String key) {
-        final String systemProperty = JavaSecurityManagers.getSystemProperty(key);
+        final String systemProperty = options.get(key, (String) null);
         if (systemProperty != null) {
             argsList.add("-D" + key + "=" + systemProperty);
         }
@@ -500,7 +510,7 @@ public class RemoteServer {
             return home;
         }
 
-        final String openejbHome = JavaSecurityManagers.getSystemProperty("openejb.home");
+        final String openejbHome = options.get("openejb.home", (String) null);
 
         if (openejbHome != null) {
             home = new File(openejbHome);

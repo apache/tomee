@@ -1,0 +1,161 @@
+= CDI @RequestScoped
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo mostra o uso da anotação `@RequestScoped` para objetos injetados. Um objeto que é 
+definido como `@RequestScoped` é criado uma vez para cada requisição e é compartilhado por todos os 
+beans que o injetam através do mesmo request.
+
+== Exemplo
+
+Este exemplo retrata um cenário similar ao cdi-application-scope. O visitante de um restaurante 
+pede uma sopa ao garçom. O pedido é passado para o chefe que prepara o prato e o devolve ao garçom 
+que entrega para o visitante.
+
+=== Waiter (garçom)
+
+O `Waiter` session bean recebe uma requisição através do método `orderSoup()` da classe de teste.
+Uma instância de `Soup` será criada nesse método e ela será compartilhada em toda a requisição com o 
+bean `Chef`. O método passa o request para o bean `Chef`. Ele então retorna o nome da sopa para a 
+classe de teste.
+
+....
+@Stateless
+public class Waiter {
+
+    @Inject
+    private Soup soup;
+
+    @EJB
+    private Chef chef;
+
+    public String orderSoup(String name){
+        soup.setName(name);
+        return chef.prepareSoup().getName();
+    }
+}
+....
+
+=== Soup (sopa)
+
+A classe `Soup` é um POJO injetável, definida como `@RequestScoped`. Isso significa que uma instância 
+será criada apenas uma vez para cada request e será compartilhada por todos os beans que a injetam.
+
+....
+@RequestScoped
+public class Soup {
+
+    private String name = "Soup of the day";
+
+    @PostConstruct
+    public void afterCreate() {
+        System.out.println("Soup created");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+}
+....
+
+=== Chef
+
+A classe `Chef` é um simples session bean com um campo `Soup` injetado. Normalmente, o parâmetro soup 
+seria passado para o `prepareSoup()` como argumento, mas para as necessidades deste exemplo será 
+passado pelo contexto da requisição.
+
+....
+@Stateless
+public class Chef {
+
+    @Inject
+    private Soup soup;
+
+    public Soup prepareSoup() {
+        return soup;
+    }
+}
+....
+
+== Caso de teste
+
+Esta é a classe de entrada para este exemplo.
+
+....
+public class RestaurantTest {
+
+    private static String TOMATO_SOUP = "Tomato Soup";
+    private EJBContainer container;
+
+    @EJB
+    private Waiter joe;
+
+    @Before
+    public void startContainer() throws Exception {
+        container = EJBContainer.createEJBContainer();
+        container.getContext().bind("inject", this);
+    }
+
+    @Test
+    public void orderSoup(){
+        String soup = joe.orderSoup(TOMATO_SOUP);
+        assertEquals(TOMATO_SOUP, soup);
+        soup = joe.orderSoup(POTATO_SOUP);
+        assertEquals(POTATO_SOUP, soup);
+    }
+
+    @After
+    public void closeContainer() throws Exception {
+        container.close();
+    }
+}
+....
+
+== Executando
+
+Na saida você pode ver que existem duas instâncias de `Soup` criadas - uma para cada requisição.
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.cdi.requestscope.RestaurantTest
+Apache OpenEJB 7.0.0-SNAPSHOT    build: 20111224-11:09
+http://tomee.apache.org/
+INFO - openejb.home = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
+INFO - openejb.base = C:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope\target\classes
+INFO - Beginning load: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope\target\classes
+INFO - Configuring enterprise application: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean cdi-request-scope.Comp: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+INFO - Auto-creating a container for bean Chef: Container(type=STATELESS, id=Default Stateless Container)
+INFO - Enterprise application "c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope" loaded.
+INFO - Assembling app: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
+INFO - Jndi(name="java:global/cdi-request-scope/Chef!org.superbiz.cdi.requestscope.Chef")
+INFO - Jndi(name="java:global/cdi-request-scope/Chef")
+INFO - Jndi(name="java:global/cdi-request-scope/Waiter!org.superbiz.cdi.requestscope.Waiter")
+INFO - Jndi(name="java:global/cdi-request-scope/Waiter")
+INFO - Created Ejb(deployment-id=Chef, ejb-name=Chef, container=Default Stateless Container)
+INFO - Created Ejb(deployment-id=Waiter, ejb-name=Waiter, container=Default Stateless Container)
+INFO - Started Ejb(deployment-id=Chef, ejb-name=Chef, container=Default Stateless Container)
+INFO - Started Ejb(deployment-id=Waiter, ejb-name=Waiter, container=Default Stateless Container)
+INFO - Deployed Application(path=c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope)
+Soup created
+Soup created
+INFO - Undeploying app: c:\Users\Daniel\workspaces\openejb\openejb\examples\cdi-request-scope
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.412 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

@@ -17,3 +17,5 @@ nb-configuration.xml
 .factorypath
 .history
 **/test/key
+tck/**/temp
+examples/jaxrs-json-provider-jettison/temp/

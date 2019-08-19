@@ -55,7 +55,7 @@ public class PublicKeyAsJWKSTest {
         JWTAuthConfigurationProperties.init(null);
 
         final JWTAuthConfiguration jwtAuthConfiguration =
-                JWTAuthConfigurationProperties.getJWTAuthContextInfo().orElseThrow(IllegalArgumentException::new);
+                JWTAuthConfigurationProperties.getJWTAuthConfiguration().orElseThrow(IllegalArgumentException::new);
 
         final JwtConsumerBuilder jwtConsumerBuilder = new JwtConsumerBuilder()
                 .setRequireExpirationTime()

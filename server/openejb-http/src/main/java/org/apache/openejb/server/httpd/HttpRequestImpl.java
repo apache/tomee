@@ -86,12 +86,7 @@ public class HttpRequestImpl implements HttpRequest {
     private static final String CHUNKED = "chunked";
 
     public static final Class<?>[] SERVLET_CONTEXT_INTERFACES = new Class<?>[]{ServletContext.class};
-    public static final InvocationHandler SERVLET_CONTEXT_HANDLER = new InvocationHandler() {
-        @Override
-        public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
-            return null;
-        }
-    };
+    public static final InvocationHandler SERVLET_CONTEXT_HANDLER = (proxy, method, args) -> null;
 
     private EndWebBeansListener end;
     private BeginWebBeansListener begin;
@@ -185,13 +180,13 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<String> getHeaderNames() {
-        return new ArrayEnumeration(new ArrayList<>(headers.keySet()));
+        return new ArrayEnumeration<>(new ArrayList<>(headers.keySet()));
     }
 
     @Override
     public Enumeration<String> getHeaders(String s) {
         final List<String> list = headers.get(s);
-        return new ArrayEnumeration(list == null ? Collections.emptyList() : list);
+        return new ArrayEnumeration<>(list == null ? Collections.emptyList() : list);
     }
 
     @Override
@@ -271,7 +266,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public String getQueryString() {
-        StringBuilder str = new StringBuilder("");
+        StringBuilder str = new StringBuilder();
         for (final Map.Entry<String, List<String>> q : queryParams.entrySet()) {
             for (final String v : q.getValue()) {
                 str.append(q.getKey()).append("=").append(v).append("&");
@@ -370,7 +365,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<Locale> getLocales() {
-        return new ArrayEnumeration(Arrays.asList(Locale.getAvailableLocales()));
+        return new ArrayEnumeration<>(Arrays.asList(Locale.getAvailableLocales()));
     }
 
     @Override
@@ -579,7 +574,7 @@ public class HttpRequestImpl implements HttpRequest {
 
             List<String> list = queryParams.get(name);
             if (list == null) {
-                list = new LinkedList<String>();
+                list = new LinkedList<>();
                 queryParams.put(name, list);
             }
             list.add(value);
@@ -839,7 +834,7 @@ public class HttpRequestImpl implements HttpRequest {
     public Cookie[] getCookies() {
         if (cookies != null) return toCookies(cookies);
 
-        cookies = new HashMap<String, String>();
+        cookies = new HashMap<>();
 
         String cookieHeader = getHeader(HEADER_COOKIE);
         if (cookieHeader == null) return toCookies(cookies);
@@ -857,7 +852,7 @@ public class HttpRequestImpl implements HttpRequest {
     protected Map<?, ?> getInternalCookies() {
         if (cookies != null) return cookies;
 
-        cookies = new HashMap<String, String>();
+        cookies = new HashMap<>();
 
         String cookieHeader = getHeader(HEADER_COOKIE);
         if (cookieHeader == null) return cookies;
@@ -1014,7 +1009,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return new ArrayEnumeration(new ArrayList<String>(attributes.keySet()));
+        return new ArrayEnumeration<>(new ArrayList<>(attributes.keySet()));
     }
 
     @Override
@@ -1059,7 +1054,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        final Map<String, String[]> params = new HashMap<String, String[]>();
+        final Map<String, String[]> params = new HashMap<>();
         for (final Map.Entry<String, List<String>> p : parameters.entrySet()) {
             final List<String> values = p.getValue();
             params.put(p.getKey(), values.toArray(new String[values.size()]));
@@ -1069,7 +1064,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Override
     public Enumeration<String> getParameterNames() {
-        return new ArrayEnumeration(new ArrayList<>(parameters.keySet()));
+        return new ArrayEnumeration<>(new ArrayList<>(parameters.keySet()));
     }
 
     @Override
@@ -1095,7 +1090,7 @@ public class HttpRequestImpl implements HttpRequest {
 
     @Deprecated // TODO should be dropped, do we drop axis module as well?
     public Map<String, String> getParameters() {
-        final HashMap<String, String> converted = new HashMap<String, String>(parameters.size());
+        final HashMap<String, String> converted = new HashMap<>(parameters.size());
         for (final Map.Entry<String, List<String>> entry : parameters.entrySet()) {
             converted.put(entry.getKey(), entry.getValue().iterator().next());
         }

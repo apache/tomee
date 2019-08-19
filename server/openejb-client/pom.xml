@@ -31,7 +31,7 @@
 
   <artifactId>openejb-client</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Server :: Client</name>
+  <name>TomEE :: Server :: Client</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.client</tomee.build.name>
@@ -138,28 +138,13 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.4_mail</artifactId>
+      <artifactId>geronimo-javamail_1.5_mail</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>jakarta.xml.bind</groupId>
-      <artifactId>jakarta.xml.bind-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>      
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
+      <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <exclusions>
-        <exclusion> <!-- Is already included in java-ee-api -->
-          <groupId>jakarta.activation</groupId>
-          <artifactId>jakarta.activation-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>

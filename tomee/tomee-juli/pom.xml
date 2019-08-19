@@ -25,7 +25,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-juli</artifactId>
-  <name>OpenEJB :: TomEE :: Juli</name>
+  <name>TomEE :: TomEE :: Juli</name>
 
   <dependencies>
     <dependency>

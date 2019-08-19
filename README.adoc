@@ -22,7 +22,7 @@ Official website: https://tomee.apache.org
 
 '''''
 
-* link:#to-starti-using-tomee[To start using TomEE]
+* link:#to-start-using-tomee[To start using TomEE]
 * link:#to-start-developing-tomEE[To start developing TomEE]
 * link:#contributing[Contributing]
 * link:#changelog[Changelog]
@@ -37,7 +37,7 @@ compliant applications.
 
 * Apache TomEE is distributed 5 different flavors, you can check the
 http://tomee.apache.org/comparison.html[comparison] table and then
-proceed to http://tomee.apache.org/download-ng.html[donwload] the
+proceed to http://tomee.apache.org/download-ng.html[download] the
 distribution for your use case.
 * http://tomee.apache.org/docs.html[Documentation and examples] are
 available in the official website.

@@ -24,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-rs</artifactId>
-  <name>OpenEJB :: Server :: CXF RS</name>
+  <name>TomEE :: Server :: CXF RS</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf.rs</tomee.build.name>
@@ -88,6 +88,10 @@
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.5_spec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>

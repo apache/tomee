@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-common-cli</artifactId>
-  <name>OpenEJB :: Server :: Common CLI</name>
+  <name>TomEE :: Server :: Common CLI</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.common.cli</tomee.build.name>

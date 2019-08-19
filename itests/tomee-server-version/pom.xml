@@ -28,7 +28,7 @@
 
   <artifactId>tomee-server-version</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Server Composer</name>
+  <name>TomEE :: iTests :: Server Composer</name>
 
   <build>
     <plugins>

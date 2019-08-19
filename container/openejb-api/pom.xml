@@ -28,7 +28,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-api</artifactId>
-  <name>OpenEJB :: Container :: API</name>
+  <name>TomEE :: Container :: API</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.container.api</tomee.build.name>

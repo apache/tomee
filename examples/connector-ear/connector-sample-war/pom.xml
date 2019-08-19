@@ -31,7 +31,7 @@
 
   <artifactId>connector-sample-war</artifactId>
   <packaging>war</packaging>
-  <name>OpenEJB :: Connector Examples :: Connector in EAR :: Sample WAR</name>
+  <name>TomEE :: Connector Examples :: Connector in EAR :: Sample WAR</name>
 
   <dependencies>
     <dependency>

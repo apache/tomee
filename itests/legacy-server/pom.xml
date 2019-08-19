@@ -29,7 +29,7 @@
   <groupId>org.apache.openejb.itests</groupId>
   <artifactId>legacy-server</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Legacy Server</name>
+  <name>TomEE :: iTests :: Legacy Server</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.legacy.server</tomee.build.name>

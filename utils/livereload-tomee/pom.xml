@@ -25,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>livereload-tomee</artifactId>
-  <name>OpenEJB :: Utils :: LiveReload</name>
+  <name>TomEE :: Utils :: LiveReload</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.util.livereload</tomee.build.name>

@@ -23,7 +23,7 @@
   <artifactId>rest-jaas</artifactId>
   <version>8.0.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>OpenEJB :: Examples :: JAXRS and JAAS</name>
+  <name>TomEE :: Examples :: JAXRS and JAAS</name>
 
   <dependencies>
     <dependency>

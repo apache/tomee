@@ -113,6 +113,51 @@
       </property>
     </configuration>
   </container>
+  <container qualifier="tomee-remote-hibernate">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
+      <property name="portRange">33001-36000</property>
+      <property name="cleanOnStartUp">true</property>
+      <property name="properties">
+        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        openejb.ear.use-as-webcontext-base=true
+        embedded = false
+
+        # try to save some permgen mem
+        openejb.cdi.activated-on-ejb = false
+        openejb.descriptors.output = true
+      </property>
+    </configuration>
+  </container>
+  <container qualifier="tomee-remote-secpol">
+    <configuration>
+      <property name="httpPort">-1</property>
+      <property name="ajpPort">-1</property>
+      <property name="stopPort">-1</property>
+      <property name="dir">target/tomee-remote</property>
+      <property name="appWorkingDir">target/arquillian-remote-working-dir</property>
+      <property name="portRange">33001-36000</property>
+      <property name="cleanOnStartUp">true</property>
+      <property name="properties">
+        My\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
+        openejb.classloader.forced-load=org.apache.openejb.arquillian.tests
+        openejb.ear.use-as-webcontext-base=true
+        embedded = false
+
+        # try to save some permgen mem
+        openejb.cdi.activated-on-ejb = false
+        openejb.descriptors.output = true
+        javax.security.jacc.policy.provider=sun.security.provider.PolicyFile
+      </property>
+    </configuration>
+  </container>
   <container qualifier="tomee-webapp">
     <configuration>
       <property name="httpPort">-1</property>

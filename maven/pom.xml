@@ -27,7 +27,7 @@
   <groupId>org.apache.tomee.maven</groupId>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Maven Plugins</name>
+  <name>TomEE :: Maven Plugins</name>
 
   <properties>
     <maven.version>2.2.1</maven.version>

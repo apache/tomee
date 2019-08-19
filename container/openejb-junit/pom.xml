@@ -26,7 +26,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-junit</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Container :: JUnit</name>
+  <name>TomEE :: Container :: JUnit</name>
 
   <dependencies>
     <dependency>

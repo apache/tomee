@@ -25,7 +25,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.DeploymentException;
 import javax.servlet.ServletContext;
 import java.security.Key;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +44,7 @@ import static org.eclipse.microprofile.jwt.config.Names.VERIFIER_PUBLIC_KEY_LOCA
  */
 @ApplicationScoped
 public class JWTAuthConfigurationProperties {
-    public static final List<String> JWK_SUPPORTED_KEY_TYPES = Arrays.asList("RSA");
+    public static final List<String> JWK_SUPPORTED_KEY_TYPES = Collections.singletonList("RSA");
     public static final String PUBLIC_KEY_ERROR = "Could not read MicroProfile Public Key";
     public static final String PUBLIC_KEY_ERROR_LOCATION = PUBLIC_KEY_ERROR + " from Location: ";
 
@@ -53,10 +53,10 @@ public class JWTAuthConfigurationProperties {
 
     public void init(@Observes @Initialized(ApplicationScoped.class) ServletContext context) {
         this.config = ConfigProvider.getConfig();
-        this.jwtAuthConfiguration = createJWTAuthContextInfo();
+        this.jwtAuthConfiguration = createJWTAuthConfiguration();
     }
 
-    public Optional<JWTAuthConfiguration> getJWTAuthContextInfo() {
+    public Optional<JWTAuthConfiguration> getJWTAuthConfiguration() {
         return Optional.ofNullable(jwtAuthConfiguration);
     }
 
@@ -72,7 +72,7 @@ public class JWTAuthConfigurationProperties {
         return config.getOptionalValue(ISSUER, String.class);
     }
 
-    private JWTAuthConfiguration createJWTAuthContextInfo() {
+    private JWTAuthConfiguration createJWTAuthConfiguration() {
         if (getVerifierPublicKey().isPresent() && getPublicKeyLocation().isPresent()) {
             throw new DeploymentException("Both " +
                                           VERIFIER_PUBLIC_KEY +
@@ -87,7 +87,7 @@ public class JWTAuthConfigurationProperties {
         final Optional<Map<String, Key>> first = new PublicKeyResolver().resolve(publicKeyContents, publicKeyLocation);
 
         return first
-                .map(keys -> JWTAuthConfiguration.authContextInfo(keys, getIssuer().orElse(null)))
+                .map(keys -> JWTAuthConfiguration.authConfiguration(keys, getIssuer().orElse(null)))
                 .orElse(null);
     }
 

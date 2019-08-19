@@ -95,7 +95,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
 
         @Override
         public synchronized Enumeration<Permission> elements() {
-            return new ArrayEnumeration(permissions);
+            return new ArrayEnumeration<>(permissions);
         }
     }
 }

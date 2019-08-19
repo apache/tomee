@@ -27,7 +27,7 @@
 
   <artifactId>openejb-itests-beans</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: iTests :: Beans</name>
+  <name>TomEE :: iTests :: Beans</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.itests.beans</tomee.build.name>

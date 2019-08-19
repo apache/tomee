@@ -31,12 +31,13 @@
 
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
-  <name>OpenEJB :: Examples</name>
+  <name>TomEE :: Examples</name>
 
   <modules>
     <module>access-timeout-meta</module>
     <module>access-timeout</module>
     <module>alternate-descriptors</module>
+    <!--<module>applet</module>-->
     <module>application-composer</module>
     <module>applicationcomposer-jaxws-cdi</module>
     <module>applicationexception</module>
@@ -44,6 +45,7 @@
     <module>async-methods</module>
     <module>async-postconstruct</module>
     <module>bean-validation-design-by-contract</module>
+    <module>bval-evaluation-redeployment</module>
     <module>cdi-alternative-and-stereotypes</module>
     <module>cdi-application-scope</module>
     <module>cdi-basic</module>
@@ -91,7 +93,9 @@
     <module>injection-of-env-entry</module>
     <module>interceptors</module>
     <module>javamail</module>
+    <module>java-modules</module>
     <module>jaxrs-filter</module>
+    <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
     <module>jpa-enumerated</module>
@@ -106,13 +110,20 @@
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
+    <!--
+    Momentarily cut out till the feature can be re-implemented
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
+    -->
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
+    <module>mp-metrics-gauge</module>
+    <module>mp-metrics-metered</module>
+    <module>mp-opentracing-traced</module>
     <module>mp-rest-jwt</module>
     <module>mp-rest-jwt-jwk</module>
+    <module>mp-rest-jwt-principal</module>
     <module>mp-rest-jwt-public-key</module>
     <module>mtom</module>
     <module>multi-jpa-provider-testing</module>
@@ -141,6 +152,7 @@
     <module>schedule-methods-meta</module>
     <module>schedule-methods</module>
     <module>server-events</module>
+    <module>singleton-startup-ordering</module>
     <module>simple-cdi-interceptor</module>
     <module>simple-ear</module>
     <module>simple-cmp2</module>
@@ -157,6 +169,7 @@
     <module>simple-stateless-with-descriptor</module>
     <module>simple-webservice</module>
     <module>simple-webservice-without-interface</module>
+    <module>async-servlet</module>
     <module>spring-data-proxy</module>
     <module>spring-data-proxy-meta</module>
     <module>struts</module>
@@ -197,6 +210,7 @@
     <module>vaadin-vxx-simple</module>
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
+    <module>xa-datasource</module>
   </modules>
 
   <dependencies>
@@ -239,11 +253,19 @@
     <profile>
       <id>java9</id>
       <activation>
-        <jdk>[9,)</jdk>
+        <jdk>9</jdk>
       </activation>
-      <modules>
-        <module>java-modules</module>
-      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>

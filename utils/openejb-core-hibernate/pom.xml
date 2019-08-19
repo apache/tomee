@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>openejb-core-hibernate</artifactId>
-  <name>OpenEJB :: Utils :: Core Hibernate</name>
+  <name>TomEE :: Utils :: Core Hibernate</name>
   <packaging>pom</packaging>
 
   <properties>
@@ -44,7 +44,7 @@
           <artifactId>openjpa</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.tomee.patch</groupId>
+          <groupId>org.apache.bval</groupId>
           <artifactId>bval-jsr</artifactId>
         </exclusion>
         <exclusion>

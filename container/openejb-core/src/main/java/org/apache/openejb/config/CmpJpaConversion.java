@@ -64,6 +64,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Strings;
+import org.apache.xbean.finder.ResourceFinder;
 
 import javax.ejb.EJBLocalObject;
 import java.lang.reflect.Field;
@@ -103,11 +104,12 @@ class CmpJpaConversion implements DynamicDeployer {
             "pcDetachedState",
             "serialVersionUID"
     )));
+    public static final String GENERATED_ORM_XML = "META-INF/openejb-cmp-generated-orm.xml";
 
     private static EntityMappings readEntityMappings(final String location, final AppModule appModule) {
 
         try {
-            URL url = EntityMappingURLFinder.INSTANCE.apply(location, appModule);
+            final URL url = new ResourceFinder("", appModule.getClassLoader()).getResource(location);
             if (Objects.isNull(url)) {
                 return null;
             }
@@ -133,7 +135,6 @@ class CmpJpaConversion implements DynamicDeployer {
             appModule.setCmpMappings(cmpMappings);
         }
 
-        // todo scan existing persistence module for all entity mappings and don't generate mappings for them
 
         final Set<String> definedMappedClasses = new HashSet<>();
 
@@ -150,12 +151,12 @@ class CmpJpaConversion implements DynamicDeployer {
             }
         }
 
-        // we process this one jar-file at a time...each contributing to the 
-        // app mapping data 
+        // we process this one jar-file at a time...each contributing to the
+        // app mapping data
         for (final EjbModule ejbModule : appModule.getEjbModules()) {
             final EjbJar ejbJar = ejbModule.getEjbJar();
 
-            // scan for CMP entity beans and merge the data into the collective set 
+            // scan for CMP entity beans and merge the data into the collective set
             for (final EnterpriseBean enterpriseBean : ejbJar.getEnterpriseBeans()) {
                 if (isCmpEntity(enterpriseBean)) {
                     processEntityBean(ejbModule, definedMappedClasses, cmpMappings, (EntityBean) enterpriseBean);
@@ -163,7 +164,7 @@ class CmpJpaConversion implements DynamicDeployer {
             }
 
             // if there are relationships defined in this jar, get a list of the defined
-            // entities and process the relationship maps. 
+            // entities and process the relationship maps.
             final Relationships relationships = ejbJar.getRelationships();
             if (relationships != null) {
 
@@ -192,7 +193,23 @@ class CmpJpaConversion implements DynamicDeployer {
         if (!cmpMappings.getEntity().isEmpty()) {
             final PersistenceUnit persistenceUnit = getCmpPersistenceUnit(appModule);
 
-            persistenceUnit.getMappingFile().add("META-INF/openejb-cmp-generated-orm.xml");
+            final boolean generatedOrmXmlProvided = appModule.getClassLoader().getResource(GENERATED_ORM_XML) != null;
+            if (! persistenceUnit.getMappingFile().contains(GENERATED_ORM_XML)) {
+                // explicit check for openejb-cmp-generated-orm, as this is generated and added to <mapping-file>
+                if (generatedOrmXmlProvided) {
+                    LOGGER.warning("App module " + appModule.getModuleId() + " provides " + GENERATED_ORM_XML + ", but does not " +
+                            "specify it using <mapping-file> in persistence.xml for the CMP persistence unit, and it may conflict " +
+                            "with the generated mapping file. Consider renaming the file and explicitly referencing it in persistence.xml");
+                }
+                persistenceUnit.getMappingFile().add(GENERATED_ORM_XML);
+            } else {
+                if (generatedOrmXmlProvided) {
+                    LOGGER.warning("App module " + appModule.getModuleId() + " provides " + GENERATED_ORM_XML + " and additionally "
+                            + cmpMappings.getEntity().size() + "mappings have been generated. Consider renaming the " + GENERATED_ORM_XML + " in " +
+                            "your deployment archive to avoid any conflicts.");
+                }
+            }
+
             for (final Entity entity : cmpMappings.getEntity()) {
                 if (!persistenceUnit.getClazz().contains(entity.getClazz())) {
                     persistenceUnit.getClazz().add(entity.getClazz());

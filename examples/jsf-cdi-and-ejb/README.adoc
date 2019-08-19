@@ -77,13 +77,13 @@ In this case, CalculatorBean#add() is invoked.
 Calculator#add() delegates the work to the ejb, gets the result, stores
 it and then returns what view is to be rendered.
 
-The return value ``success'' is checked up in faces-config
+The return value `success` is checked up in faces-config
 navigation-rules and the respective page is rendered.
 
-In our case, `result.xhtml' page is rendered where use EL and display
+In our case, `result.xhtml` page is rendered where use EL and display
 the result from the request-scoped `calculatorBean`.
 
-#Source Code
+# Source Code
 
 == CalculatorBean
 

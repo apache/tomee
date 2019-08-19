@@ -6,10 +6,10 @@
 _Help us document this example! Click the blue pencil icon in the upper
 right to edit this page._
 
-To change a webservice deployment URI one solution is to use
-openejb-jar.xml.
+To change a web service deployment URI one solution is to use
+`openejb-jar.xml`.
 
-In this sample we have a webservice though the class Rot13:
+In this sample we have a web service through the class `Rot13`:
 
 ....
 package org.superbiz.jaxws;
@@ -41,9 +41,9 @@ public class Rot13 {
 }
 ....
 
-We decide to deploy to /tool/rot13 url.
+We decide to deploy to `/tool/rot13` url.
 
-To do so we first define it in openejb-jar.xml:
+To do so we first define it in `openejb-jar.xml`:
 
 ....
 <?xml version="1.0" encoding="UTF-8"?>
@@ -57,12 +57,12 @@ To do so we first define it in openejb-jar.xml:
 </openejb-jar>
 ....
 
-It is not enough since by default TomEE deploys the webservices in a
-subcontext called webservices. To skip it simply set the system property
-tomee.jaxws.subcontext to / (done in arquillian.xml for our test).
+It is not enough since by default TomEE deploys the webs ervices in a
+subcontext called `webservices`. To skip it simply set the system property
+`tomee.jaxws.subcontext` to `/` (done in `arquillian.xml` for our test).
 
-Then now our Rot13 webservice is deployed as expected to /tool/rot13 and
-we check it with arquillian and tomee embedded:
+Then now our `Rot13` web service is deployed as expected to `/tool/rot13` and
+we check it with Arquillian and TomEE embedded:
 
 ....
  package org.superbiz.jaxws;
