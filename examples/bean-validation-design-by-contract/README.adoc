@@ -8,11 +8,10 @@
 Bean Validation (aka JSR 303) contains an optional appendix dealing with
 method validation.
 
-Some implementions of this JSR implement this appendix (Apache bval,
-Hibernate validator for example).
+Some implementions of this JSR implement this appendix (Apache BVal,
+Hibernate Validator for example).
 
-OpenEJB provides an interceptor which allows you to use this feature to
-do design by contract.
+NOTE: If you override or implement a method, which has constraints, you need to re-add the constraints to the new method.
 
 == Design by contract
 
@@ -21,31 +20,13 @@ the example you specify the minimum centimeters a sport man should jump
 at pole vaulting:
 
 ....
-@Local
-public interface PoleVaultingManager {
-    int points(@Min(120) int centimeters);
-}
-....
-
-== Usage
-
-TomEE and OpenEJB do not provide anymore
-`BeanValidationAppendixInterceptor` since Bean Validation 1.1 does it
-(with a slighly different usage but the exact same feature).
-
-So basically you don’t need to configure anything to use it. # Errors
-
-If a parameter is not validated an exception is thrown, it is an
-EJBException wrapping a ConstraintViolationException:
-
-....
-try {
-    gamesManager.addSportMan("I lose", "EN");
-    fail("no space should be in names");
-} catch (EJBException wrappingException) {
-    assertTrue(wrappingException.getCause() instanceof ConstraintViolationException);
-    ConstraintViolationException exception = ConstraintViolationException.class.cast(wrappingException.getCausedByException());
-    assertEquals(1, exception.getConstraintViolations().size());
+@Stateless
+public class PoleVaultingManagerBean
+{
+    public int points(@Min(120) int centimeters)
+    {
+        return centimeters - 120;
+    }
 }
 ....
 
@@ -77,12 +58,16 @@ public class OlympicGamesManager {
 ....
 package org.superbiz.designbycontract;
 
-import javax.ejb.Local;
+import javax.ejb.Stateless;
 import javax.validation.constraints.Min;
 
-@Local
-public interface PoleVaultingManager {
-    int points(@Min(120) int centimeters);
+@Stateless
+public class PoleVaultingManagerBean
+{
+    public int points(@Min(120) int centimeters)
+    {
+        return centimeters - 120;
+    }
 }
 ....
 
