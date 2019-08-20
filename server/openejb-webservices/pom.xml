@@ -33,13 +33,13 @@
     <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
   </properties>
   <dependencies>
-<!--    <dependency>--> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
-<!-- Removed as included in javaee-api-8.0.0
-      <groupId>javax.xml.soap</groupId>
-      <artifactId>javax.xml.soap-api</artifactId>
-      <version>1.4.0-b01</version>
-      <scope>test</scope>
-    </dependency>--> 
+    <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
+    <!-- Removed as included in javaee-api-8.0.0 -->
+    <!--<dependency>-->
+      <!--<groupId>javax.xml.soap</groupId>-->
+      <!--<artifactId>javax.xml.soap-api</artifactId>-->
+      <!--<version>1.4.0-b01</version>-->
+    <!--</dependency>-->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -69,6 +69,11 @@
     <dependency>
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>${saaj-impl.version}</version>
     </dependency>
 
     <!-- spec dependencies -->
