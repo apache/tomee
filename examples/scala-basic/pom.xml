@@ -164,16 +164,4 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <profiles>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <properties>
-        <scala.version>2.12</scala.version>
-        <scala.full-version>${scala.version}.2</scala.full-version>
-      </properties>
-    </profile>
-  </profiles>
 </project>
