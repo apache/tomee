@@ -9,7 +9,7 @@ Este exemplo gera pares de chaves para o cliente e o servidor e cria os 2 keysto
 
 O conector HTTPS  no `server.xml` demonstra como configurar o lado do servidor.
 
-O caso de teste demonstra como iteragir com a API CXF  a fim de configurar o lado do cliente.
+O caso de teste demonstra como interagir com a API CXF  a fim de configurar o lado do cliente.
 
 
 == CalculatorImpl
