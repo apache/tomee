@@ -31,7 +31,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
-    <version.deltaspike>1.9.0</version.deltaspike>
+    <version.deltaspike>1.9.1</version.deltaspike>
     <version.ozark>1.0.0-m04</version.ozark>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
