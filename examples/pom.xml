@@ -134,7 +134,11 @@
     <module>myfaces-codi-demo</module>
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
+
+    <!-- Consider removing this example. Does not bring much value and the mdb module teaches wrong things
     <module>polling-parent</module>
+    -->
+
     <module>projectstage-demo</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
