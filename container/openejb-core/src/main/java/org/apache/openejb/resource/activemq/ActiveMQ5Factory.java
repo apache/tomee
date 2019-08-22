@@ -36,7 +36,7 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.xbean.propertyeditor.PropertyEditorException;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 import org.apache.xbean.recipe.ObjectRecipe;
 
 import javax.naming.Context;
@@ -65,6 +65,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
     protected static final Map<URI, BrokerService> brokers = new HashMap<URI, BrokerService>();
     private static Throwable throwable;
     private static final AtomicBoolean started = new AtomicBoolean(false);
+    private static PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry().registerDefaults();
 
     public static void setThreadProperties(final Properties p) {
         properties = p;
@@ -433,7 +434,7 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
                     final Object field = params.remove(key);
                     if (field != null) {
                         try {
-                            final Object toSet = PropertyEditors.getValue(m.getParameterTypes()[0], field.toString());
+                            final Object toSet = propertyEditorRegistry.getValue(m.getParameterTypes()[0], field.toString());
                             m.invoke(persistenceAdapter, toSet);
                         } catch (final PropertyEditorException cantConvertException) {
                             throw new IllegalArgumentException("can't convert " + field + " for " + m.getName(), cantConvertException);

@@ -29,7 +29,7 @@ import javax.management.ObjectName;
 import javax.management.RuntimeMBeanException;
 
 import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 
 // TODO: maybe find a better way to invoker get/set/invoke because currently we limit a bit possible values
 @Command(name = "jmx", description = "consult/update a jmx information", usage = "jmx <operation> <options>. " +
@@ -41,6 +41,13 @@ import org.apache.xbean.propertyeditor.PropertyEditors;
     "\n\t\t\tjmx set MyAttributeName foo:type=bar NewValue" +
     "\n\t\t\tjmx invoke myMethod(arg1,arg2) foo:type=bar")
 public class LocalJMXCommand extends AbstractCommand {
+
+    private final PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry();
+
+    public LocalJMXCommand() {
+        this.propertyEditorRegistry.registerDefaults();
+    }
+
     @Override
     public void execute(final String cmd) {
         final String jmxCmd = cmd.trim();
@@ -117,7 +124,7 @@ public class LocalJMXCommand extends AbstractCommand {
             for (int i = 0; i < passedArgs.length; i++) {
                 final String expected = operation.getSignature()[i].getType();
                 if (!String.class.getName().equals(expected)) {
-                    passedArgs[i] = PropertyEditors.getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
+                    passedArgs[i] = propertyEditorRegistry.getValue(expected, args[i], Thread.currentThread().getContextClassLoader());
                 } else {
                     passedArgs[i] = args[i];
                 }
@@ -173,7 +180,7 @@ public class LocalJMXCommand extends AbstractCommand {
                 }
             }
 
-            final Object valueObj = PropertyEditors.getValue(type, newValue, Thread.currentThread().getContextClassLoader());
+            final Object valueObj = propertyEditorRegistry.getValue(type, newValue, Thread.currentThread().getContextClassLoader());
             mBeanServer.setAttribute(oname, new Attribute(split[0], valueObj));
             streamManager.writeOut("done");
         } catch (Exception ex) {
