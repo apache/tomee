@@ -22,6 +22,7 @@ import org.apache.geronimo.connector.outbound.ConnectionReturnAction;
 import org.apache.geronimo.connector.outbound.ConnectionTrackingInterceptor;
 import org.apache.geronimo.connector.outbound.ManagedConnectionInfo;
 import org.apache.geronimo.connector.outbound.connectiontracking.ConnectionTracker;
+import org.apache.geronimo.transaction.manager.TransactionImpl;
 import org.apache.openejb.dyni.DynamicSubclass;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
@@ -32,7 +33,6 @@ import javax.resource.ResourceException;
 import javax.resource.spi.DissociatableManagedConnection;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
-import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.lang.ref.PhantomReference;
@@ -58,6 +58,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
     private final TransactionManager txMgr;
     private final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CONNECTOR, "org.apache.openejb.resource");
     private final ConcurrentMap<ManagedConnectionInfo, ProxyPhantomReference> references = new ConcurrentHashMap<ManagedConnectionInfo, ProxyPhantomReference>();
+    @SuppressWarnings("rawtypes")
     private final ReferenceQueue referenceQueue = new ReferenceQueue();
     private final ConcurrentMap<Class<?>, Class<?>> proxies = new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, Class<?>[]> interfaces = new ConcurrentHashMap<>();
@@ -80,6 +81,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection to be obtained
      * @param key            the unique id of the connection manager
      */
+    @Override
     public void setEnvironment(final ConnectionInfo connectionInfo, final String key) {
         ProxyPhantomReference reference = (ProxyPhantomReference) referenceQueue.poll();
         while (reference != null) {
@@ -103,12 +105,14 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection that was obtained
      * @param reassociate    should always be false
      */
+    @SuppressWarnings("unchecked")
+    @Override
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (txMgr != null && registry != null) {
-            Transaction currentTx = null;
+            TransactionImpl currentTx = null;
             try {
-                currentTx = txMgr.getTransaction();
-            } catch (SystemException e) {
+                currentTx = (TransactionImpl) txMgr.getTransaction();
+            } catch (SystemException | ClassCastException e) {
                 //ignore
             }
 
@@ -166,16 +170,18 @@ public class AutoConnectionTracker implements ConnectionTracker {
      * @param connectionInfo the connection that was released
      * @param action         ignored
      */
+    @Override
+    @SuppressWarnings("unchecked")
     public void handleReleased(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final ConnectionReturnAction action) {
-        Transaction currentTx = null;
+        TransactionImpl currentTx = null;
         try {
-            currentTx = txMgr.getTransaction();
-        } catch (SystemException e) {
+            currentTx = (TransactionImpl) txMgr.getTransaction();
+        } catch (SystemException | ClassCastException e) {
             //ignore
         }
 
         if (currentTx != null) {
-            Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
+            Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) currentTx.getResource(KEY);
             if (txConnections == null) {
                 txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
                 registry.putResource(KEY, txConnections);
@@ -193,6 +199,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             }
         }
 
+        @SuppressWarnings("rawtypes")
         final PhantomReference phantomReference = references.remove(connectionInfo.getManagedConnectionInfo());
         if (phantomReference != null) {
             phantomReference.clear();
@@ -292,6 +299,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
             this.handle = handle;
         }
 
+        @Override
         public Object invoke(final Object object, final Method method, final Object[] args) throws Throwable {
             if (method.getDeclaringClass() == Object.class) {
                 if (method.getName().equals("finalize")) {
@@ -330,7 +338,7 @@ public class AutoConnectionTracker implements ConnectionTracker {
         public ProxyPhantomReference(final ConnectionTrackingInterceptor interceptor,
                                      final ManagedConnectionInfo managedConnectionInfo,
                                      final ConnectionInvocationHandler handler,
-                                     final ReferenceQueue referenceQueue) {
+                                     @SuppressWarnings("rawtypes") final ReferenceQueue referenceQueue) {
             super(handler, referenceQueue);
             this.interceptor = interceptor;
             this.managedConnectionInfo = managedConnectionInfo;
