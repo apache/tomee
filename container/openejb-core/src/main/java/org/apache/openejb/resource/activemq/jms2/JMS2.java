@@ -43,6 +43,9 @@ import javax.jms.TransactionInProgressException;
 import javax.jms.TransactionInProgressRuntimeException;
 import javax.jms.TransactionRolledBackException;
 import javax.jms.TransactionRolledBackRuntimeException;
+import javax.transaction.SystemException;
+
+import org.apache.openejb.OpenEJB;
 
 public final class JMS2 {
     private JMS2() {
@@ -83,6 +86,7 @@ public final class JMS2 {
         return new JMSRuntimeException(e.getMessage(), e.getErrorCode(), e);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Message> T wrap(final T message10) {
         if (message10 == null) {
             return null;
@@ -111,5 +115,14 @@ public final class JMS2 {
             return (T) new WrappingStreamMessage(StreamMessage.class.cast(message10));
         }
         return (T) new DelegateMessage(message10);
+    }
+
+
+    public static boolean inTx() {
+        try {
+            return OpenEJB.getTransactionManager().getTransaction() != null;
+        } catch (SystemException | NullPointerException e) {
+            return false;
+        }
     }
 }

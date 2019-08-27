@@ -40,6 +40,7 @@ import java.util.Set;
 import static org.apache.openejb.resource.activemq.jms2.JMS2.toRuntimeException;
 import static org.apache.openejb.resource.activemq.jms2.JMS2.wrap;
 
+@SuppressWarnings("deprecation")
 class JMSProducerImpl implements JMSProducer {
     private final JMSContextImpl context;
     private final MessageProducer producer;
