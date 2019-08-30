@@ -143,9 +143,6 @@ public class JMSContextImpl implements JMSContext {
     public void close() {
         try {
             synchronized (this) {
-                if (session != null) {
-                    session.close();
-                }
                 if (connection != null) {
                     connection.close();
                 }
