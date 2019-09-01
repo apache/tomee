@@ -35,7 +35,7 @@ public class ValidationGeneratorTest {
     @Test
     public void testGetConstrainedMethods() throws Exception {
 
-        final Set<Method> methods = ValidationGenerator.getConstrainedMethods(Colors.class);
+        final Set<Method> methods = OldValidationGenerator.getConstrainedMethods(Colors.class);
         final Map<String, Method> map = methods.stream().collect(Collectors.toMap(Method::getName, method -> method));
 
         Assert.assertTrue(map.containsKey("red"));
@@ -54,7 +54,7 @@ public class ValidationGeneratorTest {
     }
 
     private void assertGeneration(final Class<?> target, final Class<?> expectedClass) throws IOException, ProxyGenerationException {
-        final String actual = Asmifier.asmify(ValidationGenerator.generateFor(target));
+        final String actual = Asmifier.asmify(OldValidationGenerator.generateFor(target));
         final String expected = Asmifier.asmify(Asmifier.readClassFile(expectedClass));
 
         Assert.assertEquals(expected, actual);

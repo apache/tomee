@@ -16,26 +16,14 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.openejb.dyni.DynamicSubclass;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
-import org.apache.xbean.asm7.AnnotationVisitor;
-import org.apache.xbean.asm7.ClassReader;
-import org.apache.xbean.asm7.ClassVisitor;
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Opcodes;
-import org.apache.xbean.asm7.Type;
 
-import javax.validation.Constraint;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * We allow CDI and EJB beans to use BeanValidation to validate a JsonWebToken
@@ -95,152 +83,55 @@ import java.util.Set;
  *    }
  *
  */
-public class ValidationGenerator implements Opcodes {
+public abstract class ValidationGenerator implements Opcodes {
 
-    public static byte[] generateFor(final Class<?> target) throws ProxyGenerationException {
-        final Set<Method> constrainedMethods = getConstrainedMethods(target);
+    protected final Class<?> clazz;
+    protected final List<MethodConstraints> constraints;
+    protected final String suffix;
 
-        if (constrainedMethods.size() == 0) return null;
+    public ValidationGenerator(final Class<?> clazz, final List<MethodConstraints> constraints, final String suffix) {
+        this.clazz = clazz;
+        this.constraints = new ArrayList<>(constraints);
+        this.suffix = suffix;
+        Collections.sort(constraints);
+    }
 
-        final Map<String, MethodVisitor> visitors = new LinkedHashMap<>();
+    public Class<?> generateAndLoad() {
+        return loadOrCreate();
+    }
 
-        final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+    public String getName() {
+        return clazz.getName() + "$$" + suffix;
+    }
 
-        final String generatedClassName = getName(target).replace('.', '/');
+    public Class<?> loadOrCreate() {
+        final String constraintsClassName = getName();
+        final ClassLoader classLoader = clazz.getClassLoader();
 
-        cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, generatedClassName, null, "java/lang/Object", null);
-
-        { // public constructor
-            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(1, 1);
-            mv.visitEnd();
+        try {
+            return classLoader.loadClass(constraintsClassName);
+        } catch (ClassNotFoundException e) {
+            // ok, let's continue on and make it
         }
 
-        int id = 0;
-        for (final Method method : sort(constrainedMethods)) {
-            final String name = method.getName() + "$$" + (id++);
-
-            // Declare a method of return type JsonWebToken for use with
-            // a call to BeanValidation's ExecutableValidator.validateReturnValue
-            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()Lorg/eclipse/microprofile/jwt/JsonWebToken;", null, null);
-
-            // Put the method name on the
-            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
-            av.visit("value", method.toString());
-            av.visitEnd();
-
-            // track the MethodVisitor
-            // We will later copy over the annotations
-            visitors.put(method.getName() + Type.getMethodDescriptor(method), mv);
-
-            // The method will simply return null
-            mv.visitCode();
-            mv.visitInsn(ACONST_NULL);
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(1, 1);
+        final byte[] bytes;
+        try {
+            bytes = generate();
+        } catch (ProxyGenerationException e) {
+            throw new ValidationGenerationException(clazz, e);
         }
 
-        copyMethodAnnotations(target, visitors);
+        if (bytes == null) return null;
 
-        for (final MethodVisitor visitor : visitors.values()) {
-            visitor.visitEnd();
-        }
-
-        return cw.toByteArray();
-    }
-
-    private static List<Method> sort(final Set<Method> constrainedMethods) {
-        final List<Method> methods = new ArrayList<>(constrainedMethods);
-        methods.sort((a, b) -> a.toString().compareTo(b.toString()));
-        return methods;
-    }
-
-    public static String getName(final Class<?> target) {
-        return target.getName() + "$$JwtConstraints";
-    }
-
-    public static Set<Method> getConstrainedMethods(final Class<?> clazz) {
-        final Set<Method> constrained = new HashSet<>();
-
-        // we could have been doing this long before Streams
-        for (Method method : clazz.getMethods())
-            for (Annotation annotation : method.getAnnotations())
-                if (isConstraint(annotation))
-                    constrained.add(method);
-
-        return constrained;
-    }
-
-    private static boolean isConstraint(final Annotation annotation) {
-        return annotation.annotationType().isAnnotationPresent(Constraint.class);
-    }
-
-    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
-        // Move all the annotations onto the newly implemented methods
-        // Ensures CDI and JAX-RS and JAX-WS still work
-        Class clazz = classToProxy;
-        while (clazz != null && !clazz.equals(Object.class)) {
-            try {
-                final ClassReader classReader = new ClassReader(DynamicSubclass.readClassFile(clazz));
-                final ClassVisitor copyMethodAnnotations = new CopyMethodAnnotations(visitors);
-                classReader.accept(copyMethodAnnotations, ClassReader.SKIP_CODE);
-            } catch (final IOException e) {
-                throw new ProxyGenerationException(e);
-            }
-            clazz = clazz.getSuperclass();
+        try {
+            return LocalBeanProxyFactory.Unsafe.defineClass(classLoader, clazz, constraintsClassName, bytes);
+        } catch (IllegalAccessException e) {
+            throw new ValidationGenerationException(clazz, e);
+        } catch (InvocationTargetException e) {
+            throw new ValidationGenerationException(clazz, e.getCause());
         }
     }
 
-    public static class MoveAnnotationsVisitor extends MethodVisitor {
-
-        private final MethodVisitor newMethod;
-
-        public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM7, movedMethod);
-            this.newMethod = newMethod;
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-            return newMethod.visitAnnotation(desc, visible);
-        }
-
-        @Override
-        public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-            return super.visitParameterAnnotation(parameter, desc, visible);
-        }
-
-        @Override
-        public void visitEnd() {
-            newMethod.visitEnd();
-            super.visitEnd();
-        }
-    }
-
-    private static class CopyMethodAnnotations extends ClassVisitor {
-        private final Map<String, MethodVisitor> visitors;
-
-        public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
-            super(Opcodes.ASM7);
-            this.visitors = visitors;
-        }
-
-        @Override
-        public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
-            final MethodVisitor newMethod = visitors.remove(name + desc);
-
-            if (newMethod == null) {
-                return null;
-            }
-
-            final MethodVisitor oldMethod = super.visitMethod(access, name, desc, signature, exceptions);
-
-            return new MoveAnnotationsVisitor(oldMethod, newMethod);
-        }
-    }
+    public abstract byte[] generate() throws ProxyGenerationException;
 
 }

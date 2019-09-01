@@ -20,9 +20,10 @@ import org.apache.bval.jsr.descriptor.ConstraintD;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-public class MethodConstraints {
+public class MethodConstraints implements Comparable<MethodConstraints> {
 
     /**
      * Names of annotations that contain constraints
@@ -32,6 +33,7 @@ public class MethodConstraints {
     final Method method;
 
     public MethodConstraints(final Method method) {
+        Objects.requireNonNull(method, "method cannot be null");
         this.method = method;
     }
 
@@ -45,5 +47,17 @@ public class MethodConstraints {
 
     public Method getMethod() {
         return method;
+    }
+
+    @Override
+    public int compareTo(final MethodConstraints that) {
+        final String signatureA = signature(that.method);
+        final String signatureB = signature(this.method);
+        return signatureA.compareTo(signatureB);
+    }
+
+    private String signature(final Method method) {
+        final String desc = method.toString();
+        return desc.substring(desc.indexOf(method.getName()));
     }
 }

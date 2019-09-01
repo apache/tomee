@@ -35,11 +35,14 @@ import java.util.Set;
 
 public class ClassValidationData {
 
+    private final Class<?> clazz;
+
     private final List<MethodConstraints> jwtConstraints = new ArrayList<>();
 
     private final List<MethodConstraints> returnConstraints = new ArrayList<>();
 
     public ClassValidationData(final Class<?> clazz) {
+        this.clazz = clazz;
         final ConstraintValidators validators = new ConstraintValidators();
 
         final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -73,6 +76,10 @@ public class ClassValidationData {
             if (jwtAnnotations.getAnnotations().size() > 0) jwtConstraints.add(jwtAnnotations);
             if (returnAnnotations.getAnnotations().size() > 0) returnConstraints.add(returnAnnotations);
         }
+    }
+
+    public Class<?> getClazz() {
+        return clazz;
     }
 
     public List<MethodConstraints> getJwtConstraints() {

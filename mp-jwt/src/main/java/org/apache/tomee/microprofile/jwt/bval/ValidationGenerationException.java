@@ -16,11 +16,11 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-public class JWTValidationGenerationException extends IllegalStateException {
+public class ValidationGenerationException extends IllegalStateException {
 
     private final Class<?> componentClass;
 
-    public JWTValidationGenerationException(final Class<?> componentClass, final Throwable e) {
+    public ValidationGenerationException(final Class<?> componentClass, final Throwable e) {
         super(e);
         this.componentClass = componentClass;
     }

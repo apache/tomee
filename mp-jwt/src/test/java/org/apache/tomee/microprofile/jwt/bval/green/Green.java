@@ -14,27 +14,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval;
+package org.apache.tomee.microprofile.jwt.bval.green;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Arrays;
 
-@Provider
-public class ValidationInterceptorsFeature implements DynamicFeature {
+public class Green {
 
-    @Override
-    public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
-
-        final Class<?> resourceClass = resourceInfo.getResourceClass();
-
-        final ValidationConstraints constraints = ValidationConstraints.of(resourceClass);
-
-        if (constraints != null) {
-            context.register(new ValidationInterceptor(resourceInfo, constraints));
+    @ReturnValidation("bar")
+    @TokenValidation("http://foo.bar.com")
+    public URL emerald() {
+        try {
+            return new URL("foo://bar");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
         }
+    }
 
+    @ReturnValidation("bar")
+    public URI sage() {
+        return URI.create("one://two");
+    }
+
+    @TokenValidation("http://foo.bar.com")
+    public void olive() {
+    }
+
+    public java.util.Collection<URI> mint() {
+        return Arrays.asList(URI.create("hello://world"), URI.create("three://four"));
     }
 
 }

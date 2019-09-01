@@ -14,27 +14,39 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval;
+package org.apache.tomee.microprofile.jwt.bval.green;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import org.apache.tomee.microprofile.jwt.bval.Name;
+import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
+import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
-@Provider
-public class ValidationInterceptorsFeature implements DynamicFeature {
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.Arrays;
 
-    @Override
-    public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
+public class Green$$ReturnConstraints {
 
-        final Class<?> resourceClass = resourceInfo.getResourceClass();
+    public Green$$ReturnConstraints() {
+    }
 
-        final ValidationConstraints constraints = ValidationConstraints.of(resourceClass);
 
-        if (constraints != null) {
-            context.register(new ValidationInterceptor(resourceInfo, constraints));
-        }
+    @ReturnValidation("bar")
+    public URL emerald() throws MalformedURLException {
+        return null;
+    }
 
+    @ReturnValidation("bar")
+    public URI sage() {
+        return null;
+    }
+
+    public void olive() {
+    }
+
+    public java.util.Collection<URI> mint() {
+        return null;
     }
 
 }

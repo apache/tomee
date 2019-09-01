@@ -16,25 +16,17 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import org.apache.openejb.util.proxy.ProxyGenerationException;
 
-@Provider
-public class ValidationInterceptorsFeature implements DynamicFeature {
+import java.util.List;
 
-    @Override
-    public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
-
-        final Class<?> resourceClass = resourceInfo.getResourceClass();
-
-        final ValidationConstraints constraints = ValidationConstraints.of(resourceClass);
-
-        if (constraints != null) {
-            context.register(new ValidationInterceptor(resourceInfo, constraints));
-        }
-
+public class ReturnValidationGenerator extends ValidationGenerator {
+    public ReturnValidationGenerator(final Class<?> clazz, final List<MethodConstraints> constraints) {
+        super(clazz, constraints, "ReturnConstraints");
     }
 
+    @Override
+    public byte[] generate() throws ProxyGenerationException {
+        return new byte[0];
+    }
 }

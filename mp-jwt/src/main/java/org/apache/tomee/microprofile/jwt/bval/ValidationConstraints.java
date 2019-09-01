@@ -53,8 +53,8 @@ public class ValidationConstraints {
 
         if (constraintsClazz == null) return null;
 
-        final Set<Method> original = ValidationGenerator.getConstrainedMethods(componentClass);
-        final Set<Method> generated = ValidationGenerator.getConstrainedMethods(constraintsClazz);
+        final Set<Method> original = OldValidationGenerator.getConstrainedMethods(componentClass);
+        final Set<Method> generated = OldValidationGenerator.getConstrainedMethods(constraintsClazz);
 
         if (original.size() != generated.size()) {
             throw new GeneratedConstraintsMissingException(original, generated);
@@ -75,7 +75,7 @@ public class ValidationConstraints {
         }
 
         final Map<Method, Method> validationMethods = new HashMap<>();
-        for (final Method method : ValidationGenerator.getConstrainedMethods(componentClass)) {
+        for (final Method method : OldValidationGenerator.getConstrainedMethods(componentClass)) {
             final Method validationMethod = names.get(method.toString());
             validationMethods.put(method, validationMethod);
         }
@@ -88,7 +88,7 @@ public class ValidationConstraints {
     }
 
     public static Class loadOrCreate(final Class<?> componentClass) {
-        final String constraintsClassName = ValidationGenerator.getName(componentClass);
+        final String constraintsClassName = OldValidationGenerator.getName(componentClass);
         final ClassLoader classLoader = componentClass.getClassLoader();
 
         try {
@@ -99,9 +99,9 @@ public class ValidationConstraints {
 
         final byte[] bytes;
         try {
-            bytes = ValidationGenerator.generateFor(componentClass);
+            bytes = OldValidationGenerator.generateFor(componentClass);
         } catch (ProxyGenerationException e) {
-            throw new JWTValidationGenerationException(componentClass, e);
+            throw new ValidationGenerationException(componentClass, e);
         }
 
         if (bytes == null) return null;
@@ -109,9 +109,9 @@ public class ValidationConstraints {
         try {
             return LocalBeanProxyFactory.Unsafe.defineClass(classLoader, componentClass, constraintsClassName, bytes);
         } catch (IllegalAccessException e) {
-            throw new JWTValidationGenerationException(componentClass, e);
+            throw new ValidationGenerationException(componentClass, e);
         } catch (InvocationTargetException e) {
-            throw new JWTValidationGenerationException(componentClass, e.getCause());
+            throw new ValidationGenerationException(componentClass, e.getCause());
         }
     }
 }

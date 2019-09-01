@@ -16,18 +16,35 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
+import org.apache.bval.jsr.ConstraintCached;
+import org.apache.bval.jsr.descriptor.ConstraintD;
+import org.apache.bval.jsr.job.ConstraintValidators;
 import org.apache.tomee.microprofile.jwt.JsonWebTokenValidator;
 import org.apache.tomee.microprofile.jwt.Tokens;
+import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
+import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.constraintvalidation.ValidationTarget;
+import javax.validation.executable.ExecutableValidator;
+import javax.validation.metadata.BeanDescriptor;
+import javax.validation.metadata.ConstraintDescriptor;
+import javax.validation.metadata.ContainerElementTypeDescriptor;
+import javax.validation.metadata.MethodDescriptor;
+import javax.validation.metadata.ReturnValueDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Iterator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -90,5 +107,63 @@ public class ValidationConstraintsTest {
         assertEquals("The 'aud' claim must contain 'joe'", next.getMessage());
     }
 
+    @Test
+    public void testBval() throws Exception {
+        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        final Validator validator = factory.getValidator();
+        final Class<?> targetClass = Circle.class;
+        final Method method = targetClass.getMethod("red");
 
+        final MethodDescriptor constraintsForMethod = validator.getConstraintsForClass(targetClass)
+                .getConstraintsForMethod(method.getName(), method.getParameterTypes());
+
+        final ExecutableValidator executableValidator = validator.forExecutables();
+
+        final Set<ConstraintViolation<Object>> violations =
+                executableValidator.validateReturnValue(new Circle(), method, new Red());
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+
+    }
+
+//    @Test
+//    public void testHack() throws Exception {
+//
+//        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+//        final Validator validator = factory.getValidator();
+//        final BeanDescriptor descriptor = validator.getConstraintsForClass(Circle.class);
+//
+//        final Class<?> targetClass = Circle.class;
+//        final Method method = targetClass.getMethod("red");
+//        final MethodDescriptor redDescriptor = descriptor.getConstraintsForMethod("red");
+//        final ReturnValueDescriptor returnValueDescriptor = redDescriptor.getReturnValueDescriptor();
+//        final Set<ConstraintDescriptor<?>> constraintDescriptors = returnValueDescriptor.getConstraintDescriptors();
+//
+//        final Iterator<ConstraintDescriptor<?>> iterator = constraintDescriptors.iterator();
+//        final ConstraintD<?> audienceDescriptor = (ConstraintD<?>) iterator.next();
+//        final ConstraintD<?> issuerDescriptor = (ConstraintD<?>) iterator.next();
+//
+//        final ConstraintValidators<? extends Annotation> constraintValidators = new ConstraintValidators<>(new ConstraintCached(), audienceDescriptor, ValidationTarget.ANNOTATED_ELEMENT, JsonWebToken.class);
+//        final Class<? extends ConstraintValidator<? extends Annotation, ?>> aClass = constraintValidators.get();
+//
+//        final Set<ContainerElementTypeDescriptor> constrainedContainerElementTypes = returnValueDescriptor.getConstrainedContainerElementTypes();
+//
+//        final ConstraintCached constraintsCache = new ConstraintCached();
+//        final Class<Red> validatedType = Red.class;
+//        final ConstraintValidators<Annotation> compute = new ConstraintValidators<>(constraintsCache, null, ValidationTarget.ANNOTATED_ELEMENT, validatedType);
+//        final Class<? extends ConstraintValidator<Annotation, ?>> validatorClass = compute.get();
+//    }
+
+    public static class Circle {
+        @Audience("bar")
+        @Issuer("http://foo.bar.com")
+        public Red red() {
+            return new Red();
+        }
+
+    }
+
+    public static class Red {
+    }
 }
