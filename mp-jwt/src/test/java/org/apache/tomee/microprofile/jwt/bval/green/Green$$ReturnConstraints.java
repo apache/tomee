@@ -17,36 +17,22 @@
 package org.apache.tomee.microprofile.jwt.bval.green;
 
 import org.apache.tomee.microprofile.jwt.bval.Name;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 
 public class Green$$ReturnConstraints {
 
     public Green$$ReturnConstraints() {
     }
 
-
+    @Name("public java.net.URL org.apache.tomee.microprofile.jwt.bval.green.Green.emerald()")
     @ReturnValidation("bar")
-    public URL emerald() throws MalformedURLException {
+    public URL emerald$$0() {
         return null;
     }
 
+    @Name("public void org.apache.tomee.microprofile.jwt.bval.green.Green.sage()")
     @ReturnValidation("bar")
-    public URI sage() {
-        return null;
+    public void sage$$1() {
     }
-
-    public void olive() {
-    }
-
-    public java.util.Collection<URI> mint() {
-        return null;
-    }
-
 }

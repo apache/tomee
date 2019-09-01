@@ -32,7 +32,6 @@ public class Green$$JwtConstraints {
     public Green$$JwtConstraints() {
     }
 
-
     @Name("public java.net.URL org.apache.tomee.microprofile.jwt.bval.green.Green.emerald()")
     @TokenValidation("http://foo.bar.com")
     public JsonWebToken emerald$$0() {
@@ -45,6 +44,4 @@ public class Green$$JwtConstraints {
     public JsonWebToken olive$$1() {
         return null;
     }
-
-
 }

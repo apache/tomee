@@ -34,8 +34,7 @@ public class Green {
     }
 
     @ReturnValidation("bar")
-    public URI sage() {
-        return URI.create("one://two");
+    public void sage() {
     }
 
     @TokenValidation("http://foo.bar.com")

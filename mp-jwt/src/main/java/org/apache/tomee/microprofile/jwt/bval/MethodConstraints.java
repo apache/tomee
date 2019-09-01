@@ -53,11 +53,16 @@ public class MethodConstraints implements Comparable<MethodConstraints> {
     public int compareTo(final MethodConstraints that) {
         final String signatureA = signature(that.method);
         final String signatureB = signature(this.method);
-        return signatureA.compareTo(signatureB);
+        return signatureB.compareTo(signatureA);
     }
 
     private String signature(final Method method) {
         final String desc = method.toString();
         return desc.substring(desc.indexOf(method.getName()));
+    }
+
+    @Override
+    public String toString() {
+        return signature(method);
     }
 }
