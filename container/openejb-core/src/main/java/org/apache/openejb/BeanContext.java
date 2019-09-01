@@ -1111,7 +1111,7 @@ public class BeanContext extends DeploymentContext {
      * When an instance of an EJB is instantiated, everything in this list
      * is also instatiated and tied to the bean instance.  Per spec, interceptors
      * are supposed to have the same lifecycle as the bean they wrap.
-     * <p/>
+     *
      * OpenEJB has the concept of interceptors which do not share the same lifecycle
      * as the bean instance -- they may be instantiated elsewhere and simply applied
      * to the bean.  The impact is that these interceptors must be multithreaded.
@@ -1554,9 +1554,6 @@ public class BeanContext extends DeploymentContext {
 
     @SuppressWarnings("unchecked")
     public InstanceContext newInstance() throws Exception {
-        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
-        final ThreadContext oldContext = ThreadContext.enter(callContext);
-
         final boolean dynamicallyImplemented = isDynamicallyImplemented();
 
         final WebBeansContext webBeansContext = getWebBeansContext();
@@ -1566,6 +1563,9 @@ public class BeanContext extends DeploymentContext {
                 throw new OpenEJBException("proxy class can only be InvocationHandler");
             }
         }
+
+        final ThreadContext callContext = new ThreadContext(this, null, Operation.INJECTION);
+        final ThreadContext oldContext = ThreadContext.enter(callContext);
 
         try {
             final Context ctx = getJndiEnc();

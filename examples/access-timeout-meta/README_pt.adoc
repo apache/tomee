@@ -1,0 +1,287 @@
+= @AccessTimeout a forma Meta-anotação 
+:index-group: Meta-Annotations
+:jbake-type: page
+:jbake-status: status=published
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:stylesheet: ../github-stylesheet.css
+endif::[]
+
+== Indrodução
+Qualquer anotação que recebe parâmetros podem se beneficiar das meta-anotações. Aquí observamos como `@AccessTimeout` pode ser mais fácil de entender e administrar mediante meta-anotações.
+Usaremos [access-timeout](../access-timeout/README.html) como nosso exemplo de caso de uso.
+
+O valor dos parâmetros do fornecido para o `@AccessTimeout` tem um efeito dramático em que a anotação realmente faz. Além disso, `@ AccessTimeout` tem um desses designs
+onde `-1` e `0` tem um significado totalmente diferente. Um quer dizer "espere para sempre", o outro "nunca espere". Só alguns com sorte podem lembrar qual é qual.
+Para o resto de nós é uma fonte constante de erros.
+
+TIP: Meta-Anotações. ao resgate!
+
+
+== *_Criando Meta-Anotações._*
+
+Com respeito as melhores práticas, colocaremos nossas meta-anotações em um pacote chamado `api`, para este exemplo que nós da `org.superbiz.accesstimeout.api`. O pacote `org.superbiz.api` também vai funcionar.
+
+
+A ideia básica é ter um pacote onde anotações "aprovadas" sejam usadas e proibir uso de versões não-meta-anotações. Toda a configuração
+estará centralizada no pacote `api` e alterações nos valores de tempo limite estarão localizadas nesse pacote e refletidas automaticamente em todo o aplicativo.
+
+Um efeito secundário interessante desta abordagem é que se o pacote `api` onde as definições de meta-anotação existem localizados em um jar separado, então efetivamente alguém
+pode trocar toda a configuração de uma aplicação simplesmente substituindo o jar `api`.
+
+
+=== @Metatype [.small]#A Meta-Anotação "root"#
+
+Como todo o uso de meta-anotação, primeiro devemos criar nossa própria meta-anotação "root". Isto é tão facil como criar uma anotação
+chamada `Metatype` que esta anotada com esta mesma anotação e tem um `ElementType.ANNOTATION_TYPE` como seu objetivo.
+
+
+[source,java,numbered]
+----
+package org.superbiz.accesstimeout.api;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Metatype
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+public @interface Metatype {
+}
+----
+
+=== @AwaitNever
+
+Quando a anotação `@AccessTimeout` tem o valor de `0` que tem a implicação que nunca deve esperar para acessar o bean. Se o bean esta ocupado, aquele que o chama imediatamente
+receberá uma `ConcurrentAccessException`. Isto é difícil de lembrar e definitivamente não é auto-documentado para aqueles que nunca conheceram os detalhes.
+
+Para criar uma versão de meta-anotação `@AccessTimeout(0)` nós simplesmente devemos pensar um bom nome de anotação, criar essa anotação e anota-la com ambas `@AccessTimeout`
+e `@Metatype`
+
+
+[source,java,numbered]
+----
+package org.superbiz.accesstimeout.api;
+
+import javax.ejb.AccessTimeout;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Metatype
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+
+@AccessTimeout(0)
+public @interface AwaitNever {
+}
+----
+
+=== @AwaitForever
+
+Assim como `0` tem seu significado especial como "nunca esperar" , o valor de `-1` quer dizer "espere para sempre."
+
+Enquanto estamos exigindo, o que podemos fazer com meta-anotações,
+tecnicamente "espere para sempre" não é a melhor descrição. Atualmente os métodos de `javax.util.concurrent` APIs usam "await" em vez de "wait". Um (wait) provavelmente implica
+um comando de espera, que neste caso não é , o outro (await) em vez disso, significa que esperar é possível, mas não é certo. Então, usaremos "await" no nome de nossas anotações.
+
+Nós fazemos o nosso próprio `@AwaitForever` e a anotamos com `@AccessTimeout(0)` e `@Metatype`
+
+[source,java,numbered]
+----
+package org.superbiz.accesstimeout.api;
+
+import javax.ejb.AccessTimeout;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Metatype
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+
+@AccessTimeout(-1)
+public @interface AwaitForever {
+}
+----
+
+=== @AwaitBriefly
+
+Tanto os valores de `-1` e `0` a `@AccessTimeout` eles não incluem o escopo completo da anotação. Aqui é onde podemos especificar o máximo de minutos , segundos,
+milisegundos,etc. onde se pode esperar acessar a instância do bean.
+
+[source,java,numbered]
+----
+@Metatype
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.METHOD, ElementType.TYPE})
+
+@AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+public @interface AwaitBriefly {
+}
+----
+
+== Configuração vs Operação
+
+Depois de criar algumas meta-anotações e a diversão se tornar vulgar, você começa a se perguntar qual será a melhor maneira de se beneficiar das meta-anotações.
+
+Você realmente tem que começar a pensar como você quer usar a meta-anotação e colocar o chapéu de designer. O dilema fundamental é
+**configuração vs operação** e a resposta é subjetiva; Quanta flexibilidade você deseja projetar em sua aplicação e onde?
+
+## Nomes de configuração [.small]#descrevendo a configuração#
+
+A abordagem mais simples é chamar suas meta-anotações depois da **configuração** que encapsulam. Nós seguimos este formato até agora com `@AwaitNever` e `@AwaitForever`
+para que seja claro o conteúdo de cada meta-anotação (`@AccessTimeout(-1)` e `@AccessTimeout(0)` respectivamente).
+
+Os **contras** desta abordagem é que você vai querer alterar as configurações deste aplicativo apenas alterando as meta-anotações -- este é um dos grandes beneficios
+das meta-anotações -- mas isto podería trocar o significado da anotação. Certamente , a anotação `@AwaitNever` não pode ter outro valor que '0' se estiver na altura do nome.
+
+## Nomes de operação  [.small]#descrevendo o código#
+
+A abordagem alternativa é chamar as meta-anotações depois de **operações** a que se aplica. Brevemente descrever, descrever o próprio código e não a configuração. Assim que,
+nomes como `@OrderCheckTimeout` ou `@TwitterUpdateTimeout`. Estes nomes são provas de troca de configuração. Isso não mudará se a configuração mudar e, de fato, eles podem facilitar o controle de
+localizador de grãos sobre a configuração do aplicativo.
+
+Os **contras** desta abordagem é que requer muito mais deliberação e consideração, se, mencionar mais anotações. Suas habilidades como arquiteto, designer e capacidade de pensar como
+administrador serão postas a prova. Você tem que ser bom para usar o chapéu dev-ops.
+
+
+## Pragmatismo  [.small]#o melhor dos dois mundos#
+
+Felizmente, as meta-anotações são recursivas. Você pode fazer um pouco dos dois.
+
+[source,java,numbered]
+----
+@Metatype
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+
+@AwaitBriefly
+public @interface TwitterUpdateTimeout {
+}
+----
+
+Claro ainda temos que ser muito deliberado em como usar as anotações. Quando se usa uma "configuração" chamada meta-anotação no código pode ser usada para dizer a si mesmo
+"Você não quer reconfigurá-lo depois". Se isso não parecer certo, faça um esforço extra para criar uma operação chamada anotação e use-a no código.
+
+
+# Aplicando a Meta-Anotação
+
+Juntando tudo , talvez assim é como deveríamos aplicar nossas meta-anotações para o exemplo  [access-timeout](../access-timeout/README.html).
+
+=== Antes
+
+[source,java,numbered]
+----
+package org.superbiz.accesstimeout;
+
+import javax.ejb.AccessTimeout;
+import javax.ejb.Asynchronous;
+import javax.ejb.Lock;
+import javax.ejb.Singleton;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import static javax.ejb.LockType.WRITE;
+
+/**
+    * @version $Revision$ $Date$
+    */
+@Singleton
+@Lock(WRITE)
+public class BusyBee {
+
+    @Asynchronous
+    public Future stayBusy(CountDownLatch ready) {
+        ready.countDown();
+
+        try {
+            new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
+        return null;
+    }
+
+    @AccessTimeout(0)
+    public void doItNow() {
+        // do something
+    }
+
+    @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+    public void doItSoon() {
+        // do something
+    }
+
+    @AccessTimeout(-1)
+    public void justDoIt() {
+        // do something
+    }
+
+}
+----
+
+=== Depois
+
+[source,java,numbered]
+----
+package org.superbiz.accesstimeout;
+
+import org.superbiz.accesstimeout.api.AwaitBriefly;
+import org.superbiz.accesstimeout.api.AwaitForever;
+import org.superbiz.accesstimeout.api.AwaitNever;
+
+import javax.ejb.Asynchronous;
+import javax.ejb.Lock;
+import javax.ejb.Singleton;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
+
+import static javax.ejb.LockType.WRITE;
+
+/**
+    * @version $Revision$ $Date$
+    */
+@Singleton
+@Lock(WRITE)
+public class BusyBee {
+
+    @Asynchronous
+    public Future stayBusy(CountDownLatch ready) {
+        ready.countDown();
+
+        try {
+            new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
+        return null;
+    }
+
+    @AwaitNever
+    public void doItNow() {
+        // do something
+    }
+
+    @AwaitBriefly
+    public void doItSoon() {
+        // do something
+    }
+
+    @AwaitForever
+    public void justDoIt() {
+        // do something
+    }
+
+}
+----

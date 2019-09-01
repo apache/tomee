@@ -1046,7 +1046,7 @@ public class StatefulContainer implements RpcContainer {
 
     /**
      * SessionSynchronizationCoordinator handles afterBegin, beforeCompletion and afterCompletion callbacks.
-     * <p/>
+     *
      * This class also is responsible for calling releaseInstance after the transaction completes.
      */
     private final class SessionSynchronizationCoordinator implements TransactionSynchronization {

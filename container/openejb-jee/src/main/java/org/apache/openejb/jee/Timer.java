@@ -31,29 +31,29 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  * ejb-jar_3_1.xsd
- * <p/>
+ *
  * <p>Java class for timerType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="timerType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="schedule" type="{http://java.sun.com/xml/ns/javaee}timer-scheduleType"/>
- *         &lt;element name="start" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="end" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="timeout-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType"/>
- *         &lt;element name="persistent" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="timezone" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;element name="info" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="timerType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="schedule" type="{http://java.sun.com/xml/ns/javaee}timer-scheduleType"/&gt;
+ *         &lt;element name="start" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="end" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="timeout-method" type="{http://java.sun.com/xml/ns/javaee}named-methodType"/&gt;
+ *         &lt;element name="persistent" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="timezone" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;element name="info" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

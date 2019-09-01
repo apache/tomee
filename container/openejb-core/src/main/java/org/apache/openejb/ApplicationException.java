@@ -20,14 +20,14 @@ package org.apache.openejb;
 /**
  * This exception is thrown when a normal EnterpriseBean exception is thrown.
  * It acts as a carrier or wrapper for the actual application exception.
- * <p/>
+ *
  * The ApplicationException's nested exception will be either an EJB spec
  * defined ApplicationException ( or a custom exception defined by the bean
  * developer) or a RemoteException.
- * <p/>
+ *
  * The org.apache.openejb.ApplicationException must be caught and its nested
  * exception rethrown by the bean proxy to the client.
- * <p/>
+ *
  * The org.apache.openejb.ApplicationException is non-system exception; it does NOT
  * indicate a problem with the contaienr itself.
  *

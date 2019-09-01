@@ -98,8 +98,8 @@ public class AppValidator {
         Thread.currentThread().setContextClassLoader(appModule.getClassLoader()); // be sure to not mix classloaders
         try {
             final ValidationRule[] rules = getValidationRules();
-            for (int i = 0; i < rules.length; i++) {
-                rules[i].validate(appModule);
+            for (ValidationRule rule : rules) {
+                rule.validate(appModule);
             }
         } catch (final DefinitionException de) {
             throw de;
@@ -164,22 +164,22 @@ public class AppValidator {
     }
 
     protected void printValidationExceptions(final ValidationException[] exceptions) {
-        for (int i = 0; i < exceptions.length; i++) {
+        for (ValidationException exception : exceptions) {
             System.out.print(" ");
-            System.out.print(exceptions[i].getPrefix());
+            System.out.print(exception.getPrefix());
             System.out.print(" ... ");
-            if (!(exceptions[i] instanceof ValidationError)) {
-                System.out.print(exceptions[i].getComponentName());
+            if (!(exception instanceof ValidationError)) {
+                System.out.print(exception.getComponentName());
                 System.out.print(": ");
             }
             if (level > 2) {
-                System.out.println(exceptions[i].getMessage(1));
+                System.out.println(exception.getMessage(1));
                 System.out.println();
                 System.out.print('\t');
-                System.out.println(exceptions[i].getMessage(level));
+                System.out.println(exception.getMessage(level));
                 System.out.println();
             } else {
-                System.out.println(exceptions[i].getMessage(level));
+                System.out.println(exception.getMessage(level));
             }
         }
         if (printCount && exceptions.length > 0) {
@@ -211,23 +211,23 @@ public class AppValidator {
     }
 
     protected void printValidationExceptionsXML(final ValidationException[] exceptions) {
-        for (int i = 0; i < exceptions.length; i++) {
+        for (ValidationException exception : exceptions) {
             System.out.print("    <");
-            System.out.print(exceptions[i].getPrefix());
+            System.out.print(exception.getPrefix());
             System.out.println(">");
-            if (!(exceptions[i] instanceof ValidationError)) {
+            if (!(exception instanceof ValidationError)) {
                 System.out.print("      <ejb-name>");
-                System.out.print(exceptions[i].getComponentName());
+                System.out.print(exception.getComponentName());
                 System.out.println("</ejb-name>");
             }
             System.out.print("      <summary>");
-            System.out.print(exceptions[i].getMessage(1));
+            System.out.print(exception.getMessage(1));
             System.out.println("</summary>");
             System.out.println("      <description><![CDATA[");
-            System.out.println(exceptions[i].getMessage(3));
+            System.out.println(exception.getMessage(3));
             System.out.println("]]></description>");
             System.out.print("    </");
-            System.out.print(exceptions[i].getPrefix());
+            System.out.print(exception.getPrefix());
             System.out.println(">");
         }
     }
@@ -235,13 +235,13 @@ public class AppValidator {
     public void displayResults(final ValidationResults[] sets) {
         if (printXml) {
             System.out.println("<results>");
-            for (int i = 0; i < sets.length; i++) {
-                printResultsXML(sets[i]);
+            for (ValidationResults set : sets) {
+                printResultsXML(set);
             }
             System.out.println("</results>");
         } else {
-            for (int i = 0; i < sets.length; i++) {
-                printResults(sets[i]);
+            for (ValidationResults set : sets) {
+                printResults(set);
             }
             for (int i = 0; i < sets.length; i++) {
                 if (sets[i].hasErrors() || sets[i].hasFailures()) {

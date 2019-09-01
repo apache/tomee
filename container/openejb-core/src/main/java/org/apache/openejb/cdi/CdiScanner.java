@@ -156,6 +156,14 @@ public class CdiScanner implements BdaScannerService {
 
             final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new HashMap<>();
             for (final BeansInfo.BDAInfo bda : beans.bdas) {
+/*                if (!startupObject.isFromWebApp() &&
+                    ejbJar.webapp &&
+                    !appInfo.webAppAlone &&
+                    ejbJar.path != null &&
+                    bda.uri.toString().contains(ejbJar.path)) {
+                    continue;
+                }*/
+
                 if (bda.uri != null) {
                     try {
                         beansXml.add(bda.uri.toURL());
@@ -165,6 +173,11 @@ public class CdiScanner implements BdaScannerService {
                 }
                 infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
             }
+/*
+            if (!startupObject.isFromWebApp() && ejbJar.webapp && !appInfo.webAppAlone) {
+                continue;
+            }*/
+            
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
                 // infoByBda.put() not needed since we know it means annotated
                 handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
@@ -220,11 +233,7 @@ public class CdiScanner implements BdaScannerService {
     }
 
     private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<String> list, final ClassLoader loader) {
-        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
-        if (classes == null) {
-            classes = new HashSet<>();
-            beanClassesPerBda.put(bdaInfo, classes);
-        }
+        Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
 
         for (final String s : list) {
             final Class<?> load = load(s, loader);
@@ -234,11 +243,7 @@ public class CdiScanner implements BdaScannerService {
         }
     }
     private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<Class<?>> list) {
-        Set<Class<?>> classes = beanClassesPerBda.get(bdaInfo);
-        if (classes == null) {
-            classes = new HashSet<>();
-            beanClassesPerBda.put(bdaInfo, classes);
-        }
+        Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
 
         classes.addAll(list);
     }

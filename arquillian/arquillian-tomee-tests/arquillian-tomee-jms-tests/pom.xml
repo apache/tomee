@@ -15,9 +15,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -27,7 +25,7 @@
   </parent>
 
   <artifactId>arquillian-tomee-jms-tests</artifactId>
-  <name>OpenEJB :: Arquillian Adaptors Parent :: Tests :: JMS</name>
+  <name>TomEE :: Arquillian Adaptors Parent :: Tests :: JMS</name>
 
   <properties>
     <profile-under-test>plus</profile-under-test>
@@ -35,6 +33,10 @@
     <!-- cause mojarra only works with CDI for now -->
     <skip.remote.plume>true</skip.remote.plume>
     <skip.webapp.plume>true</skip.webapp.plume>
+
+    <!-- no JMS in webprofile -->
+    <skip.remote.webprofile>true</skip.remote.webprofile>
+    <skip.webapp.webprofile>true</skip.webapp.webprofile>
   </properties>
 
   <dependencies>
@@ -43,6 +45,28 @@
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

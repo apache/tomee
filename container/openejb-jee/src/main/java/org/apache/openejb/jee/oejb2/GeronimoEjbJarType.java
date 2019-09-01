@@ -31,30 +31,30 @@ import java.util.ArrayList;
 
 /**
  * <p>Java class for geronimo-ejb-jarType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="geronimo-ejb-jarType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}clustering" minOccurs="0"/>
- *         &lt;element name="openejb-jar" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}openejb-jarType" minOccurs="0"/>
- *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="tss-link" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}tss-linkType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="web-service-binding" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}web-service-bindingType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}security" minOccurs="0"/>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service"/>
- *           &lt;element ref="{http://java.sun.com/xml/ns/persistence}persistence"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="geronimo-ejb-jarType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}clustering" minOccurs="0"/&gt;
+ *         &lt;element name="openejb-jar" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}openejb-jarType" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://geronimo.apache.org/xml/ns/naming-1.2}jndiEnvironmentRefsGroup" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="tss-link" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}tss-linkType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="web-service-binding" type="{http://geronimo.apache.org/xml/ns/j2ee/ejb/openejb-2.0}web-service-bindingType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}security" minOccurs="0"/&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service"/&gt;
+ *           &lt;element ref="{http://java.sun.com/xml/ns/persistence}persistence"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -174,21 +174,21 @@ public class GeronimoEjbJarType {
 
     /**
      * Gets the value of the jndiEnvironmentRefsGroup property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the jndiEnvironmentRefsGroup property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getJndiEnvironmentRefsGroup().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link ResourceEnvRefType }{@code >}
      * {@link JAXBElement }{@code <}{@link EjbRefType }{@code >}
@@ -273,21 +273,21 @@ public class GeronimoEjbJarType {
 
     /**
      * Gets the value of the messageDestination property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the messageDestination property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMessageDestination().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link MessageDestinationType }
      */
@@ -322,21 +322,21 @@ public class GeronimoEjbJarType {
 
     /**
      * Gets the value of the service property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the service property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getService().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractServiceType }{@code >}
      * {@link JAXBElement }{@code <}{@link org.apache.openejb.jee.oejb2.GbeanType }{@code >}

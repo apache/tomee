@@ -19,7 +19,7 @@ package org.apache.openejb.monitoring;
 
 import org.apache.openejb.util.Classes;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -53,8 +53,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import static java.util.Collections.sort;
-
 /**
  * @version $Rev$ $Date$
  */
@@ -73,6 +71,7 @@ public class ManagedMBean implements DynamicMBean {
     private boolean filterAttributes;
     private MBeanParameterInfo excludeInfo;
     private MBeanParameterInfo includeInfo;
+    private PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry();
 
     public ManagedMBean(final Object managed) {
         this(managed, "");
@@ -95,6 +94,8 @@ public class ManagedMBean implements DynamicMBean {
             operationsMap.put(filterOperation.getName(), new MethodMember(method, this, ""));
 
             filterAttributes = true;
+
+            propertyEditorRegistry.registerDefaults();
         } catch (final NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
@@ -202,7 +203,7 @@ public class ManagedMBean implements DynamicMBean {
             final Class<?> expectedType = method.getParameterTypes()[i];
             if (value instanceof String && expectedType != Object.class) {
                 final String stringValue = (String) value;
-                value = PropertyEditors.getValue(expectedType, stringValue);
+                value = propertyEditorRegistry.getValue(expectedType, stringValue);
             }
             args[i] = value;
         }
@@ -244,8 +245,8 @@ public class ManagedMBean implements DynamicMBean {
             }
         }
 
-        sort(operations, MBeanFeatureInfoComparator.INSTANCE);
-        sort(attributes, MBeanFeatureInfoComparator.INSTANCE);
+        operations.sort(MBeanFeatureInfoComparator.INSTANCE);
+        attributes.sort(MBeanFeatureInfoComparator.INSTANCE);
 
         if (filterAttributes) {
             final Iterator<MBeanAttributeInfo> iterator = attributes.iterator();

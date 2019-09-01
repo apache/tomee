@@ -53,6 +53,8 @@ import static org.junit.Assert.assertTrue;
 public class MaxSizePoolEndpointHandlerTest {
 
     private static final String TEXT = "foo";
+    private static final int COUNT = 100;
+    private static final int POOL_SIZE = 5;
 
     @Configuration
     public Properties config() {
@@ -63,7 +65,7 @@ public class MaxSizePoolEndpointHandlerTest {
             .p("mdbs", "new://Container?type=MESSAGE")
             .p("mdbs.ResourceAdapter", "sra")
             .p("mdbs.pool", "true")
-            .p("mdbs.maxSize", "30")
+            .p("mdbs.maxSize", "" + POOL_SIZE)
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
@@ -93,7 +95,7 @@ public class MaxSizePoolEndpointHandlerTest {
     public void shouldSendMessage() throws Exception {
         assertNotNull(cf);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < COUNT; i++) {
             final SampleConnection connection = cf.getConnection();
             try {
                 connection.sendMessage(TEXT);
@@ -106,7 +108,7 @@ public class MaxSizePoolEndpointHandlerTest {
         setControl("start");
 
         assertTrue(Listener.sync());
-        assertEquals(30, Listener.COUNTER.get());
+        assertEquals(POOL_SIZE, Listener.COUNTER.get());
     }
 
     private void setControl(final String action) throws Exception {
@@ -131,7 +133,8 @@ public class MaxSizePoolEndpointHandlerTest {
         }
 
         public static void reset() {
-            latch = new CountDownLatch(100);
+            latch = new CountDownLatch(COUNT);
+            COUNTER.set(0);
             BOOLEANS.clear();
         }
 

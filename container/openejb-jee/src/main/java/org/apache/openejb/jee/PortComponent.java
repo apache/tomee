@@ -30,38 +30,38 @@ import java.util.List;
 
 /**
  * javaee_web_services_1_3.xsd
- * <p/>
+ *
  * <p>Java class for port-componentType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="port-componentType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" minOccurs="0"/>
- *         &lt;element name="display-name" type="{http://java.sun.com/xml/ns/javaee}display-nameType" minOccurs="0"/>
- *         &lt;element name="icon" type="{http://java.sun.com/xml/ns/javaee}iconType" minOccurs="0"/>
- *         &lt;element name="port-component-name" type="{http://java.sun.com/xml/ns/javaee}string"/>
- *         &lt;element name="wsdl-service" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType" minOccurs="0"/>
- *         &lt;element name="wsdl-port" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType" minOccurs="0"/>
- *         &lt;element name="enable-mtom" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/>
- *         &lt;element name="mtom-threshold" type="{http://java.sun.com/xml/ns/javaee}xsdNonNegativeIntegerType" minOccurs="0"/>
- *         &lt;element name="addressing" type="{http://java.sun.com/xml/ns/javaee}addressingType" minOccurs="0"/>
- *         &lt;element name="respect-binding" type="{http://java.sun.com/xml/ns/javaee}respect-bindingType" minOccurs="0"/>
- *         &lt;element name="protocol-binding" type="{http://java.sun.com/xml/ns/javaee}protocol-bindingType" minOccurs="0"/>
- *         &lt;element name="service-endpoint-interface" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/>
- *         &lt;element name="service-impl-bean" type="{http://java.sun.com/xml/ns/javaee}service-impl-beanType"/>
- *         &lt;choice>
- *           &lt;element name="handler" type="{http://java.sun.com/xml/ns/javaee}handlerType" maxOccurs="unbounded" minOccurs="0"/>
- *           &lt;element name="handler-chains" type="{http://java.sun.com/xml/ns/javaee}handler-chainsType" minOccurs="0"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="port-componentType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://java.sun.com/xml/ns/javaee}descriptionType" minOccurs="0"/&gt;
+ *         &lt;element name="display-name" type="{http://java.sun.com/xml/ns/javaee}display-nameType" minOccurs="0"/&gt;
+ *         &lt;element name="icon" type="{http://java.sun.com/xml/ns/javaee}iconType" minOccurs="0"/&gt;
+ *         &lt;element name="port-component-name" type="{http://java.sun.com/xml/ns/javaee}string"/&gt;
+ *         &lt;element name="wsdl-service" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType" minOccurs="0"/&gt;
+ *         &lt;element name="wsdl-port" type="{http://java.sun.com/xml/ns/javaee}xsdQNameType" minOccurs="0"/&gt;
+ *         &lt;element name="enable-mtom" type="{http://java.sun.com/xml/ns/javaee}true-falseType" minOccurs="0"/&gt;
+ *         &lt;element name="mtom-threshold" type="{http://java.sun.com/xml/ns/javaee}xsdNonNegativeIntegerType" minOccurs="0"/&gt;
+ *         &lt;element name="addressing" type="{http://java.sun.com/xml/ns/javaee}addressingType" minOccurs="0"/&gt;
+ *         &lt;element name="respect-binding" type="{http://java.sun.com/xml/ns/javaee}respect-bindingType" minOccurs="0"/&gt;
+ *         &lt;element name="protocol-binding" type="{http://java.sun.com/xml/ns/javaee}protocol-bindingType" minOccurs="0"/&gt;
+ *         &lt;element name="service-endpoint-interface" type="{http://java.sun.com/xml/ns/javaee}fully-qualified-classType" minOccurs="0"/&gt;
+ *         &lt;element name="service-impl-bean" type="{http://java.sun.com/xml/ns/javaee}service-impl-beanType"/&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="handler" type="{http://java.sun.com/xml/ns/javaee}handlerType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *           &lt;element name="handler-chains" type="{http://java.sun.com/xml/ns/javaee}handler-chainsType" minOccurs="0"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

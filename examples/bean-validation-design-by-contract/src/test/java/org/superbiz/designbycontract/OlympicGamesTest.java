@@ -37,7 +37,7 @@ public class OlympicGamesTest {
     private OlympicGamesManager gamesManager;
 
     @EJB
-    private PoleVaultingManager poleVaultingManager;
+    private PoleVaultingManagerBean poleVaultingManager;
 
     @BeforeClass
     public static void start() {

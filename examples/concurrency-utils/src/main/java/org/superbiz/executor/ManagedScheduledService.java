@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.context.RequestScoped;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -56,15 +57,17 @@ public class ManagedScheduledService {
      * executor uses a runnable to perform the operations.<br>
      * If an exception happens, the task will stop and you can catch the exception with the {@link ScheduledFuture}.
      *
-     * @param value        The value to compute
-     * @param errorMessage If not null an exception with be thrown with this message
+     * @param value          The value to compute
+     * @param errorMessage   If not null an exception with be thrown with this message
+     * @param countDownLatch
      * @return An object where you can cancel the periodic task and check for exceptions.
      */
     public ScheduledFuture<?> periodicFixedDelayTask(final int value,
-                                                     final String errorMessage) {
+                                                     final String errorMessage,
+                                                     final CountDownLatch countDownLatch) {
         LOGGER.info("longRunnableTask scheduled");
         return executor.scheduleAtFixedRate(
-                longRunnableTask(value, 10, errorMessage), 0, 100, TimeUnit.MILLISECONDS);
+                longRunnableTask(value, 10, errorMessage, countDownLatch), 0, 100, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -77,22 +80,14 @@ public class ManagedScheduledService {
      */
     private Runnable longRunnableTask(final int value,
                                       final int taskDurationMs,
-                                      final String errorMessage) {
+                                      final String errorMessage,
+                                      final CountDownLatch countDownLatch) {
         return () -> {
-            if (nonNull(errorMessage)) {
-                LOGGER.severe("Exception will be thrown");
-                throw new RuntimeException(errorMessage);
-            }
-            try {
-                // Simulate a long processing task using TimeUnit to sleep.
-                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Problem while waiting");
-            }
-
+            failOrWait(taskDurationMs, errorMessage);
             Integer result = value + 1;
             LOGGER.info("longRunnableTask complete. Value is " + result);
             // Cannot return result with a Runnable.
+            countDownLatch.countDown();
         };
     }
 
@@ -109,21 +104,25 @@ public class ManagedScheduledService {
                                                final String errorMessage) {
         return () -> {
             LOGGER.info("longCallableTask start");
-            if (nonNull(errorMessage)) {
-                LOGGER.severe("Exception will be thrown");
-                throw new RuntimeException(errorMessage);
-            }
-
-            try {
-                // Simulate a long processing task using TimeUnit to sleep.
-                TimeUnit.MILLISECONDS.sleep(taskDurationMs);
-            } catch (InterruptedException e) {
-                throw new RuntimeException("Problem while waiting");
-            }
+            failOrWait(taskDurationMs, errorMessage);
             LOGGER.info("longCallableTask complete");
             // We can return a result with a Callable.
             return value + 1;
         };
+    }
+
+    private void failOrWait(final int taskDurationMs,
+                            final String errorMessage) {
+        if (nonNull(errorMessage)) {
+            LOGGER.severe("Exception will be thrown");
+            throw new RuntimeException(errorMessage);
+        }
+        try {
+            // Simulate a long processing task using TimeUnit to sleep.
+            TimeUnit.MILLISECONDS.sleep(taskDurationMs);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Problem while waiting");
+        }
     }
 
 }

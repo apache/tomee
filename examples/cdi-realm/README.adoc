@@ -1,0 +1,181 @@
+= CDI Realm
+:index-group: Security
+:jbake-type: page
+:jbake-status: published
+
+This example shows how to secure access to a web resource provided by a servlet. For this, we will use realms.
+
+A https://javaee.github.io/tutorial/security-intro005.html#BNBXJ[realm], in JEE world, is a security policy domain defined for a web or application server.
+A realm contains a collection of users, who may or may not be assigned to a group.
+
+A realm, basically, specifies a list of users and roles. I's a "database" of users with associated passwords and possible roles.
+The Servlet Specification doesn't specifies an API for specifying such a list of users and roles for a given application.
+For this reason, Tomcat servlet container defines an interface, `org.apache.catalina.Realm`. More information can be found https://tomcat.apache.org/tomcat-9.0-doc/realm-howto.html[here].
+
+In TomEE application server, the mechanism used by Tomcat to define a realm for a servlet is reused and enhanced. More information can be found https://www.tomitribe.com/blog/tomee-security-episode-1-apache-tomcat-and-apache-tomee-security-under-the-covers[here].
+
+== Example
+
+This example shows a servlet secured using a realm. The secured servlet has a simple functionality, just for illustrating the concepts explained here:
+
+....
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/servlet")
+public class SecuredServlet extends HttpServlet {
+    @Override
+    protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+        resp.getWriter().write("Servlet!");
+    }
+}
+....
+
+For securing this servlet, we will add the following class:
+
+....
+import javax.enterprise.context.RequestScoped;
+import java.security.Principal;
+
+@RequestScoped // just to show we can be bound to the request but @ApplicationScoped is what makes sense
+public class AuthBean {
+    public Principal authenticate(final String username, String password) {
+        if (("userA".equals(username) || "userB".equals(username)) && "test".equals(password)) {
+            return new Principal() {
+                @Override
+                public String getName() {
+                    return username;
+                }
+
+                @Override
+                public String toString() {
+                    return username;
+                }
+            };
+        }
+        return null;
+    }
+
+    public boolean hasRole(final Principal principal, final String role) {
+        return principal != null && (
+                principal.getName().equals("userA") && (role.equals("admin")
+                        || role.equals("user"))
+                        || principal.getName().equals("userB") && (role.equals("user"))
+        );
+    }
+}
+....
+
+The class defines 2 methods: `authenticate` and `hasRole`.
+Both these methods will be used by a class, `LazyRealm`, implemented in TomEE application server.
+In the file `webapp/META-INF/context.xml` this realm is configured:
+
+....
+<Context preemptiveAuthentication="true">
+  <Valve className="org.apache.catalina.authenticator.BasicAuthenticator" />
+  <Realm className="org.apache.tomee.catalina.realm.LazyRealm"
+         cdi="true" realmClass="org.superbiz.AuthBean"/>
+</Context>
+....
+
+The class `AuthBean` defines a "database" with 2 users: userA (having role admin) and userB (having role user), both having the password test.
+Class `org.apache.tomee.catalina.realm.LazyRealm` will load our `AuthBean` class and will use it to check if a user has access to the content provided by our servlet.
+
+== Tests
+
+....
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.openejb.arquillian.common.IO;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+@RunWith(Arquillian.class)
+public class AuthBeanTest {
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "low-typed-realm.war")
+                .addClasses(SecuredServlet.class, AuthBean.class)
+                .addAsManifestResource(new FileAsset(new File("src/main/webapp/META-INF/context.xml")), "context.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @ArquillianResource
+    private URL webapp;
+
+    @Test
+    public void success() throws IOException {
+        assertEquals("200 Servlet!", get("userA", "test"));
+    }
+
+    @Test
+    public void failure() throws IOException {
+        assertThat(get("userA", "oops, wrong password"), startsWith("401"));
+    }
+
+    private String get(final String user, final String password) {
+        final BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
+        basicCredentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
+        final CloseableHttpClient client = HttpClients.custom()
+                .setDefaultCredentialsProvider(basicCredentialsProvider).build();
+
+        final HttpHost httpHost = new HttpHost(webapp.getHost(), webapp.getPort(), webapp.getProtocol());
+        final AuthCache authCache = new BasicAuthCache();
+        final BasicScheme basicAuth = new BasicScheme();
+        authCache.put(httpHost, basicAuth);
+        final HttpClientContext context = HttpClientContext.create();
+        context.setAuthCache(authCache);
+
+        final HttpGet get = new HttpGet(webapp.toExternalForm() + "servlet");
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(httpHost, get, context);
+            return response.getStatusLine().getStatusCode() + " " + EntityUtils.toString(response.getEntity());
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            try {
+                IO.close(response);
+            } catch (final IOException e) {
+                // no-op
+            }
+        }
+    }
+}
+....
+
+The test uses Arquillian to start an application server and load the servlet.
+There are two tests methods: `success`, where our servlet is accessed with the correct username and password, and `failure`, where our servlet is accessed with an incorrect password.
+
+Full example can be found https://github.com/apache/tomee/tree/master/examples/cdi-realm[here].
+It's a maven project, and the test can be run with `mvn clean install` command.

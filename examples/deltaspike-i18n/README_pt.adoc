@@ -1,0 +1,108 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Apache DeltaSpike I18n Demo
+
+Este exemplo mostra como usar o DeltaSpike I18n.
+
+== Introdução ao Apache DeltaSpike I18n
+
+O Apache DeltaSpike I18n é um módulo do projeto Apache DeltaSpike que permite o uso de mensagens de tipo seguro e internacionalização.
+
+== Amostra de código
+
+=== @MessageBundle interface
+Criamos uma interface com um método para cada mensagem de tipo seguro. A interface deve ser anotatada com `@MessageBundle` e para cada mensagem é necessário ser anotada com `@MessageTemplate`:
+
+....
+@MessageBundle
+public interface MessageHelper {
+
+    @MessageTemplate("{openejb.and.deltaspike}")
+    String openejbAndDeltaspike();
+}
+....
+
+=== Arquivo de propriedades do MessageHelper
+Ele procurará a string "openejb.and.deltaspike" (sem as chaves "{}") em um arquivo de propriedades com o mesmo nome da interface, mas com a extensão .properties em vez de .java ou .class.
+
+MessageHelper.properties
+
+....
+openejb.and.deltaspike = OpenEJB and DeltaSpike are cool products!
+....
+
+=== Usando o tipo de mensagens seguras
+Agora você pode injetar a interface e recuperar a mensagem de tipo seguro:
+
+....
+    @Inject
+    private MessageHelper msg;
+
+    @Test
+    public void check() {
+        assertEquals("OpenEJB and DeltaSpike are cool products!", msg.openejbAndDeltaspike());
+    }
+}
+....
+
+== Executando
+
+Executando o exemplo é bastante simples. No diretorio `/tomee/examples/deltaspike-i18n` execute:
+
+$ mvn clean install
+
+Qual deve criar a saída como o seguinte.
+
+....
+Running org.superbiz.deltaspike.i18n.MessageHelperTest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Tue Mar 05 17:05:52 GMT 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190305
+INFO - Build time: 01:33
+INFO - ********************************************************************************
+INFO - openejb.home = /Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n
+INFO - openejb.base = /Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@436a4e4b
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Using 'openejb.deployments.classpath=false'
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Configuring enterprise application: /Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n/a9dac2c3-841d-4954-b038-450896c63783.war
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean a9dac2c3-841d-4954-b038-450896c63783_org.superbiz.deltaspike.i18n.MessageHelperTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /var/folders/p6/lmyy1_jd7fv_h5lzqg8rpvhh0000gp/T for stateful session passivation
+INFO - Enterprise application "/Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n/a9dac2c3-841d-4954-b038-450896c63783.war" loaded.
+INFO - Assembling app: /Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n/a9dac2c3-841d-4954-b038-450896c63783.war
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@436a4e4b
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - class: org.apache.deltaspike.core.impl.exception.control.extension.ExceptionControlExtension activated=true
+INFO - class: org.apache.deltaspike.core.impl.message.MessageBundleExtension activated=true
+INFO - class: org.apache.deltaspike.core.impl.message.NamedMessageBundleInvocationHandler activated=true
+INFO - class: org.apache.deltaspike.core.impl.config.ConfigurationExtension activated=true
+INFO - class: org.apache.deltaspike.core.impl.exclude.extension.ExcludeExtension activated=true
+INFO - class: org.apache.deltaspike.core.impl.exclude.CustomProjectStageBeanFilter activated=true
+INFO - class: org.apache.deltaspike.core.impl.exclude.GlobalAlternative activated=true
+INFO - class: org.apache.deltaspike.core.impl.jmx.MBeanExtension activated=true
+INFO - class: org.apache.deltaspike.core.impl.scope.DeltaSpikeContextExtension activated=true
+INFO - Computed the following DeltaSpike ProjectStage: Production
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 1051 ms.
+INFO - Deployed Application(path=/Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n/a9dac2c3-841d-4954-b038-450896c63783.war)
+INFO - Undeploying app: /Users/marcos.ferreira/Marcos/tomee/examples/deltaspike-i18n/a9dac2c3-841d-4954-b038-450896c63783.war
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.51 sec
+INFO - Destroying container system
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

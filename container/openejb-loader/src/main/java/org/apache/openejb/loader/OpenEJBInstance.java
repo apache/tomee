@@ -30,7 +30,7 @@ public class OpenEJBInstance {
         this.init = openejb.getMethod("init", Properties.class);
         this.isInitialized = openejb.getMethod("isInitialized");
     }
-
+    
     public void init(final Properties props) throws Exception {
         try {
             init.invoke(null, props);

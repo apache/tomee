@@ -19,8 +19,7 @@
 
 <!-- $Rev: 638272 $ $Date: 2008-03-18 01:59:59 -0700 (Tue, 18 Mar 2008) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
@@ -29,7 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-business-logic</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: Examples :: Simple EAR :: Business Logic</name>
+  <name>TomEE :: Examples :: Simple EAR :: Business Logic</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -50,6 +49,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+        <configuration>
+          <argLine>-Djdk.attach.allowAttachSelf</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -62,7 +65,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

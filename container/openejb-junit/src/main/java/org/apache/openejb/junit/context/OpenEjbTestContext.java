@@ -300,7 +300,7 @@ public class OpenEjbTestContext implements TestContext {
      * a setter, and therefore I made it work on private fields as well. So if you
      * are injecting to a private field and wish to have some control over it, create
      * a setter according to the JavaBeans idioms.
-     * <p/>
+     *
      * If the setter isn't found OR it fails, then an attempt will be made to set
      * it directly, and a message will be printed when it fails.
      */
@@ -373,7 +373,7 @@ public class OpenEjbTestContext implements TestContext {
      * understood by the {@link #performInjections(java.lang.Object) } method. This
      * method will be called, supplying the annotation, and you can then interpret and
      * create the value to be injected. By default this method just returns null.
-     * <p/>
+     *
      * You can use this to inject values into annotated fields which contain custom
      * values in their names.
      *

@@ -47,11 +47,11 @@ import java.util.jar.JarInputStream;
 /**
  * ClassFinder searches the classpath of the specified classloader for
  * packages, classes, constructors, methods, or fields with specific annotations.
- * <p/>
+ *
  * For security reasons ASM is used to find the annotations.  Classes are not
  * loaded unless they match the requirements of a called findAnnotated* method.
  * Once loaded, these classes are cached.
- * <p/>
+ *
  * The getClassesNotLoaded() method can be used immediately after any find*
  * method to get a list of classes which matched the find requirements (i.e.
  * contained the annotation), but were unable to be loaded.
@@ -68,13 +68,13 @@ public class AnnotationFinder {
     /**
      * Creates a ClassFinder that will search the urls in the specified classloader
      * excluding the urls in the classloader's parent.
-     * <p/>
+     *
      * To include the parent classloader, use:
-     * <p/>
+     *
      * new ClassFinder(classLoader, false);
-     * <p/>
+     *
      * To exclude the parent's parent, use:
-     * <p/>
+     *
      * new ClassFinder(classLoader, classLoader.getParent().getParent());
      *
      * @param classLoader source of classes to scan
@@ -140,13 +140,13 @@ public class AnnotationFinder {
 
     /**
      * Returns a list of classes that could not be loaded in last invoked findAnnotated* method.
-     * <p/>
+     *
      * The list will only contain entries of classes whose byte code matched the requirements
      * of last invoked find* method, but were unable to be loaded and included in the results.
-     * <p/>
+     *
      * The list returned is unmodifiable.  Once obtained, the returned list will be a live view of the
      * results from the last findAnnotated* method call.
-     * <p/>
+     *
      * This method is not thread safe.
      *
      * @return an unmodifiable live view of classes that could not be loaded in previous findAnnotated* call.

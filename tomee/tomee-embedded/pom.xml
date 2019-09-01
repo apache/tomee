@@ -19,8 +19,7 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <artifactId>tomee</artifactId>
@@ -31,7 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-embedded</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: TomEE Embedded</name>
+  <name>TomEE :: TomEE :: TomEE Embedded</name>
   <version>8.0.0-SNAPSHOT</version>
 
   <build>
@@ -479,7 +478,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcmail-jdk15on</artifactId>
-      <version>1.57</version>
+      <version>1.60</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

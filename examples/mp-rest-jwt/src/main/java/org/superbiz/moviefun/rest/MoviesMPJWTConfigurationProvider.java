@@ -16,7 +16,7 @@
  */
 package org.superbiz.moviefun.rest;
 
-import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
+import org.apache.tomee.microprofile.jwt.config.JWTAuthConfiguration;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Produces;
@@ -32,7 +32,7 @@ import java.util.Optional;
 public class MoviesMPJWTConfigurationProvider {
 
     @Produces
-    Optional<JWTAuthContextInfo> getOptionalContextInfo() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    Optional<JWTAuthConfiguration> getOptionalContextInfo() throws NoSuchAlgorithmException, InvalidKeySpecException {
         final String pemEncoded = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlivFI8qB4D0y2jy0CfEq" +
                 "Fyy46R0o7S8TKpsx5xbHKoU1VWg6QkQm+ntyIv1p4kE1sPEQO73+HY8+Bzs75XwR" +
                 "TYL1BmR1w8J5hmjVWjc6R2BTBGAYRPFRhor3kpM6ni2SPmNNhurEAHw7TaqszP5e" +
@@ -46,11 +46,11 @@ public class MoviesMPJWTConfigurationProvider {
         final KeyFactory kf = KeyFactory.getInstance("RSA");
         final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
 
-        return Optional.of(JWTAuthContextInfo.authContextInfo(pk, "https://server.example.com"));
+        return Optional.of(JWTAuthConfiguration.authConfiguration(pk, "https://server.example.com"));
     }
 
     @Produces
-    JWTAuthContextInfo getContextInfo() throws InvalidKeySpecException, NoSuchAlgorithmException {
+    JWTAuthConfiguration getContextInfo() throws InvalidKeySpecException, NoSuchAlgorithmException {
         return getOptionalContextInfo().get();
     }
 }

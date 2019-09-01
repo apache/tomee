@@ -1,0 +1,172 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= JSF-CDI-EJB
+
+Aplicação simples que contém um CDI managed bean `CalculatorBean`,
+que usa o EJB `Calculator` para adicionar dois números e mostrar os resultados para o usuário. O EJB é injetado no managed bean usando a anotação
+@Inject.
+
+Você poderia executar isso no último Apache TomEE
+https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/[snapshot]
+
+O código completo está abaixo, mas vamos quebrá-lo para olhar para alguns trechos menores e ver como ele funciona.
+
+Uma pequena nota sobre a configuração:
+
+Quanto as bibliotecas, myfaces-api e myfaces-impl são fornecidas em
+tomee/lib e, portanto não devem ser parte do war. Nos termos do Maven, eles estariam com o escopo `provided'
+
+Observe também que nós usamos a declaração servlet 2.5 no web.xml
+
+E nós usamos a versão 2.0 do faces-config
+
+Para tornar este em um cdi-aware-archive (ou seja, arquivo Bean) um beans.xml vazio
+é adicionado no WEB-INF
+
+....
+   <?xml version="1.0" encoding="UTF-8"?>
+
+   <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+     http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
+   </beans>
+....
+
+Nós primeiro vamos declarar o FacesServlet no web.xml
+
+....
+  <servlet>
+    <servlet-name>Faces Servlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+....
+
+FacesServlet atua como o controlador mestre.
+
+Em seguida criaremos o arquivo calculator.xhtml.
+
+....
+       <h:outputText value='Enter first number'/>
+       <h:inputText value='#{calculatorBean.x}'/>
+       <h:outputText value='Enter second number'/>
+       <h:inputText value='#{calculatorBean.y}'/>
+       <h:commandButton action="#{calculatorBean.add}" value="Add"/>
+....
+
+Observe como usamos o bean aqui. Por padrão, o nome do bean seria o nome simples da classe bean com a primeira letra minúscula 
+
+Nós temos o `CalculatorBean` anotado com `@RequestScoped`. Então quando uma requisição vem, o bean é instanciado e colocado no escopo da requisição.
+
+Aqui, o método getX() do calculatorBean é invocado e valor do resultado é apresentado. x sendo um Double, nós devemos ver justamente 0.0 sendo exibido.
+
+Quando você modifica o valor e submete o formulário, esses valores inseridos são vinculados no bean usando os setters e então o método commandButton-action é invocado. 
+
+Neste caso, CalculatorBean#add() é invocado.
+
+Calculator#add() delega o trabalho para o ejb, obtém o resultado, armazena-o e, em seguida, retorna qual view deve ser processada.
+
+
+O valor de retorno `success` é verificado no faces-config
+navigation-rules e a respectiva página é renderizada.
+
+No nosso caso, a página `result.xhtml` é renderizada onde usar EL e mostra o resultado do request-scoped `calculatorBean`.
+
+# Código-fonte
+
+== CalculatorBean
+
+....
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+import javax.inject.Inject;
+
+@RequestScoped
+@Named
+public class CalculatorBean {
+    @Inject
+    Calculator calculator;
+    private double x;
+    private double y;
+    private double result;
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getResult() {
+        return result;
+    }
+
+    public void setResult(double result) {
+        this.result = result;
+    }
+
+    public String add() {
+        result = calculator.add(x, y);
+        return "success";
+    }
+}
+....
+
+== Calculator
+
+....
+package org.superbiz.jsf;
+
+import javax.ejb.Stateless;
+
+@Stateless
+public class Calculator{
+
+    public double add(double x, double y) {
+        return x + y;
+    }
+}
+....
+
+#web.xml
+
+MyProject web.xml
+
+Faces Servlet javax.faces.webapp.FacesServlet 1
+
+Faces Servlet *.jsf
+
+index.jsp index.html
+
+#Calculator.xhtml
+
+<!DOCTYPE html PUBLIC ``-//W3C//DTD XHTML 1.0 Transitional//EN''
+``http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd''>
+
+#Result.xhtml
+
+<!DOCTYPE html PUBLIC ``-//W3C//DTD XHTML 1.0 Transitional//EN''
+``http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd''>
+
+....
+    <h:commandLink action="back">
+        <h:outputText value="Home"/>
+    </h:commandLink>
+</h:form>
+....
+
+#faces-config.xml
+
+/calculator.xhtml success /result.xhtml
+
+/result.xhtml back /calculator.xhtml

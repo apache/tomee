@@ -19,8 +19,7 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
@@ -30,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-catalina</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Catalina</name>
+  <name>TomEE :: TomEE :: Catalina</name>
   <description>This module contains the classes that will be added to the catalina class loader</description>
 
   <properties>
@@ -65,6 +64,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
       <classifier>tomcat</classifier>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-config</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

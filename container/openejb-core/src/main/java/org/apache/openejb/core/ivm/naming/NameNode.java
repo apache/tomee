@@ -26,7 +26,6 @@ import javax.naming.NamingException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class NameNode implements Serializable {
     private final String atomicName;
@@ -219,13 +218,7 @@ public class NameNode implements Serializable {
 
 
     public int compareTo(final int otherHash) {
-        if (atomicHash == otherHash) {
-            return 0;
-        } else if (atomicHash > otherHash) {
-            return 1;
-        } else {
-            return -1;
-        }
+        return Integer.compare(atomicHash, otherHash);
     }
 
     private void bind(final NameNode node) {
@@ -310,10 +303,8 @@ public class NameNode implements Serializable {
         }
         
         if(myObject instanceof Federation) {
-            Iterator<Context> federatedContextsIterator = ((Federation) myObject).iterator();
-            while(federatedContextsIterator.hasNext()) {
-                Context current = federatedContextsIterator.next();
-                if(IvmContext.class.isInstance(current)) {
+            for (Context current : ((Federation) myObject)) {
+                if (IvmContext.class.isInstance(current)) {
                     IvmContext.class.cast(current).setReadOnly(isReadOnly);
                 }
             }

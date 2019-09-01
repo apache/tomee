@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * This class encompasses a little technique that saves lots of architecture rework.
- * <p/>
+ *
  * Essentially we're allowing an EjbModule to be both an EjbModule and a ClientModule.
  * Trick is we don't really know if it has any @LocaClient or @RemoteClient classes
  * until we've scanned it.  Since it's already an EjbModule and we do plan to scan
@@ -35,7 +35,7 @@ import java.util.List;
  * don't want to do that twice if we don't have to.  We link them by giving them the
  * same AtomicReference<ClassFinder> object.  When one of them sets it, they both see it
  * and the need to create a second one is avoided.
- * <p/>
+ *
  * If the automatically generated ClientModule doesn't turn out to really be a client after
  * any descriptors have been read and the jar scanned, then we just remove it so it doesn't
  * factor into the remainder of the deploy chain.

@@ -50,7 +50,6 @@ public class ObserversTest extends Assert {
     }
 
     @Test
-    @Ignore("Object invoked instead")
     public void colorStillInvoked() throws Exception {
         observers.fireEvent(new Green());
         assertEvent(BasicObserver.color);

@@ -558,15 +558,15 @@ public class Cmp2Generator implements Opcodes {
      * Create a simple internal method for obtaining the
      * primary key.  There are 2 possibilities for handling
      * the primary key here:
-     * <p/>
+     *
      * 1)  There is a defined primary key field.  The
      * contents of that field are returned.
-     * <p/>
+     *
      * 2)  The primary key is provided by the container.
      * This is a long value stored in a private, generated
      * field.  This field is returned as a generated
      * wrappered Long.
-     * <p/>
+     *
      * 3)  A primary key class has been provided.  An instance
      * of this class is instantiated, and code is generated
      * that will copy all of the CMP fields from the EJB
@@ -751,7 +751,7 @@ public class Cmp2Generator implements Opcodes {
 
         // return this.${cmrField.name}Cmr.get(this.${cmdField.name});  
         // this takes the value stored in the CMR field (which might be a single value or 
-        // a Set or Collection), and hands it to the appropriate accessor. 
+        // a Set or Collection), and hands it to the appropriate accessor.
         mv.visitMethodInsn(INVOKEVIRTUAL, cmrField.getAccessorInternalName(), "get", cmrField.getCmrStyle().getGetterDescriptor(), false);
         // if the style is a single value, then we're going to need to cast this 
         // to the target class before returning.  
@@ -1130,7 +1130,7 @@ public class Cmp2Generator implements Opcodes {
         /**
          * Handle a conversion from one object type to another.  If
          * There are 3 possible conversions:
-         * <p/>
+         *
          * 1)  The to class is Object.  This can be handled
          * without conversion.  This option is a NOP.
          * 2)  The to class is a reference type (non-primitive).  This conversion

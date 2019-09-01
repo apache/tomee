@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,18 +32,32 @@ import java.io.File;
 
 @RunWith(Arquillian.class)
 public class RedeploymentTest {
+    private static final String projectDir;
+
+    static {
+        String userDir = System.getProperty("user.dir");
+        String runnerDir = "runner";
+
+        //If running this test alone from runner subdir, exclude the containing
+        //directory from the path
+        if (userDir.contains(runnerDir)) {
+            userDir = userDir.substring(0, userDir.length() - runnerDir.length());
+        }
+
+        projectDir = userDir;
+    }
 
     public RedeploymentTest() {
     }
 
     @Deployment(name = "webapp1", managed = false)
     public static Archive<?> webapp1() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp1/target/WebApp1-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File(projectDir + "/WebApp1/target/WebApp1.war"));
     }
 
     @Deployment(name = "webapp2", managed = false)
     public static Archive<?> webapp2() {
-        return ShrinkWrap.createFromZipFile(WebArchive.class, new File("../WebApp2/target/WebApp2-1.1.0-SNAPSHOT.war"));
+        return ShrinkWrap.createFromZipFile(WebArchive.class, new File(projectDir + "/WebApp2/target/WebApp2.war"));
     }
 
     @ArquillianResource
@@ -57,29 +71,33 @@ public class RedeploymentTest {
         System.out.println("===========================================");
         System.out.println("Running test on port: " + port);
 
+        final String urlPath1 = "http://localhost:" + port + "/WebApp1/test/";
+        final String urlPath2 = "http://localhost:" + port + "/WebApp2/test/";
+
         deployer.deploy("webapp1");
-        int result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
+        int result = WebClient.create(urlPath1)
                 .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
+
         System.out.println(result);
         Assert.assertEquals(406, result);
 
-        //Not interested in webapp2 output
-        // deployer.undeploy("webapp2");
+        deployer.undeploy("webapp1");
         deployer.deploy("webapp2");
 
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
+        result = WebClient.create(urlPath2)
                 .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
+
         System.out.println(result);
         Assert.assertEquals(406, result);
-        deployer.undeploy("webapp2");
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("validd").getStatus();
-        System.out.println(result);
-        Assert.assertEquals(406, result);
-        result = WebClient.create("http://localhost:" + port + "/WebApp1/test/")
-                .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+
+        result = WebClient.create(urlPath2)
+                 .type(MediaType.APPLICATION_JSON_TYPE).post("valid").getStatus();
+
         System.out.println(result);
         Assert.assertEquals(200, result);
+ 
+        deployer.undeploy("webapp2");
+
         System.out.println("===========================================");
         System.out.println("");
     }

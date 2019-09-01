@@ -19,14 +19,13 @@
 
 <!-- $Rev: 684173 $ $Date: 2008-08-08 20:13:24 -0700 (Fri, 08 Aug 2008) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-ws-security</artifactId>
   <packaging>jar</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Web Examples :: EJB WebService with WS-Security</name>
+  <name>TomEE :: Web Examples :: EJB WebService with WS-Security</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -41,13 +40,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
+      <version>[8.0,)</version>
     </dependency>
 
     <!--
@@ -55,11 +48,42 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
+         on Sun's internal copy of Xerces. See OPENEJB-1126. -->
+    <dependency>
+      <groupId>com.sun.xml.parsers</groupId>
+      <artifactId>jaxp-ri</artifactId>
+      <version>1.4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>1.5.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf</artifactId>
       <version>8.0.0-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -118,7 +142,7 @@
             </goals>
             <configuration>
               <target name="generate keys">
-                <ant antfile="create-keystores.xml" target="run"/>
+                <ant antfile="create-keystores.xml" target="run" />
               </target>
             </configuration>
           </execution>
@@ -142,23 +166,4 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <profiles>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

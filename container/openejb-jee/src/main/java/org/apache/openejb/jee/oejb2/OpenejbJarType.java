@@ -36,40 +36,40 @@ import org.apache.openejb.jee.oejb3.PropertiesAdapter;
 
 /**
  * <p>Java class for openejb-jarType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="openejb-jarType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}cmp-connection-factory" minOccurs="0"/>
- *         &lt;element name="ejb-ql-compiler-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="db-syntax-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="enforce-foreign-key-constraints" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/>
- *         &lt;element name="enterprise-beans">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;choice maxOccurs="unbounded" minOccurs="0">
- *                   &lt;element name="session" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}session-beanType"/>
- *                   &lt;element name="entity" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-beanType"/>
- *                   &lt;element name="message-driven" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}message-driven-beanType"/>
- *                 &lt;/choice>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="relationships" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}relationshipsType" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}security" minOccurs="0"/>
- *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="openejb-jarType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}environment" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}cmp-connection-factory" minOccurs="0"/&gt;
+ *         &lt;element name="ejb-ql-compiler-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="db-syntax-factory" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="enforce-foreign-key-constraints" type="{http://geronimo.apache.org/xml/ns/deployment-1.2}emptyType" minOccurs="0"/&gt;
+ *         &lt;element name="enterprise-beans"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *                   &lt;element name="session" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}session-beanType"/&gt;
+ *                   &lt;element name="entity" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}entity-beanType"/&gt;
+ *                   &lt;element name="message-driven" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}message-driven-beanType"/&gt;
+ *                 &lt;/choice&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="relationships" type="{http://tomee.apache.org/xml/ns/openejb-jar-2.2}relationshipsType" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/naming-1.2}message-destination" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/j2ee/application-1.2}security" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://geronimo.apache.org/xml/ns/deployment-1.2}service" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

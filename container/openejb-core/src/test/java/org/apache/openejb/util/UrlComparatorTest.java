@@ -35,11 +35,11 @@ public class UrlComparatorTest extends TestCase {
         urls.add(new URL("file:///Users/jstuart/one"));
         urls.add(new URL("file:///Users/scobert/three"));
 
-        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart")));
+        urls.sort(new UrlComparator(new URL("file:///Users/jstuart")));
 
         assertEquals(new URL("file:///Users/jstuart/two"), urls.get(0));
 
-        Collections.sort(urls, new UrlComparator(new URL("file:///Users/jstuart/one")));
+        urls.sort(new UrlComparator(new URL("file:///Users/jstuart/one")));
 
         assertEquals(new URL("file:///Users/jstuart/one"), urls.get(0));
     }

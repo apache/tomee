@@ -23,22 +23,22 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * Target({METHOD, FIELD}) @Retention(RUNTIME)
  * public @interface Lob {}
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for lob complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="lob">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="lob"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

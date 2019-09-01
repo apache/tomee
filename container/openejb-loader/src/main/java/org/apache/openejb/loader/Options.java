@@ -30,38 +30,38 @@ import java.lang.reflect.Constructor;
  * The purpose of this class is to provide a more strongly typed version of a
  * java.util.Properties object. So far it is a read only view of the properties
  * and does not set data into the underlying Properties instance.
- * <p/>
+ * 
  * Similar to java.util.Properties it will delegate to a "parent" instance when
  * a property is not found.  If a property is found but its value cannot be parsed
  * as the desired data type, the parent's value is used.
- * <p/>
+ * 
  * By default this object will log nothing, but if a Log implementation is set the
  * Options class will log three kinds of statements:
- * <p/>
+ * 
  * - When a property is not found: the property name and default value in use along
  * with all possible values (enums only). Debug level.
  * - When a property is found: the property name and value.  Info level.
  * - When a property value cannot be parsed: the property name and invalid value. Warn level.
- * <p/>
+ * 
  * Logging the user supplied values onto INFO is really nice as it shows up in the standard
  * log output and allows us to easily see which values the user has changed from the default.
  * It's rather impossible to diagnose issues without this information.
- * <p/>
+ * 
  * ENUM SETS:
- * <p/>
+ * 
  * Properties that accept a Set of enum values automatically accept ALL and NONE in
  * addition to the explicitly created enum items.
- * <p/>
+ * 
  * Using ALL. This allows users to have an easy way to imply "all" without having to
  * hardcode an the entire list of enum items and protects against the case where that
  * list may grow in the future.
- * <p/>
+ * 
  * Using NONE.  This allows users an alternative to using an empty string when explicitly
  * specifying that none of the options should be used.
- * <p/>
+ * 
  * In the internal code, this allows us to have these concepts in all enum options
  * without us having to add NONE or ALL enum items explicitly which leads to strange code.
- * <p/>
+ * 
  * Additionally TRUE is an alias for ALL and FALSE an alias for NONE.  This allows options
  * that used to support only true/false values to be further defined in the future without
  * breaking compatibility.
@@ -266,14 +266,9 @@ public class Options {
     /**
      * Use this instead of Enum.valueOf() when you want to ensure that the
      * the enum values are case insensitive.
-     *
-     * @param enumType
-     * @param name
-     * @param <T>
-     * @return
      */
     public static <T extends Enum<T>> T valueOf(final Class<T> enumType, final String name) {
-        final Map<String, T> map = new HashMap<String, T>();
+        final Map<String, T> map = new HashMap<>();
         for (final T t : enumType.getEnumConstants()) {
             map.put(t.name().toUpperCase(), t);
         }
@@ -320,7 +315,6 @@ public class Options {
         return value;
     }
 
-
     protected static <T extends Enum<T>> String[] lowercase(final T... items) {
         final String[] values = new String[items.length];
         for (int i = 0; i < items.length; i++) {
@@ -346,7 +340,6 @@ public class Options {
     protected static String possibleValues(final Class<? extends Enum> enumType) {
         return join(", ", lowercase(enumType.getEnumConstants()));
     }
-
 
     public static String join(final String delimiter, final Object... collection) {
         final StringBuilder sb = new StringBuilder();
@@ -422,7 +415,7 @@ public class Options {
 
                 final String defaultValues;
 
-                if (defaults.size() == 0) {
+                if (defaults.isEmpty()) {
                     defaultValues = "NONE";
                 } else if (defaults.size() == enumType.getEnumConstants().length) {
                     defaultValues = "ALL";
@@ -514,6 +507,7 @@ public class Options {
     }
 
     public static class NullLog implements Log {
+
         @Override
         public boolean isDebugEnabled() {
             return false;

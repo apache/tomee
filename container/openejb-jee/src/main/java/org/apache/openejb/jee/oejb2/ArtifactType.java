@@ -27,52 +27,52 @@ import javax.xml.bind.annotation.XmlType;
  * Refers to either another module running in the server, or
  * an entry in the server's Repository.  In either case this effectively uses a
  * URI.
- * <p/>
+ *
  * When this is pointing to a repository entry, the URI must have a form
  * acceptable to the repository, which is currently a URI consisting of
  * Maven-style identifiers separated by slashes (groupId/artifactId/version/type,
  * for example, the URI "postgresql/postgresql-8.0-jdbc/313/jar" for a file like
  * "repository/postgresql/postgresql-8.0-jdbc-313.jar").
- * <p/>
+ *
  * When this is pointing to a module, the URI should match the
  * module's moduleId.  This also looks
  * like a Maven-style URI discussed above.
- * <p/>
+ *
  * The artifactType element can take either a straight URI (as in the examples
  * above), or maven-style identifier fragments (groupId, type, artifactId, and
  * version), which it will compose into a URI by adding up the fragments with
  * slashes in between.
- * <p/>
+ *
  * There is a correspondence between the xml format and a URI.  For example, the URI
- * <p/>
+ *
  * postgresql/postgresql-8.0-jdbc/313/jar
- * <p/>
+ *
  * corresponds to the xml:
- * <p/>
+ *
  * <groupId>postgresql</groupId>
  * <artifactId>postgresql-8.0-jdbc</artifactId>
  * <version>313</version>
  * <type>jar</type>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for artifactType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="artifactType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="groupId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="artifactId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="artifactType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="groupId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="artifactId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

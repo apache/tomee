@@ -101,7 +101,9 @@ public class TomcatLoader implements Loader {
     /**
      * other services
      */
-    private static final List<ServerService> services = new ArrayList<ServerService>();
+    private static final List<ServerService> services = new ArrayList<>();
+
+    private static final TomcatThreadContextListener threadContextListener = new TomcatThreadContextListener();
 
     /**
      * this method will be split in two to be able to use SystemInstance in between both invocations
@@ -187,7 +189,7 @@ public class TomcatLoader implements Loader {
         System.setProperty("openejb.base", SystemInstance.get().getBase().getDirectory().getAbsolutePath());
 
         // Install tomcat thread context listener
-        ThreadContext.addThreadContextListener(new TomcatThreadContextListener());
+        ThreadContext.addThreadContextListener(threadContextListener);
 
         // set ignorable libraries from a tomee property instead of using the standard openejb one
         // don't ignore standard openejb exclusions file
@@ -215,7 +217,7 @@ public class TomcatLoader implements Loader {
         // for compatibility purpose, no more used normally by our trunk
         SystemInstance.get().setComponent(WebDeploymentListeners.class, new WebDeploymentListeners());
 
-        optionalService(properties, "org.apache.tomee.microprofile.MicroProfileService");
+        optionalService(properties, "org.apache.tomee.microprofile.TomEEMicroProfileService");
 
         // tomee webapp enricher
         final TomEEClassLoaderEnricher classLoaderEnricher = new TomEEClassLoaderEnricher();

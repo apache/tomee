@@ -1,0 +1,71 @@
+= Log4j2 Configuration
+:index-group: Configuration
+:jbake-date: 2019-07-09
+:jbake-type: page
+:jbake-status: published
+:jbake-tomeepdf:
+
+Title: Log4j2 with TomEE
+
+Out of the box, TomEE is uses a Java-Util-Logging (JUL) based logging system, which is configured using conf/logging.properties.
+
+Occassionally, users may wish to swap over to using Log4j2. These instructions detail how to do this with the latest TomEE versions.
+These instructions have been tested with TomEE 7.x and TomEE 8 SNAPSHOT (master) on July 9th, 2019.
+
+== Setup
+
+You'll need to obtain the following jars: log4j-core, log4j-api and log4j-jul. These instructions were tested with the 2.12.0 versions:
+
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.12.0/log4j-core-2.12.0.jar
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.12.0/log4j-api-2.12.0.jar
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-jul/2.12.0/log4j-jul-2.12.0.jar
+
+Add these to the TomEE bin directory. Add the following to setenv.sh on *nix:
+
+```
+    JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
+    LOGGING_CONFIG="-DnoOp"
+    LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
+    CLASSPATH=".:$CATALINA_BASE/bin:$CATALINA_BASE/bin/log4j-core-2.12.0.jar:$CATALINA_BASE/bin/log4j-api-2.12.0.jar:$CATALINA_BASE/bin/log4j-jul-2.12.0.jar"
+```
+
+or add the following to setenv.bat on Windows:
+
+```
+    @echo off
+    set "JAVA_OPTS=%JAVA_OPTS% -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+    set LOGGING_CONFIG=-DnoOpp
+    set LOGGING_MANAGER=-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
+    set "CLASSPATH=.;%CATALINA_BASE%\bin;%CATALINA_BASE%\bin\log4j-core-2.12.0.jar;%CATALINA_BASE%\bin\log4j-api-2.12.0.jar;%CATALINA_BASE%\bin\log4j-jul-2.12.0.jar"
+```
+
+Take care to match the jar filenames if you have downloaded jars for a slightly different version of log4j2.
+
+== Configuration
+
+Add your log4j2.xml config in the `bin` directory.  Here's a simple config you can use to help you get started:
+
+```
+    <?xml version="1.0" encoding="UTF-8" ?>
+    <Configuration status="warn" name="catalina" packages="">
+        <Appenders>
+            <Console name="console" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+            </Console>
+            <File name="catalina" fileName="${sys:catalina.base}/logs/catalina.log">
+                <PatternLayout>
+                    <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+                </PatternLayout>
+            </File>
+            <Async name="Async">
+                <AppenderRef ref="catalina" />
+            </Async>
+        </Appenders>
+        <Loggers>
+            <Root level="info">
+                <AppenderRef ref="Async" />
+                <AppenderRef ref="console" />
+            </Root>
+        </Loggers>
+    </Configuration>
+```

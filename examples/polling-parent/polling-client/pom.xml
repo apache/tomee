@@ -16,9 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
@@ -27,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>polling-client</artifactId>
-  <name>OpenEJB :: Examples :: Polling :: Client</name>
+  <name>TomEE :: Examples :: Polling :: Client</name>
   <description>Just a cli to avoid to remember URLs</description>
 
   <dependencies>
@@ -39,6 +37,12 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -91,7 +95,7 @@
           <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
+            <version>[8.0,)</version>
           </dependency>
           <dependency> <!-- because entities was enhanced -->
             <groupId>org.apache.openjpa</groupId>

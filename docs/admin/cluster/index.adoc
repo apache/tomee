@@ -52,24 +52,13 @@ The group setting can be changed to further group servers that may use the same 
 
 IMPORTANT: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
 
-text
-
 NOTE: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
-
-text
 
 TIP: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
 
-text
-
 CAUTION: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
 
-text
-
 WARNING: for multicast to work you need to have ejbd activated as a normal service. This can be done setting in `conf/system.properties` the entry: `openejb.service.manager.class = org.apache.openejb.server.SimpleServiceManager`.
-
-text
-
 
 ===== Multicast Client
 

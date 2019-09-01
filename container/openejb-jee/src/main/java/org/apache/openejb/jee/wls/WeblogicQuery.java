@@ -29,29 +29,29 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for weblogic-query complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="weblogic-query">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/>
- *         &lt;element name="query-method" type="{http://www.bea.com/ns/weblogic/90}query-method"/>
- *         &lt;choice minOccurs="0">
- *           &lt;element name="ejb-ql-query" type="{http://www.bea.com/ns/weblogic/90}ejb-ql-query"/>
- *           &lt;element name="sql-query" type="{http://www.bea.com/ns/weblogic/90}sql-query"/>
- *         &lt;/choice>
- *         &lt;element name="max-elements" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="include-updates" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="sql-select-distinct" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="enable-query-caching" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="weblogic-query"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="description" type="{http://www.bea.com/ns/weblogic/90}description" minOccurs="0"/&gt;
+ *         &lt;element name="query-method" type="{http://www.bea.com/ns/weblogic/90}query-method"/&gt;
+ *         &lt;choice minOccurs="0"&gt;
+ *           &lt;element name="ejb-ql-query" type="{http://www.bea.com/ns/weblogic/90}ejb-ql-query"/&gt;
+ *           &lt;element name="sql-query" type="{http://www.bea.com/ns/weblogic/90}sql-query"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;element name="max-elements" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="include-updates" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="sql-select-distinct" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="enable-query-caching" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

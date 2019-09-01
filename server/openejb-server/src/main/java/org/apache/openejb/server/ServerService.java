@@ -30,18 +30,18 @@ import org.apache.openejb.spi.Service;
 @Managed
 public interface ServerService extends Service {
 
-    public void start() throws ServiceException;
+    void start() throws ServiceException;
 
-    public void stop() throws ServiceException;
+    void stop() throws ServiceException;
 
-    public void service(InputStream in, OutputStream out) throws ServiceException, IOException;
+    void service(InputStream in, OutputStream out) throws ServiceException, IOException;
 
-    public void service(Socket socket) throws ServiceException, IOException;
+    void service(Socket socket) throws ServiceException, IOException;
 
-    public String getName();
+    String getName();
 
-    public String getIP();
+    String getIP();
 
-    public int getPort();
+    int getPort();
 
 }

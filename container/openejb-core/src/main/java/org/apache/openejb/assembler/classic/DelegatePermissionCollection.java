@@ -22,10 +22,10 @@ import org.apache.openejb.util.ArrayEnumeration;
 
 import java.security.Permission;
 import java.security.PermissionCollection;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DelegatePermissionCollection extends PermissionCollection {
@@ -63,7 +63,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
 
     public static class FastPermissionCollection extends PermissionCollection {
         private static final int MAX_CACHE_SIZE = SystemInstance.get().getOptions().get("openejb.permission-collection.cache.size", 3000);
-        private final List<Permission> permissions = new ArrayList<>();
+        private final Set<Permission> permissions = new HashSet<>();
         private final Map<Permission, Boolean> alreadyEvaluatedPermissions = new ConcurrentHashMap<>();
 
         @Override
@@ -95,7 +95,7 @@ public class DelegatePermissionCollection extends PermissionCollection {
 
         @Override
         public synchronized Enumeration<Permission> elements() {
-            return new ArrayEnumeration(permissions);
+            return new ArrayEnumeration<>(permissions);
         }
     }
 }

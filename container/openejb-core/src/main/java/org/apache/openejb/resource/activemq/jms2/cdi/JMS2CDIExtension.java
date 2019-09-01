@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.resource.activemq.jms2.cdi;
 
-import org.apache.openejb.OpenEJB;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.resource.activemq.jms2.JMS2;
 import org.apache.openejb.spi.ContainerSystem;
 
 import javax.annotation.PreDestroy;
@@ -56,10 +56,10 @@ import javax.jms.TemporaryTopic;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.NamingException;
-import javax.transaction.SystemException;
 import javax.transaction.TransactionScoped;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 // this extension adds to CDI a producer a JMSContext,
@@ -139,6 +139,7 @@ public class JMS2CDIExtension implements Extension {
     }
 
     public abstract static class AutoContextDestruction implements Serializable {
+          private static final long serialVersionUID = 1L;
         private transient Map<Key, JMSContext> contexts = new ConcurrentHashMap<>();
 
         public void push(final Key key, final JMSContext c) {
@@ -169,13 +170,16 @@ public class JMS2CDIExtension implements Extension {
 
     @RequestScoped
     public static class RequestAutoContextDestruction extends AutoContextDestruction {
+        private static final long serialVersionUID = 1L;
     }
 
     @TransactionScoped
     public static class TransactionAutoContextDestruction extends AutoContextDestruction {
+        private static final long serialVersionUID = 1L;
     }
 
     public static class Key implements Serializable {
+        private static final long serialVersionUID = 1L;
         private volatile ConnectionFactory connectionFactoryInstance;
         private final String connectionFactory;
         private final String username;
@@ -238,7 +242,7 @@ public class JMS2CDIExtension implements Extension {
             return connectionFactory != null ? connectionFactory.equals(key.connectionFactory) : key.connectionFactory == null
                 && (username != null ? username.equals(key.username) : key.username == null
                 && (password != null ? password.equals(key.password) : key.password == null
-                && (session != null ? session.equals(key.session) : key.session == null)));
+                && (Objects.equals(session, key.session))));
 
         }
 
@@ -249,6 +253,7 @@ public class JMS2CDIExtension implements Extension {
     }
 
     public static class InternalJMSContext implements JMSContext, Serializable {
+        private static final long serialVersionUID = 1L;
         private final Key key;
         private final RequestAutoContextDestruction requestStorage;
         private final TransactionAutoContextDestruction transactionStorage;
@@ -260,7 +265,7 @@ public class JMS2CDIExtension implements Extension {
         }
 
         private synchronized JMSContext context() {
-            if (inTx()) {
+            if (JMS2.inTx()) {
                 return findOrCreateContext(transactionStorage);
             }
             return findOrCreateContext(requestStorage);
@@ -273,14 +278,6 @@ public class JMS2CDIExtension implements Extension {
                 storage.push(key, jmsContext);
             }
             return jmsContext;
-        }
-
-        private boolean inTx() {
-            try {
-                return OpenEJB.getTransactionManager().getTransaction() != null;
-            } catch (SystemException e) {
-                return false;
-            }
         }
 
         // plain delegation now

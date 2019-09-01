@@ -118,9 +118,7 @@ public class MBeanPojoWrapper implements DynamicMBean {
 
         try {
             return attributeMap.get(attribute).getReadMethod().invoke(delegate);
-        } catch (IllegalAccessException e) {
-            throw new MBeanException(e);
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             throw new MBeanException(e);
         }
     }

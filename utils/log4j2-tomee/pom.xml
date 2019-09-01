@@ -16,11 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="
-          http://maven.apache.org/POM/4.0.0
-          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
@@ -29,7 +25,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>log4j2-tomee</artifactId>
-  <name>OpenEJB :: Utils :: Log4j2</name>
+  <name>TomEE :: Utils :: Log4j2</name>
   <description>Add this module if you use log4j2 in TomEE/lib and rely on shutdown hook and don't want to loose logs.</description>
 
   <properties>

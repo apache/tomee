@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class MoviesTest extends TestCase {
     /**
      * Standard successful transaction scenario.  The data created inside
      * the transaction is visible after the transaction completes.
-     * <p/>
+     *
      * Note that UserTransaction is only usable by Bean-Managed Transaction
      * beans, which can be specified with @TransactionManagement(BEAN)
      */
@@ -115,7 +115,7 @@ public class MoviesTest extends TestCase {
     /**
      * Transaction is marked for rollback inside the bean via
      * calling the javax.ejb.SessionContext.setRollbackOnly() method
-     * <p/>
+     *
      * This is the cleanest way to make a transaction rollback.
      */
     public void testMarkedRollback() throws Exception {

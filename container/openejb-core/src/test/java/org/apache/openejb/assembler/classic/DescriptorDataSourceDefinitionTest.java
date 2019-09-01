@@ -167,36 +167,29 @@ public class DescriptorDataSourceDefinitionTest {
         }
 
         public void addMovie(final Movie movie) throws Exception {
-            final Connection conn = movieDatabase.getConnection();
-            try {
+            try (Connection conn = movieDatabase.getConnection()) {
                 final PreparedStatement sql = conn.prepareStatement("INSERT into movie (director, title, year) values (?, ?, ?)");
                 sql.setString(1, movie.getDirector());
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
                 sql.execute();
-            } finally {
-                conn.close();
             }
         }
 
 
         public void deleteMovie(final Movie movie) throws Exception {
-            final Connection conn = movieDatabase.getConnection();
-            try {
+            try (Connection conn = movieDatabase.getConnection()) {
                 final PreparedStatement sql = conn.prepareStatement("DELETE from movie where director = ? AND title = ? AND year = ?");
                 sql.setString(1, movie.getDirector());
                 sql.setString(2, movie.getTitle());
                 sql.setInt(3, movie.getYear());
                 sql.execute();
-            } finally {
-                conn.close();
             }
         }
 
         public List<Movie> getMovies() throws Exception {
             final ArrayList<Movie> movies = new ArrayList<>();
-            final Connection conn = movieDatabase.getConnection();
-            try {
+            try (Connection conn = movieDatabase.getConnection()) {
                 final PreparedStatement sql = conn.prepareStatement("SELECT director, title, year from movie");
                 final ResultSet set = sql.executeQuery();
                 while (set.next()) {
@@ -207,8 +200,6 @@ public class DescriptorDataSourceDefinitionTest {
                     movies.add(movie);
                 }
 
-            } finally {
-                conn.close();
             }
             return movies;
         }

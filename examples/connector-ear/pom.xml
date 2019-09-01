@@ -21,12 +21,13 @@
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Connector Examples :: Connector in EAR</name>
+  <name>TomEE :: Connector Examples :: Connector in EAR</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
+    <surefire.version>2.21.0</surefire.version>
   </properties>
 
   <repositories>
@@ -82,6 +83,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.version}</version>
         <configuration>
           <systemProperties>
             <property>

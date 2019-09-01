@@ -19,14 +19,13 @@
 
 <!-- $Rev: 751189 $ $Date: 2009-03-07 04:37:34 +0100 (sam., 07 mars 2009) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-inheritance</artifactId>
   <packaging>jar</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Webservice Inheritance</name>
+  <name>TomEE :: Examples :: Webservice Inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -42,6 +41,14 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+        <configuration>
+          <argLine>-Djdk.attach.allowAttachSelf</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -54,8 +61,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>[8.0,)</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -78,7 +85,7 @@
     <dependency>
       <groupId>com.sun.xml.parsers</groupId>
       <artifactId>jaxp-ri</artifactId>
-      <version>1.4.2</version>
+      <version>1.4.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -28,23 +28,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <p>Java class for persistence complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="persistence">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="is-modified-method-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="delay-updates-until-end-of-tx" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="finders-load-bean" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/>
- *         &lt;element name="persistence-use" type="{http://www.bea.com/ns/weblogic/90}persistence-use" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="persistence"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="is-modified-method-name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="delay-updates-until-end-of-tx" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="finders-load-bean" type="{http://www.bea.com/ns/weblogic/90}true-false" minOccurs="0"/&gt;
+ *         &lt;element name="persistence-use" type="{http://www.bea.com/ns/weblogic/90}persistence-use" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

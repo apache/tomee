@@ -33,44 +33,44 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 /**
- * <p/>
+ *
  * Java class for Difference complex type.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="Difference">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="target">
- *             &lt;complexType>
- *               &lt;complexContent>
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                   &lt;choice maxOccurs="unbounded" minOccurs="0">
- *                     &lt;any/>
- *                   &lt;/choice>
- *                 &lt;/restriction>
- *               &lt;/complexContent>
- *             &lt;/complexType>
- *           &lt;/element>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="difference" type="{http://www.omg.org/XMI}Difference"/>
- *         &lt;/choice>
- *         &lt;choice maxOccurs="unbounded" minOccurs="0">
- *           &lt;element name="container" type="{http://www.omg.org/XMI}Difference"/>
- *         &lt;/choice>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/>
- *       &lt;attribute name="container" type="{http://www.w3.org/2001/XMLSchema}IDREFS" />
- *       &lt;attribute name="target" type="{http://www.w3.org/2001/XMLSchema}IDREFS" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="Difference"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="target"&gt;
+ *             &lt;complexType&gt;
+ *               &lt;complexContent&gt;
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                   &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *                     &lt;any/&gt;
+ *                   &lt;/choice&gt;
+ *                 &lt;/restriction&gt;
+ *               &lt;/complexContent&gt;
+ *             &lt;/complexType&gt;
+ *           &lt;/element&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="difference" type="{http://www.omg.org/XMI}Difference"/&gt;
+ *         &lt;/choice&gt;
+ *         &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *           &lt;element name="container" type="{http://www.omg.org/XMI}Difference"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://www.omg.org/XMI}ObjectAttribs"/&gt;
+ *       &lt;attribute name="container" type="{http://www.w3.org/2001/XMLSchema}IDREFS" /&gt;
+ *       &lt;attribute name="target" type="{http://www.w3.org/2001/XMLSchema}IDREFS" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -106,22 +106,22 @@ public class Difference {
 
     /**
      * Gets the value of the differenceTargets property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the differenceTargets property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDifferenceTargets().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Difference.Target }
      */
@@ -134,22 +134,22 @@ public class Difference {
 
     /**
      * Gets the value of the differences property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the differences property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDifferences().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Difference }
      */
@@ -162,22 +162,22 @@ public class Difference {
 
     /**
      * Gets the value of the differenceContainers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the differenceContainers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getDifferenceContainers().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Difference }
      */
@@ -190,22 +190,22 @@ public class Difference {
 
     /**
      * Gets the value of the containers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the containers property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getContainers().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Object }
      */
     public List<Object> getContainers() {
@@ -217,22 +217,22 @@ public class Difference {
 
     /**
      * Gets the value of the targets property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list, not a
      * snapshot. Therefore any modification you make to the returned list will
      * be present inside the JAXB object. This is why there is not a
      * <CODE>set</CODE> method for the targets property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
-     * <p/>
+     *
      * <pre>
      * getTargets().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list {@link Object }
      */
     public List<Object> getTargets() {
@@ -355,23 +355,23 @@ public class Difference {
     }
 
     /**
-     * <p/>
+     *
      * Java class for anonymous complex type.
-     * <p/>
-     * <p/>
+     *
+     *
      * The following schema fragment specifies the expected content contained
      * within this class.
-     * <p/>
+     *
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;choice maxOccurs="unbounded" minOccurs="0">
-     *         &lt;any/>
-     *       &lt;/choice>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+     *         &lt;any/&gt;
+     *       &lt;/choice&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      */
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -385,22 +385,22 @@ public class Difference {
 
         /**
          * Gets the value of the elements property.
-         * <p/>
-         * <p/>
+         *
+         *
          * This accessor method returns a reference to the live list, not a
          * snapshot. Therefore any modification you make to the returned list
          * will be present inside the JAXB object. This is why there is not a
          * <CODE>set</CODE> method for the elements property.
-         * <p/>
-         * <p/>
+         *
+         *
          * For example, to add a new item, do as follows:
-         * <p/>
+         *
          * <pre>
          * getElements().add(newItem);
          * </pre>
-         * <p/>
-         * <p/>
-         * <p/>
+         *
+         *
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link Element }
          */
@@ -414,11 +414,11 @@ public class Difference {
         /**
          * Gets a map that contains attributes that aren't bound to any typed
          * property on this class.
-         * <p/>
-         * <p/>
+         *
+         *
          * the map is keyed by the name of the attribute and the value is the
          * string value of the attribute.
-         * <p/>
+         *
          * the map returned by this method is live, and you can add new
          * attribute by updating the map directly. Because of this design,
          * there's no setter.

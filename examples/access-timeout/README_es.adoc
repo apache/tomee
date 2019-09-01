@@ -1,0 +1,218 @@
+= @AccessTimeout Annotation
+:index-group: EJB
+:jbake-type: page
+:jbake-status: published
+
+Antes de ver la anotación `@AccessTimeout`, es importante ver cuando una llamada puede necesitar "esperar".
+
+== Esperando
+
+=== Bean con estado (Stateful Bean)
+
+[note]
+
+NOTE: De forma predeterminada, los clientes pueden realizar llamadas concurrentes a un objeto de sesión con estado y el contenedor es requerido para serializar dichas solicitudes concurrentes. El contenedor nunca permite el acceso multi-threaded a una instancia de un bean de sesión con estado. Por este motivo, los metadatos de bloqueo de los método de lectura / escritura (Read/Write), así como el modo de concurrencia administrada por el bean, no son aplicables a los beans de sesión con estado y no deben ser utilizados.
+
+Esto significa que cuando se ejecuta un método `foo ()` de una instancia de bean con estado (Stateful Bean) y se recibe una segunda solicitud para ese método u otro método, el contenedor EJB serializaría la segunda solicitud. No permitiría que el método se ejecute concurrentemente, sino esperará hasta que se procese la primera solicitud.
+
+El cliente también esperaría cuando un bean anotado con `@Stateful` está en una transacción y el cliente lo está invocando desde fuera de esa transacción.
+
+=== Bean sin estado (Stateless Bean)
+
+Si hay 20 instancias de un bean en la la pila (pool) y todas están ocupadas. Cuando llegue la próxima solicitud, el procesamiento *podría esperar* a que un bean esté disponible en la pila. (Nota: la semántica de la pila, si existe, no está cubierta por la especificación. La semántica de pila del proveedor puede o no implicar una condición de espera)
+
+=== Singleton Bean
+
+El contenedor impone un acceso de un solo hilo (single-threaded) por defecto a los beans de tipo singleton. Eso es el equivalente de anotar con `@Lock (Write)`. Entonces, cuando se ejecuta un método `@Lock (Write)`, todas las demás invocaciones de los métodos `@Lock (READ)` y `@Lock (WRITE)` tendrán que esperar.
+
+=== Resumen
+
+ - `@Singleton` - se invoca un método `@Lock (WRITE)` y se usa la concurrencia administrada por el contenedor. Todos los métodos son `@Lock (WRITE)` por defecto.
+- `@Stateful`: se invoca cualquier método de la instancia y se produce una segunda invocación. O el bean `@Stateful` está en una transacción y la llamada es invocada desde fuera de esa transacción.
+ - `@Stateless` - no hay instancias disponibles en la pila. Sin embargo, como se señaló, la semática de pila, si corresponde, no está cubierta por la especificación. Si la semántica de agrupación del proveedor implica una condición de espera, se debe aplicar @AccessTimeout.
+
+= @AccessTimeout
+
+`@AccessTimeout` es simplemente un envoltorio de conveniencia alrededor de las tuplas `long` y `TimeUnit` comúnmente usadas en la API `java.util.concurrent`.
+
+[source,java,numbered]
+----
+import java.util.concurrent.TimeUnit;
+@Target({METHOD, TYPE})
+@Retention(RUNTIME)
+public @interface AccessTimeout {
+    long value();
+    TimeUnit unit() default TimeUnit.MILLISECONDS;
+}
+----
+
+== Uso
+
+Un método o clase se puede anotar con `@AccessTimeout` para especificar el tiempo máximo que una llamada puede esperar para acceder al bean si se produce una condición de espera.
+
+La semántica del elemento de valor (value) es la siguiente:
+
+ - Si `value` > 0 indica un valor de tiempo de espera en las unidades especificadas por el elemento `unit`.
+ - Si `value` es 0 significa que el acceso concurrente no está permitido.
+ - Si `value` es -1 indica que la solicitud del cliente se bloqueará indefinidamente hasta que pueda continuar el progreso.
+
+
+Tan simple como eso!
+
+NOTE: ¿Qué excepción recibiría el cliente, con un timeout?
+Citando la especificación, "si un método de negocios invocado por el cliente está en progreso en una instancia cuando otra llamada invocada por el cliente, del mismo o diferente cliente, llega a la misma instancia de un bean de sesión con estado, si el segundo cliente es un cliente de la interfaz de negocios del bean o vista sin interfaz, la invocación concurrente debe dar como resultado que el segundo cliente reciba una excepción javax.ejb.ConcurrentAccessException[15]. Si se utiliza la vista de cliente EJB 2.1, el contenedor debe lanzar una excepción java.rmi.RemoteException si el segundo cliente es un cliente remoto o una javax.ejb.EJBException si el segundo cliente es un cliente local"
+
+=== No estándar predeterminado
+
+Notese que el atributo `value` no tiene valor predeterminado. Esto fue intencional y estaba destinado a comunicar que si `@AccessTimeout` no se usa explícitamente, el comportamiento que se obtiene es específico del proveedor.
+
+Algunos proveedores esperarán un tiempo preconfigurado y lanzarán una excepción `javax.ejb.ConcurrentAccessException`, algunos proveedores la lanzarán de inmediato.
+
+== Ejemplo
+
+Aquí tenemos un bean sensillo de tipo @Singleton que tiene tres métodos síncronos y un método asíncrono (`@Asynchronous`) . El bean en sí está anotado con `@Lock (WRITE)` para que solo un hilo pueda acceder al `@Singleton` a la vez. Este es el comportamiento predeterminado de un bean `@Singleton`, por lo que no es necesario el uso explícito de la anotación `@Lock (WRITE)`, pero es bastante bueno para mayor claridad ya que la naturaleza de un solo hilo del bean es importante para el ejemplo.
+
+
+[source,java,numbered]
+----
+@Singleton
+@Lock(WRITE)
+public class BusyBee {
+
+    @Asynchronous
+    public Future stayBusy(CountDownLatch ready) {
+        ready.countDown();
+
+        try {
+            new CountDownLatch(1).await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+
+        return null;
+    }
+
+    @AccessTimeout(0)
+    public void doItNow() {
+        // do something
+    }
+
+    @AccessTimeout(value = 5, unit = TimeUnit.SECONDS)
+    public void doItSoon() {
+        // do something
+    }
+
+    @AccessTimeout(-1)
+    public void justDoIt() {
+        // do something
+    }
+}
+----
+
+El método `@Asynchronous` no es una parte crítica de `@AccessTimeout`, pero sirve como una forma simple de "bloquear" el bean para propósitos de prueba. Nos permite probar fácilmente el comportamiento concurrente del bean.
+
+[source,java,numbered]
+----
+public class BusyBeeTest extends TestCase {
+
+    public void test() throws Exception {
+
+        final Context context = EJBContainer.createEJBContainer().getContext();
+
+        final CountDownLatch ready = new CountDownLatch(1);
+
+        final BusyBee busyBee = (BusyBee) context.lookup("java:global/access-timeout/BusyBee");
+
+        // This asynchronous method will never exit
+        busyBee.stayBusy(ready);
+
+        // Are you working yet little bee?
+        ready.await();
+
+
+        // OK, Bee is busy
+
+
+        { // Timeout Immediately
+            final long start = System.nanoTime();
+
+            try {
+                busyBee.doItNow();
+
+                fail("The bee should be busy");
+            } catch (Exception e) {
+                // the bee is still too busy as expected
+            }
+
+            assertEquals(0, seconds(start));
+        }
+
+        { // Timeout in 5 seconds
+            final long start = System.nanoTime();
+
+            try {
+                busyBee.doItSoon();
+
+                fail("The bee should be busy");
+            } catch (Exception e) {
+                // the bee is still too busy as expected
+            }
+
+            assertEquals(5, seconds(start));
+        }
+
+        // This will wait forever, give it a try if you have that long
+        //busyBee.justDoIt();
+    }
+
+    private long seconds(long start) {
+        return TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
+    }
+}
+----
+
+== Ejecución
+
+[source,bash]
+----
+mvn clean test
+----
+
+=== Salida de la terminal
+[source,bash]
+----
+-------------------------------------------------------
+    T E S T S
+-------------------------------------------------------
+Running org.superbiz.accesstimeout.BusyBeeTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/access-timeout
+INFO - openejb.base = /Users/dblevins/examples/access-timeout
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/access-timeout/target/classes
+INFO - Beginning load: /Users/dblevins/examples/access-timeout/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/access-timeout
+INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+INFO - Auto-creating a container for bean BusyBee: Container(type=SINGLETON, id=Default Singleton Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.accesstimeout.BusyBeeTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Enterprise application "/Users/dblevins/examples/access-timeout" loaded.
+INFO - Assembling app: /Users/dblevins/examples/access-timeout
+INFO - Jndi(name="java:global/access-timeout/BusyBee!org.superbiz.accesstimeout.BusyBee")
+INFO - Jndi(name="java:global/access-timeout/BusyBee")
+INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest!org.superbiz.accesstimeout.BusyBeeTest")
+INFO - Jndi(name="java:global/EjbModule748454644/org.superbiz.accesstimeout.BusyBeeTest")
+INFO - Created Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
+INFO - Created Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
+INFO - Started Ejb(deployment-id=org.superbiz.accesstimeout.BusyBeeTest, ejb-name=org.superbiz.accesstimeout.BusyBeeTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=BusyBee, ejb-name=BusyBee, container=Default Singleton Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/access-timeout)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.071 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----

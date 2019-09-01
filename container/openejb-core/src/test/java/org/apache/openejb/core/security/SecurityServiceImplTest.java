@@ -37,7 +37,7 @@ public class SecurityServiceImplTest {
         final ClassLoader jaasLoader = new URLClassLoader(new URL[0]) {
             @Override
             public Enumeration<URL> getResources(final String name) throws IOException {
-                return new ArrayEnumeration(Collections.singletonList(new URL("file:/tmp/jaas/folder+with+plus/login.config")));
+                return new ArrayEnumeration<>(Collections.singletonList(new URL("file:/tmp/jaas/folder+with+plus/login.config")));
             }
         };
         Thread.currentThread().setContextClassLoader(jaasLoader);

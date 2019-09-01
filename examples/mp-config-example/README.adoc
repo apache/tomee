@@ -1,5 +1,5 @@
-= Microprofile Config
-:index-group: Unrevised
+= MicroProfile Config
+:index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
@@ -14,7 +14,7 @@ mvn clean install tomee:run
 
 == API
 
-Within the application there is an three way to inject values using config
+Within the application there are three ways to inject values using config
 
 1 . For the ConfigProperty with default value call:
 ----
@@ -43,7 +43,7 @@ Each individual property can be injected directly
 private String javaVersion;
 ----
 
-You can also set a default value for it, case the config does not match the property in the context it will use the default value
+You can also set a default value for it, in case the config does not match the property in the context it will use the default value
 
 [source,java,numbered]
 ----

@@ -1,0 +1,110 @@
+= TomEE deployment on Azure
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: published
+
+This example uses a basic echo application, deployed with embedded TomEE on the Azure Cloud.
+
+We use the TomEE maven plugin to package the app with TomEE Embedded
+in order to generate a fat jar. This jar is then picked up and deployed by the azure-webapp-maven-plugin.
+
+== Azure Setup
+
+In order for the Azure plugin to work, you will need to have an Azure account and add a subscription to it.
+Then, on your development machine, install the Azure command-line interface (CLI) and authenticate with the command
+line, before you can deploy your application.
+
+- Create an Azure Account, if you don't have one, at https://azure.microsoft.com/en-us
+- Use the free option, if available or https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade[add a subscription].
+- https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest[Install] the Azure (CLI) according
+to operating system of the computer you are using to develop.
+
+- Finally you can setup your development computer.
+
+=== Login into Azure
+
+`az login`
+
+The result:
+
+----
+[
+   {
+     "cloudName": "AzureCloud",
+     "id": "aaaaaaaa-aaaa-aaaa-aaaaa-aaaaaaaaaa",
+     "isDefault": true,
+     "name": "Pay-As-You-Go",
+     "state": "Enabled",
+     "tenantId": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb",
+     "user": {
+       "name": "<your azure account's email>",
+       "type": "user"
+     }
+   }
+ ]
+----
+The TenantId is someone that can register and manage apps, yourself. You will need that for later.
+
+
+=== Create a service principal
+An Azure service principal is a security identity used by user-created apps, services,
+and automation tools to access specific Azure resources:
+
+----
+az ad sp create-for-rbac --name  http://<your-sub-domain> --password <password for this app>
+
+{
+  "appId": "cccccccc-cccc-cccc-cccc-ccccccccccccccc",
+  "displayName": "cloud-tomee-azure",
+  "name": "http://cloud-tomee-azure",
+  "password": "<password for this app>",
+  "tenant": "bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb"
+}
+----
+The <your-sub-domain>, also called the service principal name in the Azure documentation.
+In this example "http://cloud-tomee-azure". It has to be unique across Azure.
+The appId is the identification of the app service.
+
+=== Configure Maven
+
+You could continue just using the Azure CLI for authentication but we can also do it permanently with Maven.
+
+In that case we need to edit Maven's settings.xml so the azure-webapp-maven-plugin can authenticate against Azure:
+
+You can add a new server to `~/.m2/settings.xml` like this:
+----
+<server>
+  <id>azure-auth</id>
+  <configuration>
+     <client>cccccccc-cccc-cccc-cccc-ccccccccccccccc</client>
+     <tenant>bbbbbbb-bbbbb-bbbb-bbbbb-bbbbbbbbbbb</tenant>
+     <key><password for this app></key>
+     <environment>AZURE</environment>
+   </configuration>
+</server>
+----
+That's it. You can now build the example and deploy it to Azure just using Maven:
+
+`mvn clean install -Pazure-single-jar azure-webapp:deploy`
+
+The azure-webapp is explicitly invoked because it relies on you Azure account. The standard TomEE build will not use an Azure account.
+
+The end URL will look like:
+
+`https://<your-sub-domain>.azurewebsites.net/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+
+==== Notes
+
+At the moment of creation of this example there is a bug on azure with the JAVA_HOME that prevents the deployment.
+Check: https://github.com/Azure-App-Service/java/issues/11
+The workaround is to set the Env. variable on the Azure web console and restart the app.
+
+To deploy the echo app locally you can execute:
+
+`mvn tomee:run`
+
+You can test the app by calling `http://localhost/cloud-tomee-azure-8.0.0-SNAPSHOT/echo/send-this-back`
+
+It will return send-this-back.
+
+The echo app is also available with a simple war file that you can deploy on TomEE manually, for testing purposes.

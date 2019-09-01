@@ -23,7 +23,7 @@
   <artifactId>applet</artifactId>
   <packaging>war</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Web Examples :: Signed Applet EJB Client</name>
+  <name>TomEE :: Web Examples :: Signed Applet EJB Client</name>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,8 +37,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -119,7 +119,7 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>javaee-api</artifactId>
-                  <version>8.0</version>
+                  <version>[8.0,)</version>
                   <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                   <destFileName>javaee-api.jar</destFileName>
                 </artifactItem>

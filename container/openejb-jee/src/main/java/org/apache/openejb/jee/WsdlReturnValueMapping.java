@@ -34,7 +34,7 @@ import javax.xml.namespace.QName;
  * specific parameter. Parts within a message context are uniquely
  * identified with their names. The wsdl-message-part-name is not
  * specified if there is no return value or OUT parameters.
- * <p/>
+ *
  * Used in: service-endpoint-method-mapping
  */
 @XmlAccessorType(XmlAccessType.FIELD)

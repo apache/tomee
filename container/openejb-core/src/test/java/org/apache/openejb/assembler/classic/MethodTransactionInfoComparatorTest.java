@@ -73,7 +73,7 @@ public class MethodTransactionInfoComparatorTest extends TestCase {
 
         final ArrayList<MethodTransactionInfo> actual = new ArrayList<>(expected);
         Collections.shuffle(actual);
-        Collections.sort(actual, new MethodTransactionBuilder.MethodTransactionComparator());
+        actual.sort(new MethodTransactionBuilder.MethodTransactionComparator());
 
         for (int i = 0; i < actual.size(); i++) {
             final MethodTransactionInfo a = actual.get(i);

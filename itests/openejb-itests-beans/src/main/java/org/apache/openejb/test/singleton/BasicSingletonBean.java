@@ -84,7 +84,7 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
 
     /**
      * Maps to BasicSingletonObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -98,7 +98,7 @@ public class BasicSingletonBean implements SessionBean, TimedObject {
 
     /**
      * Maps to BasicSingletonObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

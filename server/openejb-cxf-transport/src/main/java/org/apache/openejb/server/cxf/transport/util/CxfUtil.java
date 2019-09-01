@@ -121,6 +121,16 @@ public final class CxfUtil {
                     }
                     return c == Object.class ? aClass : c;
                 }
+
+                @Override
+                public Class<?> getRealClassFromClass(Class<?> aClass) {
+                    return aClass;
+                }
+
+                @Override
+                public Object getRealObject(Object o) {
+                    return o;
+                }
             });
 
             SystemInstance.get().addObserver(new LifecycleManager());
@@ -134,11 +144,12 @@ public final class CxfUtil {
     }
 
     private static void initAuthenticators() { // TODO: drop when we get a fully supporting java 9 version of CXF
+/*      Removing to bump to CXF 3.3.0 which supports Java 11  
         try {
             CXFAuthenticator.addAuthenticator();
         } catch (final RuntimeException re) {
             // we swallow it while cxf doesnt support java 9, this workaround is enough to make most of cases passing
-        }
+        }*/
     }
 
     public static Bus getBus() {

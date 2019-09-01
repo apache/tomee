@@ -690,9 +690,9 @@ public class HeavyweightOperationInfoBuilder {
 
     /**
      * Supporting the Document/Literal Wrapped pattern
-     * <p/>
+     *
      * See http://www-106.ibm.com/developerworks/webservices/library/ws-whichwsdl/ for a nice explanation and example
-     * <p/>
+     *
      * wrapped-element tag is used
      * WSDL message with a single part
      * part uses the 'element' attribute to point to an elemement in the types section

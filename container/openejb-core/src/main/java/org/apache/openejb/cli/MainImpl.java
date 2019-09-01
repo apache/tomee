@@ -165,7 +165,7 @@ public class MainImpl implements Main {
         // section of code, the openejb.base value is cemented and cannot
         // be changed.
         for (final String arg : args) {
-            if (arg.indexOf("-Dopenejb.base") != -1) {
+            if (arg.contains("-Dopenejb.base")) {
                 final String prop = arg.substring(arg.indexOf("-D") + 2, arg.indexOf('='));
                 final String val = arg.substring(arg.indexOf('=') + 1);
 

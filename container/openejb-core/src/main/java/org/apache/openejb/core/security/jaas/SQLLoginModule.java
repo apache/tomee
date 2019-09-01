@@ -55,22 +55,22 @@ import java.util.Set;
 /**
  * A login module that loads security information from a SQL database.  Expects
  * to be run by a GenericSecurityRealm (doesn't work on its own).
- * <p/>
+ *
  * This requires database connectivity information (either 1: a dataSourceName and
  * optional dataSourceApplication or 2: a JDBC driver, URL, username, and password)
  * and 2 SQL queries.
- * <p/>
+ *
  * The userSelect query should return 2 values, the username and the password in
  * that order.  It should include one PreparedStatement parameter (a ?) which
  * will be filled in with the username.  In other words, the query should look
  * like: <tt>SELECT user, password FROM credentials WHERE username=?</tt>
- * <p/>
+ *
  * The groupSelect query should return 2 values, the username and the group name in
  * that order (but it may return multiple rows, one per group).  It should include
  * one PreparedStatement parameter (a ?) which will be filled in with the username.
  * In other words, the query should look like:
  * <tt>SELECT user, role FROM user_roles WHERE username=?</tt>
- * <p/>
+ *
  * This login module checks security credentials so the lifecycle methods must return true to indicate success
  * or throw LoginException to indicate failure.
  *
@@ -223,9 +223,8 @@ public class SQLLoginModule implements LoginModule {
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    final ResultSet result = statement.executeQuery();
 
-                    try {
+                    try (ResultSet result = statement.executeQuery()) {
                         boolean found = false;
                         while (result.next()) {
                             final String userName = result.getString(1);
@@ -243,8 +242,6 @@ public class SQLLoginModule implements LoginModule {
                             // User does not exist
                             throw new FailedLoginException();
                         }
-                    } finally {
-                        result.close();
                     }
                 } finally {
                     statement.close();
@@ -256,9 +253,8 @@ public class SQLLoginModule implements LoginModule {
                     for (int i = 0; i < count; i++) {
                         statement.setObject(i + 1, cbUsername);
                     }
-                    final ResultSet result = statement.executeQuery();
 
-                    try {
+                    try (ResultSet result = statement.executeQuery()) {
                         while (result.next()) {
                             final String userName = result.getString(1);
                             final String groupName = result.getString(2);
@@ -267,8 +263,6 @@ public class SQLLoginModule implements LoginModule {
                                 groups.add(groupName);
                             }
                         }
-                    } finally {
-                        result.close();
                     }
                 } finally {
                     statement.close();

@@ -58,7 +58,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     /**
      * The password codec to be used to retrieve the plain text password from a
      * ciphered value.
-     * <p/>
+     *
      * <em>The default is no codec.</em>. In other words, it means password is
      * not ciphered. The {@link org.apache.openejb.cipher.PlainTextPasswordCipher} can also be used.
      */
@@ -169,7 +169,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     /**
      * <p>
      * Sets the {@link #passwordCipher}.
-     * </p>
+     *
      *
      * @param passwordCipher password codec value
      */

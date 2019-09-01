@@ -18,8 +18,7 @@
 
 <!-- $Rev: 600338 $ $Date: 2007-12-02 09:08:04 -0800 (Sun, 02 Dec 2007) $ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <artifactId>tomee</artifactId>
@@ -30,7 +29,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>apache-tomee</artifactId>
   <packaging>jar</packaging>
-  <name>OpenEJB :: TomEE :: Apache TomEE</name>
+  <name>TomEE :: TomEE :: Apache TomEE</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.tomee</tomee.build.name>
@@ -283,14 +282,10 @@
             <version>${version.javaee-api}</version>
           </dependency>
           <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jaxb_2.2_spec</artifactId>
-            <version>1.0.1</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.2.11</version>
+            <groupId>org.apache.tomee.bom</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
           </dependency>
           <dependency>
             <groupId>${project.groupId}</groupId>

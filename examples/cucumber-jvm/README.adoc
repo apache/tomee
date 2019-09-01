@@ -1,0 +1,189 @@
+= Cucumber JVM
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: published
+
+
+== About Cucumber
+Cucumber is a tool that enables support for link:https://en.wikipedia.org/wiki/Behavior-driven_development[Behaviour-Driven Development (BDD)] by the execution of *scenarios* written in plain text and validates that the software does what those scenarios say. The format used to describe the scenarios is the link:https://docs.cucumber.io/gherkin/reference/[gherkin syntax].
+
+Cucumber was originally written in the Ruby programming language, but now supports a variety of different programming languages through various implementations, including Java.
+
+
+== About Cucumber JVM
+
+Is the pure Java implementation of Cucumber that can integrates with all the popular Dependency Injection containers.
+
+== Dependencies
+For this examples we are adding two dependencies in the `pom.xml` dependencies section. `cucumber-openejb` for integration with Open EJB and `cucumber-junit` to use JUnit to execute cucumber scenario(s).
+
+[source,xml]
+----
+<dependency>
+      <groupId>io.cucumber</groupId>
+      <artifactId>cucumber-openejb</artifactId>
+      <version>4.2.3</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.openejb</groupId>
+          <artifactId>openejb-core</artifactId>
+        </exclusion>
+      </exclusions>
+</dependency>
+<dependency>
+  <groupId>io.cucumber</groupId>
+  <artifactId>cucumber-junit</artifactId>
+  <version>4.2.3</version>
+  <scope>test</scope>
+</dependency>
+----
+
+
+
+
+== Test entry point
+
+The class `org.superbiz.cucumber.CucumberTest` is the entry point we can identify when the test phase from maven gets executed. The `@RunWith(Cucumber.class)` is the annotation that enable the cucumber integration and from there it scans the available feature files (`hello.feature`) and their corresponding programmatic mapping (HelloStepDef.java)
+
+[source,java,numbered]
+----
+package org.superbiz.cucumber;
+
+import cucumber.api.junit.Cucumber;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+public class CucumberTest {
+    // the suite, will load automatically the features
+}
+----
+
+
+== Feature file
+The `hello.feature` file contains the `gherkin` syntax that indicates the sequence of steps that cucumber will execute. Check the link:https://docs.cucumber.io/gherkin/reference/[cucumber gherkin reference documentation] to understand the available keywords, rules and conditionals.
+
+
+[source,bash]
+----
+Feature: Hello
+
+  Scenario: Say Hello
+    Given A name 'foo'
+    Then The bean says 'hello foo'
+----
+
+== Step Definitions
+
+This are the programmatic set of instruction that will match the Feature file scenarios and their corresponding actions. The class `HelloStepDef.java` has the annotations `Given` and `Then` from the `cucumber.api.java.en` package. For this examples we are using English but the tool can support different languages.
+
+A step definition’s expression can either be a Regular Expression or a Cucumber Expression. In this example we are using Regular Expression but you can check the link:https://docs.cucumber.io/cucumber/step-definitions/[Step Definition reference] documentation for more information.
+
+[source,java,numbered]
+----
+package org.superbiz.cucumber;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertEquals;
+
+public class HelloStepDef {
+
+    @Inject
+    private Hello hello;
+
+    private String name;
+
+    @Given("^A name '([a-z]*)'$")
+    public void initName(final String name) {
+        this.name = name;
+    }
+
+    @Then("^The bean says '([ a-z]*)'$ ")
+    public void checkResult(final String result) {
+        assertEquals(result, hello.hello(name));
+    }
+}
+----
+
+In the above code you can see how JUnit came into play on the line `assertEquals(result, hello.hello(name));` when the result obtained from the execution of the method hello from the Hello bean is compared with the value `result` from the feature file `hello.feature`
+
+
+== Running
+In order to run this example, make sure you have cloned the `https://github.com/apache/tomee` repository to your local computer and navigate to `tomee/examples/cucumber-jvm` folder
+
+Then you just need to execute:
+
+[source,bash]
+----
+mvn clean test
+----
+
+
+=== Output
+[source,bash]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.cucumber.CucumberTest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Tue Feb 26 14:01:02 CST 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190226
+INFO - Build time: 11:17
+INFO - ********************************************************************************
+INFO - openejb.home = /Users/norm/git/tomee/examples/cucumber-jvm
+INFO - openejb.base = /Users/norm/git/tomee/examples/cucumber-jvm
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@769f71a9
+INFO - Succeeded in installing singleton service
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Found EjbModule in classpath: /Users/norm/git/tomee/examples/cucumber-jvm/target/classes
+INFO - Beginning load: /Users/norm/git/tomee/examples/cucumber-jvm/target/classes
+INFO - Configuring enterprise application: /Users/norm/git/tomee/examples/cucumber-jvm
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean cucumber-jvm.Comp351520508: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /var/folders/xg/3840xb4543j_n48v_y19_kv00000gn/T for stateful session passivation
+INFO - Enterprise application "/Users/norm/git/tomee/examples/cucumber-jvm" loaded.
+INFO - Assembling app: /Users/norm/git/tomee/examples/cucumber-jvm
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@769f71a9
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 331 ms.
+INFO - Deployed Application(path=/Users/norm/git/tomee/examples/cucumber-jvm)
+..INFO - Undeploying app: /Users/norm/git/tomee/examples/cucumber-jvm
+INFO - Destroying OpenEJB container
+
+1 Scenarios (1 passed)
+2 Steps (2 passed)
+0m2.117s
+
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.339 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 5.462 s
+[INFO] Finished at: 2019-02-26T14:01:04-06:00
+[INFO] Final Memory: 29M/619M
+[INFO] ------------------------------------------------------------------------
+
+----

@@ -94,7 +94,7 @@ public class UnknownRemoteIntfcTests extends UnknownCmpTestClient {
     /**
      * After a system exception the intance should be garbage collected
      * and the remote reference should be invalidated.
-     * <p/>
+     *
      * The Remote Server fails this one, that should be fixed.
      */
     public void BUG_test05_invokeAfterSystemException() {

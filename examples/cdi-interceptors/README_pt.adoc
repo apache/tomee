@@ -1,0 +1,221 @@
+= CDI Interceptors
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+Vamos escrever uma aplicação simples que nos permite comprar entradas para um filme. Como toda aplicação, log é uma das questões transversais que nós temos.
+Alem disso, ha alguns métodos na nossa aplicação que só podem ser acessados no horário de trabalho. Se acessados fora do horário nos vamos lançar um `AccessDeniedException`.
+
+Como podemos marcar quais métodos devem ser interceptados? Não seria conveniente anotar um método desta forma:
+
+ @Log
+ public void aMethod(){...}
+
+ou
+
+ @TimeRestricted
+ public void bMethod(){...}
+
+Vamos criar essas anotações que vão "marcar" um método para interceptação.
+
+ @InterceptorBinding
+ @Target({ TYPE, METHOD })
+ @Retention(RUNTIME)
+ public @interface Log {
+ }
+
+e
+
+ @InterceptorBinding
+ @Target({ TYPE, METHOD })
+ @Retention(RUNTIME)
+ public @interface TimeRestricted {
+ }
+
+Garanta que voce não esqueceu a anotação `@InterceptorBinding` acima! Agora nossas anotações personalizadas estão criadas, vamos anexa-las (ou vincula-las) aos interceptores.
+
+Aqui esta nosso interceptor de log. Um método `@AroundInvoke` e estamos quase terminando.
+
+ @Interceptor
+ @Log  //Vinculando com o interceptador aqui. Agora todo método anotado com @Log ira ser interceptado pelo logMethodEntry
+ public class BookForAShowLoggingInterceptor implements Serializable {
+     private static final long serialVersionUID = 8139854519874743530L;
+     private Logger logger = Logger.getLogger("BookForAShowApplicationLogger");
+     @AroundInvoke
+     public Object logMethodEntry(InvocationContext ctx) throws Exception {
+         logger.info("Before entering method:" + ctx.getMethod().getName());
+         InterceptionOrderTracker.getMethodsInterceptedList().add(ctx.getMethod().getName());
+         InterceptionOrderTracker.getInterceptedByList().add(this.getClass().getSimpleName());
+         return ctx.proceed();
+     }
+ }
+
+Agora a anotação `@Log` que nos criamos esta vinculada a esse interceptador. (Da mesma forma nos vinculamos `@TimeRestrict` para `TimeBasedRestrictingInterceptor`. Veja no código) 
+
+Tudo pronto, vamos anotar a nível de classe ou método e se divertir interceptando!
+
+ @Log
+ @Stateful
+ public class BookForAShowOneInterceptorApplied implements Serializable {
+     private static final long serialVersionUID = 6350400892234496909L;
+     public List<String> getMoviesList() {
+         List<String> moviesAvailable = new ArrayList<String>();
+         moviesAvailable.add("12 Angry Men");
+         moviesAvailable.add("Kings speech");
+         return moviesAvailable;
+     }
+     public Integer getDiscountedPrice(int ticketPrice) {
+         return ticketPrice - 50;
+     }
+     // Suponha que existam mais métodos
+ }
+
+A anotação `@Log` aplicada em nível de classe denota que todos os métodos serão interceptados com `BookForAShowLoggingInterceptor`.
+
+Antes de dizer-mos "tudo pronto" tem apenas uma coisa que precisamos fazer! Habilitar os interceptadores!
+
+Vamos criar rapidamente um arquivo `beans.xml` no caminho `src/main/resources/META-INF/beans.xml`:
+
+ <beans>
+   <interceptors>
+     <class>org.superbiz.cdi.bookshow.interceptors.BookForAShowLoggingInterceptor
+     </class>
+     <class>org.superbiz.cdi.bookshow.interceptors.TimeBasedRestrictingInterceptor
+     </class>
+   </interceptors>
+ </beans>
+
+Por padrão, um arquivo de bean não tem interceptadores habilitados; Um interceptador deve ser explicitamente habilitado para "escutar" sua classe no arquivo `beans.xml`.
+
+A ordem da anotação que intercepta não importa. 
+
+Exemplo:
+
+ @TimeRestrict
+ @Log
+ void cMethod(){}
+
+Existe o elemento `interceptors` no `bean.xml` não apenas para "habilitar" os interceptadores, mas também define a "ordem de execução" deles. Nesse caso `BookForAShowLoggingInterceptor` vai ser aplicado primeiro e depois `TimeBasedRestrictingInterceptor`
+
+Agora você já sabe que a ordem somente é determinada pelo elemento `interceptors` no `beans.xml`. A regra é clara, interceptadores que aparecem antes na lista são chamados primeiro.
+
+Perceba também que um método pode ser marcado para interceptação utilizando vários interceptors apenas adicionando a anotação acima.
+
+Isso traz outra questão. No caso acima nós temos dois interceptadores aplicados juntos. Mas e se nos quisermos algo como 4 interceptadores? Isso vai ir longe.... Ter tantas anotações não deixa meu código feio?
+
+Não se preocupe! Apenas crie uma anotação que herda das outras
+
+ @Inherited
+ @InterceptorBinding
+ @Target({ TYPE, METHOD })
+ @Retention(RUNTIME)
+ @Log
+ @TimeRestricted
+ public @interface TimeRestrictAndLog {
+ }
+
+Este interceptador faz herança.
+
+O código abaixo demonstra a maioria dos casos que nos discutimos.
+
+Não esqueça que forma antiga de binding com `@Interceptors(WhicheverInterceptor.class)` também é suportada. De uma olhada em `BookForAShowOldStyleInterceptorBinding` onde os comentários explicam como a maneira mais nova (que conversamos acima) é melhor.
+
+== O código
+
+=== BookForAShowOneInterceptorApplied
+
+`BookForAShowOneInterceptorApplied` mostra apenas um simples interceptador de `@Log` sendo aplicado.
+
+....
+package org.superbiz.cdi.bookshow.beans;
+
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+
+import javax.ejb.Stateful;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+@Log
+@Stateful
+public class BookForAShowOneInterceptorApplied implements Serializable {
+    private static final long serialVersionUID = 6350400892234496909L;
+
+    public List<String> getMoviesList() {
+        List<String> moviesAvailable = new ArrayList<String>();
+        moviesAvailable.add("12 Angry Men");
+        moviesAvailable.add("Kings speech");
+        return moviesAvailable;
+    }
+
+    public Integer getDiscountedPrice(int ticketPrice) {
+        return ticketPrice - 50;
+    }
+}
+....
+
+=== BookForAShowTwoInterceptorsApplied
+
+`BookForAShowTwoInterceptorsApplied` mostra ambos `@Log` e `@TimeRestricted` sendo aplicados.
+
+....
+package org.superbiz.cdi.bookshow.beans;
+
+import org.superbiz.cdi.bookshow.interceptorbinding.Log;
+import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestricted;
+
+import javax.ejb.Stateful;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+@Log
+@Stateful
+public class BookForAShowTwoInterceptorsApplied implements Serializable {
+    private static final long serialVersionUID = 6350400892234496909L;
+
+    public List<String> getMoviesList() {
+        List<String> moviesAvailable = new ArrayList<String>();
+        moviesAvailable.add("12 Angry Men");
+        moviesAvailable.add("Kings speech");
+        return moviesAvailable;
+    }
+
+    @TimeRestricted
+    public Integer getDiscountedPrice(int ticketPrice) {
+        return ticketPrice - 50;
+    }
+}
+....
+
+=== BookShowInterceptorBindingInheritanceExplored
+
+`BookShowInterceptorBindingInheritanceExplored` mostra como `@TimeRestrictAndLog` (interceptor-binding-inheritance) pode ser usado como uma alternativa em vez de anotar o método com muitas anotações explicitamente.
+
+....
+package org.superbiz.cdi.bookshow.beans;
+
+import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestrictAndLog;
+
+import javax.ejb.Stateful;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+@Stateful
+public class BookShowInterceptorBindingInheritanceExplored implements Serializable {
+    private static final long serialVersionUID = 6350400892234496909L;
+
+    public List<String> getMoviesList() {
+        List<String> moviesAvailable = new ArrayList<String>();
+        moviesAvailable.add("12 Angry Men");
+        moviesAvailable.add("Kings speech");
+        return moviesAvailable;
+    }
+
+    @TimeRestrictAndLog
+    public Integer getDiscountedPrice(int ticketPrice) {
+        return ticketPrice - 50;
+    }
+}
+....

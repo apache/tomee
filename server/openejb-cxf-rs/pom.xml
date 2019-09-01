@@ -15,8 +15,7 @@
       See the License for the specific language governing permissions and
       limitations under the License.
   -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
@@ -25,7 +24,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>openejb-cxf-rs</artifactId>
-  <name>OpenEJB :: Server :: CXF RS</name>
+  <name>TomEE :: Server :: CXF RS</name>
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf.rs</tomee.build.name>
@@ -51,17 +50,49 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.5_spec</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-javamail_1.4_spec</artifactId>
@@ -73,6 +104,10 @@
         <exclusion>
           <groupId>javax.ws.rs</groupId>
           <artifactId>javax.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>xalan</groupId>
@@ -92,17 +127,33 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-cors</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-oauth2</artifactId>
       <version>${cxf.version}</version>
       <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-servlet_3.0_spec</artifactId>
@@ -113,6 +164,12 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jaxb</groupId>
+          <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency> <!-- JohnzonProvider, WadlDocumentMessageBodyWriter and JsrProvider -->
       <groupId>org.apache.johnzon</groupId>

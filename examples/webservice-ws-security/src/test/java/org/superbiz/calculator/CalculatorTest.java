@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,8 @@ import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.interceptor.LoggingInInterceptor;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
@@ -69,6 +71,37 @@ public class CalculatorTest extends TestCase {
         assertNotNull(calcService);
 
         final CalculatorWs calc = calcService.getPort(CalculatorWs.class);
+
+        final Client client = ClientProxy.getClient(calc);
+        final Endpoint endpoint = client.getEndpoint();
+        endpoint.getOutInterceptors().add(new SAAJOutInterceptor());
+
+        final Map<String, Object> outProps = new HashMap<>();
+        outProps.put(WSHandlerConstants.ACTION, WSHandlerConstants.USERNAME_TOKEN);
+        outProps.put(WSHandlerConstants.USER, "jane");
+        outProps.put(WSHandlerConstants.PASSWORD_TYPE, WSConstants.PW_TEXT);
+        outProps.put(WSHandlerConstants.PW_CALLBACK_REF, new CallbackHandler() {
+
+            @Override
+            public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                final WSPasswordCallback pc = (WSPasswordCallback) callbacks[0];
+                pc.setPassword("waterfall");
+            }
+        });
+
+        final WSS4JOutInterceptor wssOut = new WSS4JOutInterceptor(outProps);
+        endpoint.getOutInterceptors().add(wssOut);
+
+        assertEquals(10, calc.sum(4, 6));
+    }
+
+    public void testCalculatorViaWsInterfaceFactoryBean() throws Exception {
+        final JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+
+        factory.setServiceClass(CalculatorWs.class);
+        factory.setAddress("http://localhost:" + port + "/webservice-ws-security/CalculatorImpl");
+
+        final CalculatorWs calc = (CalculatorWs) factory.create();
 
         final Client client = ClientProxy.getClient(calc);
         final Endpoint endpoint = client.getEndpoint();

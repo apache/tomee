@@ -26,27 +26,27 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * @Target({TYPE}) @Retention(RUNTIME)
+ * Target({TYPE}) @Retention(RUNTIME)
  * public @interface EntityListeners {
  * Class[] value();
  * }
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
  * <p>Java class for entity-listeners complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="entity-listeners">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="entity-listener" type="{http://java.sun.com/xml/ns/persistence/orm}entity-listener" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="entity-listeners"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="entity-listener" type="{http://java.sun.com/xml/ns/persistence/orm}entity-listener" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -60,21 +60,21 @@ public class EntityListeners {
 
     /**
      * Gets the value of the entityListener property.
-     * <p/>
-     * <p/>
+     *
+     *
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the entityListener property.
-     * <p/>
-     * <p/>
+     *
+     *
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEntityListener().add(newItem);
      * </pre>
-     * <p/>
-     * <p/>
-     * <p/>
+     *
+     *
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link EntityListener }
      */

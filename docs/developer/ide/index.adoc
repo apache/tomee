@@ -12,12 +12,12 @@ TomEE is supported by the main IDEs in the market:
 
 == Eclipse
 
-Be the first to write this part!
+Eclipse is an integrated development environment used in computer programming, and is the most widely used Java IDE. It contains a base workspace and an extensible plug-in system for customizing the environment. link:https://en.wikipedia.org/wiki/Eclipse_(software)[Wikipedia]
 
-== Idea
+== IntelliJ IDEA
 
-Be the first to write this part!
+IntelliJ IDEA is a Java integrated development environment for developing computer software. It is developed by JetBrains, and is available as an Apache 2 Licensed community edition, and in a proprietary commercial edition. Both can be used for commercial development. link:https://en.wikipedia.org/wiki/IntelliJ_IDEA[Wikipedia]
 
 == Netbeans
 
-Be the first to write this part!
+NetBeans is an integrated development environment for Java. NetBeans allows applications to be developed from a set of modular software components called modules. NetBeans runs on Microsoft Windows, macOS, Linux and Solaris. link:https://en.wikipedia.org/wiki/NetBeans[Wikipedia]

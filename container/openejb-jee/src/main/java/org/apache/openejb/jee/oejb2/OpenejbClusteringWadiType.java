@@ -26,24 +26,24 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for openejb-clustering-wadiType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="openejb-clustering-wadiType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}abstract-clusteringType">
- *       &lt;sequence>
- *         &lt;element name="sweepInterval" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="numPartitions" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/>
- *         &lt;element name="cluster" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType" minOccurs="0"/>
- *         &lt;element name="disableReplication" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="deltaReplication" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="backing-strategy-factory" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="openejb-clustering-wadiType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://geronimo.apache.org/xml/ns/j2ee/application-2.0}abstract-clusteringType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="sweepInterval" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="numPartitions" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0"/&gt;
+ *         &lt;element name="cluster" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType" minOccurs="0"/&gt;
+ *         &lt;element name="disableReplication" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="deltaReplication" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="backing-strategy-factory" type="{http://geronimo.apache.org/xml/ns/naming-1.2}patternType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

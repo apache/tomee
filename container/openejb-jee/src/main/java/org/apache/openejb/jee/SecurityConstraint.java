@@ -30,25 +30,25 @@ import java.util.List;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for security-constraintType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="security-constraintType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="display-name" type="{http://java.sun.com/xml/ns/javaee}display-nameType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="web-resource-collection" type="{http://java.sun.com/xml/ns/javaee}web-resource-collectionType" maxOccurs="unbounded"/>
- *         &lt;element name="auth-constraint" type="{http://java.sun.com/xml/ns/javaee}auth-constraintType" minOccurs="0"/>
- *         &lt;element name="user-data-constraint" type="{http://java.sun.com/xml/ns/javaee}user-data-constraintType" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="security-constraintType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="display-name" type="{http://java.sun.com/xml/ns/javaee}display-nameType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="web-resource-collection" type="{http://java.sun.com/xml/ns/javaee}web-resource-collectionType" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="auth-constraint" type="{http://java.sun.com/xml/ns/javaee}auth-constraintType" minOccurs="0"/&gt;
+ *         &lt;element name="user-data-constraint" type="{http://java.sun.com/xml/ns/javaee}user-data-constraintType" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

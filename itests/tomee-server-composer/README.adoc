@@ -1,0 +1,4 @@
+# TomEE Server Composer
+
+Intended soley as a means to improve integration testing by enabling a more expressive way
+ to build a running server process, including ability to read log output.

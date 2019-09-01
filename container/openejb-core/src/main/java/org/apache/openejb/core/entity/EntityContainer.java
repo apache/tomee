@@ -400,7 +400,7 @@ public class EntityContainer implements RpcContainer {
                 final Object primaryKey = keys.nextElement();
                 proxies.addElement(new ProxyInfo(beanContext, primaryKey));
             }
-            returnValue = new ArrayEnumeration(proxies);
+            returnValue = new ArrayEnumeration<>(proxies);
         } else {
             returnValue = new ProxyInfo(beanContext, returnValue);
         }

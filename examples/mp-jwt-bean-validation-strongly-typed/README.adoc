@@ -1,0 +1,9 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT, Bean Validation and Strongly-Typed Annotations
+
+TODO
+
+CAUTION: This feature has been temporarily removed in `master` and needs to be reworked.  It is anticipated this will complete before Apache TomEE 8.0.0 final.

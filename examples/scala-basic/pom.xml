@@ -17,21 +17,20 @@
     limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.superbiz</groupId>
   <artifactId>scala-basic</artifactId>
   <packaging>jar</packaging>
   <version>8.0.0-SNAPSHOT</version>
-  <name>OpenEJB :: Examples :: Basic Scala</name>
+  <name>TomEE :: Examples :: Basic Scala</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scala.version>2.11</scala.version>
-    <scala.full-version>${scala.version}.9</scala.full-version>
+    <scala.version>2.13</scala.version>
+    <scala.full-version>${scala.version}.0</scala.full-version>
   </properties>
 
   <repositories>
@@ -112,8 +111,8 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-            <artifactId>javaee-api</artifactId>
-       <version>8.0</version>
+      <artifactId>javaee-api</artifactId>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
 
@@ -126,7 +125,7 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version}</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.8</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -165,16 +164,4 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <profiles>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <properties>
-        <scala.version>2.12</scala.version>
-        <scala.full-version>${scala.version}.2</scala.full-version>
-      </properties>
-    </profile>
-  </profiles>
 </project>

@@ -89,6 +89,8 @@
         <!-- wars and pom -->
         <exclude>*:war</exclude>
         <exclude>*:pom</exclude>
+        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.5_spec</exclude>
+        <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.5_mail</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

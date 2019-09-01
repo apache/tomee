@@ -20,28 +20,28 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
- * <p/>
+ *
  * Java class for EnvEntryType.
- * <p/>
- * <p/>
+ *
+ *
  * The following schema fragment specifies the expected content contained within
  * this class.
- * <p/>
- * <p/>
+ *
+ *
  * <pre>
- * &lt;simpleType name="EnvEntryType">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName">
- *     &lt;enumeration value="String"/>
- *     &lt;enumeration value="Integer"/>
- *     &lt;enumeration value="Boolean"/>
- *     &lt;enumeration value="Double"/>
- *     &lt;enumeration value="Byte"/>
- *     &lt;enumeration value="Short"/>
- *     &lt;enumeration value="Long"/>
- *     &lt;enumeration value="Float"/>
- *     &lt;enumeration value="Character"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="EnvEntryType"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}NCName"&gt;
+ *     &lt;enumeration value="String"/&gt;
+ *     &lt;enumeration value="Integer"/&gt;
+ *     &lt;enumeration value="Boolean"/&gt;
+ *     &lt;enumeration value="Double"/&gt;
+ *     &lt;enumeration value="Byte"/&gt;
+ *     &lt;enumeration value="Short"/&gt;
+ *     &lt;enumeration value="Long"/&gt;
+ *     &lt;enumeration value="Float"/&gt;
+ *     &lt;enumeration value="Character"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  */
 @XmlEnum

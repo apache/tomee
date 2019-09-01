@@ -244,11 +244,7 @@ public class UrlCache {
     }
 
     private synchronized Map<URL, File> getAppCache(final String appId) {
-        Map<URL, File> urlFileMap = cache.get(appId);
-        if (urlFileMap == null) {
-            urlFileMap = new LinkedHashMap<>();
-            cache.put(appId, urlFileMap);
-        }
+        Map<URL, File> urlFileMap = cache.computeIfAbsent(appId, k -> new LinkedHashMap<>());
         return urlFileMap;
     }
 

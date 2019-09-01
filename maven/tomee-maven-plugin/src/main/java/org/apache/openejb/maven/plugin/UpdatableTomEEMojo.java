@@ -173,7 +173,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
     protected boolean startSynchronizers() {
         timer = new Timer("tomee-maven-plugin-synchronizer");
 
-        final Collection<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
+        final Collection<Synchronizer> synchronizers = new ArrayList<>();
 
         long interval = 5000; // max of all sync interval
 
@@ -206,7 +206,7 @@ public abstract class UpdatableTomEEMojo extends AbstractTomEEMojo {
 
     @Override
     protected Collection<String> availableCommands() {
-        final Collection<String> cmds = new ArrayList<String>();
+        final Collection<String> cmds = new ArrayList<>();
         cmds.addAll(super.availableCommands());
         cmds.add(RELOAD_CMD);
         return cmds;

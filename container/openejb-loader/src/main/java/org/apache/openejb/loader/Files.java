@@ -43,7 +43,7 @@ import static org.apache.openejb.loader.JarLocation.decode;
  * @version $Rev$ $Date$
  */
 public class Files {
-    private static final Map<String, MessageDigest> DIGESTS = new HashMap<String, MessageDigest>();
+    private static final Map<String, MessageDigest> DIGESTS = new HashMap<>();
     private static final boolean IS_WINDOWS = System.getProperty("os.name", "unknown").toLowerCase(Locale.ENGLISH).startsWith("win");
 
     public static File path(final String... parts) {
@@ -85,9 +85,8 @@ public class Files {
         return collect(dir, new PatternFileFilter(pattern));
     }
 
-
     public static List<File> collect(final File dir, final FileFilter filter) {
-        final List<File> accepted = new ArrayList<File>();
+        final List<File> accepted = new ArrayList<>();
         if (filter.accept(dir)) {
             accepted.add(dir);
         }
@@ -245,8 +244,8 @@ public class Files {
     }
 
 
-    // Shutdown hook for recursive delete on tmp directories
-    static final List<String> delete = new ArrayList<String>();
+    // Shutdown hook for recursive DELETE on tmp directories
+    private static final List<String> DELETE = new ArrayList<>();
 
     static {
         final ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -264,7 +263,7 @@ public class Files {
     }
 
     public static void deleteOnExit(final File file) {
-        delete.add(file.getAbsolutePath());
+        DELETE.add(file.getAbsolutePath());
         flagForDeleteOnExit(file);
     }
 
@@ -288,14 +287,14 @@ public class Files {
     }
 
     private static void delete() {
-        for (final String path : delete) {
+        for (final String path : DELETE) {
             delete(new File(path));
         }
     }
 
     /**
      * Delete a file and all contents if specified file is a directory.
-     * If the delete fails then the file/s are flagged for delete on exit.
+     * If the DELETE fails then the file/s are flagged for DELETE on exit.
      *
      * @param file File
      */
@@ -327,7 +326,7 @@ public class Files {
      * Delete a file and all contents if specified file is a directory
      *
      * @param file File
-     * @Throws IllegalStateException on failure at any point
+     * @throws IllegalStateException on failure at any point
      */
     public static void remove(final File file) {
 
@@ -352,7 +351,7 @@ public class Files {
 
     public static File select(final File dir, final String pattern) {
         final List<File> matches = collect(dir, pattern);
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             throw new IllegalStateException(String.format("Missing '%s'", pattern));
         }
         if (matches.size() > 1) {
@@ -362,7 +361,7 @@ public class Files {
     }
 
     private static String join(final String delimiter, final Collection<File> collection) {
-        if (collection.size() == 0) {
+        if (collection.isEmpty()) {
             return "";
         }
         final StringBuilder sb = new StringBuilder();
@@ -374,6 +373,11 @@ public class Files {
 
     // return the token as url if simply a path otheriwse if ending by *.jar returning the list of
     // files in the folder
+    /**
+     *
+     * @param path String
+     * @return List of files in the folder
+     */
     public static Set<URL> listJars(final String path) {
         final Set<URL> set = new HashSet<>();
 
@@ -452,7 +456,7 @@ public class Files {
     }
 
     public static String hash(final Set<URL> urls, final String algo) {
-        final Collection<File> files = new ArrayList<File>();
+        final Collection<File> files = new ArrayList<>();
 
         for (final URL u : urls) {
             final File file = toFile(u);

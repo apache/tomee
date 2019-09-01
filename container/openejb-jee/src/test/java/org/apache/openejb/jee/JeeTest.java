@@ -258,8 +258,7 @@ public class JeeTest extends TestCase {
     public void testWebServiceHandlers() throws Exception {
         final QName[] expectedServiceNames = {new QName("http://www.helloworld.org", "HelloService", "ns1"), new QName("http://www.bar.org", "HelloService", "bar"),
             new QName("http://www.bar1.org", "HelloService", "bar"), new QName(XMLConstants.NULL_NS_URI, "HelloService", "foo"), new QName(XMLConstants.NULL_NS_URI, "*"), null};
-        final InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml");
-        try {
+        try (InputStream in = this.getClass().getClassLoader().getResourceAsStream("handler.xml")) {
             final HandlerChains handlerChains = (HandlerChains) JaxbJavaee.unmarshalHandlerChains(HandlerChains.class, in);
             for (int index = 0; index < handlerChains.getHandlerChain().size(); index++) {
                 final HandlerChain handlerChain = handlerChains.getHandlerChain().get(index);
@@ -272,8 +271,6 @@ public class JeeTest extends TestCase {
                 }
             }
             System.out.println(JaxbJavaee.marshal(HandlerChains.class, handlerChains));
-        } finally {
-            in.close();
         }
     }
 

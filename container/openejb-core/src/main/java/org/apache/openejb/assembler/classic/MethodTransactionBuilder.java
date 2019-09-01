@@ -78,7 +78,7 @@ public class MethodTransactionBuilder {
      * exactly one MethodInfo per MethodTransactionInfo.  A single MethodTransactionInfo
      * with three MethodInfos would be expanded into three MethodTransactionInfo with
      * one MethodInfo each.
-     * <p/>
+     *
      * The MethodTransactionInfo list is then sorted from least to most specific.
      *
      * @return a normalized list of new MethodTransactionInfo objects
@@ -97,7 +97,7 @@ public class MethodTransactionBuilder {
         }
 
         Collections.reverse(normalized);
-        Collections.sort(normalized, new MethodTransactionComparator());
+        normalized.sort(new MethodTransactionComparator());
 
         return normalized;
     }

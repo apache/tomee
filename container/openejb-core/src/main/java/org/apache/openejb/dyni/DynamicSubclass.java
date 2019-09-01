@@ -100,9 +100,7 @@ public class DynamicSubclass implements Opcodes {
                 thisHandler.setAccessible(true);
             }
             thisHandler.set(instance, handler);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalArgumentException(e);
-        } catch (final IllegalAccessException e) {
+        } catch (final NoSuchFieldException | IllegalAccessException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -265,7 +263,7 @@ public class DynamicSubclass implements Opcodes {
         return out.toByteArray();
     }
 
-    private static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
+    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
         // Move all the annotations onto the newly implemented methods
         // Ensures CDI and JAX-RS and JAX-WS still work
         Class clazz = classToProxy;

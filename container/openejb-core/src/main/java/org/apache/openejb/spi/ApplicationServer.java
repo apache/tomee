@@ -27,25 +27,25 @@ import javax.ejb.HomeHandle;
 
 /**
  * <h2><b>LOCAL to REMOTE SERIALIZATION</b></h2> <p>
- * <p/>
+ *
  * <i>Definition:</i><p>
  * This is a serialization that initiates in the local vm, but
  * is outside the scope of a marked IntraVM local serialization.
- * <p/>
+ *
  * <i>Circumstances:</i><p>
  * When an IntraVM implementation of a javax.ejb.* interface is
  * serialized outside the scope of the IntraVM Server
- * <p/>
+ *
  * These serializations happen when objects are sent from a
  * local bean to a remote client as part of a return value, or
  * when a stateful session bean is passified.
- * <p/>
+ *
  * <i>Action:</i><p>
  * Don't serialize the IntraVM javax.ejb.* interface
  * implementation, instead ask the ApplicationServer to nominate
  * its own implementation as a replacement.  This is done via
  * the org.apache.openejb.spi.ApplicationServer interface.
- * <p/>
+ *
  * <i>Example Scenario:</i><p>
  * SERIALIZATION<br>
  * <br>1.  ObjectOutputStream encounters an IntraVmMetaData instance
@@ -61,7 +61,7 @@ import javax.ejb.HomeHandle;
  * <br>5.  The ObjectOutputStream serializes the ApplicationServer's
  * EJBMetaData instance in place of the IntraVmMetaData
  * instance.
- * <p/>
+ *
  * Note:  The ApplicationServer's EJBMetaData instance can
  * be any object that implements the javax.ejb.EJBMetaData
  * interface and can also implement any serialization
@@ -69,11 +69,11 @@ import javax.ejb.HomeHandle;
  * replacement or implement protocol specific logic or
  * otherwise gain control over the serialization of
  * EJBMetaData instances destined for its remote clients.
- * <p/>
+ *
  * DESERIALIZATION<p>
  * The deserialization of the Application Server's
  * javax.ejb.* implementations is implementation specific.
- * <p/>
+ *
  *
  * @version $Revision$ $Date$
  */

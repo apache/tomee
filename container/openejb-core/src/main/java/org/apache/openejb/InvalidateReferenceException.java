@@ -22,7 +22,7 @@ package org.apache.openejb;
  * system exception that results in the eviction of the bean instance.  The
  * InvalidateReferenceException's nested exception will be a RemoteException
  * or possibly an ObjectNotFoundException.
- * <p/>
+ *
  * The Application Server must catch the InvalidateReferenceException and its
  * nested exception rethrown by the bean proxy. After the exception is
  * re-thrown by the bean proxy, the bean proxy must be invalidated so that all

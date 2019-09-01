@@ -36,24 +36,24 @@ import java.util.Map;
 
 /**
  * web-common_3_0.xsd
- * <p/>
+ *
  * <p>Java class for web-appType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="web-appType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/>
- *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}web-commonType"/>
- *         &lt;element name="absolute-ordering" type="{http://java.sun.com/xml/ns/javaee}absoluteOrderingType"/>
- *       &lt;/choice>
- *       &lt;attGroup ref="{http://java.sun.com/xml/ns/javaee}web-common-attributes"/>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="web-appType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="module-name" type="{http://java.sun.com/xml/ns/javaee}string" minOccurs="0"/&gt;
+ *         &lt;group ref="{http://java.sun.com/xml/ns/javaee}web-commonType"/&gt;
+ *         &lt;element name="absolute-ordering" type="{http://java.sun.com/xml/ns/javaee}absoluteOrderingType"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attGroup ref="{http://java.sun.com/xml/ns/javaee}web-common-attributes"/&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 

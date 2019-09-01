@@ -20,10 +20,10 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.SelfManaging;
 import org.apache.openejb.server.ServerService;
 import org.apache.openejb.server.ServiceException;
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.util.SecurityUtils;
+import org.apache.sshd.common.util.security.SecurityUtils;
+import org.apache.sshd.common.util.security.bouncycastle.BouncyCastleGeneratorHostKeyProvider;
+import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.jaas.JaasPasswordAuthenticator;
-import org.apache.sshd.server.keyprovider.PEMGeneratorHostKeyProvider;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
 
 import java.io.File;
@@ -49,9 +49,9 @@ public class SSHServer implements ServerService, SelfManaging {
 
         final String basePath = SystemInstance.get().getBase().getDirectory().getAbsolutePath();
         if (SecurityUtils.isBouncyCastleRegistered()) {
-            sshServer.setKeyPairProvider(new PEMGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".pem").getPath()));
+            sshServer.setKeyPairProvider(new BouncyCastleGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".pem").toPath()));
         } else {
-            sshServer.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".ser").getPath()));
+            sshServer.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(new File(basePath, KEY_NAME + ".ser").toPath()));
         }
 
         final OpenEJBShellFactory sf = new OpenEJBShellFactory(bind, port);

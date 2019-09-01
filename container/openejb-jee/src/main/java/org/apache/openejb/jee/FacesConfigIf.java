@@ -39,32 +39,32 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * present, the navigation handler will match a null outcome
  * and use the condition return value to determine if the
  * case should be considered a match.</p>
- * <p/>
+ *
  * <div class="changed_added_2_2">
- * <p/>
- * <p>When used in a <code>&lt;switch&gt;</code> within a flow, if the
+ *
+ * <p>When used in a <code>&lt;switch&gt;</code&gt; within a flow, if the
  * expresion returns <code>true</code>, the
- * <code>&lt;from-outcome&gt;</code> sibling element's outcome is used as
+ * <code>&lt;from-outcome&gt;</code&gt; sibling element's outcome is used as
  * the id of the node in the flow graph to which control must be
  * passed.</p>
- * <p/>
+ *
  * </div>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
+ *
+ *
+ *
+ *
  * <p>Java class for faces-config-ifType complex type.
- * <p/>
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p/>
+ *
  * <pre>
- * &lt;complexType name="faces-config-ifType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee>faces-config-el-expressionType">
- *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="faces-config-ifType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://xmlns.jcp.org/xml/ns/javaee&gt;faces-config-el-expressionType"&gt;
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)

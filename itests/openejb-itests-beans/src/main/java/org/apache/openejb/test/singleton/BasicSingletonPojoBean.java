@@ -65,7 +65,7 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
 
     /**
      * Maps to BasicSingletonObject.getPermissionsReport
-     * <p/>
+     *
      * Returns a report of the bean's
      * runtime permissions
      *
@@ -79,7 +79,7 @@ public class BasicSingletonPojoBean implements BasicSingletonBusinessLocal, Basi
 
     /**
      * Maps to BasicSingletonObject.getAllowedOperationsReport
-     * <p/>
+     *
      * Returns a report of the allowed opperations
      * for one of the bean's methods.
      *

@@ -103,14 +103,11 @@ public class MdbPoolContainerTest {
         assertNotNull(cf);
 
 
-        final Connection connection = cf.createConnection();
-        try {
+        try (Connection connection = cf.createConnection()) {
             final Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             final MessageProducer producer = session.createProducer(destination);
             producer.send(session.createTextMessage(TEXT));
             assertTrue(Listener.sync());
-        } finally {
-            connection.close();
         }
     }
 

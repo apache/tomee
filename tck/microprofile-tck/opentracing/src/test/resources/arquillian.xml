@@ -42,6 +42,9 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="properties">
+        tomee.mp.scan = all
+      </property>
     </configuration>
   </container>
   <container qualifier="tomee-plume">
@@ -54,6 +57,9 @@
       <property name="dir">target/tomee</property>
       <property name="appWorkingDir">target/workdir</property>
       <property name="cleanOnStartUp">true</property>
+      <property name="properties">
+        tomee.mp.scan = all
+      </property>
     </configuration>
   </container>
 </arquillian>
