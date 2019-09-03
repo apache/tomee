@@ -21,6 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,22 +57,30 @@ public class JMSContextInjectionTest {
     @Test
     public void testShouldSendAndReceiveTwoHundredMessages() throws Exception {
         messageCounter.reset();
-
         for (int i = 0; i < 200; i++) {
             senderBean.sendToQueue("test", "Hello world");
         }
-        Thread.sleep(100L);
+        int waitingCount =0;
+        while (senderBean.countMessagesInQueue("test") > 0 && waitingCount++ < 15) {
+            Thread.sleep(10L);
+        }
+        if (waitingCount >= 15) {
+            Assert.fail("Hit max wait time");
+        }
         assertEquals(200, messageCounter.getValue());
     }
 
     @Test
     public void testTransactionShouldRollback() throws Exception {
         messageCounter.reset();
-
+        boolean fail = true;
         try {
             senderBean.sendToQueue("test", "Hello world", true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (XACancellingException e) {
+            fail = false;
+        }
+        if (fail) {
+            Assert.fail("Did not catch XACancellingException and we needed to");
         }
         Thread.sleep(100L);
         assertEquals(0, messageCounter.getValue());
