@@ -14,15 +14,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval;
+package org.apache.tomee.microprofile.jwt.bval.red;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Name {
-    String value();
+public class Color {
+
+    @OneReturnValidation("parent")
+    @TwoTokenValidation("http://parent.com")
+    public URL color(final List<URL> urls) {
+        try {
+            return new URL("foo://bar");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @OneReturnValidation("parent")
+    @TwoTokenValidation("http://parent.com")
+    public URL color(final Set<URL> urls) {
+        try {
+            return new URL("foo://bar");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -16,23 +16,43 @@
  */
 package org.apache.tomee.microprofile.jwt.bval.green;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
+import org.apache.tomee.microprofile.jwt.bval.Generated;
 
+import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
 public class Green$$ReturnConstraints {
 
     public Green$$ReturnConstraints() {
     }
 
-    @Name("public java.net.URL org.apache.tomee.microprofile.jwt.bval.green.Green.emerald()")
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
     @ReturnValidation("bar")
-    public URL emerald$$0() {
+    public URL emerald() {
         return null;
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.green.Green.sage()")
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @ReturnValidation("int")
+    public URL emerald(final int i) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @ReturnValidation("URI")
+    public URL emerald(final URI i) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @ReturnValidation("URI")
+    public URL emerald(final List<URI> i) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
     @ReturnValidation("bar")
-    public void sage$$1() {
+    public void sage() {
     }
 }

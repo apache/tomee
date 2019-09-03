@@ -14,19 +14,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.green;
+package org.apache.tomee.microprofile.jwt.bval.red;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
-public class Green {
+public class Red extends Color {
 
-    @ReturnValidation("bar")
-    @TokenValidation("http://foo.bar.com")
-    public URL emerald() {
+    @OneReturnValidation("child1")
+    @TwoReturnValidation("child2")
+    @TwoTokenValidation("http://child.com")
+    @OneTokenValidation("http://blue.com")
+    public URL color(final List<URL> urls) {
         try {
             return new URL("foo://bar");
         } catch (MalformedURLException e) {
@@ -34,9 +34,9 @@ public class Green {
         }
     }
 
-    @ReturnValidation("int")
-    @TokenValidation("http://foo.bar.com/int")
-    public URL emerald(final int i) {
+    @OneReturnValidation("bar")
+    @TwoTokenValidation("http://foo.bar.com")
+    public URL ruby() {
         try {
             return new URL("foo://bar");
         } catch (MalformedURLException e) {
@@ -44,36 +44,12 @@ public class Green {
         }
     }
 
-    @ReturnValidation("URI")
-    @TokenValidation("http://foo.bar.com/URI")
-    public URL emerald(final URI i) {
-        try {
-            return new URL("foo://bar");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    @OneReturnValidation("bar")
+    public void rose() {
     }
 
-    @ReturnValidation("URI")
-    @TokenValidation("http://foo.bar.com/URI")
-    public URL emerald(final List<URI> i) {
-        try {
-            return new URL("foo://bar");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @ReturnValidation("bar")
-    public void sage() {
-    }
-
-    @TokenValidation("http://foo.bar.com")
-    public void olive() {
-    }
-
-    public java.util.Collection<URI> mint() {
-        return Arrays.asList(URI.create("hello://world"), URI.create("three://four"));
+    @TwoTokenValidation("http://foo.bar.com")
+    public void cherry() {
     }
 
 }

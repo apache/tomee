@@ -17,7 +17,6 @@
 package org.apache.tomee.microprofile.jwt.bval;
 
 import org.apache.openejb.loader.IO;
-import org.apache.tomee.microprofile.jwt.bval.data.Colors$$JwtConstraints;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceClassVisitor;

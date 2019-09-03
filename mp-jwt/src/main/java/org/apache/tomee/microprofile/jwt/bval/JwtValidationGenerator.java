@@ -20,6 +20,7 @@ import org.apache.xbean.asm7.AnnotationVisitor;
 import org.apache.xbean.asm7.ClassWriter;
 import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Type;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -31,18 +32,23 @@ public class JwtValidationGenerator extends ValidationGenerator {
     }
 
     protected void generateMethods(final ClassWriter cw) {
-        int id = 0;
         for (final MethodConstraints methodConstraints : constraints) {
             final Method method = methodConstraints.getMethod();
-            final String name = method.getName() + "$$" + (id++);
+            final String name = method.getName();
 
             // Declare a method of return type JsonWebToken for use with
             // a call to BeanValidation's ExecutableValidator.validateReturnValue
-            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()Lorg/eclipse/microprofile/jwt/JsonWebToken;", null, null);
+            final Type returnType = Type.getType(JsonWebToken.class);
+            final Type[] parameterTypes = Type.getArgumentTypes(method);
+            final String descriptor = Type.getMethodDescriptor(returnType, parameterTypes);
+
+            final int access = method.isVarArgs() ? ACC_PUBLIC + ACC_VARARGS : ACC_PUBLIC;
+
+            final MethodVisitor mv = cw.visitMethod(access, name, descriptor, null, null);
 
             // Put the method name on the
-            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
-            av.visit("value", method.toString());
+            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Generated.class), true);
+            av.visit("value", this.getClass().getName());
             av.visitEnd();
 
             // track the MethodVisitor

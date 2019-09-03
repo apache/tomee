@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.green;
+package org.apache.tomee.microprofile.jwt.bval.blue;
 
 import org.apache.tomee.microprofile.jwt.bval.Asserts;
 import org.apache.tomee.microprofile.jwt.bval.ClassValidationData;
@@ -24,26 +24,26 @@ import org.apache.tomee.microprofile.jwt.bval.ValidationGenerator;
 import org.junit.Test;
 
 /**
- * Simple happy-path
+ * Test every kind of parameter and return type
  */
-public class GreenValidationGeneratorTest {
+public class BlueValidationGeneratorTest {
 
     @Test
     public void testJwtGenerator() throws Exception {
 
-        final ClassValidationData data = new ClassValidationData(Green.class);
+        final ClassValidationData data = new ClassValidationData(Blue.class);
         final ValidationGenerator generator = new JwtValidationGenerator(data.getClazz(), data.getJwtConstraints());
 
-        Asserts.assertBytecode(generator.generate(), Green$$JwtConstraints.class);
+        Asserts.assertBytecode(generator.generate(), Blue$$JwtConstraints.class);
     }
 
     @Test
     public void testReturnGenerator() throws Exception {
 
-        final ClassValidationData data = new ClassValidationData(Green.class);
+        final ClassValidationData data = new ClassValidationData(Blue.class);
         final ValidationGenerator generator = new ReturnValidationGenerator(data.getClazz(), data.getReturnConstraints());
 
-        Asserts.assertBytecode(generator.generate(), Green$$ReturnConstraints.class);
+        Asserts.assertBytecode(generator.generate(), Blue$$ReturnConstraints.class);
     }
 
 }

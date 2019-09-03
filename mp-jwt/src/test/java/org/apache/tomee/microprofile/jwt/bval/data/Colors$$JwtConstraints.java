@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.bval.data;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
+import org.apache.tomee.microprofile.jwt.bval.Generated;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -26,13 +26,13 @@ public class Colors$$JwtConstraints {
     public Colors$$JwtConstraints() {
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
+    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
     @Issuer("http://foo.bar.com")
     public JsonWebToken blue$$0() {
         return null;
     }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
+    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
     @Audience("bar")
     @Issuer("http://foo.bar.com")
     public JsonWebToken red$$1() {

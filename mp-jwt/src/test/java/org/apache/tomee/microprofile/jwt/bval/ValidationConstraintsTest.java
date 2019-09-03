@@ -16,9 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.bval.jsr.ConstraintCached;
-import org.apache.bval.jsr.descriptor.ConstraintD;
-import org.apache.bval.jsr.job.ConstraintValidators;
 import org.apache.tomee.microprofile.jwt.JsonWebTokenValidator;
 import org.apache.tomee.microprofile.jwt.Tokens;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
@@ -29,22 +26,14 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import javax.validation.constraintvalidation.ValidationTarget;
 import javax.validation.executable.ExecutableValidator;
-import javax.validation.metadata.BeanDescriptor;
-import javax.validation.metadata.ConstraintDescriptor;
-import javax.validation.metadata.ContainerElementTypeDescriptor;
 import javax.validation.metadata.MethodDescriptor;
-import javax.validation.metadata.ReturnValueDescriptor;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;

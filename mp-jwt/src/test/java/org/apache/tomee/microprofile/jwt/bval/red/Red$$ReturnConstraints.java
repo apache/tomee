@@ -14,25 +14,40 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval.red;
 
 import org.apache.tomee.microprofile.jwt.bval.Generated;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 
-public class Shapes$$JwtConstraints {
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.square(int)")
-    @Issuer("http://foo.bar.com")
-    @Audience("joe")
-    public JsonWebToken square$$0() {
+public class Red$$ReturnConstraints {
+
+    public Red$$ReturnConstraints() {
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @OneReturnValidation("child1")
+    @TwoReturnValidation("child2")
+    public URL color(List var1) {
         return null;
     }
 
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.triangle(boolean)")
-    @Audience("jane")
-    public JsonWebToken triangle$$1() {
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @OneReturnValidation("parent")
+    public URL color(Set var1) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @OneReturnValidation("bar")
+    public void rose() {
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.ReturnValidationGenerator")
+    @OneReturnValidation("bar")
+    public URL ruby() {
         return null;
     }
 }

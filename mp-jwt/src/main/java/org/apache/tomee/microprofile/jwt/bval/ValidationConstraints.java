@@ -69,7 +69,7 @@ public class ValidationConstraints {
 
         final Map<String, Method> names = new HashMap<>();
         for (final Method method : constraintsClazz.getMethods()) {
-            final Name name = method.getAnnotation(Name.class);
+            final Generated name = method.getAnnotation(Generated.class);
             if (name == null) continue;
             names.put(name.value(), method);
         }

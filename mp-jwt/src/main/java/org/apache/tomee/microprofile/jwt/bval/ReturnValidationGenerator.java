@@ -31,18 +31,21 @@ public class ReturnValidationGenerator extends ValidationGenerator {
     }
 
     protected void generateMethods(final ClassWriter cw) {
-        int id = 0;
         for (final MethodConstraints methodConstraints : constraints) {
             final Method method = methodConstraints.getMethod();
-            final String name = method.getName() + "$$" + (id++);
+            final String name = method.getName();
 
             // Declare a method of return type JsonWebToken for use with
             // a call to BeanValidation's ExecutableValidator.validateReturnValue
-            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()"+Type.getDescriptor(method.getReturnType()), null, null);
+            final Type returnType = Type.getReturnType(method);
+            final Type[] parameterTypes = Type.getArgumentTypes(method);
+            final String descriptor = Type.getMethodDescriptor(returnType, parameterTypes);
+
+            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, descriptor, null, null);
 
             // Put the method name on the
-            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
-            av.visit("value", method.toString());
+            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Generated.class), true);
+            av.visit("value", this.getClass().getName());
             av.visitEnd();
 
             // track the MethodVisitor
@@ -53,6 +56,30 @@ public class ReturnValidationGenerator extends ValidationGenerator {
                 mv.visitCode();
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(0, 1);
+            } else if (method.getReturnType().equals(Long.TYPE)) {
+                mv.visitCode();
+                mv.visitInsn(LCONST_0);
+                mv.visitInsn(LRETURN);
+                mv.visitMaxs(2, 4);
+                mv.visitEnd();
+            } else if (method.getReturnType().equals(Float.TYPE)) {
+                mv.visitCode();
+                mv.visitInsn(FCONST_0);
+                mv.visitInsn(FRETURN);
+                mv.visitMaxs(1, 3);
+                mv.visitEnd();
+            } else if (method.getReturnType().equals(Double.TYPE)) {
+                mv.visitCode();
+                mv.visitInsn(DCONST_0);
+                mv.visitInsn(DRETURN);
+                mv.visitMaxs(2, 4);
+                mv.visitEnd();
+            } else if (method.getReturnType().isPrimitive()) {
+                mv.visitCode();
+                mv.visitInsn(ICONST_0);
+                mv.visitInsn(IRETURN);
+                mv.visitMaxs(1, 3);
+                mv.visitEnd();
             } else {
                 // The method will simply return null
                 mv.visitCode();

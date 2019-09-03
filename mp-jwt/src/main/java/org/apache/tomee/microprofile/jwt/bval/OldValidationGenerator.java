@@ -129,7 +129,7 @@ public class OldValidationGenerator implements Opcodes {
             final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()Lorg/eclipse/microprofile/jwt/JsonWebToken;", null, null);
 
             // Put the method name on the
-            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
+            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Generated.class), true);
             av.visit("value", method.toString());
             av.visitEnd();
 

@@ -16,15 +16,11 @@
  */
 package org.apache.tomee.microprofile.jwt.bval.green;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
+import org.apache.tomee.microprofile.jwt.bval.Generated;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
-import java.util.Arrays;
+import java.util.List;
 
 public class Green$$JwtConstraints {
 
@@ -32,16 +28,33 @@ public class Green$$JwtConstraints {
     public Green$$JwtConstraints() {
     }
 
-    @Name("public java.net.URL org.apache.tomee.microprofile.jwt.bval.green.Green.emerald()")
+    @Generated("org.apache.tomee.microprofile.jwt.bval.JwtValidationGenerator")
     @TokenValidation("http://foo.bar.com")
-    public JsonWebToken emerald$$0() {
+    public JsonWebToken emerald() {
         return null;
     }
 
+    @Generated("org.apache.tomee.microprofile.jwt.bval.JwtValidationGenerator")
+    @TokenValidation("http://foo.bar.com/int")
+    public JsonWebToken emerald(final int i) {
+        return null;
+    }
 
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.green.Green.olive()")
+    @Generated("org.apache.tomee.microprofile.jwt.bval.JwtValidationGenerator")
+    @TokenValidation("http://foo.bar.com/URI")
+    public JsonWebToken emerald(final URI i) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.JwtValidationGenerator")
+    @TokenValidation("http://foo.bar.com/URI")
+    public JsonWebToken emerald(final List<URI> i) {
+        return null;
+    }
+
+    @Generated("org.apache.tomee.microprofile.jwt.bval.JwtValidationGenerator")
     @TokenValidation("http://foo.bar.com")
-    public JsonWebToken olive$$1() {
+    public JsonWebToken olive() {
         return null;
     }
 }
