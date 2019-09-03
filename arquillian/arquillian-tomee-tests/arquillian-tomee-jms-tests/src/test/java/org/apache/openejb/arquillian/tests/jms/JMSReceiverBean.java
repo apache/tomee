@@ -18,6 +18,8 @@ package org.apache.openejb.arquillian.tests.jms;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -26,6 +28,7 @@ import javax.jms.MessageListener;
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "test")
 })
+@TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class JMSReceiverBean implements MessageListener {
 
     @Inject

@@ -21,7 +21,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,7 +31,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore // we know these are failing
 @RunWith(Arquillian.class)
 public class JMSContextInjectionTest {
 
@@ -62,7 +60,7 @@ public class JMSContextInjectionTest {
         for (int i = 0; i < 200; i++) {
             senderBean.sendToQueue("test", "Hello world");
         }
-
+        Thread.sleep(100L);
         assertEquals(200, messageCounter.getValue());
     }
 
@@ -75,9 +73,7 @@ public class JMSContextInjectionTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        Thread.sleep(100L);
         assertEquals(0, messageCounter.getValue());
     }
-
-
 }
