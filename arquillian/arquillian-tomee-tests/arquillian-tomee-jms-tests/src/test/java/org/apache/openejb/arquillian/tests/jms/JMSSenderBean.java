@@ -28,7 +28,6 @@ import javax.jms.QueueBrowser;
 @Lock(LockType.READ)
 @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class JMSSenderBean {
-
     @Inject
     private JMSContext jmsContext;
 
@@ -49,7 +48,7 @@ public class JMSSenderBean {
         final Queue queue = jmsContext.createQueue(queueName);
         final QueueBrowser browser = jmsContext.createBrowser(queue);
         final Enumeration<?> msgEnumeration = browser.getEnumeration();
-        int count =0 ;
+        int count = 0;
         while (msgEnumeration.hasMoreElements()) {
             msgEnumeration.nextElement();
             count++;

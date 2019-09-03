@@ -30,7 +30,6 @@ import javax.jms.MessageListener;
 })
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class JMSReceiverBean implements MessageListener {
-
     @Inject
     private MessageCounter counter;
 
