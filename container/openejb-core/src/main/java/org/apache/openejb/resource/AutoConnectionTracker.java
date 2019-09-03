@@ -109,56 +109,55 @@ public class AutoConnectionTracker implements ConnectionTracker {
     @Override
     public void handleObtained(final ConnectionTrackingInterceptor interceptor, final ConnectionInfo connectionInfo, final boolean reassociate) throws ResourceException {
         if (txMgr != null && registry != null) {
-            TransactionImpl currentTx = null;
             try {
-                currentTx = (TransactionImpl) txMgr.getTransaction();
-            } catch (SystemException | ClassCastException e) {
-                //ignore
-            }
+                final TransactionImpl currentTx = (TransactionImpl) txMgr.getTransaction();
+                if (currentTx != null) {
+                    Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry
+                            .getResource(KEY);
+                    if (txConnections == null) {
+                        txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
+                        registry.putResource(KEY, txConnections);
+                    }
 
-            if (currentTx != null) {
-                Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
-                if (txConnections == null) {
-                    txConnections = new HashMap<ManagedConnectionInfo, Map<ConnectionInfo, Object>>();
-                    registry.putResource(KEY, txConnections);
-                }
+                    Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
+                    if (connectionObjects == null) {
+                        connectionObjects = new HashMap<ConnectionInfo, Object>();
+                        txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
+                    }
 
-                Map<ConnectionInfo, Object> connectionObjects = txConnections.get(connectionInfo.getManagedConnectionInfo());
-                if (connectionObjects == null) {
-                    connectionObjects = new HashMap<ConnectionInfo, Object>();
-                    txConnections.put(connectionInfo.getManagedConnectionInfo(), connectionObjects);
-                }
+                    connectionObjects.put(connectionInfo, connectionInfo.getConnectionProxy());
 
-                connectionObjects.put(connectionInfo, connectionInfo.getConnectionProxy());
+                    registry.registerInterposedSynchronization(new Synchronization() {
+                        @Override
+                        public void beforeCompletion() {
+                        }
 
-                registry.registerInterposedSynchronization(new Synchronization() {
-                    @Override
-                    public void beforeCompletion() {
-                        final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) registry.getResource(KEY);
-                        if (txConnections != null && txConnections.size() > 0) {
-
-                            for (final ManagedConnectionInfo managedConnectionInfo : txConnections.keySet()) {
-                                final StringBuilder sb = new StringBuilder();
-                                final Collection<ConnectionInfo> connectionInfos = txConnections.get(managedConnectionInfo).keySet();
-                                for (final ConnectionInfo connectionInfo : connectionInfos) {
-                                    sb.append("\n  ").append("Connection handle opened at ").append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
+                        @Override
+                        public void afterCompletion(final int status) {
+                            final Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>> txConnections = (Map<ManagedConnectionInfo, Map<ConnectionInfo, Object>>) currentTx
+                                    .getResource(KEY);
+                            if (txConnections != null && txConnections.size() > 0) {
+                                for (final ManagedConnectionInfo managedConnectionInfo : txConnections.keySet()) {
+                                    final StringBuilder sb = new StringBuilder();
+                                    final Collection<ConnectionInfo> connectionInfos = txConnections.get(managedConnectionInfo)
+                                            .keySet();
+                                    for (final ConnectionInfo connectionInfo : connectionInfos) {
+                                        sb.append("\n  ").append("Connection handle opened at ")
+                                                .append(stackTraceToString(connectionInfo.getTrace().getStackTrace()));
+                                    }
+                                    logger.warning("Transaction complete, but connection still has handles associated: "
+                                            + managedConnectionInfo + "\nAbandoned connection information: " + sb.toString());
                                 }
-
-                                logger.warning("Transaction complete, but connection still has handles associated: " + managedConnectionInfo + "\nAbandoned connection information: " + sb.toString());
                             }
                         }
-                    }
-
-                    @Override
-                    public void afterCompletion(final int status) {
-
-                    }
-                });
+                    });
+                }
+            } catch (SystemException | ClassCastException e) {
+                // ignore
             }
-        }
-
-        if (! reassociate) {
-            proxyConnection(interceptor, connectionInfo);
+            if (!reassociate) {
+                proxyConnection(interceptor, connectionInfo);
+            }
         }
     }
 
