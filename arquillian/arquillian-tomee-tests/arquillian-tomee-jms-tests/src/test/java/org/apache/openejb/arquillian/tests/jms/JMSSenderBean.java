@@ -16,14 +16,17 @@
  */
 package org.apache.openejb.arquillian.tests.jms;
 
+import java.util.Enumeration;
+
 import javax.ejb.*;
 import javax.inject.Inject;
 import javax.jms.JMSContext;
 import javax.jms.Queue;
+import javax.jms.QueueBrowser;
 
 @Singleton
 @Lock(LockType.READ)
-@TransactionAttribute(TransactionAttributeType.REQUIRED)
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 public class JMSSenderBean {
 
     @Inject
@@ -38,7 +41,19 @@ public class JMSSenderBean {
         jmsContext.createProducer().send(queue, message);
 
         if (rollback) {
-            throw new RuntimeException("Should rollback");
+            throw new XACancellingException();
         }
+    }
+
+    public int countMessagesInQueue(final String queueName) throws Exception {
+        final Queue queue = jmsContext.createQueue(queueName);
+        final QueueBrowser browser = jmsContext.createBrowser(queue);
+        final Enumeration<?> msgEnumeration = browser.getEnumeration();
+        int count =0 ;
+        while (msgEnumeration.hasMoreElements()) {
+            msgEnumeration.nextElement();
+            count++;
+        }
+        return count;
     }
 }
