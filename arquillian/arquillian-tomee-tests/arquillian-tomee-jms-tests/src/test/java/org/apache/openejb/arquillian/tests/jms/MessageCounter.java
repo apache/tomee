@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @ApplicationScoped
 public class MessageCounter {
-
     private AtomicInteger count = new AtomicInteger(0);
 
     public int getValue() {

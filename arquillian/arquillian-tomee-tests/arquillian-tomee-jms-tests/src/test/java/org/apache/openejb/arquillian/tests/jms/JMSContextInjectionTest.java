@@ -49,7 +49,6 @@ public class JMSContextInjectionTest {
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-
         return ShrinkWrap.create(WebArchive.class, "jms-context.war")
                 .addClasses(JMSSenderBean.class, JMSReceiverBean.class, MessageCounter.class);
     }
@@ -60,7 +59,7 @@ public class JMSContextInjectionTest {
         for (int i = 0; i < 200; i++) {
             senderBean.sendToQueue("test", "Hello world");
         }
-        int waitingCount =0;
+        int waitingCount = 0;
         while (senderBean.countMessagesInQueue("test") > 0 && waitingCount++ < 15) {
             Thread.sleep(10L);
         }
