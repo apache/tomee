@@ -47,10 +47,10 @@ public class JMSContextInjectionTest {
     @Resource
     private ConnectionFactory connectionFactory;
 
-    @Deployment(testable = false)
+    @Deployment
     public static WebArchive getArchive() {
         return ShrinkWrap.create(WebArchive.class, "jms-context.war")
-                .addClasses(JMSSenderBean.class, JMSReceiverBean.class, MessageCounter.class);
+                .addClasses(JMSContextInjectionTest.class, JMSSenderBean.class, JMSReceiverBean.class, MessageCounter.class, XACancellingException.class);
     }
 
     @Test
