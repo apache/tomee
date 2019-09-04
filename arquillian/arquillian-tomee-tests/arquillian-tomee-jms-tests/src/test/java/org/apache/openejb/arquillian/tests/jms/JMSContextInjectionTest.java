@@ -21,7 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,7 +32,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore // we know these are failing
 @RunWith(Arquillian.class)
 public class JMSContextInjectionTest {
 
@@ -50,7 +49,6 @@ public class JMSContextInjectionTest {
 
     @Deployment(testable = false)
     public static WebArchive getArchive() {
-
         return ShrinkWrap.create(WebArchive.class, "jms-context.war")
                 .addClasses(JMSSenderBean.class, JMSReceiverBean.class, MessageCounter.class);
     }
@@ -58,26 +56,32 @@ public class JMSContextInjectionTest {
     @Test
     public void testShouldSendAndReceiveTwoHundredMessages() throws Exception {
         messageCounter.reset();
-
         for (int i = 0; i < 200; i++) {
             senderBean.sendToQueue("test", "Hello world");
         }
-
+        int waitingCount = 0;
+        while (senderBean.countMessagesInQueue("test") > 0 && waitingCount++ < 15) {
+            Thread.sleep(10L);
+        }
+        if (waitingCount >= 15) {
+            Assert.fail("Hit max wait time");
+        }
         assertEquals(200, messageCounter.getValue());
     }
 
     @Test
     public void testTransactionShouldRollback() throws Exception {
         messageCounter.reset();
-
+        boolean fail = true;
         try {
             senderBean.sendToQueue("test", "Hello world", true);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (XACancellingException e) {
+            fail = false;
         }
-
+        if (fail) {
+            Assert.fail("Did not catch XACancellingException and we needed to");
+        }
+        Thread.sleep(100L);
         assertEquals(0, messageCounter.getValue());
     }
-
-
 }
