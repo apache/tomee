@@ -155,9 +155,10 @@ public class AutoConnectionTracker implements ConnectionTracker {
             } catch (SystemException | ClassCastException e) {
                 // ignore
             }
-            if (!reassociate) {
-                proxyConnection(interceptor, connectionInfo);
-            }
+        }
+
+        if (!reassociate) {
+            proxyConnection(interceptor, connectionInfo);
         }
     }
 
