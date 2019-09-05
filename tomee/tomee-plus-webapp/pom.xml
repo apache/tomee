@@ -144,7 +144,6 @@
       <version>${jcs.version}</version>
       <scope>runtime</scope>
     </dependency>
-
     <!-- if i'm not mistaken we decided to remove it from our default deliveries
     <dependency>
       <groupId>${project.groupId}</groupId>
