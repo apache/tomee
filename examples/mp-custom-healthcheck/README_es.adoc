@@ -20,7 +20,7 @@ Por defecto, https://github.com/eclipse/microprofile-health[microprofile-health-
 
 Para proporcionar una salida a la medida , por ejemplo, si tenemos una aplicación que usa un API de clima, y el servicio se cae, podemos reportar que el servicio esta caído (DOWN).
 
-Para proporcionar una salida a la medida, es necesario implementar la interface  https://github.com/eclipse/microprofile-health/blob/master/api/src/main/java/org/eclipse/microprofile/health/HealthCheck.java[HealthCheck], en una clase anotada con la anotación `@ApplicationScoped` más la anotación`@Health` para proporcionar la salida a la medida.
+Es necesario implementar la interface  https://github.com/eclipse/microprofile-health/blob/master/api/src/main/java/org/eclipse/microprofile/health/HealthCheck.java[HealthCheck], en una clase con la anotación `@ApplicationScoped` y la anotación`@Health` para proporcionar la salida a la medida.
 
 Se pueden ver más detalles aquí: https://github.com/apache/geronimo-health/blob/master/geronimo-health/src/main/java/org/apache/geronimo/microprofile/impl/health/cdi/GeronimoHealthExtension.java[GeronimoHealthExtension.java]
 
@@ -54,7 +54,7 @@ En el anterior ejemplo, el health end point es: https://openweathermap.org/appid
 [discrete]
 === Ejemplos
 
-.Running the application
+.Ejecutando la aplicación
 ----
     mvn clean install tomee:run
 ----
@@ -62,7 +62,7 @@ En el anterior ejemplo, el health end point es: https://openweathermap.org/appid
 [discrete]
 ==== Ejemplo 1
 
-Cuando se accede el end point /health , OpenWeatherMap nos dice que nuestras llamadas disponibles se están acabando y que deberíamos tomar acción antes de que se agoten.
+Cuando se accede al end point /health , OpenWeatherMap nos dice que nuestras llamadas disponibles se están acabando y que deberíamos tomar acción antes de que se agoten.
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/health
@@ -91,7 +91,7 @@ curl http://localhost:8080/mp-custom-healthcheck/health
 [discrete]
 ==== Ejemplo 2
 
-Weather API still working fine.
+La API del clima continua funcionando bien.
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/weather/day/status
@@ -105,8 +105,7 @@ Hi, today is a sunny day!
 [discrete]
 ==== Ejemplo 3
 
-When hitting one more time /health endpoint, OpenWeatherMap tell us that our account is temporary blocked and this
-service is being reported as DOWN.
+Si accedemos una vez más al end point /health, OpenWeatherMap nos dice que nuestra cuenta se encuentra temporalmente  bloqueada y el servicio se reporta como caído (DOWN).
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/health
@@ -134,7 +133,7 @@ curl http://localhost:8080/mp-custom-healthcheck/health
 [discrete]
 ==== Ejemplo 4
 
-Weather API has stopped.
+La API del clima se ha detenido.
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/weather/day/status
