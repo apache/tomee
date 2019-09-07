@@ -13,6 +13,9 @@ Este es un ejemplo de cómo usar la configuración de microprofile en TomEE.
 mvn clean install tomee:run 
 ----
 
+== microprofile-config.properties
+Este es el archivo que contiene los valores a ser interpretados por MP Config.
+
 == API
 
 Hay tres formas de inyectar valores en la aplicación usando configuración.
