@@ -1,0 +1,90 @@
+:index-group: JMS
+:jbake-type: page
+:jbake-status: status=published
+# Portabilidade entre ActiveMQ e IBM MQ
+
+Este aplicativo demonstra a capacidade de obter portabilidade/interoperabilidade entre o ActiveMQ e o IBM MQ para aplicativos baseados no tipo MDB e conexão JMS baseada em Java. Abrange padrões e aprendizados conforme listado abaixo.
+
+1. Como executar vários contêineres mdb na mesma JVM;
+2. Várias maneiras de configurar IBM Filas/Tópicos vs AMQ Filas/Tópicos;
+3. Configuração do MDB para IBM MQ vs AMQ e Anotações vs Configuração;
+4. Declaração estática vs dinâmica/substituição de filas/tópicos;
+5. Uso e importância de RA (Adaptadores de Recursos) e Fábricas de Conexão;
+6. Amostras de serviço da Web para gravar dados em IBM Queues e AMQ Queues usando injeção de recursos (fábricas de conexão e filas/tópicos);
+7. Referência de JNDI para recursos (consulte configuração de WMQReadBean em ejb-jar.xml);
+
+
+## Executando este aplicativo
+### Ambiente
+O aplicativo pode ser importado na IDE Eclipse como um projeto maven e é testado usando apache-tomee-plume-7.0.2 e apache-activemq-5.14.3 (executando como standalone no localhost, IBM MQ 8.xx (detalhes das conexões ocultos para evitar mau uso, aqueles que desejam testar podem entrar em contato com a equipe de middleware para obter acesso à instância gerenciada do IBM MQ e ao AppWatch)).
+
+### Bibliotecas Adicionais
+Para conectar-se ao IBM MQ, o tomee requer bibliotecas adicionais contendo implementação para Adaptador de Recurso JCA, fábricas de conexão do IBM MQ, recursos de fila/tópico, ActivationConfigs, etc. Essas bibliotecas vêm com assinatura IBM e todas elas não estão disponíveis no maven central, abaixo é a lista de todos os arquivos jar específicos da IBM.
+
+com.ibm.mq.connector.jar  
+com.ibm.mq.jar      
+com.ibm.mq.pcf.jar   
+com.ibm.mq.headers.jar    
+com.ibm.mq.jmqi.jar   
+com.ibm.mqjms.jar
+providerutil.jar
+
+com.ibm.mq.connector.jar pode ser extraido de wmq.jmsra.rar que está disponível com a instalação do IBM MQ (não disponível na internet).
+
+
+### tomee.xml
+Este arquivo (localizado em tomee_home/conf é deixado em branco, pois gostaríamos que nosso aplicativo gerenciasse todos os recursos. Qualquer recurso declarado aqui estaria disponível para todos os aplicativos implantados no servidor.
+(Arquivo não incluido neste repositório git)
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<tomee>
+</tomee>
+----
+
+
+### catalina.properties
+Este arquivo pode ser usado para fornecer convenientemente argumentos java -D como uma entrada para tomee. No entanto, no mundo real, esses parâmetros seriam configurados usando variáveis de ambiente para evitar a adição de propriedades específicas do aplicativo no tomee conf (Arquivo não incluído neste repositório git).
+
+[source,xml]
+----
+com.ibm.msg.client.commonservices.log.status=OFF
+
+AMQReadBean2.activation.destination=overriden_queue_IMQReadBean
+#Destinos de fila
+amq.variable.destination=my_overriden_value
+#Substituições de recursos
+#amq_ra.ServerUrl=tcp://xxxxx.xxx.xxx.com:61616
+
+#Substituições de configuração de ativação do MDB
+#Hierarquia para regras de substituição de ativação (específicas para genéricas)
+#1  -D<deploymentId>.activation.<property>=<value>
+#2. -D<ejbName>.activation.<property>=<value>
+#3. -D<message-listener-interface>.activation.<property>=<value>
+#4. -Dmdb.activation.<property>=<value>
+#mdb.activation.destination=overriden_queue_value
+WMQReadBean.activation.HostName=10.234.56.789
+----
+
+### resources.xml
+Este arquivo é um espaço reservado para recursos específicos do aplicativo (ele substituirá quaisquer recursos correspondentes declarados em tomee.xml) como adaptadores de recursos, fábricas de conexão, filas, tópicos, mdb-containers, etc.
+Este exemplo faz uso pesado desse arquivo que está em src/main/webapp/WEB-INF, para aplicativos implementados como arquivo war ele é copiado para ###/webapps/application-name/WEB-INF/resources.xml.
+
+### ejb-jar.xml
+Esse arquivo está localizado em src/main/resources/META-INF/ e contém configurações específicas do aplicativo para enterprise beans, na demo que configuramos nossos beans de mensagem nesse arquivo. As definições neste arquivo são equivalentes a anotações, a versão="3.1" suportará uma combinação de beans configurados e anotados. Uma diferença importante entre os beans anotados e os beans configurados é a seguinte, se houver vários contêineres definidos ou usados no mesmo aplicativo (Como esse aplicativo usa o amq-contêiner e o imq-contêiner).
+Qualquer bean anotado é sequencialmente vinculado ao recurso de contêiner, isso pode trazer imprevisibilidade e pode resultar na vinculação de um Bean a um contêiner de destino incorreto. Por exemplo, o ChatBean MDB é intencionalmente comentado, pois pode gerar erros ao ser vinculado incorretamente ao IMQ. Para lidar com esses problemas, a abordagem baseada em configuração pode ser usada em conjunto com o openejb-jar.xml (conforme descrito abaixo).
+
+### openejb-jar.xml
+Este arquivo está localizado em src/main/resources/META-INF/ e contém mapeamento adicional entre ejb e contêineres de destino. Ele também possui um ID de implementação que pode ser usado para criar várias implantações para o mesmo ejb em um contêiner ou em contêineres. Isso é muito útil quando você deseja vincular um bean específico ao contêiner desejado (por exemplo, WMQReadBean deve obrigatoriamente ser vinculado ao contêiner simple-tomee-1.0/imq_container).
+
+### web.xml
+Arquivo típico de recurso da Web, pouco usado neste aplicativo tutorial.
+
+### beans.xml
+Para usar @Inject, a primeira coisa que você precisa é de um arquivo META-INF/beans.xml no módulo ou jar. Isso efetivamente ativa o CDI e permite que as referências do @Inject funcionem. Não META-INF/beans.xml sem injeção e período.
+Não usado neste tutorial
+
+
+## Desenvolvedores
+
+Suyog Barve <suyog.barve@walmart.com>
