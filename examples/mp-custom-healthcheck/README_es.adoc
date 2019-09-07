@@ -8,7 +8,7 @@ Este es un ejemplo sobre cómo usar el MicroProfile Custom Health Check en TomEE
 [discrete]
 ==== Health Feature
 
-Los Health checks se usan para probar el estado de los servicios y los recursos de los que una aplicación depende, incluso para exponer su estado. Por ejemplo, en un ambiente de clúster, donde un nodo inestable requiere ser descartado y eventualmente ser remplazado por una instancia estable.
+Los Enlaces de Estado (Health checks) se usan para probar el estado de los servicios y los recursos de los que una aplicación depende, incluso para exponer su estado. Por ejemplo, en un ambiente de clúster, donde un nodo inestable requiere ser descartado y eventualmente ser remplazado por una instancia estable.
 
 Por defecto, https://github.com/eclipse/microprofile-health[microprofile-health-api] proporciona la salida de un nodo, simplemente accediendo el end point http://host:port/health.
 
@@ -49,7 +49,7 @@ public class WeatherServiceHealthCheck implements HealthCheck {
 }
 ----
 
-En el anterior ejemplo, el health end point es: https://openweathermap.org/appid[OpenWeatherMap] (_solamente ilustrativo_) que proporciona una suscripción al plan para acceder los servicios y si el limite de llamadas a la API se excede no estará disponible hasta que se renueve las suscripción.
+En el anterior ejemplo, el enlace de estado es: https://openweathermap.org/appid[OpenWeatherMap] (_solamente ilustrativo_) que proporciona una suscripción al plan para acceder los servicios y si el limite de llamadas a la API se excede no estará disponible hasta que se renueve las suscripción.
 
 [discrete]
 === Ejemplos
@@ -62,7 +62,7 @@ En el anterior ejemplo, el health end point es: https://openweathermap.org/appid
 [discrete]
 ==== Ejemplo 1
 
-Cuando se accede al end point /health , OpenWeatherMap nos dice que nuestras llamadas disponibles se están acabando y que deberíamos tomar acción antes de que se agoten.
+Cuando se accede al enlace /health , OpenWeatherMap nos dice que nuestras llamadas disponibles se están acabando y que deberíamos tomar acción antes de que se agoten.
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/health
@@ -105,7 +105,7 @@ Hi, today is a sunny day!
 [discrete]
 ==== Ejemplo 3
 
-Si accedemos una vez más al end point /health, OpenWeatherMap nos dice que nuestra cuenta se encuentra temporalmente  bloqueada y el servicio se reporta como caído (DOWN).
+Si accedemos una vez más al enlace /health, OpenWeatherMap nos dice que nuestra cuenta se encuentra temporalmente  bloqueada y el servicio se reporta como caído (DOWN).
 
 ----
 curl http://localhost:8080/mp-custom-healthcheck/health
