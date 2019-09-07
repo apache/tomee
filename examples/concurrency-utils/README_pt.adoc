@@ -1,26 +1,26 @@
-= Concurrency Utilities for Java EE
+= Utilitário de Concorrência para o Java EE
 :index-group: Other Features
 :jbake-type: page
 :jbake-status: published
 
-In this example will be used https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities.htm[Concurrency Utilities for Java EE], or JSR 236.
+Neste exemplo será usado o https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities.htm[Utilitário de Concorrência para Java EE], ou JSR 236.
 
-This standard allows application developers to use concurrency utilities managed by the application server.
-In this way, the developer no longer has the responsibility to manually manage thread polls or threads.
-Also, in a non-managed Thread object, the container cannot guarantee that other Java EE platform services work correctly. For these reasons, it is recommended the usage of managed threads whenever the need arise.
-More information can be found https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[here].
+Esse padrão permite que os desenvolvedores de aplicativos usem utilitários de concorrência gerenciados pelo servidor de aplicação.
+Dessa forma, o desenvolvedor não tem mais a responsabilidade de gerenciar manualmente pesquisas de thread ou threads.
+Além disso, em um objeto de thread não gerenciado, o contêiner não pode garantir que outros serviços da plataforma Java EE funcionem corretamente. Por esses motivos, é recomendável o uso de threads gerenciadas sempre que a necessidade surgir.
+Mais informações podem ser encontradas https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities001.htm[aqui].
 
-== Main Components of the Concurrency Utilities
+== Principais Componentes do Utilitário de Concorrência
 
-The standard specifies main components of the concurrency utilities. In short, these components are managed objects that offer concurrency facilities. These objects, since are managed by the application, can be injected either using CDI, either JNDI. More information can be found https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities002.htm[here].
+O padrão especifica os componentes principais do utilitário de concorrência. Em suma, esses componentes são objetos gerenciados que oferecem facilidades de concorrência. Esses objetos, uma vez que são gerenciados pelo aplicativo, podem ser injetados usando CDI ou JNDI. Mais informações podem ser encontradas https://docs.oracle.com/javaee/7/tutorial/concurrency-utilities002.htm[aqui].
 
 === ManagedExecutorService
 
-A `ManagedExecutorService` is an object that allows application developers to submit tasks asynchronously. Tasks are executed on threads that are managed by the container.
+Um `ManagedExecutorService` é um objeto que permite ao desenvolvedor do aplicativo enviar tarefas de forma assíncrona. As tarefas são executadas em threads que são gerenciadas pelo contêiner.
 
-==== Example
+==== Exemplo
 
-Here is a class that uses a `ManagedExecutorService` (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedService.java[here]):
+Aqui está a classe que usa um `ManagedExecutorService` (código completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedService.java[aqui]):
 
 ....
 
@@ -62,15 +62,15 @@ public class ManagedService {
 }
 ....
 
-The `ManagedExecutorService` object, being an managed object, is injected using the `@Resource` annotation.
+O objeto `ManagedExecutorService`, está sendo gerenciado, é injetado usando a anotação `@Resource`.
 
-This example simulates a long running computation, defined in the `longTask` method.
+Esse exemplo simula uma computação de longa execução, definida no método `longTask`.
 
-The capabilities of `ManagedExecutorService` are exemplified in the `asyncTask` and `asyncTaskWithException` methods.
-Both methods invoke the `longTask` method defined above; each execution of `longTask` is performed in a thread managed by the application.
-The method `asyncTask` simulates a successful execution, while the `asyncTaskWithException` simulates a execution that will throw an exception.
+As capacidades do `ManagedExecutorService` são exemplificadas nos métodos `asyncTask` e `asyncTaskWithException`.
+Os dois métodos invocam o método `longTask`definido acima; cada execução do `longTask` é feita em uma thread gerenciada pela aplicação.
+O método `asyncTask` simula uma execução bem sucedida, enquanto o `asyncTaskWithException` simula uma execução que vai lançar uma exceção.
 
-The methods are used in the following test class (full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedServiceTest.java[here]):
+Os métodos são usados na seguinte classe de teste  (exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedServiceTest.java[aqui]):
 ....
 
 @RunWith(Arquillian.class)
@@ -119,11 +119,11 @@ public class ManagedServiceTest {
 
 === ManagedScheduledExecutorService
 
-A `ManagedScheduledExecutorService` is an object that allows developers to execute tasks asynchronously at specific times. The tasks are executed on threads started by the container.
+Um `ManagedScheduledExecutorService` é um objeto que permite que os desenvolvedores executem tarefas assíncronas em momentos específicos. As tarefas são executadas em threads iniciadas pelo contêiner.
 
-==== Example
+==== Exemplo
 
-Full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedScheduledService.java[here]:
+Exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedScheduledService.java[aqui]:
 
 ....
 
@@ -181,12 +181,12 @@ public class ManagedScheduledService {
 }
 ....
 
-This example also defines a method, `longCallableTask`, simulating the execution of a long running computation.
+Esse exemplo também define um método, `longCallableTask`, simulando a execução de uma computação de longa duração.
 
-The method `singleFixedDelayTask` schedules a long running task (by calling `longCallableTask`), but the execution will start after 100 ms.
-The method `periodicFixedDelayTask` schedules tasks to be run periodically, after each 100 ms, with an initial delay of 0.
+O método `singleFixedDelayTask` agenda uma tarefa de longa duração (chamando `longCallableTask`), mas a execução vai iniciar depois de 100 ms.
+O método `periodicFixedDelayTask` agenda tarefas para serem executadas periodicamente, após cada 100 ms, com um delay inicial de 0.
 
-The methods are used in the following test class (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedScheduledServiceTest.java[here]):
+Os metódos são usados nas seguintes classes de teste (código completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedScheduledServiceTest.java[aqui]):
 
 ....
 
@@ -259,11 +259,11 @@ public class ManagedScheduledServiceTest {
 
 === ManagedThreadFactory
 
-A `ManagedThreadFactory` is an object that allows developers to create container managed threads.
+Um `ManagedThreadFactory` é um objeto que permite aos  desenvolvedores criar threads gerenciadas por contêiner.
 
-==== Example
+==== Exemplo
 
-Full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ThreadFactoryService.java[here]:
+Exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ThreadFactoryService.java[aqui]:
 
 ....
 
@@ -329,12 +329,12 @@ public class ThreadFactoryService {
 }
 ....
 
-This example defines a class implementing `Runnable`, executing a long running task in the `run` method.
+Esse exemplo define uma classe que implementa `Runnable`, executando uma tarefa de longa duração no método `run`.
 
-The method `asyncTask` just creates a managed thread (using the injected `ManagedThreadFactory`) then starts it.
-The method `asyncHangingTask` also creates a managed thread, starts it, but then stops it.
+O método `asyncTask` apenas cria uma thread gerenciada (usando o `ManagedThreadFactory` injetado) em seguida, a inicia.
+O método `asyncHangingTask` também cria uma thread gerenciada, a inicia, mas também a para.
 
-The following class tests these methods (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ThreadFactoryServiceTest.java[here]):
+A seguinte classe testa esses métodos (código completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ThreadFactoryServiceTest.java[aqui]):
 
 ....
 
@@ -376,5 +376,5 @@ public class ThreadFactoryServiceTest {
 }
 ....
 
-Full project example can be found https://github.com/apache/tomee/tree/master/examples/concurrency-utils[here].
-It's a Maven project, and all the tests can be executed by running `mvn clean install` command.
+O exemplo completo do projeto pode ser encontrado https://github.com/apache/tomee/tree/master/examples/concurrency-utils[aqui].
+É um projeto Maven, e todos os testes podem ser rodados executando o comando `mvn clean install`.
