@@ -184,179 +184,165 @@ defines the type of destination. It should be `javax.jms.Queue` or
 
 The Activation Spec properties that can be configured are:
 
-Property Name
+[.table.table-bordered,options="header"]
+|===
+|Property Name|Required|Default Value|Description
 
-Required
+|acknowledgeMode
 
-Default Value
+|no
 
-Description
+|Auto-acknowledge
 
-acknowledgeMode
+|The JMS Acknowledgement mode to use. Valid values are: `Auto-acknowledge` or `Dups-ok-acknowledge`
 
-no
+|clientId
 
-Auto-acknowledge
+|no
 
-The JMS Acknowledgement mode to use. Valid values are: Auto-acknowledge
-or Dups-ok-acknowledge
+|set in resource adapter
 
-clientId
+|The JMS Client ID to use (only really required for durable topics)
 
-no
+|destinationType
 
-set in resource adapter
+|yes
 
-The JMS Client ID to use (only really required for durable topics)
+|null
 
-destinationType
+|The type of destination; a queue or topic
 
-yes
+|destination
 
-null
+|yes
 
-The type of destination; a queue or topic
+|null
 
-destination
+|The destination name (queue or topic name)
 
-yes
+|enableBatch
 
-null
+|no
 
-The destination name (queue or topic name)
+|false
 
-enableBatch
+|Used to enable transaction batching for increased performance
 
-no
+|maxMessagesPerBatch
 
-false
+|no
 
-Used to enable transaction batching for increased performance
+|10
 
-maxMessagesPerBatch
+|The number of messages per transaction batch
 
-no
+|maxMessagesPerSessions
 
-10
+|no
 
-The number of messages per transaction batch
+|10
 
-maxMessagesPerSessions
-
-no
-
-10
-
-This is actually the prefetch size for the subscription. (Yes, badly
+|This is actually the prefetch size for the subscription. (Yes, badly
 named).
 
-maxSessions
+|maxSessions
 
-no
+|no
 
-10
+|10
 
-The maximum number of concurrent sessions to use
+|The maximum number of concurrent sessions to use
 
-messageSelector
+|messageSelector
 
-no
+|no
 
-null
+|null
 
-Message Selector to use on the subscription to perform content based
+|Message Selector to use on the subscription to perform content based
 routing filtering the messages
 
-noLocal
+|noLocal
 
-no
+|no
 
-false
+|false
 
-Only required for topic subscriptions; indicates if locally published
-messages should be included in the subscription or not
+|Only required for topic subscriptions; indicates if locally published messages should be included in the subscription or not
 
-password
+|password
 
-no
+|no
 
-set in resource adapter
+|set in resource adapter
 
-The password for the JMS connection
+|The password for the JMS connection
 
-subscriptionDurability
+|subscriptionDurability
 
-no
+|no
 
-NonDurable
+|NonDurable
 
-Whether or not a durable (topic) subscription is required. Valid values
-are: Durable or NonDurable
+|Whether or not a durable (topic) subscription is required. Valid values are: `Durable` or `NonDurable`
 
-subscriptionName
+|subscriptionName
 
-no
+|no
 
-null
+|null
 
-The name of the durable subscriber. Only used for durable topics and
+|The name of the durable subscriber. Only used for durable topics and
 combined with the clientID to uniquely identify the durable topic
 subscription
 
-userName
+|userName
 
-no
+|no
 
-set in resource adapter
+|set in resource adapter
 
-The user for the JMS connection
+|The user for the JMS connection
 
-useRAManagedTransaction
+|useRAManagedTransaction
 
-no
+|no
 
-false
+|false
 
-Typically, a resource adapter delivers messages to an endpoint which is
-managed by a container. Normally, this container likes to be the one
-that wants to control the transaction that the inbound message is being
-delivered on. But sometimes, you want to deliver to a simpler container
-system that will not be controlling the inbound transaction. In these
-cases, if you set useRAManagedTransaction to true, the resource adapter
-will commit the transaction if no exception was generated from the
-MessageListener and rollback if an exception is thrown.
+|Typically, a resource adapter delivers messages to an endpoint which is managed by a container. Normally, this container likes to be the one that wants to control the transaction that the inbound message is being delivered on. But sometimes, you want to deliver to a simpler container system that will not be controlling the inbound transaction. In these cases, if you set useRAManagedTransaction to true, the resource adapter will commit the transaction if no exception was generated from the MessageListener and rollback if an exception is thrown.
 
-initialRedeliveryDelay
+|initialRedeliveryDelay
 
-no
+|no
 
-1000
+|1000
 
-The delay before redeliveries start. Also configurable on the
+|The delay before redeliveries start. Also configurable on the
 ResourceAdapter
 
-maximumRedeliveries
+|maximumRedeliveries
 
-no
+|no
 
-5
+|5
 
-The maximum number of redeliveries or -1 for no maximum. Also
+|The maximum number of redeliveries or `-1` for no maximum. Also
 configurable on the ResourceAdapter
 
-redeliveryBackOffMultiplier
+|redeliveryBackOffMultiplier
 
-no
+|no
 
-5
+|5
 
-The multiplier to use if exponential back off is enabled. Also
+|The multiplier to use if exponential back off is enabled. Also
 configurable on the ResourceAdapter
 
-redeliveryUseExponentialBackOff
+|redeliveryUseExponentialBackOff
 
-no
+|no
 
-false
+|false
 
-To enable exponential backoff. Also configurable on the ResourceAdapter
+|To enable exponential backoff. Also configurable on the ResourceAdapter
