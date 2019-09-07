@@ -16,37 +16,37 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
-Steps to run the example
+Passo para executar o exemplo
 
-Build and start the demo:
+Build e start da demo:
 
 ....
 mvn clean package tomee:run
 ....
 
-Open:
+Abrir:
 
 ....
 http://localhost:8080/
 ....
 
-This example shows how to improve JSF2/CDI/BV/JPA applications with
-features provided by Apache DeltaSpike and MyFaces ExtVal.
+Este exemplo mostra como melhorar os aplicativos JSF2/CDI/BV/JPA com
+recursos fornecidos pelo Apache DeltaSpike e MyFaces ExtVal.
 
-=== Intro of Apache DeltaSpike and MyFaces ExtVal
+=== Introdução ao Apache DeltaSpike e MyFaces ExtVal
 
-The Apache DeltaSpike project hosts portable extensions for Contexts and
-Dependency Injection (CDI - JSR 299). DeltaSpike is a toolbox for your
-CDI application. Like CDI itself DeltaSpike is focused on type-safety.
-It is a modularized and extensible framework. So it’s easy to choose the
-needed parts to facilitate the daily work in your project.
+O projeto Apache DeltaSpike hospeda extensões portáveis para contextos e
+Injeção de Dependência (CDI - JSR 299). DeltaSpike é uma caixa de ferramentas para sua
+aplicação CDI. Como o próprio CDI, o DeltaSpike está focado na segurança de tipos (type-safety).
+É um framework modularizado e extensível. Então é fácil escolher o
+peças necessárias para facilitar o trabalho diário em seu projeto.
 
-MyFaces Extensions Validator (aka ExtVal) is a JSF centric validation
-framework which is compatible with JSF 1.x and JSF 2.x. This example
-shows how it improves the default integration of Bean-Validation
-(JSR-303) with JSF2 as well as meta-data based cross-field validation.
+MyFaces Extensions Validator (também conhecido como ExtVal) é um framework de validação centrada no JSF
+que é compatível com JSF 1.x e JSF 2.x. Este exemplo
+como como melhorar a integração padrão do Bean-Validation
+(JSR-303) com JSF2 bem como validação de campo cruzado baseada em metadados.
 
-Illustrated Features
+Recursos Ilustrados
 
 Apache DeltaSpike
 
