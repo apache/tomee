@@ -14,25 +14,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.tomee.microprofile.jwt.bval.Generated;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+public class MissingJwtConstraintsException extends RuntimeException {
 
-public class Shapes$$JwtConstraints {
-
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.square(int)")
-    @Issuer("http://foo.bar.com")
-    @Audience("joe")
-    public JsonWebToken square$$0() {
-        return null;
-    }
-
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Shapes.triangle(boolean)")
-    @Audience("jane")
-    public JsonWebToken triangle$$1() {
-        return null;
-    }
 }

@@ -14,29 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.tomee.microprofile.jwt.bval.Generated;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import java.lang.reflect.Method;
 
-public class Colors$$JwtConstraints {
-
-    public Colors$$JwtConstraints() {
+public class MissingConstraintsMethodException extends RuntimeException {
+    public MissingConstraintsMethodException(final Class<?> componentClass, final Method method) {
     }
-
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken blue$$0() {
-        return null;
-    }
-
-    @Generated("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
-    @Audience("bar")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken red$$1() {
-        return null;
-    }
-
 }

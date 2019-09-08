@@ -27,7 +27,7 @@ public class ClassValidationGenerator {
         this.validationData = validationData;
     }
 
-    public void generate() {
+    public List<Class<?>> generate() {
         final List<Class<?>> classes = new ArrayList<Class<?>>();
 
         if (validationData.getJwtConstraints().size() > 0) {
@@ -38,5 +38,6 @@ public class ClassValidationGenerator {
             final ReturnValidationGenerator generator = new ReturnValidationGenerator(validationData.getClazz(), validationData.getReturnConstraints());
             classes.add(generator.generateAndLoad());
         }
+        return classes;
     }
 }
