@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: Polling</name>
 
   <properties>
-    <xbean.version>4.8</xbean.version>
+    <xbean.version>4.14</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.0-SNAPSHOT</tomee.version>
     <cxf.version>3.3.1</cxf.version>
@@ -73,7 +73,6 @@
     <module>polling-core</module>
     <module>polling-web</module>
     <module>polling-client</module>
-    <module>polling-mdb</module>
   </modules>
 
   <dependencyManagement>
@@ -82,7 +81,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>8.0</version>
+        <version>[8.0,)</version>
         <scope>provided</scope>
       </dependency>
       <dependency>

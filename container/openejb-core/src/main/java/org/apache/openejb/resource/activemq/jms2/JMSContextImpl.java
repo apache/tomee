@@ -42,6 +42,7 @@ import javax.jms.TemporaryTopic;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.jms.XAConnection;
+
 import java.io.Serializable;
 
 import static org.apache.openejb.resource.activemq.jms2.JMS2.toRuntimeException;
@@ -80,7 +81,6 @@ public class JMSContextImpl implements JMSContext {
         if (connection == null) {
             try {
                 connection = username != null ? factory.createConnection(username, password) : factory.createConnection();
-                xa = XAConnection.class.isInstance(connection);
             } catch (final JMSException e) {
                 throw toRuntimeException(e);
             }
@@ -96,10 +96,11 @@ public class JMSContextImpl implements JMSContext {
                 }
                 if (session == null) {
                     try {
+                        Connection connection = connection();
                         if (xa) {
-                            session = XAConnection.class.cast(connection()).createXASession();
+                            session = XAConnection.class.cast(connection).createXASession();
                         } else {
-                            session = connection().createSession(sessionMode);
+                            session = connection.createSession(sessionMode);
                         }
                     } catch (final JMSException e) {
                         throw toRuntimeException(e);
@@ -142,9 +143,6 @@ public class JMSContextImpl implements JMSContext {
     public void close() {
         try {
             synchronized (this) {
-                if (session != null) {
-                    session.close();
-                }
                 if (connection != null) {
                     connection.close();
                 }

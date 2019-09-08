@@ -3,8 +3,6 @@
 :jbake-status: status=published
 = Simple CDI Interceptor
 
-#Simple CDI Interceptor
-
 Let’s write a simple application that would allow us to book tickets for
 a movie show. As with all applications, logging is one cross-cutting
 concern that we have.
@@ -20,7 +18,7 @@ handy to annotate a method like
 public void aMethod(){...} 
 ....
 
-Let’s create an annotation that would ``mark'' a method for
+Let’s create an annotation that would "mark" a method for
 interception.
 
 ....
@@ -31,11 +29,11 @@ public @interface Log {
 }
 ....
 
-Sure, you haven’t missed the @InterceptorBinding annotation above ! Now
+Sure, you haven’t missed the `@InterceptorBinding` annotation above ! Now
 that our custom annotation is created, lets attach it (or to use a
-better term for it, ``bind it'' ) to an interceptor.
+better term for it, "bind it" ) to an interceptor.
 
-So here’s our logging interceptor. An @AroundInvoke method and we are
+So here’s our logging interceptor. An `@AroundInvoke` method and we are
 almost done.
 
 ....
@@ -51,7 +49,7 @@ public class LoggingInterceptor {
 }
 ....
 
-Now the @Log annotation we created is bound to this interceptor.
+Now the `@Log` annotation we created is bound to this interceptor.
 
 That done, let’s annotate at class-level or method-level and have fun
 intercepting !
@@ -77,10 +75,10 @@ public class BookShow implements Serializable {
 The `@Log` annotation applied at class level denotes that all the
 methods should be intercepted with `LoggingInterceptor`.
 
-Before we say ``all done'' there’s one last thing we are left with ! To
+Before we say "all done" there’s one last thing we are left with ! To
 enable the interceptors !
 
-Lets quickly put up a [beans.xml file]
+Lets quickly put up a `beans.xml` file in `META-INF`
 
 ....
 <beans>
@@ -91,15 +89,13 @@ Lets quickly put up a [beans.xml file]
 </beans>
 ....
 
-in META-INF
-
-Those lines in beans.xml not only ``enable'' the interceptors, but also
-define the ``order of execution'' of the interceptors. But we’ll see
+Those lines in `beans.xml` not only "enable" the interceptors, but also
+define the "order of execution" of the interceptors. But we’ll see
 that in another example on multiple-cdi-interceptors.
 
-Fire up the test, and we should see a `Entering method: getMoviesList'
+Fire up the test, and we should see a `Entering method: getMoviesList`
 printed in the console.
-
+....
 #Tests Apache OpenEJB 4.0.0-beta-2 build: 20111103-01:00
 http://tomee.apache.org/ INFO - openejb.home =
 /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
@@ -136,3 +132,4 @@ Ejb(deployment-id=BookShow, ejb-name=BookShow, container=Default
 Stateful Container) INFO - Deployed
 Application(path=/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors)
 Entering method: getMoviesList
+....

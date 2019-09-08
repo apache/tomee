@@ -31,10 +31,9 @@
 
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
         openejb.descriptors.output=true
-
+        
         AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        AMQResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
-        AMQResourceAdapter.ServerUrl = vm://jvm_broker
+        AMQResourceAdapter.BrokerXmlConfig = broker:(vm://localhost)?useJmx=false&amp;persistent=false&amp;deleteAllMessagesOnStartup=true
         AMQMessageContainer = new://Container?type=MESSAGE
         AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
         AMQConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory
@@ -54,9 +53,8 @@
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
 
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
-
+        
         AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        AMQResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
         AMQResourceAdapter.ServerUrl = vm://jvm_broker
         AMQMessageContainer = new://Container?type=MESSAGE
         AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
@@ -79,12 +77,12 @@
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
 
         AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        AMQResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
-        AMQResourceAdapter.ServerUrl = vm://jvm_broker
+        AMQResourceAdapter.BrokerXmlConfig = broker:(vm://localhost)?useJmx=false&amp;persistent=false&amp;deleteAllMessagesOnStartup=true
         AMQMessageContainer = new://Container?type=MESSAGE
         AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
         AMQConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory
         AMQConnectionFactory.ResourceAdapter = AMQResourceAdapter
+        
         javax.security.jacc.policy.provider=sun.security.provider.PolicyFile
       </property>
     </configuration>
@@ -101,10 +99,9 @@
         My\ Unmanaged\ DataSource.JdbcUrl = jdbc:hsqldb:mem:hsqldb
 
         openejb.classloader.forced-load=org.apache.openejb.arquillian.tests.jms
-
+        
         AMQResourceAdapter = new://Resource?type=ActiveMQResourceAdapter
-        AMQResourceAdapter.BrokerXmlConfig = broker:(tcp://localhost:61616)?useJmx=false&amp;persistent=false
-        AMQResourceAdapter.ServerUrl = vm://jvm_broker
+        AMQResourceAdapter.BrokerXmlConfig = broker:(vm://localhost)?useJmx=false&amp;persistent=false&amp;deleteAllMessagesOnStartup=true
         AMQMessageContainer = new://Container?type=MESSAGE
         AMQMessageContainer.ResourceAdapter = AMQResourceAdapter
         AMQConnectionFactory = new://Resource?type=javax.jms.ConnectionFactory

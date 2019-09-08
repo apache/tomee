@@ -63,6 +63,7 @@
             </goals>
             <configuration>
               <skip>${maven.test.skip}</skip>
+              <argLine>-Djdk.attach.allowAttachSelf</argLine>
               <groups>org.superbiz.embedded.standalone.Embedded</groups>
               <systemPropertyVariables>
                 <arquillian.launch>embedded</arquillian.launch>
@@ -94,6 +95,7 @@
             <configuration>
               <skip>${maven.test.skip}</skip>
               <groups>org.superbiz.tomee.embedded.TomEEEmbedded</groups>
+              <argLine>-Djdk.attach.allowAttachSelf</argLine>
               <systemPropertyVariables>
                 <arquillian.launch>tomee-embedded</arquillian.launch>
                 <openejb.arquillian.adapter>tomee-embedded</openejb.arquillian.adapter>
@@ -137,7 +139,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
 

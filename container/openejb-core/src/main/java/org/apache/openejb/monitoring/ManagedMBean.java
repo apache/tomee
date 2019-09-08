@@ -19,7 +19,7 @@ package org.apache.openejb.monitoring;
 
 import org.apache.openejb.util.Classes;
 import org.apache.xbean.finder.ClassFinder;
-import org.apache.xbean.propertyeditor.PropertyEditors;
+import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
 
 import javax.management.Attribute;
 import javax.management.AttributeList;
@@ -71,6 +71,7 @@ public class ManagedMBean implements DynamicMBean {
     private boolean filterAttributes;
     private MBeanParameterInfo excludeInfo;
     private MBeanParameterInfo includeInfo;
+    private PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry();
 
     public ManagedMBean(final Object managed) {
         this(managed, "");
@@ -93,6 +94,8 @@ public class ManagedMBean implements DynamicMBean {
             operationsMap.put(filterOperation.getName(), new MethodMember(method, this, ""));
 
             filterAttributes = true;
+
+            propertyEditorRegistry.registerDefaults();
         } catch (final NoSuchMethodException e) {
             throw new IllegalStateException(e);
         }
@@ -200,7 +203,7 @@ public class ManagedMBean implements DynamicMBean {
             final Class<?> expectedType = method.getParameterTypes()[i];
             if (value instanceof String && expectedType != Object.class) {
                 final String stringValue = (String) value;
-                value = PropertyEditors.getValue(expectedType, stringValue);
+                value = propertyEditorRegistry.getValue(expectedType, stringValue);
             }
             args[i] = value;
         }

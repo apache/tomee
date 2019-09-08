@@ -29,6 +29,7 @@
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
+    <surefire.argline/>
   </properties>
 
   <dependencies>
@@ -200,7 +201,7 @@
         <configuration>
           <reuseForks>true</reuseForks>
           <forkCount>1</forkCount>
-          <argLine>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</argLine>
+          <argLine>${surefire.argline}</argLine>
           <useFile>false</useFile>
           <disableXmlReport>true</disableXmlReport>
           <suiteXmlFiles>
@@ -245,5 +246,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <surefire.argline>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
+      </properties>
+    </profile>
+  </profiles>
 
 </project>

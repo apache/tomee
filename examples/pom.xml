@@ -103,7 +103,9 @@
     <module>jsf-cdi-and-ejb</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
+    <!-- Does not work with Java 9+ because of the modules. Needs more work
     <module>mbean-auto-registration</module>
+    -->
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
@@ -246,23 +248,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
-              <skip>true</skip>
-            </configuration>
           </plugin>
         </plugins>
       </build>

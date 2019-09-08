@@ -1,0 +1,16 @@
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: status=published
+
+== Amostra Spring Data com Meta
+
+Este exemplo simplesmente simplifica o uso do spring-data provendo uma amostra
+de meta annotation `@SpringRepository` para fazer todo o trabalho EJB de proxy dinâmico.
+
+Ele substitui as anotações @Proxy e @Stateless.
+
+Não é mais confortável?
+
+Para fazer isso, definimos uma meta-anotação `Metatype` e a usamos.
+
+A implementação de proxy é a mesma que para amostra do Spring-Data.

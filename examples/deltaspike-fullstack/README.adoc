@@ -33,7 +33,7 @@ http://localhost:8080/
 This example shows how to improve JSF2/CDI/BV/JPA applications with
 features provided by Apache DeltaSpike and MyFaces ExtVal.
 
-Intro of Apache DeltaSpike and MyFaces ExtVal
+=== Intro of Apache DeltaSpike and MyFaces ExtVal
 
 The Apache DeltaSpike project hosts portable extensions for Contexts and
 Dependency Injection (CDI - JSR 299). DeltaSpike is a toolbox for your

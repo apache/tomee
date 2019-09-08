@@ -33,6 +33,7 @@
   <properties>
     <suite.name>passing</suite.name>
     <cdi-tck.version>${cdi.tck.20.version}</cdi-tck.version>
+    <tomee.opts/>
   </properties>
 
   <dependencies>
@@ -239,4 +240,17 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <tomee.opts>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</tomee.opts>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
