@@ -20,11 +20,11 @@ import org.apache.tomee.microprofile.jwt.JsonWebTokenValidator;
 import org.apache.tomee.microprofile.jwt.Tokens;
 import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
 import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.apache.tomee.microprofile.jwt.bval.data.Colors;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintViolation;
@@ -197,10 +197,25 @@ public class ValidationConstraintsTest {
         @Audience("bar")
         @Issuer("http://foo.bar.com")
         @Crimson()
+        @RolesAllowed("") // to ensur non bean-validation annotations do not cause errors
         public Red red() {
             return new Red();
         }
 
+        /**
+         * To ensure non bean-validation methods do not cause errors
+         */
+        @RolesAllowed("")
+        public Object green() {
+            return new Red();
+        }
+
+        /**
+         * To ensure non-public methods do not cause errors
+         */
+        private Object blue() {
+            return new Red();
+        }
     }
 
     public static class Red {

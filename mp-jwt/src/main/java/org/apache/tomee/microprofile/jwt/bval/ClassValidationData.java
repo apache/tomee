@@ -16,22 +16,19 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
+import org.apache.bval.jsr.ApacheValidatorFactory;
 import org.apache.bval.jsr.descriptor.ConstraintD;
 import org.apache.bval.jsr.job.ConstraintValidators;
+import org.apache.bval.jsr.metadata.Meta;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import javax.validation.ConstraintDefinitionException;
 import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import javax.validation.metadata.BeanDescriptor;
-import javax.validation.metadata.ConstraintDescriptor;
-import javax.validation.metadata.MethodDescriptor;
-import javax.validation.metadata.ReturnValueDescriptor;
+import javax.validation.metadata.Scope;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ClassValidationData {
 
@@ -44,20 +41,16 @@ public class ClassValidationData {
     public ClassValidationData(final Class<?> clazz) {
         this.clazz = clazz;
         final ConstraintValidators validators = new ConstraintValidators();
-
-        final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        final Validator validator = factory.getValidator();
-        final BeanDescriptor descriptor = validator.getConstraintsForClass(clazz);
+        final ApacheValidatorFactory factory = ApacheValidatorFactory.class.cast(Validation.buildDefaultValidatorFactory());
 
         for (final Method method : clazz.getMethods()) {
-            final MethodDescriptor methodDescriptor = descriptor.getConstraintsForMethod(method.getName(), method.getParameterTypes());
 
-            if (methodDescriptor == null) continue;
+            final List<ConstraintD<?>> constraints = getConstraints(factory, method);
+
+            if (constraints.size() == 0) continue;
 
             final MethodConstraints jwtAnnotations = new MethodConstraints(method);
             final MethodConstraints returnAnnotations = new MethodConstraints(method);
-
-            final Set<ConstraintD<?>> constraints = cast(methodDescriptor.getReturnValueDescriptor());
 
             if (method.getReturnType().isAssignableFrom(JsonWebToken.class)) {
                 for (final ConstraintD<?> constraint : constraints) {
@@ -78,6 +71,21 @@ public class ClassValidationData {
         }
     }
 
+    private static List<ConstraintD<?>> getConstraints(final ApacheValidatorFactory factory, final Method method) {
+        final List<ConstraintD<?>> constraints = new ArrayList<>();
+
+        final Meta.ForMethod meta = new Meta.ForMethod(method);
+        for (final Annotation annotation : method.getAnnotations()) {
+            try {
+                final ConstraintD constraint = new ConstraintD(annotation, Scope.LOCAL_ELEMENT, meta, factory);
+                constraints.add(constraint);
+            } catch (ConstraintDefinitionException e) {
+                // ignore
+            }
+        }
+        return constraints;
+    }
+
     public Class<?> getClazz() {
         return clazz;
     }
@@ -88,17 +96,5 @@ public class ClassValidationData {
 
     public List<MethodConstraints> getReturnConstraints() {
         return returnConstraints;
-    }
-
-    /**
-     * Cast to set of ConstraintD
-     */
-    private static Set<ConstraintD<?>> cast(final ReturnValueDescriptor returnValueDescriptor) {
-        final Set<ConstraintDescriptor<?>> descriptors = returnValueDescriptor.getConstraintDescriptors();
-        final Set<ConstraintD<?>> constraintDs = new HashSet<ConstraintD<?>>();
-        for (final ConstraintDescriptor<?> descriptor : descriptors) {
-            constraintDs.add(ConstraintD.class.cast(descriptor));
-        }
-        return constraintDs;
     }
 }
