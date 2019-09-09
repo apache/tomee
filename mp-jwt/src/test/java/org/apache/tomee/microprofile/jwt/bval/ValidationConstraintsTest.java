@@ -18,28 +18,39 @@ package org.apache.tomee.microprofile.jwt.bval;
 
 import org.apache.tomee.microprofile.jwt.JsonWebTokenValidator;
 import org.apache.tomee.microprofile.jwt.Tokens;
-import org.apache.tomee.microprofile.jwt.bval.data.Colors;
-import org.apache.tomee.microprofile.jwt.bval.data.Shapes;
+import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
+import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import javax.annotation.security.RolesAllowed;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
+import javax.validation.Payload;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Ignore
 public class ValidationConstraintsTest {
 
     @Test
-    public void testValidate() throws Exception {
-        final ValidationConstraints constraints = ValidationConstraints.of(Colors.class);
+    public void invalidAudAndIss() throws Exception {
+        final ValidationConstraints constraints = ValidationConstraints.of(Circle.class);
 
-        final Method red = Colors.class.getMethod("red");
+        final Method red = Circle.class.getMethod("red");
 
 
         final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
@@ -56,25 +67,54 @@ public class ValidationConstraintsTest {
 
         final JsonWebToken jwt = validator.validate(token);
 
-        final Set<ConstraintViolation<Object>> violations = constraints.validate(red, jwt);
-
-        assertEquals(1, violations.size());
-        final ConstraintViolation<Object> next = violations.iterator().next();
-        assertEquals("The 'iss' claim must be 'http://foo.bar.com'", next.getMessage());
+        assertViolations(constraints.validate(red, jwt),
+                "The 'aud' claim is required",
+                "The 'aud' claim must contain 'bar'",
+                "The 'iss' claim must be 'http://foo.bar.com'"
+        );
     }
 
     @Test
-    public void testAudienceIsJoe() throws Exception {
-        final ValidationConstraints constraints = ValidationConstraints.of(Shapes.class);
+    public void invalidIss() throws Exception {
+        final ValidationConstraints constraints = ValidationConstraints.of(Circle.class);
 
-        final Method method = Shapes.class.getMethod("square");
+        final Method red = Circle.class.getMethod("red");
+
+
         final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
                 .publicKey(Tokens.getPublicKey())
                 .build();
 
         final String claims = "{" +
                 "  \"sub\":\"Jane Awesome\"," +
-                "  \"aud\":[\"jim\"]," +
+                "  \"aud\":[\"bar\",\"user\"]," +
+                "  \"iss\":\"http://something.com\"," +
+                "  \"groups\":[\"manager\",\"user\"]," +
+                "  \"exp\":2552047942" +
+                "}";
+        final String token = Tokens.asToken(claims);
+
+        final JsonWebToken jwt = validator.validate(token);
+
+        assertViolations(constraints.validate(red, jwt),
+                "The 'iss' claim must be 'http://foo.bar.com'"
+        );
+    }
+
+    @Test
+    public void invalidAud() throws Exception {
+        final ValidationConstraints constraints = ValidationConstraints.of(Circle.class);
+
+        final Method red = Circle.class.getMethod("red");
+
+
+        final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
+                .publicKey(Tokens.getPublicKey())
+                .build();
+
+        final String claims = "{" +
+                "  \"sub\":\"Jane Awesome\"," +
+                "  \"aud\":[\"foo\",\"user\"]," +
                 "  \"iss\":\"http://foo.bar.com\"," +
                 "  \"groups\":[\"manager\",\"user\"]," +
                 "  \"exp\":2552047942" +
@@ -83,12 +123,122 @@ public class ValidationConstraintsTest {
 
         final JsonWebToken jwt = validator.validate(token);
 
-        final Set<ConstraintViolation<Object>> violations = constraints.validate(method, jwt);
-
-        assertEquals(1, violations.size());
-        final ConstraintViolation<Object> next = violations.iterator().next();
-        assertEquals("The 'aud' claim must contain 'joe'", next.getMessage());
+        assertViolations(constraints.validate(red, jwt),
+                "The 'aud' claim must contain 'bar'"
+        );
     }
 
+    @Test
+    public void missingAud() throws Exception {
+        final ValidationConstraints constraints = ValidationConstraints.of(Circle.class);
 
+        final Method red = Circle.class.getMethod("red");
+
+
+        final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
+                .publicKey(Tokens.getPublicKey())
+                .build();
+
+        final String claims = "{" +
+                "  \"sub\":\"Jane Awesome\"," +
+                "  \"iss\":\"http://foo.bar.com\"," +
+                "  \"groups\":[\"manager\",\"user\"]," +
+                "  \"exp\":2552047942" +
+                "}";
+        final String token = Tokens.asToken(claims);
+
+        final JsonWebToken jwt = validator.validate(token);
+
+        assertViolations(constraints.validate(red, jwt),
+                "The 'aud' claim is required",
+                "The 'aud' claim must contain 'bar'"
+        );
+    }
+
+    @Test
+    public void valid() throws Exception {
+        final ValidationConstraints constraints = ValidationConstraints.of(Circle.class);
+
+        final Method red = Circle.class.getMethod("red");
+
+
+        final JsonWebTokenValidator validator = JsonWebTokenValidator.builder()
+                .publicKey(Tokens.getPublicKey())
+                .build();
+
+        final String claims = "{" +
+                "  \"sub\":\"Jane Awesome\"," +
+                "  \"iss\":\"http://foo.bar.com\"," +
+                "  \"aud\":[\"bar\",\"user\"]," +
+                "  \"groups\":[\"manager\",\"user\"]," +
+                "  \"exp\":2552047942" +
+                "}";
+        final String token = Tokens.asToken(claims);
+
+        final JsonWebToken jwt = validator.validate(token);
+
+        assertViolations(constraints.validate(red, jwt));
+    }
+
+    private static void assertViolations(final Set<ConstraintViolation<Object>> constraintViolations, final String... violations) {
+        final List<String> actual = constraintViolations.stream()
+                .map(ConstraintViolation::getMessage)
+                .sorted()
+                .collect(Collectors.toList());
+
+        final List<String> expected = Stream.of(violations)
+                .sorted()
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(expected, actual);
+    }
+
+    public static class Circle {
+        @Audience("bar")
+        @Issuer("http://foo.bar.com")
+        @Crimson()
+        @RolesAllowed("") // to ensur non bean-validation annotations do not cause errors
+        public Red red() {
+            return new Red();
+        }
+
+        /**
+         * To ensure non bean-validation methods do not cause errors
+         */
+        @RolesAllowed("")
+        public Object green() {
+            return new Red();
+        }
+
+        /**
+         * To ensure non-public methods do not cause errors
+         */
+        private Object blue() {
+            return new Red();
+        }
+    }
+
+    public static class Red {
+    }
+
+    @Documented
+    @javax.validation.Constraint(validatedBy = {Crimson.Constraint.class})
+    @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
+    @Retention(RUNTIME)
+    public @interface Crimson {
+
+        Class<?>[] groups() default {};
+
+        String message() default "This will never pass";
+
+        Class<? extends Payload>[] payload() default {};
+
+
+        class Constraint implements ConstraintValidator<Crimson, Red> {
+            @Override
+            public boolean isValid(final Red value, final ConstraintValidatorContext context) {
+                return false;
+            }
+        }
+    }
 }

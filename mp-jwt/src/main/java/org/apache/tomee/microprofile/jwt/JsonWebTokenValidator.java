@@ -56,7 +56,7 @@ public class JsonWebTokenValidator {
     }
 
     public JsonWebToken validate(final String token) throws ParseException {
-        final JWTAuthConfiguration authConfiguration = verificationKey == null ? JWTAuthConfiguration.authConfiguration(verificationKey, issuer) : JWTAuthConfiguration.authConfiguration(verificationKeys, issuer);
+        final JWTAuthConfiguration authConfiguration = verificationKey != null ? JWTAuthConfiguration.authConfiguration(verificationKey, issuer) : JWTAuthConfiguration.authConfiguration(verificationKeys, issuer);
         JWTCallerPrincipal principal;
 
         try {

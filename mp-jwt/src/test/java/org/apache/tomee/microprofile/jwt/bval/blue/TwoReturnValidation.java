@@ -14,9 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.ann;
-
-import org.eclipse.microprofile.jwt.JsonWebToken;
+package org.apache.tomee.microprofile.jwt.bval.blue;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -24,7 +22,8 @@ import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.Set;
+import java.net.URI;
+import java.net.URL;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,12 +31,11 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@RequireClaim("aud")
 @Documented
-@javax.validation.Constraint(validatedBy = {Audience.Constraint.class})
+@javax.validation.Constraint(validatedBy = {TwoReturnValidation.UriConstraint.class, TwoReturnValidation.UrlConstraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-public @interface Audience {
+public @interface TwoReturnValidation {
 
     String value();
 
@@ -48,18 +46,17 @@ public @interface Audience {
     Class<? extends Payload>[] payload() default {};
 
 
-    class Constraint implements ConstraintValidator<Audience, JsonWebToken> {
-        private Audience audience;
-
+    class UrlConstraint implements ConstraintValidator<TwoReturnValidation, URL> {
         @Override
-        public void initialize(final Audience constraint) {
-            this.audience = constraint;
+        public boolean isValid(final URL value, final ConstraintValidatorContext context) {
+            return true;
         }
+    }
 
+    class UriConstraint implements ConstraintValidator<TwoReturnValidation, URI> {
         @Override
-        public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
-            final Set<String> audience = value.getAudience();
-            return audience != null && audience.contains(this.audience.value());
+        public boolean isValid(final URI value, final ConstraintValidatorContext context) {
+            return true;
         }
     }
 }

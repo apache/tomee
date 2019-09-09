@@ -16,13 +16,16 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class ValidationGenerationException extends IllegalStateException {
 
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Name {
-    String value();
+    private final Class<?> componentClass;
+
+    public ValidationGenerationException(final Class<?> componentClass, final Throwable e) {
+        super(e);
+        this.componentClass = componentClass;
+    }
+
+    public Class<?> getComponentClass() {
+        return componentClass;
+    }
 }

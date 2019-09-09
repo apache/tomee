@@ -16,25 +16,9 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import javax.ws.rs.container.DynamicFeature;
-import javax.ws.rs.container.ResourceInfo;
-import javax.ws.rs.core.FeatureContext;
-import javax.ws.rs.ext.Provider;
+import java.lang.reflect.Method;
 
-@Provider
-public class ValidationInterceptorsFeature implements DynamicFeature {
-
-    @Override
-    public void configure(final ResourceInfo resourceInfo, final FeatureContext context) {
-
-        final Class<?> resourceClass = resourceInfo.getResourceClass();
-
-        final ValidationConstraints constraints = ValidationConstraints.of(resourceClass);
-
-        if (constraints != null) {
-            context.register(new ValidationInterceptor(resourceInfo, constraints));
-        }
-
+public class MissingConstraintsMethodException extends RuntimeException {
+    public MissingConstraintsMethodException(final Class<?> componentClass, final Method method) {
     }
-
 }

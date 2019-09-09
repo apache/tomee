@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.ann;
+package org.apache.tomee.microprofile.jwt.bval.blue;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
@@ -24,7 +24,6 @@ import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.Set;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.FIELD;
@@ -32,12 +31,11 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@RequireClaim("aud")
 @Documented
-@javax.validation.Constraint(validatedBy = {Audience.Constraint.class})
+@javax.validation.Constraint(validatedBy = {TwoTokenValidation.Constraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-public @interface Audience {
+public @interface TwoTokenValidation {
 
     String value();
 
@@ -48,18 +46,17 @@ public @interface Audience {
     Class<? extends Payload>[] payload() default {};
 
 
-    class Constraint implements ConstraintValidator<Audience, JsonWebToken> {
-        private Audience audience;
+    class Constraint implements ConstraintValidator<TwoTokenValidation, JsonWebToken> {
+        private TwoTokenValidation audience;
 
         @Override
-        public void initialize(final Audience constraint) {
+        public void initialize(final TwoTokenValidation constraint) {
             this.audience = constraint;
         }
 
         @Override
         public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
-            final Set<String> audience = value.getAudience();
-            return audience != null && audience.contains(this.audience.value());
+            return value != null;
         }
     }
 }

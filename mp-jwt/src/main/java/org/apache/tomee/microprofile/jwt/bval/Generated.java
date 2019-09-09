@@ -14,29 +14,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval.data;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.tomee.microprofile.jwt.bval.Name;
-import org.apache.tomee.microprofile.jwt.bval.ann.Audience;
-import org.apache.tomee.microprofile.jwt.bval.ann.Issuer;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class Colors$$JwtConstraints {
-
-    public Colors$$JwtConstraints() {
-    }
-
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.blue()")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken blue$$0() {
-        return null;
-    }
-
-    @Name("public void org.apache.tomee.microprofile.jwt.bval.data.Colors.red()")
-    @Audience("bar")
-    @Issuer("http://foo.bar.com")
-    public JsonWebToken red$$1() {
-        return null;
-    }
-
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Generated {
+    String value();
 }
