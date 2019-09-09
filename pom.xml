@@ -170,7 +170,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.15.8</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.10</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -190,6 +190,8 @@
     <version.hibernate>4.2.18.Final</version.hibernate>
     <version.eclipselink>2.6.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
+
+    <jackson.version>2.9.9.3</jackson.version>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -1041,6 +1043,10 @@
             <artifactId>jackson-core-mapper</artifactId>
           </exclusion>
           <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
           </exclusion>
@@ -1768,6 +1774,11 @@
             <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
