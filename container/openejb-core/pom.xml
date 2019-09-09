@@ -551,7 +551,7 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
+      <groupId>org.tomitribe.quartz</groupId>
       <artifactId>quartz</artifactId>
     </dependency>
     <!-- Dependency of Quartz -->

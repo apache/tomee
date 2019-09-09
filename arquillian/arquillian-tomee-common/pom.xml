@@ -202,7 +202,7 @@
         </exclusion>
         <exclusion>
           <artifactId>quartz</artifactId>
-          <groupId>org.quartz-scheduler</groupId>
+          <groupId>org.tomitribe.quartz</groupId>
         </exclusion>
         <exclusion>
           <artifactId>openwebbeans-impl</artifactId>
