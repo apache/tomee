@@ -186,7 +186,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>2.0.3</bval.version>
-    <org.apache.activemq.version>5.15.6</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.10</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -232,7 +232,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.9.4</jackson.version>
+    <jackson.version>2.9.9.3</jackson.version>
+    <jackson.dataformat.version>2.9.9</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
@@ -1864,6 +1865,18 @@
             <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <!-- Jackson required by OpenAPI Impl -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>${jackson.dataformat.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

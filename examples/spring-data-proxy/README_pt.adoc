@@ -1,0 +1,17 @@
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: status=published
+
+== Amostra Spring Data
+
+Este exemplo usa ganchos OpenEJB para substituir uma implementação EJB por um proxy para usar o Spring Data no seu contêiner preferido.
+
+É bem simples: Simplesmente prover para o OpenEJB uma InvocationHandler
+usando delegação para o Spring-Data e pronto!
+
+É o que é feito em `org.superbiz.dynamic.SpringDataProxy`.
+
+Ele contém um pequeno truque: mesmo que não seja anotado
+o atributo `implementingInterfaceClass` é injetado pelo OpenEJB para obter
+a interface.
+Então nós simplesmente criamos o repositório Spring Data e delegamos para ele.

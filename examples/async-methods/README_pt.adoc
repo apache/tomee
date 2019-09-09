@@ -3,14 +3,14 @@
 :jbake-status: status=published
 = Métodos Assíncronos
 
-A anotação @Asynchronous foi introduzida no EJB 3.1 como um  simples meio
+A anotação `@Asynchronous` foi introduzida no EJB 3.1 como um  simples meio
 de criar processamento assícrono.
 
 Toda vez que um método anotado com `@Asynchronous` é invocado por qualquer um que
 vai imediatamente retornar independentemente de quanto tempo o método realmente leva.
- 
+
 Cada invocação retorna um objeto http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html[Future]
-que essencialmente inicia  _vazio_ e terá mais tarde o seu valor preenchido pelo contêiner quando o método relacionado é chamado concluir. 
+que essencialmente inicia  _vazio_ e terá mais tarde o seu valor preenchido pelo contêiner quando o método relacionado é chamado concluir.
 
 Retornar um objeto `Future` não é necessário e os métodos `@ Asynchronous` podem retornar `void`.
 
@@ -23,7 +23,7 @@ próxima declaração,
 
 `final Future<String> orange = processor.addJob("orange");`
 
-sem aguardar pelo método addJob() para completar. E depois poderíamos
+sem aguardar pelo método `addJob()` para completar. E depois poderíamos
 perguntar pelo resultado usando o método `Future <?>. get ()` como
 
 `assertEquals("blue", blue.get());`
@@ -50,7 +50,8 @@ ____
 
 == O código
 
-....
+[source,java]
+----
 @Singleton
 public class JobProcessor {
 @Asynchronous
@@ -74,7 +75,7 @@ private void doSomeHeavyLifting() {
     }
   }
 }
-....
+----
 
 == Teste
 
@@ -110,15 +111,16 @@ public void test() throws Exception {
 
     // A execução deve ser em torno de 9 a 21 segundos
     // O tempo de execução depende do número de encadeamentos disponíveis para execução assíncrona.
-    //No melhor dos casos, é 10s mais algum tempo de processamento mínimo. 
+    //No melhor dos casos, é 10s mais algum tempo de processamento mínimo.
     assertTrue("Expected > 9 but was: " + total, total > 9);
     assertTrue("Expected < 21 but was: " + total, total < 21);
 
   }
 }
-....
+----
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -170,7 +172,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.491 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 == Como funciona debaixo dos panos
 
@@ -196,7 +198,7 @@ retornado não é o mesmo objeto `Future` que o chamador está segurando.
 
 Seria legal se o `JobProcessor` real pudesse retornar` String` e
 a versão do chamador de `JobProcessor` poderia retornar` Future <String> `,
-mas nós não vimos nenhuma maneira de fazer isso sem adicionar mais complexidade. 
+mas nós não vimos nenhuma maneira de fazer isso sem adicionar mais complexidade.
 
 Então o `AsyncResult` é um simples objeto wrapper. O contêiner vai puxar
 o `String` para fora, lançar o ` AsyncResult`, então colocar o `String` em
