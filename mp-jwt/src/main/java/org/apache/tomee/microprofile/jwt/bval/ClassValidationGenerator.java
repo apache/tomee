@@ -28,15 +28,17 @@ public class ClassValidationGenerator {
     }
 
     public List<Class<?>> generate() {
-        final List<Class<?>> classes = new ArrayList<Class<?>>();
+        final List<Class<?>> classes = new ArrayList<>();
 
         if (validationData.getJwtConstraints().size() > 0) {
-            final JwtValidationGenerator generator = new JwtValidationGenerator(validationData.getClazz(), validationData.getJwtConstraints());
-            classes.add(generator.generateAndLoad());
-        }
-        if (validationData.getReturnConstraints().size() > 0) {
-            final ReturnValidationGenerator generator = new ReturnValidationGenerator(validationData.getClazz(), validationData.getReturnConstraints());
-            classes.add(generator.generateAndLoad());
+            {
+                final JwtValidationGenerator generator = new JwtValidationGenerator(validationData.getClazz(), validationData.getJwtConstraints());
+                classes.add(generator.generateAndLoad());
+            }
+            {
+                final ReturnValidationGenerator generator = new ReturnValidationGenerator(validationData.getClazz(), validationData.getReturnConstraints());
+                classes.add(generator.generateAndLoad());
+            }
         }
         return classes;
     }

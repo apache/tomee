@@ -56,7 +56,7 @@ public class ValidationConstraints {
                 .stream()
                 .filter(aClass -> aClass.getName().endsWith("JwtConstraints"))
                 .findFirst()
-                .orElseThrow(MissingJwtConstraintsException::new);
+                .orElseThrow(MissingConstraintsException::new);
 
 
         final Map<Method, Method> mapping = new HashMap<>();

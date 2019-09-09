@@ -16,6 +16,6 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-public class MissingJwtConstraintsException extends RuntimeException {
+public class MissingConstraintsException extends RuntimeException {
 
 }

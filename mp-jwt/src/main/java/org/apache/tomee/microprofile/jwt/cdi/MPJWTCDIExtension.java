@@ -16,6 +16,7 @@
  */
 package org.apache.tomee.microprofile.jwt.cdi;
 
+import org.apache.bval.cdi.BValInterceptor;
 import org.apache.tomee.microprofile.jwt.MPJWTFilter;
 import org.apache.tomee.microprofile.jwt.MPJWTInitializer;
 import org.apache.tomee.microprofile.jwt.config.JWTAuthConfigurationProperties;
@@ -34,6 +35,7 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.ProcessInjectionPoint;
 import javax.inject.Provider;
 import java.lang.reflect.ParameterizedType;
@@ -69,6 +71,11 @@ public class MPJWTCDIExtension implements Extension {
             injectionPoints.add(pip.getInjectionPoint());
         }
     }
+
+    void pat(@Observes final ProcessAnnotatedType<BValInterceptor> stockBvalInterceptor) {
+        stockBvalInterceptor.veto();
+    }
+
 
     public void registerClaimProducer(@Observes final AfterBeanDiscovery abd, final BeanManager bm) {
 
@@ -116,6 +123,7 @@ public class MPJWTCDIExtension implements Extension {
         bbd.addAnnotatedType(beanManager.createAnnotatedType(JsonbProducer.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTFilter.class));
         bbd.addAnnotatedType(beanManager.createAnnotatedType(MPJWTInitializer.class));
+        bbd.addAnnotatedType(beanManager.createAnnotatedType(org.apache.tomee.microprofile.jwt.bval.BValInterceptor.class));
     }
 
     public static <T> T getContextualReference(Class<T> type, final BeanManager beanManager) {
