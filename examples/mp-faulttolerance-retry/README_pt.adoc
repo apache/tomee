@@ -1,0 +1,252 @@
+= MicroProfile Fault Tolerance - Retry Policy
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este é um exemplo de como usar
+Microprofile @Retry em TomEE.
+
+== Retry Feature
+
+Microprofile Fault Tolerance tem um recurso chamado Retry que pode ser usado
+para recuperar uma operação de falha, chamando a mesma operação novamente
+até atingir seus critérios de parada.
+
+A Retry policy permite configurar :
+
+* *maxRetries*: o máximo de tentativas
+* *delay*: atrasos entre cada tentativa
+* *delayUnit*: a unidade de atraso
+* *maxDuration*: duração máxima para executar a nova tentativa
+* *durationUnit*: unidade de duração
+* *jitter:* a variação aleatória dos atrasos de uma nova tentativa
+* *jitterDelayUnit:* a unidade de instabilidade
+* *retryOn:* especifique as falhas para tentar novamente
+* *abortOn:* especifique as falhas para abortar
+
+Para usar esse recurso, você pode anotar uma classe e/ou um método com a anotação @Retry. Verifique em 
+http://download.eclipse.org/microprofile/microprofile-fault-tolerance-1.1/microprofile-fault-tolerance-spec.html[specification]
+para mais detalhes.
+
+== Exemplos
+
+=== Execute o aplicativo
+
+....
+mvn clean install tomee:run
+....
+
+=== Exemplo 1
+
+O método statusOfDay falhará 3 (três) vezes, a cada vez, lançando uma 
+`WeatherGatewayTimeoutException` e como a anotação @Retry está 
+configurada para `retryOn` em caso de falha, a biblioteca FailSafe pegará
+o valor `maxRetry` e tentará a mesma operação até atingir o número máximo de tentativas, que é 3 (valor padrão).
+
+[source,java]
+----
+@RequestScoped
+public class WeatherGateway{ 
+   ...
+   @Retry(maxRetry=3, retryOn = WeatherGatewayTimeoutException.class)
+   public String statusOfDay(){
+       if(counterStatusOfDay.addAndGet(1) <= DEFAULT_MAX_RETRY){
+           LOGGER.warning(String.format(FORECAST_TIMEOUT_MESSAGE, DEFAULT_MAX_RETRY, counterStatusOfDay.get()));
+           throw new WeatherGatewayTimeoutException();
+       }
+       return "Today is a sunny day!";
+   }
+   ...
+ }
+----
+
+Chamada de status do dia
+
+....
+GET http://localhost:8080/mp-faulttolerance-retry/weather/day/status
+....
+
+Server log
+
+....
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
+....
+
+Response
+
+....
+Today is a sunny day!
+....
+
+=== Exemplo 2
+
+O método weekStatus falhará duas vezes, a cada vez, lançando uma 
+`WeatherGatewayTimeoutException` porque `retryOn` está configurado e 
+em vez de retornar uma resposta ao chamador, a lógica afirma que na terceira tentativa uma 
+`WeatherGatewayBusyServiceException` será lançada. Como a anotação `@Retry` está configurada para 
+ `abortOn` no caso de `WeatherGatewayTimeoutException` ocorrer, a tentativa restante não será
+executada e o chamador deve lidar com a exceção.
+
+[source,java]
+----
+@Retry(maxRetries = 3, retryOn = WeatherGatewayTimeoutException.class, abortOn = WeatherGatewayBusyServiceException.class)
+public String statusOfWeek(){
+    if(counterStatusOfWeek.addAndGet(1) <= DEFAULT_MAX_RETRY){
+        LOGGER.warning(String.format(FORECAST_TIMEOUT_MESSAGE_ATTEMPTS, DEFAULT_MAX_RETRY, counterStatusOfWeek.get()));
+        throw new WeatherGatewayTimeoutException();
+    }
+    LOGGER.log(Level.SEVERE, String.format(FORECAST_BUSY_MESSAGE, counterStatusOfWeek.get()));
+    throw new WeatherGatewayBusyServiceException();
+}
+----
+
+Chamada de status da semana
+
+....
+GET http://localhost:8080/mp-faulttolerance-retry/weather/week/status
+....
+
+Server log
+
+....
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
+WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
+SEVERE  - Error AccuWeather Forecast Service is busy. Number of Attempts: (4) 
+....
+
+Response
+
+....
+WeatherGateway Service is Busy. Retry later
+....
+
+=== Exemplo 3
+
+A anotação `@Retry` permite configurar um atraso para cada nova tentativa
+ser executada, dando a chance ao serviço solicitado para se recuperar e
+responder a solicitação corretamente. Para cada nova tentativa, seguindo o atraso
+configurado, é necessário definir `jitter` como zero (0). Caso contrário, o atraso de
+cada nova tentativa será aleatório.
+
+Analisando o log de mensagens, é possível ver que todas as tentativas levaram 
+praticamente o mesmo tempo para executar.
+
+[source,java]
+----
+@Retry(retryOn = WeatherGatewayTimeoutException.class, maxRetries = 5, delay = 500, jitter = 0)
+public String statusOfWeekend() {
+    if (counterStatusOfWeekend.addAndGet(1) <= 5) {
+        logTimeoutMessage(statusOfWeekendInstant);
+        statusOfWeekendInstant = Instant.now();
+        throw new WeatherGatewayTimeoutException();
+    }
+    return "The Forecast for the Weekend is Scattered Showers.";
+}
+----
+
+Chamada de status de fim de semana
+
+....
+GET http://localhost:8080/mp-faulttolerance-retry/weather/weekend/status
+....
+
+Server log
+
+....
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (500) millis
+....
+
+=== Exemplo 4
+
+Basicamente com o mesmo comportamento do `Exemplo 3`, este exemplo defini
+o `delay` e o `jitter` com 500 milissegundos para aleatoriamente um novo atraso a cada nova tentativa 
+após a primeira falha.
+https://github.com/jhalterman/failsafe/blob/master/src/main/java/net/jodah/failsafe/AbstractExecution.java[AbstractExecution#randomDelay(delay,jitter,random)]
+pode dar uma ideia de como o novo atraso é calculado.
+
+Analisando o log de mensagens, é possível ver quanto tempo cada tentativa teve 
+que esperar até a sua execução.
+
+[source,java]
+----
+@Retry(retryOn = WeatherGatewayTimeoutException.class, delay = 500, jitter = 500)
+public String statusOfMonth() {
+    if (counterStatusOfWeekend.addAndGet(1) <= DEFAULT_MAX_RETRY) {
+        logTimeoutMessage(statusOfMonthInstant);
+        statusOfMonthInstant = Instant.now();
+        throw new WeatherGatewayTimeoutException();
+    }
+    return "The Forecast for the Weekend is Scattered Showers.";
+}
+----
+
+Chamada de status do mês
+
+....
+GET http://localhost:8080/mp-faulttolerance-retry/weather/month/status
+....
+
+Server log
+
+....
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (417) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (90) millis
+....
+
+=== Example 5
+
+Se uma condição para uma operação re-executada não estiver definida como nos
+exemplos anteriores usando o parâmetro `retryOn`, a operação é
+executada novamente para qualquer exceção lançada.
+
+[source,java]
+----
+@Retry(maxDuration = 1000)
+public String statusOfYear(){
+    if (counterStatusOfWeekend.addAndGet(1) <= 5) {
+        logTimeoutMessage(statusOfYearInstant);
+        statusOfYearInstant = Instant.now();
+        throw new RuntimeException();
+    }
+    return "WeatherGateway Service Error";
+}
+----
+
+Chamada de status do ano
+
+....
+GET http://localhost:8080/mp-faulttolerance-retry/weather/year/statusk
+....
+
+Server log
+
+....
+WARNING - Timeout when accessing AccuWeather Forecast Service.
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (666) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (266) millis
+WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (66) millis
+....
+
+=== Execute os testes
+
+Você também pode experimentar usando 
+link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java]
+disponível no projeto.
+
+....
+mvn clean test
+....
+
+....
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+....

@@ -32,6 +32,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+@RequireClaim("aud")
 @Documented
 @javax.validation.Constraint(validatedBy = {Audience.Constraint.class})
 @Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
@@ -58,7 +59,7 @@ public @interface Audience {
         @Override
         public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
             final Set<String> audience = value.getAudience();
-            return audience.contains(this.audience.value());
+            return audience != null && audience.contains(this.audience.value());
         }
     }
 }

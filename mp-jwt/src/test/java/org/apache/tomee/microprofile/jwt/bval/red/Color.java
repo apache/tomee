@@ -14,18 +14,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.microprofile.jwt.bval;
+package org.apache.tomee.microprofile.jwt.bval.red;
 
-public class JWTValidationGenerationException extends IllegalStateException {
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Set;
 
-    private final Class<?> componentClass;
+public class Color {
 
-    public JWTValidationGenerationException(final Class<?> componentClass, final Throwable e) {
-        super(e);
-        this.componentClass = componentClass;
+    @OneReturnValidation("parent")
+    @TwoTokenValidation("http://parent.com")
+    public URL color(final List<URL> urls) {
+        try {
+            return new URL("foo://bar");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public Class<?> getComponentClass() {
-        return componentClass;
+    @OneReturnValidation("parent")
+    @TwoTokenValidation("http://parent.com")
+    public URL color(final Set<URL> urls) {
+        try {
+            return new URL("foo://bar");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
+
 }

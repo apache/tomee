@@ -14,28 +14,49 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.val;
+package org.apache.tomee.microprofile.jwt.bval.red;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Allowed("manager")
-@javax.validation.Constraint(validatedBy = {})
 @Documented
-@Target({METHOD, ANNOTATION_TYPE})
+@javax.validation.Constraint(validatedBy = {TwoTokenValidation.Constraint.class})
+@Target({METHOD, FIELD, ANNOTATION_TYPE, PARAMETER})
 @Retention(RUNTIME)
-public @interface Manager {
+public @interface TwoTokenValidation {
+
+    String value();
 
     Class<?>[] groups() default {};
 
-    String message() default "The 'group' claim must contain 'user'";
+    String message() default "The 'aud' claim must contain '{value}'";
 
     Class<? extends Payload>[] payload() default {};
 
+
+    class Constraint implements ConstraintValidator<TwoTokenValidation, JsonWebToken> {
+        private TwoTokenValidation audience;
+
+        @Override
+        public void initialize(final TwoTokenValidation constraint) {
+            this.audience = constraint;
+        }
+
+        @Override
+        public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
+            return value != null;
+        }
+    }
 }

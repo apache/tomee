@@ -14,28 +14,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.superbiz.val;
+package org.apache.tomee.microprofile.jwt.bval;
 
-import javax.validation.Payload;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-@Allowed("manager")
-@javax.validation.Constraint(validatedBy = {})
-@Documented
-@Target({METHOD, ANNOTATION_TYPE})
-@Retention(RUNTIME)
-public @interface Manager {
-
-    Class<?>[] groups() default {};
-
-    String message() default "The 'group' claim must contain 'user'";
-
-    Class<? extends Payload>[] payload() default {};
-
+public class MissingConstraintsMethodException extends RuntimeException {
+    public MissingConstraintsMethodException(final Class<?> componentClass, final Method method) {
+    }
 }
