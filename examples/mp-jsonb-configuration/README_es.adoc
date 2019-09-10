@@ -1,24 +1,24 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: status=published
-= JSON-B Configuration
+= Configurando JSON-B
 
-This examples shows how to customize jsonb for a JAX-RS Application.
-JSONB is the new `javaee-api:8.0` standard for json
-serialization/deserialization. Few annotations are needed and
-`JsonbConfig` offers many configurations.
+Este ejemplo muestra cómo personalizar jsonb para una aplicación JAX-RS.
+JSONB es el nuevo estándar `javaee-api: 8.0` para la serialización /
+deserialización de json. Se necesitan pocas anotaciones y `JsonbConfig`
+ofrece muchas configuraciones.
 
-== Run and test Endpoint
+== Ejecuta y prueba el Endpoint
 
-the application can be run with `mvn clean install tomee:run` if port
-8080 is available you can invoke the following endpoint:
+la aplicación se puede ejecutar con `mvn clean install tomee: run` si el puerto
+8080 está disponible, puede invocar el siguiente endpoint:
 
 [source,bash]
 ----
 $ curl -X GET http://localhost:8080/mp-jsonb-configuration/api/users
 ----
 
-that should respond with the following json:
+que debería responder con el siguiente json:
 
 [source,bash]
 ----
@@ -38,8 +38,8 @@ that should respond with the following json:
 
 == @ApplicationPath
 
-JAXRS entry point class, as follows jaxrs will load all the annotated
-`@Path` classes and methods without specifying them.
+La clase de punto de entrada JAXRS, de la siguiente manera los jaxrs cargarán
+todos las clases y métodos anotados con `@ Path` sin especificarlos.
 
 [source,java]
 ----
@@ -52,9 +52,9 @@ public class JAXRSApplication extends Application {
 }
 ----
 
-== @Path Rest resource
+== @Path Recurso Rest
 
-Simple jaxrs class with a GET endpoint
+Clase jaxrs simple con un método GET
 
 [source,java]
 ----
@@ -89,10 +89,11 @@ public class UserService {
 }
 ----
 
-== JSONB Configuration
+== Configuració JSONB
 
-Implementing `ContextResolver<>`` you can customize jaxrs defaults, in this
-example we are going to customize JSONB serialization/deserialization
+Implementando `ContextResolver <>` puede personalizar los valores
+predeterminados de jaxrs, en este ejemplo, vamos a personalizar la
+serialización / deserialización JSONB
 
 [source,java]
 ----
@@ -125,11 +126,11 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 }
 ----
 
-`JsonbConfig` offers many configurations.
+`JsonbConfig` ofrece muchas configuraciones.
 
-== Accessing the rest endpoint
+== Accediendo al recurso Rest
 
-The test spin up an openejb webapp and invoke the `/users` endpoint
+La prueba activa una aplicación web openejb e invoca el recurso rest `/users`
 
 [source,java]
 ----
@@ -175,12 +176,11 @@ public class UserServiceTest {
 }
 ----
 
-== Running
+== Ejecutando
 
-Running the example can be done from maven with a simple `mvn clean
-install' command run from the `mp-jsonb-configuration' directory.
+Ejecutando el ejemplo se puede hacer desde maven con un simple comando `mvn clean install` ejecutado desde el directorio `mp-jsonb-configuration`.
 
-When run you should see output similar to the following:
+Cuando se ejecute, debería ver una salida similar a la siguiente:
 
 [source,java]
 ----
@@ -280,13 +280,11 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 ----
 
-=== Inside the jar
+=== Dentro del jar
 
-`javaee-api:8.0` brings in all the dependencies needed to spin up a
-working REST application.
+`javaee-api: 8.0` incorpora todas las dependencias necesarias para activar una aplicación REST que funcione.
 
-If we look at the jar built by maven, we’ll see the application itself
-is quite small:
+Si miramos el jar construido por maven, veremos que la aplicación en sí es bastante pequeña:
 
 [source,bash]
 ----
@@ -311,6 +309,4 @@ $ jar tvf target/mp-jsonb-configuration-8.0.0-SNAPSHOT.war
    128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-configuration/pom.properties
 ----
 
-This single jar could be deployed any any compliant Java EE
-implementation. In TomEE you’d simply place it in the
-`${tomee.home}/webapps/` directory.
+Este jar individual podría desplegarse en cualquier implementación Java EE que cumpla con los requisitos. En TomEE simplemente lo colocaría en el directorio `${tomee.home}/webapps/`.
