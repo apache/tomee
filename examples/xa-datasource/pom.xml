@@ -30,7 +30,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <derby.version>10.12.1.1</derby.version>
-    <tomee.version>1.7.6-SNAPSHOT</tomee.version>
+    <tomee.version>1.7.6-TT.14</tomee.version>
   </properties>
   <build>
     <finalName>dbtest</finalName>
