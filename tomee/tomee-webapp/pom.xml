@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.openejb</groupId>
-    <version>1.7.6-TT.13</version>
+    <version>1.7.6-TT.14</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-webapp</artifactId>
@@ -164,7 +164,7 @@
     </dependency>
     <dependency> <!-- needed by myfaces -->
       <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils-core</artifactId>
+      <artifactId>commons-beanutils</artifactId>
       <version>${commons-beanutils.version}</version>
     </dependency>
     <dependency>
