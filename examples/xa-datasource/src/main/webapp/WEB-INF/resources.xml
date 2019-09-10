@@ -1,0 +1,45 @@
+<resources>
+  <Resource id="movieDatabaseXA" type="javax.sql.XADataSource" class-name="org.apache.derby.jdbc.EmbeddedXADataSource">
+    DatabaseName=testdb
+    CreateDatabase=create
+  </Resource>
+  <Resource id="movieDatabase" type="DataSource">
+    XaDataSource=movieDatabaseXA
+    UserName=admin
+    Password=admin
+    ValidationQuery=values 1
+    InitialSize=2
+    MaxActive=128
+    MaxIdle=25
+    MinIdle=10
+    TestWhileIdle=true
+    TestOnBorrow=false
+    TestOnReturn=false
+    AccessToUnderlyingConnectionAllowed=true
+    TimeBetweenEvictionRuns=1 minute
+    MaxWaitTime=0 seconds
+    JtaManaged=true
+    PoolPreparedStatements=true
+    MaxOpenPreparedStatements=1024
+  </Resource>
+  <Resource id="movieDatabaseUnmanaged" type="DataSource">
+    JdbcDriver  org.apache.derby.jdbc.EmbeddedDriver
+    JdbcUrl  jdbc:derby:testdb;create=true
+    UserName admin
+    Password admin
+    ValidationQuery=values 1
+    InitialSize=2
+    MaxActive=128
+    MaxIdle=25
+    MinIdle=10
+    TestWhileIdle=true
+    TestOnBorrow=false
+    TestOnReturn=false
+    AccessToUnderlyingConnectionAllowed=true
+    TimeBetweenEvictionRuns=1 minute
+    MaxWaitTime=0 seconds
+    JtaManaged=false
+    PoolPreparedStatements=true
+    MaxOpenPreparedStatements=1024
+  </Resource>
+</resources>
