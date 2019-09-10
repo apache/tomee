@@ -142,7 +142,7 @@ public class ManagedConnection implements InvocationHandler {
                         throw new SQLException("Unable to enlist connection the transaction", e);
                     }
 
-                    registry.putResource(key, delegate);
+                    registry.putResource(key, proxy);
                     transaction.registerSynchronization(new ClosingSynchronization());
 
                     if (xaConnection == null) {
@@ -158,8 +158,19 @@ public class ManagedConnection implements InvocationHandler {
                             }
                         }
                     }
-                } else if (delegate == null) { // shouldn't happen
-                    delegate = connection;
+                } else if (delegate == null) {
+                    // this happens if the caller obtains subsequent connections from the *same* datasource
+                    // are enlisted in the *same* transaction:
+                    //   connection != null (because it comes from the tx registry)
+                    //   delegate == null (because its a new ManagedConnection instance)
+                    // we attempt to work-around this by looking up the connection in the tx registry in ManaagedDataSource
+                    // and ManagedXADataSource, but there is an edge case where the connection is fetch from the datasource
+                    // first, and a BMT tx is started by the user.
+
+                    final ManagedConnection managedConnection = ManagedConnection.class.cast(Proxy.getInvocationHandler(connection));
+                    this.delegate = managedConnection.delegate;
+                    this.xaConnection = managedConnection.xaConnection;
+                    this.xaResource = managedConnection.xaResource;
                 }
 
                 return invokeUnderTransaction(method, args);
@@ -194,9 +205,10 @@ public class ManagedConnection implements InvocationHandler {
     }
 
     protected Object newConnection() throws SQLException {
-        final Object connection = DataSource.class.isInstance(key.ds) ?
-                (key.user == null ? DataSource.class.cast(key.ds).getConnection() : DataSource.class.cast(key.ds).getConnection(key.user, key.pwd)) :
-                (key.user == null ? XADataSource.class.cast(key.ds).getXAConnection() : XADataSource.class.cast(key.ds).getXAConnection(key.user, key.pwd));
+        final Object connection = DataSource.class.isInstance(key.getDs()) ?
+                (key.getUser() == null ? DataSource.class.cast(key.getDs()).getConnection() : DataSource.class.cast(key.getDs()).getConnection(key.getUser(), key.getPwd())) :
+                (key.getUser() == null ? XADataSource.class.cast(key.getDs()).getXAConnection() : XADataSource.class.cast(key.getDs()).getXAConnection(key.getUser(), key.getPwd()));
+
         if (XAConnection.class.isInstance(connection)) {
             xaConnection = XAConnection.class.cast(connection);
             xaResource = xaConnection.getXAResource();
@@ -248,7 +260,7 @@ public class ManagedConnection implements InvocationHandler {
         return null;
     }
 
-    private static boolean isUnderTransaction(final int status) {
+    public static boolean isUnderTransaction(final int status) {
         return status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK;
     }
 
@@ -285,41 +297,5 @@ public class ManagedConnection implements InvocationHandler {
         }
     }
 
-    private static final class Key {
-        private final CommonDataSource ds;
-        private final String user;
-        private final String pwd;
-        private final int hash;
 
-        private Key(final CommonDataSource ds, final String user, final String pwd) {
-            this.ds = ds;
-            this.user = user;
-            this.pwd = pwd;
-
-            int result = ds.hashCode();
-            result = 31 * result + (user != null ? user.hashCode() : 0);
-            result = 31 * result + (pwd != null ? pwd.hashCode() : 0);
-            hash = result;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Key key = Key.class.cast(o);
-            return (ds == key.ds || ds.equals(key.ds)) &&
-                    !(user != null ? !user.equals(key.user) : key.user != null) &&
-                    !(pwd != null ? !pwd.equals(key.pwd) : key.pwd != null);
-        }
-
-        @Override
-        public int hashCode() {
-            return hash;
-        }
-    }
 }

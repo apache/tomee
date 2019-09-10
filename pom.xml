@@ -132,9 +132,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.42</tomcat.version>
+    <tomcat.version>8.5.43</tomcat.version>
 
-    <cxf.version>3.1.17</cxf.version>
+    <cxf.version>3.1.18</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.arquillian>1.1.13.Final</version.arquillian>
@@ -170,7 +170,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
-    <org.apache.activemq.version>5.15.8</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.10</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -190,6 +190,8 @@
     <version.hibernate>4.2.18.Final</version.hibernate>
     <version.eclipselink>2.6.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
+
+    <jackson.version>2.9.9.3</jackson.version>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -523,6 +525,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>boms</module>
         <module>itests</module>
         <module>maven</module>
         <module>gradle</module>
@@ -552,6 +555,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>boms</module>
         <module>maven</module>
         <module>gradle</module>
         <module>container</module>
@@ -1057,6 +1061,10 @@
           <exclusion>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.hadoop</groupId>
@@ -1770,25 +1778,16 @@
         <artifactId>eclipselink</artifactId>
         <version>${version.eclipselink}</version>
       </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jaxb_2.2_spec</artifactId>
-        <version>1.0.1</version>
+      <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+        <version>1.2.1</version>
       </dependency>
       <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>2.3.0</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-impl</artifactId>
-        <version>2.3.0</version>
-      </dependency>
-      <dependency>
-        <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-core</artifactId>
-        <version>2.3.0</version>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
       </dependency>
       <dependency> <!-- licence apache, only 110ko -->
         <groupId>org.fusesource.jansi</groupId>
@@ -1805,6 +1804,11 @@
             <artifactId>xalan</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

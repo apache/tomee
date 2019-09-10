@@ -58,16 +58,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <type>pom</type>
     </dependency>
 
     <dependency>
