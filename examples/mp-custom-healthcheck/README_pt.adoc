@@ -1,0 +1,166 @@
+= MicroProfile Custom Health Check
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este é um exemplo de como usar MicroProfile Custom Health Check em TomEE.
+
+[discrete]
+==== Health Feature
+
+Os links de status (Health checks) são usados para verificar os estados dos serviços e recursos que uma aplicação depende ou mesmo expor seus
+status. Por exemplo, em um ambiente de cluster, onde um nó não íntegro precisa ser descartado (terminated, shutdown) e eventualmente
+substituído por outra instância íntegra.
+
+Por padrão, https://github.com/eclipse/microprofile-health[microprofile-health-api] proporciona a saida básica de um nó simplesmente
+acessando o endpoint http://host:port/health.
+
+[source,json]
+----
+{"checks":[],"outcome":"UP","status":"UP"}
+----
+
+Para fornecer uma saída personalizada, digamos que temos uma API do tempo, e se o serviço se tornar indisponível, 
+devemos relatar o serviço como inativo (DOWN).
+
+Para iniciar com uma saída personalizada, é necessário implementar a interface https://github.com/eclipse/microprofile-health/blob/master/api/src/main/java/org/eclipse/microprofile/health/HealthCheck.java[HealthCheck],
+transforme a classe em um bean gerenciado anotando-a com `@ApplicationScoped` e `@Health` para ativar a verificação personalizada.
+Veja mais detalhes aqui https://github.com/apache/geronimo-health/blob/master/geronimo-health/src/main/java/org/apache/geronimo/microprofile/impl/health/cdi/GeronimoHealthExtension.java[GeronimoHealthExtension.java]
+
+[source,java]
+----
+@Health
+@ApplicationScoped
+public class WeatherServiceHealthCheck implements HealthCheck {
+
+    @Inject WeatherGateway weatherGateway;
+
+    @Override
+    public HealthCheckResponse call() {
+        HealthCheckResponseBuilder responseBuilder = HealthCheckResponse.named("OpenWeatherMap");
+        try {
+            WeatherApiStatus status = weatherGateway.getApiStatus();
+            return responseBuilder.withData("weatherServiceApiUrl", status.getUrl())
+                    .withData("weatherServiceApiVersion", status.getVersion())
+                    .withData("weatherServiceMessage", status.getMessage())
+                    .up().build();
+        } catch (WeatherException e) {
+            return responseBuilder.withData("weatherServiceErrorMessage", e.getMessage()).down().build();
+        }
+    }
+}
+----
+
+No exemplo acima, o link de status é https://openweathermap.org/appid[OpenWeatherMap] (_somente ilustrativo_) que fornece uma
+plano de assinatura para acessar seus serviços e, se o limite de chamadas for excedido, a API ficará indisponível até sua 
+renovação.
+
+[discrete]
+=== Exemplos
+
+.Executando o aplicativo
+----
+    mvn clean install tomee:run
+----
+
+[discrete]
+==== Exemplo 1
+
+Quando acessado o endpoint /health, OpenWeatherMap nos diz que nossas chamadas restantes estão acabando e que devemos tomar
+uma ação antes que fique indisponível.
+
+----
+curl http://localhost:8080/mp-custom-healthcheck/health
+----
+
+[source,json]
+----
+{
+   "checks":[
+      {
+         "data":{
+            "weatherServiceApiVersion":"2.5",
+            "weatherServiceMessage":"Your account will become unavailable soon due to limitation of your
+                                    subscription type. Remaining API calls are 1",
+            "weatherServiceApiUrl":"http://api.openweathermap.org/data/2.5/"
+         },
+         "name":"OpenWeatherMap",
+         "state":"UP"
+      }
+   ],
+   "outcome":"UP",
+   "status":"UP"
+}
+----
+
+[discrete]
+==== Exemplo 2
+
+A API do tempo ainda está funcionando bem.
+
+----
+curl http://localhost:8080/mp-custom-healthcheck/weather/day/status
+----
+
+[source,text]
+----
+Hi, today is a sunny day!
+----
+
+[discrete]
+==== Exemplo 3
+
+Quando acessamos novamente o endpoint /health, OpenWeatherMap nos diz que nossa conta está temporariamente bloqueada e esse
+serviço é relatado como inativo (DOWN).
+
+----
+curl http://localhost:8080/mp-custom-healthcheck/health
+----
+
+[source,json]
+----
+{
+   "checks":[
+      {
+         "data":{
+            "weatherServiceErrorMessage":"Your account is temporary blocked due to exceeding of
+            requests limitation of your subscription type. Please choose the proper subscription
+            http://openweathermap.org/price"
+         },
+         "name":"weatherservice",
+         "state":"DOWN"
+      }
+   ],
+   "outcome":"DOWN",
+   "status":"DOWN"
+}
+----
+
+[discrete]
+==== Exemplo 4
+
+A API do tempo parou.
+
+----
+curl http://localhost:8080/mp-custom-healthcheck/weather/day/status
+----
+
+[source,text]
+----
+Weather Service is unavailable at moment, retry later.
+----
+
+[discrete]
+===== Executando os testes
+
+Você pode também testar usando link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponível no projeto.
+
+----
+mvn clean test
+----
+
+----
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped:
+----
