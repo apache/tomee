@@ -78,8 +78,6 @@ public class QuartzResourceAdapter implements javax.resource.spi.ResourceAdapter
                               , System.getProperty(StdSchedulerFactory.PROP_SCHED_INTERRUPT_JOBS_ON_SHUTDOWN_WITH_WAIT, "true"));
 
         //Let the user enable this if they really want it
-        System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK
-                              , System.getProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true"));
         System.setProperty("org.terracotta.quartz.skipUpdateCheck"
                               , System.getProperty("org.terracotta.quartz.skipUpdateCheck", "true"));
 
