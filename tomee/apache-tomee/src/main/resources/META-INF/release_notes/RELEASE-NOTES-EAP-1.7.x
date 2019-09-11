@@ -1,6 +1,13 @@
-= TomEE EAP 1.7.6-TT.13
+= TomEE EAP 1.7.6-TT.14
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.14
+
+* TOMEE-2532 Fix deployment issue where javax.security.jacc.policy.provider is set
+* SONATYPE-2018-0605 - update CXF to 2.6.17-TT.4 to mitigate SONATYPE-2018-0605
+* Update Quartz to mitigate CVE-2019-13990
+* Update Beanutils to mitigate CVE-2019-10086
 
 === Changes in TomEE EAP 1.7.6-TT.13
 
