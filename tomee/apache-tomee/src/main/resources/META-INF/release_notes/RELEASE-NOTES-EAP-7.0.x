@@ -1,4 +1,13 @@
-= TomEE EAP 7.1.2-TT.1
+= TomEE EAP 7.1.2-TT.2
+
+=== Changes in TomEE EAP 7.1.2-TT.2
+
+* Update JAXB to 2.3.2
+* Fix connection issue with XA transactions
+* Fix JMS2 Transaction issue
+* SONATYPE-2018-0605 - update CXF to 2.6.17-TT.4 to mitigate SONATYPE-2018-0605
+* Update Quartz to 2.2.4 to mitigate CVE-2019-13990
+* Update Beanutils to 1.9.4 to mitigate CVE-2019-10086
 
 === Changes in TomEE EAP 7.1.2-TT.1
 
