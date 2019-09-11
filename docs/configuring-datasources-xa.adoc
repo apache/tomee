@@ -1,0 +1,349 @@
+= XA DataSource Configuration
+:index-group: Datasource
+:jbake-date: 2019-07-12
+:jbake-type: page
+:jbake-status: published
+
+== Introduction
+
+XA datasources are able to participate in global transactions involving
+more than one resource - for example, scenarios where a transaction needs 
+to encompass connections to two different databases,, or a database and
+a JMS resource. 
+
+The global transaction manager will provide a two phase commit for all
+the resources enlisted in the transaction - if any of the commit
+operations fail, then all the resources in the global transaction will
+be rolled back.
+
+JTA can still be used with non-XA datasources, however the datasource will
+use a local transaction as opposed to a global transaction.
+
+JDBC drivers providing XA capabilities provide an implementation of
+`javax.sql.XADataSource`. This makes them a little more tricky to configure
+than non-XA datasources. The general technique is to configure an instance
+of the vendor-provided `XADataSource` implementation, and to then point
+the usual non-XA resource at this instance. Sounds complex? Let's walk
+through an example. We'll also provide tested example configs for a number
+of well known databases at the end of this document.
+
+== Example
+
+In this example, we'll look at MySQL. First off, download the MySQL driver
+from: https://dev.mysql.com/downloads/connector/j/. Once you have the .jar
+file, add it to the TomEE `lib` directory. This driver provides the 
+`com.mysql.cj.jdbc.MysqlXADataSource` class. The properties that need to 
+be configured vary between datasources, so we'll need to get a list of the
+properties and work out the values to set.
+
+From the TomEE bin directory, execute the following command:
+`./tomee.sh setters -c com.mysql.cj.jdbc.MysqlXADataSource` on *nix systems,
+or 
+
+`tomee.bat setters -c com.mysql.cj.jdbc.MysqlXADataSource` on Windows systems.
+
+This will give a complete list of paramaters that are available for the XA 
+datasource. We'll simply use the `URL` paramater for the datasource.
+
+```
+  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.mysql.cj.jdbc.MysqlXADataSource">
+    Url jdbc:mysql://192.168.37.202:3306/movie
+  </Resource>
+```
+
+Next, we create a JtaManaged datasource as we normally would, and point it to the
+XA datasource using the `XaDataSource` attribute.
+
+```
+  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+    XaDataSource demo/jdbc/XADataSourceXA
+    JdbcDriver  com.mysql.cj.jdbc.Driver
+    JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
+    username root
+    password my-secret-pw
+    JtaManaged true
+    InitialSize 10
+    MaxActive 128
+    MaxIdle 25
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    ValidationQuery select 1
+  </Resource>
+```
+
+And finally, a non-JTA managed datasource as well:
+
+```
+  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+    JdbcDriver com.mysql.cj.jdbc.Driver
+    JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
+    UserName root
+    password my-secret-pw
+    JtaManaged false
+    InitialSize 10
+    MaxActive 100
+    MaxIdle 50
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    ValidationQuery select 1
+  </Resource>
+```
+
+== Sample configs
+
+=== Oracle
+
+```
+  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+    XaDataSource demo/jdbc/XADataSourceXA
+    JdbcDriver  oracle.jdbc.OracleDriver
+    JdbcUrl jdbc:oracle:thin:@//192.168.37.214:1521/XE
+    username system
+    password my-cool-password
+    JtaManaged true
+    InitialSize 10
+    MaxActive 128
+    MaxIdle 25
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    PoolPreparedStatements true
+    MaxOpenPreparedStatements 1024
+    ValidationQuery select 1 from dual
+  </Resource>
+
+  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="oracle.jdbc.xa.client.OracleXADataSource">
+    Url jdbc:oracle:thin:@//192.168.37.214:1521/XE
+  </Resource>
+
+  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+    JdbcDriver oracle.jdbc.OracleDriver
+    JdbcUrl jdbc:oracle:thin:@//192.168.37.214:1521/XE
+    UserName system
+    password my-cool-password
+    JtaManaged false
+    InitialSize 10
+    MaxActive 100
+    MaxIdle 50
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    PoolPreparedStatements true
+    MaxOpenPreparedStatements 1024
+    ValidationQuery select 1 from dual
+  </Resource>
+```
+
+=== Microsoft SQL Server
+
+```
+  <Resource id="demo/jdbc/XADataSource" type="DataSource">
+    XaDataSource demo/jdbc/XADataSourceXA
+    JdbcDriver  com.microsoft.sqlserver.jdbc.SQLServerDriver
+    JdbcUrl jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
+    username sa
+    password my-secret-pw1
+    JtaManaged true
+    InitialSize 10
+    MaxActive 128
+    MaxIdle 25
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    PoolPreparedStatements true
+    MaxOpenPreparedStatements 1024
+    ValidationQuery select 1
+  </Resource>
+
+  <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.microsoft.sqlserver.jdbc.SQLServerXADataSource">
+    URL jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
+  </Resource>
+
+  <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+    JdbcDriver com.microsoft.sqlserver.jdbc.SQLServerDriver
+    JdbcUrl jdbc:sqlserver://yourserver.database.windows.net:1433;database=test
+    UserName sa
+    password my-secret-pw1
+    JtaManaged false
+    InitialSize 10
+    MaxActive 100
+    MaxIdle 50
+    MinIdle 10
+    AccessToUnderlyingConnectionAllowed true
+    TestOnBorrow false
+    TestWhileIdle true
+    TimeBetweenEvictionRuns 1 minute
+    MaxWaitTime 0 seconds
+    PoolPreparedStatements true
+    MaxOpenPreparedStatements 1024
+    ValidationQuery select 1
+  </Resource>
+```
+
+Please note that using XA with Microsoft SQL Server requires the MS DTC to be configured correctly, and sqljdbc_xa.dll to be installed. For instructions, please see this Microsoft article: https://docs.microsoft.com/en-us/sql/connect/jdbc/understanding-xa-transactions?view=sql-server-2017
+
+=== MySQL
+
+```
+  <resources>
+    <Resource id="demo/jdbc/XADataSource" type="DataSource">
+      XaDataSource demo/jdbc/XADataSourceXA
+      JdbcDriver  com.mysql.cj.jdbc.Driver
+      JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
+      username root
+      password my-secret-pw
+      JtaManaged true
+      InitialSize 10
+      MaxActive 128
+      MaxIdle 25
+      MinIdle 10
+      AccessToUnderlyingConnectionAllowed true
+      TestOnBorrow false
+      TestWhileIdle true
+      TimeBetweenEvictionRuns 1 minute
+      MaxWaitTime 0 seconds
+      ValidationQuery select 1
+
+    <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="com.mysql.cj.jdbc.MysqlXADataSource">
+      Url jdbc:mysql://192.168.37.202:3306/movie
+    </Resource>
+
+    <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+      JdbcDriver com.mysql.cj.jdbc.Driver
+      JdbcUrl jdbc:mysql://192.168.37.202:3306/movie
+      UserName root
+      password my-secret-pw
+      JtaManaged false
+      InitialSize 10
+      MaxActive 100
+      MaxIdle 50
+      MinIdle 10
+      AccessToUnderlyingConnectionAllowed true
+      TestOnBorrow false
+      TestWhileIdle true
+      TimeBetweenEvictionRuns 1 minute
+      MaxWaitTime 0 seconds
+      ValidationQuery select 1
+    </Resource>
+  </resources>
+```
+
+=== PostgreSQL
+
+```
+  <resources>
+    <Resource id="demo/jdbc/XADataSource" type="DataSource">
+      XaDataSource demo/jdbc/XADataSourceXA
+      JdbcDriver org.postgresql.Driver 
+      JdbcUrl jdbc:postgresql://192.168.37.200:5432/movie
+      username postgres
+      password mysecretpassword
+      JtaManaged true
+      InitialSize 10
+      MaxActive 128
+      MaxIdle 25
+      MinIdle 10
+      AccessToUnderlyingConnectionAllowed true
+      TestOnBorrow false
+      TestWhileIdle true
+      TimeBetweenEvictionRuns 1 minute
+      MaxWaitTime 0 seconds
+      PoolPreparedStatements true
+      MaxOpenPreparedStatements 1024
+      ValidationQuery select 1
+    </Resource>
+
+    <Resource id="demo/jdbc/XADataSourceXA" type="XADataSource" class-name="org.postgresql.xa.PGXADataSource">
+      URL jdbc:postgresql://192.168.37.200:5432/movie
+    </Resource>
+
+    <Resource id="demo/jdbc/XADataSourceUnmanaged" type="DataSource">
+      JdbcDriver org.postgresql.Driver
+      JdbcUrl jdbc:postgresql://192.168.37.200:5432/movie
+      UserName postgres
+      password mysecretpassword
+      JtaManaged false
+      InitialSize 10
+      MaxActive 100
+      MaxIdle 50
+      MinIdle 10
+      AccessToUnderlyingConnectionAllowed true
+      TestOnBorrow false
+      TestWhileIdle true
+      TimeBetweenEvictionRuns 1 minute
+      MaxWaitTime 0 seconds
+      PoolPreparedStatements true
+      MaxOpenPreparedStatements 1024
+      ValidationQuery select 1
+    </Resource>
+  </resources>
+```
+
+=== Derby
+
+```
+  <resources>
+    <Resource id="movieDatabaseXA" type="javax.sql.XADataSource" class-name="org.apache.derby.jdbc.ClientXADataSource">
+      DatabaseName=testdb
+      CreateDatabase=create
+      ServerName=localhost
+      PortName=1527
+      UserName=admin
+      Password=admin
+    </Resource>
+    <Resource id="movieDatabase" type="DataSource">
+      JdbcDriver org.apache.derby.jdbc.ClientDriver
+      JdbcUrl  jdbc:derby://localhost:1527/testdb;create=true
+      XaDataSource=movieDatabaseXA
+      UserName=admin
+      Password=admin
+      ValidationQuery=values 1
+      InitialSize=2
+      MaxActive=128
+      MaxIdle=25
+      MinIdle=10
+      TestWhileIdle=true
+      TestOnBorrow=false
+      TestOnReturn=false
+      AccessToUnderlyingConnectionAllowed=true
+      TimeBetweenEvictionRuns=1 minute
+      MaxWaitTime=0 seconds
+      JtaManaged=true
+    </Resource>
+    <Resource id="movieDatabaseUnmanaged" type="DataSource">
+      JdbcDriver org.apache.derby.jdbc.ClientDriver
+      JdbcUrl  jdbc:derby://localhost:1527/testdb;create=true
+      UserName admin
+      Password admin
+      ValidationQuery=values 1
+      InitialSize=2
+      MaxActive=128
+      MaxIdle=25
+      MinIdle=10
+      TestWhileIdle=true
+      TestOnBorrow=false
+      TestOnReturn=false
+      AccessToUnderlyingConnectionAllowed=true
+      TimeBetweenEvictionRuns=1 minute
+      MaxWaitTime=0 seconds
+      JtaManaged=false
+    </Resource>
+  </resources>
+```

@@ -133,7 +133,7 @@ public class MulticastConnectionFactory implements ConnectionFactory {
         }
 
         public static Map<String, String> parseParamters(final URI uri) throws URISyntaxException {
-            return uri.getQuery() == null ? new HashMap<String, String>(0) : parseQuery(stripPrefix(uri.getQuery(), "?"));
+            return uri.getRawQuery() == null ? new HashMap<String, String>(0) : parseQuery(stripPrefix(uri.getRawQuery(), "?"));
         }
 
         public static String stripPrefix(final String value, final String prefix) {

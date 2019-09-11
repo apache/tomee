@@ -26,7 +26,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>7.1.2-TT.1</version>
+    <version>7.1.2-TT.2</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -556,6 +556,10 @@
     <dependency>
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
     </dependency>
     <!-- JavaMail -->
     <dependency>
