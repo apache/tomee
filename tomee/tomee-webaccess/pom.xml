@@ -233,6 +233,12 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
       <type>pom</type>
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <artifactId>jakarta.activation</artifactId>
+          <groupId>jakarta.activation-api</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>

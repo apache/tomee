@@ -200,6 +200,16 @@
       <groupId>com.sun.xml.messaging.saaj</groupId>
       <artifactId>saaj-impl</artifactId>
       <version>${saaj-impl.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.activation</groupId>
+          <artifactId>jakarta.activation-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.soap</groupId>
+          <artifactId>jakarta.xml.soap-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
          on Sun's internal copy of Xerces. See OPENEJB-1126. -->

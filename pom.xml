@@ -915,11 +915,23 @@
         <artifactId>javaee-api</artifactId>
         <version>${version.javaee-api}</version>
         <classifier>tomcat</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${version.javaee-api}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_2.2_spec</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>
