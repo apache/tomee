@@ -1,21 +1,21 @@
-= MicroProfile Metrics Metered
+= Métricas con MicroProfile `@Metered`
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use microprofile metrics in TomEE.
+Este es un ejemplo sobre cómo utilizar las métricas de microperfil en TomEE.
 
-== Run the application:
+== Ejecute la aplicación:
 
 [source,bash]
 ----
 $ mvn clean install tomee:run
 ----
 
-Within the application, there is an enpoint that will give you a weather status
-for the day and week.
+Dentro de la aplicación, hay un endpoint que te dará el estado del clima para
+el día y la semana.
 
-== For the day status call:
+== Obtenga el clima para la semana:
 
 [source,bash]
 ----
@@ -29,11 +29,12 @@ $ curl -X GET http://localhost:8080/mp-metrics-metered/weather/day/status
 Hi, today is a sunny day!
 ----
 
-== Metered Feature
-MicroProfile metrics has a feature that can be used to find the rate of
-requests to a service.
+== Usando `@Metered`
 
-To use this feature you need to annotate the JAX-RS resource method with
+Las métricas de MicroProfile tienen una función que se puede usar para medir
+solicitudes a un servicio.
+
+Para utilizar esta función, debe anotar los métodos de los recursos JAX-RS con
 `@Metered`.
 
 [source,java]
@@ -58,46 +59,45 @@ public class WeatherService {
 }
 ----
 
-There are some configurations, as part of `@Metered`, that you need to know:
+Hay algunas configuraciones, como parte de `@Metered`, que necesita saber:
 
 **String name**
-Optional. Sets the name of the metric. If not explicitly given the name of the
-annotated object is used.
+Opcional. Establece el nombre de la métrica. Si no se proporciona
+explícitamente, se utiliza el nombre del objeto anotado.
 
-**boolean absolute**
-If true, uses the given name as the absolute name of the metric. If false,
-prepends the package name and class name before the given name. Default value
-is false.
+*boolean absolute* Si es verdadero, usa el nombre dado como el nombre absoluto
+de la métrica. Si es falso, antepone el nombre del paquete y el nombre de la
+clase antes del nombre dado. El valor predeterminado es falso.
 
 **String displayName**
-Optional. A human-readable display name for metadata.
+Opcional. Un nombre para mostrar legible para los metadatos.
 
 **String description**
-Optional. A description of the metric.
+Opcional. Una descripción de la métrica.
 
 **String[] tags**
-Optional. Array of Strings in the <key>=<value> format to supply special tags
-to a metric.
+Opcional. Matriz de cadenas en el formato <key>=<value> para suministrar
+etiquetas especiales a una métrica.
 
 **boolean reusable**
-Denotes if a metric with a certain name can be registered in more than one
-place. Does not apply to gauges.
+Indica si una métrica con un nombre determinado se puede registrar en más de un
+lugar. No se aplica a `@Gauges` (medidores).
 
 **String unit**
-Unit of the metric. Default for `@Metered` is nanoseconds.
+Unidad de la métrica. El valor predeterminado para `@Metered` es nanosegundos.
 
-== Metric data
+== Datos de la Métrica
 
-Check the Metered metric doing a _GET_ request:
+Verifique la métrica `@Metered` haciendo una solicitud _GET_:
 
-== Prometheus format:
+== Formato Prometheus:
 
 [source,bash]
 ----
 $ curl -X GET http://localhost:8080/mp-metrics-metered/metrics/application/dailyStatus
 ----
 
-== Response:
+== Respuesta Prometheus:
 
 [source,text]
 ----
@@ -113,9 +113,12 @@ application:daily_status_five_min_rate_per_second 3.5942838529305413E-20
 application:daily_status_fifteen_min_rate_per_second 3.4665766454142955E-21
 ----
 
-== JSON Format:
+== Formato JSON:
 
-For json format add the header `Accept: application/json` to the request.
+Para el formato json, agregue el encabezado `Accept: application/json` a la
+solicitud HTTP.
+
+== Respuesta JSON
 
 [source,javascript]
 ----
@@ -131,20 +134,21 @@ For json format add the header `Accept: application/json` to the request.
 }
 ----
 
-== Metric metadata
+== Metadatos Métrica
 
-A metric will have a metadata so you can know more information about it, like `displayName`, `description`, `tags`, etc.
+Una métrica tendrá metadatos para que pueda conocer más información al
+respecto, como `displayName`,`description`, `tags`, etc.
 
-Check the metric metadata doing a _OPTIONS_ request:
+Verifique los metadatos de la métrica haciendo una solicitud HTTP _OPTIONS_:
 
-== Request
+== Solicitud HTTP _OPTIONS_
 
 [source,bash]
 ----
 $ curl -X OPTIONS http://localhost:8080/mp-metrics-metered/metrics/application/dailyStatus
 ----
 
-== Response:
+== Respuesta:
 
 [source,javascript]
 ----
@@ -162,8 +166,7 @@ $ curl -X OPTIONS http://localhost:8080/mp-metrics-metered/metrics/application/d
 }
 ----
 
-
-== Test the application:
+== Pruebe la aplicación:
 
 [source,bash]
 ----
