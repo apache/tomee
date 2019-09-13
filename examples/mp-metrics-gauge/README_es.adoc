@@ -28,8 +28,8 @@ $ curl -X GET http://localhost:8080/mp-metrics-gauge/weather/day/temperature
 
 == Usando `@Gauge`
 
-Las métricas de MicroProfile tienen una función para medir. El valor y tipo de
-la medida son iguales a el valor y tipo del método anotado.
+Las métricas de MicroProfile tienen una función para medir. El valor y tipo
+de la medida son iguales al valor y tipo del método anotado.
 
 Para utilizar esta función, debe anotar los métodos de los recursos JAX-RS con
 `@Gauge`.
@@ -63,7 +63,8 @@ explícitamente, se utiliza el nombre del objeto anotado.
 
 *boolean absolute*
 Si es verdadero, usa el nombre dado como el nombre absoluto de la métrica. Si
-es falso, antepone el nombre del paquete y el nombre de la clase antes del nombre dado. El valor predeterminado es falso.
+es falso, antepone el nombre del paquete y el nombre de la clase antes del
+nombre dado. El valor predeterminado es falso.
 
 *String displayName*
 Opcional. Un nombre para mostrar legible para los metadatos.
