@@ -1,19 +1,18 @@
-= MicroProfile Metrics `@Histogram`
+= Métricas con MicroProfile `@Histogram`
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use microprofile metrics in TomEE.
+Este es un ejemplo sobre cómo utilizar las métricas de microperfil en TomEE.
 
-== Run the application:
+== Ejecute la aplicación:
 
 [source,bash]
 ----
 $ mvn clean install tomee:run
 ----
 
-Within the application, there is an enpoint that will give you a weather
-histogram of the most recent New York City temperatures.
+Dentro de la aplicación, hay un endpoint que te dará un histograma del clima de las más recientes temperaturas en la Ciudad de Nueva York.
 
 == Request:
 
@@ -42,12 +41,11 @@ $ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
 }
 ----
 
-== Histogram Feature
+== Usando `@Histogram`
 
-Microprofile metrics has a feature create a histogram of data.
+Las métricas de MicroProfile tienen una función que te permite crear un histograma datos.
 
-To use this feature, inject a `MetricRegistry`, register the Histogram, and add
-data to the histogram as shown below.
+Para utilizar esta función, injecta un objeto `MetricRegistry`, registra el Histograma, and agrega datos al histograma como se muestra a continuación.
 
 [source,java]
 ----
@@ -74,36 +72,36 @@ public Histogram getTemperatures() {
 }
 ----
 
-There are some Histogram configurations defined in the `@Metric` annotation:
+Hay algunas configuraciones definidas en la anotación `@Histogram`:
 
-*String name* Optional. The name of the metric. If not explicitly given the
-name of the annotated object is used.
+*String name* Opcional. Establece el nombre de la métrica. Si no se proporciona
+explícitamente, se utiliza el nombre del objeto anotado.
 
-*String displayName* Optional. A human readable display name for metadata.
+*String displayName* Opcional. Un nombre para mostrar legible para los metadatos.
 
-*String description* Optional. A description of the metric.
+*String description* Opcional. Una descripción de la métrica.
 
-*String[] tags* Optional. An array of Strings in the = format to supply special
-tags to a metric.
+*String[] tags* Opcional. Matriz de cadenas en el formato = para suministrar
+etiquetas especiales a una métrica.
 
-*boolean reusable* Denotes if a metric with a certain name can be registered in
-more than one place. Does not apply to gauges or histograms.
+*boolean reusable* Indica si una métrica con un nombre determinado se puede
+registrar en más de un lugar. No se aplica a `@Histogram`.
 
-=== For the histogram status:
+=== GET /histogram/status:
 
 [source,bash]
 ----
 $ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
 ----
 
-=== Reponse:
+=== Respuesta:
 
 [source,bash]
 ----
  Here are the most recent New York City temperatures.
 ----
 
-=== Expected Prometheus format:
+=== Formato Prometheus:
 
 [source,text]
 ----
@@ -155,14 +153,14 @@ $ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram/statu
     application:org_superbiz_histogram_weather_service_temperatures{quantile="0.999"} 0.0
 ----
 
-=== Request:
+=== Formato JSON:
 
 [source,bash]
 ----
 $ curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
 ----
 
-=== Response:
+=== Respuesta JSON:
 
 [source,javascript]
 ----
@@ -183,19 +181,19 @@ $ curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
 }
 ----
 
-== Metric Metadata:
+== Metadatos de la Métrica:
 
-A metric will have a metadata to provide information about it such as
-`displayName`, `description`, `tags`, etc.
+Una métrica tendrá metadatos para que pueda conocer más información al
+respecto, como `displayName`,`description`, `tags`, etc.
 
-=== Request:
+=== Solicitud HTTP _OPTIONS_:
 
 [source,bash]
 ----
 $ curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
 ----
 
-=== Response:
+=== Respuesta:
 
 [source,javascript]
 ----
@@ -213,7 +211,7 @@ $ curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
 }
 ----
 
-=== Test the application:
+=== Prueba la aplicación
 
 [source,bash]
 ----
