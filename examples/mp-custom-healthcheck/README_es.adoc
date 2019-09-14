@@ -1,4 +1,4 @@
-= MicroProfile Custom Health Check
+= Control de Estado Personalizado (Custom Health Check) de MicroProfile 
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
@@ -6,11 +6,11 @@
 Este es un ejemplo sobre cómo usar el MicroProfile Custom Health Check en TomEE.
 
 [discrete]
-==== Health Feature
+==== Funcionalidad de Estado
 
-Los Enlaces de Estado (Health checks) se usan para probar el estado de los servicios y los recursos de los que una aplicación depende, incluso para exponer su estado. Por ejemplo, en un ambiente de clúster, donde un nodo inestable requiere ser descartado y eventualmente ser remplazado por una instancia estable.
+Los Controles de Estado (Health checks) se usan para probar el estado de los servicios y los recursos de los que una aplicación depende, así como también para exponer su estado. Por ejemplo, en un ambiente de clúster, donde un nodo inestable requiere ser descartado y eventualmente ser remplazado por una instancia estable.
 
-Por defecto, https://github.com/eclipse/microprofile-health[microprofile-health-api] proporciona la salida de un nodo, simplemente accediendo el end point http://host:port/health.
+Por defecto, https://github.com/eclipse/microprofile-health[microprofile-health-api] proporciona la salida de un nodo, simplemente accediendo el enlace http://host:port/health.
 
 
 [source,json]
@@ -18,9 +18,9 @@ Por defecto, https://github.com/eclipse/microprofile-health[microprofile-health-
 {"checks":[],"outcome":"UP","status":"UP"}
 ----
 
-Para proporcionar una salida a la medida , por ejemplo, si tenemos una aplicación que usa un API de clima, y el servicio se cae, podemos reportar que el servicio esta caído (DOWN).
+Para proporcionar una salida a la medida, por ejemplo, si tenemos una aplicación que usa una API de clima, y el servicio se cae, podemos reportar que el servicio esta caído (DOWN).
 
-Es necesario implementar la interface  https://github.com/eclipse/microprofile-health/blob/master/api/src/main/java/org/eclipse/microprofile/health/HealthCheck.java[HealthCheck], en una clase con la anotación `@ApplicationScoped` y la anotación`@Health` para proporcionar la salida a la medida.
+Es necesario implementar la interface  https://github.com/eclipse/microprofile-health/blob/master/api/src/main/java/org/eclipse/microprofile/health/HealthCheck.java[HealthCheck], en una clase con la anotación `@ApplicationScoped` y la anotación `@Health` para proporcionar la salida personalizada.
 
 Se pueden ver más detalles aquí: https://github.com/apache/geronimo-health/blob/master/geronimo-health/src/main/java/org/apache/geronimo/microprofile/impl/health/cdi/GeronimoHealthExtension.java[GeronimoHealthExtension.java]
 
