@@ -230,7 +230,7 @@
       <dependency>
         <artifactId>commons-beanutils</artifactId>
         <groupId>commons-beanutils</groupId>
-        <version>1.8.3</version>
+        <version>1.9.4</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
