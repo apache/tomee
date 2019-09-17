@@ -1797,7 +1797,7 @@
         <version>2.2.4-TT.1</version>
         <exclusions>
           <exclusion>
-            <groupId>org.quartz-scheduler</groupId>
+            <groupId>org.tomitribe.quartz</groupId>
             <artifactId>quartz</artifactId>
           </exclusion>
           <exclusion>
