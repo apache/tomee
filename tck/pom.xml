@@ -38,7 +38,7 @@
     <module>tck-common</module>
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
-    <!--<module>cdi-standalone</module>-->
+    <module>cdi-signature-test</module>
     <module>bval-embedded</module>
     <module>bval-tomee</module>
     <module>bval-signature-test</module>

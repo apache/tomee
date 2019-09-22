@@ -23,8 +23,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>cdi-standalone</artifactId>
-  <name>TomEE :: TCK :: CDI Standalone</name>
+  <artifactId>cdi-signature-test</artifactId>
+  <name>TomEE :: TCK :: CDI TCK Signature Tests</name>
 
   <dependencies>
     <dependency>
@@ -76,13 +76,14 @@
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.0.0</version>
         <executions>
           <execution>
-            <id>copy-tck-api-signature-file</id>
+            <id>copy-tck-cdi-api-signature-file</id>
             <phase>generate-test-sources</phase>
             <goals>
               <goal>unpack</goal>
@@ -94,13 +95,17 @@
                   <artifactId>cdi-tck-impl</artifactId>
                   <version>${cdi-tck.version}</version>
                   <type>jar</type>
-                  <overWrite>false</overWrite>
+                  <overWrite>true</overWrite>
                 </artifactItem>
               </artifactItems>
+              <!-- We just need the signature file and nothing else -->
+              <includes>**/*.sig</includes>
+              <outputDirectory>${project.build.directory}/api-signature</outputDirectory>
             </configuration>
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.netbeans.tools</groupId>
         <artifactId>sigtest-maven-plugin</artifactId>
@@ -113,13 +118,11 @@
           </execution>
         </executions>
         <configuration>
-          <packages>javax.validation,javax.validation.bootstrap,javax.validation.constraints,
-            javax.validation.constraintvalidation,javax.validation.executable,javax.validation.groups,
-            javax.validation.metadata,javax.validation.spi,javax.validation.valueextraction
-          </packages>
-          <sigfile>${project.build.directory}/api-signature/validation-api-java8.sig</sigfile>
+          <packages>javax.inject,javax.decorator</packages>
+          <sigfile>${project.build.directory}/api-signature/cdi-api-jdk7.sig</sigfile>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
