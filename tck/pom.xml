@@ -28,6 +28,7 @@
 
   <properties>
     <cdi.tck.20.version>2.0.3.Final</cdi.tck.20.version>
+    <cdi-tck.version>${cdi.tck.20.version}</cdi-tck.version>
 
     <bval-tck.version>2.0.4.Final</bval-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
@@ -37,8 +38,10 @@
     <module>tck-common</module>
     <module>cdi-embedded</module>
     <module>cdi-tomee</module>
+    <!--<module>cdi-standalone</module>-->
     <module>bval-embedded</module>
     <module>bval-tomee</module>
+    <module>bval-signature-test</module>
     <module>microprofile-tck</module>
   </modules>
 
