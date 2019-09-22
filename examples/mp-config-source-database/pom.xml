@@ -26,7 +26,7 @@
   <name>MicroProfile :: Examples :: Config Source Database</name>
 
   <properties>
-    <version.javaee-api>8.0</version.javaee-api>
+    <version.javaee-api>8.0-2</version.javaee-api>
     <version.microprofile>2.0.1</version.microprofile>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <tomee.version>8.0.1-SNAPSHOT</tomee.version>
