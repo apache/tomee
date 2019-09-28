@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo utilizar las métricas de microperfil en TomEE. El
+Este es un ejemplo sobre cómo utilizar las métricas de Microprofile en TomEE. El
 proyecto incluye un perfil de Docker que se puede usar para crear una imagen de
 Docker.
 
@@ -54,7 +54,7 @@ Hi, today is a sunny day!
 
 == Usando `@Counted`
 
-Las métricas de MicroProfile tienen una función que se puede usar para contar
+Las métricas de Microprofile tienen una función que se puede usar para contar
 solicitudes a un servicio.
 
 Para utilizar esta función, debe anotar los métodos de los recursos JAX-RS con
