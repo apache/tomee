@@ -155,6 +155,7 @@
     <module>simple-cdi-interceptor</module>
     <module>simple-ear</module>
     <module>simple-cmp2</module>
+    <module>simple-jms</module>
     <module>simple-mdb-and-cdi</module>
     <module>simple-mdb</module>
     <module>simple-mdb-with-descriptor</module>
