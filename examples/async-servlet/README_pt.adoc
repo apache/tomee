@@ -1,0 +1,54 @@
+= Async Servlet
+:index-group: Servlet
+:jbake-type: page
+:jbake-status: published
+
+== Async Servlet
+
+Servlets pode ser executado assincronamente - isso pode ser util se seu servlet executa operações de longa execução, como chamar
+outros serviços usando um cliente assíncrono.
+
+Marque seu servlet como `asyncSupported` e chame Request.startAsync (). Isso retornará um objeto AsyncContext. Seu
+O código precisará chamar AsyncContext.dispatch () quando terminar.s
+
+AVISO:
+
+A Seção 2.3.3.4 da Especificação do Servlet 3.0 diz "Além dos métodos startAsync e complete, não é garantido que as implementações dos objetos de solicitação e resposta sejam seguras contra threads. Isso significa que elas devem ser usadas apenas dentro do escopo da thread de manipulação de solicitações ou o aplicativo deve garantir que o acesso aos objetos de solicitação e resposta seja seguro para threads".
+
+Se você escrever para a resposta diretamente do seu Runnable (nº 1 abaixo), você corre o risco de sofrer uma condição de corrida com outra thread usando a resposta.
+Isso é particularmente perceptível quando o Async solicita o tempo limite, pois os contêineres reciclam o objeto Request and Response para usar em outra solicitação.
+
+[source,java,numbered]
+----
+@WebServlet(urlPatterns = "/*", asyncSupported = true)
+public class CalcServlet extends HttpServlet {
+
+	private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+	@Override
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+
+		final AsyncContext asyncContext = req.startAsync();
+		asyncContext.setTimeout(timeout);
+		asyncContext.start(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// trabalha <!-- 1 -->
+				} catch (final Exception e) {
+                    // lidar com exceções
+				} finally {
+					asyncContext.dispatch();
+				}
+			}
+		});
+	}
+
+
+}
+
+----
+
+Etapas para replicar:
+
+   1. Execute `mvn clean install`. O Servlet é testado usando Arquillian.
