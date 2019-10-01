@@ -1,0 +1,117 @@
+:index-group: CDI
+:jbake-type: page
+:jbake-status: status=published
+= CDI Interceptor Simples
+
+Vamos escrever uma aplicação simples que nos permite comprar entradas para um 
+filme. Como toda aplicação, log é uma das questões transversais que temos.
+
+(Trechos relevantes de código vão estar presentes neste tutorial, mas você pode 
+ver o código completo em nosso repositório no https://github.com/apache/tomee/tree/master/examples/simple-cdi-interceptor[GitHub])
+
+Como nós podemos marcar quais métodos serão interceptados? 
+Não seria interessante 
+poder anotar o método desta forma?
+
+....
+@Log
+public void aMethod(){...} 
+....
+
+Vamos criar uma anotação que "marca" nosso método para interceptação.
+
+....
+@InterceptorBinding
+@Target({ TYPE, METHOD })
+@Retention(RUNTIME)
+public @interface Log {
+}
+....
+
+Tenha certeza que você não esqueceu da anotação `@InterceptorBinding` acima! 
+Agora que nossa anotação customizada foi criada, vamos anexa-la (ou "vincula-la") 
+a um interceptador.
+
+Aqui está nosso interceptador de log. Um método `@AroundInvoke` e estamos quase 
+terminando.
+
+....
+@Interceptor
+@Log  //binding the interceptor here. now any method annotated with @Log would be intercepted by logMethodEntry
+public class LoggingInterceptor {
+    @AroundInvoke
+    public Object logMethodEntry(InvocationContext ctx) throws Exception {
+        System.out.println("Entering method: " + ctx.getMethod().getName());
+        //or logger.info statement 
+        return ctx.proceed();
+    }
+}
+....
+
+Agora a anotação `@Log` que criamos está vinculada a este interceptador.
+
+Tudo pronto, vamos anotar em nível de classe ou método e nos divertir interceptando !
+
+....
+@Log
+@Stateful
+public class BookShow implements Serializable {
+    private static final long serialVersionUID = 6350400892234496909L;
+    public List<String> getMoviesList() {
+        List<String> moviesAvailable = new ArrayList<String>();
+        moviesAvailable.add("12 Angry Men");
+        moviesAvailable.add("Kings speech");
+        return moviesAvailable;
+    }
+    public Integer getDiscountedPrice(int ticketPrice) {
+        return ticketPrice - 50;
+    }
+    // assume more methods are present
+}
+....
+
+A anotação `@Log` aplicada em nível de classe diz que todos os métodos desta 
+classe devem ser interceptados pelo `LoggingInterceptor`.
+
+Antes de dizermos "tudo pronto" temos que fazer uma última coisa! Habilitar 
+os interceptadores! 
+
+Vamos criar rapidamente um arquivo `beans.xml` na pasta `META-INF`
+
+....
+<beans>
+  <interceptors>
+    <class>org.superbiz.cdi.bookshow.interceptors.LoggingInterceptor
+    </class>
+  </interceptors>
+</beans>
+....
+
+Essas linhas em `beans.xml` não apenas "habilitam" os interceptadores, mas também 
+definem sua "ordem de execução". Mas veremos isso em outro exemplo multiple-cdi-interceptors.
+
+Execute o teste, e veremos um `Entering method: getMovieList` impresso no terminal.
+....
+#Tests Apache OpenEJB 4.0.0-beta-2 build: 20111103-01:00
+http://tomee.apache.org/ 
+INFO - openejb.home = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
+INFO - openejb.base = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
+INFO - Using `javax.ejb.embeddable.EJBContainer=true' 
+INFO - ConfiguringService(id=Default Security Service, type=SecurityService, provider-id=Default Security Service) 
+INFO - ConfiguringService(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager) 
+INFO - Found EjbModule in classpath:/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors/target/classes
+INFO - Beginning load: /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors/target/classes
+INFO - Configuring enterprise application: /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container) 
+INFO - Auto-creating a container for bean cdi-simple-interceptors.Comp: Container(type=MANAGED,id=Default Managed Container) 
+INFO - Configuring Service(id=DefaultStateful Container, type=Container, provider-id=Default Stateful Container) 
+INFO - Auto-creating a container for bean BookShow: Container(type=STATEFUL, id=Default Stateful Container) 
+INFO - Enterprise application "/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors" loaded. 
+INFO - Assembling app: /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors 
+INFO - Jndi(name="java:global/cdi-simple-interceptors/BookShow!org.superbiz.cdi.bookshow.beans.BookShow")
+INFO - Jndi(name="java:global/cdi-simple-interceptors/BookShow") 
+INFO - Created Ejb(deployment-id=BookShow, ejb-name=BookShow, container=Default Stateful Container) 
+INFO - Started Ejb(deployment-id=BookShow, ejb-name=BookShow, container=Default Stateful Container) 
+INFO - Deployed Application(path=/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors) 
+Entering method: getMoviesList
+....

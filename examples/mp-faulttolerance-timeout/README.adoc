@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-This is an example of how to use Microprofile @Timeout in TomEE.
+This is an example of how to use Microprofile `@Timeout` in TomEE.
 
 [discrete]
 == Timeout Feature
@@ -35,7 +35,7 @@ mvn clean install tomee:run
 
 The method `statusOfDayByAccuWeather` fails when the threshold of `@Timeout` annotation is reached due to a long execution of
 `longProcessingTask` method. To respond to the request nicely, a fallback method will take place to complete the request
-successfully. The fallback method is determined by @Fallback annotation.
+successfully. The fallback method is determined by `@Fallback` annotation.
 
 [source,java]
 ----
@@ -103,6 +103,6 @@ mvn clean test
 
 ----
 [INFO] Results:
-[INFO] 
+[INFO]
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----

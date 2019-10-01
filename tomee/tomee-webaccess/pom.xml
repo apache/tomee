@@ -17,7 +17,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>tomee-webaccess</artifactId>
   <packaging>war</packaging>
@@ -233,6 +233,12 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
       <type>pom</type>
+      <exclusions>
+        <exclusion> <!-- Is already included in java-ee-api -->
+          <artifactId>jakarta.activation</artifactId>
+          <groupId>jakarta.activation-api</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
   <build>

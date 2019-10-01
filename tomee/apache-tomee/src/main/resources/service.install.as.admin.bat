@@ -22,6 +22,9 @@ REM================================================
 @if not "%ECHO%" == ""  echo %ECHO%
 @if "%OS%" == "Windows_NT" setlocal
 
+set OLD_SERVICEUSER=%PR_SERVICEUSER%
+set OLD_SERVICEPASSWORD=%PR_SERVICEPASSWORD%
+
 if "%OS%" == "Windows_NT" (
   set "DIRNAME=%~dp0%"
 ) else (
@@ -30,4 +33,29 @@ if "%OS%" == "Windows_NT" (
 
 pushd %DIRNAME%
 
+:checkUser
+if "x%1x" == "x/service-userx" goto serviceUser
+if "x%1x" == "x--service-userx" goto serviceUser
+if "x%1x" == "x/service-passwordx" goto servicePassword
+if "x%1x" == "x--service-passwordx" goto servicePassword
+
+goto install
+
+:serviceUser
+shift
+if "x%1x" == "xx" goto displayUsage
+set PR_SERVICEUSER=%1
+shift
+goto checkUser
+
+:servicePassword
+shift
+if "x%1x" == "xx" goto displayUsage
+set PR_SERVICEPASSWORD=%1
+shift
+goto checkUser
+
+:install
 service install
+set PR_SERVICEUSER=%OLD_SERVICEUSER%
+set PR_SERVICEPASSWORD=%OLD_SERVICEPASSWORD%

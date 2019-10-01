@@ -1,0 +1,192 @@
+:index-group: EJB
+:jbake-type: page
+:jbake-status: status=published
+= Métodos @Asynchronous
+
+La annotación @Asynchronous fue introducida en EJB 3.1 como una manera simple
+de crear procesamiento asíncrono.
+
+Cada vez que un método anotado con `@Asynchronous` es invocado por cualquiera
+retornará inmediatamentesin importar cuanto tarda en realidad el método. Cada
+invocación retorna un objeto
+http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html[Future]
+que esencialmente inicia _vacío_ y luego se llenará con su valor por el
+contenedor cuando la llamada al metodo relacionado se ejecute en realidad.
+Retornar un objeto `Future` no es requerido y un método `@Asynchronous` puede
+por supuesto retornar `void`.
+
+== Ejemplo
+
+Aquí, en `JobProcessorTest`,
+
+`final Future<String> red = processor.addJob("red");` procede a la siguiente sentencia,
+
+`final Future<String> orange = processor.addJob("orange");`
+
+sin esperar por a que método `addJob()` se complete. Y luego podríamos
+preguntar por el resultado usando el método `Future<?>.get()` como sigue
+
+`assertEquals("blue", blue.get());`
+
+Espera a que el procesamiento de complete (si no se a completado aún) y
+obtiene el resultado. Si no te importa el resultado, podrías simplemente tener tu método asíncrono como un método `void`.
+
+Desde la documentación del Objeto http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html[Future],
+
+____
+Un Future representa el resultado de un cómputo asíncrono. Se proporcionan métodos para chequear si el cómputo está completo, esperar por que se complete,
+y para obtener el resultado del cómputo. El resultado solo puede ser obtenido
+usando el método get cuando el cómputo se ha completado, bloqueando si es
+necesario hasta que está listo. La cancelación es ejecutada por el método
+cancel. Métodos adicionales son proporcionados para determinarsi la tarea se
+completó normalmente o fue cancelada. Una vez que un cómputo se ha completado,
+el cómputo no puede ser cancelado. Si quieres usar un Future solo por que se
+puede cancelar pero sin proveer un resultado usable, puedes declarar tipos de
+la forma Future<?> y retornar null como un resultado de la tarea subyacente
+____
+
+== El código
+
+[source,java]
+----
+@Singleton
+public class JobProcessor {
+@Asynchronous
+@Lock(READ)
+@AccessTimeout(-1)
+public Future<String> addJob(String jobName) {
+
+    // Pretendamos que esta tarea tarda un tiempo
+    doSomeHeavyLifting();
+
+    // Retorna nuestro resultado
+    return new AsyncResult<String>(jobName);
+}
+
+private void doSomeHeavyLifting() {
+    try {
+        Thread.sleep(SECONDS.toMillis(10));
+    } catch (InterruptedException e) {
+        Thread.interrupted();
+        throw new IllegalStateException(e);
+    }
+  }
+}
+----
+
+== Prueba
+
+[source,java]
+----
+public class JobProcessorTest extends TestCase {
+
+public void test() throws Exception {
+
+    final Context context = EJBContainer.createEJBContainer().getContext();
+
+    final JobProcessor processor = (JobProcessor) context.lookup("java:global/async-methods/JobProcessor");
+
+    final long start = System.nanoTime();
+
+    // Encola mucho trabajo
+    final Future<String> red = processor.addJob("red");
+    final Future<String> orange = processor.addJob("orange");
+    final Future<String> yellow = processor.addJob("yellow");
+    final Future<String> green = processor.addJob("green");
+    final Future<String> blue = processor.addJob("blue");
+    final Future<String> violet = processor.addJob("violet");
+
+    // Espera por el resultado -- 1 minuto de trabajo
+    assertEquals("blue", blue.get());
+    assertEquals("orange", orange.get());
+    assertEquals("green", green.get());
+    assertEquals("red", red.get());
+    assertEquals("yellow", yellow.get());
+    assertEquals("violet", violet.get());
+
+    // Cuanto tiempo tardó?
+    final long total = TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start);
+
+    // Una ejecución debería tardar entre 9 y 21 seconds
+    // El tiempo de ejecución dependen en el número de threads disponibles para la ejecucion asíncrona.
+    // En el mejor de los casos son 10s mas un tiempo mínimo
+    assertTrue("Expected > 9 but was: " + total, total > 9);
+    assertTrue("Expected < 21 but was: " + total, total < 21);
+
+  }
+}
+----
+
+[source,java]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.async.JobProcessorTest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Wed Feb 27 12:46:11 BRT 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190227
+INFO - Build time: 04:12
+INFO - ********************************************************************************
+INFO - openejb.home = /home/soro/git/apache/tomee/examples/async-methods
+INFO - openejb.base = /home/soro/git/apache/tomee/examples/async-methods
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@22f71333
+INFO - Succeeded in installing singleton service
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Found EjbModule in classpath: /home/soro/git/apache/tomee/examples/async-methods/target/classes
+INFO - Beginning load: /home/soro/git/apache/tomee/examples/async-methods/target/classes
+INFO - Configuring enterprise application: /home/soro/git/apache/tomee/examples/async-methods
+INFO - Auto-deploying ejb JobProcessor: EjbDeployment(deployment-id=JobProcessor)
+INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+INFO - Auto-creating a container for bean JobProcessor: Container(type=SINGLETON, id=Default Singleton Container)
+INFO - Creating Container(id=Default Singleton Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.async.JobProcessorTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /tmp for stateful session passivation
+INFO - Enterprise application "/home/soro/git/apache/tomee/examples/async-methods" loaded.
+INFO - Assembling app: /home/soro/git/apache/tomee/examples/async-methods
+INFO - Jndi(name="java:global/async-methods/JobProcessor!org.superbiz.async.JobProcessor")
+INFO - Jndi(name="java:global/async-methods/JobProcessor")
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@22f71333
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 316 ms.
+INFO - Created Ejb(deployment-id=JobProcessor, ejb-name=JobProcessor, container=Default Singleton Container)
+INFO - Started Ejb(deployment-id=JobProcessor, ejb-name=JobProcessor, container=Default Singleton Container)
+INFO - Deployed Application(path=/home/soro/git/apache/tomee/examples/async-methods)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.491 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----
+
+== Como funciona esto detrás de escena
+
+Lo que lo hace trabajar detrás de escena es:
+
+* El `JobProcessor` quien es el llamador ve que no es de hecho una instancia de `JobProcessor`. Por el contrario es una subclase o proxy que tiene todos los métodos sobrescritos. Métodos que deben ser asíncronos son tratados distinto.
+* Llamadas a un método asíncrono simplemente retornan un `Runnable` siendo creado que envuelve el método y parámetros que tu pasaste. Este runnable es pasado a un
+http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Executor.html[Executor] quien es simplemente una cola de trabajo adjuntada al conjunto de hilos (thread pool).
+* Después de añadir el trabajo a la cola, la versión proxeada del método retorna una implementation de `Future` que es enlazada a el `Runnable` quien está ahora esperando en la cola.
+* Cuando el `Runnable` finalmente ejecuta el método sobre la instancia _real_ del `JobProcessor`, tomará el valor de retorno y lo asignará dentro del `Future` haciendolo disponible a el que llama.
+
+Importante notar que el objeto `AsyncResult` que `JobProcessor` retorna no es el mismo objeto `Future` que el que llama contiene. Sería genial si el `JobProcessor` real pudiera retornar `String` y que el que la versión de `JobProcessor` del que llama pudiera retornar `Future<String>`, pero no encontramos una manera de hacer eso sin añadir mas complejidad. Entonces el `AsyncResult` es un simple objeto envoltorio. El contenedor sacará el `String`, descartará el `AsyncResult`, entonces pondrá el `String` en el `Future` _real_ que el llamador contiene.
+
+Para obtener status del proceso, simplemente pasa un objeto thread-safe como http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/AtomicInteger.html[AtomicInteger] a el método `@Asynchronous` y has que el código lo actualice periodicamente con el porcentaje completado.
+
+== Ejemplos Relacionados
+
+Para procesamiento asíncrono complejo, la respuesta de JavaEE’s es `@MessageDrivenBean`. Échale una mirada al ejemplo
+link:../simple-mdb/README.html[simple-mdb]

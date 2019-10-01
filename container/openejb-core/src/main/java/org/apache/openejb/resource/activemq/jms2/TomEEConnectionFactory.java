@@ -17,35 +17,63 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import org.apache.activemq.ActiveMQConnection;
-import org.apache.activemq.ActiveMQSslConnectionFactory;
+import org.apache.activemq.ActiveMQXASslConnectionFactory;
 import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 
 import javax.jms.JMSContext;
 
-public class TomEEConnectionFactory extends ActiveMQSslConnectionFactory {
+public class TomEEConnectionFactory extends ActiveMQXASslConnectionFactory {
     @Override
     protected ActiveMQConnection createActiveMQConnection(final Transport transport, final JMSStatsImpl stats) throws Exception {
-        return new TomEEConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
+        return new TomEEXAConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
     }
 
     @Override
     public JMSContext createContext() {
-        return new JMSContextImpl(this, -1, null, null, false);
+        boolean inTx = JMS2.inTx();
+        int mode;
+        if (inTx) {
+            mode = -1;
+        } else {
+            mode = JMSContext.AUTO_ACKNOWLEDGE;
+        }
+        return new JMSContextImpl(this, mode, null, null, inTx);
     }
 
     @Override
     public JMSContext createContext(final int sessionMode) {
-        return new JMSContextImpl(this, sessionMode, null, null, false);
+        boolean inTx = JMS2.inTx();
+        int mode;
+        if (inTx) {
+            mode = -1;
+        } else {
+            mode = sessionMode;
+        }
+        return new JMSContextImpl(this, mode, null, null, inTx);
     }
 
     @Override
     public JMSContext createContext(final String userName, final String password) {
-        return new JMSContextImpl(this, -1, userName, password, false);
+        boolean inTx = JMS2.inTx();
+        int mode;
+        if (inTx) {
+            mode = -1;
+        } else {
+            mode = JMSContext.AUTO_ACKNOWLEDGE;
+        }
+        return new JMSContextImpl(this, mode, userName, password, inTx);
     }
 
     @Override
     public JMSContext createContext(final String userName, final String password, final int sessionMode) {
-        return new JMSContextImpl(this, sessionMode, userName, password, false);
+        boolean inTx = JMS2.inTx();
+        int mode;
+        if (inTx) {
+            mode = -1;
+        } else {
+            mode = sessionMode;
+        }
+        return new JMSContextImpl(this, mode, userName, password, inTx);
     }
 }

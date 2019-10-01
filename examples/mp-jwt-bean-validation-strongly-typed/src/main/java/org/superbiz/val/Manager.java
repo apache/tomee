@@ -16,10 +16,6 @@
  */
 package org.superbiz.val;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -30,7 +26,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Allowed("manager")
-@javax.validation.Constraint(validatedBy = {Manager.Constraint.class})
+@javax.validation.Constraint(validatedBy = {})
 @Documented
 @Target({METHOD, ANNOTATION_TYPE})
 @Retention(RUNTIME)
@@ -41,13 +37,5 @@ public @interface Manager {
     String message() default "The 'group' claim must contain 'user'";
 
     Class<? extends Payload>[] payload() default {};
-
-
-    class Constraint implements ConstraintValidator<Manager, JsonWebToken> {
-        @Override
-        public boolean isValid(final JsonWebToken value, final ConstraintValidatorContext context) {
-            return true;
-        }
-    }
 
 }

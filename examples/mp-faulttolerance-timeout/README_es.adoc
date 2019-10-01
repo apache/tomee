@@ -1,0 +1,107 @@
+= Tolerancia a fallos (Fault Tolerance) en MicroProfile - Timeout (Tiempo de espera)
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este es un ejemplo de como usar Microprofile `@Timeout` en TomEE.
+
+[discrete]
+== Funcionalidad de tiempo de espera (Timeout)
+
+`Fault Tolerance Timeout` permite especificar cuánto tiempo puede tomar una tarea en completar su ejecución y abortarla en caso que tarde más del tiempo especificado. La funcionalidad de Timeout puede ser usada en conjunto con otras anotaciones para guiar la ejecución y resultado de una tarea. Mira la
+https://download.eclipse.org/microprofile/microprofile-fault-tolerance-1.1/microprofile-fault-tolerance-spec.html#_timeout_usage[especificación]
+para mas detalles.
+
+La anotación `@Timeout` permite configurar:
+
+* *value:* el valor del tiempo de espera
+* *unit:* la unidad del tiempo de espera
+
+[discrete]
+== Ejemplo
+
+[discrete]
+=== Ejecuta la aplicación
+
+[source,bash]
+----
+mvn clean install tomee:run
+----
+
+[discrete]
+=== Como funciona esto?
+
+El método `statusOfDayByAccuWeather` falla cuando se alcanza el umbral de la
+anotación `@Timeout` debido a una larga ejecución del método
+`longProcessingTask`. Para responder bien a la solicitud, se ejecutará un
+método alternativo para completar la solicitud exitosamente. El método
+alternativo está determinado por la anotación `@Fallback`.
+
+[source,java]
+----
+@RequestScoped
+public class WeatherGateway {
+
+    private static final Logger LOGGER = Logger.getLogger(WeatherGateway.class.getName());
+
+    @Timeout(50)
+    @Fallback(fallbackMethod = "statusOfWeekByMetEireann")
+    public String statusOfDayByAccuWeather(){
+        return longProcessingTask();
+    }
+
+    public String statusOfWeekByMetEireann(){
+        LOGGER.log(Level.WARNING, "MetEireann backup service has been requested due to AccuWeather timeout");
+        return "Beautiful day";
+    }
+
+    private String longProcessingTask(){
+        try {
+            Thread.sleep(80);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.WARNING,"AccuWeather task has been interrupted.");
+        }
+        return null;
+    }
+    ...
+}
+----
+
+Llamada al estado del día
+
+[source,text]
+----
+GET http://localhost:8080/mp-faulttolerance-timeout/weather/day/status
+----
+
+Logs en el Servidor
+
+[source,text]
+----
+WARNING AccuWeather task has been interrupted.
+WARNING MetEireann fallback service has been requested due to AccuWeather timeout.
+----
+
+Respuesta HTTP
+
+[source,text]
+----
+Beautiful day!
+----
+
+[discrete]
+=== Ejecutando las pruebas
+
+También puedes probarlo usando el
+link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponible en el proyecto.
+
+[source,text]
+----
+mvn clean test
+----
+
+----
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----

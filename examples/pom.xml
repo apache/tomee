@@ -26,7 +26,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>examples</artifactId>
@@ -103,18 +103,17 @@
     <module>jsf-cdi-and-ejb</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
+    <!-- Does not work with Java 9+ because of the modules. Needs more work
     <module>mbean-auto-registration</module>
+    -->
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
-    <!--
-    Momentarily cut out till the feature can be re-implemented
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
-    -->
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>

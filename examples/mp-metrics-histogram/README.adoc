@@ -1,4 +1,4 @@
-= MicroProfile Metrics Histogram
+= MicroProfile Metrics `@Histogram`
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
@@ -7,22 +7,25 @@ This is an example on how to use microprofile metrics in TomEE.
 
 == Run the application:
 
-....
-mvn clean install tomee:run 
-....
+[source,bash]
+----
+$ mvn clean install tomee:run
+----
 
 Within the application, there is an enpoint that will give you a weather
 histogram of the most recent New York City temperatures.
 
 == Request:
 
-....
-curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
+----
 
 == Response:
 
-....
+[source,javascript]
+----
 {
     "count":15,
     "max":55,
@@ -36,17 +39,18 @@ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
     "p999":54.0,
     "stddev":7.0710678118654755,
     "unit":"degrees F"
-} 
-....
+}
+----
 
 == Histogram Feature
 
 Microprofile metrics has a feature create a histogram of data.
 
-To use this feature, inject a MetricRegistry, register the Histogram,
-and add data to the histogram as shown below.
+To use this feature, inject a `MetricRegistry`, register the Histogram, and add
+data to the histogram as shown below.
 
-....
+[source,java]
+----
 @Inject
 private MetricRegistry registry;
 
@@ -68,41 +72,41 @@ public Histogram getTemperatures() {
     }
     return histogram;
 }
-....
+----
 
-There are some Histogram configurations defined in the @Metric
-annotation:
+There are some Histogram configurations defined in the `@Metric` annotation:
 
-*String name* Optional. The name of the metric. If not explicitly given
-the name of the annotated object is used.
+*String name* Optional. The name of the metric. If not explicitly given the
+name of the annotated object is used.
 
-*String displayName* Optional. A human readable display name for
-metadata.
+*String displayName* Optional. A human readable display name for metadata.
 
 *String description* Optional. A description of the metric.
 
-*String[] tags* Optional. An array of Strings in the = format to supply
-special tags to a metric.
+*String[] tags* Optional. An array of Strings in the = format to supply special
+tags to a metric.
 
-*boolean reusable* Denotes if a metric with a certain name can be
-registered in more than one place. Does not apply to gauges or
-histograms.
+*boolean reusable* Denotes if a metric with a certain name can be registered in
+more than one place. Does not apply to gauges or histograms.
 
 === For the histogram status:
 
-....
-GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
+----
 
 === Reponse:
 
-....
+[source,bash]
+----
  Here are the most recent New York City temperatures.
-....
+----
 
 === Expected Prometheus format:
 
-....
+[source,text]
+----
     # TYPE application:temperatures_degrees F summary histogram
     # TYPE application:temperatures_degrees F_count histogram
     application:temperatures_degrees F_count 15.0
@@ -149,17 +153,19 @@ GET http://localhost:8080/mp-metrics-histogram/weather/histogram/status
     application:org_superbiz_histogram_weather_service_temperatures{quantile="0.99"} 0.0
     # TYPE application:org_superbiz_histogram_weather_service_temperatures histogram
     application:org_superbiz_histogram_weather_service_temperatures{quantile="0.999"} 0.0
-....
+----
 
 === Request:
 
-....
-curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
+----
 
 === Response:
 
-....
+[source,javascript]
+----
 {
     "org.superbiz.histogram.WeatherService.temperatures": {
         "count":0,
@@ -174,23 +180,25 @@ curl -X GET http://localhost:8080/mp-metrics-histogram/metrics/application
         "stddev":0.0,
         "unit":"none"
     }
-}  
-....
+}
+----
 
 == Metric Metadata:
 
 A metric will have a metadata to provide information about it such as
-displayName, description, tags, etc.
+`displayName`, `description`, `tags`, etc.
 
 === Request:
 
-....
-curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
-....
+[source,bash]
+----
+$ curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
+----
 
 === Response:
 
-....
+[source,javascript]
+----
 {
     "org.superbiz.histogram.WeatherService.temperatures": {
         "description": "A histogram metrics example.",
@@ -203,10 +211,11 @@ curl -X OPTIONS http://localhost:8080/mp-metrics-histogram/metrics/application
         "unit":"none"
     }
 }
-....
+----
 
 === Test the application:
 
-....
-mvn test
-....
+[source,bash]
+----
+$ mvn test
+----

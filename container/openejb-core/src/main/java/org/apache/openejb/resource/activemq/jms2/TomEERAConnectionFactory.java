@@ -16,15 +16,18 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import org.apache.activemq.ra.ActiveMQConnectionFactory;
 import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
 import org.apache.activemq.ra.ActiveMQManagedConnectionFactory;
 
 import javax.jms.JMSContext;
-import javax.jms.Session;
 import javax.resource.spi.ConnectionManager;
 
 public class TomEERAConnectionFactory extends ActiveMQConnectionFactory {
+    private static final long serialVersionUID = 1L;
+    private TransactionSupportLevel transactionSupportLevel = TransactionSupportLevel.XATransaction;
+
     public TomEERAConnectionFactory(final ActiveMQManagedConnectionFactory factory, final ConnectionManager manager,
                                     final ActiveMQConnectionRequestInfo connectionRequestInfo) {
         super(factory, manager, connectionRequestInfo);
@@ -32,21 +35,116 @@ public class TomEERAConnectionFactory extends ActiveMQConnectionFactory {
 
     @Override
     public JMSContext createContext() {
-        return new JMSContextImpl(this, Session.AUTO_ACKNOWLEDGE, null, null, false);
+        // See notes here. We _do_ allow the user to override session mode at the
+        // connectionFactory level, otherwise we follow the spec.
+        // https://docs.oracle.com/javaee/7/api/javax/jms/ConnectionFactory.html#createContext-int-
+        int mode;
+        boolean xa;
+        switch (transactionSupportLevel) {
+            case XATransaction:
+                if (JMS2.inTx()) {
+                    mode = -1;
+                    xa = true;
+                    break;
+                }
+            case NoTransaction:
+                mode = JMSContext.AUTO_ACKNOWLEDGE;
+                xa = false;
+                break;
+            case LocalTransaction:
+                mode = JMSContext.SESSION_TRANSACTED;
+                xa = false;
+                break;
+            default:
+                throw new IllegalStateException("transactionSupportLevel mode not supported:" + transactionSupportLevel);
+        }
+        return new JMSContextImpl(this, mode, null, null, xa);
     }
 
     @Override
     public JMSContext createContext(final int sessionMode) {
-        return new JMSContextImpl(this, sessionMode, null, null, false);
+        int mode;
+        boolean xa;
+        switch (transactionSupportLevel) {
+            case XATransaction:
+                if (JMS2.inTx()) {
+                    mode = -1;
+                    xa = true;
+                    break;
+                }
+            case NoTransaction:
+                mode = sessionMode;
+                xa = false;
+                break;
+            case LocalTransaction:
+                mode = JMSContext.SESSION_TRANSACTED;
+                xa = false;
+                break;
+            default:
+                throw new IllegalStateException("transactionSupportLevel mode not supported:" + transactionSupportLevel);
+        }
+        return new JMSContextImpl(this, mode, null, null, xa);
     }
 
     @Override
     public JMSContext createContext(final String userName, final String password) {
-        return new JMSContextImpl(this, Session.AUTO_ACKNOWLEDGE, userName, password, false);
+        int mode;
+        boolean xa;
+        switch (transactionSupportLevel) {
+            case XATransaction:
+                if (JMS2.inTx()) {
+                    mode = -1;
+                    xa = true;
+                    break;
+                }
+            case NoTransaction:
+                mode = JMSContext.AUTO_ACKNOWLEDGE;
+                xa = false;
+                break;
+            case LocalTransaction:
+                mode = JMSContext.SESSION_TRANSACTED;
+                xa = false;
+                break;
+            default:
+                throw new IllegalStateException("transactionSupportLevel mode not supported:" + transactionSupportLevel);
+        }
+        return new JMSContextImpl(this, mode, userName, password, xa);
     }
 
     @Override
     public JMSContext createContext(final String userName, final String password, final int sessionMode) {
-        return new JMSContextImpl(this, sessionMode, userName, password, false);
+        int mode;
+        boolean xa;
+        switch (transactionSupportLevel) {
+            case XATransaction:
+                if (JMS2.inTx()) {
+                    mode = -1;
+                    xa = true;
+                    break;
+                }
+            case NoTransaction:
+                mode = sessionMode;
+                xa = false;
+                break;
+            case LocalTransaction:
+                mode = JMSContext.SESSION_TRANSACTED;
+                xa = false;
+                break;
+            default:
+                throw new IllegalStateException("transactionSupportLevel mode not supported:" + transactionSupportLevel);
+        }
+        return new JMSContextImpl(this, mode, userName, password, xa);
+    }
+
+    public TransactionSupportLevel getTransactionSupport() {
+        return transactionSupportLevel;
+    }
+
+    public void setTransactionSupport(TransactionSupportLevel transactionSupportLevel) {
+        if (transactionSupportLevel == null) {
+            throw new IllegalArgumentException("transactionSupportLevel cannot be null");
+        } else {
+            this.transactionSupportLevel = transactionSupportLevel;
+        }
     }
 }

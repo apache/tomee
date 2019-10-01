@@ -106,6 +106,7 @@ class SetupCommand {
 
         deleteWithRetry(file: paths.findOpenEJBWebJar('tomee-loader'))
         deleteWithRetry(file: paths.findOpenEJBWebJar('swizzle-stream'))
+        deleteWithRetry(file: paths.findTomEELibJar('jakarta.activation-api'))
 
         log.info('Assigning execute privileges to scripts in Tomcat bin directory')
         ant.chmod(dir: "${workDir}/apache-tomcat-${tomcatVersion}/bin", perm: 'u+x', includes: '**/*.sh')

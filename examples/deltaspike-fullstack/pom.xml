@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
   <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
 
   <packaging>war</packaging>
 
@@ -24,7 +24,7 @@
     <version.myfaces2>2.3.0</version.myfaces2>
     <version.deltaspike>1.9.1</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
   </properties>
 
   <build>
@@ -81,8 +81,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.18.1</version>
-        <configuration> <!-- optional -->
+        <version>2.22.1</version>
+        <configuration>
+          <argLine>-Djdk.attach.allowAttachSelf</argLine>
           <systemPropertyVariables>
             <openejb.jul.forceReload>true</openejb.jul.forceReload>
             <logging.level.OpenEJB.startup>FINEST</logging.level.OpenEJB.startup>
@@ -147,7 +148,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm7-shaded</artifactId>
-      <version>4.12</version>
+      <version>4.14</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

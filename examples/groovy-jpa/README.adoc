@@ -1,0 +1,104 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Groovy Project with Persistence JPA
+
+This example is developed with http://groovy-lang.org[Groovy Lang] with JPA data persistence.
+
+== Example
+
+In this example, a person is created and consulted later.
+
+== Code sample
+
+=== Entity
+
+Create a class `Person` with the annotation `@Entity`.
+
+In the class create property `name` of type `String`.
+In the class create property `id` of type `long`.
+
+The identifier of entity `Person` is property `id` with annotation `@Id`.
+
+To automatically generate the sequential add the annotation `@GeneratedValue`.
+
+[source,java]
+----
+include::src/main/groovy/org/superbiz/groovy/Person.groovy[]
+----
+
+=== Persistence
+
+In the persistence is added the entity `Person` with `<class>org.superbiz.groovy.Person</class>`
+
+[source,java]
+----
+include::src/main/resources/META-INF/persistence.xml[]
+----
+
+== Running example
+
+Running the example is fairly simple. In the `/tomee/examples/groovy-jpa` directory
+run:
+
+....
+$ mvn clean install
+....
+
+Which should create output like the following:
+
+....
+[INFO] Running org.superbiz.groovy.GroovyJPATest
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Sat Sep 07 18:29:58 ECT 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190907
+INFO - Build time: 04:10
+INFO - ********************************************************************************
+INFO - openejb.home = /Users/sergio/workspace/git/tomee/examples/groovy-jpa
+INFO - openejb.base = /Users/sergio/workspace/git/tomee/examples/groovy-jpa
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@71c8becc
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Using 'openejb.deployments.classpath=false'
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Configuring enterprise application: /Users/sergio/workspace/git/tomee/examples/groovy-jpa/0db140ef-9d71-4f1a-8ddb-1d0e3feae256.war
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean 0db140ef-9d71-4f1a-8ddb-1d0e3feae256_org.superbiz.groovy.GroovyJPATest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /var/folders/3j/qhs78rln3y9bl0c279f2j13m0000gn/T for stateful session passivation
+INFO - Configuring PersistenceUnit(name=groovy)
+INFO - Configuring Service(id=Default Unmanaged JDBC Database, type=Resource, provider-id=Default Unmanaged JDBC Database)
+INFO - Auto-creating a Resource with id 'Default Unmanaged JDBC Database' of type 'DataSource for 'groovy'.
+INFO - Creating Resource(id=Default Unmanaged JDBC Database)
+INFO - Adjusting PersistenceUnit groovy <non-jta-data-source> to Resource ID 'Default Unmanaged JDBC Database' from 'jdbc/groovy'
+INFO - Enterprise application "/Users/sergio/workspace/git/tomee/examples/groovy-jpa/0db140ef-9d71-4f1a-8ddb-1d0e3feae256.war" loaded.
+INFO - Assembling app: /Users/sergio/workspace/git/tomee/examples/groovy-jpa/0db140ef-9d71-4f1a-8ddb-1d0e3feae256.war
+INFO - JAVA AGENT NOT INSTALLED. The JPA Persistence Provider requested installation of a ClassFileTransformer which requires a JavaAgent.  See http://tomee.apache.org/javaagent.html
+INFO - OpenJPA dynamically loaded a validation provider.
+INFO - PersistenceUnit(name=groovy, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 1142ms
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@71c8becc
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 574 ms.
+INFO - Deployed Application(path=/Users/sergio/workspace/git/tomee/examples/groovy-jpa/0db140ef-9d71-4f1a-8ddb-1d0e3feae256.war)
+INFO - Starting OpenJPA 3.1.0
+INFO - Using dictionary class "org.apache.openjpa.jdbc.sql.HSQLDictionary" (HSQL Database Engine 2.3.2 ,HSQL Database Engine Driver 2.3.2).
+INFO - Connected to HSQL Database Engine version 2.2 using JDBC driver HSQL Database Engine Driver version 2.3.2.
+INFO - Creating subclass and redefining methods for "[class org.superbiz.groovy.Person]". This means that your application will be less efficient than it would if you ran the OpenJPA enhancer.
+INFO - Undeploying app: /Users/sergio/workspace/git/tomee/examples/groovy-jpa/0db140ef-9d71-4f1a-8ddb-1d0e3feae256.war
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.304 s - in org.superbiz.groovy.GroovyJPATest
+INFO - Destroying container system
+INFO - Closing DataSource: Default Unmanaged JDBC Database
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....

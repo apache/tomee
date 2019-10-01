@@ -41,13 +41,6 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${project.basedir}/target/maven-shared-archive-resources/META-INF/</directory>
-      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
-      <includes>
-        <include>LICENSE</include>
-      </includes>
-    </fileSet>
-    <fileSet>
       <directory>${project.basedir}/src/main/resources/META-INF/plus/</directory>
       <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
       <includes>

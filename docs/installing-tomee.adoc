@@ -1,5 +1,5 @@
 = Installing TomEE
-:index-group: Unrevised
+:index-group: Installation
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
@@ -20,13 +20,13 @@ License.
 == Downloading a Distribution Archive
 
 Download a distribution archive of the latest TomEE release from the
-link:downloads.html[Downloads] page. If you are not sure which one to
+link:download-ng.html[Downloads] page. If you are not sure which one to
 use, take apache-tomee-webprofile-x.y.z.zip.
 
 If you want to try out the latest development snapshot (e.g. to test a
 bugfix which has not yet been released), then download an archive
 directly from the
-https://repository.apache.org/content/groups/snapshots/org/apache/openejb/apache-tomee[Apache
+https://repository.apache.org/content/groups/snapshots/org/apache/tomee/apache-tomee[Apache
 Maven Snapshots Repository] instead.
 
 The instructions on this page work with the webprofile distribution but
@@ -54,12 +54,16 @@ To start TomEE as a background process, invoke
 $CATALINA_HOME/bin/startup.sh
 ----
 
+NOTE: On Windows, use `startup.bat`
+
 To start TomEE in foreground, invoke
 
 [source,java]
 ----
 $CATALINA_HOME/bin/catalina.sh run
 ----
+
+NOTE: On Windows, use `catalina.bat`
 
 == Log Messages
 
@@ -83,5 +87,11 @@ To stop TomEE, invoke
 $CATALINA_HOME/bin/shutdown.sh
 ----
 
-If you started TomEE in foreground via `catalina.sh run`, it is safe to
+NOTE: On Windows, use `shutdown.bat`
+
+If you started TomEE in foreground via `catalina.sh run` or `catalina.bat run`, it is safe to
 simply type `Ctrl-C`.
+
+== Running as a service
+
+To run TomEE as a service, see link:lin-service.html for Linux, and link:win-service.html for Windows.

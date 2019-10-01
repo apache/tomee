@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>singleton-startup-ordering</artifactId>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples ::  Singleton startup ordering</name>
 
@@ -105,5 +105,16 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <repository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/repo/</url>
+    </repository>
+    <snapshotRepository>
+      <id>localhost</id>
+      <url>file://${basedir}/target/snapshot-repo/</url>
+    </snapshotRepository>
+  </distributionManagement>
 
 </project>

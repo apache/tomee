@@ -20,12 +20,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
     <surefire.version>2.21.0</surefire.version>
   </properties>
@@ -47,9 +47,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>6.0-6</version>
+        <version>8.0-2</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>

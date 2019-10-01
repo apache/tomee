@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 //START SNIPPET: code
-package org.superbiz.mdb;
+package org.superbiz.mdbdesc;
 
 import junit.framework.TestCase;
 

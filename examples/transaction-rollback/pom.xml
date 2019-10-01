@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>transaction-rollback</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Transaction Rollback</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,6 +39,14 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+        <configuration>
+          <argLine>-Djdk.attach.allowAttachSelf</argLine>
         </configuration>
       </plugin>
     </plugins>
@@ -68,7 +76,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <version>8.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 
