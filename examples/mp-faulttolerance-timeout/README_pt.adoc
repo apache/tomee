@@ -18,7 +18,7 @@ A anotação `@Timeout` permite configurar:
 * *unit:* a unidade do tempo de espera
 
 [discrete]
-== EXemplo
+== Exemplo
 
 [discrete]
 === Execute o aplicativo
@@ -93,7 +93,7 @@ Beautiful day!
 === Executando os testes
 
 Você também pode experimentá-lo usando o
-link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponible en el proyecto.
+link:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponível no projeto.
 
 [source,text]
 ----
