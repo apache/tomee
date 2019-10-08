@@ -22,7 +22,10 @@ import org.apache.commons.dbcp2.PoolableConnection;
 import org.apache.commons.dbcp2.PoolingDataSource;
 import org.apache.commons.dbcp2.managed.ManagedConnection;
 import org.apache.commons.dbcp2.managed.ManagedDataSource;
+import org.apache.commons.dbcp2.managed.TransactionContext;
 import org.apache.commons.dbcp2.managed.TransactionRegistry;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.openejb.BeanContext;
 import org.apache.openejb.OpenEJB;
 import org.apache.openejb.cipher.PasswordCipher;
 import org.apache.openejb.cipher.PasswordCipherFactory;
@@ -32,6 +35,7 @@ import org.apache.openejb.resource.jdbc.IsolationLevels;
 import org.apache.openejb.resource.jdbc.plugin.DataSourcePlugin;
 import org.apache.openejb.resource.jdbc.pool.XADataSourceResource;
 import org.apache.openejb.util.JavaSecurityManagers;
+import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.reflection.Reflections;
 
 import javax.management.MBeanServer;
@@ -39,7 +43,9 @@ import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.ObjectStreamException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -54,6 +60,7 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     private final String name;
 
     private Logger logger;
+    private static final org.apache.openejb.util.Logger debugLogger = org.apache.openejb.util.Logger.getInstance(LogCategory.OPENEJB_RESOURCE_JDBC, BeanContext.class);
 
     /**
      * The password codec to be used to retrieve the plain text password from a
@@ -75,40 +82,49 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
     }
 
     @Override
-    protected DataSource createDataSourceInstance() throws SQLException {
+    protected DataSource createDataSourceInstance() {
         final TransactionRegistry transactionRegistry = getTransactionRegistry();
         if (transactionRegistry == null) {
             throw new IllegalStateException("TransactionRegistry has not been set");
         }
+
         if (getConnectionPool() == null) {
             throw new IllegalStateException("Pool has not been set");
         }
+
         final PoolingDataSource<PoolableConnection> pds = new ManagedDataSource<PoolableConnection>(getConnectionPool(), transactionRegistry) {
             @Override
             public Connection getConnection() throws SQLException {
-                return new ManagedConnection<PoolableConnection>(getPool(), transactionRegistry, isAccessToUnderlyingConnectionAllowed()) {
-                    @Override
-                    public void close() throws SQLException {
-                        if (!isClosedInternal()) {
-                            try {
-                                if (null != getDelegateInternal()) {
-                                    super.close();
-                                }
-                            } finally {
-                                setClosedInternal(true);
-                            }
-                        }
-                    }
 
-                    @Override
-                    public boolean isClosed() throws SQLException {
-                        return isClosedInternal() || null != getDelegateInternal() && getDelegateInternal().isClosed();
+                final PoolableConnectionManagedConnection connection = new PoolableConnectionManagedConnection(getPool(), transactionRegistry, isAccessToUnderlyingConnectionAllowed());
+
+                if (debugLogger.isDebugEnabled()) {
+                    final TransactionContext transactionContext = transactionRegistry.getActiveTransactionContext();
+                    if (transactionContext != null) {
+                        transactionContext.addTransactionContextListener((txCtx, committed) -> {
+                            try {
+                                if (debugLogger.isDebugEnabled() && (!connection.isClosed())) {
+                                    debugLogger.debug("Connection not closed at the end of transaction, this will potentially leak. Connection created at: " + connection.createdAt);
+                                }
+                            } catch (SQLException e) {
+                                // not much we can do here
+                            }
+                        });
+
+                        debugLogger.debug("getConnection() - active: " + getPool().getNumActive() + ". Called from " + (getStackTrace()));
                     }
-                };
+                }
+                return connection;
             }
         };
         pds.setAccessToUnderlyingConnectionAllowed(isAccessToUnderlyingConnectionAllowed());
         return pds;
+    }
+
+    private String getStackTrace() {
+        final StringWriter sw = new StringWriter();
+        new Throwable().printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 
     @Override
@@ -394,5 +410,40 @@ public class BasicManagedDataSource extends org.apache.commons.dbcp2.managed.Bas
 
     Object writeReplace() throws ObjectStreamException {
         return new DataSourceSerialization(name);
+    }
+
+    private class PoolableConnectionManagedConnection extends ManagedConnection<PoolableConnection> {
+
+        private final String createdAt;
+        private final ObjectPool<PoolableConnection> pool;
+
+        public PoolableConnectionManagedConnection(final ObjectPool<PoolableConnection> pool,
+                                                   final TransactionRegistry transactionRegistry,
+                                                   final boolean accessToUnderlyingConnectionAllowed) throws SQLException {
+            super(pool, transactionRegistry, accessToUnderlyingConnectionAllowed);
+            this.pool = pool;
+            createdAt = debugLogger.isDebugEnabled() ? getStackTrace() : "";
+        }
+
+        @Override
+        public void close() throws SQLException {
+            if (!isClosedInternal()) {
+                try {
+                    if (null != getDelegateInternal()) {
+                        super.close();
+                    }
+                } finally {
+                    setClosedInternal(true);
+                    if (debugLogger.isDebugEnabled()) {
+                        debugLogger.debug("close() - active: " + pool.getNumActive() + ". Called from " + (getStackTrace()));
+                    }
+                }
+            }
+        }
+
+        @Override
+        public boolean isClosed() throws SQLException {
+            return isClosedInternal() || null != getDelegateInternal() && getDelegateInternal().isClosed();
+        }
     }
 }
