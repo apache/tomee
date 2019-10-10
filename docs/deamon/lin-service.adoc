@@ -1,24 +1,44 @@
-:index-group: Unrevised
+:index-group: Installation
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-= Installing
-TomEE as a Windows® Service
+= Linux Service
 
-The different architecture exe's are as follows (so always use the one
-that matches your system):
+Depending on your flavour of Linux, there are likely a few different ways you can run TomEE as a service.
+This page demonstrates running as a service with systemd, and has been tested with RedHat Enterprise Linux.
 
-TomEE.amd64.exe = 64bit OS TomEE.ia64.exe = Itanium OS TomEE.x86.exe =
-32bit OS
+Create a file `/etc/systemd/system/tomee.service` with the following content:
 
-The only difference to Tomcat is that they ship with 'like named'
-binaries, but in sub-directories - Or offer separate downloads for your
-OS. We just modified the batch files to detect your arch-type and use
-the correct binaries. Everything is all in the 'bin' directory so we
-only have a one zip fits all approach.
+```
+[Unit]
+Description=Apache TomEE
+After=network.target
 
-Definitive documentation can be found here:
+[Service]
+User=<user to run as>
+Type=forking
+Environment=JAVA_HOME=/usr/lib/jvm/jre
+Environment=CATALINA_PID=/opt/tomee/temp/tomee.pid
+Environment=CATALINA_HOME=/opt/tomee
+Environment=CATALINA_BASE=/opt/tomee
+Environment=CATALINA_OPTS='-server'
+Environment=JAVA_OPTS='-Djava.awt.headless=true'
+ExecStart=/opt/tomee/bin/startup.sh
+ExecStop=/opt/tomee/bin/shutdown.sh
+KillSignal=SIGCONT
 
-http://commons.apache.org/proper/commons-daemon/procrun.html
+[Install]
+WantedBy=multi-user.target
+```
+
+The file above assumes TomEE is extracted to `/opt/tomee`, and that `JAVA_HOME` is at `/usr/lib/jvm/jre` - adjust these to match your installation.
+
+Once done, run `sudo systemctl daemon-reload` so systemd is aware of the new service.
+
+You should now be able to use the following commands to control the TomEE service:
+
+* `sudo systemctl start tomee` (to start TomEE)
+* `sudo systemctl stop tomee` (to stop TomEE)
+* `sudo systemctl status tomee` (to check the status of the TomEE service)

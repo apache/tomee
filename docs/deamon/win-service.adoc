@@ -1,24 +1,140 @@
-:index-group: Unrevised
+:index-group: Installation
 :jbake-date: 2018-12-05
 :jbake-type: page
 :jbake-status: published
 
 
-= Installing
-TomEE as a Windows® Service
+= Windows Service
+== TomEE as a Windows® Service
 
-The different architecture exe's are as follows (so always use the one
-that matches your system):
+It is possible to configure TomEE to run as Windows service, and batch 
+files are provided in the bin folder to accomplish this. The key batch
+file is `service.bat`, and this provides commands to install and 
+remove the service. Additionally two helper files are provided to 
+simplify the installation and create a basic service setup.
 
-TomEE.amd64.exe = 64bit OS TomEE.ia64.exe = Itanium OS TomEE.x86.exe =
-32bit OS
+* service.install.as.admin.bat
+* service.remove.as.admin.bat
 
-The only difference to Tomcat is that they ship with 'like named'
-binaries, but in sub-directories - Or offer separate downloads for your
-OS. We just modified the batch files to detect your arch-type and use
-the correct binaries. Everything is all in the 'bin' directory so we
-only have a one zip fits all approach.
+== Installation
 
-Definitive documentation can be found here:
+These instructions assume you have already downloaded a TomEE zip file
+and extracted it to the desired location on the file system, and that
+you have a suitable Java installation on your machine.
+
+Start by opening a Command Prompt as an Administrator user. 
+
+
+Ensure you have JAVA_HOME set to the JDK you wish to use for the 
+service. You can check this by running `set JAVA_HOME`.
+
+Run `service install`. Optionally you can pass a service name, and 
+credentials for a service user.
+
+`service install [/service-user <user>] [/service-password <password>] [service name]`
+
+For example: 
+
+```
+    C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>service install TomEE-DEV
+    Installing the service 'TomEE-DEV' ...
+    Using CATALINA_HOME:    "C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT"
+    Using CATALINA_BASE:    "C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT"
+    Using JAVA_HOME:        "C:\Java\jdk-11.0.4+11
+    Using JRE_HOME:         "C:\Java\jdk-11.0.4+11"
+    Using JVM:              "C:\Java\jdk-11.0.4+11"\bin\server\jvm.dll"
+    Using Service User:     ""
+    Installed, will now configure TomEE
+    The service 'TomEE-DEV' has been installed.
+
+    C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>
+```
+
+== Removal
+
+Removal is similar to installation. First, ensure the service is stopped.
+ In an administrator Command Prompt, run:
+
+`service remove [service name]`
+
+For example:
+
+```
+    C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>service remove TomEE-DEV
+    The service 'TomEE-DEV' has been removed
+
+    C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>
+```
+
+== Service Accounts
+
+Ny default, the service is installed to run at the user `NT-Authority\Local Service`, 
+which is a very restricted account. If you wish to use `LocalSystem`, which
+has more privileges, use:
+
+`service install /service-user LocalSystem [service name]`
+
+For example:
+
+```
+C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>service install /service-user LocalSystem TomEE-DEV
+Installing the service 'TomEE-DEV' ...
+Using CATALINA_HOME:    "C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT"
+Using CATALINA_BASE:    "C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT"
+Using JAVA_HOME:        "C:\Java\jdk-11.0.4+11"
+Using JRE_HOME:         "C:\Java\jdk-11.0.4+11"
+Using JVM:              "C:\Java\jdk-11.0.4+11"\bin\server\jvm.dll"
+Using Service User:     "LocalSystem"
+Installed, will now configure TomEE
+The service 'TomEE-DEV' has been installed.
+
+C:\Java\apache-tomee-plus-8.0.0-SNAPSHOT\bin>
+```
+
+Alternatively, you may have a specific local or domain user you wish to use
+to run the service. You can specify the username and password for
+the service user with the `/service-user` and `/service-password` 
+parameters.
+
+== Making Changes
+
+Once the service is installed, it is possible to make changes either
+using the Windows Service Control Manager (start, stop, change user)
+or by running the TomEE.exe executable in the bin directory which
+will allow you change more settings, such as the JVM the service
+uses.
+
+NOTE: if you use a custom name for your service, rename (or copy) TomEE.exe to
+match it - e.g. TomEE-DEV.exe to match the examples above.
+
+== Using a 32 bit JVM on 64 bit Windows
+
+The service script will install either TomEE.x86.exe or TomEE.amd64.exe as the
+service. The script uses the `PROCESSOR_ARCHITECTURE=AMD64` environment
+variable to determine which to use. The TomEE executable used needs to 
+match the architecture of the JVM you wish to use.
+
+If you wish to use a 32 bit JVM on 64 bit Windows, run 
+
+`set PROCESSOR_ARCHITECTURE=X86` prior to installing the service.
+
+== Setting environment variables for the service
+
+Setting custom environment variables for TomEE to use is a little tricky
+as it can't be done through the UI, but can be accomplished via the 
+command line.
+
+After the service as been installed, at the Command Prompt, use the 
+following syntax (use the right TomEE exe for your platform)
+
+`TomEE.amd64.exe //US//TomEE ++Environment "variable=value"`
+
+Replace `TomEE` after `//US//` with your service name if you are using
+a custom service name.
+
+== Further information
+
+The TomEE exe files are from the Apache Commons Daemon project. 
+Full documentation for commons-daemon can be found here:
 
 http://commons.apache.org/proper/commons-daemon/procrun.html

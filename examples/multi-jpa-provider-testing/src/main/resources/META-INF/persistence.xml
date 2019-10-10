@@ -23,6 +23,8 @@
                        http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
   <persistence-unit name="jpa">
     <jta-data-source>jdbc/jpa</jta-data-source>
+    <class>org.superbiz.model.Person</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <!--
         OpenJPA

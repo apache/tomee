@@ -3,44 +3,51 @@
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to use microprofile metrics in TomEE.  The project includes a docker profile which can be used to create a Docker image. 
+This is an example of how to use microprofile metrics in TomEE.  The project
+includes a docker profile which can be used to create a Docker image.
 
 == Run the application:
 
-....
-mvn clean install tomee:run 
-....
+[source,bash]
+----
+$ mvn clean install tomee:run
+----
 
-== Alternatively build and run the application via Docker (note the use of the docker profile):
+NOTE: Alternatively, build and run the application via Docker (note the use of the docker profile):
 
-....
-mvn -Pdocker docker:build
-docker run -it --rm \
-       -p 8080:8080 \
-       --name=tomee-mp-metrics-counted \
-       tomee/mp-metrics-counted
-....
+[source,bash]
+----
+$ mvn -Pdocker docker:build
+----
 
-Within the application there is an endpoint that will give you weather
+[source,bash]
+----
+$ docker run -it --rm -p 8080:8080 --name=tomee-mp-metrics-counted tomee/mp-metrics-counted
+----
+
+Within the application, there is an endpoint that will give you weather
 status for the day and week.
 
-== For the day status call:
+== Get the weather for the week:
 
-....
-GET http://localhost:8080/mp-metrics-counted/weather/week/status
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-counted/weather/week/status
+----
 
-== If running via Docker, because the application is installed as the ROOT application, remove the application name such as:
+IMPORTANT: If running via Docker, because the application is installed as the ROOT application, remove the application name from the URL:
 
-....
-GET http://localhost:8080/weather/week/status
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/weather/week/status
+----
 
 == Response:
 
-....
+[source,text]
+----
 Hi, today is a sunny day!
-....
+----
 
 == Counted Feature
 
@@ -48,9 +55,10 @@ MicroProfile metrics has a feature that can be used to count requests to
 a service.
 
 To use this feature you need to annotate the JAX-RS resource method with
-@Counted.
+`@Counted`.
 
-....
+[source,java]
+----
 @Path("/weather")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -66,28 +74,26 @@ public class WeatherService {
     }
 ...
 }
-....
+----
 
-There are some configurations, as part of @Counted, that you need to
-know:
+There are some configurations, as part of `@Counted`, that you need to know:
 
-*String name* Optional. Sets the name of the metric. If not explicitly
-given the name of the annotated object is used.
+*String name* Optional. Sets the name of the metric. If not explicitly given
+the name of the annotated object is used.
 
-*boolean absolute* If true, uses the given name as the absolute name of
-the metric. If false, prepends the package name and class name before
-the given name. Default value is false.
+*boolean absolute* If true, uses the given name as the absolute name of the
+metric. If false, prepends the package name and class name before the given
+name. Default value is false.
 
-*String displayName* Optional. A human-readable display name for
-metadata.
+*String displayName* Optional. A human-readable display name for metadata.
 
 *String description* Optional. A description of the metric.
 
-*String[] tags* Optional. Array of Strings in the = format to supply
-special tags to a metric.
+*String[] tags* Optional. Array of Strings in the = format to supply special
+tags to a metric.
 
-*boolean reusable* Denotes if a metric with a certain name can be
-registered in more than one place. Does not apply to gauges.
+*boolean reusable* Denotes if a metric with a certain name can be registered in
+more than one place. Does not apply to `@Gauge`.
 
 == Metric data
 
@@ -95,22 +101,32 @@ Check the counter metric doing a _GET_ request:
 
 === Prometheus format:
 
-....
-GET http://localhost:8080/mp-metrics-counted/metrics/application/weather_day_status
-....
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-counted/metrics/application/weather_day_status
+----
 
-=== Response:
+=== Prometheus Response:
 
-....
+[source,text]
+----
 # TYPE application:weather_day_status counter
 application:weather_day_status 1.0
-....
+----
 
 === JSON Format:
 
-For json format add the header _Accept=application/json_ to the request.
+For json format add the header `Accept: application/json` to the HTTP request.
 
-....
+[source,bash]
+----
+$ curl -X GET -H "Accept: application/json" http://localhost:8080/mp-metrics-counted/metrics/application/weather_day_status
+----
+
+=== JSON Response:
+
+[source,javascript]
+----
 {
     "weather_day_status": {
         "delegate": {},
@@ -118,24 +134,26 @@ For json format add the header _Accept=application/json_ to the request.
         "count": 1
     }
 }
-....
+----
 
 == Metric metadata
 
-A metric will have a metadata so you can know more information about it,
-like displayName, description, tags e etc.
+A metric will have metadata so you can know more information about it,
+like `displayName`, `description`, `tags`, etc.
 
-Check the metric metadata doing a _OPTIONS_ request:
+Check the metric metadata doing a _OPTIONS_ HTTP request:
 
-=== Request
+=== _OPTIONS_ HTTP Request
 
-....
-OPTIONS http://localhost:8080/mp-metrics-counted/metrics/application/weather_day_status
-....
+[source,bash]
+----
+$ curl -X OPTIONS http://localhost:8080/mp-metrics-counted/metrics/application/weather_day_status
+----
 
 === Response:
 
-....
+[source,javascript]
+----
 {
     "weather_day_status": {
         "unit": "none",
@@ -159,7 +177,7 @@ OPTIONS http://localhost:8080/mp-metrics-counted/metrics/application/weather_day
         "tags": ""
     }
 }
-....
+----
 
-You can also try it out using the WeatherServiceTest.java available in
-the project.
+You can also try it out using the WeatherServiceTest.java available in the
+project.

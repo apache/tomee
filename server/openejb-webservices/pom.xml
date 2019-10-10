@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>openejb-webservices</artifactId>
@@ -33,13 +33,13 @@
     <tomee.build.name>${project.groupId}.server.webservices</tomee.build.name>
   </properties>
   <dependencies>
-<!--    <dependency>--> <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
-<!-- Removed as included in javaee-api-8.0.0
-      <groupId>javax.xml.soap</groupId>
-      <artifactId>javax.xml.soap-api</artifactId>
-      <version>1.4.0-b01</version>
-      <scope>test</scope>
-    </dependency>--> 
+    <!-- workaround for SaajUniverseTest, our ProviderLocator doesnt use system property first - we should fix it -->
+    <!-- Removed as included in javaee-api-8.0.0 -->
+    <!--<dependency>-->
+      <!--<groupId>javax.xml.soap</groupId>-->
+      <!--<artifactId>javax.xml.soap-api</artifactId>-->
+      <!--<version>1.4.0-b01</version>-->
+    <!--</dependency>-->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -70,6 +70,11 @@
       <groupId>org.codehaus.swizzle</groupId>
       <artifactId>swizzle-stream</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>${saaj-impl.version}</version>
+    </dependency>
 
     <!-- spec dependencies -->
     <dependency>
@@ -86,22 +91,6 @@
       <groupId>axis</groupId>
       <artifactId>axis</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.messaging.saaj</groupId>
-      <artifactId>saaj-impl</artifactId>
-      <version>1.4.0-b03</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.xml.soap</groupId>
-          <artifactId>javax.xml.soap-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
   </dependencies>
 </project>

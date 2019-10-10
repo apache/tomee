@@ -24,14 +24,14 @@ next statement,
 
 `final Future<String> orange = processor.addJob("orange");`
 
-without waiting for the addJob() method to complete. And later we could
+without waiting for the `addJob()` method to complete. And later we could
 ask for the result using the `Future<?>.get()` method like
 
 `assertEquals("blue", blue.get());`
 
 It waits for the processing to complete (if its not completed already)
 and gets the result. If you did not care about the result, you could
-simply have your asynchronous method as a void method.
+simply have your asynchronous method as a `void` method.
 
 http://download.oracle.com/javase/6/docs/api/java/util/concurrent/Future.html[Future]
 Object from docs,
@@ -52,7 +52,8 @@ ____
 
 == The code
 
-....
+[source,java]
+----
 @Singleton
 public class JobProcessor {
 @Asynchronous
@@ -76,11 +77,12 @@ private void doSomeHeavyLifting() {
     }
   }
 }
-....
+----
 
 == Test
 
-....
+[source,java]
+----
 public class JobProcessorTest extends TestCase {
 
 public void test() throws Exception {
@@ -112,15 +114,16 @@ public void test() throws Exception {
 
     // Execution should be around 9 - 21 seconds
     // The execution time depends on the number of threads available for asynchronous execution.
-    // In the best case it is 10s plus some minimal processing time. 
+    // In the best case it is 10s plus some minimal processing time.
     assertTrue("Expected > 9 but was: " + total, total > 9);
     assertTrue("Expected < 21 but was: " + total, total < 21);
 
   }
 }
-....
+----
 
-....
+[source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -172,7 +175,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 23.491 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 == How it works under the covers
 
@@ -208,7 +211,7 @@ http://download.oracle.com/javase/6/docs/api/java/util/concurrent/atomic/AtomicI
 to the `@Asynchronous` method and have the bean code periodically update
 it with the percent complete.
 
-#Related Examples
+== Related Examples
 
 For complex asynchronous processing, JavaEE’s answer is
 `@MessageDrivenBean`. Have a look at the

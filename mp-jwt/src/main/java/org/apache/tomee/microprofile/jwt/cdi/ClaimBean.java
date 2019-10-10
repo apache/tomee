@@ -18,7 +18,6 @@ package org.apache.tomee.microprofile.jwt.cdi;
 
 import org.apache.openejb.cdi.ManagedSecurityService;
 import org.apache.xbean.propertyeditor.PropertyEditorRegistry;
-import org.apache.xbean.propertyeditor.PropertyEditors;
 import org.eclipse.microprofile.jwt.Claim;
 import org.eclipse.microprofile.jwt.ClaimValue;
 import org.eclipse.microprofile.jwt.Claims;
@@ -250,7 +249,7 @@ public class ClaimBean<T> implements Bean<T>, PassivationCapable {
             // handle JsonValue<T> (number, string, etc)
             return (T) toJson(key);
 
-        } else if (PropertyEditors.canConvert((Class<?>) ip.getType())) {
+        } else if (propertyEditorRegistry.findConverter((Class<?>) ip.getType()) != null) {
             final Class<?> type = (Class<?>) ip.getType();
             try {
                 final Object claimObject = getClaimValue(key);

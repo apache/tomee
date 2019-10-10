@@ -26,7 +26,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>examples</artifactId>
@@ -103,18 +103,17 @@
     <module>jsf-cdi-and-ejb</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
+    <!-- Does not work with Java 9+ because of the modules. Needs more work
     <module>mbean-auto-registration</module>
+    -->
     <module>movies-complete-meta</module>
     <module>movies-complete</module>
     <module>mp-config-example</module>
     <module>mp-config-source-database</module>
     <module>mp-faulttolerance-fallback</module>
     <module>mp-faulttolerance-retry</module>
-    <!--
-    Momentarily cut out till the feature can be re-implemented
     <module>mp-jwt-bean-validation</module>
     <module>mp-jwt-bean-validation-strongly-typed</module>
-    -->
     <module>mp-metrics-counted</module>
     <module>mp-metrics-histogram</module>
     <module>mp-metrics-timed</module>
@@ -246,23 +245,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
-              <skip>true</skip>
-            </configuration>
           </plugin>
         </plugins>
       </build>

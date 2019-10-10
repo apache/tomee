@@ -17,6 +17,7 @@
 package org.apache.tomee.microprofile.jwt.bval;
 
 import org.apache.openejb.dyni.DynamicSubclass;
+import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.xbean.asm7.AnnotationVisitor;
 import org.apache.xbean.asm7.ClassReader;
@@ -26,16 +27,14 @@ import org.apache.xbean.asm7.MethodVisitor;
 import org.apache.xbean.asm7.Opcodes;
 import org.apache.xbean.asm7.Type;
 
-import javax.validation.Constraint;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * We allow CDI and EJB beans to use BeanValidation to validate a JsonWebToken
@@ -95,18 +94,64 @@ import java.util.Set;
  *    }
  *
  */
-public class ValidationGenerator implements Opcodes {
+public abstract class ValidationGenerator implements Opcodes {
 
-    public static byte[] generateFor(final Class<?> target) throws ProxyGenerationException {
-        final Set<Method> constrainedMethods = getConstrainedMethods(target);
+    protected final Class<?> clazz;
+    protected final List<MethodConstraints> constraints;
+    protected final String suffix;
+    protected final Map<String, MethodVisitor> generatedMethods = new LinkedHashMap<>();
 
-        if (constrainedMethods.size() == 0) return null;
+    public ValidationGenerator(final Class<?> clazz, final List<MethodConstraints> constraints, final String suffix) {
+        this.clazz = clazz;
+        this.constraints = new ArrayList<>(constraints);
+        this.suffix = suffix;
+        Collections.sort(this.constraints);
+    }
 
-        final Map<String, MethodVisitor> visitors = new LinkedHashMap<>();
+    protected abstract void generateMethods(final ClassWriter cw);
+
+    public Class<?> generateAndLoad() {
+        return loadOrCreate();
+    }
+
+    public String getName() {
+        return clazz.getName() + "$$" + suffix;
+    }
+
+    public Class<?> loadOrCreate() {
+        final String constraintsClassName = getName();
+        final ClassLoader classLoader = clazz.getClassLoader();
+
+        try {
+            return classLoader.loadClass(constraintsClassName);
+        } catch (ClassNotFoundException e) {
+            // ok, let's continue on and make it
+        }
+
+        final byte[] bytes;
+        try {
+            bytes = generate();
+        } catch (ProxyGenerationException e) {
+            throw new ValidationGenerationException(clazz, e);
+        }
+
+        if (bytes == null) return null;
+
+        try {
+            return LocalBeanProxyFactory.Unsafe.defineClass(classLoader, clazz, constraintsClassName, bytes);
+        } catch (IllegalAccessException e) {
+            throw new ValidationGenerationException(clazz, e);
+        } catch (InvocationTargetException e) {
+            throw new ValidationGenerationException(clazz, e.getCause());
+        }
+    }
+
+    public byte[] generate() throws ProxyGenerationException {
+        generatedMethods.clear();
 
         final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 
-        final String generatedClassName = getName(target).replace('.', '/');
+        final String generatedClassName = getName().replace('.', '/');
 
         cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, generatedClassName, null, "java/lang/Object", null);
 
@@ -120,127 +165,82 @@ public class ValidationGenerator implements Opcodes {
             mv.visitEnd();
         }
 
-        int id = 0;
-        for (final Method method : sort(constrainedMethods)) {
-            final String name = method.getName() + "$$" + (id++);
+        generateMethods(cw);
 
-            // Declare a method of return type JsonWebToken for use with
-            // a call to BeanValidation's ExecutableValidator.validateReturnValue
-            final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, name, "()Lorg/eclipse/microprofile/jwt/JsonWebToken;", null, null);
-
-            // Put the method name on the
-            final AnnotationVisitor av = mv.visitAnnotation(Type.getDescriptor(Name.class), true);
-            av.visit("value", method.toString());
-            av.visitEnd();
-
-            // track the MethodVisitor
-            // We will later copy over the annotations
-            visitors.put(method.getName() + Type.getMethodDescriptor(method), mv);
-
-            // The method will simply return null
-            mv.visitCode();
-            mv.visitInsn(ACONST_NULL);
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(1, 1);
-        }
-
-        copyMethodAnnotations(target, visitors);
-
-        for (final MethodVisitor visitor : visitors.values()) {
-            visitor.visitEnd();
+        /**
+         * Read all parent classes and copy the public methods we need
+         * into our new class.
+         */
+        Class current = clazz;
+        while (current != null && !current.equals(Object.class)) {
+            try {
+                final ClassReader classReader = new ClassReader(DynamicSubclass.readClassFile(current));
+                classReader.accept(new CopyMethodAnnotations(), ClassReader.SKIP_CODE);
+            } catch (final IOException e) {
+                throw new ProxyGenerationException(e);
+            }
+            current = current.getSuperclass();
         }
 
         return cw.toByteArray();
     }
 
-    private static List<Method> sort(final Set<Method> constrainedMethods) {
-        final List<Method> methods = new ArrayList<>(constrainedMethods);
-        methods.sort((a, b) -> a.toString().compareTo(b.toString()));
-        return methods;
-    }
+    public class CopyMethodAnnotations extends ClassVisitor {
 
-    public static String getName(final Class<?> target) {
-        return target.getName() + "$$JwtConstraints";
-    }
-
-    public static Set<Method> getConstrainedMethods(final Class<?> clazz) {
-        final Set<Method> constrained = new HashSet<>();
-
-        // we could have been doing this long before Streams
-        for (Method method : clazz.getMethods())
-            for (Annotation annotation : method.getAnnotations())
-                if (isConstraint(annotation))
-                    constrained.add(method);
-
-        return constrained;
-    }
-
-    private static boolean isConstraint(final Annotation annotation) {
-        return annotation.annotationType().isAnnotationPresent(Constraint.class);
-    }
-
-    public static void copyMethodAnnotations(final Class<?> classToProxy, final Map<String, MethodVisitor> visitors) throws ProxyGenerationException {
-        // Move all the annotations onto the newly implemented methods
-        // Ensures CDI and JAX-RS and JAX-WS still work
-        Class clazz = classToProxy;
-        while (clazz != null && !clazz.equals(Object.class)) {
-            try {
-                final ClassReader classReader = new ClassReader(DynamicSubclass.readClassFile(clazz));
-                final ClassVisitor copyMethodAnnotations = new CopyMethodAnnotations(visitors);
-                classReader.accept(copyMethodAnnotations, ClassReader.SKIP_CODE);
-            } catch (final IOException e) {
-                throw new ProxyGenerationException(e);
-            }
-            clazz = clazz.getSuperclass();
-        }
-    }
-
-    public static class MoveAnnotationsVisitor extends MethodVisitor {
-
-        private final MethodVisitor newMethod;
-
-        public MoveAnnotationsVisitor(final MethodVisitor movedMethod, final MethodVisitor newMethod) {
-            super(Opcodes.ASM7, movedMethod);
-            this.newMethod = newMethod;
-        }
-
-        @Override
-        public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-            return newMethod.visitAnnotation(desc, visible);
-        }
-
-        @Override
-        public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-            return super.visitParameterAnnotation(parameter, desc, visible);
-        }
-
-        @Override
-        public void visitEnd() {
-            newMethod.visitEnd();
-            super.visitEnd();
-        }
-    }
-
-    private static class CopyMethodAnnotations extends ClassVisitor {
-        private final Map<String, MethodVisitor> visitors;
-
-        public CopyMethodAnnotations(final Map<String, MethodVisitor> visitors) {
+        public CopyMethodAnnotations() {
             super(Opcodes.ASM7);
-            this.visitors = visitors;
         }
 
         @Override
         public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
-            final MethodVisitor newMethod = visitors.remove(name + desc);
+            final MethodVisitor generatedMethod = generatedMethods.remove(name + desc);
 
-            if (newMethod == null) {
+            if (generatedMethod == null) {
                 return null;
             }
 
-            final MethodVisitor oldMethod = super.visitMethod(access, name, desc, signature, exceptions);
+            final MethodVisitor sourceMethod = super.visitMethod(access, name, desc, signature, exceptions);
 
-            return new MoveAnnotationsVisitor(oldMethod, newMethod);
+            return new MethodVisitor(Opcodes.ASM7, sourceMethod) {
+                @Override
+                public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
+                    return generatedMethod.visitAnnotation(desc, visible);
+                }
+
+                @Override
+                public void visitEnd() {
+                    generatedMethod.visitEnd();
+                    super.visitEnd();
+                }
+            };
         }
     }
 
+    /**
+     * Wraps a MethodVisitor and ignores all annotations that are not
+     * bean validation annotations that should be on this method.
+     */
+    public static class ConstrainedMethodVisitor extends MethodVisitor {
+        private final List<String> approved;
+
+        public ConstrainedMethodVisitor(final MethodVisitor methodVisitor, final MethodConstraints methodConstraints) {
+            super(Opcodes.ASM7, methodVisitor);
+            this.approved = methodConstraints.getAnnotations().stream()
+                    .map(Type::getDescriptor)
+                    .collect(Collectors.toList());
+        }
+
+        @Override
+        public AnnotationVisitor visitAnnotation(final String descriptor, final boolean visible) {
+            /**
+             * If this is a bean validation annotation we need, allow it to be added
+             */
+            if (approved.contains(descriptor)) return super.visitAnnotation(descriptor, visible);
+
+            /**
+             * Otherwise tell ASM to ignore it
+             */
+            return null;
+        }
+    }
 }

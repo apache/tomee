@@ -16,19 +16,17 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
-import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.executable.ExecutableValidator;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class ValidationConstraints {
 
@@ -49,16 +47,24 @@ public class ValidationConstraints {
     }
 
     public static ValidationConstraints of(final Class<?> componentClass) {
-        final Class constraintsClazz = loadOrCreate(componentClass);
+        final ClassValidationData data = new ClassValidationData(componentClass);
 
-        if (constraintsClazz == null) return null;
+        if (data.getJwtConstraints().size() == 0) return null;
 
-        final Set<Method> original = ValidationGenerator.getConstrainedMethods(componentClass);
-        final Set<Method> generated = ValidationGenerator.getConstrainedMethods(constraintsClazz);
+        final Class<?> constraintsClazz = new ClassValidationGenerator(data)
+                .generate()
+                .stream()
+                .filter(aClass -> aClass.getName().endsWith("JwtConstraints"))
+                .findFirst()
+                .orElseThrow(MissingConstraintsException::new);
 
-        if (original.size() != generated.size()) {
-            throw new GeneratedConstraintsMissingException(original, generated);
-        }
+
+        final Map<Method, Method> mapping = new HashMap<>();
+
+        Stream.of(constraintsClazz.getMethods())
+                .filter(method -> method.isAnnotationPresent(Generated.class))
+                .forEach(method -> mapping.put(resolve(componentClass, method), method)
+                );
 
         final Object instance;
         try {
@@ -67,51 +73,18 @@ public class ValidationConstraints {
             throw new ConstraintsClassInstantiationException(constraintsClazz, e);
         }
 
-        final Map<String, Method> names = new HashMap<>();
-        for (final Method method : constraintsClazz.getMethods()) {
-            final Name name = method.getAnnotation(Name.class);
-            if (name == null) continue;
-            names.put(name.value(), method);
-        }
-
-        final Map<Method, Method> validationMethods = new HashMap<>();
-        for (final Method method : ValidationGenerator.getConstrainedMethods(componentClass)) {
-            final Method validationMethod = names.get(method.toString());
-            validationMethods.put(method, validationMethod);
-        }
-
         final ExecutableValidator executableValidator = Validation.buildDefaultValidatorFactory()
                 .getValidator()
                 .forExecutables();
 
-        return new ValidationConstraints(instance, validationMethods, executableValidator);
+        return new ValidationConstraints(instance, mapping, executableValidator);
     }
 
-    public static Class loadOrCreate(final Class<?> componentClass) {
-        final String constraintsClassName = ValidationGenerator.getName(componentClass);
-        final ClassLoader classLoader = componentClass.getClassLoader();
-
+    private static Method resolve(final Class<?> componentClass, final Method method) {
         try {
-            return classLoader.loadClass(constraintsClassName);
-        } catch (ClassNotFoundException e) {
-            // ok, let's proceed to making it
-        }
-
-        final byte[] bytes;
-        try {
-            bytes = ValidationGenerator.generateFor(componentClass);
-        } catch (ProxyGenerationException e) {
-            throw new JWTValidationGenerationException(componentClass, e);
-        }
-
-        if (bytes == null) return null;
-
-        try {
-            return LocalBeanProxyFactory.Unsafe.defineClass(classLoader, componentClass, constraintsClassName, bytes);
-        } catch (IllegalAccessException e) {
-            throw new JWTValidationGenerationException(componentClass, e);
-        } catch (InvocationTargetException e) {
-            throw new JWTValidationGenerationException(componentClass, e.getCause());
+            return componentClass.getMethod(method.getName(), method.getParameterTypes());
+        } catch (NoSuchMethodException e) {
+            throw new MissingConstraintsMethodException(componentClass, method);
         }
     }
 }

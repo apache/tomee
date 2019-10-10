@@ -27,7 +27,6 @@ import javax.jms.MessageListener;
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "test")
 })
 public class JMSReceiverBean implements MessageListener {
-
     @Inject
     private MessageCounter counter;
 

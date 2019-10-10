@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-ws-security</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: EJB WebService with WS-Security</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,13 +40,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
+      <version>[8.0,)</version>
     </dependency>
 
     <!--
@@ -54,11 +48,42 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends
+         on Sun's internal copy of Xerces. See OPENEJB-1126. -->
+    <dependency>
+      <groupId>com.sun.xml.parsers</groupId>
+      <artifactId>jaxp-ri</artifactId>
+      <version>1.4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.messaging.saaj</groupId>
+      <artifactId>saaj-impl</artifactId>
+      <version>1.5.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.soap</groupId>
+          <artifactId>javax.xml.soap-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-cxf</artifactId>
+      <version>8.0.1-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -141,23 +166,4 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <profiles>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration> <!-- requires saaj-impl 1.4 but cxf is not yet ready -->
-              <skip>true</skip>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>

@@ -23,12 +23,14 @@ import org.apache.activemq.ra.ManagedConnectionProxy;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
 public class TomEEManagedConnection extends ActiveMQManagedConnection {
     private static final Field PROXY_CONNECTIONS_FIELD;
+    private TransactionSupportLevel transactionSupportLevel;
 
     static {
         try {
@@ -41,14 +43,16 @@ public class TomEEManagedConnection extends ActiveMQManagedConnection {
 
     private final Collection<ManagedConnectionProxy> proxyConnections;
 
+    @SuppressWarnings("unchecked")
     public TomEEManagedConnection(final Subject subject, final ActiveMQConnection physicalConnection,
-                                  final ActiveMQConnectionRequestInfo info) throws ResourceException {
+                                  final ActiveMQConnectionRequestInfo info, TransactionSupportLevel transactionSupportLevel) throws ResourceException {
         super(subject, physicalConnection, info);
         try {
             proxyConnections = Collection.class.cast(PROXY_CONNECTIONS_FIELD.get(this));
         } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Incompatible AMQ", e);
         }
+        this.transactionSupportLevel = transactionSupportLevel;
     }
 
     @Override
@@ -56,5 +60,9 @@ public class TomEEManagedConnection extends ActiveMQManagedConnection {
         final ManagedConnectionProxy proxy = new TomEEManagedConnectionProxy(this, info);
         proxyConnections.add(proxy);
         return proxy;
+    }
+
+    public TransactionSupportLevel getTransactionSupportLevel() {
+        return transactionSupportLevel;
     }
 }

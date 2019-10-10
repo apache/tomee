@@ -22,17 +22,25 @@ import org.apache.activemq.ra.ActiveMQManagedConnectionFactory;
 import org.apache.activemq.ra.MessageActivationSpec;
 import org.apache.activemq.ra.SimpleConnectionManager;
 
+import java.util.Locale;
+
 import javax.jms.JMSException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
 
 public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFactory {
+    private static final long serialVersionUID = 1L;
+    private TransactionSupportLevel transactionSupportLevel;
+
     @Override
     public Object createConnectionFactory(final ConnectionManager manager) throws ResourceException {
-        return new TomEERAConnectionFactory(this, manager, getInfo());
+        TomEERAConnectionFactory factory = new TomEERAConnectionFactory(this, manager, getInfo());
+        factory.setTransactionSupport(transactionSupportLevel);
+        return factory;
     }
 
     @Override
@@ -56,7 +64,7 @@ public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFact
             amqInfo = getInfo();
         }
         try {
-            return new TomEEManagedConnection(subject, makeConnection(amqInfo), amqInfo);
+            return new TomEEManagedConnection(subject, makeConnection(amqInfo), amqInfo, transactionSupportLevel);
         } catch (final JMSException e) {
             throw new ResourceException("Could not create connection.", e);
         }
@@ -66,5 +74,38 @@ public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFact
     public boolean equals(final Object object) {
         return !(object == null || !getClass().isInstance(object))
             && ((ActiveMQManagedConnectionFactory) object).getInfo().equals(getInfo());
+    }
+
+    public String getTransactionSupport() {
+        switch (transactionSupportLevel) {
+            case XATransaction:
+                return "xa";
+            case LocalTransaction:
+                return "local";
+            case NoTransaction:
+                return "none";
+            default:
+                return null;
+        }
+    }
+
+    public void setTransactionSupport(String transactionSupport) {
+        if (transactionSupport == null) {
+            throw new IllegalArgumentException("transactionSupport cannot be not null");
+        } else {
+            switch (transactionSupport.toLowerCase(Locale.ENGLISH)) {
+                case "xa":
+                    transactionSupportLevel = TransactionSupportLevel.XATransaction;
+                    break;
+                case "local":
+                    transactionSupportLevel = TransactionSupportLevel.LocalTransaction;
+                    break;
+                case "none":
+                    transactionSupportLevel = TransactionSupportLevel.NoTransaction;
+                    break;
+                default:
+                    throw new IllegalArgumentException("transactionSupport must be xa, local, or none:" + transactionSupport);
+            }
+        }
     }
 }

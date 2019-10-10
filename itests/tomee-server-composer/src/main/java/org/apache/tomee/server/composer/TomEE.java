@@ -231,6 +231,15 @@ public class TomEE {
                     .directory(home)
                     .command(catalinaSh.getAbsolutePath(), "run");
 
+            // make sure to configure the Locale to english otherwise the watch bellow will fail on other countries
+            if (env.containsKey("JAVA_OPTS")) {
+                env.put("JAVA_OPTS", "-Duser.language=en -Duser.country=US " + env.get("JAVA_OPTS"));
+
+            } else {
+                env.put("JAVA_OPTS", "-Duser.language=en -Duser.country=US");
+
+            }
+
             builder.environment().putAll(env);
 
             if (list) Files.visit(tmpdir, TomEE::print);

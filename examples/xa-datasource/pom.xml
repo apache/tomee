@@ -19,18 +19,17 @@
 
 <!-- $Rev$ $Date$ -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>xa-datasource</artifactId>
   <packaging>war</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <name>TomEE :: Examples :: XA Datasource configuration and usage</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <derby.version>10.12.1.1</derby.version>
-    <tomee.version>8.0.0-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
   </properties>
 
 
@@ -372,7 +371,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -388,7 +387,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <version>8.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
 

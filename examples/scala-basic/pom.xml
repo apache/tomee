@@ -23,14 +23,14 @@
   <groupId>org.superbiz</groupId>
   <artifactId>scala-basic</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>8.0.1-SNAPSHOT</version>
   <name>TomEE :: Examples :: Basic Scala</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <scala.version>2.11</scala.version>
-    <scala.full-version>${scala.version}.9</scala.full-version>
+    <scala.version>2.13</scala.version>
+    <scala.full-version>${scala.version}.0</scala.full-version>
   </properties>
 
   <repositories>
@@ -112,7 +112,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
-      <version>8.0</version>
+      <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
 
@@ -125,7 +125,7 @@
     <dependency>
       <groupId>org.scalatest</groupId>
       <artifactId>scalatest_${scala.version}</artifactId>
-      <version>3.0.3</version>
+      <version>3.0.8</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -145,7 +145,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.0-SNAPSHOT</version>
+      <version>8.0.1-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -164,16 +164,4 @@
     </snapshotRepository>
   </distributionManagement>
 
-  <profiles>
-    <profile>
-      <id>java9</id>
-      <activation>
-        <jdk>9</jdk>
-      </activation>
-      <properties>
-        <scala.version>2.12</scala.version>
-        <scala.full-version>${scala.version}.2</scala.full-version>
-      </properties>
-    </profile>
-  </profiles>
 </project>
