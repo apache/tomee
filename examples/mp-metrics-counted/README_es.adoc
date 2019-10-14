@@ -54,7 +54,7 @@ Hi, today is a sunny day!
 
 == Usando `@Counted`
 
-Las métricas de Microprofile tienen una función que se puede usar para contar
+Las métricas de MicroProfile tienen una función que se puede usar para contar
 solicitudes a un servicio.
 
 Para utilizar esta función, debe anotar los métodos de los recursos JAX-RS con

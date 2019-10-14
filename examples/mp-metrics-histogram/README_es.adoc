@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo utilizar las métricas de Microprofile en TomEE.
+Este es un ejemplo sobre cómo utilizar las métricas de MicroProfile en TomEE.
 
 == Ejecute la aplicación:
 
@@ -43,7 +43,7 @@ $ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
 
 == Usando `@Histogram`
 
-Las métricas de Microprofile tienen una función que te permite crear un histograma datos.
+Las métricas de MicroProfile tienen una función que te permite crear un histograma datos.
 
 Para utilizar esta función, injecta un objeto `MetricRegistry`, registra el Histograma, and agrega datos al histograma como se muestra a continuación.
 

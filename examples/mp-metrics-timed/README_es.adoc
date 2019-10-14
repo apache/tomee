@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo utilizar las métricas de Microprofile en TomEE.
+Este es un ejemplo sobre cómo utilizar las métricas de MicroProfile en TomEE.
 
 == Ejecute la aplicación:
 
@@ -31,7 +31,7 @@ Hi, today is a sunny day!
 
 == Usando `@Timed`
 
-Las métricas de Microprofile tienen una función que se puede usar para tracker
+Las métricas de MicroProfile tienen una función que se puede usar para tracker
 el tiempo de un evento.
 
 Para utilizar esta función, debe anotar los métodos de los recursos JAX-RS con
