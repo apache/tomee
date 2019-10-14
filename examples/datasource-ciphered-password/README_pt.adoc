@@ -13,7 +13,7 @@ Também mostra como implementar sua própria criptografia.
 == Configuração
 
 A configuração é simplesmente uma configuração de fonte de dados com um
-parâmetro adicional `` PasswordCipher '' para especificar a criptografia para
+parâmetro adicional PasswordCipher para especificar a criptografia para
 usar.
 
 Exemplo usando a criptografia Static3DES:
@@ -31,7 +31,7 @@ Exemplo usando a criptografia Static3DES:
 
 == Usando sua própria implementação
 
-O exemplo implementa uma criptografia reversa que simplesmente inverte o
+O exemplo implementa uma criptografia reversa que simplesmente inverte a
 senha para criptografar/descriptografar.
 
 A implementação é feita com a biblioteca commons-lang:
@@ -52,7 +52,7 @@ public static class ReverseEncryption implements PasswordCipher {
 Para ser funcional, ele precisa do arquivo
 `META-INF/org.apache.openejb.resource.jdbc.PasswordCipher/reverse`.
 
-O nome do arquivo (reverso) define o nome da criptografia a ser usado para o
+O nome do arquivo (reversa) define o nome da criptografia a ser usado para o
 Parâmetro PasswordCipher.
 
 Este arquivo simplesmente contém a classe de implementação da criptografia.
