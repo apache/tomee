@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo utilizar las métricas de microperfil en TomEE. El
+Este es un ejemplo sobre cómo utilizar las métricas de MicroProfile en TomEE. El
 proyecto incluye un perfil de Docker que se puede usar para crear una imagen de
 Docker.
 
