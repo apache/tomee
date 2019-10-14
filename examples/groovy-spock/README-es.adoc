@@ -1,0 +1,87 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= HelloSpecification
+
+_Este es una guía de como implementar http://spockframework.org[Spock Framework] para pruebas._
+
+== Hello
+
+[source,groovy]
+----
+include::src/main/groovy/org/superbiz/groovy/Hello.groovy[]
+----
+
+== HelloSpecification
+
+Esta clase extiende de `*_spock.lang.Specification_*` para registrar la especificación de prueba.
+
+Inyecte el bean *Hello* con _@Inject_ y use http://arquillian.org[Arquilian] para desplegar la prueba.
+
+[source,groovy]
+----
+include::src/test/groovy/org/superbiz/groovy/HelloSpecification.groovy[]
+----
+
+== Ejecutando
+
+Para correr la prueba ejecute.
+
+[source,bash]
+----
+$ mvn test
+----
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.groovy.HelloSpecification
+INFO - ********************************************************************************
+INFO - OpenEJB http://tomee.apache.org/
+INFO - Startup: Fri Oct 04 00:11:58 ECT 2019
+INFO - Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+INFO - Version: 8.0.0-SNAPSHOT
+INFO - Build date: 20190907
+INFO - Build time: 04:10
+INFO - ********************************************************************************
+INFO - openejb.home = /Users/sergio/workspace/git/tomee/examples/groovy-spock
+INFO - openejb.base = /Users/sergio/workspace/git/tomee/examples/groovy-spock
+INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@4c9f8c13
+INFO - Succeeded in installing singleton service
+INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Using 'openejb.deployments.classpath=false'
+INFO - Creating TransactionManager(id=Default Transaction Manager)
+INFO - Creating SecurityService(id=Default Security Service)
+INFO - Configuring enterprise application: /Users/sergio/workspace/git/tomee/examples/groovy-spock/fb09e09c-4da2-47dd-83e9-4fd3f1e685e3.war
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean fb09e09c-4da2-47dd-83e9-4fd3f1e685e3_org.superbiz.groovy.HelloSpecification: Container(type=MANAGED, id=Default Managed Container)
+INFO - Creating Container(id=Default Managed Container)
+INFO - Using directory /var/folders/3j/qhs78rln3y9bl0c279f2j13m0000gn/T for stateful session passivation
+INFO - Enterprise application "/Users/sergio/workspace/git/tomee/examples/groovy-spock/fb09e09c-4da2-47dd-83e9-4fd3f1e685e3.war" loaded.
+INFO - Assembling app: /Users/sergio/workspace/git/tomee/examples/groovy-spock/fb09e09c-4da2-47dd-83e9-4fd3f1e685e3.war
+INFO - Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@4c9f8c13
+INFO - Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+INFO - OpenWebBeans Container is starting...
+INFO - Adding OpenWebBeansPlugin : [CdiPlugin]
+INFO - All injection points were validated successfully.
+INFO - OpenWebBeans Container has started, it took 1555 ms.
+INFO - Deployed Application(path=/Users/sergio/workspace/git/tomee/examples/groovy-spock/fb09e09c-4da2-47dd-83e9-4fd3f1e685e3.war)
+Checking hello instance: This is the Hello instance
+Comparing 'hi' to 'hi'
+INFO - Undeploying app: /Users/sergio/workspace/git/tomee/examples/groovy-spock/fb09e09c-4da2-47dd-83e9-4fd3f1e685e3.war
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.264 sec - in org.superbiz.groovy.HelloSpecification
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  46.149 s
+[INFO] Finished at: 2019-10-04T00:12:15-05:00
+[INFO] ------------------------------------------------------------------------
+....
