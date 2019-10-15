@@ -1,0 +1,41 @@
+== Vaadin V10 (LTS) - Simples WebApp em Java
+
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: published
+
+Essa demo vai mostrar como iniciar com uma simples webapp Vaadin V10, baseada na API pura do Java executando no TomEE (webprofile)
+
+A plataforma Vaadin é OpenSource e está disponível em
+https://github.com/vaadin/platform[Github]
+
+=== Construindo esse exemplo
+
+Para construir esse exemplo, apenas execute _mvn clean install tomee:run_ Você vai encontrar o app executando em http://localhost:8080/
+
+=== Implementação
+
+Essa implementação está usando o https://vaadin.com/flow[Flow API] da plataforma Vaadin.
+
+[source,java]
+----
+@Route("")
+public class HelloVaadinV10 extends Composite<Div> {
+    public HelloVaadinV10() {
+        final VerticalLayout layout = new VerticalLayout();
+        layout
+            .add(new Button("click me",
+                            event -> layout.add(new Label("clicked again"))
+            ));
+        //set the main Component
+        getContent().add(layout);
+    }
+}
+----
+
+A documentação da plataforma Vaadin V10 está disponível
+https://vaadin.com/docs/v10/flow/Overview.html[aqui]
+
+=== Informações de suporte
+
+A partir do Vaadin 10, o Vaadin está se mudando para o modelo de release train com quatro grandes releases por ano. Isso permite que eles enviem novas features mais rapidamente para os desenvolvedores. O Vaadin continua seu compromisso com a estabilidade a longo prazo com os releases long-term support (LTS). Os releases LTs vão sair aproximadamente a cada 2 anos e vão oferecer 5 anos de suporte.

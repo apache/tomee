@@ -1,5 +1,9 @@
 == Vaadin V10 (LTS) - Simple WebApp in Java
 
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: published
+
 This demo will show how to start with a simple Vaadin V10 webapp, based
 on pure Java API running on TomEE (webprofile)
 
