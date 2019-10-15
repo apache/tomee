@@ -5,9 +5,9 @@
 
 
 == Sobre Cucumber
-Cucumber é uma ferramenta que ativa suporte para link:https://en.wikipedia.org/wiki/Behavior-driven_development[Behaviour-Driven Development (BDD)] pela execução de * cenários * escritos em texto sem formatação e valida que o software faz o que esses cenários dizem. O formato usado para descrever os cenários é o link:https://docs.cucumber.io/gherkin/reference/[sintaxe do gherkin].
+Cucumber é uma ferramenta que ativa suporte para link:https://en.wikipedia.org/wiki/Behavior-driven_development[Behaviour-Driven Development (BDD)] pela execução de * cenários * escritos em texto sem formatação e valida se o software faz o que esses cenários dizem. O formato usado para descrever os cenários é o link:https://docs.cucumber.io/gherkin/reference/[sintaxe do gherkin].
 
-Cucumber foi originalmente escrito na linguagem de programação Ruby, mais agora suporta uma variedade de diferentes linguagens de programação através de varias implementações, incluindo Java.
+Cucumber foi originalmente escrito na linguagem de programação Ruby, mas agora suporta uma variedade de diferentes linguagens de programação através de varias implementações, incluindo Java.
 
 == Sobre Cucumber JVM
 
@@ -43,7 +43,7 @@ Para este exemplo nós vamos adicionar duas dependências no `pom.xml` na sessã
 
 == Ponto de entrada do teste
 
-A classe `org.superbiz.cucumber.CucumberTest` é o ponto de entrada podemos identificar quando a fase de teste do maven é executada. O `@RunWith(Cucumber.class)` é a anotação que permitir a integração do cucumber e a partir daí, ele verifica os arquivos de recursos disponíveis (`hello.feature`) e seu mapeamento programático correspondente (HelloStepDef.java)
+A classe `org.superbiz.cucumber.CucumberTest` é o ponto de entrada podemos identificar quando a fase de teste do maven é executada. O `@RunWith(Cucumber.class)` é a anotação que permite a integração do cucumber e a partir daí, ele verifica os arquivos de recursos disponíveis (`hello.feature`) e seu mapeamento programático correspondente (HelloStepDef.java)
 
 [source,java,numbered]
 ----
@@ -60,7 +60,7 @@ public class CucumberTest {
 
 
 == Arquivo de recursos
-O `hello.feature` O arquivo contém a sintaxe `gherkin` que indica a sequencia de passos que cucumber vai executar. Verifique o link:https://docs.cucumber.io/gherkin/reference/[ documentação de referência do cucumber gherkin] para entender as palavras-chave disponíveis, regras e condicionais.
+O `hello.feature` O arquivo contém a sintaxe `gherkin` que indica a sequência de passos que cucumber vai executar. Verifique o link:https://docs.cucumber.io/gherkin/reference/[ documentação de referência do cucumber gherkin] para entender as palavras-chave disponíveis, regras e condicionais.
 
 
 [source,bash]
