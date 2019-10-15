@@ -10,7 +10,7 @@ going to read configuration values from a Database.
 [discrete]
 ==== ConfigSource Feature
 
-To provide a customized ConfigSource from a database, you need to beging with a class that implements `ConfigSource` interface, overriding 3 methods:
+To provide a customized ConfigSource from a database, you need to begin with a class that implements `ConfigSource` interface, overriding 3 methods:
 `getProperties` , `getValue` , and `getName`
 
 [source,java]
