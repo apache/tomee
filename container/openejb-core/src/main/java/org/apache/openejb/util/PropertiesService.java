@@ -89,7 +89,7 @@ public class PropertiesService {
     }
 
     public void putAll(final Properties props) {
-        props.putAll(props);
+        this.props.putAll(props);
     }
 
     public Properties getProperties() {
