@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo implementar un ConfigSource para la configuración personalizada de microprofile. El ConfigSource personalizado lee los valores 
+Este es un ejemplo sobre cómo implementar un ConfigSource para la configuración personalizada de MicroProfile. El ConfigSource personalizado lee los valores 
 de configuración de una base de datos.
 
 [discrete]
