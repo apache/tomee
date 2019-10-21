@@ -8,8 +8,6 @@ TomEE tiene una particular característica que permite el uso de Validación de 
 
 La motivación para esta función es que `JsonWebToken` es efectivamente un bean, y una verificación de seguridad es, en última instancia, un acto de producir un resultado booleano utilizando una entrada mínima. Es un problema perfecto para la Validación de Bean.
 
-CAUTION: Esta característica se ha eliminado temporalmente en `master` y necesita ser modificada. Se anticipa que esto se completará antes de Apache TomEE 8.0.0 final.
-
 La característica en última instancia le permite implementar un método como este:
 
 
