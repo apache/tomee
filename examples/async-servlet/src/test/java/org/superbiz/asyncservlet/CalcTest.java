@@ -25,6 +25,7 @@ import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,6 +38,7 @@ import java.net.URL;
 
 @RunWith(Arquillian.class)
 @RunAsClient
+@Ignore
 public class CalcTest {
 
     @ArquillianResource
