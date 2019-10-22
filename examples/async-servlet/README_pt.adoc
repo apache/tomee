@@ -5,18 +5,18 @@
 
 == Async Servlet
 
-Servlets can be run asynchronously - this can be useful if your servlet performs long-running operations, such as calling
-other services using an asynchronous client.
+Servlets podem ser executado assincronamente - isso pode ser útil se seu servlet executa operações de longa execução, como chamar
+outros serviços usando um cliente assíncrono.
 
-Mark your servlet as `asyncSupported`, and call Request.startAsync(). This will return an AsyncContext object. Your
-code will need to call AsyncContext.dispatch() when it is finished.
+Marque seu servlet como `asyncSupported` e chame Request.startAsync (). Isso retornará um objeto AsyncContext. Seu
+Seu código precisará chamar AsyncContext.dispatch () quando terminar.s
 
-WARNING:
+AVISO:
 
-Section 2.3.3.4 of Servlet 3.0 Spec says "Other than the startAsync and complete methods, implementations of the request and response objects are not guaranteed to be thread safe. This means that they should either only be used within the scope of the request handling thread or the application must ensure that access to the request and response objects are thread safe."
+A Seção 2.3.3.4 da Especificação do Servlet 3.0 diz "Além dos métodos startAsync e complete, não é garantido que as implementações dos objetos de solicitação e resposta sejam seguras contra threads. Isso significa que elas devem ser usadas apenas dentro do escopo da thread de manipulação de solicitações ou o aplicativo deve garantir que o acesso aos objetos de solicitação e resposta seja seguro para threads".
 
-If you write to the response directly from your Runnable (#1 below), you risk a race condition with another thread using the response.
-This is particularly noticeable when Async requests timeout, as containers will recycle the Request and Response object to use for another request.
+Se você escrever para a resposta diretamente do seu Runnable (nº 1 abaixo), você corre o risco de sofrer uma condição de execução com outra thread usando a resposta.
+Isso é particularmente perceptível quando o Async solicita o tempo limite, pois os contêineres reciclam o objeto Request and Response para usar em outra solicitação.
 
 [source,java,numbered]
 ----
@@ -34,9 +34,9 @@ public class CalcServlet extends HttpServlet {
 			@Override
 			public void run() {
 				try {
-					// do work <!-- 1 -->
+					// trabalha <!-- 1 -->
 				} catch (final Exception e) {
-                    // handle exceptions
+                    // lidar com exceções
 				} finally {
 					asyncContext.dispatch();
 				}
@@ -49,9 +49,9 @@ public class CalcServlet extends HttpServlet {
 
 ----
 
-Steps to replicate:
+Etapas para replicar:
 
-   1. Run `mvn clean install`. The Servlet is tested using Arquillian.
+   1. Execute `mvn clean install`. O Servlet é testado usando Arquillian.
 
 ```
 -------------------------------------------------------
