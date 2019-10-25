@@ -16,16 +16,18 @@ CONDITIONS OF ANY KIND, either express or implied. See the License for
 the specific language governing permissions and limitations under the
 License.
 
-Steps to run the example
+=== Steps to run the example
 
-Build and start the demo:
+[discrete]
+==== Build and start the demo:
 
-....
+[source,bash]
+----
 mvn clean package tomee:run
-....
+----
 
-Open:
 
+==== Open:
 ....
 http://localhost:8080/myfaces-codi-1.0-SNAPSHOT/
 ....
@@ -33,7 +35,8 @@ http://localhost:8080/myfaces-codi-1.0-SNAPSHOT/
 This example shows how to improve JSF2/CDI/BV/JPA applications with
 features provided by Apache MyFaces CODI and ExtVal.
 
-Intro of MyFaces CODI and ExtVal
+[discrete]
+==== Intro of MyFaces CODI and ExtVal
 
 The Apache MyFaces Extensions CDI project (aka CODI) hosts portable
 extensions for Contexts and Dependency Injection (CDI - JSR 299). CODI
