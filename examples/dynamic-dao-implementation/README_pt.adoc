@@ -1,44 +1,44 @@
 :index-group: Proxy Beans
 :jbake-type: page
 :jbake-status: status=published
-= z
+= Implementação dinâmica de DAO
 
-Many aspects of Data Access Objects (DAOs) are very repetitive and
-boiler plate. As a fun and experimental feature, TomEE supports
-dynamically implementing an interface that is seen to have standard
-DAO-style methods.
+Muitos aspectos dos Data Access Objects (DAOs) são muito repetitivos e
+chapa de ebulição. Como um recurso divertido e experimental, o TomEE suporta
+implementar dinamicamente uma interface que é vista como tendo padrão
+Métodos no estilo DAO.
 
-The interface has to be annotated with @PersistenceContext to define
-which EntityManager to use.
+A interface deve ser anotada com @PersistenceContext para definir
+qual EntityManager usar.
 
-Methods should respect these conventions:
+Os métodos devem respeitar estas convenções:
 
-* void save(Foo foo): persist foo
+* void save(Foo foo): persistir foo
 * Foo update(Foo foo): merge foo
-* void delete(Foo foo): remove foo, if foo is detached it tries to
-attach it
+* void delete(Foo foo): remover foo, se foo for desconectado, ele tenta
+anexá-lo.
 * Collection|Foo namedQuery(String name[, Map<String, ?> params, int
-first, int max]): run the named query called name, params contains
-bindings, first and max are used for pagination. Last three parameters
-are optionnals
+first, int max]): executar a consulta nomeada chamada name, params contém
+ligações, first e max são usadas para paginação. Últimos três parâmetros
+são opcionais.
 * Collection|Foo nativeQuery(String name[, Map<String, ?> params, int
-first, int max]): run the native query called name, params contains
-bindings, first and max are used for pagination. Last three parameters
-are optionnals
+first, int max]): executar a consulta nativa chamada name, params contém
+ligações, first e max são usadas para paginação. Últimos três parâmetros
+são opcionais.
 * Collection|Foo query(String value [, Map<String, ?> params, int first,
-int max]): run the query put as first parameter, params contains
-bindings, first and max are used for pagination. Last three parameters
-are optionnals
-* Collection findAll([int first, int max]): find all Foo, parameters are
-used for pagination
+int max]): executar a consulta colocada como primeiro parâmetro, params contém
+ligações, first e max são usadas para paginação. Últimos três parâmetros
+são opcionais.
+* Collection findAll([int first, int max]): Encontre todos os Foo, os parâmetros são
+usado para paginação.
 * Collection findByBar1AndBar2AndBar3(<bar 1 type> bar1, <bar 2 type>
-bar2, bar3 [, int first, int max]): find all Foo with specified field
-values for bar1, bar2, bar3.
+bar2, bar3 [, int first, int max]): encontre todos os Foo com campo especificado
+valores para bar1, bar2, bar3.
 
-Dynamic finder can have as much as you want field constraints. For
-String like is used and for other type equals is used.
+O localizador dinâmico pode ter o quanto você deseja restrições de campo. Para
+String like é usado e para outro tipo igual é usado.
 
-== Example
+== Exemplo
 
 === User
 
@@ -325,7 +325,7 @@ public class DynamicUserDaoTest {
 }
 ....
 
-== Running
+== Executando
 
 ....
 -------------------------------------------------------
