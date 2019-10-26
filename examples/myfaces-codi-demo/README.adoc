@@ -16,7 +16,7 @@ mvn clean package tomee:run
 
 ==== Open:
 ....
-http://localhost:8080/myfaces-codi-1.0-SNAPSHOT/
+http://localhost:8080/myfaces-codi-demo-8.0.1-SNAPSHOT/
 ....
 
 This example shows how to improve JSF2/CDI/BV/JPA applications with
