@@ -232,8 +232,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.9.9.3</jackson.version>
-    <jackson.dataformat.version>2.9.9</jackson.dataformat.version>
+    <jackson.version>2.10.0</jackson.version>
+    <jackson.dataformat.version>2.10.0</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
