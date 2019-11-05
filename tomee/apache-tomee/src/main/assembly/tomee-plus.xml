@@ -41,6 +41,13 @@
       </excludes>
     </fileSet>
     <fileSet>
+      <directory>${project.basedir}/src/main/resources/META-INF/release_notes/</directory>
+      <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
+      <includes>
+        <include>*</include>
+      </includes>
+    </fileSet>
+    <fileSet>
       <directory>${project.basedir}/src/main/resources/META-INF/plus/</directory>
       <outputDirectory>/apache-tomee-plus-${project.version}</outputDirectory>
       <includes>
