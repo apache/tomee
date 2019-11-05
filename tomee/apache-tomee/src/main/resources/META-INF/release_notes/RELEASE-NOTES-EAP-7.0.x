@@ -1,4 +1,9 @@
-= TomEE EAP 7.1.2-TT.2
+= TomEE EAP 7.1.2-TT.3
+
+=== Changes in TomEE EAP 7.1.2-TT.3
+
+* Update to Mojarra 2.2.20 to mitigate CVE-2019-17091
+* Update to Jackson to 2.10.0
 
 === Changes in TomEE EAP 7.1.2-TT.2
 
