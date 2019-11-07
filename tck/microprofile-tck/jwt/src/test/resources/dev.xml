@@ -67,6 +67,7 @@
       <class name="org.eclipse.microprofile.jwt.tck.config.IssNoValidationBadIssTest" />
       <class name="org.eclipse.microprofile.jwt.tck.config.IssValidationTest" />
       <class name="org.eclipse.microprofile.jwt.tck.config.IssValidationFailTest" />
+      <class name="org.eclipse.microprofile.jwt.tck.config.NoValidationNoExpTest" />
     </classes>
   </test>
 </suite>

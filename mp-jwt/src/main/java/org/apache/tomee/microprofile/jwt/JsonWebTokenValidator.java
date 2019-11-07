@@ -61,7 +61,6 @@ public class JsonWebTokenValidator {
 
         try {
             final JwtConsumerBuilder builder = new JwtConsumerBuilder()
-                    .setRequireExpirationTime()
                     .setRelaxVerificationKeyValidation()
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()

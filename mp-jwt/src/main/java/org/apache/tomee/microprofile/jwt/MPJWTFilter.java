@@ -328,7 +328,6 @@ public class MPJWTFilter implements Filter {
 
             try {
                 final JwtConsumerBuilder builder = new JwtConsumerBuilder()
-                        .setRequireExpirationTime()
                         .setRelaxVerificationKeyValidation()
                         .setRequireSubject()
                         .setSkipDefaultAudienceValidation()
