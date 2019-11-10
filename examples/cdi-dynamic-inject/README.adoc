@@ -1,100 +1,114 @@
-= CDI @Qualifier
-:index-group: CDI
-:jbake-type: page
-:jbake-status: published
+= CDI Dynamic Inject
+: index-group: CDI
+: jbake-type: page
+: jbake-status: published
 
 == Introduction
 
-Sometimes we need write several implementation for a interface of rule business, to increase uncoupling let's inject only interface and CDI choose the right implementation, to help CDI with this choice was created the **Qualifiers**.
+Sometimes we need to write multiple implementations for a business rules interface, to increase decoupling we will dynamically inject the implementation at runtime.
 
+== Example 1
 
-== Example
+In this example we have a `Payment` interface and its implementations:
 
-In this example, we have an interface `Payment` and theirs implementations: 
-* Cash
-* CreditCard 
+- Cash
+- CreditCard
 
-In our test (Payment Test) we inject only the interface Payment, without the Qualifier feature the CDI would not known which implementation to inject in test.
+In our test (`FinalizePaymentTest`) we injected the FinalizePayment class, and called the `finishWithCash` method.
 
-We created a **Qualifier** called `PaymentQualifier` a single qualifier with only one difference, the annotation `@Qualifier`.
+This method will dynamically inject the correct implementation using CDI features.
 
 ....
-@Retention(RUNTIME)
-@Target({ TYPE, FIELD, METHOD })
-@Qualifier
-public @interface PaymentQualifier {
+public String finishWithCash () {
 
-	PaymentType type();	
+	paymentChoosed = paymentsLazy.select(Cash.class).get ();
+	return paymentChoosed.pay ();
 }
 ....
 
-This qualifier has a method named `type()`, this method will help the CDI to inject correctly implementation. see this enum:
+note that a variable called `paymentsLazy` is variable will contain all implementations of the `Payment` interface
 
 ....
-public enum PaymentType {
+@Inject
+@Any
+private Instance <Payment> paymentsLazy;
+....
 
-	CASH,
-	CREDITCARD
+
+In this variable we are using:
+
+- Annotation `@inject`
+
+Indicates to CDI that we need a dependency injection
+
+- Annotation `@Any`
+
+Indicate that all possible implementations should be listed.
+
+- `Instance` object
+
+Object responsible for knowing all possible implementations and instantiating them at the desired time.
+
+With this variable ready we can call it using:
+
+....
+paymentsLazy.select(Cash.class).get ();
+....
+
+where `Cash.class` tells you the implementation and `.get()` returns the ready-to-use instance.
+
+== Example 2
+
+In this example we have a `Payment` interface and its implementations:
+
+- Cash
+- CreditCard
+
+In our test (`FinalizePaymentQualifierTest`) we injected the FinalizePayment class, and called the `finishByQualifier` method.
+
+This method will dynamically inject the correct implementation using a `Qualifier` (PaymentType).
+
+....
+public String finishByQualifier (PaymentType type) {
+
+    paymentChoosed = paymentsLazy.select (new PayByQualifier (type)) .get ();
+    return paymentChoosed.pay ();
 }
 ....
 
-now see an implementation
+For this approach to work we will need to create a new class called `PayByQualifier` that extends `AnnotationLiteral` that expects a qualifier to pass into its `T extends Annotation` (Generics) parameter.
 
 ....
-@PaymentQualifier(type=PaymentType.CASH)
-public class Cash implements Payment {
+public class PayByQualifier extends AnnotationLiteral <PaymentQualifier> implements PaymentQualifier {
+
+	private PaymentType type;
+	
+	public PayByQualifier (PaymentType type) {
+		this.type = type;
+	}
 
 	@Override
-	public String pay() {
-		
-		return "cash";
+	public PaymentType type () {
+		return this.type;
 	}
 }
 ....
 
-Each implementation should marked with this qualifier.
+the important thing is to implement the Annotation method in our case the `public PaymentType type();`
 
-How to inject? see simplicity
+To facilitate this implementation we receive this value from constructor class.
 
 ....
-public class PaymentTest {
+public PayByQualifier (PaymentType type) {
 
-    private static EJBContainer container;
-
-    @Inject
-    @PaymentQualifier(type=PaymentType.CREDITCARD) //qualifier informing the CDI about the correctly implementation
-    private Payment paymentCreditCard;
-    
-    @Inject
-    @PaymentQualifier(type=PaymentType.CASH) //qualifier informing the CDI about the correctly implementation
-    private Payment paymentCash;
-
-    @BeforeClass
-    public static void start() {
-        container = EJBContainer.createEJBContainer();
-    }
-
-    @Before
-    public void setUp() throws Exception {
-        container.getContext().bind("inject", this);
-    }
-
-    @Test
-    public void mustReturnCreditCard() {
-    	
-        assertEquals(paymentCreditCard.pay(), "creditCard");
-    }
-    
-    @Test
-    public void mustReturnCash() {
-    	
-        assertEquals(paymentCash.pay(), "cash");
-    }
-
-    @AfterClass
-    public static void stop() {
-        container.close();
-    }
+    this.type = type;
 }
+....
+
+With this class ready we can use it in our business class:
 
 ....
+paymentChoosed = paymentsLazy.select (new PayByQualifier(type)).get ();
+....
+
+Obs: The qualifier structure was reused from https://github.com/cassunde/tomee/tree/master/examples/cdi-qualifier project 
