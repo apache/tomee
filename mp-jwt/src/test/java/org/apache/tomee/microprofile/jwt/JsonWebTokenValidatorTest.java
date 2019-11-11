@@ -44,6 +44,6 @@ public class JsonWebTokenValidatorTest {
 
         assertEquals("Jane Awesome", jwt.getSubject());
         assertEquals("https://server.example.com", jwt.getIssuer());
-        assertEquals(2552047942L, jwt.getExpirationTime().longValue());
+        assertEquals(2552047942l, jwt.getExpirationTime());
     }
 }
