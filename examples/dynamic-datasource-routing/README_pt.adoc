@@ -3,8 +3,7 @@
 :jbake-status: status=published
 = Roteamento dinâmico de fonte de dados
 
-A API de fonte de dados dinâmica do TomEE visa permitir o uso de vários dados
-fontes como uma do ponto de vista do aplicativo.
+A API de fonte de dados dinâmica do TomEE visa permitir o uso de várias fontes de dados como se fosse uma do ponto de vista do aplicativo.
 
 Pode ser útil por razões técnicas (balanceamento de carga, por exemplo) ou
 razões geralmente mais funcionais (filtragem, agregação, enriquecimento ...).
@@ -42,9 +41,9 @@ representando fontes de dados para usar* uma fonte de dados padrão para usar
 A interface Router (`org.apache.openejb.resource.jdbc.Router`) tem
 somente um método para implementar, `public DataSource getDataSource()`
 
-Nossa implementação `DeterminedRouter` usa um ThreadLocal para gerenciar o
+Nossa implementação `DeterminedRouter` usa um ThreadLocal para gerenciar a
 fonte de dados usada atualmente. Lembre-se de que a JPA usou mais de uma vez o
-Método getDatasource() para uma operação. Para alterar a fonte de dados em
+Método getDatasource() para uma operação. Alterar a fonte de dados em
 uma transação é perigosa e deve ser evitada.
 
 ....
@@ -143,7 +142,7 @@ public class DeterminedRouter extends AbstractRouter {
 
 === Declarando a implementação
 
-Para poder usar seu roteador como um recurso, você precisa fornecer um
+Para poder usar seu roteador como um recurso, você precisa fornecer uma
 configuração de serviço. Isso é feito em um arquivo que você pode encontrar em
 META-INF/org.router/ e chamado service-jar.xml (para sua implementação
 é claro que você pode alterar o nome do pacote).
@@ -195,7 +194,7 @@ public class RoutedPersister {
 
 == O teste
 
-No modo de teste e usando a configuração de estilo de propriedade, o seguinte
+No modo de teste e usando a configuração de estilo de propriedade, a seguinte
 configuração é usada:
 
 ....
@@ -256,8 +255,7 @@ public class DynamicDataSourceTest {
 
 == Configuração via openejb.xml
 
-O testcase acima usa propriedades para configuração. O caminho idêntico
-fazê-lo através do `conf/openejb.xml` é o seguinte:
+O testcase acima usa propriedades para configuração. O caminho idêntico para fazê-lo através do `conf/openejb.xml` é o seguinte:
 
 ....
 <!-- Roteador e fonte de dados -->
@@ -299,10 +297,9 @@ Usar mais de uma fonte de dados atrás de um EntityManager significa que
 bancos de dados já foram criados. Se não for esse o caso, o provedor JPA
 precisa criar a fonte de dados no momento da inicialização.
 
-Hibernate faça isso se você declarar seus bancos de dados que funcionará. Contudo
+Hibernate faz isso, se você declarar seus bancos de dados vão funcionar. Contudo
 com o OpenJPA (o provedor JPA padrão para o OpenEJB), a criação é
-preguiçoso e isso acontece apenas uma vez; quando você alterna o banco de dados, ele
-chega de trabalho.
+preguiçosa e isso acontece apenas uma vez; quando você alterna o banco de dados, ele não vai funcionar mais.
 
 É claro que o OpenEJB fornece os recursos @Singleton e @Startup do Java EE 6
 e podemos fazer um bean apenas fazendo uma descoberta simples, mesmo que não exista
