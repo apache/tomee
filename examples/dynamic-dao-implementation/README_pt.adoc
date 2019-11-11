@@ -4,9 +4,8 @@
 = Implementação dinâmica de DAO
 
 Muitos aspectos dos Data Access Objects (DAOs) são muito repetitivos e
-chapa de ebulição. Como um recurso divertido e experimental, o TomEE suporta
-implementar dinamicamente uma interface que é vista como tendo padrão
-Métodos no estilo DAO.
+boiler plate. Como um recurso divertido e experimental, o TomEE suporta
+implementar dinamicamente uma interface que é vista como tendo métodos padrão no estilo DAO.
 
 A interface deve ser anotada com @PersistenceContext para definir
 qual EntityManager usar.
@@ -35,7 +34,7 @@ usado para paginação.
 bar2, bar3 [, int first, int max]): encontre todos os Foo com campo especificado
 valores para bar1, bar2, bar3.
 
-O localizador dinâmico pode ter o quanto você deseja restrições de campo. Para
+O localizador dinâmico pode ter pode ter quantas constantes de campo você quiser. Para
 String like é usado e para outro tipo igual é usado.
 
 == Exemplo
