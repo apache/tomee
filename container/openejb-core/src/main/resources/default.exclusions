@@ -61,6 +61,7 @@ commons-logging-api-
 commons-net-
 commons-pool-
 commons-pool2-
+commonj.sdo-
 cryptacular-
 cssparser-
 cxf-
@@ -84,6 +85,7 @@ fusemq-leveldb-
 geronimo-connector
 geronimo-javamail
 geronimo-transaction
+geronimo-jsonb_
 google-
 gragent.jar
 groovy-
@@ -109,6 +111,8 @@ jackson-core-
 jackson-databind-
 jackson-mapper-asl-
 jackson-module-jaxb-annotations-
+jakarta.xml.bind-api-
+jakarta.activation-api-
 janino-
 jansi-
 jasper.jar
@@ -224,6 +228,7 @@ snappy-java-
 spring-
 sshd-
 stax-api-
+stax-ex-
 stax2-api-
 sunec.jar
 surefire-
@@ -250,6 +255,7 @@ tomcat-util
 tomcat-websocket-api
 tomee-
 tools.jar
+txw2-
 twitter4j-
 velocity-
 wagon-
@@ -258,6 +264,7 @@ webbeans-ejb
 webbeans-impl
 webbeans-spi
 websocket-api
+woodstox-core-
 woodstox-core-asl-
 ws-commons-util-
 wsdl4j-
