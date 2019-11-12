@@ -1,4 +1,10 @@
-= TomEE EAP 7.1.2-TT.3
+= TomEE EAP 7.1.2-TT.4
+
+=== Changes in TomEE EAP 7.1.2-TT.4
+
+* Update to Tomcat 8.5.47
+* Update to Commons Daemon 1.2.2
+* Update scanning exclusions to reduce memory footprint
 
 === Changes in TomEE EAP 7.1.2-TT.3
 
