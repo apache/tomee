@@ -158,6 +158,12 @@
       </exclusions>
     </dependency>
 
+    <dependency> <!-- Added in for backwards compatibility with the move to Jakarta EE coordinates -->
+      <groupId>com.sun.activation</groupId>
+      <artifactId>jakarta.activation</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+
     <dependency>
       <groupId>org.eclipse.microprofile.openapi</groupId>
       <artifactId>microprofile-openapi-api</artifactId>
