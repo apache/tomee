@@ -1,0 +1,115 @@
+= CDI Dynamic Inject
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+== Introdução
+
+As vezes precisamos escrever várias implementações para uma interface de regras de negócios, para aumentar o desacoplamento vamos injetar dinamicamente a implementação em tempo de execução.
+
+== Exemplo 1
+
+Neste exemplo, temos uma interface `Payment` e suas implementações: 
+
+- Cash
+- CreditCard 
+
+Em nosso teste (`FinalizePaymentTest`) nós injetamos a classe FinalizePayment, e chamamos o método `finishWithCash`.
+
+Esse método irá injetar dinamicamente a implementação correta usando os recursos do CDI
+
+....
+public String finishWithCash() {
+
+	paymentChoosed = paymentsLazy.select(Cash.class).get();
+	return paymentChoosed.pay();
+}
+....
+
+observe que está sendo usado uma variável chamada de `paymentsLazy` essa variável irá conter todas as implementações da interface `Payment`
+
+....
+@Inject
+@Any
+private Instance<Payment> paymentsLazy;
+....
+
+
+Nessa variável estamos usando:
+
+- Anotação `@inject` 
+
+Indica ao CDI que gostariamos de realizar um injeção de dependencia
+
+- Anotação `@Any` 
+
+Indicar que deve ser listada todas as implementações possíveis.
+
+- Objeto `Instance`
+
+Objeto responsável por conhecer todas as implementações possíveis e instancia-las no momento desejado.
+
+com essa variável pronta podemos chama-la usando o:
+
+....
+paymentsLazy.select(Cash.class).get();
+....
+
+onde `Cash.class` informa qual e a implementação e `.get()` retorna a instancia pronta para uso.
+
+== Exemplo 2
+
+Neste exemplo, temos uma interface `Payment` e suas implementações: 
+
+- Cash
+- CreditCard 
+
+Em nosso teste (`FinalizePaymentQualifierTest`) nós injetamos a classe FinalizePayment, e chamamos o método `finishByQualifier`.
+
+Esse método irá injetar dinamicamente a implementação correta usando um `Qualifier`(PaymentType).
+
+....
+public String finishByQualifier(PaymentType type) {
+
+    paymentChoosed = paymentsLazy.select( new PayByQualifier(type) ).get();
+    return paymentChoosed.pay();
+}
+....
+
+Para essa abordagem funcionar precisaremos criar uma nova classe chamada `PayByQualifier` que extende `AnnotationLiteral` que espera a passagem de um qualifier em seu parametro `T extends Annotation`(Generics).
+
+....
+public class PayByQualifier extends AnnotationLiteral<PaymentQualifier> implements PaymentQualifier {
+	
+	private PaymentType type;
+
+	public PayByQualifier(PaymentType type) {
+		
+		this.type = type;
+	}
+	
+	@Override
+	public PaymentType type() {
+		return this.type;
+	}
+}
+....
+
+o importante e implementar o método da Anotação em nosso caso o `public PaymentType type();`
+
+Para faciliar essa implementação recebemos esse valor por construtor de nossa nova classe
+
+....
+public PayByQualifier(PaymentType type) {
+		
+    this.type = type;
+}
+....
+
+Com essa classe pronta podemos usa-la em nossa classe de negócio:
+
+....
+paymentChoosed = paymentsLazy.select( new PayByQualifier(type) ).get();
+....
+
+Obs: A estrutura de qualifier foi reaproveitada do project https://github.com/cassunde/tomee/tree/master/examples/cdi-qualifier
