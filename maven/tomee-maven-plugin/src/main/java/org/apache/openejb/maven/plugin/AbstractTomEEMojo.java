@@ -82,6 +82,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.SimpleFormatter;
@@ -1296,7 +1297,18 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
         System.setProperty("server.shutdown.port", String.valueOf(tomeeShutdownPort));
         System.setProperty("server.shutdown.command", tomeeShutdownCommand);
 
-        server = new RemoteServer(getConnectAttempts(), debug);
+        // We might need to override static cached env vars in RemoteServer
+        // Reason: Multiple execution in same JVM, i.e. in Maven Integration Tests
+        Properties override = new Properties();
+        override.setProperty("openejb.home", System.getProperty("openejb.home"));
+        if (debug) {
+            override.setProperty("openejb.server.debug", System.getProperty("openejb.server.debug"));
+            override.setProperty("server.debug.port", System.getProperty("server.debug.port"));
+        }
+        override.setProperty("server.shutdown.port", System.getProperty("server.shutdown.port"));
+        override.setProperty("server.shutdown.command", System.getProperty("server.shutdown.command"));
+
+        server = new RemoteServer(override, getConnectAttempts(), debug);
         server.setAdditionalClasspath(getAdditionalClasspath());
 
         addShutdownHooks(server); // some shutdown hooks are always added (see UpdatableTomEEMojo)
@@ -1315,7 +1327,7 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
             getLog().info("Running '" + getClass().getSimpleName().replace("TomEEMojo", "").toLowerCase(Locale.ENGLISH));
         }
 
-        final InputStream originalIn = System.in; // piped when starting resmote server so saving it
+        final InputStream originalIn = System.in; // piped when starting remote server so saving it
 
         serverCmd(server, strings);
 
