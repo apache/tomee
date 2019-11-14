@@ -46,7 +46,7 @@ public class MoviesMPJWTConfigurationProvider {
         final KeyFactory kf = KeyFactory.getInstance("RSA");
         final RSAPublicKey pk = (RSAPublicKey) kf.generatePublic(spec);
 
-        return Optional.of(JWTAuthConfiguration.authConfiguration(pk, "https://server.example.com"));
+        return Optional.of(JWTAuthConfiguration.authConfiguration(pk, "https://server.example.com", false));
     }
 
     @Produces
