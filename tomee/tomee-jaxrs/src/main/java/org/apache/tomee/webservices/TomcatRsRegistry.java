@@ -159,7 +159,9 @@ public class TomcatRsRegistry implements RsRegistry {
         final Container[] children = host.findChildren();
 
         for (final Container child : children) {
-            if (! Context.class.isInstance(child)) continue;
+            if (! Context.class.isInstance(child)) {
+                continue;
+            }
 
             final Context context = (Context) child;
 
