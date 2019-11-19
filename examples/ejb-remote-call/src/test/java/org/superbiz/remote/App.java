@@ -26,7 +26,7 @@ public class App {
     public static void main(String[] args) throws NamingException, BusinessException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-        properties.put(Context.PROVIDER_URL, "http://localhost:8080/tomee/ejb");
+        properties.put(Context.PROVIDER_URL, "http://192.168.37.202:8080/tomee/ejb");
 
         Context ctx = new InitialContext(properties);
         Object ref = ctx.lookup("global/ejb-remote-call-8.0.1-SNAPSHOT/Calculator!org.superbiz.remote.Calculator");

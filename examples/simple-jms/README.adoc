@@ -4,17 +4,17 @@
 
 = Simple JMS
 
-This example demostrate how to set up a ``CustomJmsService`` in order to produce and consume a JSM ```Message``.
+This example demostrate how to set up a ``CustomJmsService`` in order to produce and consume a JMS ``Message``.
 
 = The Code
 
 == The JMS service: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
 
-Here we have a simple REST, we annotate the class with ``@Path("/message")`` to indicate the route corresponding to class ``CustomJmsService``. So we define ``sendMessage()`` as ``@POST``  and ``receiveMessage()`` as ``@GET`` for this ``/message`` route. 
+Here we have a simple REST endpoint, annotated the class with ``@Path("/message")`` to indicate the route corresponding to class ``CustomJmsService``. So we define ``sendMessage()`` as ``@POST``  and ``receiveMessage()`` as ``@GET`` for this ``/message`` route.
 
 In addition, directly related to this this example, you can observe 2 elements: a ``Queue`` and a ``ConnectionFactory`` annotated as ``@Resource``
 
-Finally, interacting with intances of ``Connection``, ``Session``, ``Queue`` you can see instances of ``MessageProducer`` and ``MessageConsumer``, reponsible of writing and reading to/from the ``Queue`` repectively.
+Finally, interacting with instances of ``Connection``, ``Session``, ``Queue`` you can see instances of ``MessageProducer`` and ``MessageConsumer``, responsible of writing and reading to/from the ``Queue`` respectively.
 
 ....
 @Stateless
@@ -84,9 +84,9 @@ public class CustomJmsService {
 
 === Test for the JMS service
 
-The test is trivial. The idea is first to POST a message to the service. This is done using intances of ``ClientBuilder`` and ``WebTarget``.
+The test is trivial. The idea is first to POST a message to the service. This is done using instances of ``ClientBuilder`` and ``WebTarget``.
 
-Then, similar to the POST, we perform a GET request that consumes the previously posted messsage.
+Then, similar to the POST, we perform a GET request that consumes the previously posted message.
 
 Finally, in order to verify both HTTP status from the responses are asserted as equals to the expected HTTP codes (204/200), as well as the message's content.
 
