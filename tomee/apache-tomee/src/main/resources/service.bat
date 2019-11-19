@@ -91,7 +91,7 @@ if not exist "%JRE_HOME%\bin\javaw.exe" goto noJavaHome
 goto okJavaHome
 :gotJdkHome
 for /f tokens^=2^ delims^=.-_^" %%j in ('"%JAVA_HOME%\bin\java.exe" -fullversion 2^>^&1') do set "JAVA_MAJOR_VERSION=%%j"
-if JAVA_MAJOR_VERSION lss 11 (
+if %JAVA_MAJOR_VERSION% lss 11 (
     if not exist "%JAVA_HOME%\jre\bin\java.exe" goto noJavaHome
     if not exist "%JAVA_HOME%\jre\bin\javaw.exe" goto noJavaHome
 )

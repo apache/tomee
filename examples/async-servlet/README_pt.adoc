@@ -1,0 +1,323 @@
+= Async Servlet
+:index-group: Servlet
+:jbake-type: page
+:jbake-status: published
+
+== Async Servlet
+
+Servlets podem ser executado assincronamente - isso pode ser útil se seu servlet executa operações de longa execução, como chamar
+outros serviços usando um cliente assíncrono.
+
+Marque seu servlet como `asyncSupported` e chame Request.startAsync (). Isso retornará um objeto AsyncContext. Seu
+Seu código precisará chamar AsyncContext.dispatch () quando terminar.s
+
+AVISO:
+
+A Seção 2.3.3.4 da Especificação do Servlet 3.0 diz "Além dos métodos startAsync e complete, não é garantido que as implementações dos objetos de solicitação e resposta sejam seguras contra threads. Isso significa que elas devem ser usadas apenas dentro do escopo da thread de manipulação de solicitações ou o aplicativo deve garantir que o acesso aos objetos de solicitação e resposta seja seguro para threads".
+
+Se você escrever para a resposta diretamente do seu Runnable (nº 1 abaixo), você corre o risco de sofrer uma condição de execução com outra thread usando a resposta.
+Isso é particularmente perceptível quando o Async solicita o tempo limite, pois os contêineres reciclam o objeto Request and Response para usar em outra solicitação.
+
+[source,java,numbered]
+----
+@WebServlet(urlPatterns = "/*", asyncSupported = true)
+public class CalcServlet extends HttpServlet {
+
+	private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+	@Override
+	protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+
+		final AsyncContext asyncContext = req.startAsync();
+		asyncContext.setTimeout(timeout);
+		asyncContext.start(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// trabalha <!-- 1 -->
+				} catch (final Exception e) {
+                    // lidar com exceções
+				} finally {
+					asyncContext.dispatch();
+				}
+			}
+		});
+	}
+
+
+}
+
+----
+
+Etapas para replicar:
+
+   1. Execute `mvn clean install`. O Servlet é testado usando Arquillian.
+
+```
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.asyncservlet.CalcTest
+Oct 02, 2019 9:14:34 PM org.apache.openejb.arquillian.common.Setup findHome
+INFO: Unable to find home in: /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee
+Oct 02, 2019 9:14:34 PM org.apache.openejb.arquillian.common.MavenCache getArtifact
+INFO: Downloading org.apache.tomee:apache-tomee:8.0.1-SNAPSHOT:zip:webprofile please wait...
+Oct 02, 2019 9:14:34 PM org.apache.openejb.arquillian.common.Zips unzip
+INFO: Extracting '/home/daniel/.m2/repository/org/apache/tomee/apache-tomee/8.0.1-SNAPSHOT/apache-tomee-8.0.1-SNAPSHOT-webprofile.zip' to '/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee'
+Oct 02, 2019 9:14:35 PM org.apache.tomee.arquillian.remote.RemoteTomEEContainer configure
+INFO: Downloaded container to: /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.169 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version name:   Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)
+02-Oct-2019 21:14:37.170 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Jul 4 2019 14:20:06 UTC
+02-Oct-2019 21:14:37.171 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version number: 9.0.22.0
+02-Oct-2019 21:14:37.171 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
+02-Oct-2019 21:14:37.171 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Version:            4.9.0-8-amd64
+02-Oct-2019 21:14:37.171 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Architecture:          amd64
+02-Oct-2019 21:14:37.172 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre
+02-Oct-2019 21:14:37.172 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_162-b12
+02-Oct-2019 21:14:37.172 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            Eclipse OpenJ9
+02-Oct-2019 21:14:37.172 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.173 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.186 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xoptionsfile=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs/options.default
+02-Oct-2019 21:14:37.186 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xlockword:mode=default,noLockword=java/lang/String,noLockword=java/util/MapEntry,noLockword=java/util/HashMap$Entry,noLockword=org/apache/harmony/luni/util/ModifiedMap$Entry,noLockword=java/util/Hashtable$Entry,noLockword=java/lang/invoke/MethodType,noLockword=java/lang/invoke/MethodHandle,noLockword=java/lang/invoke/CollectHandle,noLockword=java/lang/invoke/ConstructorHandle,noLockword=java/lang/invoke/ConvertHandle,noLockword=java/lang/invoke/ArgumentConversionHandle,noLockword=java/lang/invoke/AsTypeHandle,noLockword=java/lang/invoke/ExplicitCastHandle,noLockword=java/lang/invoke/FilterReturnHandle,noLockword=java/lang/invoke/DirectHandle,noLockword=java/lang/invoke/ReceiverBoundHandle,noLockword=java/lang/invoke/DynamicInvokerHandle,noLockword=java/lang/invoke/FieldHandle,noLockword=java/lang/invoke/FieldGetterHandle,noLockword=java/lang/invoke/FieldSetterHandle,noLockword=java/lang/invoke/StaticFieldGetterHandle,noLockword=java/lang/invoke/StaticFieldSetterHandle,noLockword=java/lang/invoke/IndirectHandle,noLockword=java/lang/invoke/InterfaceHandle,noLockword=java/lang/invoke/VirtualHandle,noLockword=java/lang/invoke/PrimitiveHandle,noLockword=java/lang/invoke/InvokeExactHandle,noLockword=java/lang/invoke/InvokeGenericHandle,noLockword=java/lang/invoke/VarargsCollectorHandle,noLockword=java/lang/invoke/ThunkTuple
+02-Oct-2019 21:14:37.186 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xjcl:jclse7b_29
+02-Oct-2019 21:14:37.187 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dcom.ibm.oti.vm.bootstrap.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64
+02-Oct-2019 21:14:37.188 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dsun.boot.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64
+02-Oct-2019 21:14:37.188 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64:/usr/lib64:/usr/lib
+02-Oct-2019 21:14:37.188 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.home=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre
+02-Oct-2019 21:14:37.189 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.ext.dirs=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/ext
+02-Oct-2019 21:14:37.189 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Duser.dir=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.189 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.class.path=.
+02-Oct-2019 21:14:37.189 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
+02-Oct-2019 21:14:37.190 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Xmx512m
+02-Oct-2019 21:14:37.190 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Xms256m
+02-Oct-2019 21:14:37.190 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -XX:ReservedCodeCacheSize=64m
+02-Oct-2019 21:14:37.190 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.httpPort=45619
+02-Oct-2019 21:14:37.190 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false
+02-Oct-2019 21:14:37.191 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
+02-Oct-2019 21:14:37.191 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=true
+02-Oct-2019 21:14:37.191 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
+02-Oct-2019 21:14:37.191 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/conf/logging.properties
+02-Oct-2019 21:14:37.192 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib/openejb-javaagent.jar
+02-Oct-2019 21:14:37.192 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+02-Oct-2019 21:14:37.192 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/temp
+02-Oct-2019 21:14:37.193 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.194 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:37.194 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib
+02-Oct-2019 21:14:37.194 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+02-Oct-2019 21:14:37.195 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
+02-Oct-2019 21:14:37.195 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.class.path=/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/bin/bootstrap.jar:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/bin/tomcat-juli.jar
+02-Oct-2019 21:14:37.195 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.command=org.apache.catalina.startup.Bootstrap start
+02-Oct-2019 21:14:37.196 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.launcher=SUN_STANDARD
+02-Oct-2019 21:14:37.196 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.launcher.pid=16103
+02-Oct-2019 21:14:37.196 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64:/usr/lib64:/usr/lib]
+02-Oct-2019 21:14:38.134 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["http-nio-45619"]
+02-Oct-2019 21:14:38.217 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["ajp-nio-37081"]
+test.war:
+/WEB-INF/
+/WEB-INF/classes/
+/WEB-INF/classes/org/
+/WEB-INF/classes/org/superbiz/
+/WEB-INF/classes/org/superbiz/asyncservlet/
+/WEB-INF/classes/org/superbiz/asyncservlet/CalcServlet$ResultHolder.class
+/WEB-INF/classes/org/superbiz/asyncservlet/CalcServlet.class
+/WEB-INF/classes/org/superbiz/asyncservlet/CalcBean.class
+02-Oct-2019 21:14:39.242 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+02-Oct-2019 21:14:39.305 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+02-Oct-2019 21:14:39.745 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+02-Oct-2019 21:14:39.750 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+02-Oct-2019 21:14:39.752 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Wed Oct 02 21:14:39 BRT 2019
+02-Oct-2019 21:14:39.753 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+02-Oct-2019 21:14:39.753 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.1-SNAPSHOT
+02-Oct-2019 21:14:39.756 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20191002
+02-Oct-2019 21:14:39.757 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 09:00
+02-Oct-2019 21:14:39.757 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+02-Oct-2019 21:14:39.757 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:39.757 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT
+02-Oct-2019 21:14:39.759 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@16d81d4a
+02-Oct-2019 21:14:39.768 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+02-Oct-2019 21:14:39.938 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/conf/tomee.xml'
+Oct 02, 2019 9:14:41 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:45619/tomee/ejb}
+02-Oct-2019 21:14:42.218 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+02-Oct-2019 21:14:42.243 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+02-Oct-2019 21:14:42.250 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
+02-Oct-2019 21:14:42.275 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+02-Oct-2019 21:14:42.307 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+02-Oct-2019 21:14:42.426 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+02-Oct-2019 21:14:42.505 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Singleton Container)
+02-Oct-2019 21:14:42.576 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: openejb
+02-Oct-2019 21:14:42.772 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jndiname.format={deploymentId}{interfaceType.openejbLegacyName}'
+02-Oct-2019 21:14:42.796 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/DeployerBusinessRemote) --> Ejb(deployment-id=openejb/Deployer)
+02-Oct-2019 21:14:42.797 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.Deployer) --> Ejb(deployment-id=openejb/Deployer)
+02-Oct-2019 21:14:42.799 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer) --> Ejb(deployment-id=openejb/Deployer)
+02-Oct-2019 21:14:42.802 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+02-Oct-2019 21:14:42.803 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+02-Oct-2019 21:14:42.810 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
+02-Oct-2019 21:14:42.815 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+02-Oct-2019 21:14:42.837 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.855 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.871 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.872 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.876 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.879 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+02-Oct-2019 21:14:42.904 INFO [main] org.apache.openejb.assembler.classic.Assembler.deployMBean Deployed MBean(openejb.user.mbeans:application=openejb,group=org.apache.openejb.assembler.monitoring,name=JMXDeployer)
+02-Oct-2019 21:14:42.910 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=openejb)
+02-Oct-2019 21:14:42.980 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+02-Oct-2019 21:14:43.203 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+02-Oct-2019 21:14:43.203 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT  
+02-Oct-2019 21:14:43.204 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+02-Oct-2019 21:14:43.204 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+02-Oct-2019 21:14:43.207 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server initialization in [6,328] milliseconds
+02-Oct-2019 21:14:43.244 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+02-Oct-2019 21:14:43.245 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+02-Oct-2019 21:14:43.269 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
+02-Oct-2019 21:14:43.269 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet engine: [Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)]
+02-Oct-2019 21:14:43.341 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+02-Oct-2019 21:14:43.342 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+02-Oct-2019 21:14:43.344 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+02-Oct-2019 21:14:43.345 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
+02-Oct-2019 21:14:43.381 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-45619"]
+02-Oct-2019 21:14:43.394 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-37081"]
+02-Oct-2019 21:14:43.399 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [191] milliseconds
+02-Oct-2019 21:14:43.656 INFO [http-nio-45619-exec-2] org.apache.openejb.util.JarExtractor.extract Extracting jar: /tmp/arquillian-tomee-app-working-dir/0/test.war
+02-Oct-2019 21:14:43.710 INFO [http-nio-45619-exec-2] org.apache.openejb.util.JarExtractor.extract Extracted path: /tmp/arquillian-tomee-app-working-dir/0/test
+02-Oct-2019 21:14:43.711 INFO [http-nio-45619-exec-2] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+02-Oct-2019 21:14:43.713 INFO [http-nio-45619-exec-2] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /test
+02-Oct-2019 21:14:43.715 INFO [http-nio-45619-exec-2] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+02-Oct-2019 21:14:43.883 INFO [http-nio-45619-exec-2] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /tmp/arquillian-tomee-app-working-dir/0/test
+02-Oct-2019 21:14:44.042 INFO [http-nio-45619-exec-2] org.apache.openejb.config.InitEjbDeployments.deploy Auto-deploying ejb CalcBean: EjbDeployment(deployment-id=CalcBean)
+02-Oct-2019 21:14:44.049 INFO [http-nio-45619-exec-2] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+02-Oct-2019 21:14:44.050 INFO [http-nio-45619-exec-2] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean test.Comp1648671683: Container(type=MANAGED, id=Default Managed Container)
+02-Oct-2019 21:14:44.053 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+02-Oct-2019 21:14:44.065 INFO [http-nio-45619-exec-2] org.apache.openejb.core.managed.SimplePassivater.init Using directory /home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/temp for stateful session passivation
+02-Oct-2019 21:14:44.096 INFO [http-nio-45619-exec-2] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/tmp/arquillian-tomee-app-working-dir/0/test" loaded.
+02-Oct-2019 21:14:44.097 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /tmp/arquillian-tomee-app-working-dir/0/test
+02-Oct-2019 21:14:44.121 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=CalcBeanLocalBean) --> Ejb(deployment-id=CalcBean)
+02-Oct-2019 21:14:44.121 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/test/CalcBean!org.superbiz.asyncservlet.CalcBean) --> Ejb(deployment-id=CalcBean)
+02-Oct-2019 21:14:44.124 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/test/CalcBean) --> Ejb(deployment-id=CalcBean)
+02-Oct-2019 21:14:44.180 INFO [http-nio-45619-exec-2] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@16d81d4a
+02-Oct-2019 21:14:44.261 INFO [http-nio-45619-exec-2] org.apache.openejb.cdi.ManagedSecurityService.<init> Some Principal APIs could not be loaded: org.eclipse.microprofile.jwt.JsonWebToken out of org.eclipse.microprofile.jwt.JsonWebToken not found
+02-Oct-2019 21:14:44.311 INFO [http-nio-45619-exec-2] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+02-Oct-2019 21:14:44.319 INFO [http-nio-45619-exec-2] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+02-Oct-2019 21:14:44.325 INFO [http-nio-45619-exec-2] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/tmp/arquillian-tomee-app-working-dir/0/test/WEB-INF/classes/ looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+02-Oct-2019 21:14:44.850 INFO [http-nio-45619-exec-2] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+02-Oct-2019 21:14:44.868 INFO [http-nio-45619-exec-2] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 557 ms.
+02-Oct-2019 21:14:44.953 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=CalcBean, ejb-name=CalcBean, container=Default Singleton Container)
+02-Oct-2019 21:14:44.953 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=CalcBean, ejb-name=CalcBean, container=Default Singleton Container)
+02-Oct-2019 21:14:44.956 INFO [http-nio-45619-exec-2] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/tmp/arquillian-tomee-app-working-dir/0/test)
+02-Oct-2019 21:14:45.106 INFO [http-nio-45619-exec-2] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+02-Oct-2019 21:14:45.155 INFO [http-nio-45619-exec-2] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+02-Oct-2019 21:14:45.195 INFO [http-nio-45619-exec-2] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+02-Oct-2019 21:14:45.309 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
+02-Oct-2019 21:14:45.647 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib/openwebbeans-el22-2.0.9.jar!/META-INF/faces-config.xml
+02-Oct-2019 21:14:45.649 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib/openwebbeans-jsf-2.0.9.jar!/META-INF/faces-config.xml
+02-Oct-2019 21:14:45.940 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.4' from path 'file:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib/myfaces-api-2.3.4.jar'
+02-Oct-2019 21:14:45.940 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.4' from path 'file:/home/daniel/git/apache/tomee/examples/async-servlet/target/tomee/apache-tomee-webprofile-8.0.1-SNAPSHOT/lib/myfaces-impl-2.3.4.jar'
+02-Oct-2019 21:14:45.957 INFO [http-nio-45619-exec-2] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
+02-Oct-2019 21:14:45.959 INFO [http-nio-45619-exec-2] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+02-Oct-2019 21:14:46.039 INFO [http-nio-45619-exec-2] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
+02-Oct-2019 21:14:46.082 INFO [http-nio-45619-exec-2] org.apache.myfaces.application.ApplicationImpl.getProjectStage Couldn't discover the current project stage, using Production
+02-Oct-2019 21:14:46.084 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.FacesConfigurator.handleSerialFactory Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+02-Oct-2019 21:14:46.092 INFO [http-nio-45619-exec-2] org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory.getLifecycleProvider Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+02-Oct-2019 21:14:46.139 INFO [http-nio-45619-exec-2] org.apache.myfaces.webapp.AbstractFacesInitializer.initFaces ServletContext initialized.
+02-Oct-2019 21:14:46.147 INFO [http-nio-45619-exec-2] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+02-Oct-2019 21:14:46.195 INFO [http-nio-45619-exec-2] org.apache.myfaces.webapp.StartupServletContextListener.contextInitialized MyFaces Core has started, it took [991] ms.
+<!doctype html><html lang="en"><head><title>HTTP Status 500 – Internal Server Error</title><style type="text/css">h1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} h2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} h3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} body {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} b {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} p {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;} a {color:black;} a.name {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 500 – Internal Server Error</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The server encountered an unexpected condition that prevented it from fulfilling the request.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)</h3></body></html>
+<!doctype html><html lang="en"><head><title>HTTP Status 500 – Internal Server Error</title><style type="text/css">h1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} h2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} h3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} body {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} b {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} p {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;} a {color:black;} a.name {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 500 – Internal Server Error</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The server encountered an unexpected condition that prevented it from fulfilling the request.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)</h3></body></html>
+<!doctype html><html lang="en"><head><title>HTTP Status 500 – Internal Server Error</title><style type="text/css">h1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} h2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} h3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} body {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} b {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} p {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;} a {color:black;} a.name {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 500 – Internal Server Error</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The server encountered an unexpected condition that prevented it from fulfilling the request.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)</h3></body></html>
+<!doctype html><html lang="en"><head><title>HTTP Status 500 – Internal Server Error</title><style type="text/css">h1 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:22px;} h2 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:16px;} h3 {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;font-size:14px;} body {font-family:Tahoma,Arial,sans-serif;color:black;background-color:white;} b {font-family:Tahoma,Arial,sans-serif;color:white;background-color:#525D76;} p {font-family:Tahoma,Arial,sans-serif;background:white;color:black;font-size:12px;} a {color:black;} a.name {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 500 – Internal Server Error</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The server encountered an unexpected condition that prevented it from fulfilling the request.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.22 (8.0.1-SNAPSHOT)</h3></body></html>
+Exception in thread "http-nio-45619-exec-8" java.lang.IllegalStateException: The request associated with the AsyncContext has already completed processing.
+        at org.apache.catalina.core.AsyncContextImpl.check(AsyncContextImpl.java:508)
+        at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:151)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper.dispatch(EEFilter.java:171)
+        at org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:128)
+        at org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+        at org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+        at java.lang.Thread.run(Thread.java:812)
+Exception in thread "http-nio-45619-exec-5" java.lang.IllegalStateException: The request associated with the AsyncContext has already completed processing.
+        at org.apache.catalina.core.AsyncContextImpl.check(AsyncContextImpl.java:508)
+        at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:151)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper.dispatch(EEFilter.java:171)
+        at org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:128)
+        at org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+        at org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+        at java.lang.Thread.run(Thread.java:812)
+Oct 02, 2019 9:15:02 PM org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:45619/tomee/ejb}
+02-Oct-2019 21:15:02.612 INFO [http-nio-45619-exec-4] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /tmp/arquillian-tomee-app-working-dir/0/test
+02-Oct-2019 21:15:02.670 WARNING [http-nio-45619-exec-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [http-nio-45619-exec-7] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.lang.Thread.sleep(Native Method)
+ java.lang.Thread.sleep(Thread.java:942)
+ org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:118)
+ org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+ org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+ org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+ java.lang.Thread.run(Thread.java:812)
+02-Oct-2019 21:15:02.681 WARNING [http-nio-45619-exec-4] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [http-nio-45619-exec-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.lang.Thread.sleep(Native Method)
+ java.lang.Thread.sleep(Thread.java:942)
+ org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:118)
+ org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+ org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+ org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+ java.lang.Thread.run(Thread.java:812)
+Oct 02, 2019 9:15:02 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/test.war
+Oct 02, 2019 9:15:02 PM org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tmp/arquillian-tomee-app-working-dir/0/test
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.738 sec
+02-Oct-2019 21:15:02.769 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+02-Oct-2019 21:15:02.770 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-45619"]
+02-Oct-2019 21:15:02.783 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["ajp-nio-37081"]
+02-Oct-2019 21:15:02.789 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
+02-Oct-2019 21:15:02.794 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-45619"]
+Exception in thread "http-nio-45619-exec-1" java.lang.IllegalStateException: The request associated with the AsyncContext has already completed processing.
+        at org.apache.catalina.core.AsyncContextImpl.check(AsyncContextImpl.java:508)
+        at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:151)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper.dispatch(EEFilter.java:171)
+        at org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:128)
+        at org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+        at org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+        at java.lang.Thread.run(Thread.java:812)
+Exception in thread "http-nio-45619-exec-7" java.lang.IllegalStateException: The request associated with the AsyncContext has already completed processing.
+        at org.apache.catalina.core.AsyncContextImpl.check(AsyncContextImpl.java:508)
+        at org.apache.catalina.core.AsyncContextImpl.dispatch(AsyncContextImpl.java:151)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper.dispatch(EEFilter.java:171)
+        at org.superbiz.asyncservlet.CalcServlet.lambda$process$0(CalcServlet.java:128)
+        at org.superbiz.asyncservlet.CalcServlet$$Lambda$186.000000003C018770.run(Unknown Source)
+        at org.apache.openejb.server.httpd.EEFilter$AsynContextWrapper$1.run(EEFilter.java:203)
+        at org.apache.catalina.core.AsyncContextImpl$RunnableWrapper.run(AsyncContextImpl.java:534)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+        at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+        at java.lang.Thread.run(Thread.java:812)
+02-Oct-2019 21:15:02.803 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["ajp-nio-37081"]
+02-Oct-2019 21:15:02.805 INFO [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+02-Oct-2019 21:15:02.818 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+02-Oct-2019 21:15:02.824 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+02-Oct-2019 21:15:02.830 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+02-Oct-2019 21:15:02.878 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["http-nio-45619"]
+02-Oct-2019 21:15:02.883 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["ajp-nio-37081"]
+
+Results :
+
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0
+```

@@ -1,0 +1,49 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT con Validación de Bean 
+
+TomEE tiene una particular característica que permite el uso de Validación de Bean como alternativa o complemento de la anotación `@RolesAllowed`. 
+
+La motivación para esta función es que `JsonWebToken` es efectivamente un bean, y una verificación de seguridad es, en última instancia, un acto de producir un resultado booleano utilizando una entrada mínima. Es un problema perfecto para la Validación de Bean.
+
+La característica en última instancia le permite implementar un método como este:
+
+
+[source,java]
+----
+@Override
+public boolean isValid(final JsonWebToken jsonWebToken, final ConstraintValidatorContext context) {
+    // your code here
+    return ...;
+}
+----
+
+Entonces adjunte la siguiente lógica a cualquier anotación de su creación como `@Issuer`. Luego use esa anotación en sus métodos, y el código anterior se ejecutará cada vez que se invoque el servicio JAX-RS.
+
+[source,java]
+----
+@GET
+@Issuer("https://movies.example.com")
+@RolesAllowed({"manager", "user"})
+public List<Movie> getAllMovies() {
+    return new ArrayList<>(store.values());
+}
+----
+
+Si desea recibir información a través de la anotación, sobreescriba el método `initialize`.
+
+[source,java]
+----
+    @Override
+    public void initialize(final Issuer issuer) {
+        this.issuer = issuer;
+    }
+----
+
+Aquí, `Issuer` es una anotación en el código de la aplicación.
+
+Puede validar los 'roles', o partes personalizados como `email` o cualquier dato en el token que desee. La interfaz `JsonWebToken` puede proporcionarle el JWT codificado completo o partes individuales. Entonces a partir de aqui no existen limites, si puede ponerlo en un token, puede validarlo.
+
+La validacion de Bean le permite tener muchas anotaciones de validación. Una anotación puede reutilizar otra, por lo que incluso puede tener una anotación de validación compuesta de varias anotaciones de validación más pequeñas, todas las que se quieran crear.

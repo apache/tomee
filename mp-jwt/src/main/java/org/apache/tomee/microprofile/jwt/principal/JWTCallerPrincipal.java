@@ -132,10 +132,7 @@ public class JWTCallerPrincipal implements JsonWebToken {
         }
         // Handle the jose4j NumericDate types and
         switch (claimType) {
-            case exp:
-            case iat:
             case auth_time:
-            case nbf:
             case updated_at:
                 try {
                     claim = claimsSet.getClaimValue(claimType.name(), Long.class);

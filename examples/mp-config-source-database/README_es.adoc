@@ -1,0 +1,109 @@
+= MicroProfile Configuration ConfigSource Database
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este es un ejemplo sobre cómo implementar un ConfigSource para la configuración personalizada de MicroProfile. El ConfigSource personalizado lee los valores 
+de configuración de una base de datos.
+
+[discrete]
+==== ConfigSource Feature
+
+Para proporcionar un ConfigSource personalizado de una base de datos, debe comenzar con una clase que implemente la interfaz `ConfigSource`, 
+sobreescribiendo 3 métodos: `getProperties`, `getValue`, y `getName`
+
+[source,java]
+----
+public class DatabaseConfigSource implements ConfigSource {
+    private DataSource dataSource;
+
+    public DatabaseConfigSource() {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("openejb:Resource/config-source-database");
+        } catch (final NamingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        final Map<String, String> properties = new HashMap<>();
+
+        try {
+            final Connection connection = dataSource.getConnection();
+            final PreparedStatement query = connection.prepareStatement("SELECT NAME, VALUE FROM CONFIGURATIONS");
+            final ResultSet names = query.executeQuery();
+
+            while (names.next()) {
+                properties.put(names.getString(0), names.getString(1));
+            }
+
+            DbUtils.closeQuietly(names);
+            DbUtils.closeQuietly(query);
+            DbUtils.closeQuietly(connection);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+
+        return properties;
+    }
+
+    @Override
+    public String getValue(final String propertyName) {
+        try {
+            final Connection connection = dataSource.getConnection();
+            final PreparedStatement query =
+                    connection.prepareStatement("SELECT VALUE FROM CONFIGURATIONS WHERE NAME = ?");
+            query.setString(1, propertyName);
+            final ResultSet value = query.executeQuery();
+
+            if (value.next()) {
+                return value.getString(1);
+            }
+
+            DbUtils.closeQuietly(value);
+            DbUtils.closeQuietly(query);
+            DbUtils.closeQuietly(connection);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return DatabaseConfigSource.class.getSimpleName();
+    }
+}
+----
+
+Para simplificar, en el ejemplo anterior, la definición de la base de datos y los datos que se utilizarán para la configuración corresponden a un 
+`Resource`, declarado en el archivo de configuración `tomee.xml` como `Resource` del tipo: `DataSource`, de la siguiente manera:
+
+[source,xml]
+----
+<tomee>
+  <Resource id="config-source-database" type="DataSource">
+
+  </Resource>
+</tomee>
+----
+
+y está vinculado al conjunto de instrucciones SQL, definidas en el script `import-config-source-database.sql`:
+
+
+[source,sql]
+----
+CREATE TABLE CONFIGURATIONS (NAME VARCHAR (255) NOT NULL PRIMARY KEY, VALUE VARCHAR(255) NOT NULL);
+INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.currency', 'Euro');
+INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.country', 'PT');
+----
+
+
+== Ejecutando la aplicación:
+
+[source,bash]
+----
+mvn clean install tomee:run
+----
