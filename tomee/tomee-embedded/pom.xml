@@ -332,10 +332,10 @@
       <groupId>org.apache.taglibs</groupId>
       <artifactId>taglibs-standard-jstlel</artifactId>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>xalan</groupId>
       <artifactId>xalan</artifactId>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jdbc</artifactId>
