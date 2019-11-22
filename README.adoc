@@ -14,7 +14,7 @@ TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile
 compliant application server.
 
 The application server is totally open source and created with the
-community efforts for the public good. Collaborative consensus and and
+community efforts for the public good. Collaborative consensus and
 peer review according to the Apache Foundation guidelines are used to
 guarantee the highest quality standards.
 
