@@ -13,7 +13,7 @@ para producir y consumir un Mensaje JMS ``Message``.
 
 Aquí tenemos un punto final REST, una clase con la anotacion: ``@Path("/ message")`` que indica la ruta correspondiente a la clase ``CustomJmsService``. Por lo tanto, definimos ``sendMessage()`` como ``@POST`` y ``acceptMessage()`` como ``@GET`` para la  ruta ``/message``.
 
-Además, directamente relacionado con este ejemplo, se pueden observar 2 elementos: una cola: ``Queue`` y una fabrica de conexiones: ``ConnectionFactory`` anotadas como ``@Recurso``
+Además, directamente relacionado con este ejemplo, se pueden observar 2 elementos: una cola: ``Queue`` y una fabrica de conexiones: ``ConnectionFactory`` anotadas como ``@Resource``
 
 Finalmente, interactuando con instancias de ``Connection``, ``Session``, y ``Queue`` se pueden ver instancias de ``MessageProducer`` y ``MessageConsumer``, responsables de escribir y leer hacia la / desde la cola: ``Queue`` respectivamente.
 
