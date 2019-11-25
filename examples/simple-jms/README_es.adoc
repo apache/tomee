@@ -7,11 +7,11 @@
 Este ejemplo demuestra cómo configurar un servicio JMS personalizado ``CustomJmsService`` 
 para producir y consumir un Mensaje JMS ``Message``.
 
-= Codigo
+= Código
 
 == El servicio JMS: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
 
-Aquí tenemos un punto final REST, una clase con la anotacion: ``@Path("/ message")`` que indica la ruta correspondiente a la clase ``CustomJmsService``. Por lo tanto, definimos ``sendMessage()`` como ``@POST`` y ``acceptMessage()`` como ``@GET`` para la  ruta ``/message``.
+Aquí tenemos un punto final REST, una clase con la anotación: ``@Path("/ message")`` que indica la ruta correspondiente a la clase ``CustomJmsService``. Por lo tanto, definimos ``sendMessage()`` como ``@POST`` y ``acceptMessage()`` como ``@GET`` para la  ruta ``/message``.
 
 Además, directamente relacionado con este ejemplo, se pueden observar 2 elementos: una cola: ``Queue`` y una fabrica de conexiones: ``ConnectionFactory`` anotadas como ``@Resource``
 
@@ -221,7 +221,7 @@ Ejecutar el ejemplo es simple. En el directorio ``simple-jms`` ingrese:
 $ mvn tomee:run
 ....
 
-Esto creara una salidad similiar a lo siguiente.
+Esto creara una salida similiar a lo siguiente.
 
 ....
 [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@3b8b5b40
