@@ -462,7 +462,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         }
     }
 
-    public static class Group implements java.security.acl.Group {
+    public static class Group implements java.security.Principal {
 
         private final List<Principal> members = new ArrayList<>();
         private final String name;
@@ -471,24 +471,8 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
             this.name = name;
         }
 
-        @Override
         public boolean addMember(final Principal user) {
             return members.add(user);
-        }
-
-        @Override
-        public boolean removeMember(final Principal user) {
-            return members.remove(user);
-        }
-
-        @Override
-        public boolean isMember(final Principal member) {
-            return members.contains(member);
-        }
-
-        @Override
-        public Enumeration<? extends Principal> members() {
-            return Collections.enumeration(members);
         }
 
         @Override
