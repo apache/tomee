@@ -1,6 +1,10 @@
-= TomEE EAP 1.7.6-TT.14
+= TomEE EAP 1.7.6-TT.15
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.15
+
+* Update CXF to 2.6.17-TT.5 to mitigate CVE-2019-12419 and CVE-2019-12406
 
 === Changes in TomEE EAP 1.7.6-TT.14
 
