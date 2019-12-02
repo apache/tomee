@@ -34,6 +34,7 @@
       <property name="additionalLibs">
         mvn:com.github.tomakehurst:wiremock-standalone:2.10.1
         mvn:org.apache.httpcomponents:httpcore:4.4.6
+        mvn:junit:junit:4.12
       </property>
     </configuration>
   </container>
@@ -50,6 +51,7 @@
       <property name="additionalLibs">
         mvn:com.github.tomakehurst:wiremock-standalone:2.10.1
         mvn:org.apache.httpcomponents:httpcore:4.4.6
+        mvn:junit:junit:4.12
       </property>
       <property name="properties">
         tomee.mp.scan = all
@@ -69,6 +71,7 @@
       <property name="additionalLibs">
         mvn:com.github.tomakehurst:wiremock-standalone:2.10.1
         mvn:org.apache.httpcomponents:httpcore:4.4.6
+        mvn:junit:junit:4.12
       </property>
       <property name="properties">
         tomee.mp.scan = all
