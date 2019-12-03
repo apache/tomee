@@ -1,7 +1,7 @@
 :index-group: Proxy Beans
 :jbake-type: page
 :jbake-status: status=published
-= Dynamic DAO Implementation
+= z
 
 Many aspects of Data Access Objects (DAOs) are very repetitive and
 boiler plate. As a fun and experimental feature, TomEE supports
@@ -19,15 +19,15 @@ Methods should respect these conventions:
 attach it
 * Collection|Foo namedQuery(String name[, Map<String, ?> params, int
 first, int max]): run the named query called name, params contains
-bindings, first and max are used for magination. Last three parameters
+bindings, first and max are used for pagination. Last three parameters
 are optionnals
 * Collection|Foo nativeQuery(String name[, Map<String, ?> params, int
 first, int max]): run the native query called name, params contains
-bindings, first and max are used for magination. Last three parameters
+bindings, first and max are used for pagination. Last three parameters
 are optionnals
 * Collection|Foo query(String value [, Map<String, ?> params, int first,
 int max]): run the query put as first parameter, params contains
-bindings, first and max are used for magination. Last three parameters
+bindings, first and max are used for pagination. Last three parameters
 are optionnals
 * Collection findAll([int first, int max]): find all Foo, parameters are
 used for pagination

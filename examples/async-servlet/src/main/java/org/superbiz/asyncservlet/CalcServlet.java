@@ -18,6 +18,8 @@ package org.superbiz.asyncservlet;
 
 import javax.ejb.EJB;
 import javax.servlet.AsyncContext;
+import javax.servlet.AsyncEvent;
+import javax.servlet.AsyncListener;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @WebServlet(urlPatterns = "/*", asyncSupported = true)
 public class CalcServlet extends HttpServlet {
@@ -111,6 +114,30 @@ public class CalcServlet extends HttpServlet {
 
 			final int threadDelay = delay;
 			final AsyncContext asyncContext = req.startAsync();
+
+			final AtomicBoolean interrupted = new AtomicBoolean(false);
+
+			asyncContext.addListener(new AsyncListener() {
+				@Override
+				public void onComplete(AsyncEvent asyncEvent) throws IOException {
+
+				}
+
+				@Override
+				public void onTimeout(AsyncEvent asyncEvent) throws IOException {
+					interrupted.set(true);
+				}
+
+				@Override
+				public void onError(AsyncEvent asyncEvent) throws IOException {
+					interrupted.set(true);
+				}
+
+				@Override
+				public void onStartAsync(AsyncEvent asyncEvent) throws IOException {
+
+				}
+			});
 			asyncContext.setTimeout(timeout);
 			asyncContext.start(() -> {
 
@@ -122,10 +149,12 @@ public class CalcServlet extends HttpServlet {
 
 				try {
 					process(operation, x, y, result);
-				} catch (final Exception e) {
-
 				} finally {
-					asyncContext.dispatch();
+					if (! interrupted.get()) {
+
+						// do not call dispatch if this request has timed-out or errored
+						asyncContext.dispatch();
+					}
 				}
 
 			});

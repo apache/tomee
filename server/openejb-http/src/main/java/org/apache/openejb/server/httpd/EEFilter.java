@@ -105,7 +105,7 @@ public class EEFilter implements Filter {
 
         @Override
         public AsyncContext startAsync() throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(), getRequest(), webBeansContext);
+            return new AsynContextWrapper(super.startAsync(), this, webBeansContext);
         }
 
         @Override

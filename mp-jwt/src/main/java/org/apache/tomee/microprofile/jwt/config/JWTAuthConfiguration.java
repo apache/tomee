@@ -38,13 +38,15 @@ public class JWTAuthConfiguration {
     private int expGracePeriodSecs = 60;
     private String headerName = "Authorization";
     private String headerScheme = "Bearer";
+    private boolean allowNoExpiryClaim = false;
 
-    private JWTAuthConfiguration(final Key publicKey, final String issuer) {
+    private JWTAuthConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
         this.publicKeys = Collections.singletonMap(DEFAULT_KEY, publicKey);
         this.issuer = issuer;
+        this.allowNoExpiryClaim = allowNoExpiryClaim;
     }
 
-    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer) {
+    private JWTAuthConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim) {
         if (publicKeys.size() == 1) {
             final Key singleKey = publicKeys.values().iterator().next();
             this.publicKeys = Collections.singletonMap(DEFAULT_KEY, singleKey);
@@ -52,14 +54,15 @@ public class JWTAuthConfiguration {
             this.publicKeys = Collections.unmodifiableMap(publicKeys);
         }
         this.issuer = issuer;
+        this.allowNoExpiryClaim = allowNoExpiryClaim;
     }
 
-    public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer) {
-        return new JWTAuthConfiguration(publicKey, issuer);
+    public static JWTAuthConfiguration authConfiguration(final Key publicKey, final String issuer, final boolean allowNoExpiryClaim) {
+        return new JWTAuthConfiguration(publicKey, issuer, allowNoExpiryClaim);
     }
 
-    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer) {
-        return new JWTAuthConfiguration(publicKeys, issuer);
+    public static JWTAuthConfiguration authConfiguration(final Map<String, Key> publicKeys, final String issuer, final boolean allowNoExpiryClaim) {
+        return new JWTAuthConfiguration(publicKeys, issuer, allowNoExpiryClaim);
     }
 
     public boolean isSingleKey() {
@@ -109,5 +112,13 @@ public class JWTAuthConfiguration {
 
     public void setHeaderScheme(final String headerScheme) {
         this.headerScheme = headerScheme;
+    }
+
+    public boolean isAllowNoExpiryClaim() {
+        return allowNoExpiryClaim;
+    }
+
+    public void setAllowNoExpiryClaim(boolean allowNoExpiryClaim) {
+        this.allowNoExpiryClaim = allowNoExpiryClaim;
     }
 }

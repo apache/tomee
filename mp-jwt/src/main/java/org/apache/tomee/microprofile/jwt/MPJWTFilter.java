@@ -328,7 +328,6 @@ public class MPJWTFilter implements Filter {
 
             try {
                 final JwtConsumerBuilder builder = new JwtConsumerBuilder()
-                        .setRequireExpirationTime()
                         .setRelaxVerificationKeyValidation()
                         .setRequireSubject()
                         .setSkipDefaultAudienceValidation()
@@ -339,6 +338,9 @@ public class MPJWTFilter implements Filter {
                                         AlgorithmIdentifiers.RSA_USING_SHA512
                                 ));
 
+                if (!authContextInfo.isAllowNoExpiryClaim()) {
+                    builder.setRequireExpirationTime();
+                }
                 if (authContextInfo.getIssuer() != null) {
                     builder.setExpectedIssuer(authContextInfo.getIssuer());
                 }
