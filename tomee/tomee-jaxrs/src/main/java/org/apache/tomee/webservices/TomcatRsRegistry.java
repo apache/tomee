@@ -82,7 +82,7 @@ public class TomcatRsRegistry implements RsRegistry {
 
         if (host == null) {
             for (final Host h : hosts) {
-                context = findContext(h, appId, webContext);
+                context = findContext(h, webContext);
                 if (context != null) {
                     host = h;
                     if (classLoader != null && classLoader.equals(context.getLoader().getClassLoader())) {
@@ -95,7 +95,7 @@ public class TomcatRsRegistry implements RsRegistry {
                 throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
             }
         } else {
-            context = findContext(host, appId, webContext);
+            context = findContext(host, webContext);
         }
 
         if (context == null) {
@@ -155,21 +155,22 @@ public class TomcatRsRegistry implements RsRegistry {
         return completePath.substring((webContext.length() > 0 && !webContext.startsWith("/") ? 1 : 0) + webContext.length());
     }
 
-    private static Context findContext(final Container host, final String appId, final String webContext) {
-        if (appId != null) { // when using versioning appId is like context#1235 but not the context itself so ensure to test appId first
-            final Context ctx = Context.class.cast(host.findChild('/' + appId));
-            if (ctx != null) {
-                return ctx;
+    private static Context findContext(final Container host, final String webContext) {
+        final Container[] children = host.findChildren();
+
+        for (final Container child : children) {
+            if (! Context.class.isInstance(child)) {
+                continue;
+            }
+
+            final Context context = (Context) child;
+
+            if (context.getPath().equals(webContext)) {
+                return context;
             }
         }
 
-        Context webapp = Context.class.cast(host.findChild(webContext));
-        if (webapp == null && "/".equals(webContext)) { // ROOT
-            webapp = Context.class.cast(host.findChild(""));
-        } else if (webapp == null && webContext.length() > 0 && !webContext.startsWith("/")) {
-            webapp = Context.class.cast(host.findChild("/" + webContext));
-        }
-        return webapp;
+        return null;
     }
 
     private static String address(final Collection<Connector> connectors, final String host, final String path) {

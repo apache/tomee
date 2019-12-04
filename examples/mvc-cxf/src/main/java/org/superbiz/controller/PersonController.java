@@ -41,7 +41,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.WebApplicationException;
 
-import org.mvcspec.ozark.engine.Viewable;
+import org.eclipse.krazo.engine.Viewable;
 import org.superbiz.model.Errors;
 import org.superbiz.model.Messages;
 import org.superbiz.model.Person;

@@ -20,16 +20,9 @@ import com.nimbusds.jose.JWSSigner;
 import org.apache.openejb.loader.JarLocation;
 import org.apache.tomee.arquillian.remote.RemoteTomEEConfiguration;
 import org.apache.tomee.arquillian.remote.RemoteTomEEContainer;
-import org.eclipse.microprofile.jwt.tck.config.IssValidationTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsBase64JWKTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsFileLocationURLTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKLocationURLTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKSLocationTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKSTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsJWKTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMLocationTest;
-import org.eclipse.microprofile.jwt.tck.config.PublicKeyAsPEMTest;
+import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimAllowMissingExpValidationTest;
+import org.apache.tomee.microprofile.tck.jwt.validation.ExpClaimValidationTest;
+import org.eclipse.microprofile.jwt.tck.config.*;
 import org.eclipse.microprofile.jwt.tck.util.TokenUtils;
 import org.jboss.arquillian.container.spi.Container;
 import org.jboss.arquillian.container.spi.ContainerRegistry;
@@ -83,6 +76,8 @@ public class MicroProfileJWTTCKArchiveProcessor implements ApplicationArchivePro
                 PublicKeyAsJWKSTest.class,
                 PublicKeyAsJWKSLocationTest.class,
                 IssValidationTest.class,
+                ExpClaimValidationTest.class,
+                ExpClaimAllowMissingExpValidationTest.class,
                 org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsPEMLocationTest.class,
                 org.apache.tomee.microprofile.tck.jwt.config.PublicKeyAsJWKLocationURLTest.class)
               .filter(c -> c.equals(testClass.getJavaClass()))

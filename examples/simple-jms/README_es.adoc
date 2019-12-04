@@ -1,0 +1,253 @@
+:index-group: JMS and MDBs
+:jbake-type: page
+:jbake-status: status=published
+
+= Simple JMS
+
+Este ejemplo demuestra cómo configurar un servicio JMS personalizado ``CustomJmsService`` 
+para producir y consumir un Mensaje JMS ``Message``.
+
+= Código
+
+== El servicio JMS: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
+
+Aquí tenemos un punto final REST, una clase con la anotación: ``@Path("/ message")`` que indica la ruta correspondiente a la clase ``CustomJmsService``. Por lo tanto, definimos ``sendMessage()`` como ``@POST`` y ``acceptMessage()`` como ``@GET`` para la  ruta ``/message``.
+
+Además, directamente relacionado con este ejemplo, se pueden observar 2 elementos: una cola: ``Queue`` y una fabrica de conexiones: ``ConnectionFactory`` anotadas como ``@Resource``
+
+Finalmente, interactuando con instancias de ``Connection``, ``Session``, y ``Queue`` se pueden ver instancias de ``MessageProducer`` y ``MessageConsumer``, responsables de escribir y leer hacia la / desde la cola: ``Queue`` respectivamente.
+
+....
+@Stateless
+@Path("message")
+public class CustomJmsService {
+
+    @Resource(name = "messageQueue")
+    private Queue messageQueue;
+
+    @Resource
+    private ConnectionFactory connectionFactory;
+
+    @POST
+    public void sendMessage(final String message) {
+        sendMessage(messageQueue, message);
+    }
+
+    @GET
+    public String receiveMessage() throws JMSException {
+        final TextMessage textMessage = receiveMessage(messageQueue, 1000);
+        if (textMessage == null) {
+            return null;
+        }
+
+        return textMessage.getText();
+    }
+
+    private void sendMessage(final Queue queue, final String message) {
+        try (final Connection connection = connectionFactory.createConnection();
+             final Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+             final MessageProducer producer = session.createProducer(queue)) {
+
+            connection.start();
+
+            final Message jmsMessage = session.createTextMessage(message);
+
+            // This enqueues messages successfully with both 8.0.0-M3 and 8.0.0
+            producer.send(jmsMessage);
+        } catch (final Exception e) {
+            throw new RuntimeException("Caught exception from JMS when sending a message", e);
+        }
+    }
+
+    private TextMessage receiveMessage(final Queue queue, final long receiveTimeoutMillis) {
+        try (final Connection connection = connectionFactory.createConnection();
+             final Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+             final MessageConsumer messageConsumer = session.createConsumer(queue)) {
+
+            connection.start();
+
+            final Message jmsMessage = messageConsumer.receive(receiveTimeoutMillis);
+
+            if (jmsMessage == null) {
+                return null;
+            }
+
+            return (TextMessage) jmsMessage;
+        } catch (final Exception e) {
+            throw new RuntimeException("Caught exception from JMS when receiving a message", e);
+        }
+    }
+}
+
+....
+
+== Probando
+
+=== Test para el servicio JMS
+
+La prueba es trivial. La idea consiste en hacer primero una petición POST que contiene el mensaje para el servicio. Esto se realiza usando instancias de las clases ``ClientBuilder`` y ``WebTarget``.
+
+Luego, de manera similar a la petición POST, se lleva a cabo una petición GET que consume el mensaje anterior. 
+
+Finalmente, se verifican los HTTP status de las respuestas de manera que sean equivalentes a los códigos HTTP esperados (204/200), así como también que el contenido del mensaje recibido sea igual al mensaje enviado.
+
+
+....
+@RunWith(Arquillian.class)
+@RunAsClient
+public class CustomJmsServiceTest {
+
+    @Deployment
+    public static Archive<?> deployment() {
+        return Mvn.war();
+    }
+
+    @ArquillianResource
+    private URL baseUrl;
+
+    @Test
+    public void test() throws Exception {
+        // POST
+        {
+            final WebTarget webTarget = ClientBuilder.newClient().target(baseUrl.toURI());
+            final Response response = webTarget.path("message").request().post(Entity.text("This is a test"));
+
+            assertEquals(204, response.getStatus());
+        }
+
+        // GET
+        {
+            final WebTarget webTarget = ClientBuilder.newClient().target(baseUrl.toURI());
+            final Response response = webTarget.path("message").request().get();
+            assertEquals(200, response.getStatus());
+
+            final String content = response.readEntity(String.class);
+            assertEquals("This is a test", content);
+        }
+    }
+}
+....
+
+
+=== Ejecutando el test del servicio JMS
+
+Construir y probar el ejemplo es simple. En el directorio ``simple-jms`` hay que ejecutar:
+
+....
+$ mvn clean install
+....
+
+Esto creara una salida similar a lo siguiente:
+
+....
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@7a6a8b01
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@58be749c
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@2740b6d6
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@e08fc09
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@139e9988
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@3cee7c7e
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@2513f485
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@778a8c93
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@414a7c3a
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@1b4e4173
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@3f1bfc2e
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@7dc57a14
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@1af0fefd
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@8e6f08b
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@2fcd3c
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@1979c922
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:6586/test/        -> org.apache.openejb.server.rest.InternalApplication@2653d780
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:6586/test/message ->  EJB org.superbiz.jms.CustomJmsService
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:6586/test/message ->      String receiveMessage() throws JMSException
+INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:6586/test/message ->      void sendMessage(String)
+INFO [http-nio-6586-exec-5] org.apache.activemq.broker.TransportConnector.start Connector vm://localhost started
+org.apache.openejb.client.EventLogger log
+INFO: RemoteInitialContextCreated{providerUri=http://localhost:6586/tomee/ejb}
+INFO [http-nio-6586-exec-8] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /tomee/examples/simple-jms/target/arquillian-test-working-dir/0/test
+WARNING [http-nio-6586-exec-8] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [PoolIdleReleaseTimer]
+WARNING [http-nio-6586-exec-8] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [ActiveMQ VMTransport: vm://localhost#0-1] 
+WARNING [http-nio-6586-exec-8] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [ActiveMQ VMTransport: vm://localhost#0-2]
+org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tomee/examples/simple-jms/target/arquillian-test-working-dir/0/test.war
+org.apache.openejb.arquillian.common.TomEEContainer undeploy
+INFO: cleaning /tomee/examples/simple-jms/target/arquillian-test-working-dir/0/test
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 27.962 sec
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-6586"]
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["ajp-nio-8009"]
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-6586"]
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["ajp-nio-8009"]
+INFO [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: Default Unmanaged JDBC Database
+INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Stopping ResourceAdapter: Default JMS Resource Adapter
+INFO [main] org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.stop Stopping ActiveMQ
+INFO [108] org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.stopImpl Stopped ActiveMQ broker
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["http-nio-6586"]
+INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["ajp-nio-8009"]
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO]
+[INFO] --- maven-war-plugin:2.4:war (default-war) @ simple-jms ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [simple-jms] in [/tomee/examples/simple-jms/target/simple-jms-8.0.1-SNAPSHOT]
+[INFO] Processing war project
+[INFO] Webapp assembled in [2118 msecs]
+[INFO] Building war: /tomee/examples/simple-jms/target/simple-jms-8.0.1-SNAPSHOT.war
+[INFO]
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-jms ---
+[INFO] Installing /tomee/examples/simple-jms/target/simple-jms-8.0.1-SNAPSHOT.war to /.m2/repository/org/superbiz/simple-jms/8.0.1-SNAPSHOT/simple-jms-8.0.1-SNAPSHOT.war
+[INFO] Installing /tomee/examples/simple-jms/pom.xml to /.m2/repository/org/superbiz/simple-jms/8.0.1-SNAPSHOT/simple-jms-8.0.1-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  50.089 s
+....
+
+
+= Running the app
+
+Ejecutar el ejemplo es simple. En el directorio ``simple-jms`` ingrese:
+
+....
+$ mvn tomee:run
+....
+
+Esto creara una salida similiar a lo siguiente.
+
+....
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@3b8b5b40
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/message ->      String receiveMessage() throws JMSException
+[main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/message ->      void sendMessage(String)
+[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deployment of web application archive [\tomee\examples\simple-jms\target\apache-tomee\webapps\simple-jms-8.0.1-SNAPSHOT.war] has finished in [8,264] ms
+[main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+[main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+[main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+[main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
+[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
+[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-8009"]
+[main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [8,367] milliseconds
+....
+
+
+Nota: es posible usar el comando ``CURL`` (o una herramienta cliente) para enviar una solicitud POST y luego una solicitud GET a la URL del servicio equivalente a:
+
+....
+http://localhost:8080/simple-jms<-TOMEE-VERSION>/message
+....
+
+Finalmente, puedes salir o recargar el ejemplo ingresando uno de los comandos disponibles:
+``quit``, ``exit``, ``reload``,
+
+....
+[WARNING] Command '' not understood. Use one of [quit, exit, reload]
+....

@@ -47,21 +47,22 @@ public class JsonWebTokenValidator {
     private final Key verificationKey;
     private final Map<String, Key> verificationKeys;
     private final String issuer;
+    private boolean allowNoExpiryClaim = false;
 
-    public JsonWebTokenValidator(final Predicate<JsonWebToken> validation, final Key verificationKey, final String issuer, final Map<String, Key> verificationKeys) {
+    public JsonWebTokenValidator(final Predicate<JsonWebToken> validation, final Key verificationKey, final String issuer, final Map<String, Key> verificationKeys, final boolean allowNoExpiryClaim) {
         this.validation = validation;
         this.verificationKey = verificationKey;
         this.verificationKeys = verificationKeys;
         this.issuer = issuer;
+        this.allowNoExpiryClaim = allowNoExpiryClaim;
     }
 
     public JsonWebToken validate(final String token) throws ParseException {
-        final JWTAuthConfiguration authConfiguration = verificationKey != null ? JWTAuthConfiguration.authConfiguration(verificationKey, issuer) : JWTAuthConfiguration.authConfiguration(verificationKeys, issuer);
+        final JWTAuthConfiguration authConfiguration = verificationKey != null ? JWTAuthConfiguration.authConfiguration(verificationKey, issuer, allowNoExpiryClaim) : JWTAuthConfiguration.authConfiguration(verificationKeys, issuer, allowNoExpiryClaim);
         JWTCallerPrincipal principal;
 
         try {
             final JwtConsumerBuilder builder = new JwtConsumerBuilder()
-                    .setRequireExpirationTime()
                     .setRelaxVerificationKeyValidation()
                     .setRequireSubject()
                     .setSkipDefaultAudienceValidation()
@@ -127,6 +128,7 @@ public class JsonWebTokenValidator {
         private Key verificationKey;
         private List<JsonWebKey> verificationKeys;
         private String issuer;
+        private boolean allowNoExpiryClaim = false;
 
         public Builder add(final Predicate<JsonWebToken> validation) {
             this.validation = validation.and(validation);
@@ -150,7 +152,7 @@ public class JsonWebTokenValidator {
         }
 
         public JsonWebTokenValidator build() {
-            return new JsonWebTokenValidator(validation, verificationKey, issuer, null);
+            return new JsonWebTokenValidator(validation, verificationKey, issuer, null, allowNoExpiryClaim);
         }
 
         public Builder verificationKeys(final List<JsonWebKey> keys) {
@@ -162,5 +164,12 @@ public class JsonWebTokenValidator {
             issuer = iss;
             return this;
         }
+
+        public Builder allowNoExpiryClaim(final boolean allowNoExpiryClaim) {
+            this.allowNoExpiryClaim = allowNoExpiryClaim;
+            return this;
+        }
+
+
     }
 }

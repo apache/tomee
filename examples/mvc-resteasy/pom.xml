@@ -30,8 +30,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.1-TT.1-SNAPSHOT</tomee.version>
-    <version.ozark>1.0.0-m04</version.ozark>
-    <resteasy.version>3.6.1.Final</resteasy.version>
+    <version.krazo>1.0.0-Beta1</version.krazo>
+    <resteasy.version>3.6.2.Final</resteasy.version>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
@@ -74,9 +74,9 @@
 
     <!-- MVC 1.0(JSR 371) -->
     <dependency>
-      <groupId>org.mvc-spec.ozark</groupId>
-      <artifactId>ozark-resteasy</artifactId>
-      <version>${version.ozark}</version>
+      <groupId>org.eclipse.krazo</groupId>
+      <artifactId>krazo-resteasy</artifactId>
+      <version>${version.krazo}</version>
     </dependency>
 
     <!-- RestEasy -->
