@@ -12,7 +12,7 @@ Client in TomEE.
 mvn clean test 
 ....
 
-=== Requirementes and configuration
+=== Requirements and configuration
 
 To use MicroProfile Rest Client you need 3 changes in your project:
 
