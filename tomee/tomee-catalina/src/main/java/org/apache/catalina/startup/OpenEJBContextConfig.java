@@ -370,7 +370,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         return webXml;
     }
 
-    public class OpenEJBWebXml extends WebXml {
+    public static class OpenEJBWebXml extends WebXml {
         public static final String OPENEJB_WEB_XML_MAJOR_VERSION_PROPERTY = "openejb.web.xml.major";
 
         private final String prefix;
