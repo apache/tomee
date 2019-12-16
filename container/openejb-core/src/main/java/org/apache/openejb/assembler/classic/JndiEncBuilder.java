@@ -384,12 +384,7 @@ public class JndiEncBuilder {
                 reference = new LinkRef(jndiName);
 
             } else if (BeanManager.class.equals(type)) {
-                reference = new LazyObjectReference<BeanManager>(new Callable<BeanManager>() {
-                    @Override
-                    public BeanManager call() throws Exception {
-                        return new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
-                    }
-                });
+                reference = new LazyObjectReference<>(new BeanManagerLazyReference());
 
             } else if (UserTransaction.class.equals(type)) {
                 reference = new IntraVmJndiReference("comp/UserTransaction");
@@ -682,6 +677,13 @@ public class JndiEncBuilder {
             } else {
                 return EjbResolver.Type.UNKNOWN;
             }
+        }
+    }
+
+    public static class BeanManagerLazyReference implements Callable<BeanManager> {
+        @Override
+        public BeanManager call() throws Exception {
+            return new InjectableBeanManager(WebBeansContext.currentInstance().getBeanManagerImpl());
         }
     }
 }
