@@ -1,23 +1,22 @@
-= MicroProfile Rest Client
+= Cliente Rest MicroProfile
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-This is a basic example on how to configure and use MicroProfile Rest
-Client in TomEE.
+Este es un ejemplo básico sobre cómo configurar y utilizar Cliente Rest de MicroProfile en TomEE.
 
-=== Run the tests for different scenarios related with JWT validation
+=== Ejecutar las pruebas para los diferentes escenarios relacionados con la validación de JWT
 
 ....
 mvn clean test 
 ....
 
-=== Requirements and configuration
+=== Requisitos y configuración
 
-To use MicroProfile Rest Client you need 3 changes in your project:
+Para utilizar el Cliente Rest de MicroProfile se requieren 3 cambios en su proyecto:
 
 [arabic]
-. Add the to the `pom.xml` the dependency:
+. Agregar la siguiente dependencia al `pom.xml`:
 +
 ....
  <dependency>
@@ -27,13 +26,13 @@ To use MicroProfile Rest Client you need 3 changes in your project:
      <scope>provided</scope>
  </dependency>
 ....
-. Provide configuration files: `microprofile-config.properties`
+. Proveer el archivo de configuración: `microprofile-config.properties`
 +
 ....
  org.superbiz.rest.BookResourceClient/mp-rest/url=http://localhost:4444
 ....
-. Provide an interface that you can build from the JAX-RS resource you
-want to consume: `BookResourceClient.java`
+. Proporcionar una interfaz que pueda crear a partir del recurso JAX-RS 
+que desea consumir: `BookResourceClient.java`
 +
 ....
  package org.superbiz.rest;
@@ -77,11 +76,11 @@ want to consume: `BookResourceClient.java`
  }
 ....
 
-=== Use of MicroProfile Rest Client in TomEE
+=== Uso del Client Rest de MicroProfile en TomEE
 
-The class `BookResourceTest.java` shows how easy is to use the type-safe
-approach provided by MicroProfile Rest Client to consume an existing
-JAX-RS resource.
+La clase `BookResourceTest.java` muestra lo fácil que es utilizar el enfoque 
+con seguridad de tipos (type-safe) proporcionado por el Client Rest de MicroProfile
+para consumir un recurso JAX-RS existente.
 
 ....
 package org.superbiz.rest;
@@ -146,8 +145,8 @@ public class BookResourceTest {
 }
 ....
 
-=== About the Test architecture
+=== Acerca de la arquitectura de prueba
 
-The test cases from this project are built using Arquillian and TomEE
-Remote. The arquillian configuration can be found in
+Los casos de prueba de este proyecto se construyen utilizando Arquillian 
+y TomEE Remote. La configuración del arquillianse se puede encontrar en 
 `src/test/resources/arquillian.xml`
