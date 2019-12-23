@@ -23,6 +23,7 @@ import org.apache.openejb.loader.IO;
 import javax.faces.context.ExternalContext;
 import java.io.InputStream;
 
+// TODO remove after MYFACES-4313 / MyFaces 2.3.7
 public class TomEEFacesConfigurationProvider extends DefaultFacesConfigurationProvider {
     @Override
     public FacesConfig getWebAppFacesConfig(final ExternalContext ectx) {

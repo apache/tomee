@@ -26,10 +26,7 @@ import org.junit.runner.RunWith;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -76,6 +73,20 @@ public class AutoBValTest {
                         .post(Entity.entity(payload, MediaType.APPLICATION_JSON_TYPE)).getStatus());
     }
 
+    @Test
+    public void checkVoidResponse() {
+        assertEquals(
+                Response.Status.NO_CONTENT.getStatusCode(),
+                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test/simple").request().get().getStatus());
+    }
+
+    @Test
+    public void checkResponse() {
+        assertEquals(
+                Response.Status.OK.getStatusCode(),
+                ClientBuilder.newClient().target(base.toExternalForm()).path("openejb/test/simpleResponse").request().get().getStatus());
+    }
+
     @Path("test")
     public static class ValidateMe {
         @POST
@@ -86,6 +97,19 @@ public class AutoBValTest {
             final Payload payload = new Payload();
             payload.setName("empty".equals(in.name) ? null : in.name);
             return payload;
+        }
+
+        @GET
+        @Path("simple")
+        public void service() {
+            // no-op; should return a 204 no content
+            System.out.println("Service invoked");
+        }
+
+        @GET
+        @Path("simpleResponse")
+        public Response serviceResponse() {
+            return Response.ok().build();
         }
     }
 

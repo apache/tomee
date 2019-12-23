@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+// TODO remove after MYFACES-4313 / MyFaces 2.3.7
 // fork to be able to not fail on empty faces-config.xml
 public class TomEEFacesConfigurationProviderFactory extends DefaultFacesConfigurationProviderFactory {
     public static final String FACES_CONFIGURATION_PROVIDER = FacesConfigurationProvider.class.getName();

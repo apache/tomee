@@ -70,6 +70,7 @@ import org.apache.openejb.classloader.ClassLoaderConfigurer;
 import org.apache.openejb.classloader.CompositeClassLoaderConfigurer;
 import org.apache.openejb.component.ClassLoaderEnricher;
 import org.apache.openejb.config.ConfigurationFactory;
+import org.apache.openejb.config.Module;
 import org.apache.openejb.config.NewLoaderLogic;
 import org.apache.openejb.config.QuickJarsTxtParser;
 import org.apache.openejb.config.TldScanner;
@@ -828,7 +829,12 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 }
 
                 final AppContext appContext = new AppContext(appInfo.appId, SystemInstance.get(), classLoader, globalJndiContext, appJndiContext, appInfo.standaloneModule);
-                appContext.getProperties().putAll(appInfo.properties);
+                for (final Entry<Object, Object> entry : appInfo.properties.entrySet()) {
+                    if (! Module.class.isInstance(entry.getValue())) {
+                        appContext.getProperties().put(entry.getKey(), entry.getValue());
+                    }
+                }
+
                 appContext.getInjections().addAll(injections);
                 appContext.getBindings().putAll(globalBindings);
                 appContext.getBindings().putAll(appBindings);
@@ -1085,7 +1091,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
                 if(setAppNamingContextReadOnly(allDeployments)) {
                     logger.info("createApplication.naming", appInfo.path);
                 }
-              
+
                 return appContext;
             } catch (final ValidationException | DeploymentException ve) {
                 throw ve;

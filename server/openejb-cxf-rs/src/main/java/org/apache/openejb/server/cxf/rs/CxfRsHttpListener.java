@@ -36,7 +36,6 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
-import org.apache.cxf.jaxrs.model.URITemplate;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
@@ -104,6 +103,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.validation.metadata.MethodDescriptor;
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
 import javax.ws.rs.core.Application;
@@ -121,6 +124,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -974,6 +978,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
             if (bvalActive) { // bval doesn't need the actual instance so faking it to avoid to lookup the bean
                 final BeanValidationProvider provider = new BeanValidationProvider(); // todo: close the factory
+                ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+                final Validator validator = validatorFactory.getValidator();
 
                 final BeanValidationInInterceptor in = new JAXRSBeanValidationInInterceptor() {
                     @Override
@@ -989,6 +995,16 @@ public class CxfRsHttpListener implements RsHttpListener {
                     @Override
                     protected Object getServiceObject(final Message message) {
                         return CxfRsHttpListener.this.getServiceObject(message);
+                    }
+
+                    @Override
+                    protected void handleValidation(final Message message, final Object resourceInstance, final Method method, final List<Object> arguments) {
+                        final MethodDescriptor constraintsForMethod = validator.getConstraintsForClass(resourceInstance.getClass())
+                                .getConstraintsForMethod(method.getName(), method.getParameterTypes());
+
+                        if (constraintsForMethod != null && constraintsForMethod.hasConstrainedReturnValue()) {
+                            super.handleValidation(message, resourceInstance, method, arguments);
+                        }
                     }
                 };
                 out.setEnforceOnlyBeanConstraints(true);
