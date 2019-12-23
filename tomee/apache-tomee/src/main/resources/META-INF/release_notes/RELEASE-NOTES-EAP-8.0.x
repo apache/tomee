@@ -1,4 +1,8 @@
-= TomEE EAP 8.0.1-TT.2
+= TomEE EAP 8.0.2-TT.1
+
+=== Changes in TomEE EAP 8.0.2-TT.1
+
+* Update to Tomcat 9.0.30 to mitigate CVE-2019-12418 & CVE-2019-17563
 
 === Changes in TomEE EAP 8.0.1-TT.2
 
