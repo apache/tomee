@@ -4,7 +4,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-faulttolerance-retry</artifactId>
-  <version>7.1.2</version>
+  <version>7.1.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>OpenEJB :: Examples :: Microprofile Fault Tolerance :: Retry</name>
 
