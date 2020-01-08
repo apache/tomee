@@ -1,6 +1,10 @@
-= TomEE EAP 1.7.6-TT.15
+= TomEE EAP 1.7.6-TT.16
 
 == Change log
+
+=== Changes in TomEE EAP 1.7.6-TT.16
+
+* Update Tomcat to 7.0.99 to mitigate CVE-2019-12418 & CVE-2019-17563
 
 === Changes in TomEE EAP 1.7.6-TT.15
 
