@@ -3,19 +3,19 @@
 :jbake-status: status=published
 = Javamail API
 
-Este é apenas um exemplo simples para demonstrar um uso muito básico do
+Este é apenas um exemplo simples para demonstrar um uso muito básico da
 API. Deve ser o suficiente para você começar a usar o java mail
 pacotes.
 
 == Um serviço REST simples usando a API Javamail
 
-Aqui vemos um terminal RESTful muito simples que pode ser chamado com um
+Aqui vemos um terminal RESTful muito simples que pode ser chamado com uma
 mensagem a ser enviada por e-mail. Não seria difícil modificar o aplicativo
 para fornecer opções de configuração mais úteis. Como está, isso não enviará
 qualquer coisa, mas se você alterar os parâmetros para corresponder ao seu servidor de correio
 você verá a mensagem sendo enviada. Você pode encontrar muito mais detalhado
 informações sobre o
-https://java.net/projects/javamail/pages/Home#Samples[Javamail API here]
+https://java.net/projects/javamail/pages/Home#Samples[Javamail API aqui]
 
 ....
 package org.superbiz.rest;
@@ -130,7 +130,7 @@ public class EmailServiceTest {
 
 #Corrida
 
-A execução do exemplo é bastante simples. No diretório "javamail-api" corre:
+A execução do exemplo é bastante simples. No diretório "javamail-api" excute:
 
 ....
 $ mvn clean install
