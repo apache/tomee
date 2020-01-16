@@ -1,6 +1,6 @@
 :index-group: Unrevised
 :jbake-type: page
-:jbake-status: status=published
+:jbake-status: published
 = Javamail API
 
 Este é apenas um exemplo simples para demonstrar um uso muito básico da
