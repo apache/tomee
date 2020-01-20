@@ -1,0 +1,34 @@
+= Embedding
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+The basic process for embedding OpenEJB:
+
+[arabic]
+. Add the OpenEJB libraries to your classpath
+. Ensure your EJB modules are discoverable
+. Use the LocalInitialContextFactory to boot OpenEJB
+
+== Important docs
+
+* link:application-discovery-via-the-classpath.html[Application
+discovery via the classpath]
+* link:embedded-configuration.html[Embedded Configuration]
+* link:configuring-datasources-in-tests.html[Configuring DataSources in
+Tests]
+* link:configuring-persistenceunits-in-tests.html[Configuring
+PersistenceUnits in Tests]
+* link:configuring-containers-in-tests.html[Configuring Containers in
+Tests]
+* link:configuring-logging-in-tests.html[Configuring Logging in Tests]
+* link:alternate-descriptors.html[Alternate Descriptors]
+* link:unit-testing-transactions.html[Unit Testing Transactions]
+* link:testcase-with-testbean-inner-class.html[TestCase with TestBean
+inner-class]
+* [TestCase Injection (@LocalClient)](local-client-injection.html)
+
+== Examples
+
+\{include:Examples Table}

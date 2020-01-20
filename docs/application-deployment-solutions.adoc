@@ -1,0 +1,92 @@
+= Deploying An Application To TomEE Or OpenEJB
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Deploying An Application To TomEE Or OpenEJB
+
+=== How to deploy my application under TomEE
+
+==== Description
+
+This aims to be more dynamic in the way you deploy your applications. It
+is clearly cloud oriented.
+
+==== Webapp and TomEE deployment
+
+Webapp can be deployed as Tomcat does. Simply put it in webapps folder
+(or the one you configured) and start TomEE.
+
+==== TomEE specific deployment
+
+By default TomEE deploys applications (ear, war, jar) contained in
+$CATALINA_BASE/apps directory at start up.
+
+==== Deployer
+
+OpenEJB provides a Deployer EJB to do this task. It can be used in your
+own software looking up remotely the "openejb/DeployerBusinessRemote"
+EJB. Its interface is "org.apache.openejb.assembler.Deployer". The
+needed dependency is org.apache.openejb:openejb-core.
+
+Once you got your deployer simply invoke the "deploy" method. Give it
+the location of your application (can be a file, http, https, maven
+location depending on the way you configured your container, for more
+information have a look to TomEE provisionning).
+
+Note: the "undeploy" method exists too and take the same path.
+
+The Deployer is the base of all other solutions
+
+==== Maven plugin
+
+link:maven/index.html[org.apache.openejb:tomee-maven-plugin] can be used
+to deploy/undeploy your application. Once this plugin is added to your
+pom you have access to the following configuration:
+
+* tomeeHttpPort
+* tomeeHost
+
+Then simply run
+
+[source,bash]
+----
+mvn tomee:deploy <path>
+----
+
+or
+
+[source,bash]
+----
+mvn tomee:undeploy <path>
+----
+
+===== The Deployer through TomEE Webapp
+
+When you start TomEE you can locally access the TomEE webapps
+(http://host:ip/tomee/).
+
+Then simply go to JNDI tree, select the deployer in the tree, then click
+on "invoke this ejb", select the deploy (or undeploy) method, fill the
+path and click on "invoke".
+
+===== Cloud idea
+
+If you want to cloudify your application, you'll get a configuration
+database (or any other storage system ;)).
+
+So it means it is easy for you to get a host and a port...so it is easy
+to deploy on all your server using the deployer: simply use the maven
+provisioning then run the deployer on all your nodes and that's all!
+
+==== Doing it with camel?
+
+If you are using a route to deploy/undeploy your applications you can
+have a look to the proposed camel-openejb component:
+
+* base code:
+http://svn.apache.org/repos/asf/tomee/sandbox/camel/camel-openejb/
+* proposed to be added to camel:
+https://issues.apache.org/jira/browse/CAMEL-4935

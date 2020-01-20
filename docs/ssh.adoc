@@ -1,0 +1,63 @@
+= SSH
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Connecting To OpenEJB or TomEE Through SSH
+
+=== Description
+
+It can be very useful to connect to the server to get some informations.
+
+=== Solution
+
+For such a case OpenEJB/TomEE proposes to start with the Java EE server
+a SSH server. Currently the security is based on JAAS (see how to
+configure JAAS for TomEE for more information about it).
+
+=== Installation
+
+Simply extract the openejb-ssh jar in the lib of tomee
+(webapps/tomee/lib) or openejb libs (lib folder). Then simply connect
+using your JAAS credential.
+
+Note: you can use the provisioning features of openejb to do this job!
+
+Then simply activate the service manage: it is done setting the system
+property openejb.servicemanager.enabled to true.
+
+Note: it can be done through the conf/system.properties file. Note2:
+please take care to not add space after true (not 'true ' for instance).
+
+=== OpenEJB SSH Shell
+
+Once you are connected you get some commands:
+
+* deploy : deploy an application
+* undeploy : undeploy an application
+* list: list deployed EJBs
+* classloader : print the classloader tree of the app specified by the
+id
+* jmx : interact with JMX ** jmx list: list mbeans ** jmx get ** jmx set
+** jmx invoke ([, ...)
+* properties: print server configuration as properties
+* script
++
++
+: execute the following script code using the following language with
+the JSR 223
+* script file
++
++
+: execute the following script using the language (from the extension of
+the file) with the JSR 223
+* ls []: list the file in path is specified or in the base of the server
+if not
+* cat : print a file
+* part - : print the part of a file
+
+Note1: JSR 223 can need to add some jar to openejb/tomee lib folder
+(groovy-all for instance to use groovy) Note2: ls, part, cat commands
+have to use $home and $base properties to specified the path

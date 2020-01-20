@@ -1,0 +1,199 @@
+= EJB Refs
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+TomEE complains it doesn't know the container type, so I added
+type="javax.naming.InitialContext" and it worked (mostly). ##
+Referencing a bean in another jar (with annotations)
+
+When using annotations to reference a bean from another ejb in your ear
+you have to supplement the `@EJB` reference with a small chunk of xml in
+the ejb-jar.xml of the referring bean.
+
+So in ejb app A colorsApp.jar you have this bean:
+
+[source,java]
+----
+package com.foo.colors;
+
+import javax.ejb.Stateless;
+
+@Stateless
+public class OrangeBean implements OrangeRemote {
+}
+----
+
+Then in ejb app B shapesApp.jar you have this bean with a reference to
+OrangeRemote:
+
+[source,java]
+----
+package com.foo.shapes;
+
+import javax.ejb.Stateless;
+import com.foo.colors.OrangeRemote;
+
+@Stateless
+public class SquareBean implements SquareRemote {
+    @EJB OrangeRemote orangeRemote;
+}
+----
+
+To hook this reference up you need to override this ref and add more
+info in the ejb-jar.xml of shapesApp.jar as follows:
+
+[source,xml]
+----
+<ejb-jar>
+  <enterprise-beans>
+
+    <session>
+      <ejb-name>SquareBean</ejb-name>
+      <ejb-ref>
+    <ejb-ref-name>com.foo.shapes.SquareBean/orangeRemote</ejb-ref-name>
+    <ejb-link>colorsApp.jar#OrangeBean</ejb-link>
+      </ejb-ref>
+    </session>
+
+  </enterprise-beans>
+</ejb-jar>
+----
+
+== Referencing a bean in another jar (xml only, no annotations)
+
+The same basic approach applies and dependency injection is still
+possible, however more information must be described in the xml.
+
+In ejb app A colorsApp.jar you have this bean:
+
+[source,java]
+----
+package com.foo.colors;
+
+import javax.ejb.Stateless;
+
+@Stateless
+public class OrangeBean implements OrangeRemote {
+}
+----
+
+Then in ejb app B shapesApp.jar -- note there is no `@EJB` annotation:
+
+[source,java]
+----
+package com.foo.shapes;
+
+import javax.ejb.Stateless;
+import com.foo.colors.OrangeRemote;
+
+@Stateless
+public class SquareBean implements SquareRemote {
+    OrangeRemote orangeRemote;
+}
+----
+
+Here's how you would hook this reference up, injection and all, with
+just xml. The following would be added to the ejb-jar.xml of
+shapesApp.jar:
+
+[source,xml]
+----
+<ejb-jar>
+  <enterprise-beans>
+
+    <session>
+      <ejb-name>SquareBean</ejb-name>
+      <ejb-ref>
+        <ejb-ref-name>com.foo.shapes.SquareBean/orangeRemote</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <remote>com.foo.colors.OrangeRemote</remote>
+        <ejb-link>colorsApp.jar#OrangeBean</ejb-link>
+        <injection-target>
+          <injection-target-class>com.foo.shapes.SquareBean</injection-target-class>
+          <injection-target-name>orangeRemote</injection-target-name>
+        </injection-target>
+      </ejb-ref>
+    </session>
+
+  </enterprise-beans>
+</ejb-jar>
+----
+
+Note that the value of could actually be anything and the above example
+would still work as there is no annotation that needs to match the and
+no one will likely be looking up the EJB as it's injected.
+
+== Referencing a bean in another server
+
+As of OpenEJB 4.0.0-beta-3, server to server references work.
+
+First we need to configure and name the InitialContext that will be used
+to satisfy the lookup to the other server.
+
+In this example we are calling our InitialContext `shoe` for fun.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<openejb>
+
+  <JndiProvider id="shoe" type="javax.naming.InitialContext">
+    java.naming.provider.url = ejbd://localhost:4201
+    java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
+  </JndiProvider>
+
+</openejb>
+----
+
+Declaring the `@EJB` reference is then done using a `mappedName` that
+references the named `InitialContext`
+
+[source,java]
+----
+public class BlueBean implements BlueRemote {
+
+    @EJB(mappedName = "jndi:ext://shoe/OrangeBeanRemote")
+    private OrangeRemote orangeRemote;
+
+    public void hasOrangeRemote() {
+        Assert.assertNotNull("orangeRemote is null", orangeRemote);
+        assertEquals("olleh", orangeRemote.echo("hello"));
+    }
+}
+----
+
+Specifically, the `mappedName` syntax is as follows:
+
+* jndi:ext://`<contextId>`/`<jndiName>`
+
+=== Referencing a bean in "many" servers
+
+Note the above also works with the various forms of failover that TomEE
+supports.
+
+If say, there are two servers that have the `OrangeBeanRemote` bean, you
+could expand the `<JndiProvider>` delcaration like so:
+
+[source,xml]
+----
+  <JndiProvider id="shoe" type="javax.naming.InitialContext">
+    java.naming.provider.url = failover:ejbd://192.168.1.20:4201,ejbd://192.168.1.30:4201
+    java.naming.factory.initial = org.apache.openejb.client.RemoteInitialContextFactory
+  </JndiProvider>
+----
+
+In the event that the `ejbd://192.168.1.20:4201` server cannot be
+contacted, the second server will be tried.
+
+This sort of arangement can also happen dynamicall against a list of
+servers that continuously grows and shrinks. The server list is
+maintained behind the scenes using server discovery logic that can
+function on either UDP or TCP. See these docs for more details on
+Failover and Discovery:
+
+* link:multicast-discovery.html[Multicast Discovery (UDP)]
+* link:multipulse-discovery.html[Multipulse Discovery (TCP)]
+* link:multipoint-discovery.html[Multipoint Discovery (TCP)]

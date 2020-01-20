@@ -1,0 +1,103 @@
+= Constructor Injection
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+For those of you who would like to use final fields,
+wish to avoid numerous setters, or dislike private field injection and
+would like nothing more than to just use plan old java constructors,
+your wish has come true. This is a feature we intended to add to OpenEJB
+3.0 but didn't have time for. We're happy to bring it to the OpenEJB 3.1
+release and with a bit of luck and support from people like yourself,
+we'll see this as an EJB 3.1 feature as well.
+
+[source,java]
+----
+@Stateless
+public class WidgetBean implements Widget {
+
+    @EJB(beanName = "FooBean")
+    private final Foo foo;
+
+    @Resource(name = "count")
+    private final int count;
+
+    @Resource
+    private final DataSource ds;
+
+    public WidgetBean(Integer count, Foo foo, DataSource ds) {
+    this.count = count;
+    this.foo = foo;
+    this.ds = ds;
+    }
+
+    public int getCount() {
+    return count;
+    }
+
+    public Foo getFoo() {
+    return foo;
+    }
+}
+----
+
+The `@EJB`, `@Resource`, `@PersistenceUnit`, and `@PersistenceContext`
+annotations can be placed at the class-level instead such as:
+
+[source,java]
+----
+@Stateless
+@EJB(name = "foo", beanInterface = Foo.class, beanName = "FooBean")
+@Resource(name = "count", type = int.class)
+@Resource(name = "ds", type = DataSource.class)
+public class WidgetBean implements Widget {
+
+    public WidgetBean(Integer count, Foo foo, DataSource ds) {
+       // do something
+    }
+
+    public int getCount() {
+    return count;
+    }
+
+    public Foo getFoo() {
+    return foo;
+    }
+}
+----
+
+Currently this functionality relies on classes being compiled with debug
+symbols (the default compile setting for javac) as we use the debug
+table in the byte code to discover the constructor arg names.
+Additionally, you must not have a no-arg constructor. If a no-arg
+constructor is present, that constructor will be used instead.
+
+Ideally, we would like the annotations to be used on the parameters
+directly as shown below. Unfortunately, this does not work as the Java
+EE annotation classes do not permit usage on parameters. If you'd like
+to see that change as much as we do, definitely voice your support by
+sending note to
+mailto:jsr-316-comments@jcp.org.html[jsr-316-comments@jcp.org]
+
+Not yet possible
+
+[source,java]
+----
+@Stateless
+
+public class WidgetBean implements Widget {
+
+    public WidgetBean(@Resource(name = "count") Integer count, @EJB Foo foo, @Resource DataSource ds) {
+       // do something
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public Foo getFoo() {
+        return foo;
+    }
+}
+----

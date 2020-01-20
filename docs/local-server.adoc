@@ -1,0 +1,56 @@
+= Local Server
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+!http://www.openejb.org/images/diagram-local-server.gif|valign=top,
+align=right, hspace=15! # Accessing EJBs Locally
+
+When OpenEJB embedded in your app, server, IDE, or JUnit, you can use
+what we call the Local Server and avoid the network overhead and enjoy
+an easy way to embedd OpenEJB. Instead of putting the app in the server,
+put the server in the app!
+
+= Say what?! A local server?
+
+Yes, you read correctly. OpenEJB can be embedded and treated as your
+very own personal EJB container.
+
+If they can have Local and Remote EJB's, why not Local and Remote EJB
+Servers too?
+
+Haven't you ever wanted EJBs without the heavy? I mean you need the
+"heavy" eventually, but not while you're developing. Well, there's the
+advantage of an EJB implementation that was designed with a very clean
+and well defined server-container contract, you can cut the server part
+out completely!
+
+So, if you wish to access ejbs locally and not in client/server mode,
+you can do so by embedding OpenEJB as a library and accessing ejbs
+through OpenEJB's built-in IntraVM (Local) Server. Why would someone
+want to do this? * Your application is a server or other middleware *
+You want to write an app that can be both stand alone _and_ distributed
+* To test your EJBs with JUnit and don't want to start/stop servers and
+other nonsense * Imagine the power from being able to use your IDE
+debugger to step from your Client all the way into your EJB and back
+with no remote debugging voodoo.
+
+In this case, your application, test suite, IDE, or client accesses
+beans as you would from any other EJB Server. The EJB Server just
+happens to be running in the same virtual machine as your application.
+This EJB Server is thusly called the IntraVM Server, and, for all
+intense purposes, your application an IntraVM Client.
+
+There are some interesting differences though. The IntraVM Server isn't
+a heavyweight server as one normally associates with EJB. It doesn't
+open connections, launch threads for processing requests, introduce
+complex classloading heirarchies, or any of those "heavy" kind of
+things. All it does is dish out proxies to your app that can be used to
+shoot calls right into the EJB Container. Very light, very fast, very
+easy for testing, debugging, developing, etc.
+
+= Embedding
+
+!http://www.openejb.org/images/diagram-local-server.gif|valign=top,
+align=right, hspace=15! \{include:OPENEJBx30:Embedding}

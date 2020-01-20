@@ -1,0 +1,37 @@
+= Apache TomEE configuration
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== Configuring Resources:
+
+* Drivers are dropped into tomeeDir/lib
+* Resources are configured in tomeeDir/conf/tomee.xml. +
+* The configurations take a very simple (XML+Property-file) syntax.
+* Tag names match annotation names
+
+For example,
+
+[source,java]
+----
+@Resource DataSource moviesDatabase 
+----
+
+is injected with the following resource:
+
+[source,xml]
+----
+<Resource id="moviesDatabase" type="DataSource">    
+JdbcDriver org.hsqldb.jdbcDriver    
+JdbcUrl jdbc:mysql:localhost:3306/moviesdb    
+UserName sa    
+Password secret    
+JtaManaged true    
+</Resource>
+----
+
+For more on how to configure, read through
+link:/configuring-datasources.html[configuring-datasources],
+link:containers-and-resources.html[containers-and-resources] docs.
