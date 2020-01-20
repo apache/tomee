@@ -1,0 +1,173 @@
+= TomEE and Hibernate
+:index-group: JPA
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+Apache TomEE ships with OpenJPA as the default JPA provider, however any
+valid JPA 2.0 provider can be used.
+
+The basic steps are:
+
+[arabic]
+. Add the Hibernate jars to `<tomee-home>/lib/`
+. Configure the webapp or the server to use Hibernate
+
+*The atifact versions defined here are just for example, so please feel
+free to use current library versions.*
+
+== Webapp Configuration
+
+Any webapp can specify the JPA provider it would like to use via the
+`persistence.xml` file, which can be at any of the following locations
+in a webapp
+
+* `WEB-INF/persistence.xml` of the `.war` file
+* `META-INF/persistence.xml` in any jar located in `WEB-INF/lib/`
+
+A single webapp may have many `persistence.xml` files and each may use
+whichever JPA provider it needs.
+
+The following is an example of a fairly common `persistence.xml` for
+Hibernate
+
+[source,xml]
+----
+<persistence version="1.0"
+       xmlns="http://java.sun.com/xml/ns/persistence"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+       http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+
+  <persistence-unit name="movie-unit">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+
+    <properties>
+      <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+Note, TomEE will automatically add the following property unless it is
+explicitly configured:
+
+[source,xml]
+----
+      <property name="hibernate.transaction.manager_lookup_class"
+                value="org.apache.openejb.hibernate.TransactionManagerLookup"/>
+----
+
+== Server Configuration
+
+The default JPA provider can be changed at the server level to favor
+Hibernate over OpenJPA.
+
+Using the `<tomee-home>/conf/system.properties` file or any other valid
+means of setting `java.lang.System.getProperties()`, the following
+standard properties can set the detault for any `persistence.xml` file.
+
+* `javax.persistence.provider`
+* `javax.persistence.transactionType`
+* `javax.persistence.jtaDataSource`
+* `javax.persistence.nonJtaDataSource`
+
+So, for example, Hibernate can become the default provider via setting
+
+`CATALINA_OPTS=-Djavax.persistence.provider=org.hibernate.ejb.HibernatePersistence`
+
+You *must* of course add the Hibernate libraries to `<tomee-home>/lib/`
+for this to work.
+
+== Hibernate libraries
+
+Jars needed for Hibernate 4.x:
+
+Add:
+
+* `<tomee-home>/lib/antlr-2.7.7.jar`
+* `<tomee-home>/lib/dom4j-1.6.1.jar`
+* `<tomee-home>/lib/hibernate-commons-annotations-4.0.1.Final.jar`
+* `<tomee-home>/lib/hibernate-core-4.1.4.Final.jar`
+* `<tomee-home>/lib/hibernate-entitymanager-4.1.4.Final.jar`
+* `<tomee-home>/lib/hibernate-validator-4.3.0.Final.jar`
+* `<tomee-home>/lib/jboss-logging-3.1.0.GA.jar`
+
+Remove (optional):
+
+* `<tomee-home>/lib/asm-3.2.jar`
+* `<tomee-home>/lib/openjpa-2.2.0.jar`
+
+== Ehcache (optional)
+
+To use Hibernate with Ehcache, add:
+
+* `<tomee-home>/lib/hibernate-ehcache-4.1.4.Final.jar`
+* `<tomee-home>/lib/ehcache-core-2.5.1.jar`
+* `<tomee-home>/lib/ehcache-terracotta-2.5.1.jar`
+* `<tomee-home>/lib/terracotta-toolkit-1.4-runtime-4.1.0.jar`
+
+== Infinispan (optional)
+
+To use Infinispan cache (default Hibernate 2nd level cache) you need the
+below jars:
+
+There are many guides on how to use 2nd level cache with JPA 2. You can
+remove OpenJPA jar so less jars are in `<tomee-home>/lib` folder. Also,
+be sure to put your Database JDBC driver in `<tomee-home>/lib`.
+
+The actual Maven dependencies for your project can be added in the usual
+way:
+
+[source,xml]
+----
+    <!-- Hibernate -->      
+    <dependency>
+        <groupId>antlr</groupId>
+        <artifactId>antlr</artifactId>
+        <version>2.7.7</version>
+    </dependency>       
+    <dependency>
+        <groupId>dom4j</groupId>
+        <artifactId>dom4j</artifactId>
+        <version>1.6.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate.common</groupId>
+        <artifactId>hibernate-commons-annotations</artifactId>
+        <version>4.0.5.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>4.2.16.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-ehcache</artifactId>
+        <version>4.2.16.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>4.2.16.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>4.3.2.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>3.1.0.GA</version>
+    </dependency>
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.15.0-GA</version>
+    </dependency>
+----

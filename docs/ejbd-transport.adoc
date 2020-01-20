@@ -1,0 +1,212 @@
+= Ejbd Transport
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+The Ejbd Transport allows to remotely access EJBs that have a remote
+interface. Nevertheless it is not based on IIOP.
+
+Ejbd Transport is different using TomEE or OpenEJB.
+
+In OpenEJB it uses openejb http layer and ejbd is configured through
+ejbd service (same for ejbds). So to activate/deactivate them use
+conf/ejbd(s).properties files. You can set property disabled to true if
+you don't want them to be started.
+
+In TomEE the transport is the Tomcat one. It uses a servlet brought by
+TomEE webapp. Here is the servlet as defined in TomEE webapp:
+
+[source,xml]
+----
+<servlet>
+    <servlet-name>ServerServlet</servlet-name>
+    <servlet-class>org.apache.openejb.server.httpd.ServerServlet</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>ServerServlet</servlet-name>
+    <url-pattern>/ejb/*</url-pattern>
+</servlet-mapping>
+----
+
+You can easily remove it if you don't use remote EJBs. Another way is to
+deactivate the servlet using the "activated" init parameter of the
+servlet.
+
+Finally you can move this servlet in your own webapp if you want to use
+a provider url containing your webapp context. Simply copy paste the
+servlet definition in your web.xml and set the url mapping to what you
+want (let say /foo/*). Then use the provider url
+http://<host>:<port>/<webapp context name>/foo
+
+== Remote communication and serialization
+
+Remotely calling EJBs, independent of using Ejbd or other RMI/IIOP based
+protocols, involves serialization and deserialization of objects.
+Deserializing unknown content coming from an untrusted source imposes a
+security risk as the stream could be manipulated. A much publicized
+http://www.kb.cert.org/vuls/id/576313[vulnerability] was found in the
+commons-collections library which allowed to remotely execute arbitrary
+code simply by deserializing instances of the class
+`InvokerTransformer`.
+
+To prevent this risk TomEE and the OpenEJB client since 1.7.4 before
+deserializing every object checks its class against a configurable
+blacklist and a whitelist. The default black list is defined as `*`,
+meaning that requests cannot be deserialized at all and the Ejbd
+transport in fact cannot be used.
+
+The blacklist and whitelist is configured via the system properties:
+
+* `tomee.serialization.class.whitelist`
+* `tomee.serialization.class.blacklist`
+
+You will also find these properties in
+link:properties-listing.html[System Properties Listing]
+
+These rules apply for the whitelist:
+
+* The whitelist has a lower priority than the blacklist. That means a
+class that is part of the blacklist cannot be whitelisted and will
+always be refused.
+* If a whitelist is not defined, either by not defining the property at
+all or defining it with an empty value, every class is on the whitelist.
+In this case only the blacklist applies.
+* If a whitelist is defined it must be a comma separated list of
+prefixes of fully qualified class names. Then deserialization of an
+object fails if its class is not part of this whitelist. A class is on
+the whitelist if its fully qualified classname is prefixed by one of the
+values in the whitelist.
+
+These rules apply for the blacklist:
+
+* If the blacklist should be deactivated it must be configured to the
+value `-`. This will open your system to the serialization vulnerability
+if you don't configure a whitelist!
+* If the blacklist is not configured its default value is
+`org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process`
+so that for example the class
+`org.apache.commons.collections.functors.InvokerTransformer` cannot be
+deserialized.
+* If the blacklist is configured with an empty value the blacklist is
+effectively `*`, therefore preventing any Ejbd communication.
+* If you want to blacklist certain classes the property must be
+configured to a comma separated list of prefixes of fully qualified
+class names. A class is on the blacklist if its fully qualified
+classname is prefixed by one of the values in the blacklist.
+
+The default for `tomee.serialization.class.whitelist` is empty, the
+default for `tomee.serialization.class.blacklist` is `*` since TomEE
+1.7.4.
+
+If an EJB request fails because a class is not whitelisted you will find
+this log entry:
+
+[source,properties]
+----
+WARN - "null OEJP/4.7" FAIL "Security error - foo.Bar is not whitelisted as deserializable, prevented before loading it." - Debug for StackTrace
+----
+
+If you trust this class and want to support serialization in remote
+communication you have to configure these properties appropriately both
+on server side as well as on client side.
+
+If you only want to support serialization of the classes `foo.Bar` and
+`foo.Baz` you can configure the properties like this:
+
+[source,properties]
+----
+tomee.serialization.class.whitelist = foo.Bar,foo.Baz
+tomee.serialization.class.blacklist = -
+----
+
+If you trust all classes in the package `foo` define the properties like
+this:
+
+[source,properties]
+----
+tomee.serialization.class.whitelist = foo.
+tomee.serialization.class.blacklist = -
+----
+
+(Don't forget the trailing `.` after foo, as it will also whitelist all
+classes in the package `foo2` otherwise.)
+
+If you trust all classes in the package `foo` except the class `foo.Bar`
+you have to configure the properties like this:
+
+[source,properties]
+----
+tomee.serialization.class.whitelist = foo.
+tomee.serialization.class.blacklist = foo.Bar
+----
+
+=== Revert to behavior of TomEE 1.7.3
+
+TomEE 1.7.3 already contained a fixed blacklist that was not
+configurable and contained the packages org.codehaus.groovy.runtime,
+org.apache.commons.collections.functors and org.apache.xalan including
+subpackages and the class java.lang.Process. If you know that your
+applications runs on TomEE 1.7.3 but does not on TomEE 1.7.4 showing the
+aforementioned log message, you can define the configuration so that the
+serialization will work in the same way as it did with TomEE 1.7.3:
+
+[source,properties]
+----
+tomee.serialization.class.whitelist = 
+tomee.serialization.class.blacklist = org.codehaus.groovy.runtime.,org.apache.commons.collections.functors.,org.apache.xalan,java.lang.Process
+----
+
+Please note that with this configuration your server may be vulnerable
+to Java serialization attacks not yet identified by the Zero Day
+initiative. Also note that the following versions of the affected
+libraries have been patched and approved by the Zero Day initiative and
+_may_ be safe to deserialize.
+
+* Groovy 2.4.4
+* Commons Collections 3.2.2
+* Xalan 2.7.2
+
+As Ejbd transport is tunneled over HTTP please make sure that the
+`ServerServlet` is not publicly accessible. When the applications
+running on TomEE do not package the `ServerServlet` themselves ensure
+that the URL http://<host>:<port>/tomee/ejb is not accessible from
+untrusted sources.
+
+If your applications package declare it in their own web.xml make sure
+that the respective URL is not accessible from untrusted sources.
+
+=== Revert to behavior of TomEE 1.7.2
+
+TomEE 1.7.2 did not have any kind of blacklist when deserializing
+objects over Ejbd. If you want to revert to this behavior you can simply
+deactivate the blacklist with this configuration:
+
+[source,properties]
+----
+tomee.serialization.class.whitelist =
+tomee.serialization.class.blacklist = -
+----
+
+Note that this configuration makes your system highly vulnerable to
+serialization attacks! Consider your system as unsafe!
+
+=== Remote communication and Arquillian tests
+
+The mechanism described above principally also works when running
+Arquillian tests. As the Ejbd transport is already used for deploying
+applications all Arquillian tests would fail with the default settings.
+
+Therefore the TomEE Arquillian adapter automatically starts the
+container so that all classes except for a set of well-know dangerous
+classes are whitelisted.
+
+As Ejbd is by default disabled since TomEE 7.0.0, the TomEE Arquillian
+adapter automatically activates it when starting a remote container.
+
+=== Remote communication and the TomEE Maven Plugin
+
+The same mentioned above on Arquillian and TomEE is also valid when
+using the TomEE Maven Plugin.

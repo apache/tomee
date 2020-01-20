@@ -1,0 +1,140 @@
+= TomEE and Eclipse
+:index-group: IDE
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software Foundation (ASF) under
+one or more contributor license agreements. See the NOTICE file
+distributed with this work for additional information regarding
+copyright ownership. The ASF licenses this file to you under the Apache
+License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+. http://www.apache.org/licenses/LICENSE-2.0 . Unless required by
+applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, either express or implied. See the License for
+the specific language governing permissions and limitations under the
+License.
+
+Using TomEE in Eclipse is pretty simple since it uses the existing
+Tomcat 7 server adaptor that comes with Eclipse.
+
+== Quick Start
+
+An excellent instructional video with step-by-step instructions on how
+to install Eclipse, TomEE and create/deploy your first project is
+available on YouTube here:
+http://www.youtube.com/watch?v=Lr8pxEACVRI[Getting Started with Apache
+TomEE] (Remember to select the 'Generate web.xml descriptor' checkbox
+during project setup. Otherwise the ejb does not get injected and you
+will get an error.).
+
+[arabic]
+. Download and install both Apache TomEE and Eclipse.
+. Start Eclipse and from the main menu go to *File* - *New* - *Dynamic
+Web Project*
+. Enter a new project name
+. In the *Target Runtime* section click on the *New Runtime* button.
+. Pick *Apache Tomcat v7.0* and click Next
+. Change the *Name* field to _TomEE_ to indicate that this is a TomEE
+server rather than a Tomcat server.
+. Set the *Tomcat installation directory* by clicking the *Browse*
+button and selecting the folder where you extracted TomEE
+. Click *Finish* to return to the New Project dialog
+. Click *Finish* to complete creating your new Project
+. When you're ready to deploy your project, right-click your project and
+select Run As - Run On Server
+. Make sure that the _TomEE_ environment is selected in the *Server
+runtime environment*
+. On the *Run on Server* dialog, click the *Always use this server when
+running this project* checkbox
+. Click *Finish* - Eclipse will start TomEE and deploy your project
+
+== Advanced installation
+
+[arabic]
+. In Eclipse, click on the *Servers* tab, right click and select New -
+Server.
+. Select *Apache - Tomcat v7.0 Server* and click *Next*
+. Set the *Tomcat installation directory* by clicking the *Browse*
+button and selecting the folder where you extracted TomEE
+. Add your webapp to the server. Click *Finish*.
+. In the *Servers* tab, double click on your server to open up the
+*Overview* page. Click on the *Modules* tab
+. Click *Add External Web Module*. In the *Add Web Module* dialog, for
+document base, browse to `<TomEE>/webapps/tomee`. Set *Path:* to
+`/tomee`. Uncheck *Auto reloading enabled*. Click OK.
+. Return to the *Overview* tab for the server.
+. Deselect the *Modules auto reload by default* checkbox.
+. If you do not want Eclipse to take control of your TomEE installation,
+select *Use Workspace Metadata* under *Server Locations*. Please review
+the _Workspace Metadata Installation_ section below for additional steps
+in this scenario. Otherwise, select *Use Tomcat Installation*
+. Click the Save button in Eclipse so the server configuration gets
+saved.
+. Click on your webapp project, then select Project - clean. Hit OK.
+This will cause Eclipse to clean and rebuild
+. In the *Servers* tab, right click on the server and select *Publish*.
+. Start the server.
+
+=== Workspace Metadata Installation
+
+If you used *Use Workspace Metadata* in the *Server Locations*
+definition of the TomEE server, you will have to add TomEE specific
+configuration files to your Servers project in your workspace in case
+you need to change system properties or add containers / resources and
+have those reflected in the server running under Eclipse.
+
+[arabic]
+. Locate your TomEE server configuration in Workspace / Servers
+. Right-click the server project and select *Import*
+. Select General - File System and click *Next*
+. Browse to your `<TomEE>/conf` folder
+. Select the following files for import: `logging.properties`,
+`system.properties` and `tomee.xml`
+. Click *Finish* to import the files.
+. In the *Servers* tab, right-click the TomEE server and select
+*Publish* to publish the files to the Eclipse metadata folder
+
+If you need to modify system properties or change your TomEE resources,
+containers, etc., you now need to make those changes in the Workspace /
+Servers / `<`Your Server`>` location and publish them to the server for
+the changes to take effect.
+
+=== JSP Hot Deployment
+
+If jsp changes are not being hot deployed then this is because the jsp
+servlet is set to development=false in the web.xml file. To allow jsp
+hot deployment alter this value to true and restart Tomee.
+
+This is the relevant snippet of the web.xml file.
+
+[source,xml]
+----
+<servlet>
+    <servlet-name>jsp</servlet-name>
+    <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+    ....
+    <init-param>
+        <param-name>development</param-name>
+        <param-value>true</param-value>
+    </init-param>
+    ....
+</servlet>
+----
+
+== How to use JULI for TomEE in WTP?
+
+It seems that WTP doesn't manage correctly Tomcat logging configuration
+(which needs to be done through system properties). A quick workaround
+is to add these properties manually:
+
+[source,properties]
+----
+-Djava.util.logging.config.file="<tomee>/conf/logging.properties"
+-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+----
+
+More information on:
+http://wiki.eclipse.org/WTP_Tomcat_FAQ#How_do_I_enable_the_JULI_logging_in_a_Tomcat_5.5_Server_instance.3F

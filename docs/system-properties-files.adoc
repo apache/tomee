@@ -1,0 +1,25 @@
+= System Properties Files
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+== OpenEJB System Properties File
+
+OpenEJB and TomEE are really configurable in particular through system
+properties.
+
+What is not so known is these system properties can be read from several
+places. The order is important, it means if the second place provides
+the same property than the first one, the first one will be omitted.
+
+Here how it works:
+
+* JVM system properties: -Dxxx=yyy
+* user system.properties: the file
+$\{user.home}/.openejb/system.properties
+* instance system.properties: conf/system.properties
+
+Note: generally you place in the user system properties file the contant
+configuration (check my openejb version for instance).

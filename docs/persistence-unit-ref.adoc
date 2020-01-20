@@ -1,0 +1,95 @@
+= persistence-unit-ref
+:index-group: JPA
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+Both lookup and injection of an
+EntityManagerFactory can be configured via the `@PersistenceUnit`
+annotation or in xml. Annotations and xml have equal function in both
+lookup and injection.
+
+= Injection and Lookup
+
+== Via annotation
+
+[source,java]
+----
+package org.superbiz;
+
+import javax.persistence.PersistenceUnit;
+import javax.persistence.EntityManagerFactory;
+import javax.ejb.Stateless;
+import javax.naming.InitialUnit;
+
+@Stateless
+public class MyBean implements MyInterface {
+
+    @PersistenceUnit(unitName = "bar-unit")
+    private EntityManagerFactory myBarEntityManagerFactory;
+
+    public void someBusinessMethod() throws Exception {
+        if (myBarEntityManagerFactory == null) throw new NullPointerException("myBarEntityManagerFactory not injected");
+
+        // Both can be looked up from JNDI as well
+        InitialContext unit = new InitialContext();
+        EntityManagerFactory barEntityManagerFactory = (EntityManagerFactory) context.lookup("java:comp/env/org.superbiz.MyBean/myBarEntityManagerFactory");
+    }
+}
+----
+
+== Via xml
+
+The above `@PersistenceUnit` annotation usage is 100% equivalent to the
+following xml.
+
+[source,xml]
+----
+<persistence-unit-ref>
+    <persistence-unit-ref-name>org.superbiz.calculator.MyBean/myBarEntityManagerFactory</persistence-unit-ref-name>
+    <persistence-unit-name>bar-unit</persistence-unit-name>
+    <persistence-unit-type>Transaction</persistence-unit-type>
+    <injection-target>
+        <injection-target-class>org.superbiz.calculator.MyBean</injection-target-class>
+        <injection-target-name>myBarEntityManagerFactory</injection-target-name>
+    </injection-target>
+</persistence-unit-ref>
+----
+
+== Lookup only
+
+=== Via annotation
+
+[source,java]
+----
+package org.superbiz;
+
+import javax.persistence.PersistenceUnit;
+import javax.persistence.EntityManagerFactory;
+import javax.ejb.Stateless;
+import javax.naming.InitialUnit;
+
+@Stateless
+@PersistenceUnit(name = "myFooEntityManagerFactory", unitName = "foo-unit")
+public class MyBean implements MyInterface {
+
+    public void someBusinessMethod() throws Exception {
+        InitialContext context = new InitialContext();
+        EntityManagerFactory fooEntityManagerFactory = (EntityManagerFactory) context.lookup("java:comp/env/myFooEntityManagerFactory");
+    }
+}
+----
+
+= Via xml
+
+The above `@PersistenceUnit` annotation usage is 100% equivalent to the
+following xml.
+
+[source,xml]
+----
+<persistence-unit-ref>
+    <persistence-unit-ref-name>myFooEntityManagerFactory</persistence-unit-ref-name>
+    <persistence-unit-name>foo-unit</persistence-unit-name>
+    <persistence-unit-type>Transaction</persistence-unit-type>
+</persistence-unit-ref>
+----

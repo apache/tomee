@@ -1,0 +1,58 @@
+:index-group: Discovery and Failover
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+Setting the following logging category to "debug" will open up some new
+logging information.
+
+[source,properties]
+----
+log4j.category.OpenEJB.server.discovery = debug
+----
+
+Or more specifically as:
+
+[source,properties]
+----
+log4j.category.OpenEJB.server.discovery.multipoint = debug
+log4j.category.OpenEJB.server.discovery.multicast = debug
+----
+
+The nature of the debug output is to display all configuration
+information at startup:
+
+[source,properties]
+----
+DEBUG - Using default 'heart_rate=500'
+DEBUG - Using default 'max_missed_heartbeats=10'
+DEBUG - Using default 'max_reconnect_delay=30000'
+DEBUG - Using default 'reconnect_delay=5000'
+DEBUG - Using default 'exponential_backoff=0'
+DEBUG - Using default 'max_reconnect_attempts=10'
+INFO - Created Tracker{group='default', groupPrefix='default:', heartRate=500, maxMissedHeartbeats=10, reconnectDelay=5000, maxReconnectDelay=30000, maxReconnectAttempts=10, exponentialBackoff=0, useExponentialBackOff=false, registeredServices=0, discoveredServices=0}
+----
+
+Changing the configuration should reflect in the logging as follows:
+
+[source,properties]
+----
+INFO - Using 'heart_rate=200'
+INFO - Using 'max_missed_heartbeats=2'
+DEBUG - Using default 'max_reconnect_delay=30000'
+DEBUG - Using default 'reconnect_delay=5000'
+DEBUG - Using default 'exponential_backoff=0'
+DEBUG - Using default 'max_reconnect_attempts=10'
+INFO - Created Tracker{group='default', groupPrefix='default:', heartRate=200, maxMissedHeartbeats=2, reconnectDelay=5000, maxReconnectDelay=30000, maxReconnectAttempts=10, exponentialBackoff=0, useExponentialBackOff=false, registeredServices=0, discoveredServices=0}
+----
+
+As well as any events at runtime:
+
+[source,properties]
+----
+DEBUG - Expired Service{uri=green://localhost:0, broadcastString='default:green://localhost:0&#39;} Timeout{lastSeen=-5005, threshold=5000}
+
+DEBUG - Added Service{uri=green://localhost:0}
+
+DEBUG - Removed Service{uri=green://localhost:0}
+----

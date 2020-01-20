@@ -1,0 +1,68 @@
+= Configuring DataSources in Tests
+:index-group: Testing Techniques
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= InitialContext
+properties
+
+You can configure data sources from within your test case (avoiding the
+need for an `openejb.xml` entirely) like so:
+
+[source,java]
+----
+Properties p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+
+p.put("myDataSource", "new://Resource?type=DataSource");
+p.put("myDataSource.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
+p.put("myDataSource.JdbcUrl", "jdbc:derby:derbyDB;create=true");
+p.put("myDataSource.JtaManaged", "true");
+
+Context context = new InitialContext(p);
+----
+
+Under certain circumstances it may be necessary to load two versions of
+the same driver. This is possible by definition of a classpath for the
+resource which points to the specific driver files required for the
+DataSource:
+
+[source,java]
+----
+p.put("myDataSourceOne", "new://Resource?type=DataSource&classpath=/path/to/driverVersionOne.jar");
+p.put("myDataSourceOne.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
+p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseOne;create=true");
+
+p.put("myDataSourceTwo", "new://Resource?type=DataSource&classpath=/path/to/driverVersionTwo.jar");
+p.put("myDataSourceTwo.JdbcDriver", "org.apache.derby.jdbc.EmbeddedDriver");
+p.put("myDataSource.JdbcUrl", "jdbc:derby:myDatabaseTwo;create=true");
+[source,java]
+----
+
+This will allow an application to communicate through legacy drivers to
+the same JDBC provider.
+
+See link:embedded-configuration.html[Embedded Configuration] for further
+details on properties and overrides.
+
+See link:containers-and-resources.html[Containers and Resources] for a
+full list of supported Resource types and their properties.
+
+== Note on <jta-data-source> and <non-jta-data-source>
+
+When configuring DataSources to be used by persistence.xml files, the
+DataSource supplied for `<jta-data-source>` is typically identical to
+the `<non-jta-data-source>`, but with the `JtaManaged` property set
+differently. Keeping with our philosophy to free you up from redundant
+configuration, we will happily auto-create a missing jta-data-source or
+non-jta-data-source based upon the supplied DataSource.
+
+In the example above, a new DataSource would be generated as an exact
+copy but with the name "myDataSourceUnmanaged" and its `JtaManaged` flag
+set to `false`. If the supplied DataSource was not `JtaManaged`, then
+the generated DataSource would be called "myDataSourceJta" and have its
+`JtaManaged` flag set to `true`.
+
+When relying on this functionality it is not necessary to specify the
+name of the generated DataSource in the `persistence.xml` file.

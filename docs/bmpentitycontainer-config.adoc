@@ -1,0 +1,55 @@
+= BmpEntityContainer Configuration
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+A BmpEntityContainer can be declared via xml in the
+`<tomee-home>/conf/tomee.xml` file or in a `WEB-INF/resources.xml` file
+using a declaration like the following. All properties in the element
+body are optional.
+
+[source,xml]
+----
+<Container id="myBmpEntityContainer" type="BMP_ENTITY">
+    poolSize = 10
+</Container>
+----
+
+Alternatively, a BmpEntityContainer can be declared via properties in
+the `<tomee-home>/conf/system.properties` file or via Java
+VirtualMachine `-D` properties. The properties can also be used when
+embedding TomEE via the `javax.ejb.embeddable.EJBContainer` API or
+`InitialContext`
+
+[source,properties]
+----
+myBmpEntityContainer = new://Container?type=BMP_ENTITY
+myBmpEntityContainer.poolSize = 10
+----
+
+Properties and xml can be mixed. Properties will override the xml
+allowing for easy configuration change without the need for $\{} style
+variable substitution. Properties are not case sensitive. If a property
+is specified that is not supported by the declared BmpEntityContainer a
+warning will be logged. If a BmpEntityContainer is needed by the
+application and one is not declared, TomEE will create one dynamically
+using default settings. Multiple BmpEntityContainer declarations are
+allowed. # Supported Properties
+
+Property
+
+Type
+
+Default
+
+Description
+
+poolSize
+
+int
+
+10
+
+Specifies the size of the bean pools for this bmp entity container.

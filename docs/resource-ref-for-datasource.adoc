@@ -1,0 +1,55 @@
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= Via annotation
+
+[source,java]
+----
+package org.superbiz.refs;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
+@Stateless
+@Resource(name = "myFooDataSource", type = DataSource.class)
+public class MyDataSourceRefBean implements MyBeanInterface {
+
+    @Resource
+    private DataSource myBarDataSource;
+
+    public void someBusinessMethod() throws Exception {
+        if (myBarDataSource == null) throw new NullPointerException("myBarDataSource not injected");
+
+        // Both can be looked up from JNDI as well
+        InitialContext context = new InitialContext();
+        DataSource fooDataSource = (DataSource) context.lookup("java:comp/env/myFooDataSource");
+        DataSource barDataSource = (DataSource) context.lookup("java:comp/env/org.superbiz.refs.MyDataSourceRefBean/myBarDataSource");
+    }
+}
+----
+
+== Via xml
+
+The above `@Resource` annotation usage is 100% equivalent to the following
+xml.
+
+[source,xml]
+----
+<resource-ref>
+    <res-ref-name>myFooDataSource</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+</resource-ref>
+<resource-ref>
+    <res-ref-name>org.superbiz.refs.MyDataSourceRefBean/myBarDataSource</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <injection-target>
+        <injection-target-class>org.superbiz.refs.MyDataSourceRefBean</injection-target-class>
+        <injection-target-name>myBarDataSource</injection-target-name>
+    </injection-target>
+</resource-ref>
+----

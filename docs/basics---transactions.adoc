@@ -1,0 +1,67 @@
+= Basics - Transactions
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+One of the many benefits of EJB, is that
+transactions within the EJB container are generally managed entirely
+automatically. Any EJB component will, by default, partake in that
+transaction.
+
+Here are some basic rules to understand about transactions. Keep note
+that this is the default behaviour, and the system can be configured to
+behave differently, depending on the needs of your system, bean, or
+individual methods of your beans.
+
+== Participants
+
+Various components and parts of the EJB system can be part of a
+transaction. Examples are
+
+[arabic]
+. Session bean
+. Message Driven Bean
+. EntityManager (a.k.a. Persistence context)
+
+== Behaviour
+
+The basic default behaviours are 1. A transaction starts at the
+beginning of the first EJB method call, in a chain of calls that are
+participating in the given transaction 1. A transaction ends at the end
+of the first EJB method, in the same chain 1. If a bean that has started
+a transaction, uses another bean, that bean will automatically use the
+same transaction as the calling bean.
+
+== Configuration
+
+You can configure your beans in a variety of ways. Generally speaking, a
+transaction is started when a method is called, but can be configured
+using `@TransactionAttribute`(value = TransactionAttributeType.X), where X
+is one of...
+
+[arabic]
+. REQUIRED - the default, which is to start a transaction if one does
+not exist, but to use the existing one if it has already been started.
+. REQUIRES_NEW - the transaction is created on every call, and ends when
+the call is completed. Beans don't partake in transactions created by
+other parts of the system.
+. MANDATORY - a transaction must always exist prior to the call, and it
+will be used. It is an error otherwise
+. NOT_SUPPORTED - component not included in the transaction
+. SUPPORTS - transaction will be used if it exists, but will not be
+created if it does not exist
+. NEVER - if a transaction exists, it is an error to call the method
+
+@TransactionAttribute applies to both methods and entire beans. You may
+set one type of transaction behaviour (as seen above) on the bean, and a
+different one on a specific method of that same bean, which overrides
+the one configured for the overall bean. For instance, maybe you want to
+make an audit entry in the database that you are about to attempt a
+credit card payment. It really needs to be in it's own transaction so
+that it is IMMEDIATELY committed for audit purposes, if something goes
+wrong with the credit card payment. So, perhaps you use MANDATORY on the
+bean, and REQUIRES_NEW on the method for audit logging. As soon as the
+method that does the audit logging is complete, the transaction is
+committed, and the credit card payment transaction continues on it's
+way.

@@ -1,0 +1,161 @@
+= Changing JMS Implementations
+:index-group: Configuration
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+NOTE: Licensed to the Apache Software
+Foundation (ASF) under one or more contributor license agreements. See
+the NOTICE file distributed with this work for additional information
+regarding copyright ownership. The ASF licenses this file to you under
+the Apache License, Version 2.0 (the "License"); you may not use this
+file except in compliance with the License. You may obtain a copy of the
+License at . http://www.apache.org/licenses/LICENSE-2.0 . Unless
+required by applicable law or agreed to in writing, software distributed
+under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+OR CONDITIONS OF ANY KIND, either express or implied. See the License
+for the specific language governing permissions and limitations under
+the License.
+
+ActiveMQ is the default JMS provider in Apache TomEE and OpenEJB.
+
+Changing JMS implementation is as simple as using that implementation's
+Java EE Connector. The connector which will be a `.rar` file should be
+bundled with the application in a `.ear` file. All JMS usage in that
+`.ear` will favor the JMS ConnectionFactory and Topic and Queue
+implementations that are configured in the `.rar` file rather than
+ActiveMQ.
+
+If the JMS implementation does not have a `.rar` file, there are still
+some options for wiring in an alternate implementation.
+
+== Generic JMS Resource Adapter
+
+If the JMS implementation does not have a Resource Archive (`.rar` file)
+that defines a compliant Resource Adapter, the
+http://genericjmsra.java.net/[Generic Resource Adapter for JMS] should
+work fine.
+
+To use this Adapter in TomEE or OpenEJB you'll need to create a
+`service-jar.xml` file and include that in a jar file and add it to the
+`<tomee.home>/lib/` directory. Then you can declare `ConnectionFactory`,
+`Topic`, and `Queue` and more via the `tomee.xml` file.
+
+The one below should be considered boiler plate. Updating it to contain
+some useful default values for your JMS implementation would be good.
+These values can be overridden in the `tomee.xml` or `openejb.xml`
+
+Let's say that the following file lives in the jar at
+`META-INF/org.superbiz/service-jar.xml`
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceJar>
+  <ServiceProvider
+      id="genericra"
+      service="Resource"
+      types="GenericJMSRA"
+      class-name="com.sun.genericra.GenericJMSRA">
+          UserName
+          Password
+          ProviderIntegrationMode
+          ConnectionFactoryClassName
+          QueueConnectionFactoryClassName
+          TopicConnectionFactoryClassName
+          XAConnectionFactoryClassName
+          XAQueueConnectionFactoryClassName
+          XATopicConnectionFactoryClassName
+          UnifiedDestinationClassName
+          TopicClassName
+          QueueClassName
+          SupportsXA
+          ConnectionFactoryProperties
+          JndiProperties
+          CommonSetterMethodName
+          RMPolicy
+          LogLevel
+          DeliveryType
+          UseFirstXAForRedelivery
+  </ServiceProvider>
+
+  <ServiceProvider
+      id="ConnectionFactory"
+      service="Resource"
+      types="javax.jms.ConnectionFactory, javax.jms.QueueConnectionFactory, javax.jms.TopicConnectionFactory, QueueConnectionFactory, TopicConnectionFactory"
+      class-name="com.sun.genericra.outbound.ManagedJMSConnectionFactory">
+          ConnectionFactoryJndiName
+          ClientId
+          ConnectionValidationEnabled
+          ResourceAdapter
+  </ServiceProvider>
+
+  <ServiceProvider
+      id="Queue"
+      service="Resource"
+      types="javax.jms.Queue, Queue"
+      class-name="com.sun.genericra.outbound.QueueProxy">
+          DestinationJndiName
+          ResourceAdapter
+          UserName
+          Password
+          JndiProperties
+          QueueClassName
+  </ServiceProvider>
+
+  <ServiceProvider
+      id="Topic"
+      service="Resource"
+      types="javax.jms.Topic, Topic"
+      class-name="com.sun.genericra.outbound.TopicProxy">
+          DestinationJndiName
+          ResourceAdapter
+          UserName
+          Password
+          JndiProperties
+          TopicClassName
+  </ServiceProvider>
+</ServiceJar>
+----
+
+It is strongly recommended to not leave the values in the
+service-jar.xml file blank as shown above. It is possible to setup
+several sets of defaults in a `service-jar.xml` or via several
+`service-jar.xml` files.
+
+Once this file is packed in a jar and added to the `<tomee.home>/lib` or
+`<openejb.home>/lib` directory, you can then declare and configure
+"instances" of these things in your `tomee.xml` or `openejb.xml` config
+file as follows:
+
+[source,xml]
+----
+<Resource id="My Generic Adapter" type="GenericJMSRA" provider="org.superbiz:genericra">
+AdapterProperty1 PropertyValue1
+AdapterProperty2 PropertyValue2
+...
+</Resource>
+----
+
+Or in properties like so:
+
+[source,properties]
+----
+myGenericAdapter = new://Resource?type=GenericJMSRA&provider=org.superbiz:genericra
+myGenericAdapter.AdapterProperty1 = PropertyValue1
+myGenericAdapter.AdapterProperty2 = PropertyValue2
+----
+
+This is basically the same as all configuration in TomEE/OpenEJB, but
+with the addition that you must specify the `provider` attribute so the
+server knows where to look for the `service-jar.xml` file that defines
+the resource and all its defaults.
+
+In this example:
+
+* the file is `META-INF/org.superbiz/service-jar.xml`
+* so the `provider` attribute is `org.superbiz`
+
+You can use whatever prefix you like for the `provider` id, though for
+obvious reasons we'd advise not using `org.apache.openejb` or
+`org.apache.tomee` in the prefix.

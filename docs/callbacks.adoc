@@ -1,0 +1,169 @@
+= Callbacks
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+Correct usage of PostConstruct, PreDestroy, PrePassivate, PostActivate,
+and AroundInvoke for EJBs and Interceptors.
+
+For Stateful, Stateless, and MessageDriven, the syntax is as follows:
+
+* @PostConstruct <any-scope> void <method-name>()
+* @PreDestroy <any-scope> void <method-name>()
+* @PrePassivate <any-scope> void <method-name>()
+* @PostActivate <any-scope> void <method-name>()
+
+For an Interceptor, the syntax includes InvocationContext as follows:
+
+* @PostConstruct <any-scope> void <method-name>(InvocationContext)
+* @PreDestroy <any-scope> void <method-name>(InvocationContext)
+* @PrePassivate <any-scope> void <method-name>(InvocationContext)
+* @PostActivate <any-scope> void &ltmethod-name>(InvocationContext)
+
+The AroundInvoke syntax for an EJB or Interceptor is the same:
+
+* @AroundInvoke <any-scope> Object <method-name>(InvocationContext)
+throws Exception
+
+== Stateless
+
+[source,java]
+----
+import javax.ejb.Stateless;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
+@Stateless
+public class MyStatelessBean implements  MyBusinessInterface  {
+
+    @PostConstruct
+    public void constructed(){
+
+    }
+
+    @PreDestroy
+    public void destroy(){
+
+    }
+
+    @AroundInvoke
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+    return invocationContext.proceed();
+    }
+}
+----
+
+== Stateful
+
+[source,java]
+----
+import javax.ejb.Stateful;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
+@Stateful
+public class MyStatefulBean implements  MyBusinessInterface  {
+
+    @PostConstruct
+    public void constructed(){
+
+    }
+
+    @PreDestroy
+    public void destroy(){
+
+    }
+
+    @AroundInvoke
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+          return invocationContext.proceed();
+    }
+
+    @PostActivate
+    public void activated(){
+
+    }
+
+    @PrePassivate
+    public void passivate(){
+
+    }
+}
+----
+
+== MessageDriven
+
+[source,java]
+----
+import javax.ejb.MessageDriven;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.InvocationContext;
+
+@MessageDriven
+public class MyMessageDrivenBean implements  MyListenerInterface  {
+
+    @PostConstruct
+    public void constructed(){
+
+    }
+
+    @PreDestroy
+    public void destroy(){
+
+    }
+
+    @AroundInvoke
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+          return invocationContext.proceed();
+    }
+}
+----
+
+== Interceptor
+
+[source,java]
+----
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.interceptor.InvocationContext;
+import javax.interceptor.AroundInvoke;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
+
+public class MyInterceptor {
+
+    @PostConstruct
+    public void constructed(InvocationContext invocationContext){
+
+    }
+
+    @PreDestroy
+    public void destroy(InvocationContext invocationContext){
+
+    }
+
+    @AroundInvoke
+    public Object invoke(InvocationContext invocationContext) throws Exception {
+        return invocationContext.proceed();
+    }
+
+    @PostActivate
+    public void activated(InvocationContext invocationContext){
+
+    }
+
+    @PrePassivate
+    public void passivate(InvocationContext invocationContext){
+
+    }
+}
+----

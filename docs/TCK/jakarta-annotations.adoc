@@ -1,0 +1,83 @@
+= Jakarta Annotations TCK
+:index-group: TCK
+:jbake-date: 2019-09-09
+:jbake-type: page
+:jbake-status: published
+
+As part of the Jakarta EE certification, Apache TomEE runs standalone TCKs for small components in a standalone manner.
+Of course, as a web profile implementation, Apache TomEE also runs bigger tests suites for web profile or MicroProfile for instance.
+
+== Technology Compatibility Kit (TCK)
+
+The Jakarta Annotations, version 1.3 has been executed for the Apache Geronimo spec jar
+
+----
+<!-- https://mvnrepository.com/artifact/org.apache.geronimo.specs/geronimo-annotation_1.3_spec -->
+<dependency>
+    <groupId>org.apache.geronimo.specs</groupId>
+    <artifactId>geronimo-annotation_1.3_spec</artifactId>
+    <version>1.2</version>
+    <scope>provided</scope>
+</dependency>
+----
+
+== Results
+
+----
+[javatest.gui] ******************************************************
+[javatest.gui] All package signatures passed.
+[javatest.gui] 	Passed classes listed below:
+[javatest.gui] 		javax.annotation.Generated(static mode)
+[javatest.gui] 		javax.annotation.Generated(reflection mode)
+[javatest.gui] 		javax.annotation.ManagedBean(static mode)
+[javatest.gui] 		javax.annotation.ManagedBean(reflection mode)
+[javatest.gui] 		javax.annotation.PostConstruct(static mode)
+[javatest.gui] 		javax.annotation.PostConstruct(reflection mode)
+[javatest.gui] 		javax.annotation.Priority(static mode)
+[javatest.gui] 		javax.annotation.Priority(reflection mode)
+[javatest.gui] 		javax.annotation.PreDestroy(static mode)
+[javatest.gui] 		javax.annotation.PreDestroy(reflection mode)
+[javatest.gui] 		javax.annotation.Resource(static mode)
+[javatest.gui] 		javax.annotation.Resource(reflection mode)
+[javatest.gui] 		javax.annotation.Resource$AuthenticationType(static mode)
+[javatest.gui] 		javax.annotation.Resource$AuthenticationType(reflection mode)
+[javatest.gui] 		javax.annotation.Resources(static mode)
+[javatest.gui] 		javax.annotation.Resources(reflection mode)
+[javatest.gui] 		javax.annotation.security.DeclareRoles(static mode)
+[javatest.gui] 		javax.annotation.security.DeclareRoles(reflection mode)
+[javatest.gui] 		javax.annotation.security.DenyAll(static mode)
+[javatest.gui] 		javax.annotation.security.DenyAll(reflection mode)
+[javatest.gui] 		javax.annotation.security.PermitAll(static mode)
+[javatest.gui] 		javax.annotation.security.PermitAll(reflection mode)
+[javatest.gui] 		javax.annotation.security.RolesAllowed(static mode)
+[javatest.gui] 		javax.annotation.security.RolesAllowed(reflection mode)
+[javatest.gui] 		javax.annotation.security.RunAs(static mode)
+[javatest.gui] 		javax.annotation.security.RunAs(reflection mode)
+[javatest.gui] 		javax.annotation.sql.DataSourceDefinition(static mode)
+[javatest.gui] 		javax.annotation.sql.DataSourceDefinition(reflection mode)
+[javatest.gui] 		javax.annotation.sql.DataSourceDefinitions(static mode)
+[javatest.gui] 		javax.annotation.sql.DataSourceDefinitions(reflection mode)
+[javatest.gui] 	******************************************************
+[javatest.gui] ******************************************************
+[javatest.gui]
+[javatest.gui] 09-09-2019 10:55:38:  cleanup
+[javatest.gui] STATUS:Passed.
+[javatest.gui] Passed.
+[javatest.gui] ********************************************************************************
+[javatest.gui] Finished Test:  PASSED........com/sun/ts/tests/signaturetest/caj/CAJSigTest.java#signatureTest
+[javatest.gui] ********************************************************************************
+[javatest.gui] Number of tests completed:  1 (1 passed, 0 failed, 0 with errors)
+[javatest.gui] Number of tests remaining:  0
+[javatest.gui] ********************************************************************************
+[javatest.gui] Completed running 1 tests.
+[javatest.gui] Number of Tests Passed      = 1
+[javatest.gui] Number of Tests Failed      = 0
+[javatest.gui] Number of Tests with Errors = 0
+[javatest.gui] ********************************************************************************
+[javatest.gui] PASSED........com/sun/ts/tests/signaturetest/caj/CAJSigTest.java#signatureTest
+[javatest.gui]
+----
+
+== Certification request
+
+Apache TomEE filled a certification request under https://github.com/eclipse-ee4j/common-annotations-api/issues/61

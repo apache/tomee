@@ -1,0 +1,7 @@
+= Singleton EJB
+:index-group: EJB
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+\{include:OPENEJBx30:Singleton Beans}

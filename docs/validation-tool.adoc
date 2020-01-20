@@ -1,0 +1,143 @@
+= Validation Tool
+:index-group: OpenEJB Standalone Server
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+
+= NAME
+
+openejb validate - OpenEJB Validation Tool
+
+= SYNOPSIS
+
+openejb validate link:options.html[options] jarfiles
+
+= NOTE
+
+The OpenEJB Validation tool must be executed from the OPENEJB_HOME
+directory. This is the directory where OpenEJB was installed or
+unpacked. For for the remainder of this document we will assume you
+unpacked OpenEJB into the directory C:.
+
+In Windows, the validation tool can be executed as follows:
+
+_C:> openejb validate -help_
+
+\{warning} There is a bug in the openejb.bat script of OpenEJB 0.9.0
+that doesn't allow you to execute the validate command as above. For
+that release, Windows users can execute the following command: _C:>
+bin.bat -help_
+
+\{warning}
+
+In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
+
+`[user@host openejb](user@host-openejb.html) # ./openejb.sh validate -help`
+
+Depending on your OpenEJB version, you may need to change execution bits
+to make the scripts executable. You can do this with the following
+command.
+
+`[user@host openejb](user@host-openejb.html) # chmod 755 openejb.sh bin/*.sh`
+
+From here on out, it will be assumed that you know how to execute the
+right openejb script for your operating system and commands will appear
+in shorthand as show below.
+
+_openejb validate -help_
+
+= DESCRIPTION
+
+The validation tool currently checks for the following things: * Does
+the Jar have all the ejb-class class files * Does the Jar have all the
+home class files * Does the Jar have all the remote class files * Is the
+ejb-class a sub-interface of SessionBean or EntityBean * Is the home a
+sub-interface of EJBHome * Is the remote a sub-interface of EJBObject *
+Are all the methods in the remote interface implemented in the ejb-class
+* Are there create methods in the home interface * Are the create
+methods in the home interface implemented in the ejb-class * Are the
+required post create methods in the ejb-class of EntityBeans * Are there
+any create methods in the ejb-class, but not in the home interface
+
+More checks will be added in the future.
+
+= OPTIONS
+
+-v
+
+Sets the output level to 1. This will output just the minumum details on
+each failure.
+
+-vv
+
+Default. Sets the output level to 2. Outputs one line summaries of each
+failure. This is the default output level.
+
+-vvv
+
+Sets the output level to 3. Outputs verbose details on each failure,
+usually with details on how to correct the failures.
+
+-xml
+
+Outputs information in well-formed XML.
+
+-nowarn
+
+Suppresses warnings.
+
+-version
+
+Print the version.
+
+-help
+
+Print this help message.
+
+-examples
+
+Show examples of how to use the options.
+
+# COMMON ISSUES
+
+== Misslocated class or NoClassDefFoundError
+
+The short explanation is that the parent doesn't have all the classes it
+needs as some of them are only in the child classloader, where the
+parent can't see them.
+
+This would occur, for example, if a class was loaded by the parent
+classloader, but that class' superclass wasn't visible to the parent
+classloader, perhaps because it is only in the child classloader.
+
+Here is a more concrete example:
+
+[source,java]
+----
+public interface Person extends EJBObject {
+}
+
+public interface Employee extends Person {
+}
+----
+
+Ok, so when we build our ejb jar, we put both the Person and Employee
+interfaces in the jar, so everything should be good (so we think). But
+now let's say that for some reason the Employee interface is also in
+another jar and that jar was loaded into the system classpath.
+
+When a new classloader is create for my ejb-jar at runtime and the
+system attempts to load the Employee interface, the call goes right
+through that classloader and down to the system classloader. The
+Employee interface is found, because it was accidentally added to that
+extra jar in the system classpath. So now the system classloader goes
+looking for Employee's superinterface, Person, where it immediatly blows
+up and throws a NoClassDefFoundError: Person.
+
+Most people will look at their ejb-jar and think, "But all my classes
+are there!?", which is true. It really doesn't matter though, because
+one of those classes is also in the parent classloader. The first call
+to load that class will bypass your classloader completely and go to the
+parent. Once there, it is the parent's job to find _all_ the dependent
+classes. If it can't ... NoClassDefFoundError.

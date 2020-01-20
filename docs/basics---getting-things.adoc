@@ -1,0 +1,108 @@
+= Basics - Getting Things
+:index-group: Unrevised
+:jbake-date: 2018-12-05
+:jbake-type: page
+:jbake-status: published
+
+= Getting Stuff from the Container
+
+Generally speaking the only way to get a
+link:container-managed-resource.html[Container-Managed Resource] is via
+_dependency injection_ or _lookup_ from within a [Container-Managed
+Component] .
+
+The _unbreakable rules_. Read these over and over again when things
+don't work.
+
+[arabic]
+. java:comp/env is the spec defined namespace for lookup of any
+link:container-managed-resource.html[Container-Managed Resource]
+. java:comp/env is _empty_ by default
+. java:comp/env is _read-only_ at runtime
+. java:comp/env is populated by link:declaring-references.html[Declaring
+References] to [Container-Managed Resource] via xml or annotation
+. only link:container-managed-component.html[Container-Managed
+Component] s, _not_ their libraries, can [Declare References|Declaring
+References] via xml or annotation
+. only link:container-managed-component.html[Container-Managed
+Component] s, _not_ their libraries, can get dependency injection of
+[Container-Managed Resource] s
+. only link:container-managed-component.html[Container-Managed
+Component] s, _and_ their libraries, may lookup from java:comp/env
+. you _must_ use the _no-arg_ 'new InitialContext()' constructor to
+lookup something from java:comp/env
+. the annotations and xml for link:declaring-references.html[Declaring
+References] are _identical_ in functionality, both _always_ configure
+lookup with _optional_ dependency injection
+
+== Common mistakes, misunderstandings, and myths
+
+* __"I tried it via annotation and it didn't work, so I used xml and
+then it did work"__
+
+See rule 9. If one form worked and the other didn't, it means you simply
+made a mistake in using one versus the other. Use what works for you,
+but understand both annotations or xml will work for either lookup or
+injection if used correctly.
+
+* __"I need to use lookups, so I can't use the annotation"__
+
+See rule 9. Annotations are not just for injection, that is just how
+they are typically used. Know that when you use an annotation for
+injection, it will _always_ create an entry in java:comp/env. As well
+you can use the annotation at the _class level_ and it will cause no
+dependency injection and only the entry creation in java:comp/env.
+
+* __"I don't want injection, so I can't use the annotation"__
+
+See rule 9 and the above. You can use the annotation at the _class
+level_ and it will cause no dependency injection and only the entry
+creation in java:comp/env.
+
+* __"I tried to list java:comp/env but it's empty?!"__
+
+See rule 2 and rule 4. There will be nothing in java:comp/env unless you
+link:declaring-references.html[Declare a Reference] to it. It does not
+matter if is a DataSource configured at the server level, etc. Nothing
+is bound into java:comp/env unless you explicitly declare a reference to
+it. The Java EE 5 TCK (Technology Compatibility Kit) tests for this
+extensively and is a rule we cannot break. Java EE 6 does finally offer
+some new namesaces (java:global, java:app, and java:module) which will
+offer some great new options for more global-style lookups.
+
+* __"I deployed the EJB but can't look it up, it's name is Foo"__
+
+See rule 2 and the above. Just creating an EJB doesn't cause it to be
+added to java:comp/env. If a
+link:container-managed-component.html[Container-Managed Component] wants
+to lookup the EJB they must [Declare a Reference|Declaring References]
+to it via the `@EJB` annotionation or <ejb-local-ref> or <ejb-ref> in xml.
+In Java EE 6, however, EJBs will be automatically bound to
+"java:global[/<app-name>]/<module-name>/<bean-name>[!<fully-qualified-interface-name>]"
+and can be looked up without declaring a reference first.
+
+* __"Which InitialContextFactory do I use for java:comp/env?"__
+
+See rule 8. You are not allowed to use an InitialContextFactory for
+java:comp/env lookups. Setting an InitialContextFactory via
+'java.naming.factory.initial' in either System properties,
+InitialContext properties, or a jndi.properties file is illegal and will
+cause java:comp/env lookups to fail.
+
+* __"My Client can't lookup the EJB from java:comp/env"__
+
+See rule 7. A plain, standalone, Java application cannot use
+java:comp/env. There is the official concept of a Java EE Application
+Client which can be packaged in an ear and deployed into the Container.
+In practice, most people find them restrictive, cumbersome, and hard to
+use and are therefore rarely employed in "real world" projects. Most
+people opt to use the non-standard, vendor-specific, approach to looking
+up EJBs from their plain java clients. In OpenEJB this can be done via
+either the RemoteInitialContextFactory (for remote clients) or the
+LocalInitialContextFactory (for local clients of an embedded container).
+The JNDI names can be configured as link:jndi-names.html[shown here] .
+
+* __"I declared the reference, but still can't look it up"__
+
+See all of the above and reread the rules a few times. Always check the
+log output as well.

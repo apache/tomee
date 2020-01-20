@@ -1,0 +1,111 @@
+= Application Composer Advanced
+
+link:getting-started.html[Getting Started] page gives you already a lot
+of inputs but you caneven go further.
+
+== @Descriptors
+
+You can reuse existing file descriptors using `@Descriptors`. The name
+is the file name and the path either a classpath path or a file path:
+
+[source,java]
+----
+// runner if needed etc...
+@Descriptors(@Descriptor(name = "persistence.xml", path = "META-INF/persistence.xml"))
+public class MyTest {
+   //...
+}
+----
+
+Note: this can be put in a `@Module` method as well.
+
+== Services
+
+If you want to test a JAXRS or JAXWS service you need to activate these
+services.
+
+To do so just add the needed dependency and use `@EnableServices`:
+
+[source,java]
+----
+// runner if needed etc...
+@EnableService("jaxrs") // jaxws supported as well
+public class MyTest {
+   //...
+}
+----
+
+== Random port
+
+Services like JAXRS and JAXWS relies on HTTP. Often it is nice to have a
+random port to be able to deploy multiple tests/projects on the same CI
+platform at the same time.
+
+To shortcut all the needed logic you can use `@RandomPort`. It is simply
+an injection giving you either the port (`int`) or the root context
+(`URL`):
+
+[source,java]
+----
+// runner, services if needed etc...
+public class MyTest {
+   @RandomPort("http")
+   private int port;
+}
+----
+
+Note: you can generate this way multiple ports. The value is the name of
+the service it will apply on (being said http is an alias for httpejbd
+which is our embedded http layer).
+
+== Nice logs
+
+`@SimpleLog` annotation allows you to have one liner logs
+
+== @JaxrsProvider
+
+`@JaxrsProvider` allows you to specify on a `@Module` method the list of
+JAXRS provider you want to use.
+
+== Dependencies without hacky code
+
+`@Jars` allows you to add dependencies (scanned) to your application
+automatically (like CDI libraries):
+
+[source,java]
+----
+@Module
+@Classes(cdi = true, value = { C1.class, C2.class, E1.class })
+@Jars("deltaspike-")
+public WebApp app() {
+    return new WebApp();
+}
+----
+
+== @Default
+
+`@Default` automatically adds in the application `target/classes` as
+binaries and `src/main/webapp` as resources for maven projects.
+
+== @CdiExtensions
+
+This annotation allows you to control which extensions are activated
+during the test.
+
+== @AppResource
+
+This annotation allows injection of few particular test resources like:
+
+* the test `AppModule` (application meta)
+* the test `Context` (JNDI)
+* the test `ApplicationComposers` (underlying runner)
+* `ContextProvider`: allow to mock JAXRS contexts
+
+== @MockInjector
+
+Allows to mock EJB injections. It decorates a dedicated method returning
+an instance (or Class) implementing `FallbackPropertyInjector`.
+
+== @WebResource
+
+Allow for web application to add folders containing web resources.
