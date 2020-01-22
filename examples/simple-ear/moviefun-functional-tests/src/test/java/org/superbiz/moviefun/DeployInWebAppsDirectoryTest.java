@@ -46,7 +46,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setGroupId("org.apache.tomee");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("7.1.2-SNAPSHOT");
+        configuration.setVersion("7.1.3-SNAPSHOT");
         configuration.setHttpPort(-1);
 
         final RemoteTomEEContainer container = new RemoteTomEEContainer();
@@ -58,7 +58,7 @@ public class DeployInWebAppsDirectoryTest {
             final File webapps = new File(configuration.getDir(), "apache-tomee-" + configuration.getClassifier() + "-" + configuration.getVersion() + "/webapps");
             webapps.mkdirs();
 
-            final File enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:7.1.2-SNAPSHOT")
+            final File enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:7.1.3-SNAPSHOT")
                     .withoutTransitivity().asSingleFile();
 
             IO.copy(enterpriseArchive, new File(webapps, "moviefun-ear.ear"));
