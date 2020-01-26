@@ -22,6 +22,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,6 +34,9 @@ import javax.ejb.TransactionManagementType;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
+@Ignore("org.jboss.shrinkwrap.resolver.impl.maven.MavenWorkingSessionImpl " +
+        "has a hardcoded reference to 'http://repo1.maven.org/maven2', " +
+        "which is now unsupportd by Maven Central.")
 @RunWith(Arquillian.class)
 public class SWMavenWarTest {
     @Deployment
