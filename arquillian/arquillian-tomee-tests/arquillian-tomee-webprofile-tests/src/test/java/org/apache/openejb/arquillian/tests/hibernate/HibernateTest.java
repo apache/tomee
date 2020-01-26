@@ -30,8 +30,7 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.ResolutionException;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
-import org.jboss.shrinkwrap.resolver.api.maven.strategy.AcceptScopesStrategy;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,21 +40,30 @@ import java.io.File;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @RunWith(Arquillian.class)
 public class HibernateTest {
+
+    public static void main(String[] args) {
+        final File[] files = Maven.resolver()
+                .loadPomFromFile("src/test/resources/hibernate-pom.xml")
+                .importCompileAndRuntimeDependencies().resolve().withTransitivity()
+                .asFile();
+    }
+
     @Deployment
     public static WebArchive war() {
         File[] hibernate;
         try { // try offline first since it is generally faster
-            hibernate = Maven.resolver()
-                    .offline(true)
+            hibernate = Maven.configureResolver()
+                    .workOffline()
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                     .asFile();
         } catch (ResolutionException re) { // try on central
             hibernate = Maven.resolver()
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                     .asFile();
         }
 

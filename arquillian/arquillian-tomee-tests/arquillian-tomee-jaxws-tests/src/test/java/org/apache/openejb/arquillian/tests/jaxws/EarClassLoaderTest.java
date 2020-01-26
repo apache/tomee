@@ -45,10 +45,10 @@ public class EarClassLoaderTest {
                         ShrinkWrap.create(WebArchive.class, "broken-web.war")
                                 .addClasses(LoadJodaFromTheWebAppResource.class)
                                 .addAsLibraries(
-                                        Maven.resolver()
-                                                .offline()
-                                                .resolve("joda-time:joda-time:2.5")
+                                        Maven.configureResolver()
+                                                .workOffline()
                                                 .withClassPathResolution(true)
+                                                .resolve("joda-time:joda-time:2.5")
                                                 .using(new AcceptScopesStrategy(ScopeType.COMPILE, ScopeType.RUNTIME))
                                                 .asFile()
                                 )

@@ -40,12 +40,12 @@ public final class Enrichers {
                 CACHE.put(pom, Maven.resolver()
                         .offline(true)
                         .loadPomFromFile(pom)
-                        .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                        .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                         .asFile());
             } catch (ResolutionException re) { // try on central
                 CACHE.put(pom, Maven.resolver()
                         .loadPomFromFile(pom)
-                        .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                        .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                         .asFile());
             }
         }
