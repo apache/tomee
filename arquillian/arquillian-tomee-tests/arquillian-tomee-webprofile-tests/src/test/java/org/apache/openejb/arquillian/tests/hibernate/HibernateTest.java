@@ -74,7 +74,7 @@ public class HibernateTest {
                         "    xsi:schemaLocation=\"http://java.sun.com/xml/ns/persistence" +
                         "                         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd\">\n" +
                         "  <persistence-unit name=\"hibernate\">\n" +
-                        "    <provider>org.hibernate.ejb.HibernatePersistence</provider>\n" +
+                        "    <provider>org.hibernate.jpa.HibernatePersistence</provider>\n" +
                         "    <exclude-unlisted-classes>true</exclude-unlisted-classes>\n" +
                         "    <properties>\n" +
                         "      <property name=\"hibernate.hbm2ddl.auto\" value=\"create-drop\" />\n" +
