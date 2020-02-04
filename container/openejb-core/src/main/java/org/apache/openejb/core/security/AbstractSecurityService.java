@@ -392,7 +392,7 @@ public abstract class AbstractSecurityService implements SecurityService<UUID>, 
         }
     }
 
-    private static void installPolicy(String policyProvider) {
+    private static void installPolicy(final String policyProvider) {
         try {
             final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             final Class policyClass = Class.forName(policyProvider, true, classLoader);
