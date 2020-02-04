@@ -63,7 +63,7 @@ public final class ProvisioningUtil {
     private static final int CONNECT_TIMEOUT = 10000;
 
     private static final String ADDITIONAL_LIB_CONFIG = "provisioning.properties";
-    private static final String REPO1 = "http://repo1.maven.org/maven2/";
+    private static final String REPO1 = "https://repo1.maven.org/maven2/";
     private static final String APACHE_SNAPSHOT = "https://repository.apache.org/snapshots/";
     private static final String ZIP_KEY = "zip";
     private static final String DESTINATION_KEY = "destination";
