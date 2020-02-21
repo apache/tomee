@@ -30,6 +30,7 @@ public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
         System.setProperty("hsqldb.reconfig_logging", "false");
+        System.setProperty("tomee.jpa.factory.lazy", "true");
 
         final Properties p = new Properties();
         p.put("movieDatabase", "new://Resource?type=DataSource");

@@ -147,7 +147,7 @@
 
     <tomcat.version>9.0.30</tomcat.version>
 
-    <cxf.version>3.3.4</cxf.version>
+    <cxf.version>3.3.5</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -202,13 +202,13 @@
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>4.2.18.Final</version.hibernate>
+    <version.hibernate>5.4.10.Final</version.hibernate>
     <version.eclipselink>2.7.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
+    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
 
     <!-- Micro Profile -->
     <microprofile.version>2.0</microprofile.version>

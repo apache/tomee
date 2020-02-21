@@ -45,10 +45,10 @@ import static org.junit.Assume.assumeFalse;
 public class EarWebAppFirstClassLoaderTest {
     @Deployment(testable = false)
     public static Archive<?> ear() {
-        final File[] joda = Maven.resolver()
-                .offline()
-                .resolve("joda-time:joda-time:2.5")
+        final File[] joda = Maven.configureResolver()
+                .workOffline()
                 .withClassPathResolution(true)
+                .resolve("joda-time:joda-time:2.5")
                 .using(new AcceptScopesStrategy(ScopeType.COMPILE, ScopeType.RUNTIME))
                 .asFile();
         return ShrinkWrap.create(EnterpriseArchive.class, "broken.ear")
@@ -59,7 +59,7 @@ public class EarWebAppFirstClassLoaderTest {
                                 "<Context>" +
                                         "<Loader className=\"" + TomEEWebappLoader.class.getName() +
                                         "\" loaderClass=\"" + WebAppFirstEarClassLoader.class.getName() + "\" />" +
-                                "</Context>"), "context.xml")
+                                        "</Context>"), "context.xml")
                         .addAsLibraries(joda));
     }
 
