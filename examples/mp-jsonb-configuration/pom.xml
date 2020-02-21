@@ -23,14 +23,14 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jsonb-configuration</artifactId>
-  <version>8.0.2-TT.2-SNAPSHOT-SNAPSHOT</version>
+  <version>8.0.2-TT.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Configuration</name>
 
   <properties>
     <version.javaee-api>8.0</version.javaee-api>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.2-TT.2-SNAPSHOT-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
   </properties>
 
   <dependencies>
