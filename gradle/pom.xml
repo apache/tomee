@@ -50,7 +50,7 @@
   <repositories>
     <repository>
       <id>gradle-libs-releases-local</id>
-      <url>http://repo.gradle.org/gradle/libs-releases-local/</url>
+      <url>https://repo.gradle.org/gradle/libs-releases-local/</url>
     </repository>
   </repositories>
 </project>
