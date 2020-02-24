@@ -59,7 +59,8 @@
             <configuration>
               <skip>${maven.test.skip}</skip>
               <systemPropertyVariables>
-                <javax.persistence.provider>org.hibernate.ejb.HibernatePersistence</javax.persistence.provider>
+                <javax.persistence.provider>org.hibernate.jpa.HibernatePersistenceProvider</javax.persistence.provider>
+                <tomee.jpa.factory.lazy>true</tomee.jpa.factory.lazy>
               </systemPropertyVariables>
             </configuration>
           </execution>
