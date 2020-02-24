@@ -69,7 +69,7 @@
         <artifactId>tomee-maven-plugin</artifactId>
         <version>7.1.3-SNAPSHOT</version>
         <configuration>
-          <tomeeVersion>7.1.2-SNAPSHOT</tomeeVersion>
+          <tomeeVersion>7.1.3-SNAPSHOT</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
