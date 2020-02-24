@@ -79,7 +79,7 @@
         <version>7.0.8-SNAPSHOT</version>
         <configuration>
           <simpleLog>true</simpleLog>
-          <tomeeVersion>7.0.7-SNAPSHOT</tomeeVersion>
+          <tomeeVersion>7.0.8-SNAPSHOT</tomeeVersion>
           <tomeeClassifier>plus</tomeeClassifier>
         </configuration>
       </plugin>
