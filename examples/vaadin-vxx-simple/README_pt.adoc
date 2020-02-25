@@ -1,3 +1,7 @@
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: published
+
 == Plataforma Vaadin Mais Recente - WebApp Simples Em Java
 
 Essa demo vai mostrar como iniciar um webapp simples do Vaadin Flow, baseada na API pura do Java executando no TomEE (webprofile). A versão atual do Vaadin Flow, que foi usada nessa demo é a mais recente. Se você procurar por versões LTS, dê uma olhada nos Exemplos Vaadin nesse repositório com o prefixo LTS. 
