@@ -88,7 +88,7 @@ public class ProvisioningUtilTest {
 
     @Test
     public void http() {
-        final Set<String> urls = ProvisioningUtil.realLocation("http://repo1.maven.org/maven2/org/apache/batchee/batchee-test/0.2-incubating/batchee-test-0.2-incubating.jar");
+        final Set<String> urls = ProvisioningUtil.realLocation("https://repo1.maven.org/maven2/org/apache/batchee/batchee-test/0.2-incubating/batchee-test-0.2-incubating.jar");
         assertEquals(1, urls.size());
         assertTrue(urls.iterator().next().replace("\\", "/").endsWith("target/batchee-test-0.2-incubating.jar"));
     }

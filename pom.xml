@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.1-SNAPSHOT</version>
+  <version>8.0.2-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-3</version.javaee-api>
+    <version.javaee-api>8.0-4-SNAPSHOT</version.javaee-api>
 
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
@@ -145,9 +145,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.30</tomcat.version>
+    <tomcat.version>9.0.31</tomcat.version>
 
-    <cxf.version>3.3.4</cxf.version>
+    <cxf.version>3.3.5</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -202,13 +202,13 @@
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
-    <version.hibernate>4.2.18.Final</version.hibernate>
+    <version.hibernate>5.4.10.Final</version.hibernate>
     <version.eclipselink>2.7.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
-    <version.shrinkwrap.resolver.bom>2.1.0</version.shrinkwrap.resolver.bom>
+    <version.shrinkwrap.resolver.bom>3.1.4</version.shrinkwrap.resolver.bom>
 
     <!-- Micro Profile -->
     <microprofile.version>2.0</microprofile.version>

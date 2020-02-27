@@ -41,7 +41,7 @@ public class SWMavenWarTest {
                 .addClass(SWBean.class)
                 .addAsLibraries(Maven.resolver()
                         .loadPomFromFile("src/test/resources/a-pom.xml")
-                        .importRuntimeAndTestDependencies().resolve().withTransitivity().asFile());
+                        .importCompileAndRuntimeDependencies().resolve().withTransitivity().asFile());
     }
 
     @Singleton
