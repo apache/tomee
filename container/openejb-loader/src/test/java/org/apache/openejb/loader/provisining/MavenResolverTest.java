@@ -71,8 +71,8 @@ public class MavenResolverTest {
     @Test
     public void resolve() throws Exception {
         resolveCommon("mvn:junit:junit:4.12:jar");
-        resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:4.12:jar");
-        resolveCommon("mvn:http://repo1.maven.org/maven2/!junit:junit:LATEST:jar");
+        resolveCommon("mvn:https://repo1.maven.org/maven2/!junit:junit:4.12:jar");
+        resolveCommon("mvn:https://repo1.maven.org/maven2/!junit:junit:LATEST:jar");
     }
 
     @Test
