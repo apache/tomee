@@ -16,9 +16,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev$ $Date$ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
@@ -31,8 +29,6 @@
     <derby.version>10.12.1.1</derby.version>
     <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
   </properties>
-
-
   <build>
     <finalName>dbtest</finalName>
     <defaultGoal>install</defaultGoal>
@@ -53,7 +49,6 @@
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
@@ -67,7 +62,6 @@
       </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -79,8 +73,12 @@
       <name>Clojars Repository</name>
       <url>http://clojars.org/repo/</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -104,25 +102,21 @@
       <version>8.0.2-TT.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <version>${derby.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbynet</artifactId>
       <version>${derby.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derbyclient</artifactId>
       <version>${derby.version}</version>
     </dependency>
-
     <dependency>
       <groupId>org.tomitribe</groupId>
       <artifactId>tomitribe-util</artifactId>
@@ -136,7 +130,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

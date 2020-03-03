@@ -16,24 +16,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev: 636494 $ $Date: 2008-03-12 21:24:02 +0100 (Wed, 12 Mar 2008) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>simple-cmp2</artifactId>
   <packaging>jar</packaging>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple CMP2 Entity</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
   </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -55,7 +49,6 @@
           <workingDirectory>${basedir}/target</workingDirectory>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -89,9 +82,13 @@
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
   <dependencies>
-
     <!-- spec apis such as javax.persistence -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -99,14 +96,12 @@
       <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-
     <!-- openejb container for running tests -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -114,10 +109,7 @@
       <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
-
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
@@ -133,5 +125,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>

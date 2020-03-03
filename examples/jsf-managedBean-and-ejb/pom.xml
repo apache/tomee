@@ -18,21 +18,17 @@
  * under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz.jsf</groupId>
   <artifactId>jsf-managedBean-and-ejb</artifactId>
   <packaging>war</packaging>
   <name>TomEE :: Web Examples :: JSF - ManangedBean and EJB</name>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.myfaces-api>2.1.16</version.myfaces-api>
   </properties>
-
   <build>
     <finalName>jsf-managedBean-and-ejb</finalName>
     <plugins>
@@ -57,18 +53,21 @@
       </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <releases>
         <enabled>false</enabled>
       </releases>
-      <snapshots />
+      <snapshots/>
       <id>apache-maven-snapshots</id>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
@@ -117,7 +116,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

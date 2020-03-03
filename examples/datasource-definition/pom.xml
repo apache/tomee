@@ -84,6 +84,11 @@
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -92,7 +97,8 @@
       <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
-    <dependency> <!-- for the plugin to endorse the build -->
+    <dependency>
+      <!-- for the plugin to endorse the build -->
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-annotation_1.3_spec</artifactId>
       <version>1.0</version>
@@ -120,7 +126,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

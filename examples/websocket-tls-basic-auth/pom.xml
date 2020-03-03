@@ -17,15 +17,12 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>websocket-tls-basic-auth</artifactId>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: WebSocket with tls and basic auth Example</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <javaee-api.version>8.0</javaee-api.version>
@@ -34,7 +31,6 @@
     <tomcat.version>9.0.12</tomcat.version>
     <junit.version>4.12</junit.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -86,7 +82,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -98,7 +93,6 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
   <!--
@@ -116,5 +110,11 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
+  <repositories>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
+  </repositories>
 </project>

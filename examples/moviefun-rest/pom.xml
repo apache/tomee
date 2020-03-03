@@ -9,32 +9,31 @@
 	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
 	OF ANY KIND, either express or implied. See the License for the specific 
 	language governing permissions and limitations under the License. -->
-
 <!-- $Rev: 684173 $ $Date: 2008-08-08 20:13:24 -0700 (Fri, 08 Aug 2008) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>moviefun-rest</artifactId>
   <packaging>war</packaging>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Moviefun Rest</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
@@ -42,7 +41,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </pluginRepository>
   </pluginRepositories>
-
   <build>
     <finalName>moviefun</finalName>
     <plugins>
@@ -144,7 +142,6 @@
       </plugin>
     </plugins>
   </build>
-
   <dependencyManagement>
     <dependencies>
       <!-- Override dependency resolver with test version. This must go *BEFORE*
@@ -166,7 +163,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -294,7 +290,6 @@
       </dependencies>
     </profile>
   </profiles>
-
   <!-- This section allows you to configure where to publish libraries for
   sharing. It is not required and may be deleted. For more information see:
   http://maven.apache.org/plugins/maven-deploy-plugin/ -->

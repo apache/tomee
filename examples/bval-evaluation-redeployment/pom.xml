@@ -17,24 +17,20 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>bval-evaluation-redeployment</artifactId>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <packaging>pom</packaging>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.test.version>8.0.2-TT.2-SNAPSHOT</tomee.test.version>
     <openejb.test.version>8.0.2-TT.2-SNAPSHOT</openejb.test.version>
   </properties>
-
   <modules>
     <module>WebApp1</module>
     <module>WebApp2</module>
     <module>runner</module>
   </modules>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -56,7 +52,6 @@
       </plugins>
     </pluginManagement>
   </build>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -143,15 +138,18 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <releases>
@@ -181,7 +179,6 @@
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
-
   <!-- This section allows you to configure where to publish libraries for
     sharing. It is not required and may be deleted. For more information see:
     http://maven.apache.org/plugins/maven-deploy-plugin/ -->
@@ -195,5 +192,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>

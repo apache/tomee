@@ -16,18 +16,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-lts-v08-simple</artifactId>
   <version>8.0.2-TT.2-SNAPSHOT</version>
-
   <name>TomEE :: Examples :: Vaadin LTS V08</name>
   <packaging>war</packaging>
-
   <!--
 This section allows you to configure where to publish libraries for sharing.
 It is not required and may be deleted.  For more information see:
@@ -43,27 +38,26 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <properties>
     <!--<maven.compiler.release>11</maven.compiler.release>-->
     <maven.compiler.target>8</maven.compiler.target>
     <maven.compiler.source>8</maven.compiler.source>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     <vaadin.version>8.8.2</vaadin.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <!--Vaadin -->
@@ -76,9 +70,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
-
     <!--Vaadin -->
     <dependency>
       <groupId>com.vaadin</groupId>
@@ -92,7 +84,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <groupId>com.vaadin</groupId>
       <artifactId>vaadin-client-compiled</artifactId>
     </dependency>
-
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
@@ -110,8 +101,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
   <build>
     <plugins>
       <plugin>
@@ -123,7 +112,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
           <context>ROOT</context>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -139,5 +127,4 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       </plugin>
     </plugins>
   </build>
-
 </project>

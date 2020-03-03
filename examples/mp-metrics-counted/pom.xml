@@ -16,17 +16,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-counted</artifactId>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Counted</name>
-
   <properties>
     <version.javaee-api>8.0</version.javaee-api>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
@@ -36,7 +32,6 @@
     <docker.file.name>Dockerfile</docker.file.name>
     <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -83,7 +78,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -104,7 +98,6 @@
           <target>1.8</target>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
   <profiles>
@@ -153,7 +146,6 @@
       </build>
     </profile>
   </profiles>
-
   <!-- This section allows you to configure where to publish libraries for
   sharing. It is not required and may be deleted. For more information see:
   http://maven.apache.org/plugins/maven-deploy-plugin/ -->
@@ -167,4 +159,11 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
+  <repositories>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
+  </repositories>
 </project>

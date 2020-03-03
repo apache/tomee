@@ -18,16 +18,13 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>mvc-cxf-hibernate</artifactId>
   <packaging>war</packaging>
-
   <name>TomEE :: Examples :: MVC (CXF-based) with Hibernate</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - Deltaspike - Hibernate</description>
   <version>8.0.2-TT.2-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
@@ -36,7 +33,6 @@
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
-
   <build>
     <finalName>mvc-cxf</finalName>
     <plugins>
@@ -77,7 +73,6 @@
       </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -87,8 +82,12 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>tomitribe-all</id>
+      <name>Tomitribe Repository</name>
+      <url>https://repository.tomitribe.com/content/groups/tomitribe/</url>
+    </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -123,7 +122,6 @@
       <version>${version.deltaspike}</version>
       <scope>runtime</scope>
     </dependency>
-
     <!-- MVC 1.0(JSR 371) -->
     <dependency>
       <groupId>org.eclipse.krazo</groupId>
@@ -135,19 +133,16 @@
       <artifactId>krazo-cxf</artifactId>
       <version>${version.krazo}</version>
     </dependency>
-
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
-
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
       <version>2.6.3</version>
     </dependency>
-
     <!--  tests  -->
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
@@ -192,7 +187,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
@@ -208,5 +202,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>
