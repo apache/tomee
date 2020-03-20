@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-4-SNAPSHOT</version.javaee-api>
+    <version.javaee-api>8.0-4</version.javaee-api>
 
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
