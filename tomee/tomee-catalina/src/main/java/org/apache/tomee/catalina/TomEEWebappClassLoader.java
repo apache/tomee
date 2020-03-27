@@ -211,6 +211,10 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     }
 
     private boolean shouldForceLoadFromTheContainer(final String name) {
+        if (forceSkip == null) {
+            return false;
+        }
+
         for (final String p : forceSkip) {
             if (name.startsWith(p)) {
                 return true;

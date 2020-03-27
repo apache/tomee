@@ -40,7 +40,7 @@ import java.io.File;
  */
 public class TomEEWebappLoader extends WebappLoader {
     private static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
-    private static final String FORCE_SKIP = SystemInstance.get().getProperty("tomee.webapp.classloader.forced-skip", "");
+    private static final String FORCE_SKIP = SystemInstance.get().getProperty("tomee.webapp.classloader.forced-skip", null);
 
     private volatile ClassLoader loader;
 
