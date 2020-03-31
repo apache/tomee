@@ -1,0 +1,57 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.superbiz.jms;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+@Stateless
+@Path("message")
+public class CustomJmsService {
+
+    @Resource
+    private ConnectionFactory cf;
+
+    @Inject
+    private JMSContext jmsContext;
+
+    @Resource(name = "messageQueue")
+    private Queue messageQueue;
+
+    @POST
+    public void sendMessage(final String message) {
+        sendMessage(messageQueue, message);
+    }
+
+    @GET
+    public String receiveMessage() throws JMSException {
+        return jmsContext.createConsumer(messageQueue).receiveBody(String.class, 1000);
+    }
+
+    private void sendMessage(final Queue queue, final String message) {
+        jmsContext.createProducer().send(messageQueue, jmsContext.createTextMessage(message));
+    }
+}
+
