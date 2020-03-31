@@ -19,10 +19,7 @@ package org.superbiz.jms;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.Queue;
+import javax.jms.*;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -47,7 +44,12 @@ public class CustomJmsService {
 
     @GET
     public String receiveMessage() throws JMSException {
-        return jmsContext.createConsumer(messageQueue).receiveBody(String.class, 1000);
+        final Message message = jmsContext.createConsumer(messageQueue).receive(1000);
+        if (! (message instanceof TextMessage)) {
+            return null;
+        }
+
+        return ((TextMessage) message).getText();
     }
 
     private void sendMessage(final Queue queue, final String message) {
