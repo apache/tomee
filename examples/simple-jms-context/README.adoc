@@ -1,0 +1,472 @@
+:index-group: JMS and MDBs
+:jbake-type: page
+:jbake-status: status=published
+
+= Simple JMS
+
+This example demostrate how to set up a ``CustomJmsService`` in order to produce and consume a JMS ``Message``.
+
+= The Code
+
+== The JMS service: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
+
+Here we have a simple REST endpoint, annotated the class with ``@Path("/message")`` to indicate the route corresponding to class ``CustomJmsService``. So we define ``sendMessage()`` as ``@POST``  and ``receiveMessage()`` as ``@GET`` for this ``/message`` route.
+
+In addition, directly related to this this example, you can observe 2 elements: a ``Queue`` and a ``ConnectionFactory`` annotated as ``@Resource``
+
+You ca see the simplicity of using the JMSContext object to send messages to and consume messages from the queue.
+
+....
+package org.superbiz.jms;
+
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+@Stateless
+@Path("message")
+public class CustomJmsService {
+
+    @Resource
+    private ConnectionFactory cf;
+
+    @Inject
+    private JMSContext jmsContext;
+
+    @Resource(name = "messageQueue")
+    private Queue messageQueue;
+
+    @POST
+    public void sendMessage(final String message) {
+        sendMessage(messageQueue, message);
+    }
+
+    @GET
+    public String receiveMessage() throws JMSException {
+        return jmsContext.createConsumer(messageQueue).receiveBody(String.class, 1000);
+    }
+
+    private void sendMessage(final Queue queue, final String message) {
+        jmsContext.createProducer().send(messageQueue, jmsContext.createTextMessage(message));
+    }
+}
+
+
+....
+
+== Testing
+
+=== Test for the JMS service
+
+The test is trivial. The idea is first to POST a message to the service. This is done using instances of ``ClientBuilder`` and ``WebTarget``.
+
+Then, similar to the POST, we perform a GET request that consumes the previously posted message.
+
+Finally, in order to verify both HTTP status from the responses are asserted as equals to the expected HTTP codes (204/200), as well as the message's content.
+
+....
+@RunWith(Arquillian.class)
+@RunAsClient
+public class CustomJmsServiceTest {
+
+    @Deployment
+    public static Archive<?> deployment() {
+        return Mvn.war();
+    }
+
+    @ArquillianResource
+    private URL baseUrl;
+
+    @Test
+    public void test() throws Exception {
+        // POST
+        {
+            final WebTarget webTarget = ClientBuilder.newClient().target(baseUrl.toURI());
+            final Response response = webTarget.path("message").request().post(Entity.text("This is a test"));
+
+            assertEquals(204, response.getStatus());
+        }
+
+        // GET
+        {
+            final WebTarget webTarget = ClientBuilder.newClient().target(baseUrl.toURI());
+            final Response response = webTarget.path("message").request().get();
+            assertEquals(200, response.getStatus());
+
+            final String content = response.readEntity(String.class);
+            assertEquals("This is a test", content);
+        }
+    }
+}
+....
+
+
+=== Running the Test for the JMS service
+
+Building and testing the example is simple. In the ``simple-jms-context`` directory run:
+
+....
+$ mvn clean install
+....
+
+Which should create output like the following.
+
+....
+[WARNING]
+[WARNING] Some problems were encountered while building the effective settings
+[WARNING] 'servers.server.id' must be unique but found duplicate server with id tomitribe-all @ /home/jgallimore/.m2/settings.xml
+[WARNING]
+[INFO] Scanning for projects...
+[INFO]
+[INFO] ------------------< org.superbiz:simple-jms-context >-------------------
+[INFO] Building TomEE :: Examples :: Simple JMS Context 8.0.2-SNAPSHOT
+[INFO] --------------------------------[ war ]---------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ simple-jms-context ---
+[INFO] Deleting /home/jgallimore/dev/tomee/examples/simple-jms-context/target
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ simple-jms-context ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/jgallimore/dev/tomee/examples/simple-jms-context/src/main/resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.5.1:compile (default-compile) @ simple-jms-context ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/jgallimore/dev/tomee/examples/simple-jms-context/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ simple-jms-context ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 1 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.5.1:testCompile (default-testCompile) @ simple-jms-context ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/jgallimore/dev/tomee/examples/simple-jms-context/target/test-classes
+[INFO]
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ simple-jms-context ---
+[INFO] Surefire report directory: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.jms.CustomJmsServiceTest
+31-Mar-2020 20:38:07.758 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version name:   Apache Tomcat (TomEE)/9.0.33 (8.0.2-SNAPSHOT)
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Mar 11 2020 09:31:38 UTC
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version number: 9.0.33.0
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Version:            4.14.173-137.228.amzn2.x86_64
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Architecture:          amd64
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /home/jgallimore/Apps/jdk8u242-b08/jre
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_242-b08
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            AdoptOpenJDK
+31-Mar-2020 20:38:07.759 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:07.760 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:07.761 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
+31-Mar-2020 20:38:07.761 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xmx512m
+31-Mar-2020 20:38:07.761 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xms256m
+31-Mar-2020 20:38:07.761 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -XX:ReservedCodeCacheSize=64m
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dtomee.httpPort=34427
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=true
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/conf/logging.properties
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib/openejb-javaagent.jar
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/temp
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:07.762 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:07.763 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib
+31-Mar-2020 20:38:07.763 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+31-Mar-2020 20:38:07.763 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
+31-Mar-2020 20:38:07.763 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib]
+31-Mar-2020 20:38:08.037 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["http-nio-34427"]
+31-Mar-2020 20:38:08.218 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+31-Mar-2020 20:38:08.226 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Tue Mar 31 20:38:08 BST 2020
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+31-Mar-2020 20:38:08.305 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.2-SNAPSHOT
+31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20200331
+31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 02:19
+31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:08.306 INFO [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT
+31-Mar-2020 20:38:08.307 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@3e2e18f2
+31-Mar-2020 20:38:08.309 INFO [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+31-Mar-2020 20:38:08.334 INFO [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/conf/tomee.xml'
+31-Mar-2020 20:38:08.361 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+31-Mar-2020 20:38:08.363 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+31-Mar-2020 20:38:08.364 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
+31-Mar-2020 20:38:08.366 INFO [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+31-Mar-2020 20:38:08.381 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+31-Mar-2020 20:38:08.422 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+31-Mar-2020 20:38:08.442 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Singleton Container)
+31-Mar-2020 20:38:08.494 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: openejb
+31-Mar-2020 20:38:08.550 INFO [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jndiname.format={deploymentId}{interfaceType.openejbLegacyName}'
+31-Mar-2020 20:38:08.560 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/DeployerBusinessRemote) --> Ejb(deployment-id=openejb/Deployer)
+31-Mar-2020 20:38:08.560 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.Deployer) --> Ejb(deployment-id=openejb/Deployer)
+31-Mar-2020 20:38:08.561 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer) --> Ejb(deployment-id=openejb/Deployer)
+31-Mar-2020 20:38:08.562 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+31-Mar-2020 20:38:08.562 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+31-Mar-2020 20:38:08.563 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
+31-Mar-2020 20:38:08.564 INFO [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+31-Mar-2020 20:38:08.571 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.573 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.575 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.575 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.575 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.575 INFO [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+31-Mar-2020 20:38:08.579 INFO [main] org.apache.openejb.assembler.classic.Assembler.deployMBean Deployed MBean(openejb.user.mbeans:application=openejb,group=org.apache.openejb.assembler.monitoring,name=JMXDeployer)
+31-Mar-2020 20:38:08.582 INFO [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=openejb)
+31-Mar-2020 20:38:08.613 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+31-Mar-2020 20:38:08.757 INFO [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+31-Mar-2020 20:38:08.803 INFO [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+31-Mar-2020 20:38:08.803 INFO [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT
+31-Mar-2020 20:38:08.804 INFO [main] org.apache.openejb.server.SimpleServiceManager.start -------
+31-Mar-2020 20:38:08.804 INFO [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+31-Mar-2020 20:38:08.805 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server initialization in [1,226] milliseconds
+31-Mar-2020 20:38:08.824 INFO [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+31-Mar-2020 20:38:08.825 INFO [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+31-Mar-2020 20:38:08.835 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
+31-Mar-2020 20:38:08.836 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet engine: [Apache Tomcat (TomEE)/9.0.33 (8.0.2-SNAPSHOT)]
+31-Mar-2020 20:38:08.882 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+31-Mar-2020 20:38:08.883 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+31-Mar-2020 20:38:08.883 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+31-Mar-2020 20:38:08.884 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
+31-Mar-2020 20:38:08.912 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-34427"]
+31-Mar-2020 20:38:08.939 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [132] milliseconds
+31-Mar-2020 20:38:11.102 INFO [http-nio-34427-exec-3] org.apache.openejb.util.JarExtractor.extract Extracting jar: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test.war
+31-Mar-2020 20:38:11.250 INFO [http-nio-34427-exec-3] org.apache.openejb.util.JarExtractor.extract Extracted path: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test
+31-Mar-2020 20:38:11.251 INFO [http-nio-34427-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+31-Mar-2020 20:38:11.251 INFO [http-nio-34427-exec-3] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /test
+31-Mar-2020 20:38:11.252 INFO [http-nio-34427-exec-3] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+31-Mar-2020 20:38:11.458 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test
+31-Mar-2020 20:38:11.569 INFO [http-nio-34427-exec-3] org.apache.openejb.config.InitEjbDeployments.deploy Auto-deploying ejb CustomJmsService: EjbDeployment(deployment-id=CustomJmsService)
+31-Mar-2020 20:38:11.573 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+31-Mar-2020 20:38:11.573 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean CustomJmsService: Container(type=STATELESS, id=Default Stateless Container)
+31-Mar-2020 20:38:11.573 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Stateless Container)
+31-Mar-2020 20:38:11.581 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default JMS Connection Factory, type=Resource, provider-id=Default JMS Connection Factory)
+31-Mar-2020 20:38:11.582 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'Default JMS Connection Factory' of type 'javax.jms.ConnectionFactory for 'CustomJmsService'.
+31-Mar-2020 20:38:11.582 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default JMS Resource Adapter, type=Resource, provider-id=Default JMS Resource Adapter)
+31-Mar-2020 20:38:11.583 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Unmanaged JDBC Database, type=Resource, provider-id=Default Unmanaged JDBC Database)
+31-Mar-2020 20:38:11.583 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default Unmanaged JDBC Database)
+31-Mar-2020 20:38:11.894 INFO [http-nio-34427-exec-3] org.hsqldb.persist.Logger.logInfoEvent Checkpoint start
+31-Mar-2020 20:38:11.896 INFO [http-nio-34427-exec-3] org.hsqldb.persist.Logger.logInfoEvent checkpointClose start
+31-Mar-2020 20:38:11.918 INFO [http-nio-34427-exec-3] org.hsqldb.persist.Logger.logInfoEvent checkpointClose end
+31-Mar-2020 20:38:11.919 INFO [http-nio-34427-exec-3] org.hsqldb.persist.Logger.logInfoEvent Checkpoint end - txts: 1
+31-Mar-2020 20:38:11.936 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default JMS Resource Adapter)
+31-Mar-2020 20:38:11.954 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.doCreateResource Thread pool size for 'Default JMS Resource Adapter' is (30)
+31-Mar-2020 20:38:11.965 INFO [http-nio-34427-exec-3] org.apache.openejb.resource.activemq.ActiveMQ5Factory.createBroker ActiveMQ5Factory creating broker
+31-Mar-2020 20:38:12.292 INFO [http-nio-34427-exec-3] org.apache.activemq.broker.BrokerService.<clinit> Loaded the Bouncy Castle security provider.
+31-Mar-2020 20:38:12.333 INFO [http-nio-34427-exec-3] org.apache.openejb.resource.activemq.ActiveMQ5Factory.createBroker Using ActiveMQ startup timeout of 10000ms
+31-Mar-2020 20:38:12.333 INFO [ActiveMQFactory start and checkpoint] org.apache.openejb.resource.activemq.ActiveMQ5Factory$1.run Starting ActiveMQ BrokerService
+31-Mar-2020 20:38:12.339 WARNING [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.BrokerService.checkMemorySystemUsageLimits Memory Usage for the Broker (1024mb) is more than the maximum available for the JVM: 455 mb - resetting to 70% of maximum available: 318 mb
+31-Mar-2020 20:38:12.341 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.BrokerService.doStartPersistenceAdapter Using Persistence Adapter: MemoryPersistenceAdapter
+31-Mar-2020 20:38:12.485 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.BrokerService.doStartBroker Apache ActiveMQ 5.15.10 (localhost, ID:a-2yv8q9r2zol44-34347-1585683492354-0:1) is starting
+31-Mar-2020 20:38:12.490 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.transport.TransportServerThreadSupport.doStart Listening for connections at: tcp://localhost:61616
+31-Mar-2020 20:38:12.490 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.TransportConnector.start Connector tcp://localhost:61616 started
+31-Mar-2020 20:38:12.491 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.BrokerService.doStartBroker Apache ActiveMQ 5.15.10 (localhost, ID:a-2yv8q9r2zol44-34347-1585683492354-0:1) started
+31-Mar-2020 20:38:12.491 INFO [ActiveMQFactory start and checkpoint] org.apache.activemq.broker.BrokerService.doStartBroker For help or more information please see: http://activemq.apache.org
+31-Mar-2020 20:38:12.511 INFO [68] org.apache.openejb.resource.activemq.ActiveMQ5Factory$1.run Starting ActiveMQ checkpoint
+31-Mar-2020 20:38:12.512 INFO [http-nio-34427-exec-3] org.apache.openejb.resource.activemq.ActiveMQ5Factory.createBroker ActiveMQ broker started
+31-Mar-2020 20:38:12.522 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=Default JMS Connection Factory)
+31-Mar-2020 20:38:12.526 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.doCreateResource Creating ConnectionManager for Resource(id=Default JMS Connection Factory)
+31-Mar-2020 20:38:12.534 INFO [http-nio-34427-exec-3] org.apache.geronimo.connector.outbound.GenericConnectionManager$InterceptorsImpl.<init> No runtime TransactionSupport
+31-Mar-2020 20:38:12.545 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.jms.CustomJmsService/cf' in bean CustomJmsService to Resource(id=Default JMS Connection Factory)
+31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=messageQueue, type=Resource, provider-id=Default Queue)
+31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.logAutoCreateResource Auto-creating a Resource with id 'messageQueue' of type 'javax.jms.Queue for 'CustomJmsService'.
+31-Mar-2020 20:38:12.546 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=messageQueue)
+31-Mar-2020 20:38:12.554 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceEnvRef Auto-linking resource-env-ref 'java:comp/env/messageQueue' in bean CustomJmsService to Resource(id=messageQueue)
+31-Mar-2020 20:38:12.554 INFO [http-nio-34427-exec-3] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+31-Mar-2020 20:38:12.555 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean test.Comp438820877: Container(type=MANAGED, id=Default Managed Container)
+31-Mar-2020 20:38:12.555 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+31-Mar-2020 20:38:12.561 INFO [http-nio-34427-exec-3] org.apache.openejb.core.managed.SimplePassivater.init Using directory /home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/temp for stateful session passivation
+31-Mar-2020 20:38:12.564 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceRef Auto-linking resource-ref 'java:comp/env/org.superbiz.jms.CustomJmsService/cf' in bean test.Comp438820877 to Resource(id=Default JMS Connection Factory)
+31-Mar-2020 20:38:12.564 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceEnvRef Auto-linking resource-env-ref 'java:comp/env/messageQueue' in bean test.Comp438820877 to Resource(id=messageQueue)
+31-Mar-2020 20:38:12.564 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AutoConfig.processResourceEnvRef Auto-linking resource-env-ref 'java:comp/env/messageQueue' in bean test_org.superbiz.jms.CustomJmsServiceTest to Resource(id=messageQueue)
+31-Mar-2020 20:38:12.581 INFO [http-nio-34427-exec-3] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test" loaded.
+31-Mar-2020 20:38:12.581 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test
+31-Mar-2020 20:38:12.595 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=CustomJmsServiceLocalBean) --> Ejb(deployment-id=CustomJmsService)
+31-Mar-2020 20:38:12.595 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/test/CustomJmsService!org.superbiz.jms.CustomJmsService) --> Ejb(deployment-id=CustomJmsService)
+31-Mar-2020 20:38:12.595 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/test/CustomJmsService) --> Ejb(deployment-id=CustomJmsService)
+31-Mar-2020 20:38:12.619 INFO [http-nio-34427-exec-3] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@3e2e18f2
+31-Mar-2020 20:38:12.710 INFO [http-nio-34427-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+31-Mar-2020 20:38:12.714 INFO [http-nio-34427-exec-3] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+31-Mar-2020 20:38:12.717 INFO [http-nio-34427-exec-3] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test/WEB-INF/classes/ looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+31-Mar-2020 20:38:13.133 INFO [http-nio-34427-exec-3] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+31-Mar-2020 20:38:13.145 INFO [http-nio-34427-exec-3] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 435 ms.
+31-Mar-2020 20:38:13.178 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=CustomJmsService, ejb-name=CustomJmsService, container=Default Stateless Container)
+31-Mar-2020 20:38:13.201 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=CustomJmsService, ejb-name=CustomJmsService, container=Default Stateless Container)
+31-Mar-2020 20:38:13.202 INFO [http-nio-34427-exec-3] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test)
+31-Mar-2020 20:38:13.290 INFO [http-nio-34427-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+31-Mar-2020 20:38:13.319 INFO [http-nio-34427-exec-3] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+31-Mar-2020 20:38:13.386 INFO [http-nio-34427-exec-3] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+31-Mar-2020 20:38:13.392 INFO [http-nio-34427-exec-3] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+31-Mar-2020 20:38:13.450 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
+31-Mar-2020 20:38:13.629 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib/openwebbeans-el22-2.0.12.jar!/META-INF/faces-config.xml
+31-Mar-2020 20:38:13.630 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib/openwebbeans-jsf-2.0.12.jar!/META-INF/faces-config.xml
+31-Mar-2020 20:38:13.728 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.6' from path 'file:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib/myfaces-api-2.3.6.jar'
+31-Mar-2020 20:38:13.728 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.6' from path 'file:/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee-remote/apache-tomee-plus-8.0.2-SNAPSHOT/lib/myfaces-impl-2.3.6.jar'
+31-Mar-2020 20:38:13.737 INFO [http-nio-34427-exec-3] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
+31-Mar-2020 20:38:13.738 INFO [http-nio-34427-exec-3] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+31-Mar-2020 20:38:13.785 INFO [http-nio-34427-exec-3] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
+31-Mar-2020 20:38:13.810 INFO [http-nio-34427-exec-3] org.apache.myfaces.application.ApplicationImpl.getProjectStage Couldn't discover the current project stage, using Production
+31-Mar-2020 20:38:13.811 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.FacesConfigurator.handleSerialFactory Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+31-Mar-2020 20:38:13.815 INFO [http-nio-34427-exec-3] org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory.getLifecycleProvider Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+31-Mar-2020 20:38:13.849 INFO [http-nio-34427-exec-3] org.apache.myfaces.webapp.AbstractFacesInitializer.initFaces ServletContext initialized.
+31-Mar-2020 20:38:13.854 INFO [http-nio-34427-exec-3] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+31-Mar-2020 20:38:13.866 INFO [http-nio-34427-exec-3] org.apache.myfaces.webapp.StartupServletContextListener.contextInitialized MyFaces Core has started, it took [470] ms.
+31-Mar-2020 20:38:14.053 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using readers:
+31-Mar-2020 20:38:14.053 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@7c102599
+31-Mar-2020 20:38:14.053 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@29476d3e
+31-Mar-2020 20:38:14.053 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@da2cf13
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@2d013d7b
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@4333a1c1
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@510f0a04
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@3297f498
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@6a3e62f4
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@7693d36
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@13e1beba
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@6e206db2
+31-Mar-2020 20:38:14.054 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@77109b40
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@39de8819
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@7693d36
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@4333a1c1
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@7c102599
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@29476d3e
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@da2cf13
+31-Mar-2020 20:38:14.055 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@2d013d7b
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@510f0a04
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@3297f498
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@6a3e62f4
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@13e1beba
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@6e206db2
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@4db474e
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@29dfcff4
+31-Mar-2020 20:38:14.056 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@281fe3c9
+31-Mar-2020 20:38:14.058 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:34427/test/        -> org.apache.openejb.server.rest.InternalApplication@3e48f518
+31-Mar-2020 20:38:14.061 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:34427/test/message ->  EJB org.superbiz.jms.CustomJmsService
+31-Mar-2020 20:38:14.061 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:34427/test/message ->      String receiveMessage() throws JMSException
+31-Mar-2020 20:38:14.061 INFO [http-nio-34427-exec-3] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:34427/test/message ->      void sendMessage(String)
+31-Mar-2020 20:38:14.619 INFO [http-nio-34427-exec-4] org.apache.activemq.broker.TransportConnector.start Connector vm://localhost started
+31-Mar-2020 20:38:14.779 INFO [http-nio-34427-exec-7] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/arquillian-test-working-dir/0/test
+31-Mar-2020 20:38:14.809 WARNING [http-nio-34427-exec-7] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [PoolIdleReleaseTimer] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ java.lang.Object.wait(Native Method)
+ java.util.TimerThread.mainLoop(Timer.java:552)
+ java.util.TimerThread.run(Timer.java:505)
+31-Mar-2020 20:38:14.809 WARNING [http-nio-34427-exec-7] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [ActiveMQ VMTransport: vm://localhost#0-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:460)
+ java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:362)
+ java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:941)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1073)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ java.lang.Thread.run(Thread.java:748)
+31-Mar-2020 20:38:14.810 WARNING [http-nio-34427-exec-7] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [ActiveMQ VMTransport: vm://localhost#0-2] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:460)
+ java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:362)
+ java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:941)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1073)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ java.lang.Thread.run(Thread.java:748)
+31-Mar-2020 20:38:14.810 WARNING [http-nio-34427-exec-7] org.apache.catalina.loader.WebappClassLoaderBase.clearReferencesThreads The web application [test] appears to have started a thread named [ActiveMQ Session Task-1] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+ sun.misc.Unsafe.park(Native Method)
+ java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:215)
+ java.util.concurrent.SynchronousQueue$TransferStack.awaitFulfill(SynchronousQueue.java:460)
+ java.util.concurrent.SynchronousQueue$TransferStack.transfer(SynchronousQueue.java:362)
+ java.util.concurrent.SynchronousQueue.poll(SynchronousQueue.java:941)
+ java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1073)
+ java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1134)
+ java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ java.lang.Thread.run(Thread.java:748)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.862 sec
+31-Mar-2020 20:38:14.957 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+31-Mar-2020 20:38:14.957 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-34427"]
+31-Mar-2020 20:38:14.965 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
+31-Mar-2020 20:38:14.967 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-34427"]
+31-Mar-2020 20:38:14.968 INFO [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+31-Mar-2020 20:38:14.975 INFO [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+31-Mar-2020 20:38:14.976 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+31-Mar-2020 20:38:14.976 SEVERE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+31-Mar-2020 20:38:14.992 INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: Default Unmanaged JDBC Database
+31-Mar-2020 20:38:14.997 INFO [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Stopping ResourceAdapter: Default JMS Resource Adapter
+31-Mar-2020 20:38:14.998 INFO [main] org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.stop Stopping ActiveMQ
+31-Mar-2020 20:38:15.006 INFO [94] org.apache.openejb.resource.activemq.ActiveMQResourceAdapter.stopImpl Stopped ActiveMQ broker
+31-Mar-2020 20:38:15.008 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["http-nio-34427"]
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO]
+[INFO] --- maven-war-plugin:2.4:war (default-war) @ simple-jms-context ---
+[INFO] Packaging webapp
+[INFO] Assembling webapp [simple-jms-context] in [/home/jgallimore/dev/tomee/examples/simple-jms-context/target/simple-jms-context-8.0.2-SNAPSHOT]
+[INFO] Processing war project
+[INFO] Webapp assembled in [47 msecs]
+[INFO] Building war: /home/jgallimore/dev/tomee/examples/simple-jms-context/target/simple-jms-context-8.0.2-SNAPSHOT.war
+[INFO]
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ simple-jms-context ---
+[INFO] Installing /home/jgallimore/dev/tomee/examples/simple-jms-context/target/simple-jms-context-8.0.2-SNAPSHOT.war to /home/jgallimore/.m2/repository/org/superbiz/simple-jms-context/8.0.2-SNAPSHOT/simple-jms-context-8.0.2-SNAPSHOT.war
+[INFO] Installing /home/jgallimore/dev/tomee/examples/simple-jms-context/pom.xml to /home/jgallimore/.m2/repository/org/superbiz/simple-jms-context/8.0.2-SNAPSHOT/simple-jms-context-8.0.2-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.834 s
+[INFO] Finished at: 2020-03-31T20:38:15+01:00
+[INFO] ------------------------------------------------------------------------
+
+....
+
+
+= Running the app
+
+Running the example is simple. In the ``simple-jms`` directory run:
+
+....
+$ mvn tomee:run
+....
+
+
+Which should create output like the following.
+
+....
+31-Mar-2020 20:39:14.341 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@418f890f
+31-Mar-2020 20:39:14.344 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
+31-Mar-2020 20:39:14.344 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/message ->      String receiveMessage() throws JMSException
+31-Mar-2020 20:39:14.344 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints              POST http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/message ->      void sendMessage(String)
+31-Mar-2020 20:39:14.363 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Deployment of web application archive [/home/jgallimore/dev/tomee/examples/simple-jms-context/target/apache-tomee/webapps/simple-jms-context-8.0.2-SNAPSHOT.war] has finished in [2,917] ms
+31-Mar-2020 20:39:14.370 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+31-Mar-2020 20:39:14.370 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+31-Mar-2020 20:39:14.370 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+31-Mar-2020 20:39:14.370 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
+31-Mar-2020 20:39:14.378 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
+31-Mar-2020 20:39:14.385 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [2,986] milliseconds
+....
+
+
+Note: now you can use the ``CURL`` command (or a browser-client tool) to send a POST request and then a GET request to the equivalent URL:
+
+....
+http://localhost:8080/simple-jms-context<-TOMEE-VERSION>/message
+....
+
+Finally, you can ``quit``, ``exit``, ``reload`` the example, by typing one of the available commands
+
+....
+[WARNING] Command '' not understood. Use one of [quit, exit, reload]
+....

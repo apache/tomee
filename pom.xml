@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-5-TT.1</version.javaee-api>
+    <version.javaee-api>8.0-4</version.javaee-api>
 
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
@@ -145,9 +145,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.31</tomcat.version>
+    <tomcat.version>9.0.33</tomcat.version>
 
-    <cxf.version>3.3.5</cxf.version>
+    <cxf.version>3.3.6</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
