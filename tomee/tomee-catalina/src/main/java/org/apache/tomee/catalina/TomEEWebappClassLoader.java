@@ -81,6 +81,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
     }
 
     public static final String CLASS_EXTENSION = ".class";
+    protected String[] forceSkip;
 
     private boolean restarting;
     private boolean forceStopPhase = Boolean.parseBoolean(SystemInstance.get().getProperty("tomee.webappclassloader.force-stop-phase", "false"));
@@ -164,7 +165,7 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
         }
 
         // avoid to redefine classes from server in this classloader is it not already loaded
-        if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name)) { // dynamic validation handling overriding
+        if (URLClassLoaderFirst.shouldDelegateToTheContainer(this, name) || shouldForceLoadFromTheContainer(name)) { // dynamic validation handling overriding
             try {
                 return OpenEJB.class.getClassLoader().loadClass(name); // we could use containerClassLoader but this is server loader so cut it even more
             } catch (final ClassNotFoundException e) {
@@ -207,6 +208,20 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
             }
             return super.loadClass(name, resolve);
         }
+    }
+
+    private boolean shouldForceLoadFromTheContainer(final String name) {
+        if (forceSkip == null) {
+            return false;
+        }
+
+        for (final String p : forceSkip) {
+            if (name.startsWith(p)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Class<?> loadWithDelegate(final boolean delegate, final boolean resolve, final String name) throws ClassNotFoundException {
@@ -547,6 +562,10 @@ public class TomEEWebappClassLoader extends ParallelWebappClassLoader {
 
     public void setWebResourceRoot(LazyStopStandardRoot webResourceRoot) {
         this.webResourceRoot = webResourceRoot;
+    }
+
+    void setForceSkip(final String[] forceSkip) {
+        this.forceSkip = forceSkip;
     }
 
     private static class NoClassClassLoader extends ClassLoader {
