@@ -18,6 +18,8 @@ package org.superbiz.jms;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.jms.*;
 import javax.ws.rs.GET;
@@ -26,6 +28,7 @@ import javax.ws.rs.Path;
 
 @Stateless
 @Path("message")
+@TransactionAttribute(TransactionAttributeType.NEVER)
 public class CustomJmsService {
 
     @Resource
