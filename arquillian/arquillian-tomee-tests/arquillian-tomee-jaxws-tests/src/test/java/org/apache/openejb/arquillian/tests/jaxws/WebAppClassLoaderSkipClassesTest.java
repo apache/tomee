@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.classloader.webapp;
+package org.apache.openejb.arquillian.tests.jaxws;
 
 import org.apache.openejb.loader.IO;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -26,14 +26,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 @RunAsClient
@@ -52,13 +51,14 @@ public class WebAppClassLoaderSkipClassesTest {
 
 
         return ShrinkWrap.create(WebArchive.class, "WebAppClassLoaderTest.war")
-                .addClasses(TestServlet.class)
+                .addClasses(TestService.class)
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .addAsLibraries(libs);
     }
 
     @Test
     public void valid() throws IOException {
-        assertEquals("true", IO.slurp(new URL(url.toExternalForm() + "test")));
+        final String output = IO.slurp(new URL(url.toExternalForm() + "test"));
+        Assert.assertFalse(output.contains("WEB-INF")); // shouldn't be loaded from the webapp
     }
 }

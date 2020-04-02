@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.arquillian.tests.classloader.webapp;
+package org.apache.openejb.arquillian.tests.jaxws;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.apache.commons.logging.Log;
 
-@WebServlet(urlPatterns = "/test")
-public class TestServlet extends HttpServlet {
-    @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
+import javax.ejb.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        ClassLoader parent = tccl.getParent();
+@Path("test")
+@Singleton
+public class TestService {
 
-        System.out.println(parent.getClass().getName());
-
-        // org/apache/commons/logging/Log.
+    @GET
+    public String get() {
+        return Log.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
     }
 }
