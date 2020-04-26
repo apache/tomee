@@ -11,8 +11,8 @@ right to edit this page._
 ....
 package org.superbiz.struts;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 
@@ -93,8 +93,8 @@ public class AddUserForm extends ActionSupport {
 ....
 package org.superbiz.struts;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 public class FindUser {
@@ -164,8 +164,8 @@ public class FindUserForm extends ActionSupport {
 ....
 package org.superbiz.struts;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.List;
 import java.util.Properties;
 
@@ -224,9 +224,9 @@ public class ListAllUsers {
 ....
 package org.superbiz.struts;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 
 @Entity
@@ -294,9 +294,9 @@ public interface UserService {
 ....
 package org.superbiz.struts;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Stateless

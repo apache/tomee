@@ -18,8 +18,8 @@ package org.superbiz;
 
 import org.apache.deltaspike.core.api.projectstage.ProjectStage;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 public final class ManagerFactory {
 

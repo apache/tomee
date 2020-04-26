@@ -16,10 +16,10 @@
  */
 package org.superbiz.ws.out;
 
-import javax.ejb.Stateless;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.ws.Holder;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.Holder;
 
 @Stateless
 @WebService(

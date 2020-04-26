@@ -16,7 +16,7 @@
  */
 package org.superbiz.mtom;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 public class AbstractService {
 

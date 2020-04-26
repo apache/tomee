@@ -16,7 +16,7 @@
  */
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 //END SNIPPET: code
 /**

@@ -5,7 +5,7 @@
 
 # Declarando um @ApplicationException
 ```
-    import javax.ejb.ApplicationException;
+    import jakarta.ejb.ApplicationException;
 
     /**
      * @version $Rev: 784112 $ $Date: 2009-06-12 06:23:57 -0700 (Fri, 12 Jun 2009) $
@@ -42,8 +42,8 @@ Como a `BusinessException` foi anotada com o `@ApplicationException(rollback = t
     import org.junit.Before;
     import org.junit.Test;
 
-    import javax.naming.Context;
-    import javax.naming.InitialContext;
+    import jakarta.naming.Context;
+    import jakarta.naming.InitialContext;
     import java.util.Properties;
 
     public class ThrowBusinessExceptionImplTest {

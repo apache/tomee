@@ -55,8 +55,8 @@ public interface Telephone {
 ....
 package org.superbiz.telephone;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateful;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateful;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,8 +100,8 @@ package org.superbiz.telephone;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 /**

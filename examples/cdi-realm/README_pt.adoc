@@ -25,11 +25,11 @@ Este exemplo mostra um secured servlet (servlet seguro/protegido) usando um real
 tem uma funcionalidade simples, apenas ilustrar os conceitos aqui explicados:
 
 ....
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet("/servlet")
@@ -44,7 +44,7 @@ public class SecuredServlet extends HttpServlet {
 Para proteger este servlet, adicionaremos a seguinte classe:
 
 ....
-import javax.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.RequestScoped;
 import java.security.Principal;
 
 @RequestScoped // just to show we can be bound to the request but @ApplicationScoped is what makes sense

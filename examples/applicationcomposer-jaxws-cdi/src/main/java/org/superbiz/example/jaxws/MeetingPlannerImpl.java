@@ -16,8 +16,8 @@
  */
 package org.superbiz.example.jaxws;
 
-import javax.inject.Inject;
-import javax.jws.WebService;
+import jakarta.inject.Inject;
+import jakarta.jws.WebService;
 import java.util.Date;
 
 @WebService

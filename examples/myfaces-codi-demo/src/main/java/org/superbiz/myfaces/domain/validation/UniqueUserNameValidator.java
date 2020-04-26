@@ -21,10 +21,10 @@ package org.superbiz.myfaces.domain.validation;
 import org.apache.myfaces.extensions.cdi.core.api.Advanced;
 import org.superbiz.myfaces.repository.UserRepository;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 @Advanced
 @ApplicationScoped

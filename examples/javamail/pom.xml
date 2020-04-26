@@ -61,7 +61,7 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.mail</groupId>
+      <groupId>jakarta.mail</groupId>
       <artifactId>mail</artifactId>
       <version>1.4</version>
       <scope>provided</scope>

@@ -29,8 +29,8 @@ import org.superbiz.deltaspike.domain.validation.Full;
 import org.superbiz.deltaspike.repository.UserRepository;
 import org.superbiz.deltaspike.view.config.Pages;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.Serializable;
 
 @Named

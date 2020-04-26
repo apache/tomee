@@ -16,9 +16,9 @@
  */
 package org.superbiz.calculator.wsh;
 
-import javax.ejb.Singleton;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.ejb.Singleton;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @Singleton
 @WebService(

@@ -26,11 +26,11 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBAccessException;
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJBAccessException;
+import jakarta.naming.AuthenticationException;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import java.net.URL;
 import java.util.Properties;
 

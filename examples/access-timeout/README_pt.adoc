@@ -59,14 +59,14 @@ A semântica para o `value` é a seguinte:
 Simples!
 
 NOTE: Quando acontecer um timeout, qual exceção o cliente recebe?
-Citando a especificação: "if a client-invoked business method is in progress on an instance when another client-invoked call, from the same or different client, arrives at the same instance of a stateful session bean, if the second client is a client of the bean's business interface or no-interface view, the concurrent invocation must result in the second client receiving a javax.ejb.ConcurrentAccessException[15]. If the EJB 2.1 client view is used, the container must throw a java.rmi.RemoteException if the second client is a remote client, or a javax.ejb.EJBException if the second client is a local client"
-Ou seja pode receber `javax.ejb.ConcurrentAccessException`. Ou no caso de EJB 2.1 estar sendo utilizado pode receber `java.rmi.RemoteException` se for um cliente externo ou `javax.ejb.EJBException` se for local.
+Citando a especificação: "if a client-invoked business method is in progress on an instance when another client-invoked call, from the same or different client, arrives at the same instance of a stateful session bean, if the second client is a client of the bean's business interface or no-interface view, the concurrent invocation must result in the second client receiving a jakarta.ejb.ConcurrentAccessException[15]. If the EJB 2.1 client view is used, the container must throw a java.rmi.RemoteException if the second client is a remote client, or a jakarta.ejb.EJBException if the second client is a local client"
+Ou seja pode receber `jakarta.ejb.ConcurrentAccessException`. Ou no caso de EJB 2.1 estar sendo utilizado pode receber `java.rmi.RemoteException` se for um cliente externo ou `jakarta.ejb.EJBException` se for local.
 
 === Sem padrão
 
 Note que o atributo `value` não tem um valor padrão. Isso foi intencional, tendo a intenção de informar que se o `@AccessTimeout` não for explicitamente usado, o comportamento sera o do server vendor.
 
-Alguns servidores vão esperar por um tempo pre determinado e lançar a exceção `javax.ejb.ConcurrentAccessException`, outros podem lançar de imediato.
+Alguns servidores vão esperar por um tempo pre determinado e lançar a exceção `jakarta.ejb.ConcurrentAccessException`, outros podem lançar de imediato.
 
 == Exemplo
 
@@ -188,7 +188,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/access-timeout
 INFO - openejb.base = /Users/dblevins/examples/access-timeout
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/access-timeout/target/classes

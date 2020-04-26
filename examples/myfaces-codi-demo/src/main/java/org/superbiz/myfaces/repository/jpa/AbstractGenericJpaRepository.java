@@ -21,8 +21,8 @@ package org.superbiz.myfaces.repository.jpa;
 import org.superbiz.myfaces.domain.AbstractDomainObject;
 import org.superbiz.myfaces.repository.GenericRepository;
 
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;

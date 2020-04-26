@@ -65,7 +65,7 @@
     </repository>
   </repositories>
   <dependencies>
-    <!-- spec apis such as javax.persistence -->
+    <!-- spec apis such as jakarta.persistence -->
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>

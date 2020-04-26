@@ -9,10 +9,10 @@ right to edit this page._
 ....
 package org.superbiz.calculator;
 
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -47,7 +47,7 @@ public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
 ....
 package org.superbiz.calculator;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CalculatorRemote {
@@ -63,7 +63,7 @@ public interface CalculatorRemote {
 ....
 package org.superbiz.calculator;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 //END SNIPPET: code
 
@@ -112,11 +112,11 @@ package org.superbiz.calculator;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.xml.namespace.QName;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Properties;
 

@@ -49,7 +49,7 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>javax.mail</groupId>
+          <groupId>jakarta.mail</groupId>
           <artifactId>mail</artifactId>
         </exclusion>
         <exclusion>

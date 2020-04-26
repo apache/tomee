@@ -21,8 +21,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;

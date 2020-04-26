@@ -19,8 +19,8 @@ package org.superbiz.store.service;
 import org.superbiz.store.entity.Order;
 import org.superbiz.store.entity.Product;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;

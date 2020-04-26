@@ -11,9 +11,9 @@ right to edit this page._
 ....
 package org.superbiz.ejblookup;
 
-import javax.ejb.EJBException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJBException;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 
 //START SNIPPET: code
 public class BlueBean implements Friend {
@@ -59,9 +59,9 @@ public interface Friend {
 ....
 package org.superbiz.ejblookup;
 
-import javax.ejb.EJBException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJBException;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 
 //START SNIPPET: code
 public class RedBean implements Friend {
@@ -128,8 +128,8 @@ package org.superbiz.ejblookup;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {
@@ -171,7 +171,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/lookup-of-ejbs-with-descriptor
 INFO - openejb.base = /Users/dblevins/examples/lookup-of-ejbs-with-descriptor
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/lookup-of-ejbs-with-descriptor/target/classes

@@ -19,12 +19,12 @@
 
 package org.superbiz.resource.jmx.factory;
 
-import javax.management.Attribute;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.StandardMBean;
+import jakarta.management.Attribute;
+import jakarta.management.MBeanAttributeInfo;
+import jakarta.management.MBeanInfo;
+import jakarta.management.MBeanServer;
+import jakarta.management.ObjectName;
+import jakarta.management.StandardMBean;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;

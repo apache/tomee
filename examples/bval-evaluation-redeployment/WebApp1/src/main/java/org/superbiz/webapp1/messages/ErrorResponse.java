@@ -16,9 +16,9 @@
  */
 package org.superbiz.webapp1.messages;
 
-import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.Date;
 

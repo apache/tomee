@@ -16,7 +16,7 @@
     limitations under the License.
 -->
 <resources>
-  <Resource id="jdbc/blog" type="javax.sql.DataSource">
+  <Resource id="jdbc/blog" type="jakarta.sql.DataSource">
     JdbcDriver = org.hsqldb.jdbcDriver
     JdbcUrl = jdbc:hsqldb:mem:blog
     UserName = SA
@@ -25,7 +25,7 @@
   </Resource>
 
 
-  <Resource id="jdbc/blog-unmanaged" type="javax.sql.DataSource">
+  <Resource id="jdbc/blog-unmanaged" type="jakarta.sql.DataSource">
     JdbcDriver = org.hsqldb.jdbcDriver
     JdbcUrl = jdbc:hsqldb:mem:blog
     UserName = SA

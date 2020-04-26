@@ -16,8 +16,8 @@
  */
 package org.superbiz.cdi.requestscope;
 
-import javax.ejb.Stateless;
-import javax.inject.Inject;
+import jakarta.ejb.Stateless;
+import jakarta.inject.Inject;
 
 @Stateless
 public class Chef {

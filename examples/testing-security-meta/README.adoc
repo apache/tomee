@@ -11,7 +11,7 @@ right to edit this page._
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RolesAllowed;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,7 +37,7 @@ public @interface AddPermission {
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.annotation.security.RolesAllowed;
+import jakarta.annotation.security.RolesAllowed;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -80,8 +80,8 @@ public @interface Metatype {
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -102,9 +102,9 @@ public @interface MovieUnit {
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.annotation.security.PermitAll;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -131,7 +131,7 @@ public @interface ReadPermission {
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.annotation.security.RunAs;
+import jakarta.annotation.security.RunAs;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -152,7 +152,7 @@ public @interface RunAsEmployee {
 ....
 package org.superbiz.injection.secure.api;
 
-import javax.annotation.security.RunAs;
+import jakarta.annotation.security.RunAs;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -173,7 +173,7 @@ public @interface RunAsManager {
 ....
 package org.superbiz.injection.secure;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {
@@ -230,9 +230,9 @@ import org.superbiz.injection.secure.api.DeletePermission;
 import org.superbiz.injection.secure.api.MovieUnit;
 import org.superbiz.injection.secure.api.ReadPermission;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Stateful
@@ -285,10 +285,10 @@ import junit.framework.TestCase;
 import org.superbiz.injection.secure.api.RunAsEmployee;
 import org.superbiz.injection.secure.api.RunAsManager;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.ejb.Stateless;
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.Stateless;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -427,7 +427,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/testing-security-meta
 INFO - openejb.base = /Users/dblevins/examples/testing-security-meta
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)

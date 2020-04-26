@@ -16,10 +16,10 @@
  */
 package org.superbiz.mbean;
 
-import javax.management.Description;
-import javax.management.MBean;
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
+import jakarta.management.Description;
+import jakarta.management.MBean;
+import jakarta.management.ManagedAttribute;
+import jakarta.management.ManagedOperation;
 
 @MBean
 @Description("play with me to guess a number")

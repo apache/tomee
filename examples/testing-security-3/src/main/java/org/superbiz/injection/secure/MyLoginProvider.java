@@ -18,7 +18,7 @@ package org.superbiz.injection.secure;
 
 import org.apache.openejb.core.security.jaas.LoginProvider;
 
-import javax.security.auth.login.FailedLoginException;
+import jakarta.security.auth.login.FailedLoginException;
 import java.util.Arrays;
 import java.util.List;
 

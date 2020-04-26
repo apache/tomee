@@ -20,12 +20,12 @@
   <Resource id="ClientRouter" type="jug.routing.PollingRouter" provider="jug.polling:PollingRouter"/>
 
   <!-- routed datasources -->
-  <Resource id="jdbc/polling" provider="RoutedDataSource" type="javax.sql.DataSource">
+  <Resource id="jdbc/polling" provider="RoutedDataSource" type="jakarta.sql.DataSource">
     Router = ClientRouter
   </Resource>
 
   <!-- real datasources -->
-  <Resource id="jdbc/client1" type="javax.sql.DataSource">
+  <Resource id="jdbc/client1" type="jakarta.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
     JdbcUrl jdbc:hsqldb:mem:client1
     UserName sa
@@ -33,7 +33,7 @@
     JtaManaged true
   </Resource>
 
-  <Resource id="jdbc/client1-non-jta" type="javax.sql.DataSource">
+  <Resource id="jdbc/client1-non-jta" type="jakarta.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
     JdbcUrl jdbc:hsqldb:mem:client1
     UserName sa
@@ -41,7 +41,7 @@
     JtaManaged false
   </Resource>
 
-  <Resource id="jdbc/client2" type="javax.sql.DataSource">
+  <Resource id="jdbc/client2" type="jakarta.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
     JdbcUrl jdbc:hsqldb:mem:client2
     UserName sa
@@ -49,7 +49,7 @@
     JtaManaged true
   </Resource>
 
-  <Resource id="jdbc/client2-non-jta" type="javax.sql.DataSource">
+  <Resource id="jdbc/client2-non-jta" type="jakarta.sql.DataSource">
     JdbcDriver org.hsqldb.jdbcDriver
     JdbcUrl jdbc:hsqldb:mem:client2
     UserName sa

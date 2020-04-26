@@ -9,8 +9,8 @@ right to edit this page._
 == ApplicationConfig
 
 ....
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,11 +26,11 @@ public class ApplicationConfig extends Application {
 == SimpleRESTEJB
 
 ....
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.util.Date;
 
 @Singleton
@@ -47,8 +47,8 @@ public class SimpleRESTEJB {
 == SimpleRESTPojo
 
 ....
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.util.Date;
 
 @Path("/pojo")

@@ -19,10 +19,10 @@ package org.superbiz.stateless.basic;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;

@@ -16,13 +16,13 @@
  */
 package org.superbiz;
 
-import javax.ejb.Init;
-import javax.ejb.Local;
-import javax.ejb.LocalHome;
-import javax.ejb.Remote;
-import javax.ejb.RemoteHome;
-import javax.ejb.Remove;
-import javax.ejb.Stateful;
+import jakarta.ejb.Init;
+import jakarta.ejb.Local;
+import jakarta.ejb.LocalHome;
+import jakarta.ejb.Remote;
+import jakarta.ejb.RemoteHome;
+import jakarta.ejb.Remove;
+import jakarta.ejb.Stateful;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -30,7 +30,7 @@ import java.util.Properties;
 
 /**
  * This is an EJB 3 style pojo stateful session bean
- * it does not need to implement javax.ejb.SessionBean
+ * it does not need to implement jakarta.ejb.SessionBean
  */
 //START SNIPPET: code
 

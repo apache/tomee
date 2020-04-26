@@ -18,8 +18,8 @@ package org.superbiz.dynamicdatasourcerouting;
 
 import org.apache.openejb.resource.jdbc.router.AbstractRouter;
 
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import jakarta.naming.NamingException;
+import jakarta.sql.DataSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

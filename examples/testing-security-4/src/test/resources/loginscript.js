@@ -17,6 +17,6 @@
 
 var p = new java.util.Properties();
 p.put("java.naming.factory.initial", "org.apache.openejb.client.LocalInitialContextFactory");
-var ctx = new javax.naming.InitialContext(p);
+var ctx = new jakarta.naming.InitialContext(p);
 var myBean = ctx.lookup("java:global/testing-security-4/LoginBean");
 myBean.authenticate(user, password);

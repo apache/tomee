@@ -109,10 +109,10 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -248,7 +248,7 @@ INFO - Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=
 INFO - Jndi(name=global/openejb/openejb/ConfigurationInfo!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
 INFO - Jndi(name=global/openejb/openejb/ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
 INFO - Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
-INFO - Jndi(name=global/openejb/MEJB!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+INFO - Jndi(name=global/openejb/MEJB!jakarta.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
 INFO - Jndi(name=global/openejb/MEJB) --> Ejb(deployment-id=MEJB)
 INFO - Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Stateless Container)
 INFO - Created Ejb(deployment-id=MEJB, ejb-name=MEJB, container=Default Stateless Container)

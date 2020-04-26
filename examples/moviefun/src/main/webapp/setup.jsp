@@ -16,7 +16,7 @@
 --%>
 <%@ page import=" org.superbiz.moviefun.Movie" %>
 <%@ page import="org.superbiz.moviefun.MoviesBean" %>
-<%@ page import="javax.naming.InitialContext" %>
+<%@ page import="jakarta.naming.InitialContext" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

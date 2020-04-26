@@ -11,7 +11,7 @@ right to edit this page._
 ....
 package org.superbiz.applet;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface Calculator {
@@ -24,16 +24,16 @@ public interface Calculator {
 ....
 package org.superbiz.applet;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.rmi.PortableRemoteObject;
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
+import jakarta.rmi.PortableRemoteObject;
+import jakarta.swing.JApplet;
+import jakarta.swing.JButton;
+import jakarta.swing.JLabel;
+import jakarta.swing.JTextArea;
+import jakarta.swing.JTextField;
+import jakarta.swing.SwingUtilities;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -114,7 +114,7 @@ public class CalculatorApplet extends JApplet {
 ....
 package org.superbiz.applet;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorImpl implements Calculator {
@@ -149,9 +149,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.superbiz.applet.Calculator;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.rmi.PortableRemoteObject;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.rmi.PortableRemoteObject;
 import java.util.Properties;
 
 

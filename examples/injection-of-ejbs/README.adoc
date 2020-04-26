@@ -25,8 +25,8 @@ of the JNDI API.
 ....
 package org.superbiz.injection;
 
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
 
 /**
  * This is an EJB 3.1 style pojo stateless session bean
@@ -73,8 +73,8 @@ public class DataReader {
 ....
 package org.superbiz.injection;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
 
 /**
  * This is an EJB 3 style pojo stateless session bean
@@ -99,7 +99,7 @@ public class DataStore implements DataStoreLocal, DataStoreRemote {
 ....
 package org.superbiz.injection;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 /**
  * This is an EJB 3 local business interface
@@ -120,7 +120,7 @@ public interface DataStoreLocal {
 ....
 package org.superbiz.injection;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * This is an EJB 3 remote business interface
@@ -142,8 +142,8 @@ package org.superbiz.injection;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 
 /**
  * A test case for DataReaderImpl ejb, testing both the remote and local interface
@@ -176,7 +176,7 @@ Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
 http://tomee.apache.org/
 INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
 INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
 INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-ejbs/target/classes

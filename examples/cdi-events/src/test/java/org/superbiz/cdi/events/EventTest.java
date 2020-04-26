@@ -22,9 +22,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.inject.Inject;
-import javax.naming.NamingException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.inject.Inject;
+import jakarta.naming.NamingException;
 
 import static org.junit.Assert.assertTrue;
 

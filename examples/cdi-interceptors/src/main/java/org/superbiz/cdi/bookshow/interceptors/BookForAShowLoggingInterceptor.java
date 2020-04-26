@@ -50,9 +50,9 @@ package org.superbiz.cdi.bookshow.interceptors;
 import org.superbiz.cdi.bookshow.interceptorbinding.Log;
 import org.superbiz.cdi.bookshow.tracker.InterceptionOrderTracker;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptor;
+import jakarta.interceptor.InvocationContext;
 import java.io.Serializable;
 import java.util.logging.Logger;
 

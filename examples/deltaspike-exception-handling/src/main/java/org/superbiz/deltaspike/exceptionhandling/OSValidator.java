@@ -18,8 +18,8 @@ package org.superbiz.deltaspike.exceptionhandling;
 
 import org.apache.deltaspike.core.api.exception.control.event.ExceptionToCatchEvent;
 
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 
 public class OSValidator {
 

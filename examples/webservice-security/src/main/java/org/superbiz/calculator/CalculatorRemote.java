@@ -16,7 +16,7 @@
  */
 package org.superbiz.calculator;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface CalculatorRemote {

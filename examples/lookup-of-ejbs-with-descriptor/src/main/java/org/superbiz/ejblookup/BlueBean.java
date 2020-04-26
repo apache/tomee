@@ -16,9 +16,9 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.EJBException;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJBException;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 
 //START SNIPPET: code
 public class BlueBean implements Friend {

@@ -16,7 +16,7 @@
  */
 package org.superbiz.servlet;
 
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.io.PrintStream;
 import java.net.URL;
 

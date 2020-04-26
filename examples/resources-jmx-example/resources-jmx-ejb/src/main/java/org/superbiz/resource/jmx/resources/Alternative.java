@@ -22,16 +22,16 @@ package org.superbiz.resource.jmx.resources;
 import org.superbiz.resource.jmx.factory.Converter;
 import org.superbiz.resource.jmx.factory.MBeanRegistrationException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.management.Attribute;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.StandardMBean;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.management.Attribute;
+import jakarta.management.InstanceNotFoundException;
+import jakarta.management.MBeanAttributeInfo;
+import jakarta.management.MBeanInfo;
+import jakarta.management.MBeanServer;
+import jakarta.management.MalformedObjectNameException;
+import jakarta.management.ObjectName;
+import jakarta.management.StandardMBean;
 import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class Alternative implements AlternativeMBean {
         } catch (final MalformedObjectNameException e) {
             LOGGER.severe("Malformed MBean name: " + name);
             throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
+        } catch (final jakarta.management.MBeanRegistrationException e) {
             LOGGER.severe("Error unregistering " + name);
             throw new MBeanRegistrationException(e);
         } catch (InstanceNotFoundException e) {

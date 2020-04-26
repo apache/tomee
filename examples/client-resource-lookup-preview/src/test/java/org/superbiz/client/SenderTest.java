@@ -19,10 +19,10 @@ package org.superbiz.client;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;

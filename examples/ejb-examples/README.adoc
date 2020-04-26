@@ -11,10 +11,10 @@ right to edit this page._
 ....
 package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
+import jakarta.sql.DataSource;
 
 @Stateless
 @LocalBean
@@ -51,8 +51,8 @@ public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.Local;
-import javax.sql.DataSource;
+import jakarta.ejb.Local;
+import jakarta.sql.DataSource;
 
 @Local
 public interface AnnotatedEJBLocal {
@@ -71,7 +71,7 @@ public interface AnnotatedEJBLocal {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 @Remote
 public interface AnnotatedEJBRemote {
@@ -86,16 +86,16 @@ public interface AnnotatedEJBRemote {
 ....
 package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.sql.DataSource;
 import java.io.IOException;
 
 public class AnnotatedServlet extends HttpServlet {
@@ -163,8 +163,8 @@ public class AnnotatedServlet extends HttpServlet {
 ....
 package org.superbiz.servlet;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class ClientHandler implements Handler {
     public boolean handleMessage(MessageContext messageContext) {
@@ -188,7 +188,7 @@ public class ClientHandler implements Handler {
 ....
 package org.superbiz.servlet;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://examples.org/wsdl")
 public interface HelloEjb {
@@ -201,9 +201,9 @@ public interface HelloEjb {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.Stateless;
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.ejb.Stateless;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @WebService(
         portName = "HelloEjbPort",
@@ -227,7 +227,7 @@ public class HelloEjbService implements HelloEjb {
 ....
 package org.superbiz.servlet;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://examples.org/wsdl")
 public interface HelloPojo {
@@ -240,8 +240,8 @@ public interface HelloPojo {
 ....
 package org.superbiz.servlet;
 
-import javax.jws.HandlerChain;
-import javax.jws.WebService;
+import jakarta.jws.HandlerChain;
+import jakarta.jws.WebService;
 
 @WebService(
         portName = "HelloPojoPort",
@@ -264,15 +264,15 @@ public class HelloPojoService implements HelloPojo {
 ....
 package org.superbiz.servlet;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NameClassPair;
+import jakarta.naming.NamingException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -336,11 +336,11 @@ public class JndiServlet extends HttpServlet {
 ....
 package org.superbiz.servlet;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class JpaBean {
@@ -376,16 +376,16 @@ public class JpaBean {
 ....
 package org.superbiz.servlet;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.Query;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JpaServlet extends HttpServlet {
@@ -459,13 +459,13 @@ public class ResourceBean {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -539,12 +539,12 @@ public class RunAsServlet extends HttpServlet {
 ....
 package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.DenyAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.annotation.security.DeclareRoles;
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.SessionContext;
+import jakarta.ejb.Stateless;
 import java.security.Principal;
 
 @Stateless
@@ -588,7 +588,7 @@ public class SecureEJB implements SecureEJBLocal {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 import java.security.Principal;
 
 @Local
@@ -612,13 +612,13 @@ public interface SecureEJBLocal {
 ....
 package org.superbiz.servlet;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -692,8 +692,8 @@ public class SecureServlet extends HttpServlet {
 ....
 package org.superbiz.servlet;
 
-import javax.xml.ws.handler.Handler;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.xml.ws.handler.Handler;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class ServerHandler implements Handler {
     public boolean handleMessage(MessageContext messageContext) {
@@ -717,7 +717,7 @@ public class ServerHandler implements Handler {
 ....
 package org.superbiz.servlet;
 
-import javax.xml.ws.Service;
+import jakarta.xml.ws.Service;
 import java.io.PrintStream;
 import java.net.URL;
 
@@ -784,13 +784,13 @@ public class WebserviceClient {
 ....
 package org.superbiz.servlet;
 
-import javax.jws.HandlerChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.WebServiceRef;
+import jakarta.jws.HandlerChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.ws.WebServiceRef;
 import java.io.IOException;
 
 public class WebserviceServlet extends HttpServlet {
@@ -1063,13 +1063,13 @@ public class WebserviceServlet extends HttpServlet {
 
   <resource-ref>
     <res-ref-name>web.xml/Data Source</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
+    <res-type>jakarta.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
 
   <resource-env-ref>
     <resource-env-ref-name>web.xml/Queue</resource-env-ref-name>
-    <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+    <resource-env-ref-type>jakarta.jms.Queue</resource-env-ref-type>
   </resource-env-ref>
 
   <ejb-ref>

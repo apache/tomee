@@ -18,8 +18,8 @@ package org.superbiz.hello;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 /**

@@ -16,7 +16,7 @@
  */
 package org.superbiz.appexception;
 
-import javax.ejb.ApplicationException;
+import jakarta.ejb.ApplicationException;
 
 /**
  * @version $Rev$ $Date$

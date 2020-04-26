@@ -27,8 +27,8 @@ import org.apache.openejb.quartz.SimpleTrigger;
 import org.apache.openejb.quartz.TriggerBuilder;
 import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
 
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
+import jakarta.ejb.Stateless;
+import jakarta.naming.InitialContext;
 import java.util.Date;
 
 @Stateless

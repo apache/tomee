@@ -16,7 +16,7 @@
  */
 package org.superbiz;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 //START SNIPPET: code
 @Remote

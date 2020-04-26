@@ -21,11 +21,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.List;
 import java.util.Properties;
 

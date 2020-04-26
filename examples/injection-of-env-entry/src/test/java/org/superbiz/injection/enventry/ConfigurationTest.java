@@ -18,8 +18,8 @@ package org.superbiz.injection.enventry;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 import java.util.Date;
 
 //START SNIPPET: code

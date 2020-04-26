@@ -23,11 +23,11 @@ import org.apache.myfaces.extensions.cdi.core.api.startup.event.StartupEvent;
 import org.superbiz.myfaces.domain.User;
 import org.superbiz.myfaces.repository.UserRepository;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 import static org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStage.Development;
 import static org.apache.myfaces.extensions.cdi.core.api.projectstage.ProjectStage.IntegrationTest;

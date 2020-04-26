@@ -132,13 +132,13 @@
 
   <resource-ref>
     <res-ref-name>web.xml/Data Source</res-ref-name>
-    <res-type>javax.sql.DataSource</res-type>
+    <res-type>jakarta.sql.DataSource</res-type>
     <res-auth>Container</res-auth>
   </resource-ref>
 
   <resource-env-ref>
     <resource-env-ref-name>web.xml/Queue</resource-env-ref-name>
-    <resource-env-ref-type>javax.jms.Queue</resource-env-ref-type>
+    <resource-env-ref-type>jakarta.jms.Queue</resource-env-ref-type>
   </resource-env-ref>
 
   <ejb-ref>

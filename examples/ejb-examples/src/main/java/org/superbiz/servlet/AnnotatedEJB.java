@@ -16,10 +16,10 @@
  */
 package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.ejb.LocalBean;
+import jakarta.ejb.Stateless;
+import jakarta.sql.DataSource;
 
 @Stateless
 @LocalBean

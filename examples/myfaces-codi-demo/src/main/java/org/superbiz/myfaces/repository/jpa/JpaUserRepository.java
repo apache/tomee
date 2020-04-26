@@ -22,7 +22,7 @@ import org.superbiz.myfaces.domain.User;
 import org.superbiz.myfaces.repository.Repository;
 import org.superbiz.myfaces.repository.UserRepository;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Repository

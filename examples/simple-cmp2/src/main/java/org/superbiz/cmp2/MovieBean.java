@@ -16,7 +16,7 @@
  */
 package org.superbiz.cmp2;
 
-import javax.ejb.EntityBean;
+import jakarta.ejb.EntityBean;
 
 public abstract class MovieBean implements EntityBean {
 

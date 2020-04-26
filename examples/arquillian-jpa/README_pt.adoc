@@ -77,7 +77,7 @@ se você não usar soluções alternativas como https://github.com/rmannibucau/p
     INFOS - Jndi(name=global/openejb/openejb/ConfigurationInfo!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
     INFOS - Jndi(name=global/openejb/openejb/ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
     INFOS - Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
-    INFOS - Jndi(name=global/openejb/MEJB!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+    INFOS - Jndi(name=global/openejb/MEJB!jakarta.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
     INFOS - Jndi(name=global/openejb/MEJB) --> Ejb(deployment-id=MEJB)
     INFOS - Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Stateless Container)
     INFOS - Created Ejb(deployment-id=MEJB, ejb-name=MEJB, container=Default Stateless Container)

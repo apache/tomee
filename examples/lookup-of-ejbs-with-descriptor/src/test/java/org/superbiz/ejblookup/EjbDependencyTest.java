@@ -18,8 +18,8 @@ package org.superbiz.ejblookup;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 
 //START SNIPPET: code
 public class EjbDependencyTest extends TestCase {

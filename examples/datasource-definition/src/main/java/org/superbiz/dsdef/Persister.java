@@ -16,10 +16,10 @@
  */
 package org.superbiz.dsdef;
 
-import javax.annotation.Resource;
-import javax.annotation.sql.DataSourceDefinition;
-import javax.inject.Named;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.annotation.sql.DataSourceDefinition;
+import jakarta.inject.Named;
+import jakarta.sql.DataSource;
 
 @DataSourceDefinition(transactional = true,
         url = "jdbc:h2:mem:persister",

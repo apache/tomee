@@ -18,11 +18,11 @@ package org.superbiz.init;
 
 import org.eclipse.persistence.transaction.JTATransactionController;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.transaction.TransactionManager;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
+import jakarta.transaction.TransactionManager;
 
 @Startup
 @Singleton // tomee does it itself if eclipselink is in common.lib otherwise it is to be done by the app

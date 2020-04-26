@@ -18,8 +18,8 @@ package org.superbiz.bean;
 
 import org.superbiz.resource.ManagerResource;
 
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class Manager {

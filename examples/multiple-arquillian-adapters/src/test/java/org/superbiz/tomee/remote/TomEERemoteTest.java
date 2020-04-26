@@ -25,7 +25,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.superbiz.SomeEJB;
 
-import javax.ejb.EJB;
+import jakarta.ejb.EJB;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

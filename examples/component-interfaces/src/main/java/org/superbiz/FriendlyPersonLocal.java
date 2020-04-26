@@ -18,7 +18,7 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.Local;
+import jakarta.ejb.Local;
 
 @Local
 public interface FriendlyPersonLocal {

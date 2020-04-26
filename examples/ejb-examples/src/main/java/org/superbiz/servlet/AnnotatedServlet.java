@@ -16,16 +16,16 @@
  */
 package org.superbiz.servlet;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.sql.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.sql.DataSource;
 import java.io.IOException;
 
 public class AnnotatedServlet extends HttpServlet {

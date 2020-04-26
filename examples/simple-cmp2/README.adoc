@@ -61,7 +61,7 @@ converted to its JPA equivalent.
 ....
 package org.superbiz.cmp2;
 
-import javax.ejb.EntityBean;
+import jakarta.ejb.EntityBean;
 
 public abstract class MovieBean implements EntityBean {
 
@@ -99,14 +99,14 @@ public abstract class MovieBean implements EntityBean {
 ....
 package org.superbiz.cmp2;
 
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
+import jakarta.ejb.CreateException;
+import jakarta.ejb.FinderException;
 import java.util.Collection;
 
 /**
  * @version $Revision$ $Date$
  */
-interface Movies extends javax.ejb.EJBLocalHome {
+interface Movies extends jakarta.ejb.EJBLocalHome {
     Movie create(String director, String title, int year) throws CreateException;
 
     Movie findByPrimaryKey(Integer primarykey) throws FinderException;
@@ -188,8 +188,8 @@ package org.superbiz.cmp2;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Collection;
 import java.util.Properties;
 

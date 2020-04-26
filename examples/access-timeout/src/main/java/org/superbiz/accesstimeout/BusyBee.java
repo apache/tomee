@@ -16,15 +16,15 @@
  */
 package org.superbiz.accesstimeout;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.Asynchronous;
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.WRITE;
 
 /**
  * @version $Revision$ $Date$

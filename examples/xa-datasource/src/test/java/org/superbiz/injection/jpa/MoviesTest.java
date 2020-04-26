@@ -18,8 +18,8 @@ package org.superbiz.injection.jpa;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,7 +29,7 @@ public class MoviesTest extends TestCase {
     public void test() throws Exception {
 
         final Properties p = new Properties();
-        p.put("movieDatabaseXA", "new://Resource?type=javax.sql.XADataSource&class-name=org.apache.derby.jdbc.EmbeddedXADataSource");
+        p.put("movieDatabaseXA", "new://Resource?type=jakarta.sql.XADataSource&class-name=org.apache.derby.jdbc.EmbeddedXADataSource");
         p.put("movieDatabaseXA.DatabaseName", "test");
         p.put("movieDatabaseXA.CreateDatabase", "create");
 

@@ -24,9 +24,9 @@ import org.apache.deltaspike.core.api.scope.GroupedConversationScoped;
 import org.superbiz.deltaspike.domain.Feedback;
 import org.superbiz.deltaspike.repository.FeedbackRepository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 

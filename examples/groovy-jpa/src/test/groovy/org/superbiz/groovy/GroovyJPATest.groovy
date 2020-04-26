@@ -26,9 +26,9 @@ import org.jboss.shrinkwrap.api.spec.WebArchive
 import org.junit.Test
 import org.junit.runner.RunWith
 
-import javax.persistence.EntityManager
-import javax.persistence.EntityManagerFactory
-import javax.persistence.PersistenceUnit
+import jakarta.persistence.EntityManager
+import jakarta.persistence.EntityManagerFactory
+import jakarta.persistence.PersistenceUnit
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull

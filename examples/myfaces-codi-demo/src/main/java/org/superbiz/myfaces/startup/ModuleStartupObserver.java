@@ -18,9 +18,9 @@
  */
 package org.superbiz.myfaces.startup;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Singleton;
+import jakarta.ejb.Startup;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

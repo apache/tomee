@@ -20,8 +20,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 
 public class PropertiesRegistryTest {
 

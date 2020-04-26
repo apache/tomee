@@ -65,7 +65,7 @@
       <version>1.12</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.ws.rs</groupId>
+          <groupId>jakarta.ws.rs</groupId>
           <artifactId>jsr311-api</artifactId>
         </exclusion>
         <exclusion>

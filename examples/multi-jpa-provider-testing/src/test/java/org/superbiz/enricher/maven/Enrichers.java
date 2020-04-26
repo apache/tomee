@@ -19,7 +19,7 @@ package org.superbiz.enricher.maven;
 import org.jboss.shrinkwrap.api.container.LibraryContainer;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
-import javax.enterprise.inject.ResolutionException;
+import jakarta.enterprise.inject.ResolutionException;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

@@ -16,7 +16,7 @@
  */
 package org.superbiz.applet;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class CalculatorImpl implements Calculator {

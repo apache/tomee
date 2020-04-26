@@ -16,7 +16,7 @@
  */
 package org.superbiz.appexception;
 
-import javax.ejb.Remote;
+import jakarta.ejb.Remote;
 
 /**
  * This is an EJB 3 remote business interface

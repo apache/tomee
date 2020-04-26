@@ -21,10 +21,10 @@ package org.superbiz.connector.adapter;
 import org.superbiz.connector.api.SampleConnection;
 import org.superbiz.connector.api.SampleConnectionFactory;
 
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
 import java.util.logging.Logger;
 
 public class SampleConnectionFactoryImpl implements SampleConnectionFactory {

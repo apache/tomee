@@ -24,10 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.superbiz.dynamic.mbean.simple.Simple;
 
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
-import javax.management.Attribute;
-import javax.management.ObjectName;
+import jakarta.ejb.EJB;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.management.Attribute;
+import jakarta.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
 import static org.junit.Assert.assertEquals;

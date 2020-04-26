@@ -18,11 +18,11 @@ package org.superbiz.calculator;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.xml.namespace.QName;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Properties;
 

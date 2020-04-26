@@ -16,8 +16,8 @@
  */
 package org.superbiz.injection.enventry;
 
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
+import jakarta.annotation.Resource;
+import jakarta.ejb.Singleton;
 import java.util.Date;
 
 /**

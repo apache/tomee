@@ -17,16 +17,16 @@
 
 package org.superbiz.dynamic.mbean;
 
-import javax.annotation.PreDestroy;
-import javax.management.Attribute;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanInfo;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
+import jakarta.annotation.PreDestroy;
+import jakarta.management.Attribute;
+import jakarta.management.MBeanAttributeInfo;
+import jakarta.management.MBeanInfo;
+import jakarta.management.MBeanServer;
+import jakarta.management.MBeanServerConnection;
+import jakarta.management.ObjectName;
+import jakarta.management.remote.JMXConnector;
+import jakarta.management.remote.JMXConnectorFactory;
+import jakarta.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationHandler;

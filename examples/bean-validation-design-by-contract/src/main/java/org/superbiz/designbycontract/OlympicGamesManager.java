@@ -16,9 +16,9 @@
  */
 package org.superbiz.designbycontract;
 
-import javax.ejb.Stateless;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.ejb.Stateless;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Stateless
 public class OlympicGamesManager {

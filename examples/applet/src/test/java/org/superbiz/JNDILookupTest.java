@@ -20,8 +20,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.superbiz.applet.Calculator;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Properties;
 
 public class JNDILookupTest {

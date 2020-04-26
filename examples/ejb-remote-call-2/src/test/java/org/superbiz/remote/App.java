@@ -16,9 +16,9 @@
  */
 package org.superbiz.remote;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import java.util.Properties;
 
 public class App {

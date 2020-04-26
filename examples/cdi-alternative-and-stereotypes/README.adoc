@@ -68,11 +68,11 @@ If you run it now you'll have this exception:
 
 [source,java,numbered]
 ----
- javax.enterprise.inject.UnsatisfiedResolutionException: Api type [org.superbiz.cdi.stereotype.Vehicle] is not found with the qualifiers
- Qualifiers: [@javax.enterprise.inject.Default()]
+ jakarta.enterprise.inject.UnsatisfiedResolutionException: Api type [org.superbiz.cdi.stereotype.Vehicle] is not found with the qualifiers
+ Qualifiers: [@jakarta.enterprise.inject.Default()]
  for injection into Field Injection Point, field name :  vehicle, 
  Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, API Types:[java.lang.Object,org.superbiz.cdi.stereotype.Journey], 
- Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
+ Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]]
 ----
 
 It means the stereotype is not activated. To do it simply add it to your `META-INF/beans.xml`:
@@ -85,19 +85,19 @@ NOTE: if you don't specify `AirOpenEJB` as `@Alternative` (done through our mock
 
 source,java,numbered]
 ----
- Caused by: javax.enterprise.inject.AmbiguousResolutionException: 
+ Caused by: jakarta.enterprise.inject.AmbiguousResolutionException: 
  There is more than one api type with : org.superbiz.cdi.stereotype.Society with qualifiers : 
- Qualifiers: [@javax.enterprise.inject.Default()] for injection into Field Injection Point, field name :  society, 
+ Qualifiers: [@jakarta.enterprise.inject.Default()] for injection into Field Injection Point, field name :  society, 
  Bean Owner : [Journey, Name:null, WebBeans Type:ENTERPRISE, 
  API Types:[org.superbiz.cdi.stereotype.Journey,java.lang.Object], 
- Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]]
+ Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]]
  found beans:
  AirOpenEJB, Name:null, WebBeans Type:MANAGED, 
 API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.AirOpenEJB,java.lang.Object], 
-Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
+Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]
  LowCostCompanie, Name:null, WebBeans Type:MANAGED, 
 API Types:[org.superbiz.cdi.stereotype.Society,org.superbiz.cdi.stereotype.LowCostCompanie,java.lang.Object], 
-Qualifiers:[javax.enterprise.inject.Any,javax.enterprise.inject.Default]
+Qualifiers:[jakarta.enterprise.inject.Any,jakarta.enterprise.inject.Default]
 ----
 
 which simply means two implementations are available for the same injection point (`Journey.society`).
@@ -119,7 +119,7 @@ Running org.superbiz.cdi.stereotype.StereotypeTest
  http://tomee.apache.org/
  INFO - openejb.home = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
  INFO - openejb.base = /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes
- INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+ INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
  INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
  INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
  INFO - Found EjbModule in classpath: /opt/dev/openejb/openejb-trunk/examples/cdi-alternative-and-stereotypes/target/test-classes

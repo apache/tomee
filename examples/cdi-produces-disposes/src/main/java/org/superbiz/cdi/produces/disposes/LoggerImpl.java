@@ -16,8 +16,8 @@
  */
 package org.superbiz.cdi.produces.disposes;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Named("logger")
 public class LoggerImpl implements Logger {

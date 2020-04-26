@@ -21,15 +21,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
+import jakarta.swing.JApplet;
+import jakarta.swing.JButton;
+import jakarta.swing.JLabel;
+import jakarta.swing.JTextArea;
+import jakarta.swing.JTextField;
+import jakarta.swing.SwingUtilities;
 
 public class CalculatorApplet extends JApplet {
 

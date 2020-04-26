@@ -16,7 +16,7 @@
  */
 package org.superbiz.stateless.basic;
 
-import javax.ejb.Stateless;
+import jakarta.ejb.Stateless;
 
 /**
  * This is an EJB 3.1 style pojo Stateless session bean

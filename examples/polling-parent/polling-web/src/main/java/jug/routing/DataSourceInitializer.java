@@ -18,9 +18,9 @@ package jug.routing;
 
 import jug.domain.Subject;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 // hack for OpenJPA
 // it initializes lazily datasource (buildSchema) so simply call it here

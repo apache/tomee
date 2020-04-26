@@ -29,13 +29,13 @@ import org.apache.myfaces.extensions.cdi.message.api.MessageContext;
 import org.apache.myfaces.extensions.validator.ExtValInformation;
 import org.superbiz.myfaces.view.InfoPage;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.Persistence;
-import javax.validation.Validation;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.persistence.Persistence;
+import jakarta.validation.Validation;
 import java.io.Serializable;
 
 @Named

@@ -127,7 +127,7 @@ public class JMXBeanCreator {
         } catch (final NotCompliantMBeanException e) {
             LOGGER.severe("Class is not a valid MBean: " + code);
             throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
+        } catch (final jakarta.management.MBeanRegistrationException e) {
             LOGGER.severe("Error registering " + name + ", " + code);
             throw new MBeanRegistrationException(e);
         }
@@ -342,7 +342,7 @@ public class Alternative implements AlternativeMBean {
         } catch (final NotCompliantMBeanException e) {
             LOGGER.severe("Class is not a valid MBean: " + code);
             throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
+        } catch (final jakarta.management.MBeanRegistrationException e) {
             LOGGER.severe("Error registering " + name + ", " + code);
             throw new MBeanRegistrationException(e);
         }
@@ -360,7 +360,7 @@ public class Alternative implements AlternativeMBean {
         } catch (final MalformedObjectNameException e) {
             LOGGER.severe("Malformed MBean name: " + name);
             throw new MBeanRegistrationException(e);
-        } catch (final javax.management.MBeanRegistrationException e) {
+        } catch (final jakarta.management.MBeanRegistrationException e) {
             LOGGER.severe("Error unregistering " + name);
             throw new MBeanRegistrationException(e);
         } catch (InstanceNotFoundException e) {
@@ -580,7 +580,7 @@ INFO: Jndi(name=global/openejb/openejb/ConfigurationInfo) --> Ejb(deployment-id=
 Apr 15, 2015 12:40:19 PM org.apache.openejb.assembler.classic.JndiBuilder bind
 INFO: Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
 Apr 15, 2015 12:40:19 PM org.apache.openejb.assembler.classic.JndiBuilder bind
-INFO: Jndi(name=global/openejb/MEJB!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+INFO: Jndi(name=global/openejb/MEJB!jakarta.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
 Apr 15, 2015 12:40:19 PM org.apache.openejb.assembler.classic.JndiBuilder bind
 INFO: Jndi(name=global/openejb/MEJB) --> Ejb(deployment-id=MEJB)
 Apr 15, 2015 12:40:19 PM org.apache.openejb.assembler.classic.Assembler startEjbs

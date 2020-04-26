@@ -16,7 +16,7 @@
  */
 package org.superbiz.interceptors;
 
-import javax.interceptor.Interceptors;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @version $Rev$ $Date$

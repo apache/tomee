@@ -59,7 +59,7 @@
             <configuration>
               <skip>${maven.test.skip}</skip>
               <systemPropertyVariables>
-                <javax.persistence.provider>org.hibernate.jpa.HibernatePersistenceProvider</javax.persistence.provider>
+                <jakarta.persistence.provider>org.hibernate.jpa.HibernatePersistenceProvider</jakarta.persistence.provider>
                 <tomee.jpa.factory.lazy>true</tomee.jpa.factory.lazy>
               </systemPropertyVariables>
             </configuration>
@@ -74,7 +74,7 @@
               <skip>${maven.test.skip}</skip>
               <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${tomee.version}/openejb-javaagent-${tomee.version}.jar"</argLine>
               <systemPropertyVariables>
-                <javax.persistence.provider>org.apache.openjpa.persistence.PersistenceProviderImpl</javax.persistence.provider>
+                <jakarta.persistence.provider>org.apache.openjpa.persistence.PersistenceProviderImpl</jakarta.persistence.provider>
               </systemPropertyVariables>
             </configuration>
           </execution>

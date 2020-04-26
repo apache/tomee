@@ -101,8 +101,8 @@ import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SimpleTrigger;
 
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
+import jakarta.ejb.Stateless;
+import jakarta.naming.InitialContext;
 import java.util.Date;
 
 @Stateless
@@ -142,8 +142,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import javax.ejb.ActivationConfigProperty;
-import javax.ejb.MessageDriven;
+import jakarta.ejb.ActivationConfigProperty;
+import jakarta.ejb.MessageDriven;
 
 @MessageDriven(activationConfig = {
         @ActivationConfigProperty(propertyName = "cronExpression", propertyValue = "* * * * * ?")})
@@ -165,8 +165,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Date;
 import java.util.Properties;
 

@@ -16,8 +16,8 @@
  */
 package org.superbiz.remote;
 
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.SessionContext;
 import java.rmi.RemoteException;
 
 public class DefaultGreetings implements Greetings {

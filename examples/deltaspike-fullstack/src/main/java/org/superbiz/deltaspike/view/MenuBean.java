@@ -21,8 +21,8 @@ package org.superbiz.deltaspike.view;
 import org.apache.deltaspike.core.spi.scope.conversation.GroupedConversationManager;
 import org.superbiz.deltaspike.view.config.Pages;
 
-import javax.enterprise.inject.Model;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Model;
+import jakarta.inject.Inject;
 
 @Model
 public class MenuBean {

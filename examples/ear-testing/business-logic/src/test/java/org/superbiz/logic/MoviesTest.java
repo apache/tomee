@@ -19,8 +19,8 @@ package org.superbiz.logic;
 import junit.framework.TestCase;
 import org.superbiz.model.Movie;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.List;
 import java.util.Properties;
 

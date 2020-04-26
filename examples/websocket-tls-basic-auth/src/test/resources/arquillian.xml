@@ -29,7 +29,7 @@
             <property name="dir">target/apache-tomee</property>
             <property name="conf">src/main/conf</property>
             <!--<property name="ssl">true</property>-->
-            <!--<property name="keystoreFile">${javax.net.ssl.keyStore}</property>-->
+            <!--<property name="keystoreFile">${jakarta.net.ssl.keyStore}</property>-->
             <!--<property name="keystorePass">123456</property>-->
             <!--<property name="keystoreType">JKS</property>-->
             <!--<property name="clientAuth">false</property>-->

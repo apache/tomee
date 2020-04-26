@@ -11,8 +11,8 @@ right to edit this page._
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -31,8 +31,8 @@ public class ClassLevelInterceptorOne {
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -51,8 +51,8 @@ public class ClassLevelInterceptorSuperClassOne {
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -71,8 +71,8 @@ public class ClassLevelInterceptorSuperClassTwo extends SuperClassOfClassLevelIn
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -91,9 +91,9 @@ public class ClassLevelInterceptorTwo {
 ....
 package org.superbiz.interceptors;
 
-import javax.annotation.PostConstruct;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -117,8 +117,8 @@ public class DefaultInterceptorOne {
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -155,11 +155,11 @@ public interface FullyIntercepted {
 ....
 package org.superbiz.interceptors;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,7 +197,7 @@ public class FullyInterceptedBean extends FullyInterceptedSuperClass implements 
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.Interceptors;
+import jakarta.interceptor.Interceptors;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -212,8 +212,8 @@ public class FullyInterceptedSuperClass {
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -258,9 +258,9 @@ public interface MethodLevelInterceptorOnlyParent extends MethodLevelInterceptor
 ....
 package org.superbiz.interceptors;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
+import jakarta.ejb.Local;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.Interceptors;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -282,8 +282,8 @@ public class MethodLevelInterceptorOnlySLSBean implements MethodLevelInterceptor
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -302,10 +302,10 @@ public class MethodLevelInterceptorTwo {
 ....
 package org.superbiz.interceptors;
 
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -350,9 +350,9 @@ public interface SecondStatelessInterceptedLocal {
 ....
 package org.superbiz.interceptors;
 
-import javax.annotation.PostConstruct;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.InvocationContext;
+import jakarta.annotation.PostConstruct;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.InvocationContext;
 
 /**
  * @version $Rev: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
@@ -376,12 +376,12 @@ public class SuperClassOfClassLevelInterceptor {
 ....
 package org.superbiz.interceptors;
 
-import javax.ejb.Stateless;
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.ExcludeClassInterceptors;
-import javax.interceptor.ExcludeDefaultInterceptors;
-import javax.interceptor.Interceptors;
-import javax.interceptor.InvocationContext;
+import jakarta.ejb.Stateless;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.ExcludeClassInterceptors;
+import jakarta.interceptor.ExcludeDefaultInterceptors;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -438,7 +438,7 @@ public interface ThirdSLSBeanLocal {
 ....
 package org.superbiz.interceptors;
 
-import javax.interceptor.InvocationContext;
+import jakarta.interceptor.InvocationContext;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -512,8 +512,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -594,8 +594,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -640,8 +640,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -692,8 +692,8 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;

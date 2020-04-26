@@ -16,9 +16,9 @@
  */
 package org.superbiz.cdi.ejbcontext;
 
-import javax.annotation.Resource;
-import javax.ejb.EJBContext;
-import javax.ejb.Stateless;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJBContext;
+import jakarta.ejb.Stateless;
 
 @Stateless
 public class PrinciaplEjb {

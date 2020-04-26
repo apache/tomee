@@ -16,7 +16,7 @@
  */
 package org.superbiz;
 
-import javax.ejb.EJBLocalObject;
+import jakarta.ejb.EJBLocalObject;
 
 public interface FriendlyPersonEjbLocalObject extends EJBLocalObject {
 

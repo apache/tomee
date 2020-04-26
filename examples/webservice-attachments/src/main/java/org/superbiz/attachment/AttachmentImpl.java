@@ -16,12 +16,12 @@
  */
 package org.superbiz.attachment;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.ejb.Stateless;
-import javax.jws.WebService;
-import javax.xml.ws.BindingType;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.ejb.Stateless;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.soap.SOAPBinding;
 import java.io.IOException;
 import java.io.InputStream;
 

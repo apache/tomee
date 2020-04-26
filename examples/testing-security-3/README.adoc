@@ -10,7 +10,7 @@ Theses is a simple example to show how to use the login possibilities. We show w
 ....
 package org.superbiz.injection.secure;
 
-import javax.persistence.Entity;
+import jakarta.persistence.Entity;
 
 @Entity
 public class Movie {
@@ -62,15 +62,15 @@ package org.superbiz.injection.secure;
 
 //START SNIPPET: code
 
-import javax.annotation.security.PermitAll;
-import javax.annotation.security.RolesAllowed;
-import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
-import javax.persistence.Query;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ejb.Stateful;
+import jakarta.ejb.TransactionAttribute;
+import jakarta.ejb.TransactionAttributeType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceContextType;
+import jakarta.persistence.Query;
 import java.util.List;
 
 @Stateful
@@ -105,7 +105,7 @@ package org.superbiz.injection.secure;
 
 import org.apache.openejb.core.security.jaas.LoginProvider;
 
-import javax.security.auth.login.FailedLoginException;
+import jakarta.security.auth.login.FailedLoginException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -157,12 +157,12 @@ package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBAccessException;
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBAccessException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import java.util.List;
 import java.util.Properties;
 
@@ -268,14 +268,14 @@ public class MovieTest extends TestCase {
         try {
             getContext("eddie", "panama");
             fail("supposed to have a login failure here");
-        } catch (javax.naming.AuthenticationException e) {
+        } catch (jakarta.naming.AuthenticationException e) {
             //expected
         }
 
         try {
             getContext("jimmy", "foxylady");
             fail("supposed to have a login failure here");
-        } catch (javax.naming.AuthenticationException e) {
+        } catch (jakarta.naming.AuthenticationException e) {
             //expected
         }
     }
@@ -301,7 +301,7 @@ INFO - openejb.home = /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-s
 INFO - openejb.base = /home/boto/dev/ws/openejb_trunk/openejb/examples/testing-security-3
 INFO - Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@38ee6681
 INFO - Succeeded in installing singleton service
-INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Using 'jakarta.ejb.embeddable.EJBContainer=true'
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)

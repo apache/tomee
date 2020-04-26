@@ -16,11 +16,11 @@
  */
 package org.superbiz.ejblookup;
 
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.Stateless;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.ejb.EJB;
+import jakarta.ejb.EJBException;
+import jakarta.ejb.Stateless;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 
 //START SNIPPET: code
 @Stateless

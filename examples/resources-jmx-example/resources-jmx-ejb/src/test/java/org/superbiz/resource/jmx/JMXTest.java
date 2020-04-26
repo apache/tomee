@@ -31,14 +31,14 @@ import org.junit.runner.RunWith;
 import org.superbiz.resource.jmx.resources.AlternativeMBean;
 import org.superbiz.resource.jmx.resources.HelloMBean;
 
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.management.Attribute;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
+import jakarta.ejb.Singleton;
+import jakarta.management.Attribute;
+import jakarta.management.MBeanServer;
+import jakarta.management.ObjectName;
 import java.lang.management.ManagementFactory;
 
 @RunWith(Arquillian.class)

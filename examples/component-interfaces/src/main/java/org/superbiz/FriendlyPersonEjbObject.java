@@ -18,7 +18,7 @@ package org.superbiz;
 
 //START SNIPPET: code
 
-import javax.ejb.EJBObject;
+import jakarta.ejb.EJBObject;
 import java.rmi.RemoteException;
 
 public interface FriendlyPersonEjbObject extends EJBObject {

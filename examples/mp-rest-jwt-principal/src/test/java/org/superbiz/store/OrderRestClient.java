@@ -19,10 +19,10 @@ package org.superbiz.store;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.superbiz.store.entity.Order;
 
-import javax.enterprise.context.Dependent;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.Dependent;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import java.util.List;
 
 @Dependent

@@ -18,8 +18,8 @@ package org.superbiz.bookstore;
 
 import org.eclipse.microprofile.auth.LoginConfig;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("/rest")
 @LoginConfig(authMethod = "MP-JWT")

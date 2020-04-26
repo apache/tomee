@@ -18,8 +18,8 @@ package org.superbiz.cmp2;
 
 import junit.framework.TestCase;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.util.Collection;
 import java.util.Properties;
 

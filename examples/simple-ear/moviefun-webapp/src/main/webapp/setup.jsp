@@ -14,7 +14,7 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-<%@ page import="javax.naming.InitialContext" %>
+<%@ page import="jakarta.naming.InitialContext" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>
 <%@ page import="org.superbiz.model.Movie" %>

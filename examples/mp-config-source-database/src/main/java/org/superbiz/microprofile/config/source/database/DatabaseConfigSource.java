@@ -19,9 +19,9 @@ package org.superbiz.microprofile.config.source.database;
 import org.apache.commons.dbutils.DbUtils;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
+import jakarta.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

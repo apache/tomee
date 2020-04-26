@@ -21,8 +21,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.superbiz.rest.model.User;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.NamingException;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.NamingException;
 
 import static org.junit.Assert.assertNotNull;
 

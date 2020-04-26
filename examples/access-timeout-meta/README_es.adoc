@@ -68,7 +68,7 @@ y `@Metatype`
 ----
 package org.superbiz.accesstimeout.api;
 
-import javax.ejb.AccessTimeout;
+import jakarta.ejb.AccessTimeout;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -88,7 +88,7 @@ public @interface AwaitNever {
 Así como `0` tiene su significado especial como "nunca esperes" , el valor de `-1` quiere decir "espera por siempre."
 
 Mientras seamos exigentes, lo que podemos hacer con las meta-anotaciones,
-técincamente "esperar por siempre" no es la mejor descripción. Actualmete los métodos de `javax.util.concurrent` APIs usan "await" en vez de "wait". Un (wait) probablemente implica
+técincamente "esperar por siempre" no es la mejor descripción. Actualmete los métodos de `jakarta.util.concurrent` APIs usan "await" en vez de "wait". Un (wait) probablemente implica
 un comando de espera, que en este caso no es , el otro (await) más bien quiere decir que la espera es posible pero no certera. Así que usaremos "await" en el nombre de nuestras anotaciones.
 
 Nosotros hacemos nuestra propia `@AwaitForever` y la anotamos con `@AccessTimeout(0)` y `@Metatype`
@@ -97,7 +97,7 @@ Nosotros hacemos nuestra propia `@AwaitForever` y la anotamos con `@AccessTimeou
 ----
 package org.superbiz.accesstimeout.api;
 
-import javax.ejb.AccessTimeout;
+import jakarta.ejb.AccessTimeout;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -182,15 +182,15 @@ Juntando todo , tal vez así es como deberíamos aplicar nuestras meta-annotatio
 ----
 package org.superbiz.accesstimeout;
 
-import javax.ejb.AccessTimeout;
-import javax.ejb.Asynchronous;
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.AccessTimeout;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.WRITE;
 
 /**
     * @version $Revision$ $Date$
@@ -240,13 +240,13 @@ import org.superbiz.accesstimeout.api.AwaitBriefly;
 import org.superbiz.accesstimeout.api.AwaitForever;
 import org.superbiz.accesstimeout.api.AwaitNever;
 
-import javax.ejb.Asynchronous;
-import javax.ejb.Lock;
-import javax.ejb.Singleton;
+import jakarta.ejb.Asynchronous;
+import jakarta.ejb.Lock;
+import jakarta.ejb.Singleton;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
-import static javax.ejb.LockType.WRITE;
+import static jakarta.ejb.LockType.WRITE;
 
 /**
     * @version $Revision$ $Date$

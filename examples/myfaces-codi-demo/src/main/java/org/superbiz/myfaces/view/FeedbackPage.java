@@ -24,9 +24,9 @@ import org.apache.myfaces.extensions.cdi.jsf.api.config.view.PreRenderView;
 import org.superbiz.myfaces.domain.Feedback;
 import org.superbiz.myfaces.repository.FeedbackRepository;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 

@@ -21,9 +21,9 @@ import org.superbiz.injection.tx.api.Delete;
 import org.superbiz.injection.tx.api.MovieUnit;
 import org.superbiz.injection.tx.api.Read;
 
-import javax.ejb.Stateful;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.ejb.Stateful;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.util.List;
 
 //END SNIPPET: code

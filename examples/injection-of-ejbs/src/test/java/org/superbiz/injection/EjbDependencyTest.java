@@ -18,8 +18,8 @@ package org.superbiz.injection;
 
 import junit.framework.TestCase;
 
-import javax.ejb.embeddable.EJBContainer;
-import javax.naming.Context;
+import jakarta.ejb.embeddable.EJBContainer;
+import jakarta.naming.Context;
 
 /**
  * A test case for DataReaderImpl ejb, testing both the remote and local interface

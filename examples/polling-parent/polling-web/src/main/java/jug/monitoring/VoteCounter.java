@@ -18,11 +18,11 @@ package jug.monitoring;
 
 import jug.domain.Subject;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.management.Description;
-import javax.management.MBean;
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.management.Description;
+import jakarta.management.MBean;
+import jakarta.management.ManagedAttribute;
+import jakarta.management.ManagedOperation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
