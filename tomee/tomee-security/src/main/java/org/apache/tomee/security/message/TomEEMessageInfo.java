@@ -18,9 +18,9 @@ package org.apache.tomee.security.message;
 
 import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
 
-import javax.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.security.enterprise.authentication.mechanism.http.AuthenticationParameters;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class TomEEMessageInfo extends MessageInfoImpl {
     public static final String AUTH_PARAMS = "org.apache.tomee.security.context.authParams";

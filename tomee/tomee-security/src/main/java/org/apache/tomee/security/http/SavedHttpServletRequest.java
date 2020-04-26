@@ -16,8 +16,8 @@
  */
 package org.apache.tomee.security.http;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
 public class SavedHttpServletRequest extends HttpServletRequestWrapper {
     private final SavedRequest savedRequest;

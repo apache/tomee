@@ -36,8 +36,8 @@ import org.apache.tomcat.util.descriptor.web.ContextResourceEnvRef;
 import org.apache.tomcat.util.descriptor.web.ContextResourceLink;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
+import jakarta.naming.Context;
+import jakarta.naming.NamingException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

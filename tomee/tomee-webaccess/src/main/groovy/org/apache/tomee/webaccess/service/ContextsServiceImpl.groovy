@@ -21,12 +21,12 @@ package org.apache.tomee.webaccess.service
 import org.apache.tomee.webaccess.data.dto.ContextResultDto
 import org.apache.tomee.webaccess.data.dto.SessionResultDto
 
-import javax.annotation.security.RolesAllowed
-import javax.ejb.Stateless
-import javax.ejb.TransactionAttribute
-import javax.ejb.TransactionAttributeType
-import javax.management.InstanceNotFoundException
-import javax.management.ObjectName
+import jakarta.annotation.security.RolesAllowed
+import jakarta.ejb.Stateless
+import jakarta.ejb.TransactionAttribute
+import jakarta.ejb.TransactionAttributeType
+import jakarta.management.InstanceNotFoundException
+import jakarta.management.ObjectName
 import java.lang.management.ManagementFactory
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

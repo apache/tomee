@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.identitystore;
+package jakarta.security.enterprise.identitystore;
 
-import javax.security.enterprise.credential.Credential;
+import jakarta.security.enterprise.credential.Credential;
 import java.lang.invoke.MethodHandles;
 import java.util.EnumSet;
 import java.util.Set;
 
 import static java.lang.invoke.MethodType.methodType;
 import static java.util.Collections.emptySet;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
-import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.PROVIDE_GROUPS;
-import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.VALIDATE;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
+import static jakarta.security.enterprise.identitystore.IdentityStore.ValidationType.PROVIDE_GROUPS;
+import static jakarta.security.enterprise.identitystore.IdentityStore.ValidationType.VALIDATE;
 
 public interface IdentityStore {
     Set<ValidationType> DEFAULT_VALIDATION_TYPES = EnumSet.of(VALIDATE, PROVIDE_GROUPS);

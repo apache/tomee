@@ -29,7 +29,7 @@ import org.apache.tomee.catalina.realm.event.UserPasswordAuthenticationEvent;
 import org.apache.webbeans.config.WebBeansContext;
 import org.ietf.jgss.GSSContext;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 import java.security.Principal;
 import java.security.cert.X509Certificate;
 

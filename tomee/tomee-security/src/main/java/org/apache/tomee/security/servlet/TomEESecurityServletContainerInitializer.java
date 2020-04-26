@@ -19,11 +19,11 @@ package org.apache.tomee.security.servlet;
 import org.apache.tomee.security.cdi.TomEESecurityExtension;
 import org.apache.tomee.security.provider.TomEESecurityAuthConfigProvider;
 
-import javax.enterprise.inject.spi.CDI;
-import javax.security.auth.message.config.AuthConfigFactory;
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.security.auth.message.config.AuthConfigFactory;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.util.Set;
 
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {

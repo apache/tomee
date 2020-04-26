@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.authentication.mechanism.http;
+package jakarta.security.enterprise.authentication.mechanism.http;
 
-import javax.security.auth.Subject;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.message.MessageInfo;
-import javax.security.enterprise.AuthenticationStatus;
-import javax.security.enterprise.identitystore.CredentialValidationResult;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.security.auth.Subject;
+import jakarta.security.auth.callback.CallbackHandler;
+import jakarta.security.auth.message.MessageInfo;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.security.enterprise.identitystore.CredentialValidationResult;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.Set;
 

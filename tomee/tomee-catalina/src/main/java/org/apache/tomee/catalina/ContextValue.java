@@ -18,8 +18,8 @@ package org.apache.tomee.catalina;
 
 import org.apache.openejb.core.ThreadContext;
 
-import javax.naming.LinkRef;
-import javax.naming.NamingException;
+import jakarta.naming.LinkRef;
+import jakarta.naming.NamingException;
 import java.util.Collection;
 import java.util.TreeSet;
 

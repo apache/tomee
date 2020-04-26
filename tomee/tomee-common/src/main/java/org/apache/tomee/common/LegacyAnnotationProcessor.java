@@ -33,14 +33,14 @@ package org.apache.tomee.common;
  * limitations under the License.
  */
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.naming.NamingException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
-import javax.xml.ws.WebServiceRef;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.annotation.Resource;
+import jakarta.ejb.EJB;
+import jakarta.naming.NamingException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.xml.ws.WebServiceRef;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,9 +48,9 @@ import java.lang.reflect.Modifier;
 
 public class LegacyAnnotationProcessor {
 
-    protected javax.naming.Context context;
+    protected jakarta.naming.Context context;
 
-    public LegacyAnnotationProcessor(final javax.naming.Context context) {
+    public LegacyAnnotationProcessor(final jakarta.naming.Context context) {
         this.context = context;
     }
 
@@ -140,7 +140,7 @@ public class LegacyAnnotationProcessor {
      * @param instance
      * @throws java.lang.IllegalAccessException
      * @throws java.lang.reflect.InvocationTargetException
-     * @throws javax.naming.NamingException
+     * @throws jakarta.naming.NamingException
      */
     public void processAnnotations(final Object instance) throws IllegalAccessException, InvocationTargetException, NamingException {
 
@@ -232,10 +232,10 @@ public class LegacyAnnotationProcessor {
      * @param field
      * @param name
      * @param clazz
-     * @throws javax.naming.NamingException
+     * @throws jakarta.naming.NamingException
      * @throws java.lang.IllegalAccessException
      */
-    protected static void lookupFieldResource(final javax.naming.Context context,
+    protected static void lookupFieldResource(final jakarta.naming.Context context,
                                               final Object instance, final Field field, final String name, final Class<?> clazz)
             throws NamingException, IllegalAccessException {
 
@@ -262,11 +262,11 @@ public class LegacyAnnotationProcessor {
      * @param method
      * @param name
      * @param clazz
-     * @throws javax.naming.NamingException
+     * @throws jakarta.naming.NamingException
      * @throws java.lang.IllegalAccessException
      * @throws java.lang.reflect.InvocationTargetException
      */
-    protected static void lookupMethodResource(final javax.naming.Context context,
+    protected static void lookupMethodResource(final jakarta.naming.Context context,
                                                final Object instance, final Method method, final String name, final Class<?> clazz)
             throws NamingException, IllegalAccessException, InvocationTargetException {
 

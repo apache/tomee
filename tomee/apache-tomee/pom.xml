@@ -150,7 +150,7 @@
         <configuration>
           <includes>
             <include>**/RemoteTomEEEJBContainer*.class</include>
-            <include>**/META-INF/services/javax.ejb.spi.EJBContainerProvider</include>
+            <include>**/META-INF/services/jakarta.ejb.spi.EJBContainerProvider</include>
           </includes>
           <archive combine.children="append">
             <manifestEntries>

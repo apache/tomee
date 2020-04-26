@@ -22,10 +22,10 @@ import static org.apache.tomee.common.NamingUtil.JNDI_NAME;
 import static org.apache.tomee.common.NamingUtil.getProperty;
 import static org.apache.tomee.common.NamingUtil.getStaticValue;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.Reference;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
 import java.util.Hashtable;
 
 public class PersistenceUnitFactory extends AbstractObjectFactory {

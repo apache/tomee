@@ -16,12 +16,12 @@
  */
 package org.apache.tomee.common;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.Reference;
-import javax.naming.spi.ObjectFactory;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.Name;
+import jakarta.naming.NameNotFoundException;
+import jakarta.naming.Reference;
+import jakarta.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 
 /**

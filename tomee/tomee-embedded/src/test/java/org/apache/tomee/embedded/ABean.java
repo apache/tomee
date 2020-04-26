@@ -16,7 +16,7 @@
  */
 package org.apache.tomee.embedded;
 
-import javax.ejb.Singleton;
+import jakarta.ejb.Singleton;
 
 @Singleton
 public class ABean {

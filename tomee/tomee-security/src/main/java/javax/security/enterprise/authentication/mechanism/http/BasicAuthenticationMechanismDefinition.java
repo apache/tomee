@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.authentication.mechanism.http;
+package jakarta.security.enterprise.authentication.mechanism.http;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

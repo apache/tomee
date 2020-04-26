@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.authentication.mechanism.http;
+package jakarta.security.enterprise.authentication.mechanism.http;
 
-import javax.security.enterprise.AuthenticationException;
-import javax.security.enterprise.AuthenticationStatus;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.security.enterprise.AuthenticationException;
+import jakarta.security.enterprise.AuthenticationStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
+import static jakarta.security.enterprise.AuthenticationStatus.SUCCESS;
 
 public interface HttpAuthenticationMechanism {
 

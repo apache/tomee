@@ -29,8 +29,8 @@ import org.apache.openejb.observer.event.BeforeEvent;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.installer.Paths;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;

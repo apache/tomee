@@ -22,10 +22,10 @@ import static org.apache.tomee.common.NamingUtil.COMPONENT_TYPE;
 import static org.apache.tomee.common.NamingUtil.getProperty;
 import static org.apache.tomee.common.NamingUtil.loadClass;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.Reference;
-import javax.naming.spi.ObjectFactory;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.Reference;
+import jakarta.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 
 public class SystemComponentFactory implements ObjectFactory {

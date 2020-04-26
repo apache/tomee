@@ -23,10 +23,10 @@ import org.apache.openejb.core.ivm.IntraVmCopyMonitor;
 import org.apache.openejb.InterfaceType;
 import org.apache.openejb.assembler.classic.JndiBuilder;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.Reference;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;

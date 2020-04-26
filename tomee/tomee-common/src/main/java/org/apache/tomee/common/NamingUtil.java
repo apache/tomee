@@ -20,8 +20,8 @@ package org.apache.tomee.common;
 import org.apache.catalina.core.StandardContext;
 import org.apache.naming.EjbRef;
 
-import javax.naming.RefAddr;
-import javax.naming.Reference;
+import jakarta.naming.RefAddr;
+import jakarta.naming.Reference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

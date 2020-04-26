@@ -18,9 +18,9 @@
 
 package org.apache.tomee.webaccess.rest
 
-import javax.ws.rs.GET
-import javax.ws.rs.Path
-import javax.ws.rs.core.Response
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.core.Response
 
 @Path('/keep-alive')
 class KeepAlive {

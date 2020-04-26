@@ -21,8 +21,8 @@ package org.apache.tomee.webapp.installer;
 import org.apache.tomee.installer.InstallerInterface;
 import org.apache.tomee.installer.PathsInterface;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -121,7 +121,7 @@ public class Runner {
                 // noop
             }
             try {
-                Class.forName("javax.ejb.EJBHome", true, this.getClass().getClassLoader());
+                Class.forName("jakarta.ejb.EJBHome", true, this.getClass().getClassLoader());
                 wereTheEjbClassesInstalled = true;
             } catch (final Exception e) {
                 // noop

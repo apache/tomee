@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.authentication.mechanism.http;
+package jakarta.security.enterprise.authentication.mechanism.http;
 
-import javax.security.enterprise.credential.Credential;
+import jakarta.security.enterprise.credential.Credential;
 
 public class AuthenticationParameters {
     private Credential credential;

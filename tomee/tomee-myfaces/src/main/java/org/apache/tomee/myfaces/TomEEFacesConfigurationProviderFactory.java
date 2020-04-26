@@ -21,8 +21,8 @@ import org.apache.myfaces.spi.FacesConfigurationProvider;
 import org.apache.myfaces.spi.ServiceProviderFinderFactory;
 import org.apache.myfaces.spi.impl.DefaultFacesConfigurationProviderFactory;
 
-import javax.faces.FacesException;
-import javax.faces.context.ExternalContext;
+import jakarta.faces.FacesException;
+import jakarta.faces.context.ExternalContext;
 import java.lang.reflect.InvocationTargetException;
 import java.security.PrivilegedActionException;
 import java.util.List;

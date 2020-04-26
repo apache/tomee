@@ -20,15 +20,15 @@ package org.apache.tomee.webaccess.service
 
 import org.apache.tomee.webaccess.data.dto.ScriptingResultDto
 
-import javax.annotation.security.RolesAllowed
-import javax.ejb.Stateless
-import javax.ejb.TransactionAttribute
-import javax.ejb.TransactionAttributeType
-import javax.naming.Context
-import javax.naming.InitialContext
-import javax.script.ScriptContext
-import javax.script.ScriptEngineManager
-import javax.script.SimpleScriptContext
+import jakarta.annotation.security.RolesAllowed
+import jakarta.ejb.Stateless
+import jakarta.ejb.TransactionAttribute
+import jakarta.ejb.TransactionAttributeType
+import jakarta.naming.Context
+import jakarta.naming.InitialContext
+import jakarta.script.ScriptContext
+import jakarta.script.ScriptEngineManager
+import jakarta.script.SimpleScriptContext
 
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Stateless(name = 'TomEEWebAccessScriptingService')

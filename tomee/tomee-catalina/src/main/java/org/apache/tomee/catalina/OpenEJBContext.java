@@ -20,13 +20,13 @@ import org.apache.naming.ContextBindings;
 import org.apache.openejb.assembler.DeployerEjb;
 import org.apache.openejb.core.ThreadContext;
 
-import javax.naming.Binding;
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NameClassPair;
-import javax.naming.NameParser;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import jakarta.naming.Binding;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.NameClassPair;
+import jakarta.naming.NameParser;
+import jakarta.naming.NamingEnumeration;
+import jakarta.naming.NamingException;
 import java.util.Hashtable;
 
 /**

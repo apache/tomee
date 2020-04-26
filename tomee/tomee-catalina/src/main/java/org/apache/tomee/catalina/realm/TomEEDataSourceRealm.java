@@ -23,9 +23,9 @@ import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
+import jakarta.naming.Context;
+import jakarta.naming.NamingException;
+import jakarta.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;

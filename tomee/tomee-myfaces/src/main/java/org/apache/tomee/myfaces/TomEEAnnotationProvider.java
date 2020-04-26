@@ -23,7 +23,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.faces.context.ExternalContext;
+import jakarta.faces.context.ExternalContext;
 import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashMap;

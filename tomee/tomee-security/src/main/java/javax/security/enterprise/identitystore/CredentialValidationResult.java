@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.identitystore;
+package jakarta.security.enterprise.identitystore;
 
 
-import javax.security.enterprise.CallerPrincipal;
+import jakarta.security.enterprise.CallerPrincipal;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.INVALID;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.NOT_VALIDATED;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.Status.INVALID;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.Status.NOT_VALIDATED;
+import static jakarta.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 
 public class CredentialValidationResult {
     public static final CredentialValidationResult INVALID_RESULT = new CredentialValidationResult(INVALID);

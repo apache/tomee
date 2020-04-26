@@ -73,7 +73,7 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.xml.stream</groupId>
+          <groupId>jakarta.xml.stream</groupId>
           <artifactId>stax-api</artifactId>
         </exclusion>
       </exclusions>

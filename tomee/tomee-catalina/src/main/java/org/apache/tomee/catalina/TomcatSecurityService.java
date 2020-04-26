@@ -28,10 +28,10 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.CallerPrincipal;
 import org.apache.tomee.loader.TomcatHelper;
 
-import javax.security.auth.Subject;
-import javax.security.auth.login.CredentialNotFoundException;
-import javax.security.auth.login.LoginException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.security.auth.Subject;
+import jakarta.security.auth.login.CredentialNotFoundException;
+import jakarta.security.auth.login.LoginException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashSet;
@@ -350,7 +350,7 @@ public class TomcatSecurityService extends AbstractSecurityService {
     protected SecurityContext getDefaultSecurityContext() {
         final Request request = OpenEJBSecurityListener.requests.get();
         if (request != null) {
-            final Object subjectCallable = request.getAttribute("javax.security.auth.subject.callable");
+            final Object subjectCallable = request.getAttribute("jakarta.security.auth.subject.callable");
             if (subjectCallable != null && Callable.class.isInstance(subjectCallable)) {
                 // maybe we should check, but it's so specific ...
                 try {

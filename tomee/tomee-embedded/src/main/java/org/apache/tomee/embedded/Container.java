@@ -91,8 +91,8 @@ import org.apache.xbean.finder.filter.Filters;
 import org.apache.xbean.recipe.ObjectRecipe;
 import org.codehaus.swizzle.stream.ReplaceStringsInputStream;
 
-import javax.naming.Context;
-import javax.naming.NamingException;
+import jakarta.naming.Context;
+import jakarta.naming.NamingException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;

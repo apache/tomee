@@ -24,8 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import jakarta.xml.parsers.SAXParser;
+import jakarta.xml.parsers.SAXParserFactory;
 
 @SuppressWarnings("UnusedDeclaration")
 public class QuickServerXmlParser extends DefaultHandler {

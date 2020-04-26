@@ -28,8 +28,8 @@ import org.apache.tomcat.JarScanFilter;
 import org.apache.tomcat.JarScanner;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import jakarta.management.MBeanServer;
+import jakarta.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.security.Principal;

@@ -309,7 +309,7 @@ public class Main {
             System.setProperty("java.security.auth.login.config", file.getAbsolutePath());
             final JAASRealm realm = new JAASRealm() {
                 @Override
-                protected javax.security.auth.login.Configuration getConfig() {
+                protected jakarta.security.auth.login.Configuration getConfig() {
                     try {
                         if (jaasConfigurationLoaded) {
                             return jaasConfiguration;
@@ -322,7 +322,7 @@ public class Main {
                             configFile = file.getAbsolutePath();
                             final Class<?> sunConfigFile = Class.forName("com.sun.security.auth.login.ConfigFile");
                             final Constructor<?> constructor = sunConfigFile.getConstructor(URI.class);
-                            javax.security.auth.login.Configuration config = javax.security.auth.login.Configuration.class.cast(constructor.newInstance(file.toURI()));
+                            jakarta.security.auth.login.Configuration config = jakarta.security.auth.login.Configuration.class.cast(constructor.newInstance(file.toURI()));
                             this.jaasConfiguration = config;
                             this.jaasConfigurationLoaded = true;
                             return this.jaasConfiguration;

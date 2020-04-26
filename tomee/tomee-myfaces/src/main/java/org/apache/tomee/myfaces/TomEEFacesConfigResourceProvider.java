@@ -24,7 +24,7 @@ import org.apache.openejb.util.AppFinder;
 import org.apache.openejb.util.URLs;
 import org.apache.xbean.finder.UrlSet;
 
-import javax.faces.context.ExternalContext;
+import jakarta.faces.context.ExternalContext;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;

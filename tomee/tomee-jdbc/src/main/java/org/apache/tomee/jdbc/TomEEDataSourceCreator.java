@@ -33,10 +33,10 @@ import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.apache.tomcat.jdbc.pool.PooledConnection;
 
-import javax.management.ObjectName;
-import javax.naming.NamingException;
-import javax.sql.CommonDataSource;
-import javax.sql.DataSource;
+import jakarta.management.ObjectName;
+import jakarta.naming.NamingException;
+import jakarta.sql.CommonDataSource;
+import jakarta.sql.DataSource;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;

@@ -22,7 +22,7 @@ import org.apache.openejb.core.ThreadContextListener;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.NamingException;
+import jakarta.naming.NamingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -23,7 +23,7 @@ import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
 import org.junit.Test;
 
-import javax.naming.NamingException;
+import jakarta.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class AppDataSourceTest {
         // if we have the JMX bug of dbcp2 integration (in 7.0.0) then we have a WARNING record from BasicDataSource.close()
         // saying:
         // Failed to unregister the JMX name:
-        //     Tomcat:type=DataSource,host=localhost,context=/AppDataSourceTest,class=javax.sql.DataSource,name="openejb/Resource/AppDataSourceTest/app/gace/MyDS"
+        //     Tomcat:type=DataSource,host=localhost,context=/AppDataSourceTest,class=jakarta.sql.DataSource,name="openejb/Resource/AppDataSourceTest/app/gace/MyDS"
         assertTrue(records.isEmpty());
     }
 }

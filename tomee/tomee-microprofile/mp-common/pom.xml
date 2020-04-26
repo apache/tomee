@@ -90,8 +90,8 @@
       <version>${microprofile.health.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -120,8 +120,8 @@
       <version>${microprofile.rest-client.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.inject</groupId>
-          <artifactId>javax.inject</artifactId>
+          <groupId>jakarta.inject</groupId>
+          <artifactId>jakarta.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -136,20 +136,20 @@
           <artifactId>jaxb-xjc</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.json</groupId>
-          <artifactId>javax.json-api</artifactId>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.ws.rs</groupId>
           <artifactId>jakarta.ws.rs-api</artifactId>
         </exclusion>      
         <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.activation</groupId>

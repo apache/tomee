@@ -22,14 +22,14 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.Strings;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.Name;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.NoInitialContextException;
-import javax.naming.Reference;
-import javax.naming.spi.ObjectFactory;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.Name;
+import jakarta.naming.NameNotFoundException;
+import jakarta.naming.NamingException;
+import jakarta.naming.NoInitialContextException;
+import jakarta.naming.Reference;
+import jakarta.naming.spi.ObjectFactory;
 import java.util.Hashtable;
 import java.util.Properties;
 

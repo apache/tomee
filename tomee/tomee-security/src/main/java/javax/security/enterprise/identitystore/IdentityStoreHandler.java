@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.identitystore;
+package jakarta.security.enterprise.identitystore;
 
-import javax.security.enterprise.credential.Credential;
+import jakarta.security.enterprise.credential.Credential;
 
 public interface IdentityStoreHandler {
     CredentialValidationResult validate(Credential credential);

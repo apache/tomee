@@ -21,12 +21,12 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.CompositeName;
-import javax.naming.InvalidNameException;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.naming.spi.NamingManager;
-import javax.naming.spi.ObjectFactory;
+import jakarta.naming.CompositeName;
+import jakarta.naming.InvalidNameException;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
+import jakarta.naming.spi.NamingManager;
+import jakarta.naming.spi.ObjectFactory;
 
 public class TomcatResourceFactory {
     private static final Logger LOGGER = Logger.getInstance(LogCategory.OPENEJB, TomcatResourceFactory.class);

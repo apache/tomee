@@ -23,12 +23,12 @@ import org.apache.openejb.core.ivm.naming.JaxWsServiceReference;
 import org.apache.openejb.core.webservices.HandlerChainData;
 import org.apache.openejb.core.webservices.PortRefData;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
+import jakarta.xml.namespace.QName;
+import jakarta.xml.ws.Service;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Hashtable;

@@ -28,7 +28,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.management.ObjectName;
+import jakarta.management.ObjectName;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.management.ManagementFactory;

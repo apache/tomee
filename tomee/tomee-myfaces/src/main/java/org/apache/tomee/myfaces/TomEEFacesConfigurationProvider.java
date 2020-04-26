@@ -20,7 +20,7 @@ import org.apache.myfaces.config.DefaultFacesConfigurationProvider;
 import org.apache.myfaces.config.element.FacesConfig;
 import org.apache.openejb.loader.IO;
 
-import javax.faces.context.ExternalContext;
+import jakarta.faces.context.ExternalContext;
 import java.io.InputStream;
 
 // TODO remove after MYFACES-4313 / MyFaces 2.3.7

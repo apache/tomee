@@ -17,10 +17,10 @@
  */
 package org.apache.tomee.common;
 
-import javax.naming.Context;
-import javax.naming.Name;
-import javax.naming.NamingException;
-import javax.naming.Reference;
+import jakarta.naming.Context;
+import jakarta.naming.Name;
+import jakarta.naming.NamingException;
+import jakarta.naming.Reference;
 import java.net.URL;
 import java.util.Hashtable;
 

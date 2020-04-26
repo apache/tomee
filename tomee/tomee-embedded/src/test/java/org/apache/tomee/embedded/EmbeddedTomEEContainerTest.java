@@ -22,7 +22,7 @@ import org.apache.openejb.config.DeploymentsResolver;
 import org.apache.openejb.loader.IO;
 import org.junit.Test;
 
-import javax.ejb.embeddable.EJBContainer;
+import jakarta.ejb.embeddable.EJBContainer;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

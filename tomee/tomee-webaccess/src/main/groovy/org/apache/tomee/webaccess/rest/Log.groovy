@@ -22,8 +22,8 @@ import org.apache.tomee.webaccess.data.dto.ListFilesResultDto
 import org.apache.tomee.webaccess.data.dto.LogFileResultDto
 import org.apache.tomee.webaccess.service.LogServiceImpl
 
-import javax.ejb.EJB
-import javax.ws.rs.*
+import jakarta.ejb.EJB
+import jakarta.ws.rs.*
 
 @Path('/log')
 class Log {

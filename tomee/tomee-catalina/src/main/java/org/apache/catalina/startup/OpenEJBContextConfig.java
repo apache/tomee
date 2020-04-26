@@ -66,9 +66,9 @@ import org.apache.tomee.loader.TomcatHelper;
 import org.apache.webbeans.web.context.WebConversationFilter;
 import org.apache.xbean.finder.IAnnotationFinder;
 
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.http.HttpServlet;
-import javax.ws.rs.core.Application;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.ws.rs.core.Application;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -180,7 +180,7 @@ public class OpenEJBContextConfig extends ContextConfig {
 
                 final StandardWrapper wrapper = (StandardWrapper) c;
 
-                final String appSpec = wrapper.getInitParameter("javax.ws.rs.Application");
+                final String appSpec = wrapper.getInitParameter("jakarta.ws.rs.Application");
                 if (appSpec != null) {
                     mappedChildren.put(appSpec, c);
                 } else {
@@ -297,7 +297,7 @@ public class OpenEJBContextConfig extends ContextConfig {
         String[] ids = null;
         if (foundResources != null) {
             for (final ContextResource resource : foundResources) {
-                if ("javax.sql.DataSource".equals(resource.getType())
+                if ("jakarta.sql.DataSource".equals(resource.getType())
                         && !ResourceFactory.class.getName().equals(resource.getProperty(Constants.FACTORY))) {
                     String jndiName = (String) resource.getProperty("mappedName");
                     if (jndiName == null) {
@@ -313,7 +313,7 @@ public class OpenEJBContextConfig extends ContextConfig {
                         final List<String> resourceIds = new ArrayList<>();
                         if (runningConfig != null) {
                             for (final ResourceInfo resourceInfo : runningConfig.facilities.resources) {
-                                if (ConfigurationFactory.isResourceType(resourceInfo.service, resourceInfo.types, "javax.sql.DataSource")
+                                if (ConfigurationFactory.isResourceType(resourceInfo.service, resourceInfo.types, "jakarta.sql.DataSource")
                                         && ServiceUtils.implies(props, resourceInfo.properties)) {
                                     resourceIds.add(resourceInfo.id);
                                 }

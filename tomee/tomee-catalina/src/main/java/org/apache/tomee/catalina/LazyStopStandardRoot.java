@@ -32,8 +32,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
+import jakarta.management.MBeanServer;
+import jakarta.management.ObjectName;
 
 public class LazyStopStandardRoot implements WebResourceRoot, JmxEnabled {
     private final WebResourceRoot delegate;

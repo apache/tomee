@@ -31,9 +31,9 @@ import org.apache.openejb.util.DaemonThreadFactory;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import jakarta.naming.Context;
+import jakarta.naming.InitialContext;
+import jakarta.naming.NamingException;
 import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;

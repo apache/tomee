@@ -22,10 +22,10 @@ import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.Test;
 
-import javax.ejb.Remote;
-import javax.ejb.Stateless;
-import javax.naming.Context;
-import javax.naming.NamingException;
+import jakarta.ejb.Remote;
+import jakarta.ejb.Stateless;
+import jakarta.naming.Context;
+import jakarta.naming.NamingException;
 import java.io.File;
 import java.net.MalformedURLException;
 

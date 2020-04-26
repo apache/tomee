@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package javax.security.enterprise.identitystore;
+package jakarta.security.enterprise.identitystore;
 
-import javax.security.enterprise.CallerPrincipal;
-import javax.security.enterprise.credential.RememberMeCredential;
+import jakarta.security.enterprise.CallerPrincipal;
+import jakarta.security.enterprise.credential.RememberMeCredential;
 import java.util.Set;
 
 public interface RememberMeIdentityStore {
