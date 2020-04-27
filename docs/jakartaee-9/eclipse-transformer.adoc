@@ -92,7 +92,7 @@ Create a Jakarta EE lib folder:
 
 [source,bash]
 ----
-mkdir jakartee-lib
+mkdir jakartaee-lib
 ----
 
 Translate each of the jars in the javaee-lib folder:
