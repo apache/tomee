@@ -1,3 +1,7 @@
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: published
+
 == Latest Vaadin Platform - Simple WebApp in Java
 
 This demo will show how to start with a simple Vaadin Flow webapp, based

@@ -1,8 +1,8 @@
-== Vaadin V8 (LTS) - WebApp Simples em Java
-
 :index-group: Frameworks
 :jbake-type: page
 :jbake-status: published
+
+== Vaadin V8 (LTS) - WebApp Simples em Java
 
 Essa demo vai mostrar como iniciar com uma simples webapp V8, baseado na API pura do Java executando no TomEE (webprofile)
 
