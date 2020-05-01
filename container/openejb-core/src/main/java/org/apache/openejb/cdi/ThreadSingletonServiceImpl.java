@@ -123,7 +123,6 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         //from CDI builder
         properties.setProperty(OpenWebBeansConfiguration.INTERCEPTOR_FORCE_NO_CHECKED_EXCEPTIONS, "false");
         properties.setProperty(SecurityService.class.getName(), ManagedSecurityService.class.getName());
-        properties.setProperty(OpenWebBeansConfiguration.CONVERSATION_PERIODIC_DELAY, "1800000");
         properties.setProperty(OpenWebBeansConfiguration.APPLICATION_SUPPORTS_CONVERSATION, "true");
         properties.setProperty(OpenWebBeansConfiguration.IGNORED_INTERFACES, "org.apache.aries.proxy.weaving.WovenProxy");
 
