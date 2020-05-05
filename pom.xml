@@ -117,7 +117,7 @@
     <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.4</johnzon.version>
+    <johnzon.version>1.2.5</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
