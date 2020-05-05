@@ -64,6 +64,7 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
+@SuppressWarnings("checkstyle:finalclass")
 public class TomEEOpenAPIExtension extends GeronimoOpenAPIExtension implements Extension {
 
     private final Collection<Bean<?>> endpoints = new ArrayList<>();
