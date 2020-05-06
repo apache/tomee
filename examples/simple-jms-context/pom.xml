@@ -24,13 +24,13 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-jms-context</artifactId>
   <packaging>war</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple JMS Context</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.arquillian>1.1.13.Final</version.arquillian>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>

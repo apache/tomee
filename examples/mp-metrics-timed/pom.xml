@@ -22,7 +22,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-timed</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Timed</name>
 
@@ -30,7 +30,7 @@
     <version.javaee-api>8.0</version.javaee-api>
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
     <junit.version>4.12</junit.version>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
   <dependencies>

@@ -24,12 +24,12 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MVC (RestEasy-based)</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - RestEasy</description>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <version.krazo>1.1.0-M1</version.krazo>
     <resteasy.version>3.6.2.Final</resteasy.version>
     <version.arquillian>1.1.13.Final</version.arquillian>
@@ -56,7 +56,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.2-SNAPSHOT</version>
+        <version>8.0.3-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>

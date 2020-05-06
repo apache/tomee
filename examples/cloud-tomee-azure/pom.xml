@@ -26,7 +26,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>cloud-tomee-azure</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Azure deployment example</name>
 

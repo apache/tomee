@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multiple-tomee-arquillian</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Multiple TomEE with Arquillian</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -84,7 +84,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -102,7 +102,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

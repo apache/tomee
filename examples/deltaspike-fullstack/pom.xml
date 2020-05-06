@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
   <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
 
   <packaging>war</packaging>
 
@@ -24,7 +24,7 @@
     <version.myfaces2>2.3.0</version.myfaces2>
     <version.deltaspike>1.9.3</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
   <build>

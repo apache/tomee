@@ -20,7 +20,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <artifactId>mp-metrics-metered</artifactId>
   <packaging>war</packaging>
 
@@ -29,7 +29,7 @@
     <microprofile.metrics.version>1.1</microprofile.metrics.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <junit.version>4.12</junit.version>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
   <dependencies>

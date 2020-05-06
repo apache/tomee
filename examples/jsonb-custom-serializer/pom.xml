@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>jsonb-custom-serializer</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Custom Serializer/Deserializer</name>
 
@@ -47,7 +47,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

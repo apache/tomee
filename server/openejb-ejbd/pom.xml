@@ -26,7 +26,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.2-SNAPSHOT</version>
+    <version>8.0.3-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-ejbd</artifactId>

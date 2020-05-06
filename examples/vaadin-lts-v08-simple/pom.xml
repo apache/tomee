@@ -23,7 +23,7 @@
 
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-lts-v08-simple</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
 
   <name>TomEE :: Examples :: Vaadin LTS V08</name>
   <packaging>war</packaging>
@@ -106,7 +106,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-cxf-rs</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -21,7 +21,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-ejbcontext-jaas</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: CDI, EJBContext and JAAS</name>
 
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,7 +56,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.2-SNAPSHOT</version>
+        <version>8.0.3-SNAPSHOT</version>
         <configuration>
           <systemVariables>
             <java.security.auth.login.config>${project.build.directory}/apache-tomee/conf/login.config</java.security.auth.login.config>

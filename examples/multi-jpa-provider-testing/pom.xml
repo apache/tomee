@@ -23,12 +23,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>multi-jpa-provider-testing</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Multiple JPA providers</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
   <build>

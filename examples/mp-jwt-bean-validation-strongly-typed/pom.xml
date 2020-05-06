@@ -21,14 +21,14 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-jwt-bean-validation-strongly-typed</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Apache TomEE + MicroProfile JWT Bean Validation, Strongly-typed Annotations</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <version.javaee-api>8.0</version.javaee-api>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
     <mp-jwt.version>1.1</mp-jwt.version>
   </properties>

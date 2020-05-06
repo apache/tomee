@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>jaxrs-json-provider-jettison</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: JAXRS JSON Provider with Jettison </name>
 
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <type>pom</type>
       <scope>provided</scope>
     </dependency>

@@ -24,7 +24,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>async-postconstruct</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: @Asynchronous @PostConstrct</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

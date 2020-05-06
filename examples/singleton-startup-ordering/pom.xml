@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>singleton-startup-ordering</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples ::  Singleton startup ordering</name>
 

@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-client</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile REST Client</name>
 
@@ -33,7 +33,7 @@
     <version.javaee-api>8.0</version.javaee-api>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <junit.version>4.12</junit.version>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
 

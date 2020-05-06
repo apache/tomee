@@ -20,7 +20,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
 
@@ -28,7 +28,7 @@
     <junit.version>4.12</junit.version>
     <version.javaee-api>8.0-1</version.javaee-api>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
 

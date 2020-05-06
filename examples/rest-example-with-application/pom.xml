@@ -23,7 +23,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>rest-example-with-application</artifactId>
   <packaging>war</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: REST Example With Application</name>
 
   <properties>

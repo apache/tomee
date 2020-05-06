@@ -21,7 +21,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>bean-validation-design-by-contract</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Bean Validation Design By Contract</name>
 
   <properties>
@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.2-SNAPSHOT</version>
+      <version>8.0.3-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

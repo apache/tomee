@@ -23,12 +23,12 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-opentracing.traced</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <properties>
     <version.javaee-api>8.0</version.javaee-api>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
   <dependencies>

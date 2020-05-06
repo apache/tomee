@@ -23,7 +23,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-metrics-counted</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
+  <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile Metrics Counted</name>
 
@@ -34,7 +34,7 @@
     <junit.version>4.12</junit.version>
     <docker.image.name>tomee/${project.artifactId}</docker.image.name>
     <docker.file.name>Dockerfile</docker.file.name>
-    <tomee.version>8.0.2-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
 
   <dependencies>
