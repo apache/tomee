@@ -20,6 +20,7 @@ package org.apache.openejb.resource.activemq;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.jmx.ManagementContext;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
 import org.apache.activemq.store.PersistenceAdapter;
 import org.apache.activemq.store.PersistenceAdapterFactory;
@@ -164,6 +165,10 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             broker.setSystemExitOnShutdown(false);
 
             broker.setStartAsync(false);
+
+            final ManagementContext managementContext = new ManagementContext();
+            managementContext.setCreateConnector(false);
+            broker.setManagementContext(managementContext);
 
             final BrokerService bs = broker;
 
