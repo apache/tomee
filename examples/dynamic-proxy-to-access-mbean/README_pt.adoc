@@ -1,25 +1,25 @@
 :index-group: Proxy Beans
 :jbake-type: page
 :jbake-status: status=published
-= Dynamic Proxy to Access MBean
+= Proxy dinâmico para acessar o MBean
 
-== Example
+== Exemplo
 
-Accessing MBean is something simple through the JMX API but it is often
-technical and not very interesting.
+Acessar o MBean é algo simples por meio da API JMX, mas geralmente é
+técnico e não muito interessante.
 
-This example simplify this work simply doing it generically in a proxy.
+Este Exemplo simplifica este trabalho simplesmente fazendo isso genericamente em um proxy.
 
-So from an user side you simple declare an interface to access your
+Portanto, do lado do usuário, você simplesmente declara uma interface para acessar seu
 MBeans.
 
-Note: the example implementation uses a local MBeanServer but enhancing
-the example API it is easy to imagine a remote connection with
-user/password if needed.
+Nota: A implementação de exemplo usa um MBeanServer local, mas aprimora
+aa API de exemplo, é fácil imaginar uma conexão remota com
+usuário / senha, se necessário.
 
-== ObjectName API (annotation)
+== API ObjectName (anotação)
 
-Simply an annotation to get the object
+Simplesmente uma anotação para obter o objeto
 
 ....
 package org.superbiz.dynamic.mbean;
@@ -36,14 +36,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface ObjectName {
     String value();
 
-    // for remote usage only
+    // apenas para uso remoto
     String url() default "";
     String user() default "";
     String password() default "";
 }
 ....
 
-== DynamicMBeanHandler (the proxy implementation)
+== DynamicMBean Handler (a implementação de proxy)
 
 ....
 package org.superbiz.dynamic.mbean;
@@ -67,7 +67,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Need a @PreDestroy method to disconnect the remote host when used in remote mode.
+ * Precisa de um método @PreDestroy para desconectar o host remoto quando usado no modo remoto.
  */
 public class DynamicMBeanHandler implements InvocationHandler {
     private final Map<Method, ConnectionInfo> infos = new ConcurrentHashMap<Method, ConnectionInfo>();
@@ -92,7 +92,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
             final String attributeName = attributeName(infos, methodName, method.getReturnType());
             return info.getAttribute(attributeName);
         }
-        // operation
+        // Operação
         return info.invoke(methodName, args, getSignature(method));
     }
 
@@ -109,12 +109,12 @@ public class DynamicMBeanHandler implements InvocationHandler {
         for (int i = 0; i < method.getParameterTypes().length; i++) {
             args[i] = method.getParameterTypes()[i].getName();
         }
-        return args; // note: null should often work...
+        return args; // note: null geralmente deve funcionar...
     }
 
     private String attributeName(MBeanInfo infos, String methodName, Class<?> type) {
         String found = null;
-        String foundBackUp = null; // without checking the type
+        String foundBackUp = null; // sem verificar o tipo
         final String attributeName = methodName.substring(3, methodName.length());
         final String lowerName = Character.toLowerCase(methodName.charAt(3)) + methodName.substring(4, methodName.length());
 
@@ -147,7 +147,7 @@ public class DynamicMBeanHandler implements InvocationHandler {
     private synchronized ConnectionInfo getConnectionInfo(Method method) throws Exception {
         if (!infos.containsKey(method)) {
             synchronized (infos) {
-                if (!infos.containsKey(method)) { // double check for synchro
+                if (!infos.containsKey(method)) { // verifica novamente se há sincronização
                     org.superbiz.dynamic.mbean.ObjectName on = method.getAnnotation(org.superbiz.dynamic.mbean.ObjectName.class);
                     if (on == null) {
                         Class<?> current = method.getDeclaringClass();
@@ -156,13 +156,13 @@ public class DynamicMBeanHandler implements InvocationHandler {
                             current = current.getSuperclass();
                         } while (on == null && current != null);
                         if (on == null) {
-                            throw new UnsupportedOperationException("class or method should define the objectName to use for invocation: " + method.toGenericString());
+                            throw new UnsupportedOperationException("classe ou método deve definir o objectName a ser usado para invocação: " + method.toGenericString());
                         }
                     }
                     final ConnectionInfo info;
                     if (on.url().isEmpty()) {
                         info = new LocalConnectionInfo();
-                        ((LocalConnectionInfo) info).server = ManagementFactory.getPlatformMBeanServer(); // could use an id...
+                        ((LocalConnectionInfo) info).server = ManagementFactory.getPlatformMBeanServer(); //poderia usar um id ...
                     } else {
                         info = new RemoteConnectionInfo();
                         final Map<String, String[]> environment = new HashMap<String, String[]>();
@@ -274,9 +274,9 @@ public class DynamicMBeanHandler implements InvocationHandler {
 }
 ....
 
-== Dynamic Proxies
+== Proxies dinâmicos
 
-=== DynamicMBeanClient (the dynamic JMX client)
+=== DynamicMBeanClient (o cliente JMX dinâmico)
 
 ....
 package org.superbiz.dynamic.mbean;
@@ -302,7 +302,7 @@ public interface DynamicMBeanClient {
 }
 ....
 
-=== DynamicRemoteMBeanClient (the dynamic JMX client remote)
+=== DynamicRemoteMBeanClient (o Cliente JMX Dinâmico Remoto)
 
 ....
 package org.superbiz.dynamic.mbean;
@@ -327,7 +327,7 @@ public interface DynamicRemoteMBeanClient {
 }
 ....
 
-== The MBean used for the test
+== O MBean usado para o teste
 
 === SimpleMBean
 
@@ -367,7 +367,7 @@ public class Simple implements SimpleMBean {
 }
 ....
 
-== DynamicMBeanClientTest (The test)
+== DynamicMBeanClientTest (O teste)
 
 ....
 package org.superbiz.dynamic.mbean;
