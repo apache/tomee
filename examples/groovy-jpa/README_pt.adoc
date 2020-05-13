@@ -18,7 +18,7 @@ Crie uma classe `Person` com a anotação `@Entity`.
 Na classe, crie a propiedade `name` do tipo `String`.
 Na classe, crie a propiedade `id` do tipo `long`.
 
-O identificador da entidade `Person` é a propiedade `id` com a anotação `@Id`.
+O identificador da entidade `Person` é a propriedade `id` com a anotação `@Id`.
 
 Para gerar automaticamente o sequencial, inclua a anotação `@GeneratedValue`.
 
