@@ -1,7 +1,7 @@
 :index-group: Unrevised
 :jbake-type: page
 :jbake-status: status=published
-= Groovy Project with Persistence JPA
+= Projeto Groovy com persistência JPA
 
 Este exemplo é desenvolvido com http://groovy-lang.org[Groovy Lang] com persistencia de dados com JPA.
 
