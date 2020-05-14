@@ -603,7 +603,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>${maven.test.skip}</skip>
+                  <skip>false</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
                     <tomee.version>${project.version}</tomee.version>

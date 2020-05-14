@@ -1,21 +1,16 @@
 :index-group: Testing Techniques
 :jbake-type: page
 :jbake-status: status=published
-= EAR Testing
+= Teste de EAR
 
-The goal of this example is to demonstrate how maven projects might be
-organized in a more real world style and how testing with OpenEJB can
-fit into that structure.
+O objetivo deste exemplo é para demonstrar como os projetos maven podem ser organizados em um estilo mais real e como os testes com o OpenEJB podem se encaixar nessa estrutura.
 
-This example takes the basic moviefun code we us in many of examples and
-splits it into two modules:
+Este exemplo pega o código moviefun básico que nós temos em muitos exemplos e o divide em dois módulos:
 
 * `business-logic`
 * `business-model`
 
-As the names imply, we keep our `@Entity` beans in the `business-model`
-module and our session beans in the `business-logic` model. The tests
-located and run from the business logic module.
+Como os nomes sugerem, mantemos nossos beans `@ Entity` no módulo `business-model` e nossos beans de sessão no modelo `business-logic` Os testes localizados e executados a partir do módulo de lógica de negócios.
 
 ....
 ear-testing
@@ -34,9 +29,9 @@ ear-testing/business-model/src/main/resources/META-INF/persistence.xml
 ear-testing/pom.xml
 ....
 
-== Project configuration
+== Configuração do projeto
 
-The parent pom, trimmed to the minimum, looks like so:
+O pom principal, aparado ao mínimo, tem a seguinte aparência:
 
 ....
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -70,7 +65,7 @@ The parent pom, trimmed to the minimum, looks like so:
 </project>
 ....
 
-The `business-model/pom.xml` as follows:
+O `business-model/pom.xml` é da seguinte maneira:
 
 ....
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -102,8 +97,8 @@ The `business-model/pom.xml` as follows:
 </project>
 ....
 
-And finally, the `business-logic/pom.xml` which is setup to support
-embedded testing with OpenEJB:
+E finalmente, o `business-logic/pom.xml` que está configurado para suportar
+teste incorporado com o OpenEJB:
 
 ....
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -135,8 +130,8 @@ embedded testing with OpenEJB:
       <scope>test</scope>
     </dependency>
     <!--
-    The <scope>test</scope> guarantees that non of your runtime
-    code is dependent on any OpenEJB classes.
+    O <scope>test</scope> garante que não seja do seu tempo de execução
+     código depende de qualquer classe OpenEJB.
     -->
     <dependency>
       <groupId>org.apache.openejb</groupId>
@@ -148,9 +143,9 @@ embedded testing with OpenEJB:
 </project>
 ....
 
-== Test Code
+== Código de teste
 
-The test code is the same as always:
+O código de teste é o mesmo de sempre:
 
 ....
 public class MoviesTest extends TestCase {
@@ -190,7 +185,7 @@ public class MoviesTest extends TestCase {
 }
 ....
 
-== Running
+== Executando
 
 ....
 -------------------------------------------------------

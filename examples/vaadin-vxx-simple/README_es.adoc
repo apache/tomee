@@ -1,0 +1,51 @@
+:index-group: Frameworks
+:jbake-type: page
+:jbake-status: published
+
+== Actual Plataforma Vaadin  - Simple Aplicación Web en Java
+
+Este ejemplo muestra como iniciar con una simple aplicación web que usa Vaadin Flow,
+basada totalmente en Java y ejecutandose en TomEE (webprofile). La versión actual de Vaadin Flow
+empleada en este ejemplo es la última disponible. Si se requiere una
+versión LTS, dirijase a uno de los ejemplos en esta sección del repositorio con 
+el prefijo LTS.
+
+La Plataforma Vaadin es OpenSource y se encuentra disponible en:
+https://github.com/vaadin/platform[Github]
+
+=== Construir este ejemplo
+
+Para construir este ejemplo, simplemente ejecute: _mvn clean install tomee:run_ y la
+aplicación se ejecutara bajo: http://localhost:8080/
+
+=== Implementación
+
+Esta implementación usa el https://vaadin.com/flow[Flow API] de la
+plataforma Vaadin.
+
+[source,java]
+----
+@Route("")
+public class HelloVaadinV10 extends Composite<Div> {
+    public HelloVaadinV10() {
+        final VerticalLayout layout = new VerticalLayout();
+        layout
+            .add(new Button("click me",
+                            event -> layout.add(new Label("clicked again"))
+            ));
+        //set the main Component
+        getContent().add(layout);
+    }
+}
+----
+
+La documentacion para la actual plataforma Vaadin se encuentra disponible en:
+https://vaadin.com/docs/[aqui]
+
+===  Información de Soporte 
+
+A partir de Vaadin 10, Vaadin se esta moviendo a un modele de versionado con
+Cuatro versiones cada año. Esto permite liberar nueva funcionalidad de una manera 
+mas rapida para los desarrolladores. Vaadin continua su compromiso con la estabilidad
+ofreciendo versiones con Long-Term Support (LTS). Las versiones LTS serán liberadas 
+aproximadamente cada dos años ofreciendo 5 años de soporte.

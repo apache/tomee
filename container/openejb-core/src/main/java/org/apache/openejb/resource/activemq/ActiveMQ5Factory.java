@@ -21,6 +21,7 @@ import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerFactoryHandler;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.jmx.ManagementContext;
 import org.apache.activemq.network.DiscoveryNetworkConnector;
 import org.apache.activemq.network.NetworkConnector;
 import org.apache.activemq.ra.ActiveMQResourceAdapter;
@@ -185,6 +186,10 @@ public class ActiveMQ5Factory implements BrokerFactoryHandler {
             broker.setSystemExitOnShutdown(false);
 
             broker.setStartAsync(false);
+
+            final ManagementContext managementContext = new ManagementContext();
+            managementContext.setCreateConnector(false);
+            broker.setManagementContext(managementContext);
 
             final BrokerService bs = broker;
 

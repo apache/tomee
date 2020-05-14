@@ -33,7 +33,7 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
-    <wss4j.version>2.2.2</wss4j.version>
+    <wss4j.version>2.2.5</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -95,7 +95,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.63</version>
+      <version>1.64</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>

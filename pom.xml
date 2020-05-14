@@ -117,7 +117,7 @@
     <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.1.13</johnzon.version>
+    <johnzon.version>1.2.5</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -145,9 +145,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.31</tomcat.version>
+    <tomcat.version>9.0.35</tomcat.version>
 
-    <cxf.version>3.3.5</cxf.version>
+    <cxf.version>3.3.6</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -172,7 +172,7 @@
 
     <!-- Apache Commons -->
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-cli.version>1.2</commons-cli.version>
+    <commons-cli.version>1.4</commons-cli.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <commons-dbcp.version>2.1</commons-dbcp.version>
@@ -186,7 +186,7 @@
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>2.0.3</bval.version>
-    <org.apache.activemq.version>5.15.10</org.apache.activemq.version>
+    <org.apache.activemq.version>5.15.12</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
