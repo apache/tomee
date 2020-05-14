@@ -23,13 +23,11 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MVC (CXF-based)</name>
   <description>OpenEJB :: Web Examples :: MVC 1.0 - Deltaspike</description>
-  <version>8.0.2-TT.2-SNAPSHOT</version>
+  <version>8.0.2-TT.4-SNAPSHOT</version>
   <url>http://tomee.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.2-TT.2-SNAPSHOT</tomee.version>
-    <version.deltaspike>1.9.1</version.deltaspike>
-    <version.krazo>1.0.0-Beta1</version.krazo>
+    <tomee.version>8.0.2-TT.4-SNAPSHOT</tomee.version>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
   </properties>
@@ -53,7 +51,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.2-TT.2-SNAPSHOT</version>
+        <version>8.0.2-TT.4-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>
@@ -158,7 +156,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>8.0.2-TT.2-SNAPSHOT</version>
+      <version>8.0.2-TT.4-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
