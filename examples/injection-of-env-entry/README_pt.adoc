@@ -1,15 +1,13 @@
 :index-group: Environment Entries
 :jbake-type: page
 :jbake-status: status=published
-= Using EnvEntries
+= Usando EnvEntries
 
-The `@Resource` annotation can be used to inject several things
-including DataSources, Topics, Queues, etc. Most of these are container
-supplied objects.
+A anotação `@Resource` pode ser usada para injetar várias coisas, incluindo fontes de dados, tópicos, filas etc. A maioria delas são objetos fornecidos por contêiner.
 
-It is possible, however, to supply your own values to be injected via an
-`<env-entry>` in your `ejb-jar.xml` or `web.xml` deployment descriptor.
-Java EE 6 supported `<env-entry>` types are limited to the following:
+É possível, no entanto, fornecer seus próprios valores para serem injetados através de um
+`<env-entry>` no seu descritor de implementação `ejb-jar.xml` ou `web.xml`.
+Os tipos `<env-entry>` suportados pelo Java EE 6 são limitados ao seguinte:
 
 * java.lang.String
 * java.lang.Integer
@@ -22,23 +20,21 @@ Java EE 6 supported `<env-entry>` types are limited to the following:
 * java.lang.Class
 * java.lang.Enum (any enum)
 
-See also the link:../custom-injection[Custom Injection] example for a
-TomEE and OpenEJB feature that will let you use more than just the above
-types as well as declare `<env-entry>` items with a plain properties
-file.
+Consulte também o link:../custom-injection[Injeção personalizada] exemplo para um
+recurso TomEE e OpenEJB permitem que você use mais do que apenas os tipos acima, além de declarar itens `<env-entry>` com um arquivo de propriedades simples.
 
-== Using @Resource for basic properties
+== Usando @Resource para propriedades básicas
 
-The use of the `@Resource` annotation isn’t limited to setters. For
-example, this annotation could have been used on the corresponding
-_field_ like so:
+O uso da anotação `@Resource` não se limita aos setters.
+Por exemplo, esta anotação poderia ter sido usada no correspondente
+_campo_ assim:
 
 ....
 @Resource
 private int maxLineItems;
 ....
 
-A fuller example might look like this:
+Um exemplo mais completo pode ser assim:
 
 ....
 package org.superbiz.injection.enventry;
@@ -80,19 +76,18 @@ public class Configuration {
 }
 ....
 
-Here we have an `@Singleton` bean called `Confuration` that has the
-following properties (`<env-entry>` items)
+Aqui temos um bean `@Singleton` chamado `Confuration` que possui as seguintes propriedades (itens `<env-entry> `)
 
 * String color
 * Shape shape
 * Class strategy
 * long date
 
-=== Supplying @Resource values for  items in ejb-jar.xml
+=== Fornecendo valores @Resource para itens em ejb-jar.xml
 
-The values for our `color`, `shape`, `strategy` and `date` properties
-are supplied via `<env-entry>` elements in the `ejb-jar.xml` file or the
-`web.xml` file like so:
+Os valores para nossas propriedades `color`,`shape`, `strategy` e `date`
+são fornecidos através dos elementos `<env-entry>` no arquivo `ejb-jar.xml` ou no arquivo
+arquivo `web.xml` da seguinte forma:
 
 ....
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
@@ -125,17 +120,16 @@ are supplied via `<env-entry>` elements in the `ejb-jar.xml` file or the
 </ejb-jar>
 ....
 
-==== Using the @Resource `name' attribute
+==== Usando o atributo @Resource `name'
 
-Note that `date` was referenced by `name` as:
+Note que `date` foi referenciado por `name` como:
 
 ....
 @Resource(name = "date")
 private long date;
 ....
 
-When the `@Resource(name)` is used, you do not need to specify the full
-class name of the bean and can do it briefly like so:
+Quando o `@Resource (name)` é usado, você não precisa especificar o nome completo da classe do bean e pode fazê-lo brevemente da seguinte maneira:
 
 ....
   <env-entry>
@@ -146,23 +140,22 @@ class name of the bean and can do it briefly like so:
   </env-entry>
 ....
 
-Conversly, `color` was not referenced by `name`
+Por outro lado, `color` não foi referenciado por `name`
 
 ....
 @Resource
 private String color;
 ....
 
-When something is not referenced by `name` in the `@Resource` annotation
-a default name is created. The format is essentially this:
+Quando algo não é referenciado por `name` na anotação `@Resource`, um nome padrão é criado. O formato é essencialmente este:
 
 ....
 bean.getClass() + "/" + field.getName()
 ....
 
-So the default `name` of the above `color` property ends up being
-`org.superbiz.injection.enventry.Configuration/color`. This is the name
-we must use when we attempt to decalre a value for it in xml.
+Portanto, o `name` padrão da propriedade `color` acima acaba sendo
+`org.superbiz.injection.enventry.Configuration/color`. Esse é o nome
+devemos usar quando tentamos decalcar um valor para ele em xml.
 
 ....
   <env-entry>
@@ -172,9 +165,9 @@ we must use when we attempt to decalre a value for it in xml.
   </env-entry>
 ....
 
-==== @Resource and Enum (Enumerations)
+==== @Resource e Enum (enumerações)
 
-The `shape` field is actually a custom Java Enum type
+O campo `shape` é realmente um tipo Java Enum personalizado
 
 ....
 package org.superbiz.injection.enventry;
@@ -187,9 +180,8 @@ public enum Shape {
 }
 ....
 
-As of Java EE 6, java.lang.Enum types are allowed as `<env-entry>`
-items. Declaring one in xml is done using the actual enum’s class name
-like so:
+No Java EE 6, os tipos java.lang.Enum são permitidos como `<ententent>`
+Itens. A declaração de um em xml é feita usando o nome da classe da enumeração real:
 
 ....
       <env-entry>
@@ -199,8 +191,7 @@ like so:
       </env-entry>
 ....
 
-Do not use `<env-entry-type>java.lang.Enum</env-entry-type>` or it will
-not work!
+Não use `<env-entry-type>java.lang.Enum</env-entry-type>` ou não funcionará!
 
 === ConfigurationTest
 
@@ -232,7 +223,7 @@ public class ConfigurationTest extends TestCase {
 }
 ....
 
-== Running
+== Executando
 
 ....
 -------------------------------------------------------
