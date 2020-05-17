@@ -76,7 +76,7 @@ public class Configuration {
 }
 ....
 
-Aqui temos um bean `@Singleton` chamado `Confuration` que possui as seguintes propriedades (itens `<env-entry> `)
+Aqui temos um bean `@Singleton` chamado `Configuration` que possui as seguintes propriedades (itens `<env-entry> `)
 
 * String color
 * Shape shape

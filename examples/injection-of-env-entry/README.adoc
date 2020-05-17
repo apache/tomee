@@ -80,7 +80,7 @@ public class Configuration {
 }
 ....
 
-Here we have an `@Singleton` bean called `Confuration` that has the
+Here we have an `@Singleton` bean called `Configuration` that has the
 following properties (`<env-entry>` items)
 
 * String color
