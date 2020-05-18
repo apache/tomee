@@ -13,9 +13,22 @@ JsonbConfig offers many configurations.
 the application can be run with `mvn clean install tomee:run' if port
 8080 is available you can invoke the following endpoint: (GET)
 http://localhost:8080/jsonb-configuration/api/users that should respond
-with the following json: [ \{ ``Id'':1, ``Name'':``user 1'',
-``Registration'':``2018 - 12 - 28'' }, \{ ``Id'':2, ``Name'':``user 2'',
-``Registration'':``2018 - 12 - 28'' }]
+with the following json:
+
+....
+[
+   {
+      "Id":1,
+      "Name":"user 1",
+      "Registration":"2018-12-28"
+   },
+   {
+      "Id":2,
+      "Name":"user 2",
+      "Registration":"2018-12-28"
+   }
+]
+....
 
 == @ApplicationPath
 
