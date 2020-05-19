@@ -20,7 +20,7 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>mp-config-source-database</artifactId>
-  <version>7.1.3-SNAPSHOT</version>
+  <version>7.1.3</version>
   <packaging>war</packaging>
 
   <name>MicroProfile :: Examples :: Config Source Database</name>
