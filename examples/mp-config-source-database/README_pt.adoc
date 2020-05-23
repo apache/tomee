@@ -1,17 +1,18 @@
-= MicroProfile Configuration ConfigSource Database
+= Banco de dados ConfigSource da configuração do MicroProfile
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published
 
-This is an example on how to implement a custom MicroProfile Configuration ConfigSource. The custom ConfigSource is
-going to read configuration values from a Database.
+Este es un ejemplo sobre cómo implementar un ConfigSource para la configuración personalizada de MicroProfile. El ConfigSource personalizado lee los valores 
+de configuración de una base de datos.
 
+Este é um exemplo sobre como implementar um `ConfigSource` para a configuração personalizada de MicroProfile.
+O ConfigSource personalizado le os valores de configuração de uma base de dados.
 
 [discrete]
 ==== ConfigSource Feature
 
-To provide a customized ConfigSource from a database, you need to begin with a class that implements `ConfigSource` interface, overriding 3 methods:
-`getProperties` , `getValue` , and `getName`
+Para proporcionar um ConfigSource personalizado de uma base de dados, devemos começar com uma classe que implemente la interface `ConfigSource`, sobreescrevendo 3 métodos: `getProperties`, `getValue`, e `getName`.
 
 [source,java]
 ----
@@ -78,11 +79,9 @@ public class DatabaseConfigSource implements ConfigSource {
     }
 }
 ----
+Para simplificar, no exemplo anterior, a definição da base de dados e os dados que se utilizaram para a configuração correspondem a um `Resource`, declarado em um arquivo de configuração `tomee.xml` como `Resource` do tipo: `DataSource` da seguinte maneira: 
 
-For simplicity, in the example above, the database definition and data to be used for the configuration, correspond to a `Resource`, declared 
-in the `tomee.xml` configuration file as `Resource` of type: `DataSource`, as following:
-
-[source,sql]
+[source,xml]
 ----
 <tomee>
   <Resource id="config-source-database" type="DataSource">
@@ -91,7 +90,7 @@ in the `tomee.xml` configuration file as `Resource` of type: `DataSource`, as fo
 </tomee>
 ----
 
-and It's linked to the a set of DDL/DML instructions, defined in the `import-config-source-database.sql` script:
+e esta vinculado ao conjunto de instruções SQL, definidas no script `import-config-source-database.sql`:
 
 [source,sql]
 ----
@@ -100,14 +99,13 @@ INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.currency', 'Euro');
 INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.country', 'PT');
 ----
 
-
-
-== Run the application:
+== Executando a aplicação:
 
 [source,bash]
 ----
 mvn clean install tomee:run
 ----
+
 [source,bash]
 ----
 -------------------------------------------------------
