@@ -35,6 +35,7 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.enterprise.util.TypeLiteral;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
@@ -46,11 +47,9 @@ public class TomEESecurityExtension implements Extension {
     private final Set<AnnotatedType> basicAuthentication = new HashSet<>();
     private final Set<AnnotatedType> formAuthentication = new HashSet<>();
 
-    void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery beforeBeanDiscovery,
-                                    final BeanManager beanManager) {
+    void observeBeforeBeanDiscovery(@Observes final BeforeBeanDiscovery beforeBeanDiscovery, final BeanManager beanManager) {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
-        beforeBeanDiscovery.addAnnotatedType(
-                beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
 
@@ -64,7 +63,8 @@ public class TomEESecurityExtension implements Extension {
     void processAuthenticationMechanismDefinitions(@Observes
                                                    @WithAnnotations({
                                                            BasicAuthenticationMechanismDefinition.class,
-                                                           FormAuthenticationMechanismDefinition.class
+                                                           FormAuthenticationMechanismDefinition.class,
+                                                           CustomFormAuthenticationMechanismDefinition.class
                                                    }) final ProcessAnnotatedType<?> processAnnotatedType) {
         final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
 
@@ -131,7 +131,7 @@ public class TomEESecurityExtension implements Extension {
     }
 
     public boolean hasAuthenticationMechanisms() {
-        return !basicAuthentication.isEmpty();
+        return (basicAuthentication.size() + formAuthentication.size()) > 0;
     }
 
     private Supplier<LoginToContinue> createLoginToContinueSupplier() {

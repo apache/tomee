@@ -56,7 +56,6 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
         authorizationStores =
                 identityStores.stream()
                               .filter(i -> i.validationTypes().contains(PROVIDE_GROUPS))
-                              .filter(i -> !i.validationTypes().contains(VALIDATE))
                               .sorted(Comparator.comparing(IdentityStore::priority))
                               .collect(Collectors.toList());
     }
