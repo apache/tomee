@@ -19,3 +19,5 @@ nb-configuration.xml
 **/test/key
 tck/**/temp
 examples/jaxrs-json-provider-jettison/temp/
+transformer/jakartaee-prototype/
+transformer/transformer-0.1.0-SNAPSHOT/
