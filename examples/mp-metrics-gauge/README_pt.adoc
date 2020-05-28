@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Esta é um exemplo sobre como utilizar as métricas de MicroProfile em TomEE.
+Este é um exemplo sobre como utilizar as métricas de MicroProfile em TomEE.
 
 == Executando a aplicação:
 
@@ -13,7 +13,7 @@ Esta é um exemplo sobre como utilizar as métricas de MicroProfile em TomEE.
 $ mvn clean install tomee:run
 ----
 
-Dentro da aplicação, tem um endpoint que vai fornecer a temperatura em celsios para o día.
+Dentro da aplicação, tem um endpoint que vai fornecer a temperatura em celsius para o dia.
 
 == Obter a temperatura para o dia:
 
@@ -76,7 +76,7 @@ Unidade da métrica. Veja a classe MetricUnits para obter uma lista de unidades 
 
 == Dados Métricos
 
-Verifique a medida fazendo uma solicitação _GET_:
+Verifique a medida fazendo uma requisição _GET_:
 
 === Formato Prometheus:
 
@@ -95,7 +95,7 @@ $ curl -X GET http://localhost:8080/mp-metrics-gauge/metrics/application/weather
 
 === Formato JSON:
 
-Para o formato json, adicione o cabeçalho Accept=application/json à solicitação.
+Para o formato json, adicione o cabeçalho Accept=application/json à requisição.
 
 === Resposta JSON
 
