@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Esta é um exemplo sobre como utilizar as métricas de MicroProfile em Tomee. O projeto inclui um perfil de Docker que se pode usar para criar uma imagem de Docker.
+Este é um exemplo sobre como utilizar as métricas de MicroProfile no Tomee. O projeto inclui um perfil de Docker que se pode usar para criar uma imagem de Docker.
 
 == Executando a aplicação:
 
@@ -13,7 +13,7 @@ $ mvn clean install tomee:run
 ----
 
 NOTE: Como alternativa, compile e execute o aplicativo através do Docker
-(observe o uso do perfil da janela de encaixe):
+(observe o uso do perfil docker):
 
 [source,bash]
 ----
@@ -25,7 +25,7 @@ $ mvn -Pdocker docker:build
 $ docker run -it --rm -p 8080:8080 --name=tomee-mp-metrics-counted tomee/mp-metrics-counted
 ----
 
-Dentro do aplicativo, há um terminal que fornecerá o estado do tempo para o dia e a semana.
+Dentro do aplicativo, há um endpoint que fornecerá o estado do tempo para o dia e a semana.
 
 == Veja o clima da semana:
 
@@ -34,7 +34,7 @@ Dentro do aplicativo, há um terminal que fornecerá o estado do tempo para o di
 $ curl -X GET http://localhost:8080/mp-metrics-counted/weather/week/status
 ----
 
-IMPORTANT: Se você executar usando o Docker, devido o aplicativo está instalado
+IMPORTANTE: Se você executar usando o Docker, porque o aplicativo está instalado
 como o aplicativo ROOT, remova o nome do aplicativo do URL:
 
 [source,bash]
@@ -51,7 +51,7 @@ Hi, today is a sunny day!
 
 == Usando `@Counted`
 
-As métricas do MicroProfile têm uma função que pode ser usada para contar solicitações para um serviço.
+As métricas do MicroProfile têm uma função que pode ser usada para contar requisições para um serviço.
 
 Para usar esta função, você deve anotar os métodos dos recursos JAX-RS com `@Counted`.
 
@@ -91,7 +91,7 @@ metadados.
 etiquetas especiais para uma métrica.
 
 *boolean reusable* Indica se uma métrica com um determinado nome pode ser
-registre-se em mais de um local. Não se aplica a `@Gauges` (metros).
+registrado em mais de um local. Não se aplica a `@Gauges` (metros).
 
 == Dados Métricos
 
@@ -114,7 +114,7 @@ application:weather_day_status 1.0
 
 === Formato JSON:
 
-Para o formato json, adicione o cabeçalho `Accept:application/json` à solicitação HTTP.
+Para o formato json, adicione o cabeçalho `Accept:application/json` à requisição HTTP.
 
 [source,bash]
 ----
@@ -136,11 +136,11 @@ $ curl -X GET -H "Accept: application/json" http://localhost:8080/mp-metrics-cou
 
 == Metadatos Métrica
 
-Uma métrica terá metadados para que você possa aprender mais sobre ela, como `displayName`,`descrição`, `tags` etc.
+Uma métrica terá metadados para que você possa saber mais sobre ela, como `displayName`,`descrição`, `tags` etc.
 
-Verifique os metadados da métrica fazendo uma solicitação HTTP _OPTIONS_:
+Verifique os metadados da métrica fazendo uma requisição HTTP _OPTIONS_:
 
-=== Solicitação HTTP _OPTIONS_
+=== Requisição HTTP _OPTIONS_
 
 [source,bash]
 ----
