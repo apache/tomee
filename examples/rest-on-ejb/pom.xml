@@ -16,24 +16,18 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev: 1090810 $ $Date: 2011-04-10 16:49:26 +0200 (dim., 10 avr. 2011) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>rest-on-ejb</artifactId>
   <packaging>jar</packaging>
   <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: REST and EJB</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.3-SNAPSHOT</tomee.version>
   </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -54,9 +48,24 @@
           <argLine>"-javaagent:${settings.localRepository}/org/apache/tomee/openejb-javaagent/${tomee.version}/openejb-javaagent-${tomee.version}.jar"</argLine>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>transformer-maven-plugin</artifactId>
+        <version>0.0.2</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>

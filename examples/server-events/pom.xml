@@ -16,22 +16,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev: 1346534 $ $Date: 2012-06-05 20:57:54 +0200 (mar. 05 juin 2012) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>server-events</artifactId>
   <packaging>jar</packaging>
   <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Examples :: Server Events</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -44,9 +39,24 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>transformer-maven-plugin</artifactId>
+        <version>0.0.2</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -54,7 +64,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -71,7 +80,6 @@
       <version>8.0.3-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
-
     <!-- test libs -->
     <dependency>
       <groupId>junit</groupId>

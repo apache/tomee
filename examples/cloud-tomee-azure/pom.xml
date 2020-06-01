@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -18,22 +17,16 @@
     specific language governing permissions and limitations
     under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
-
   <groupId>org.superbiz</groupId>
   <artifactId>cloud-tomee-azure</artifactId>
   <version>8.0.3-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Azure deployment example</name>
-
   <properties>
     <javaee-api.version>7.0</javaee-api.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -42,7 +35,6 @@
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -82,9 +74,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>transformer-maven-plugin</artifactId>
+        <version>0.0.2</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <profiles>
     <profile>
       <id>azure-single-jar</id>
@@ -123,7 +130,6 @@
       </build>
     </profile>
   </profiles>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:

@@ -17,21 +17,17 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>java-modules</artifactId>
   <packaging>war</packaging>
   <version>8.0.3-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Java Modules (Simple REST resource)</name>
-
   <properties>
     <arquillian.version>1.1.10.Final</arquillian.version>
     <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -39,7 +35,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
-
   <pluginRepositories>
     <pluginRepository>
       <id>apache-m2-snapshot</id>
@@ -47,7 +42,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </pluginRepository>
   </pluginRepositories>
-
   <build>
     <defaultGoal>package</defaultGoal>
     <plugins>
@@ -55,6 +49,22 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>transformer-maven-plugin</artifactId>
+        <version>0.0.2</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

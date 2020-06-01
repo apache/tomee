@@ -15,15 +15,12 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
   <version>8.0.3-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
-
   <properties>
     <junit.version>4.12</junit.version>
     <version.javaee-api>8.0-1</version.javaee-api>
@@ -31,7 +28,6 @@
     <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -78,7 +74,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -106,9 +101,24 @@
           <context>${artifactId}</context>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>transformer-maven-plugin</artifactId>
+        <version>0.0.2</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <distributionManagement>
     <repository>
       <id>localhost</id>
