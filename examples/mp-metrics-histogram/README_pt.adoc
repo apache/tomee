@@ -45,7 +45,7 @@ $ curl -X GET http://localhost:8080/mp-metrics-histogram/weather/histogram
 
 As métricas do MicroProfile tem uma função que permite criar um histograma de dados.
 
-Para utilizar esta função, injetamos um objeto `MetricRegistry`, registramos um Histogram e adicionamos dados ao histograma como mostrado abaixo:
+Para utilizar esta função, injetamos um objeto `MetricRegistry`, registramos um `Histogram` e adicionamos dados ao histograma como mostrado abaixo:
 
 [source,java]
 ----
