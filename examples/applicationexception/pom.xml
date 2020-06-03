@@ -52,7 +52,7 @@
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
         <artifactId>transformer-maven-plugin</artifactId>
-        <version>0.0.3</version>
+        <version>0.0.4</version>
         <configuration>
           <classifier>jakartaee9</classifier>
         </configuration>
