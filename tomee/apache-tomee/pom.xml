@@ -512,7 +512,6 @@
         <version>0.0.6</version>
         <configuration>
           <classifier>jakartaee9</classifier>
-          <rulesRenamesUri>file://${project.basedir}/transformer/renames.properties</rulesRenamesUri>
         </configuration>
         <executions>
           <execution>
