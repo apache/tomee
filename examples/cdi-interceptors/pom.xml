@@ -36,7 +36,7 @@
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
         <artifactId>transformer-maven-plugin</artifactId>
-        <version>0.0.5</version>
+        <version>0.0.6</version>
         <configuration>
           <classifier>jakartaee9</classifier>
         </configuration>
