@@ -3,13 +3,13 @@
 :jbake-status: status=published
 = Injeção de Ejbs
 
-Este exemplo mostra como usar a anotação `@EJB` em uma classe bean referir a outros beans.
+Este exemplo mostra como usar a anotação `@EJB` em uma classe bean para referenciar outros beans.
 
 Essa funcionalidade é geralmente chamada de injeção de dependência (consulte
 http://www.martinfowler.com/articles/injection.html) e foi
 recentemente introduzido no Java EE 5.
 
-Neste exemplo particula, nós vamos criar dois bean de sessão sem estado
+Neste exemplo em particular, nós vamos criar dois bean de sessão sem estado
 
 * Um DataStore session bean
 * Um DataReader session bean
