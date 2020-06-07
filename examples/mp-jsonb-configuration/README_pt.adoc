@@ -9,7 +9,7 @@ Poucas anotações são necessárias e o `JsonbConfig` oferece muitas configura�
 
 == Executando e testando o Endpoint
 
-A aplicação pode ser executada com `mvn clean install tomee: run` e se a porta 8080 estiver disponivel,pode invocar o seguinte endpoint:
+A aplicação pode ser executada com `mvn clean install tomee: run` e se a porta 8080 estiver disponível, pode invocar o seguinte endpoint:
 
 [source,bash]
 ----
@@ -127,7 +127,7 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 
 == Acessando o Recurso Rest
 
-O teste ativa um aplicativo da web openejb e chama o restante do recurso `/users`
+O teste ativa um aplicativo da web openejb e invoca o endpoint `/users`
 
 [source,java]
 ----
@@ -174,7 +174,7 @@ public class UserServiceTest {
 ----
 
 == Executando
-Executando o exemplo se pode fazer desde maven com um simples comando `mvn clean install`, executando desde o diretorio `mp-jsonb-configuration`.
+A execução do exemplo pode ser feita a partir do maven com um simples comando `mvn clean install`, executando no diretorio `mp-jsonb-configuration`.
 
 Quando executado, você deve ver uma saída semelhante à seguinte:
 
@@ -280,7 +280,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 `javaee-api: 8.0` ele incorpora todas as dependências necessárias para ativar um aplicativo REST em funcionamento.
 
-Se olharmos para o jar construído por maven, veremos que o aplicativo em si é bem pequeno:
+Se olharmos para o jar construído pelo maven, veremos que o aplicativo em si é bem pequeno:
 
 [source,bash]
 ----
@@ -305,4 +305,4 @@ $ jar tvf target/mp-jsonb-configuration-8.0.0-SNAPSHOT.war
    128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/mp-jsonb-configuration/pom.properties
 ----
 
-Esse jar individual pode ser implementado em qualquer implementação Java EE que atenda aos requisitos. No TomEE, basta colocá-lo no diretório `${tomee.home}/webapps/`.
+Esse jar individual pode ser implantado em qualquer implementação Java EE que atenda aos requisitos. No TomEE, basta colocá-lo no diretório `${tomee.home}/webapps/`.
