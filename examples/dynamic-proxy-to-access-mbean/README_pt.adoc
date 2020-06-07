@@ -8,13 +8,13 @@
 Acessar o MBean é algo simples por meio da API JMX, mas geralmente é
 técnico e não muito interessante.
 
-Este Exemplo simplifica este trabalho simplesmente fazendo isso genericamente em um proxy.
+Este exemplo simplifica este trabalho simplesmente fazendo isso genericamente em um proxy.
 
-Portanto, do lado do usuário, você simplesmente declara uma interface para acessar seu
+Portanto, do lado do usuário, você simplesmente declara uma interface para acessar seus
 MBeans.
 
-Nota: A implementação de exemplo usa um MBeanServer local, mas aprimora
-aa API de exemplo, é fácil imaginar uma conexão remota com
+Nota: A implementação de exemplo usa um MBeanServer local, mas aprimorando
+a API de exemplo, é fácil imaginar uma conexão remota com
 usuário / senha, se necessário.
 
 == API ObjectName (anotação)
