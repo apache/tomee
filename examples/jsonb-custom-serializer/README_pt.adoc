@@ -3,13 +3,12 @@
 :jbake-status: status=published
 = Serializador personalizado JSON-B
 
-Este exemplo mostra como personalizar objetos
-serialização/desserialização com jsonb para um aplicativo JAX-RS.
+Este exemplo mostra como personalizar a serialização/desserialização de objetos com jsonb para um aplicativo JAX-RS.
 
 == Executando e testando o Endpoint
 
 A Aplicação pode ser executado com `mvn clean install tomee:run' se porta
-8080 está disponível, você pode invocar o seguinteendpoint: (GET)
+8080 está disponível, você pode invocar o seguinte endpoint: (GET)
 http://localhost:8080/jsonb-custom-serializer/api/users que deve responder com o seguinte json:
 
 ....
@@ -57,7 +56,7 @@ que respondem com o seguinte json:
 
 == @ApplicationPath
 
-Classe de ponto de entrada JAXRS, da seguinte maneira jaxrs carregará todas as classes e métodos anotados com @Path sem especificá-los.
+Classe JAXRS de ponto de entrada, da seguinte maneira, o jaxrs carregará todas as classes e métodos anotados com @Path sem especificá-los.
 
 ....
 import javax.ws.rs.ApplicationPath;
@@ -71,7 +70,7 @@ public class JAXRSApplication extends Application {
 
 == Recurso @Path Rest
 
-Classe jaxrs simples com um GET e um POST endpoint
+Classe jaxrs simples com um endpoint GET e um POST
 
 ....
 import java.util.ArrayList;
@@ -145,7 +144,7 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 
 == Address serializer
 
-Classe serializador de objetos simples que adiciona `modified 'durante a serialização
+Classe serializadora de objetos simples que adiciona `modified` durante a serialização
 
 ....
 import javax.json.bind.serializer.JsonbSerializer;
@@ -170,7 +169,7 @@ public class AddressSerializer implements JsonbSerializer<Address> {
 
 == User Deserializer
 
-Create an object from a json
+Cria um objeto a partir de um json
 
 ....
 import java.lang.reflect.Type;
@@ -288,7 +287,7 @@ public class UserServiceTest {
 
 == Executando
 
-A execução do exemplo pode ser feita no maven com um simples comando `mvn clean install', executado no diretório `jsonb-custom-serializer'.
+A execução do exemplo pode ser feita no maven com um simples comando `mvn clean install', executada no diretório `jsonb-custom-serializer'.
 
 Ao executar, você verá uma saída semelhante à seguinte.
 
@@ -451,13 +450,11 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
 ....
 
-=== Inside the jar
+=== Dentro do jar
 
-javaee-api:8.0 brings in all the dependencies needed to spin up a
-working REST application.
+javaee-api:8.0 traz todas as dependências necessárias para iniciar uma aplicação REST funcionando.
 
-If we look at the jar built by maven, we’ll see the application itself
-is quite small:
+Se olharmos para o jar construído pelo maven, veremos que a aplicação:
 
 ....
 $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
@@ -484,6 +481,5 @@ $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war
    132 Sat Dec 29 19:10:42 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.properties
 ....
 
-This single jar could be deployed any any compliant Java EE
-implementation. In TomEE you’d simply place it in the
-`tomee.home/webapps/` directory.
+Esse simples jar poderia ser implantado em qualquer implementação Java EE compliant. 
+No TomEE você simplesmente colocaria-o no diretório `tomee.home/webapps/` .
