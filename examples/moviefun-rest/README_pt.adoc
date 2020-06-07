@@ -37,7 +37,7 @@ public class ApplicationConfig extends Application {
 
 === LoadRest
 
-É um POJO que é mapeado para um URL raiz (`load`) com o anotação @Path e possui métodos Java para servir solicitações a este URL raiz e seus sub-URLs. Nesse caso, só tenha uma solicitação POST onde use um EJB (MoviesBean) injetado na sua classe para fazer um carregamento inicial de dados no banco de dados.
+É um POJO que é mapeado para um URL raiz (`load`) com o anotação @Path e possui métodos Java para servir solicitações a este URL raiz e seus sub-URLs. Nesse caso, só tem uma solicitação POST onde usa um EJB (MoviesBean) injetado na sua classe para fazer um carregamento inicial de dados no banco de dados.
 
 ....
 package org.superbiz.moviefun.rest;
@@ -236,7 +236,7 @@ public class Movie {
 
 === MoviesBean
 
-Este é o EJB de acordo com a anotação @Stateless. Ele usa a persistência da unidade "unidade de filme" para persistir filme de entidades.
+Este é o EJB de acordo com a anotação @Stateless. Ele usa a persistência da unidade `movie-unit` para persistir persistir entidades de filmes.
 ....
 package org.superbiz.moviefun;
 
@@ -317,12 +317,11 @@ public class MoviesBean {
 
 == Executando
 
-Running the example is fairly simple. In the ``moviefun-rest'' directory
-run:
-
 A execução do exemplo é bastante simples. No diretório `moviefun-rest` execute:
 
+....
 $ mvn clean install
+....
 
 O que deve criar uma saída como a seguir.
 
