@@ -6,9 +6,9 @@
 
 TomEE tem uma caracteristica particular que permite o uso de Validação de Bean como alternativa ao complemento da anotação `@RolesAllowed`.
 
-A motivação para esta função é que `JsonWebToken` é efetivamente um bean, e uma verificação de seguraça é, em última instancia, um ato de produzir um resultado booleano utilizando uma entrada minima. È um problema perfeito para a validação de Bean.
+A motivação para esta função é que `JsonWebToken` é efetivamente um bean, e uma verificação de seguraça é, em última instância, um ato de produzir um resultado booleano utilizando uma entrada mínima. É um problema perfeito para a validação de Bean.
 
-A caracteristica em última instancia lhe permite implementar um método como este:
+A funcionalidade lhe permite implementar um método como este:
 
 [source,java]
 ----
