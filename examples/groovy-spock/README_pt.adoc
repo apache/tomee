@@ -14,7 +14,7 @@ include::src/main/groovy/org/superbiz/groovy/Hello.groovy[]
 
 == HelloSpecification
 
-Esta classe extende de `*_spock.lang.Specification_*` para registrar a especificaçao de testes.
+Esta classe estende de `*_spock.lang.Specification_*` para registrar a especificação de testes.
 
 Injete o bean *Hello* com _@Inject_ e use http://arquillian.org[Arquilian] para desdobrar o teste.
 
