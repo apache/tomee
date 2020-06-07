@@ -9,7 +9,7 @@ São necessárias poucas anotações e o JsonbConfig oferece muitas configuraç�
 
 == Executando e testando o Endpoint
 
-o aplicativo pode ser executado com `mvn clean install tomee:run' se porta
+O aplicativo pode ser executado com `mvn clean install tomee:run' se a porta
 8080 está disponível, você pode chamar o seguinte terminal:(GET)
 http://localhost:8080/jsonb-configuration/api/users que deve responder com o seguinte json: 
 
@@ -114,7 +114,7 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 
 == Acessando o endpoint rest
 
-O teste gera um aplicativo da web openejb e chama o terminal do usuário
+O teste gera uma aplicação web openejb e chama o endpoint do usuário
 
 ....
 import java.io.IOException;
@@ -264,7 +264,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 === Dentro do jar
 
-javaee-api:8.0 traz todas as dependências necessárias para girar
+javaee-api:8.0 traz todas as dependências necessárias para iniciar
 um aplicativo REST que esteja funcionando.
 
 Se olharmos para o jar construído por maven, veremos que o aplicativo em si é bem pequeno:
