@@ -5,7 +5,7 @@
 
 Este é um exemplo de como configurar no TomEE 7.x ou posterior o provedor JSON herdado, Jettison, usado pelo TomEE 1.7.x.
 
-Este cenário é util quando aplicações REST são migrado de TomEE 1.7.x para TomEE 7.x ou posterior e você quer manter a saída JSON herdada do Jettison 1.3.7.
+Este cenário é util quando aplicações REST são migradas de TomEE 1.7.x para TomEE 7.x ou posterior e você quer manter a saída JSON herdada do Jettison 1.3.7.
 
 
 === Executando os testes
