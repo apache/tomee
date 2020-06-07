@@ -3,16 +3,13 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo sobre cómo implementar un ConfigSource para la configuración personalizada de MicroProfile. El ConfigSource personalizado lee los valores 
-de configuración de una base de datos.
-
 Este é um exemplo sobre como implementar um `ConfigSource` para a configuração personalizada de MicroProfile.
-O ConfigSource personalizado le os valores de configuração de uma base de dados.
+O ConfigSource personalizado lê os valores de configuração de uma base de dados.
 
 [discrete]
 ==== ConfigSource Feature
 
-Para proporcionar um ConfigSource personalizado de uma base de dados, devemos começar com uma classe que implemente la interface `ConfigSource`, sobreescrevendo 3 métodos: `getProperties`, `getValue`, e `getName`.
+Para proporcionar um ConfigSource personalizado de uma base de dados, devemos começar com uma classe que implemente a interface `ConfigSource`, sobrescrevendo 3 métodos: `getProperties`, `getValue`, e `getName`.
 
 [source,java]
 ----
@@ -79,7 +76,7 @@ public class DatabaseConfigSource implements ConfigSource {
     }
 }
 ----
-Para simplificar, no exemplo anterior, a definição da base de dados e os dados que se utilizaram para a configuração correspondem a um `Resource`, declarado em um arquivo de configuração `tomee.xml` como `Resource` do tipo: `DataSource` da seguinte maneira: 
+Para simplificar, no exemplo anterior, a definição da base de dados e os dados utilizados para a configuração correspondem a um `Resource`, declarado em um arquivo de configuração `tomee.xml` como `Resource` do tipo: `DataSource` da seguinte maneira: 
 
 [source,xml]
 ----
@@ -90,7 +87,7 @@ Para simplificar, no exemplo anterior, a definição da base de dados e os dados
 </tomee>
 ----
 
-e esta vinculado ao conjunto de instruções SQL, definidas no script `import-config-source-database.sql`:
+e está vinculado a um conjunto de instruções SQL, definidas no script `import-config-source-database.sql`:
 
 [source,sql]
 ----
