@@ -229,7 +229,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("javax.mail.")) {
             return false;
         }
-        if (name.startsWith("javax.") || name.startsWith("jakarta.\")) {
+        if (name.startsWith("javax.") || name.startsWith("jakarta.")) {
             return isInServer(name);
         }
         if (name.startsWith("sun.")) {
