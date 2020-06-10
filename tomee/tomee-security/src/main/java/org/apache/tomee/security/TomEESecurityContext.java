@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import static javax.security.auth.message.AuthStatus.SEND_CONTINUE;
@@ -124,11 +125,15 @@ public class TomEESecurityContext implements SecurityContext {
 
     public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        if (TomcatSecurityService.class.isInstance(securityService)) {
+        if (securityService instanceof TomcatSecurityService) {
             final TomcatSecurityService tomcatSecurityService = (TomcatSecurityService) securityService;
             final Request request = OpenEJBSecurityListener.requests.get();
             final GenericPrincipal genericPrincipal =
-                    new GenericPrincipal(principal.getName(), null, new ArrayList<>(groups), principal);
+                    new GenericPrincipal(
+                        principal.getName(),
+                        null,
+                        groups == null ? Collections.emptyList() : new ArrayList<>(groups),
+                        principal);
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());

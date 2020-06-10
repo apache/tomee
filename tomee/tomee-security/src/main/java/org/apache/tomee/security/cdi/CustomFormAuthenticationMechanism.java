@@ -26,17 +26,15 @@ import javax.security.enterprise.authentication.mechanism.http.AutoApplySession;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
 import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
-import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.HttpMethod;
 import java.util.function.Supplier;
 
 @ApplicationScoped
 @AutoApplySession
 @LoginToContinue
-public class FormAuthenticationMechanism implements HttpAuthenticationMechanism, LoginToContinueMechanism {
+public class CustomFormAuthenticationMechanism implements HttpAuthenticationMechanism, LoginToContinueMechanism {
     @Inject
     private Supplier<LoginToContinue> loginToContinue;
     @Inject
@@ -47,12 +45,9 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism,
                                                 final HttpMessageContext httpMessageContext)
             throws AuthenticationException {
 
-        final String username = request.getParameter("j_username");
-        final String password = request.getParameter("j_password");
-
-        if (validateForm(httpMessageContext.getRequest(), username, password)) {
+        if (validateCredentials(httpMessageContext)) {
             return httpMessageContext.notifyContainerAboutLogin(
-                    identityStoreHandler.validate(new UsernamePasswordCredential(username, password)));
+                    identityStoreHandler.validate(httpMessageContext.getAuthParameters().getCredential()));
         }
 
         return httpMessageContext.doNothing();
@@ -62,10 +57,7 @@ public class FormAuthenticationMechanism implements HttpAuthenticationMechanism,
         return loginToContinue.get();
     }
 
-    private boolean validateForm(final HttpServletRequest request, final String username, final String password) {
-        return request.getMethod().equals(HttpMethod.POST) &&
-               request.getRequestURI().endsWith("/j_security_check") &&
-               username != null && !username.isEmpty() &&
-               password != null && !password.isEmpty();
+    private boolean validateCredentials(final HttpMessageContext httpMessageContext) {
+        return httpMessageContext.getAuthParameters().getCredential() != null;
     }
 }

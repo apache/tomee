@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
+import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.INVALID;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.PROVIDE_GROUPS;
 import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.VALIDATE;
@@ -55,7 +56,7 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
 
         authorizationStores =
                 identityStores.stream()
-                              .filter(i -> i.validationTypes().contains(PROVIDE_GROUPS))
+                              .filter(i -> i.validationTypes().contains(PROVIDE_GROUPS) && !i.validationTypes().contains(VALIDATE))
                               .sorted(Comparator.comparing(IdentityStore::priority))
                               .collect(Collectors.toList());
     }
@@ -76,13 +77,16 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
             }
         }
 
-        if (authorizedStore == null) {
+        if (authorizedStore == null && validationResult.getStatus().equals(INVALID)) {
             return INVALID_RESULT;
+
+        } else if(authorizedStore == null) {
+            return NOT_VALIDATED_RESULT;
         }
 
         final Set<String> groups = new HashSet<>();
         if (authorizedStore.validationTypes().contains(PROVIDE_GROUPS)) {
-            groups.addAll(authorizedStore.getCallerGroups(validationResult));
+            groups.addAll(validationResult.getCallerGroups());
         }
 
         final CredentialValidationResult authorizedValidationResult = validationResult;

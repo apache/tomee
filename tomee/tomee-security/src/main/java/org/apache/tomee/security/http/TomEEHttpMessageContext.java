@@ -235,15 +235,15 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
         this.groups = null;
         try {
             handler.handle(new Callback[] {
-                new CallerPrincipalCallback(clientSubject, principal),
-                new GroupPrincipalCallback(clientSubject, groups.toArray(new String[groups.size()]))
+                new CallerPrincipalCallback(clientSubject, (String) null),
+                new GroupPrincipalCallback(clientSubject, null)
             });
         } catch (final IOException | UnsupportedCallbackException e) {
             e.printStackTrace();
         }
 
 
-        TomEESecurityContext.registerContainerAboutLogin(principal, groups);
+        TomEESecurityContext.registerContainerAboutLogin(new CallerPrincipal(null), null);
 
         return NOT_DONE;
     }
