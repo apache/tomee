@@ -198,7 +198,7 @@ public class PCClassFileTransformer
             return null;
         }
 
-        if (clsName.startsWith("java/") || clsName.startsWith("javax/"))
+        if (clsName.startsWith("java/") || clsName.startsWith("javax/") || clsName.startsWith("jakarta/"))
             return null;
         if (isEnhanced(bytes))
             return Boolean.FALSE;

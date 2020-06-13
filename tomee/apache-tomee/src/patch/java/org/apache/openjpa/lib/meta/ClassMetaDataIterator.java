@@ -67,7 +67,8 @@ public class ClassMetaDataIterator implements MetaDataIterator {
         // skip classes that can't have metadata
         if (cls != null && (cls.isPrimitive()
             || cls.getName().startsWith("java.")
-            || cls.getName().startsWith("javax."))) {
+            || cls.getName().startsWith("javax.")
+            || cls.getName().startsWith("jakarta."))) {
             _loader = null;
             _locs = Collections.emptyList();
             return;

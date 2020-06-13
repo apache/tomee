@@ -352,7 +352,8 @@ public abstract class AbstractMetaDataDefaults
      */
     protected static boolean isUserDefined(Class<?> cls) {
         return cls != null && !cls.getName().startsWith("java.")
-            && !cls.getName().startsWith ("javax.");
+            && !cls.getName().startsWith ("javax.")
+            && !cls.getName().startsWith ("jakarta.");
 	}
 
     /**
