@@ -533,6 +533,15 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 return SKIP_JMS || EMBEDDED;
             }
         }
+        if (name.startsWith("jakarta.")) {
+            final String sub = name.substring("jakarta.".length());
+            if (sub.startsWith("jws.")) {
+                return SKIP_JAXWS || EMBEDDED;
+            }
+            if (sub.startsWith("jms.")) {
+                return SKIP_JMS || EMBEDDED;
+            }
+        }
         return ParentClassLoaderFinder.Helper.get().getResource(name.replace('.', '/') + ".class") != null;
     }
 
