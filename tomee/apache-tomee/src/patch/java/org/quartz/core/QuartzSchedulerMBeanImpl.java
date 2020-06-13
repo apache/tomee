@@ -330,7 +330,7 @@ public class QuartzSchedulerMBeanImpl extends StandardMBean implements
 
     private Exception newPlainException(Exception e) {
         String type = e.getClass().getName();
-        if(type.startsWith("java.") || type.startsWith("javax.")) {
+        if(type.startsWith("java.") || type.startsWith("javax.") || type.startsWith("jakarta.")) {
             return e;
         } else {
             Exception result = new Exception(e.getMessage());
