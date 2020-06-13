@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.eclipse.persistence.internal.core.helper.CoreClassConstants;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.eclipse.persistence.internal.oxm.Constants;
 
@@ -93,7 +93,11 @@ public class Helper {
     public final static String URL = "java.net.URL";
     protected final static String JAVA_PKG = "java.";
     protected final static String JAVAX_PKG = "javax.";
+    protected final static String JAKARTA_PKG = "jakarta.";
     protected final static String JAVAX_WS_PKG = "javax.xml.ws.";
+    protected final static String JAKARTA_WS_PKG = "jakarta.xml.ws.";
+    protected final static String JAVAX_RPC_PKG = "javax.xml.rpc.";
+    protected final static String JAKARTA_RPC_PKG = "jakarta.xml.rpc.";
 
     private JavaClass collectionClass;
     private JavaClass setClass;
@@ -266,7 +270,7 @@ public class Helper {
      * @return
      */
     public JavaClass getType(JavaField field) {
-        JavaClass type = (JavaClass) field.getResolvedType();
+        JavaClass type = field.getResolvedType();
         try {
             return jModel.getClass(type.getRawName());
         } catch (Exception x) {}
@@ -274,7 +278,7 @@ public class Helper {
     }
 
     /**
-     * Return a JavaClass instance based on the @see javax.xml.bind.JAXBElement .
+     * Return a JavaClass instance based on the @see jakarta.xml.bind.JAXBElement .
      *
      * Replacement of direct access to JAXBELEMENT_CLASS field.
      *
@@ -317,8 +321,7 @@ public class Helper {
      *     JavaClass' raw name
      * 2 - the provided JavaClass' raw name starts with "java."
      * 3 - the provided JavaClass' raw name starts with "javax.", with
-     *     the exception of "javax.xml.ws."
-     *
+     *     the exception of "jakarta.xml.ws." and "javax.xml.rpc"
      * @param jClass
      * @return
      */
@@ -327,7 +330,12 @@ public class Helper {
         if(null == rawName) {
             return true;
         }
-        return (getXMLToJavaTypeMap().containsKey(rawName) || rawName.startsWith(JAVA_PKG) || (rawName.startsWith(JAVAX_PKG) && !rawName.startsWith(JAVAX_WS_PKG))) ;
+        return (getXMLToJavaTypeMap().containsKey(rawName) || rawName.startsWith(JAVA_PKG) || ((rawName.startsWith(JAVAX_PKG) || rawName.startsWith(JAKARTA_PKG)) && !(
+                rawName.startsWith(JAVAX_WS_PKG) ||
+                rawName.startsWith(JAVAX_RPC_PKG) ||
+                rawName.startsWith(JAKARTA_WS_PKG) ||
+                rawName.startsWith(JAKARTA_RPC_PKG)
+        )));
     }
 
     public void setClassLoader(ClassLoader loader) {
