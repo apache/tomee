@@ -158,7 +158,8 @@ public class MbeansDescriptorsIntrospectionSource extends ModelerSource
         // Anything in the java or javax package that
         // does not have a defined mapping is excluded.
         if (javaType.getName().startsWith("java.") ||
-            javaType.getName().startsWith("javax.")) {
+            javaType.getName().startsWith("javax.") ||
+            javaType.getName().startsWith("jakarta.")) {
             return false;
         }
 
