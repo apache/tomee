@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2020 Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 1998, 2018 IBM Corporation. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -31,9 +31,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.PersistenceException;
-import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.spi.ClassTransformer;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.exceptions.EntityManagerSetupException;
@@ -344,7 +344,7 @@ public class JavaSECMPInitializer extends JPAInitializer {
                 // Forced to check for java. and javax. packages here, because even if the class
                 // has been loaded by parent loader we would load it again
                 // (see comment in loadClass)
-                return !name.startsWith("java.") && !name.startsWith("javax.") && ((classNames == null) || !classNames.contains(name));
+                return !name.startsWith("java.") && !name.startsWith("javax.") && !name.startsWith("jakarta.") && ((classNames == null) || !classNames.contains(name));
             }
         }
 

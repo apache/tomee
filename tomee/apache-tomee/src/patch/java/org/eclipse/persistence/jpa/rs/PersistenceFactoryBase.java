@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.eclipse.persistence.dynamic.DynamicClassLoader;
@@ -145,7 +145,7 @@ public class PersistenceFactoryBase implements PersistenceContextFactory {
 
         // For now we'll copy the connection info from admin PU
         for (Map.Entry<String, ?> entry : originalProperties.entrySet()) {
-            if (entry.getKey().startsWith("javax") || entry.getKey().startsWith("eclipselink.log") || entry.getKey().startsWith("eclipselink.target-server")) {
+            if (entry.getKey().startsWith("javax") || entry.getKey().startsWith("jakarta") || entry.getKey().startsWith("eclipselink.log") || entry.getKey().startsWith("eclipselink.target-server")) {
                 properties.put(entry.getKey(), entry.getValue());
             }
         }

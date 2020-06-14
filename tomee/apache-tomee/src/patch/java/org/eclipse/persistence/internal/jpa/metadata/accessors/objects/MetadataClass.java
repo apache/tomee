@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -149,6 +150,7 @@ public class MetadataClass extends MetadataAnnotatedElement {
     /**
      * Allow comparison to Java classes and Metadata classes.
      */
+    @Override
     public boolean equals(Object object) {
         if (object instanceof Class) {
             if (getName() == null) {
@@ -393,6 +395,7 @@ public class MetadataClass extends MetadataAnnotatedElement {
     /**
      * INTERNAL:
      */
+    @Override
     public int getModifiers() {
         return m_modifiers;
     }
@@ -590,6 +593,7 @@ public class MetadataClass extends MetadataAnnotatedElement {
     /**
      * INTERNAL:
      */
+    @Override
     public void setModifiers(int modifiers) {
         m_modifiers = modifiers;
     }
@@ -597,10 +601,12 @@ public class MetadataClass extends MetadataAnnotatedElement {
     /**
      * INTERNAL:
      */
+    @Override
     public void setName(String name) {
         super.setName(name);
 
-        if ((!MetadataFactory.ALLOW_JDK) && (name.startsWith("java.") || name.startsWith("javax.")
+        if ((!MetadataFactory.ALLOW_JDK) && (name.startsWith("java.")
+                || name.startsWith("javax.") || name.startsWith("jakarta.")
                 || name.startsWith("org.eclipse.persistence.internal."))) {
             setIsJDK(true);
         }

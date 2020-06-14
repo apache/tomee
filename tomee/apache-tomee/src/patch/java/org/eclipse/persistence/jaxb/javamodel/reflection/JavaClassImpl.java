@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2018 Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2020 Oracle and/or its affiliates. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v. 2.0 which is available at
@@ -13,10 +13,6 @@
 // Contributors:
 //     Oracle - initial API and implementation from Oracle TopLink
 package org.eclipse.persistence.jaxb.javamodel.reflection;
-
-import org.eclipse.persistence.exceptions.JAXBException;
-import org.eclipse.persistence.internal.security.PrivilegedAccessHelper;
-import org.eclipse.persistence.jaxb.javamodel.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -32,6 +28,16 @@ import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.eclipse.persistence.exceptions.JAXBException;
+import org.eclipse.persistence.internal.security.PrivilegedAccessHelper;
+import org.eclipse.persistence.jaxb.javamodel.JavaAnnotation;
+import org.eclipse.persistence.jaxb.javamodel.JavaClass;
+import org.eclipse.persistence.jaxb.javamodel.JavaClassInstanceOf;
+import org.eclipse.persistence.jaxb.javamodel.JavaConstructor;
+import org.eclipse.persistence.jaxb.javamodel.JavaField;
+import org.eclipse.persistence.jaxb.javamodel.JavaMethod;
+import org.eclipse.persistence.jaxb.javamodel.JavaPackage;
 
 /**
  * INTERNAL:
@@ -57,7 +63,7 @@ public class JavaClassImpl implements JavaClass {
     protected boolean isMetadataComplete;
     protected JavaClass superClassOverride;
 
-    protected static final String XML_REGISTRY_CLASS_NAME = "javax.xml.bind.annotation.XmlRegistry";
+    protected static final String XML_REGISTRY_CLASS_NAME = "jakarta.xml.bind.annotation.XmlRegistry";
 
     public JavaClassImpl(Class javaClass, JavaModelImpl javaModelImpl) {
         this.jClass = javaClass;
@@ -326,7 +332,7 @@ public class JavaClassImpl implements JavaClass {
             }
             String className = nonInnerClass.getCanonicalName();
             if(className !=null){
-                int index = className.lastIndexOf(".");
+                int index = className.lastIndexOf('.');
                 if(index > -1){
                     return className.substring(0, index);
                 }
@@ -355,7 +361,9 @@ public class JavaClassImpl implements JavaClass {
                 } else {
                     Class parent = null;
                     for(Class next:superInterfaces) {
-                        if(!(next.getName().startsWith("java.") || next.getName().startsWith("javax."))) {
+                        if(!(next.getName().startsWith("java.")
+                                || next.getName().startsWith("javax.")
+                                || next.getName().startsWith("jakarta."))) {
                             if(parent == null) {
                                 parent = next;
                             } else {
