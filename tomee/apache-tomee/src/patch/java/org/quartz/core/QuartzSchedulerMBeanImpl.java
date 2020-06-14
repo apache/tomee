@@ -1,7 +1,7 @@
-package org.quartz.core;
+package org.apache.openejb.quartz.core;
 
-import static org.quartz.JobKey.jobKey;
-import static org.quartz.TriggerKey.triggerKey;
+import static org.apache.openejb.quartz.JobKey.jobKey;
+import static org.apache.openejb.quartz.TriggerKey.triggerKey;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -30,24 +30,24 @@ import javax.management.StandardMBean;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobKey;
-import org.quartz.JobListener;
-import org.quartz.SchedulerException;
-import org.quartz.SchedulerListener;
-import org.quartz.Trigger;
-import org.quartz.Trigger.TriggerState;
-import org.quartz.TriggerKey;
-import org.quartz.core.jmx.JobDetailSupport;
-import org.quartz.core.jmx.JobExecutionContextSupport;
-import org.quartz.core.jmx.QuartzSchedulerMBean;
-import org.quartz.core.jmx.TriggerSupport;
-import org.quartz.impl.matchers.GroupMatcher;
-import org.quartz.impl.triggers.AbstractTrigger;
-import org.quartz.spi.OperableTrigger;
+import org.apache.openejb.quartz.JobDataMap;
+import org.apache.openejb.quartz.JobDetail;
+import org.apache.openejb.quartz.JobExecutionContext;
+import org.apache.openejb.quartz.JobExecutionException;
+import org.apache.openejb.quartz.JobKey;
+import org.apache.openejb.quartz.JobListener;
+import org.apache.openejb.quartz.SchedulerException;
+import org.apache.openejb.quartz.SchedulerListener;
+import org.apache.openejb.quartz.Trigger;
+import org.apache.openejb.quartz.Trigger.TriggerState;
+import org.apache.openejb.quartz.TriggerKey;
+import org.apache.openejb.quartz.core.jmx.JobDetailSupport;
+import org.apache.openejb.quartz.core.jmx.JobExecutionContextSupport;
+import org.apache.openejb.quartz.core.jmx.QuartzSchedulerMBean;
+import org.apache.openejb.quartz.core.jmx.TriggerSupport;
+import org.apache.openejb.quartz.impl.matchers.GroupMatcher;
+import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
+import org.apache.openejb.quartz.spi.OperableTrigger;
 
 public class QuartzSchedulerMBeanImpl extends StandardMBean implements
         NotificationEmitter, QuartzSchedulerMBean, JobListener,
