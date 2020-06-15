@@ -35,7 +35,7 @@ language governing permissions and limitations under the License. -->
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
         <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.1.1</version>
         <configuration>
           <classifier>jakartaee9</classifier>
         </configuration>

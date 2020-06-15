@@ -120,7 +120,7 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
         <artifactId>org.eclipse.transformer.maven</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.1.1</version>
         <configuration>
           <classifier>jakartaee9</classifier>
         </configuration>
