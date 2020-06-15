@@ -522,6 +522,22 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.patch</groupId>
+        <artifactId>tomee-patch-plugin</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <configuration>
+          <select>.*jakartaee.*\.zip</select>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

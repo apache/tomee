@@ -404,6 +404,9 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
         if (name.startsWith("javax.")) {
             return true;
         }
+        if (name.startsWith("jakarta.")) {
+            return true;
+        }
         if (name.startsWith("sun.")) {
             return true;
         }

@@ -130,7 +130,7 @@ public class Start {
 
                 cmd.add(key + value);
 
-            } else if (!key.matches("^(java|javax|os|sun|user|file|awt|line|path)\\..*")) {
+            } else if (!key.matches("^(java|javax|jakarta|os|sun|user|file|awt|line|path)\\..*")) {
 
                 cmd.add("-D" + key + "=" + value);
 
