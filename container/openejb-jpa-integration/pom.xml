@@ -50,8 +50,9 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.persistence</groupId>
+      <groupId>org.apache.tomee.patch</groupId>
       <artifactId>eclipselink</artifactId>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>

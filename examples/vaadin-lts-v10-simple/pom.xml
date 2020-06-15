@@ -119,8 +119,8 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       </plugin>
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
-        <artifactId>transformer-maven-plugin</artifactId>
-        <version>0.0.8</version>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1-SNAPSHOT</version>
         <configuration>
           <classifier>jakartaee9</classifier>
         </configuration>
