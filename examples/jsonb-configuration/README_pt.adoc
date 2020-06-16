@@ -1,19 +1,17 @@
 :index-group: JSON-B
 :jbake-type: page
 :jbake-status: status=published
-= JSON-B Configuration
+= Configuração JSON-B
 
-This examples shows how to customize jsonb for a JAX-RS Application.
-JSONB is the new javaee-api:8.0 standard for json
-serialization/deserialization. Few annotations are needed and
-JsonbConfig offers many configurations.
+Este exemplo mostra como customizar jsonb para uma aplicaçao JAX-RS.
+JSONB é o novo padrão javaee-api: 8.0 para json serialização/desserialização. 
+São necessárias poucas anotações e o JsonbConfig oferece muitas configurações.
 
-== Run and test Endpoint
+== Executando e testando o Endpoint
 
-the application can be run with `mvn clean install tomee:run' if port
-8080 is available you can invoke the following endpoint: (GET)
-http://localhost:8080/jsonb-configuration/api/users that should respond
-with the following json:
+O aplicativo pode ser executado com `mvn clean install tomee:run' se a porta
+8080 está disponível, você pode chamar o seguinte terminal:(GET)
+http://localhost:8080/jsonb-configuration/api/users que deve responder com o seguinte json: 
 
 ....
 [
@@ -32,8 +30,7 @@ with the following json:
 
 == @ApplicationPath
 
-JAXRS entry point class, as follows jaxrs will load all the annotated
-@Path classes and methods without specifying them.
+Classe de ponto de entrada JAXRS, da seguinte maneira jaxrs carregará todas as classes e métodos @Path anotados sem especificá-los.
 
 ....
 import javax.ws.rs.ApplicationPath;
@@ -45,9 +42,9 @@ public class JAXRSApplication extends Application {
 }
 ....
 
-== @Path Rest resource
+== Recurso @Path Rest
 
-Simple jaxrs class with a GET endpoint
+Classe jaxrs simples com um endpoint GET
 
 ....
 import java.util.ArrayList;
@@ -81,10 +78,9 @@ public class UserService {
 }
 ....
 
-== JSONB Configuration
+== Configuração JSONB
 
-Implementing ContextResolver<> you can customize jaxrs defaults, in this
-example we are going to customize JSONB serialization/deserialization
+Implementando ContextResolver<>, você pode personalizar os padrões jaxrs; neste exemplo, vamos personalizar a serialização/desserialização JSONB
 
 ....
 import javax.json.bind.Jsonb;
@@ -100,7 +96,7 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
     private Jsonb jsonb;
 
     public JSONBConfiguration() {
-        // jsonbConfig offers a lot of configurations.
+        // jsonbConfig oferece muitas configurações.
         JsonbConfig config = new JsonbConfig().withFormatting(true)
                 .withPropertyNamingStrategy(PropertyNamingStrategy.UPPER_CAMEL_CASE)
                 .withDateFormat("yyyy - MM - dd", Locale.ENGLISH);
@@ -116,11 +112,9 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
 }
 ....
 
-JsonbConfig offers many configurations.
+== Acessando o endpoint rest
 
-== Accessing the rest endpoint
-
-The test spin up an openejb webapp and invoke the users endpoint
+O teste gera uma aplicação web openejb e chama o endpoint do usuário
 
 ....
 import java.io.IOException;
@@ -156,21 +150,20 @@ public class UserServiceTest {
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy - MM - dd");
 
-        // test withDateFormat("yyyy - MM - dd")
+        // teste withDateFormat("yyyy - MM - dd")
         Assert.assertTrue(message.contains(sdf.format(new Date())));
-        // test withFormatting(true)
+        // teste withFormatting(true)
         Assert.assertTrue(message.contains(System.getProperty("line.separator")));
     }
 
 }
 ....
 
-== Running
+== Executando
 
-Running the example can be done from maven with a simple `mvn clean
-install' command run from the `jsonb-configuration' directory.
+A execução do exemplo pode ser feita no maven com um simples comando `mvn clean install', executado no diretório `jsonb-configuration'.
 
-When run you should see output similar to the following.
+Ao executar, você verá uma saída semelhante à seguinte.
 
 ....
 -------------------------------------------------------
@@ -269,13 +262,12 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
 ....
 
-=== Inside the jar
+=== Dentro do jar
 
-javaee-api:8.0 brings in all the dependencies needed to spin up a
-working REST application.
+javaee-api:8.0 traz todas as dependências necessárias para iniciar
+um aplicativo REST que esteja funcionando.
 
-If we look at the jar built by maven, we’ll see the application itself
-is quite small:
+Se olharmos para o jar construído por maven, veremos que o aplicativo em si é bem pequeno:
 
 ....
 $ jar tvf target/jsonb-configuration-8.0.0-SNAPSHOT.war 
@@ -299,6 +291,4 @@ $ jar tvf target/jsonb-configuration-8.0.0-SNAPSHOT.war
    128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/pom.properties
 ....
 
-This single jar could be deployed any any compliant Java EE
-implementation. In TomEE you’d simply place it in the
-`tomee.home/webapps/` directory.
+Esse jar único pode ser implantado em qualquer Java EE compatível implementação. No TomEE, basta colocá-lo no diretório `tomee.home/webapps/`.
