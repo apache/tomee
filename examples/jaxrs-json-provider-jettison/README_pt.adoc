@@ -1,25 +1,24 @@
-= JAX-RS JSON Provider With Jettison
+= Provedor JAX-RS JSON com Jettison
 :index-group: REST
 :jbake-type: page
 :jbake-status: status=published
 
-This is a example on how to configure on TomEE  7.x or later the legacy JSON provider, Jettison, used by TomEE 1.7.x .
+Este é um exemplo de como configurar no TomEE 7.x ou posterior o provedor JSON herdado, Jettison, usado pelo TomEE 1.7.x.
+
+Este cenário é util quando aplicações REST são migradas de TomEE 1.7.x para TomEE 7.x ou posterior e você quer manter a saída JSON herdada do Jettison 1.3.7.
 
 
-This scenario is useful when REST applications are migrated from TomEE 1.7.x into TomEE  7.x or later and you want to keep the legacy JSON output from Jettison 1.3.7.
-
-
-=== Run the tests
-This example contains 2 test cases, one using Jettison and one without it for comparison purposes.
+=== Executando os testes
+Este exemplo contém 2 casos de teste, um usando o Jettison e outro sem ele para fins de comparação.
 
 ....
 mvn clean test 
 ....
 
 
-=== Enabling Jettison as Json Provider
+=== Habilitando o Jettison como provedor Json
 
-You need to provide the following 2 files in your `WEB-INF` folder:
+Você precisa fornecer os 2 arquivos a seguir na pasta `WEB-INF`:
 
 * openejb-jar.xml
 ....
@@ -50,11 +49,11 @@ You need to provide the following 2 files in your `WEB-INF` folder:
 
 ....
 
-And finally make sure the Jettison JAR 1.3.7 is available in TomEE /lib folder.
+E, finalmente, verifique se o Jettison JAR 1.3.7 está disponível na pasta TomEE /lib.
 
-=== Comparing outputs
+=== Comparando saídas
 
-`Item.java` is the POJO we are going to process:
+`Item.java` é o POJO que vamos processar:
 
 ....
 package org.superbiz;
@@ -122,27 +121,26 @@ public class Item {
 ....
 
 
-Legacy JSON output using Jettison 1.3.7:
+Saída JSON herdada usando o Jettison 1.3.7:
 ....
 {"book":{"@id":"134","@availableSince":"2019-05-27 15:27:16.878","@available":"false","$":"TomEE Tutorial"}}
 ....
 
-Current JSON output:
+Saída JSON atual:
 
 ....
 {"available":false,"availableSince":"2019-05-27 15:27:16.878","id":134,"name":"TomEE Tutorial"}
 ....
 
-=== About the Test architecture
+=== Sobre a arquitetura de teste
 
-The test cases from this project are built using Arquillian and TomEE
-Remote. The arquillian configuration can be found in
-`src/test/resources/arquillian.xml`
+Os casos de teste deste projeto são construídos usando Arquillian e TomEE
+Controlo remoto. A configuração arquilliana pode ser encontrada em `src/test/resources/arquillian.xml`
 
-An important part for this configuration is the inclusion of Jettison jar during test execution:
+Uma parte importante dessa configuração é a inclusão do jar do Jettison durante a execução do teste:
 
 ....
 <property name="additionalLibs">mvn:org.codehaus.jettison:jettison:1.3.7</property>
 ....
 
-If a version > 1.3.7 is used, the JSON output start to change into a modern default format: Boolean and numeric values are not longer surrounded with double quotes.
+Se uma versão> 1.3.7 for usada, a saída JSON começará a mudar para um formato padrão moderno: valores booleanos e numéricos não são mais cercados por aspas duplas.
