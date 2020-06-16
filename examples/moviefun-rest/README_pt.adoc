@@ -3,19 +3,17 @@
 :jbake-status: status=published
 = MovieFun REST
 
-This example shows the CRUD of a movie funny application. +
-The web client is built using backbone and the backend is built with
-JAX-RS, JPA for the persistence in a H2 database.
+Este exemplo mostra o CRUD de um aplicativo engraçado para filmes.
+O web client é construído usando o backbone e o back-end é construído com
+JAX-RS, JPA para a persistência em um banco de dados H2.
 
-== The Code
+== O código
 
 === ApplicationConfig
 
-Here use JAX-RS annotations to create resources. @ApplicationPath
-identifies the application path that serves as the base URI for all
-resources. The implementation of method getClasses will be called by the
-JAX-RS framework to get information about this application. In the
-following example, it defines two resources: LoadRest and MoviesRest.
+Aqui, use anotações JAX-RS para criar recursos. 
+@ApplicationPath identifica o caminho do aplicativo que serve como o URI base para todos os recursos.
+A implementação do método getClasses será chamada pela estrutura JAX-RS para obter informações sobre este aplicativo. No exemplo a seguir, ele define dois recursos: LoadRest e MoviesRest.
 
 ....
 package org.superbiz.moviefun.rest;
@@ -39,11 +37,7 @@ public class ApplicationConfig extends Application {
 
 === LoadRest
 
-It is a POJO which is mapped to a root URL (``load'') with the
-annotation @Path and has Java methods for serving requests to this root
-URL and its sub-URLs. In this case, only have a POST request where use
-an EJB (MoviesBean) injected to it class for do an initial load of data
-in the database.
+É um POJO que é mapeado para um URL raiz (`load`) com o anotação @Path e possui métodos Java para servir solicitações a este URL raiz e seus sub-URLs. Nesse caso, só tem uma solicitação POST onde usa um EJB (MoviesBean) injetado na sua classe para fazer um carregamento inicial de dados no banco de dados.
 
 ....
 package org.superbiz.moviefun.rest;
@@ -76,10 +70,7 @@ public class LoadRest {
 
 === MovieRest
 
-It is a POJO which is mapped to a root URL (``movies'') with the
-annotation @Path and has Java methods for serving requests of entities
-movies in JSON format according to the @Produces annotation. Here has a
-method for each HTTP method (GET, POST, PUT, DELETE).
+É um POJO que é mapeado para um URL raiz (`filmes`) com o anotação @Path e possui métodos Java para veicular solicitações de filmes de entidades no formato JSON de acordo com a anotação @Produces. Aqui tem um método para cada método HTTP (GET, POST, PUT, DELETE).
 
 ....
 package org.superbiz.moviefun.rest;
@@ -152,7 +143,7 @@ public class MoviesRest {
 
 === Movie
 
-This is the entity Movie that will be persisted by JPA.
+Essa é a entidade Movie que será persistida pela JPA.
 
 ....
 package org.superbiz.moviefun;
@@ -245,9 +236,7 @@ public class Movie {
 
 === MoviesBean
 
-This is the EJB according to the @Stateless annotation. It uses the unit persistence "movie-unit" for persist 
-entities movie.
-
+Este é o EJB de acordo com a anotação @Stateless. Ele usa a persistência da unidade `movie-unit` para persistir persistir entidades de filmes.
 ....
 package org.superbiz.moviefun;
 
@@ -326,14 +315,15 @@ public class MoviesBean {
 }
 ....
 
-== Running
+== Executando
 
-Running the example is fairly simple. In the ``moviefun-rest'' directory
-run:
+A execução do exemplo é bastante simples. No diretório `moviefun-rest` execute:
 
+....
 $ mvn clean install
+....
 
-Which should create output like the following.
+O que deve criar uma saída como a seguir.
 
 ....
 INFO: OpenJPA dynamically loaded a validation provider.
