@@ -1,0 +1,206 @@
+:index-group: Referencing EJBs
+:jbake-type: page
+:jbake-status: status=published
+= Injeção de Ejbs
+
+Este exemplo mostra como usar a anotação `@EJB` em uma classe bean para referenciar outros beans.
+
+Essa funcionalidade é geralmente chamada de injeção de dependência (consulte
+http://www.martinfowler.com/articles/injection.html) e foi
+recentemente introduzido no Java EE 5.
+
+Neste exemplo em particular, nós vamos criar dois bean de sessão sem estado
+
+* Um DataStore session bean
+* Um DataReader session bean
+
+O bean DataReader usa o DataStore para recuperar algumas informações e veremos como, dentro do bean DataReader, obter uma referência ao bean DataStore usando a anotação `@EJB`, evitando assim o uso da API JNDI.
+
+== DataReader
+
+[source,java,numbered]
+----
+package org.superbiz.injection;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+
+/**
+* Este é um bean de sessão sem estado pojo do estilo EJB 3.1
+* Toda implementação de bean de sessão sem estado deve ser anotada
+* usando a anotação @Stateless
+* Este EJB possui 2 interfaces de negócios: DataReaderRemote, um negócio remoto
+* interface e DataReaderLocal, uma interface de negócios local
+ * <p/>
+ * As variáveis de instância 'dataStoreRemote' são anotadas com a anotação @EJB:
+ * isso significa que o servidor de aplicativos, em tempo de execução, injetará nesta instância
+ * variável uma referência ao EJB DataStoreRemote
+ * <p/>
+ * As variáveis de instância 'dataStoreLocal' são anotadas com a anotação @EJB:
+ * isso significa que o servidor de aplicativos, em tempo de execução, injetará nesta instância
+ * variável uma referência ao EJB DataStoreLocal
+ */
+@Stateless
+public class DataReader {
+
+    @EJB
+    private DataStoreRemote dataStoreRemote;
+    @EJB
+    private DataStoreLocal dataStoreLocal;
+    @EJB
+    private DataStore dataStore;
+
+    public String readDataFromLocalStore() {
+        return "LOCAL:" + dataStoreLocal.getData();
+    }
+
+    public String readDataFromLocalBeanStore() {
+        return "LOCALBEAN:" + dataStore.getData();
+    }
+
+    public String readDataFromRemoteStore() {
+        return "REMOTE:" + dataStoreRemote.getData();
+    }
+}
+----
+
+== DataStore
+
+[source,java,numbered]
+----
+package org.superbiz.injection;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+/**
+ * Este é um bean de sessão sem estado pojo do estilo EJB 3
+ * Toda implementação de bean de sessão sem estado deve ser anotada
+ * usando a anotação @Stateless
+ * Este EJB possui 2 interfaces de negócios: DataStoreRemote, um negócio remoto
+ * interface e DataStoreLocal, uma interface de negócios local
+ */
+@Stateless
+@LocalBean
+public class DataStore implements DataStoreLocal, DataStoreRemote {
+
+    public String getData() {
+        return "42";
+    }
+}
+----
+
+== DataStoreLocal
+
+[source,java,numbered]
+----
+package org.superbiz.injection;
+
+import javax.ejb.Local;
+
+/**
+ * Essa é uma interface de negócios local do EJB 3
+ * Uma interface comercial local pode ser anotada com o @Local
+ * anotação, mas é opcional. Uma interface de negócios que é
+ * não anotado com @Local ou @Remote é assumido como Local
+ */
+@Local
+public interface DataStoreLocal {
+
+    public String getData();
+}
+----
+
+== DataStoreRemote
+
+[source,java,numbered]
+----
+package org.superbiz.injection;
+
+import javax.ejb.Remote;
+
+/**
+ * Esta é uma interface de negócios remota EJB 3
+ * Uma interface comercial remota deve ser anotada com a anotação @Remote
+ */
+@Remote
+public interface DataStoreRemote {
+
+    public String getData();
+}
+----
+
+== EjbDependencyTest
+
+[source,java,numbered]
+----
+package org.superbiz.injection;
+
+import junit.framework.TestCase;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+
+/**
+ * Um caso de teste para DataReaderImpl ejb, testando a interface remota e local
+ */
+public class EjbDependencyTest extends TestCase {
+
+    public void test() throws Exception {
+        final Context context = EJBContainer.createEJBContainer().getContext();
+
+        DataReader dataReader = (DataReader) context.lookup("java:global/injection-of-ejbs/DataReader");
+
+        assertNotNull(dataReader);
+
+        assertEquals("LOCAL:42", dataReader.readDataFromLocalStore());
+        assertEquals("REMOTE:42", dataReader.readDataFromRemoteStore());
+        assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
+    }
+}
+----
+
+== Executando
+
+....
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.injection.EjbDependencyTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/injection-of-ejbs
+INFO - openejb.base = /Users/dblevins/examples/injection-of-ejbs
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-ejbs/target/classes
+INFO - Beginning load: /Users/dblevins/examples/injection-of-ejbs/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-ejbs
+INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+INFO - Auto-creating a container for bean DataReader: Container(type=STATELESS, id=Default Stateless Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.injection.EjbDependencyTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Enterprise application "/Users/dblevins/examples/injection-of-ejbs" loaded.
+INFO - Assembling app: /Users/dblevins/examples/injection-of-ejbs
+INFO - Jndi(name="java:global/injection-of-ejbs/DataReader!org.superbiz.injection.DataReader")
+INFO - Jndi(name="java:global/injection-of-ejbs/DataReader")
+INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStore")
+INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreLocal")
+INFO - Jndi(name="java:global/injection-of-ejbs/DataStore!org.superbiz.injection.DataStoreRemote")
+INFO - Jndi(name="java:global/injection-of-ejbs/DataStore")
+INFO - Jndi(name="java:global/EjbModule355598874/org.superbiz.injection.EjbDependencyTest!org.superbiz.injection.EjbDependencyTest")
+INFO - Jndi(name="java:global/EjbModule355598874/org.superbiz.injection.EjbDependencyTest")
+INFO - Created Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
+INFO - Created Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
+INFO - Created Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=DataReader, ejb-name=DataReader, container=Default Stateless Container)
+INFO - Started Ejb(deployment-id=DataStore, ejb-name=DataStore, container=Default Stateless Container)
+INFO - Started Ejb(deployment-id=org.superbiz.injection.EjbDependencyTest, ejb-name=org.superbiz.injection.EjbDependencyTest, container=Default Managed Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-ejbs)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.225 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+....
