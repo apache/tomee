@@ -592,7 +592,7 @@
         <module>arquillian</module>
         <module>utils</module>
         <module>tomee</module>
-        <module>jakartaee9</module>
+        <module>jakarta</module>
       </modules>
       <repositories>
         <repository>
