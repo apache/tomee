@@ -27,6 +27,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tomee.jakarta</groupId>
   <artifactId>apache-tomee</artifactId>
   <version>9.0.0-M1-SNAPSHOT</version>
   <packaging>jar</packaging>
