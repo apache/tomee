@@ -23,13 +23,13 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.3</version>
+    <version>8.0.3-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee.jakarta</groupId>
   <artifactId>apache-tomee</artifactId>
-  <version>9.0.0-M1</version>
+  <version>9.0.0-M1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>TomEE :: TomEE :: Apache TomEE 9</name>
 
@@ -334,8 +334,4 @@
     </plugins>
   </build>
 
-
-  <scm>
-    <tag>apache-tomee-9.0.0-M1</tag>
-  </scm>
 </project>
