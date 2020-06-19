@@ -33,7 +33,7 @@
   <name>TomEE :: TomEE :: Apache TomEE 9</name>
 
   <properties>
-    <tomee.version>8.0.3</tomee.version>
+    <tomee.version>8.0.3-SNAPSHOT</tomee.version>
     <tomee.build.name>${project.groupId}.tomee.tomee</tomee.build.name>
     <webprofile.work-dir>${project.build.directory}/webprofile-work-dir</webprofile.work-dir>
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
@@ -317,7 +317,7 @@
       <plugin>
         <groupId>org.apache.tomee.patch</groupId>
         <artifactId>tomee-patch-plugin</artifactId>
-        <version>0.1</version>
+        <version>0.1-SNAPSHOT</version>
         <configuration>
           <select>apache-tomee.*\.zip</select>
         </configuration>
