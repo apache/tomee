@@ -44,7 +44,7 @@
 
   <dependencies>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <version>${tomee.version}</version>
       <classifier>webprofile</classifier>
@@ -58,7 +58,7 @@
       </exclusions>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <version>${tomee.version}</version>
       <classifier>microprofile</classifier>
@@ -72,7 +72,7 @@
       </exclusions>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <version>${tomee.version}</version>
       <classifier>plume</classifier>
@@ -86,7 +86,7 @@
       </exclusions>
     </dependency>
     <dependency> <!-- to be sure to have it -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
       <version>${tomee.version}</version>
       <classifier>plus</classifier>
