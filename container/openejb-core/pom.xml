@@ -724,6 +724,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb</artifactId>
+      <version>${jacorb.version}</version>
+    </dependency>
+
   </dependencies>
 
   <profiles>

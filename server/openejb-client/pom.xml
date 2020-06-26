@@ -166,5 +166,13 @@
       <version>1.60</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.rmi</groupId>
+      <artifactId>jboss-rmi-api_1.0_spec</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jacorb</groupId>
+      <artifactId>jacorb</artifactId>
+    </dependency>
   </dependencies>
 </project>
