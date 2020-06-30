@@ -1,0 +1,334 @@
+Title: Injeção do EntityManager
+
+Neste exemplo é mostrado o uso do `@PersistenceContext` para se ter um `EntityManager` com um 
+persistence context `EXTENDED`, injetado em um bean `@Stateful`. Um bean do tipo `@Entity` JPA, é 
+usado com o `EntityManager` para criar, inserir e alterar dados em um banco de dados.
+
+## Criando uma entidade JPA
+
+A entidade por si é simples um pojo com a anotação `@Entity`. Nós criamos uma chamada `Movie` o qual nós queremos usar para armazenar registros de filmes.
+
+    package org.superbiz.injection.jpa;
+
+    import javax.persistence.Entity;
+    
+    @Entity
+    public class Movie {
+
+        @Id @GeneratedValue
+        private long id;
+
+        private String director;
+        private String title;
+        private int year;
+
+        public Movie() {
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public Movie(String director, String title, int year) {
+            this.director = director;
+            this.title = title;
+            this.year = year;
+        }
+
+        public String getDirector() {
+            return director;
+        }
+
+        public void setDirector(String director) {
+            this.director = director;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public int getYear() {
+            return year;
+        }
+
+        public void setYear(int year) {
+            this.year = year;
+        }
+    }
+
+## Configuração do EntityManager através do arquivo persistence.xml
+
+A entidade `Movie` acima foi criada, removida, atualizada ou deletada através do objeto `EntityManager`. O `EntityManager` por si só é
+configurado através do arquivo `META-INF/persistence.xml` que é colocado no mesmo jar que a entidade `Movie`.
+
+    <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+      <persistence-unit name="movie-unit">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <class>org.superbiz.injection.jpa.Movie</class>
+
+        <properties>
+          <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+        </properties>
+      </persistence-unit>
+    </persistence>
+
+Informo que a entidade `Movie` está listada através do elemento `<class>`.  Isto não é requerido, mas pode nos ajudar 
+quando testamos ou quando a classe `Movie` estiver localizada em um jar e que o jar contenha o arquivo `persistence.xml`.
+
+## Injeção através do @PersistenceContext
+
+O `EntityManager` por si só, é criado como um contêiner e a informação é usada no `persistence.xml`, e ai para se usar isto 
+em tempo de execução, nós simplesmente precisamos requisitar que isto seja injetado dentro de seus componentes. 
+Nós iremos fazer isso através do `@PersistenceContext`.
+
+A anotação `@PersistenceContext`, precisa de alguma forma ser usada em qualquer bean CDI, EJB, Servlet, Servlet Listener, Servlet Filter, ou JSF ManagedBean.  
+Se você não usa EJB, você precisa ter de utilizar um `UserTransaction`, para criar e submeter transações manualmente. 
+Uma transação é requerida, para alguém que utilizou de métodos de criação, atualização ou deleção para trabalhar com o EntityManager.
+
+    package org.superbiz.injection.jpa;
+
+    import javax.ejb.Stateful;
+    import javax.persistence.EntityManager;
+    import javax.persistence.PersistenceContext;
+    import javax.persistence.PersistenceContextType;
+    import javax.persistence.Query;
+    import java.util.List;
+    
+    @Stateful
+    public class Movies {
+    
+        @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
+        private EntityManager entityManager;
+    
+        public void addMovie(Movie movie) throws Exception {
+            entityManager.persist(movie);
+        }
+    
+        public void deleteMovie(Movie movie) throws Exception {
+            entityManager.remove(movie);
+        }
+    
+        public List<Movie> getMovies() throws Exception {
+            Query query = entityManager.createQuery("SELECT m from Movie as m");
+            return query.getResultList();
+        }
+    }
+
+Por um motivo particular o `EntityManager` é injetado como um persistence context `EXTENDED`, qual o simples meio para que o `EntityManager`
+seja criado quando o bean `@Stateful` é criado e destruído, quando o bean `@Stateful` é destruído. Simplesmente, o dado é colocado 
+no `EntityManager` que é cacheado para o tempo de vida do bean `@Stateful`.
+
+O uso de persistence contexts `EXTENDED` está **somente** disponível para beans `@Stateful`. Veja na página [Conceitos JPA](../../jpa-concepts.html) 
+para um alto nível de explicação do que o "persistence context" é realmente, e de que forma isto é importante para o JPA.
+
+## Executando o teste MoviesTest
+
+Testar JPA é muito fácil, nós podemos simplesmente usar a API `EJBContainer` para criar um contêiner no nosso caso de teste.
+
+    package org.superbiz.injection.jpa;
+    
+    import junit.framework.TestCase;
+    
+    import javax.ejb.embeddable.EJBContainer;
+    import javax.naming.Context;
+    import java.util.List;
+    import java.util.Properties;
+    
+    //START SNIPPET: code
+    public class MoviesTest extends TestCase {
+    
+        public void test() throws Exception {
+    
+            final Properties p = new Properties();
+            p.put("movieDatabase", "new://Resource?type=DataSource");
+            p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+            p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+    
+            final Context context = EJBContainer.createEJBContainer(p).getContext();
+    
+            Movies movies = (Movies) context.lookup("java:global/injection-of-entitymanager/Movies");
+    
+            movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+            movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
+            movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
+    
+            List<Movie> list = movies.getMovies();
+            assertEquals("List.size()", 3, list.size());
+    
+            for (Movie movie : list) {
+                movies.deleteMovie(movie);
+            }
+    
+            assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+        }
+    }
+
+# Rodando a aplicação
+
+Quando nós executarmos nosso caso de teste, veremos uma saída semelhante com a seguinte. 
+    
+    -------------------------------------------------------
+     T E S T S
+    -------------------------------------------------------
+    Running org.superbiz.injection.jpa.MoviesTest
+    Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+    http://tomee.apache.org/
+    INFO - openejb.home = /Users/dblevins/examples/injection-of-entitymanager
+    INFO - openejb.base = /Users/dblevins/examples/injection-of-entitymanager
+    INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+    INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+    INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+    INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+    INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-entitymanager/target/classes
+    INFO - Beginning load: /Users/dblevins/examples/injection-of-entitymanager/target/classes
+    INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-entitymanager
+    INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+    INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+    INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+    INFO - Auto-creating a container for bean org.superbiz.injection.jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+    INFO - Configuring PersistenceUnit(name=movie-unit)
+    INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+    INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+    INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+    INFO - Enterprise application "/Users/dblevins/examples/injection-of-entitymanager" loaded.
+    INFO - Assembling app: /Users/dblevins/examples/injection-of-entitymanager
+    INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 462ms
+    INFO - Jndi(name="java:global/injection-of-entitymanager/Movies!org.superbiz.injection.jpa.Movies")
+    INFO - Jndi(name="java:global/injection-of-entitymanager/Movies")
+    INFO - Jndi(name="java:global/EjbModule1461341140/org.superbiz.injection.jpa.MoviesTest!org.superbiz.injection.jpa.MoviesTest")
+    INFO - Jndi(name="java:global/EjbModule1461341140/org.superbiz.injection.jpa.MoviesTest")
+    INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Created Ejb(deployment-id=org.superbiz.injection.jpa.MoviesTest, ejb-name=org.superbiz.injection.jpa.MoviesTest, container=Default Managed Container)
+    INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+    INFO - Started Ejb(deployment-id=org.superbiz.injection.jpa.MoviesTest, ejb-name=org.superbiz.injection.jpa.MoviesTest, container=Default Managed Container)
+    INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-entitymanager)
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.301 sec
+    
+    Results :
+    
+    Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+    
+## Teste de Performance
+
+### Pré-requisitos
+
+
+- Oralce DB
+   
+   * Atualize seu arquivo maven `setings.xml` para conter na seção `<servers>` a seguinte entrada:
+
+    ```xml   
+        <server>
+            <id>maven.oracle.com </id>
+            <username>YourOracleAccountUsername</username>
+            <password>YourOracleAccountPassword</password>
+            <configuration>
+                <basicAuthScope>
+                <host>ANY </host>
+                <port>ANY </port>
+                <realm>OAM 11g </realm>
+                </basicAuthScope>
+                <httpConfiguration>
+                <all>
+                <params>
+                <property>
+                <name>http.protocol.allow-circular-redirects </name>
+                <value>%b,true </value>
+                </property>
+                </params>
+                </all>
+                </httpConfiguration>
+            </configuration>
+        </server>
+    ```
+            
+   * Atualize o arquivo `pom.xml`, na seção `<dependency>` com a entrada:
+    
+    ```xml
+        <dependency>
+          <groupId>com.oracle.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>18.3.0.0</version>
+          <scope>provided</scope>
+        </dependency>
+    ```
+    
+   * Atualize o arquivo `pom.xml`, seção `<repositories>` com a entrada:    
+ 
+    ```xml               
+        <repository>
+          <id>maven.oracle.com</id>
+          <name>oracle-maven-repo</name>
+          <url>https://maven.oracle.com</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </releases>
+        </repository>
+    ```
+    
+   * Atualize o arquivo `pom.xml`, depois da seção `</repositories>`, adicionando a entrada:
+
+    ```xml        
+        <pluginRepositories>
+            <pluginRepository>
+              <id>maven.oracle.com</id>
+              <name>oracle-maven-repo</name>
+              <url>https://maven.oracle.com</url>
+              <layout>default</layout>
+              <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+              </releases>
+            </pluginRepository>
+        </pluginRepositories>   
+    ```
+
+   * Atualize o arquivo `pom.xml`, adicionando o tipo de jar JDBC para o tomee-maven-plugin:
+
+    ```xml        
+          <plugin>
+            <groupId>org.apache.tomee.maven</groupId>
+            <artifactId>tomee-maven-plugin</artifactId>
+            <version>${tomee.version}</version>
+            <configuration>
+              <tomeeVersion>${tomee.version}</tomeeVersion>
+              <tomeeClassifier>plume</tomeeClassifier>
+              <tomeeHttpPort>9080</tomeeHttpPort>
+              <tomeeShutdownPort>9005</tomeeShutdownPort>
+              <libs>
+                <lib>com.oracle.jdbc:ojdbc8:18.3.0.0</lib>
+              </libs>
+            </configuration>
+          </plugin>
+    ```
+    
+    
+   Para além dessas informações sobre configuração do Oracle JDBC no Maven, você pode verificar em [Oracle Article](https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides)
+    
+           
+### Rodando a aplicação
+Em um terminal
+    
+    mvn clean install tomee:run
+    
+### Rodando o Grinder console
+Em um terminal execute:
+               
+    ./grinder.sh
+ 
+ Uma vez que o painel de controle UI está disponível, pressione o botão `Start the worker processes`
+ 
+ O teste de carga vai continuar enquanto você não pressionar no painel de controle o botão `Stop the worker processes and the agent processes`
+                   
