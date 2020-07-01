@@ -19,7 +19,10 @@ package org.apache.tomee.security.identitystore;
 import org.apache.openjpa.lib.util.StringUtil;
 
 import javax.annotation.PostConstruct;
+import javax.el.ELProcessor;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -29,6 +32,7 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.PasswordHash;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,10 +46,16 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toMap;
 
 @ApplicationScoped
 public class TomEEDatabaseIdentityStore implements IdentityStore {
+
+    @Inject
+    private BeanManager beanManager;
 
     @Inject
     private Supplier<DatabaseIdentityStoreDefinition> definitionSupplier;
@@ -55,11 +65,24 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
 
     private DataSource dataSource;
 
+    private PasswordHash passwordHash;
+
     @PostConstruct
     private void init() throws Exception {
         definition = definitionSupplier.get();
         validationTypes = new HashSet<>(asList(definition.useFor()));
         dataSource = lookup(definition.dataSourceLookup());
+
+        passwordHash = getInstance(definition.hashAlgorithm());
+
+        final ELProcessor elProcessor = new ELProcessor();
+        elProcessor.getELManager().addELResolver(beanManager.getELResolver());
+
+        passwordHash.initialize(stream(definition.hashAlgorithmParameters())
+                    .flatMap(s -> stream((String[]) eval(elProcessor, s, String[].class)))
+                    .collect(toMap(s -> (String) s.substring(0, s.indexOf('=')) ,
+                                   s -> (String) eval(elProcessor, s.substring(s.indexOf('=') + 1), String.class)))
+                               );
     }
 
     @Override
@@ -75,8 +98,7 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
             return CredentialValidationResult.INVALID_RESULT;
         }
 
-        // todo deal with hash algorithm
-        if (Arrays.equals(usernamePasswordCredential.getPassword().getValue(), passwords.get(0).toCharArray())) {
+        if (passwordHash.verify(usernamePasswordCredential.getPassword().getValue(), passwords.get(0))) {
             Set<String> groups = emptySet();
             if (validationTypes.contains(ValidationType.PROVIDE_GROUPS)) {
                 groups = new HashSet<>(getGroups(usernamePasswordCredential.getCaller()));
@@ -154,5 +176,19 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
                 }
             }
         }
+    }
+
+    private Object eval(final ELProcessor processor, final String expression, final Class<?> expectedType) {
+        // expression maybe #{expression} instead of ${expression}
+        // the ELProcessor anyways wraps it with ${}
+        final String sanitizedExpression = expression.replaceAll("^[#$]\\{(.+)}$", "$1");
+        return processor.getValue(sanitizedExpression, expectedType);
+    }
+
+    private <T extends PasswordHash> T getInstance(final Class<T> beanType) {
+        final Bean<T> bean = (Bean<T>) beanManager.getBeans(beanType).iterator().next();
+
+        // This should create the instance and put it in the context
+        return (T) beanManager.getReference(bean, beanType, beanManager.createCreationalContext(bean));
     }
 }

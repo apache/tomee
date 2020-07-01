@@ -17,6 +17,8 @@
 package org.apache.tomee.security.cdi;
 
 import org.apache.tomee.security.TomEEELInvocationHandler;
+import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
+import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
@@ -61,11 +63,14 @@ public class TomEESecurityExtension implements Extension {
     void observeBeforeBeanDiscovery(
         @Observes final BeforeBeanDiscovery beforeBeanDiscovery,
         final BeanManager beanManager) {
+
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
-        beforeBeanDiscovery.addAnnotatedType(
-            beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
+
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEPbkdf2PasswordHash.class));
+        beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEPlaintextPasswordHash.class));
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(AutoApplySessionInterceptor.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(RememberMeInterceptor.class));
