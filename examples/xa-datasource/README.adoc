@@ -1,3 +1,7 @@
+:index-group: DataSources
+:jbake-type: page
+:jbake-status: status=published
+= Injection Of Entitymanager
 Title: Injection Of Entitymanager
 
 This example shows use of `@PersistenceContext` to have an `EntityManager` with an
