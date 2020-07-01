@@ -1,9 +1,7 @@
 :index-group: DataSources
 :jbake-type: page
 :jbake-status: status=published
-= Injection Of Entitymanager
-
-Title: Injeção do EntityManager
+= Injeção do EntityManager
 
 Neste exemplo é mostrado o uso do `@PersistenceContext` para se ter um `EntityManager` com um 
 persistence context `EXTENDED`, injetado em um bean `@Stateful`. Um bean do tipo `@Entity` JPA, é 
