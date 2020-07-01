@@ -3,12 +3,9 @@
 :jbake-status: status=published
 = Dynamic Proxy to Access MBean
 
-_Help us document this example! Click the blue pencil icon in the upper
-right to edit this page._
-
 == Example
 
-Acessing MBean is something simple through the JMX API but it is often
+Accessing MBean is something simple through the JMX API but it is often
 technical and not very interesting.
 
 This example simplify this work simply doing it generically in a proxy.
@@ -46,7 +43,7 @@ public @interface ObjectName {
 }
 ....
 
-== DynamicMBeanHandler (thr proxy implementation)
+== DynamicMBeanHandler (the proxy implementation)
 
 ....
 package org.superbiz.dynamic.mbean;
@@ -305,7 +302,7 @@ public interface DynamicMBeanClient {
 }
 ....
 
-=== DynamicMBeanClient (the dynamic JMX client)
+=== DynamicRemoteMBeanClient (the dynamic JMX client remote)
 
 ....
 package org.superbiz.dynamic.mbean;

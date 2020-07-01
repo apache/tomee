@@ -22,7 +22,7 @@ Java EE 6 supported `<env-entry>` types are limited to the following:
 * java.lang.Class
 * java.lang.Enum (any enum)
 
-See also the link:../custom-injection[Custom Injection] exmaple for a
+See also the link:../custom-injection[Custom Injection] example for a
 TomEE and OpenEJB feature that will let you use more than just the above
 types as well as declare `<env-entry>` items with a plain properties
 file.
@@ -80,7 +80,7 @@ public class Configuration {
 }
 ....
 
-Here we have an `@Singleton` bean called `Confuration` that has the
+Here we have an `@Singleton` bean called `Configuration` that has the
 following properties (`<env-entry>` items)
 
 * String color

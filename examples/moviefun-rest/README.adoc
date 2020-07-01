@@ -245,10 +245,10 @@ public class Movie {
 
 === MoviesBean
 
-....
 This is the EJB according to the @Stateless annotation. It uses the unit persistence "movie-unit" for persist 
 entities movie.
 
+....
 package org.superbiz.moviefun;
 
 import javax.ejb.Stateless;

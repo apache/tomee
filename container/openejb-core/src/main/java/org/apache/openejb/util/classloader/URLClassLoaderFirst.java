@@ -229,7 +229,7 @@ public class URLClassLoaderFirst extends URLClassLoader {
         if (name.startsWith("javax.mail.")) {
             return false;
         }
-        if (name.startsWith("javax.")) {
+        if (name.startsWith("javax.") || name.startsWith("jakarta.")) {
             return isInServer(name);
         }
         if (name.startsWith("sun.")) {
@@ -526,6 +526,15 @@ public class URLClassLoaderFirst extends URLClassLoader {
     private static boolean isInServer(final String name) {
         if (name.startsWith("javax.")) {
             final String sub = name.substring("javax.".length());
+            if (sub.startsWith("jws.")) {
+                return SKIP_JAXWS || EMBEDDED;
+            }
+            if (sub.startsWith("jms.")) {
+                return SKIP_JMS || EMBEDDED;
+            }
+        }
+        if (name.startsWith("jakarta.")) {
+            final String sub = name.substring("jakarta.".length());
             if (sub.startsWith("jws.")) {
                 return SKIP_JAXWS || EMBEDDED;
             }

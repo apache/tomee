@@ -6,11 +6,11 @@
 This is a example on how to configure on TomEE  7.x or later the legacy JSON provider, Jettison, used by TomEE 1.7.x .
 
 
-This scenario is useful when REST applications are migrated from TomEE 1.7.x into TomEE  7.x or later and you want to keep the lecacy JSON output from Jettison 1.3.7.
+This scenario is useful when REST applications are migrated from TomEE 1.7.x into TomEE  7.x or later and you want to keep the legacy JSON output from Jettison 1.3.7.
 
 
 === Run the tests
-This example contains 2 test cases, one using Jettison and one with out it for comparison purposes.
+This example contains 2 test cases, one using Jettison and one without it for comparison purposes.
 
 ....
 mvn clean test 
