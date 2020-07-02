@@ -39,7 +39,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -48,7 +47,6 @@ import java.util.function.Supplier;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toMap;
 
 @ApplicationScoped
@@ -63,15 +61,12 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
 
     private Set<ValidationType> validationTypes;
 
-    private DataSource dataSource;
-
     private PasswordHash passwordHash;
 
     @PostConstruct
     private void init() throws Exception {
         definition = definitionSupplier.get();
         validationTypes = new HashSet<>(asList(definition.useFor()));
-        dataSource = lookup(definition.dataSourceLookup());
 
         passwordHash = getInstance(definition.hashAlgorithm());
 
@@ -135,6 +130,7 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
     private List<String> query(final String query, final String parameter) {
         final List<String> result = new ArrayList<>();
 
+        final DataSource dataSource = lookup(definition.dataSourceLookup()); // todo instance field?
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, parameter);
