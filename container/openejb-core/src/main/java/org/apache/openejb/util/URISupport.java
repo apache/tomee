@@ -378,4 +378,28 @@ public class URISupport {
 
         return result;
     }
+
+    /**
+     * This method adds new parameters to a URI. Any parameters provided that already exist in the URI will *not* be replaced.
+     * @param uri The URI to add parameters to
+     * @param newParameters The parameters to add
+     * @return The URI with the new parameters added
+     * @throws URISyntaxException If there is a syntax error with the provided URI.
+     */
+    public static URI addParameters(final URI uri, final Map<String, String> newParameters) throws URISyntaxException {
+        if (newParameters == null || newParameters.size() == 0) {
+            return uri;
+        }
+
+        final Map<String, String> parameters = new HashMap<>(parseParamters(uri));
+
+        final Set<String> keys = newParameters.keySet();
+        for (final String key : keys) {
+            if (! parameters.containsKey(key)) {
+                parameters.put(key, newParameters.get(key));
+            }
+        }
+
+        return createRemainingURI(uri, parameters);
+    }
 }
