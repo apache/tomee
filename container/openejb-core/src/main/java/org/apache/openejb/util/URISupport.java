@@ -22,13 +22,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Swiped verbatim from ActiveMQ... the URI kings.
@@ -377,5 +372,29 @@ public class URISupport {
         final int result = -1;
 
         return result;
+    }
+
+    /**
+     * This method adds new parameters to a URI. Any parameters provided that already exist in the URI will *not* be replaced.
+     * @param uri The URI to add parameters to
+     * @param newParameters The parameters to add
+     * @return The URI with the new parameters added
+     * @throws URISyntaxException If there is a syntax error with the provided URI.
+     */
+    public static URI addParameters(final URI uri, final Map<String, String> newParameters) throws URISyntaxException {
+        if (newParameters == null || newParameters.size() == 0) {
+            return uri;
+        }
+
+        final Map<String, String> parameters = new HashMap<>(parseParamters(uri));
+
+        final Set<String> keys = newParameters.keySet();
+        for (final String key : keys) {
+            if (! parameters.containsKey(key)) {
+                parameters.put(key, newParameters.get(key));
+            }
+        }
+
+        return createRemainingURI(uri, parameters);
     }
 }
