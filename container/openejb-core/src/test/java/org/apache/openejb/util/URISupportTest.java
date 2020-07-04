@@ -104,7 +104,7 @@ public class URISupportTest extends TestCase {
 
     public void testEmptyParameters() throws Exception {
         final URI initial = URLs.uri("vm://broker?foo=bar&boo=baz&welcome=helloworld&create=true");
-        final URI uri = URISupport.addParameters(initial, Collections.emptyMap());
+        final URI uri = URISupport.addParameters(initial, Collections.<String, String>emptyMap());
 
         assertEquals(initial, uri);
     }
