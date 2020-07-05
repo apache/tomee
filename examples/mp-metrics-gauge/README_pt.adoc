@@ -1,5 +1,4 @@
 = Métricas com MicroProfile `@Gauge` (Medida)
-
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published

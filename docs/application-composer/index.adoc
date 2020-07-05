@@ -1,4 +1,7 @@
 = Application Composer
+:jbake-type: page
+:jbake-status: published
+:index-group: Testing
 
 Here is the subdomain dedicated to the Application Composer.
 

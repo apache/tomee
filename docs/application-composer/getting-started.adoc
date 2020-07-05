@@ -1,4 +1,7 @@
 = Application Composer Getting Started
+:jbake-type: page
+:jbake-status: published
+:index-group: Testing
 
 ApplicationComposer API is mainly contained in
 `org.apache.openejb.testing` package (historically, today we would have
