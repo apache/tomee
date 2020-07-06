@@ -22,29 +22,29 @@ Como um rápido lembrete, a configuração no `openejb-jar.xml`, você pode util
   </ejb-deployment>
 </openejb-jar>
 ----
-Para um webservice Pojo isto é o mesmo, mas usando o pojo-deployment em vez do ejb-deployment.
+Para um webservice Pojo é da mesma forma, mas usando o pojo-deployment em vez do ejb-deployment.
 
 Então uma vez que fez sua seleção de prefixo, e conhece onde é para escrever a configuração, basta utilizar as seguintes entradas:
 
 * *properties*: propriedades da fábrica servidora
 
-* *features*: CXF para características
+* *features*: recursos CXF
 
-* *in-interceptors*: CXF dentro do interceptadores
+* *in-interceptors*:  interceptadores de entrada do CXF
 
-* *out-interceptors*: CXF fora dos interceptadores
+* *out-interceptors*: interceptadores de saída do CXF
 
-* *in-fault-interceptors*: CXF dentro dos interceptadores para tratamento de erros 
+* *in-fault-interceptors*: interceptadores de entrada do CXF para tratamento de erros 
 
-* *out-fault-interceptors*: CXF fora dos out interceptadores para tratamento de erros 
+* *out-fault-interceptors*: interceptadores de saída do CXF para tratamento de erros 
 
 * *databinding*: servidor de vinculação de dados
 
-* *providers (somente para JAX-RS endpoint)*: lista de provedores JAX-RS
+* *providers (somente para endpoint JAX-RS)*: lista de provedores JAX-RS
 
 * *skip-provider-scanning (somente para JAX-RS)*: utilizar ou não um provedor de varredura (por padrão true)
 
-Para características de interceptadores, a regra é o mesma: lista de valores separados por vírgula. Cada valor da lista, é um nome de classe qualificado ou um id de serviço, é um ou o outro, no resources.xml.
+Para características e interceptadores, a regra é a mesma: lista de valores separados por vírgula. Cada valor da lista, é um nome de classe qualificado ou um id de serviço, é um ou o outro, no resources.xml.
 
 == Exemplo para JAX-WS
 Para configurar o WSS4J no EJB `CalculatorBean` para adicionar uma instância no openejb-jar.xml:
@@ -63,7 +63,7 @@ Para configurar o WSS4J no EJB `CalculatorBean` para adicionar uma instância no
 ----
 == passwordCallbackClass
 
-`passwordCallbackClass` é uma propriedade do `WSS4JInInterceptorFactory` e seu valor da classe é `PasswordCallbackHandler`.
+`passwordCallbackClass` é uma propriedade do `WSS4JInInterceptorFactory` e seu valor é a classe `PasswordCallbackHandler`.
 
 `PasswordCallbackHandler` utiliza `org.apache.wss4j.common.ext.WSPasswordCallback` para prover senhas no mecanismo de callback.
 
@@ -76,7 +76,7 @@ Exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master
 === Executando os testes
 
 Exemplo de projeto completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/webservice-ws-with-resources-config[aqui].
-Isoe é um projeto maven, e todos os testes pode ser executados rodando o comando `mvn clean test`.
+Isso é um projeto maven, e todos os testes pode ser executados rodando o comando `mvn clean test`.
 
     mvn clean test
     
