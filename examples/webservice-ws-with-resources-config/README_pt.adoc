@@ -76,7 +76,7 @@ Exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master
 === Executando os testes
 
 Exemplo de projeto completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/webservice-ws-with-resources-config[aqui].
-Isso é um projeto maven, e todos os testes pode ser executados rodando o comando `mvn clean test`.
+Este é um projeto maven, e todos os testes pode ser executados rodando o comando `mvn clean test`.
 
     mvn clean test
     
