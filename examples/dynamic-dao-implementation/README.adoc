@@ -1,7 +1,7 @@
 :index-group: Proxy Beans
 :jbake-type: page
 :jbake-status: status=published
-= z
+= Dynamic Data Access Objects
 
 Many aspects of Data Access Objects (DAOs) are very repetitive and
 boiler plate. As a fun and experimental feature, TomEE supports
