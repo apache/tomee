@@ -33,10 +33,7 @@ import org.apache.openejb.core.timer.EjbTimerService;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.loader.Options;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.monitoring.LocalMBeanServer;
-import org.apache.openejb.monitoring.ManagedMBean;
-import org.apache.openejb.monitoring.ObjectNameBuilder;
-import org.apache.openejb.monitoring.StatsInterceptor;
+import org.apache.openejb.monitoring.*;
 import org.apache.openejb.resource.XAResourceWrapper;
 import org.apache.openejb.spi.SecurityService;
 import org.apache.openejb.util.LogCategory;
@@ -182,18 +179,19 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         beanContext.setContainerData(endpointFactory);
         deployments.put(deploymentId, beanContext);
 
+        final MBeanServer server = LocalMBeanServer.get();
+
         // Create stats interceptor
         if (StatsInterceptor.isStatsActivated()) {
             final StatsInterceptor stats = new StatsInterceptor(beanContext.getBeanClass());
             beanContext.addFirstSystemInterceptor(stats);
 
-            final MBeanServer server = LocalMBeanServer.get();
 
             final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
             jmxName.set("J2EEServer", "openejb");
             jmxName.set("J2EEApplication", null);
             jmxName.set("EJBModule", beanContext.getModuleID());
-            jmxName.set("StatelessSessionBean", beanContext.getEjbName());
+            jmxName.set("MessageDrivenBean", beanContext.getEjbName());
             jmxName.set("j2eeType", "");
             jmxName.set("name", beanContext.getEjbName());
 
@@ -209,6 +207,29 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
                 logger.error("Unable to register MBean ", e);
             }
         }
+
+        // Expose InstanceLimit/InstanceCount stats through JMX
+        {
+            final ObjectNameBuilder jmxName = new ObjectNameBuilder("openejb.management");
+            jmxName.set("J2EEServer", "openejb");
+            jmxName.set("J2EEApplication", null);
+            jmxName.set("EJBModule", beanContext.getModuleID());
+            jmxName.set("MessageDrivenBean", beanContext.getEjbName());
+            jmxName.set("j2eeType", "");
+            jmxName.set("name", beanContext.getEjbName());
+
+            try {
+                final ObjectName objectName = jmxName.set("j2eeType", "Instances").build();
+                if (server.isRegistered(objectName)) {
+                    server.unregisterMBean(objectName);
+                }
+                server.registerMBean(new ManagedMBean(new InstanceMonitor(instanceFactory)), objectName);
+                endpointFactory.jmxNames.add(objectName);
+            } catch (final Exception e) {
+                logger.error("Unable to register MBean ", e);
+            }
+        }
+
 
         // activate the endpoint
         CURRENT.set(beanContext);
@@ -729,6 +750,24 @@ public class MdbContainer implements RpcContainer, BaseMdbContainer {
         @Override
         public AttributeList setAttributes(final AttributeList attributes) {
             return ATTRIBUTE_LIST;
+        }
+    }
+
+    public static class InstanceMonitor {
+        private final MdbInstanceFactory instanceFactory;
+
+        public InstanceMonitor(MdbInstanceFactory instanceFactory) {
+            this.instanceFactory = instanceFactory;
+        }
+
+        @Managed
+        public int getInstanceLimit() {
+            return instanceFactory.getInstanceLimit();
+        }
+
+        @Managed
+        public int getInstanceCount() {
+            return instanceFactory.getInstanceCount();
         }
     }
 }
