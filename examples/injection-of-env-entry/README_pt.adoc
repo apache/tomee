@@ -29,14 +29,16 @@ O uso da anotação `@Resource` não se limita aos setters.
 Por exemplo, esta anotação poderia ter sido usada no correspondente
 _campo_ assim:
 
-....
+[source,java]
+----
 @Resource
 private int maxLineItems;
-....
+----
 
 Um exemplo mais completo pode ser assim:
 
-....
+[source,java]
+----
 package org.superbiz.injection.enventry;
 
 import javax.annotation.Resource;
@@ -74,7 +76,7 @@ public class Configuration {
         return new Date(date);
     }
 }
-....
+----
 
 Aqui temos um bean `@Singleton` chamado `Configuration` que possui as seguintes propriedades (itens `<env-entry> `)
 
@@ -89,7 +91,8 @@ Os valores para nossas propriedades `color`,`shape`, `strategy` e `date`
 são fornecidos através dos elementos `<env-entry>` no arquivo `ejb-jar.xml` ou no arquivo
 arquivo `web.xml` da seguinte forma:
 
-....
+[source,xml]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
   <enterprise-beans>
     <session>
@@ -118,58 +121,64 @@ arquivo `web.xml` da seguinte forma:
     </session>
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 ==== Usando o atributo @Resource `name'
 
 Note que `date` foi referenciado por `name` como:
 
-....
+[source,java]
+----
 @Resource(name = "date")
 private long date;
-....
+----
 
 Quando o `@Resource (name)` é usado, você não precisa especificar o nome completo da classe do bean e pode fazê-lo brevemente da seguinte maneira:
 
-....
+[source,java]
+----
   <env-entry>
     <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
     <env-entry-name>date</env-entry-name>
     <env-entry-type>java.lang.Long</env-entry-type>
     <env-entry-value>123456789</env-entry-value>
   </env-entry>
-....
+----
 
 Por outro lado, `color` não foi referenciado por `name`
 
-....
+[source,java]
+----
 @Resource
 private String color;
-....
+----
 
 Quando algo não é referenciado por `name` na anotação `@Resource`, um nome padrão é criado. O formato é essencialmente este:
 
-....
+[source,java]
+----
 bean.getClass() + "/" + field.getName()
-....
+----
 
 Portanto, o `name` padrão da propriedade `color` acima acaba sendo
 `org.superbiz.injection.enventry.Configuration/color`. Esse é o nome
 devemos usar quando tentamos decalcar um valor para ele em xml.
 
-....
+[source,java]
+----
   <env-entry>
     <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
     <env-entry-type>java.lang.String</env-entry-type>
     <env-entry-value>orange</env-entry-value>
   </env-entry>
-....
+----
 
 ==== @Resource e Enum (enumerações)
 
 O campo `shape` é realmente um tipo Java Enum personalizado
 
-....
+[source,java]
+----
 package org.superbiz.injection.enventry;
 
 public enum Shape {
@@ -178,24 +187,26 @@ public enum Shape {
     TRIANGLE,
     SQUARE
 }
-....
+----
 
 No Java EE 6, os tipos java.lang.Enum são permitidos como `<ententent>`
 Itens. A declaração de um em xml é feita usando o nome da classe da enumeração real:
 
-....
+[source,java]
+----
       <env-entry>
         <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
         <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
         <env-entry-value>TRIANGLE</env-entry-value>
       </env-entry>
-....
+----
 
 Não use `<env-entry-type>java.lang.Enum</env-entry-type>` ou não funcionará!
 
 === ConfigurationTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.enventry;
 
 import junit.framework.TestCase;
@@ -221,11 +232,12 @@ public class ConfigurationTest extends TestCase {
         assertEquals(new Date(123456789), configuration.getDate());
     }
 }
-....
+----
 
 == Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -261,4 +273,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.664 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

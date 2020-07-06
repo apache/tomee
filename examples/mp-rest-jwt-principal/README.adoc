@@ -23,14 +23,15 @@ project:
 [arabic]
 . Add the dependency to our `pom.xml` file:
 +
-....
+[source,xml]
+----
 <dependency>
     <groupId>org.eclipse.microprofile.jwt</groupId>
     <artifactId>microprofile-jwt-auth-api</artifactId>
     <version>${mp-jwt.version}</version>
     <scope>provided</scope>
 </dependency>
-....
+----
 . Annotate our `Application.class` with `@LoginConfig(authMethod = "MP-JWT")`
 
 . Provide public and private key for authentication. And specify the location of the public key and the issuer in our

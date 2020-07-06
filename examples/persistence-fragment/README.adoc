@@ -11,7 +11,8 @@ The JPA provides Java developers with an object/relational mapping facility for 
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.injection.jpa;
 
 import javax.persistence.Entity;
@@ -65,7 +66,7 @@ public class Movie {
         this.year = year;
     }
 }
-....
+----
 
 == persistence-fragment.xml
 
@@ -78,7 +79,8 @@ public class Movie {
 
 == MoviesTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.jpa;
 
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
@@ -112,7 +114,7 @@ public class MoviesTest {
         container.close();
     }
 }
-....
+----
 
 == persistence.xml
 

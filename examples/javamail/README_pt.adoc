@@ -17,7 +17,8 @@ você verá a mensagem sendo enviada. Você pode encontrar muito mais detalhado
 informações sobre o
 https://java.net/projects/javamail/pages/Home#Samples[Javamail API aqui]
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import javax.mail.Authenticator;
@@ -74,7 +75,7 @@ public class EmailService {
         return "Sent";
     }
 }
-....
+----
 
 == Teste
 
@@ -94,7 +95,8 @@ o conjunto de classes para usar neste aplicativo.
 Finalmente, para testá-lo, usamos a API do cliente cxf para chamar o serviço REST post ()
 método.
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -126,19 +128,21 @@ public class EmailServiceTest {
         assertEquals("Failed to send message: Unknown SMTP host: your.mailserver.host", message);
     }
 }
-....
+----
 
 #Corrida
 
 A execução do exemplo é bastante simples. No diretório "javamail-api" excute:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 O que deve criar uma saída como a seguir.
 
-....
+[source,java]
+----
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -198,4 +202,4 @@ DEBUG SMTP: trying to connect to host "your.mailserver.host", port 25, isSSL fal
 INFO - Undeploying app: D:\github\tomee\examples\javamail\EmailServiceTest
 INFO - Stopping network services
 INFO - Stopping server services
-....
+----

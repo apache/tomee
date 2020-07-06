@@ -19,7 +19,8 @@ image::../../resources/mdb-flow.png[]
 
 == ChatBean
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 import javax.annotation.Resource;
@@ -93,11 +94,12 @@ public class ChatBean implements MessageListener {
         }
     }
 }
-....
+----
 
 == ChatBeanTest
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 import junit.framework.TestCase;
@@ -164,11 +166,12 @@ public class ChatBeanTest extends TestCase {
         return ((TextMessage) answers.receive(1000)).getText();
     }
 }
-....
+----
 
 = Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -215,4 +218,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.547 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

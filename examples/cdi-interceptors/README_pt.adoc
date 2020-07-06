@@ -126,7 +126,8 @@ Não esqueça que forma antiga de binding com `@Interceptors(WhicheverIntercepto
 
 `BookForAShowOneInterceptorApplied` mostra apenas um simples interceptador de `@Log` sendo aplicado.
 
-....
+[source,java]
+----
 package org.superbiz.cdi.bookshow.beans;
 
 import org.superbiz.cdi.bookshow.interceptorbinding.Log;
@@ -152,13 +153,14 @@ public class BookForAShowOneInterceptorApplied implements Serializable {
         return ticketPrice - 50;
     }
 }
-....
+----
 
 === BookForAShowTwoInterceptorsApplied
 
 `BookForAShowTwoInterceptorsApplied` mostra ambos `@Log` e `@TimeRestricted` sendo aplicados.
 
-....
+[source,java]
+----
 package org.superbiz.cdi.bookshow.beans;
 
 import org.superbiz.cdi.bookshow.interceptorbinding.Log;
@@ -186,13 +188,14 @@ public class BookForAShowTwoInterceptorsApplied implements Serializable {
         return ticketPrice - 50;
     }
 }
-....
+----
 
 === BookShowInterceptorBindingInheritanceExplored
 
 `BookShowInterceptorBindingInheritanceExplored` mostra como `@TimeRestrictAndLog` (interceptor-binding-inheritance) pode ser usado como uma alternativa em vez de anotar o método com muitas anotações explicitamente.
 
-....
+[source,java]
+----
 package org.superbiz.cdi.bookshow.beans;
 
 import org.superbiz.cdi.bookshow.interceptorbinding.TimeRestrictAndLog;
@@ -218,4 +221,4 @@ public class BookShowInterceptorBindingInheritanceExplored implements Serializab
         return ticketPrice - 50;
     }
 }
-....
+----

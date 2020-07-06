@@ -22,7 +22,8 @@ A `ManagedExecutorService` is an object that allows application developers to su
 
 Here is a class that uses a `ManagedExecutorService` (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedService.java[here]):
 
-....
+[source,java]
+----
 
 @RequestScoped
 public class ManagedService {
@@ -60,7 +61,7 @@ public class ManagedService {
     }
 
 }
-....
+----
 
 The `ManagedExecutorService` object, being an managed object, is injected using the `@Resource` annotation.
 
@@ -71,7 +72,8 @@ Both methods invoke the `longTask` method defined above; each execution of `long
 The method `asyncTask` simulates a successful execution, while the `asyncTaskWithException` simulates a execution that will throw an exception.
 
 The methods are used in the following test class (full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedServiceTest.java[here]):
-....
+[source,java]
+----
 
 @RunWith(Arquillian.class)
 public class ManagedServiceTest {
@@ -115,7 +117,7 @@ public class ManagedServiceTest {
         }
     }
 }
-....
+----
 
 === ManagedScheduledExecutorService
 
@@ -125,7 +127,8 @@ A `ManagedScheduledExecutorService` is an object that allows developers to execu
 
 Full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ManagedScheduledService.java[here]:
 
-....
+[source,java]
+----
 
 @RequestScoped
 public class ManagedScheduledService {
@@ -179,7 +182,7 @@ public class ManagedScheduledService {
     }
 
 }
-....
+----
 
 This example also defines a method, `longCallableTask`, simulating the execution of a long running computation.
 
@@ -188,7 +191,8 @@ The method `periodicFixedDelayTask` schedules tasks to be run periodically, afte
 
 The methods are used in the following test class (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ManagedScheduledServiceTest.java[here]):
 
-....
+[source,java]
+----
 
 @RunWith(Arquillian.class)
 public class ManagedScheduledServiceTest {
@@ -255,7 +259,7 @@ public class ManagedScheduledServiceTest {
     }
 
 }
-....
+----
 
 === ManagedThreadFactory
 
@@ -265,7 +269,8 @@ A `ManagedThreadFactory` is an object that allows developers to create container
 
 Full example can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/main/java/org/superbiz/executor/ThreadFactoryService.java[here]:
 
-....
+[source,java]
+----
 
 @RequestScoped
 public class ThreadFactoryService {
@@ -327,7 +332,7 @@ public class ThreadFactoryService {
         }
     }
 }
-....
+----
 
 This example defines a class implementing `Runnable`, executing a long running task in the `run` method.
 
@@ -336,7 +341,8 @@ The method `asyncHangingTask` also creates a managed thread, starts it, but then
 
 The following class tests these methods (full code can be found https://github.com/apache/tomee/blob/master/examples/concurrency-utils/src/test/java/org/superbiz/executor/ThreadFactoryServiceTest.java[here]):
 
-....
+[source,java]
+----
 
 @RunWith(Arquillian.class)
 public class ThreadFactoryServiceTest {
@@ -374,7 +380,7 @@ public class ThreadFactoryServiceTest {
         assertTrue(longTask.getIsTerminated());
     }
 }
-....
+----
 
 Full project example can be found https://github.com/apache/tomee/tree/master/examples/concurrency-utils[here].
 It's a Maven project, and all the tests can be executed by running `mvn clean install` command.

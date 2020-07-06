@@ -8,7 +8,8 @@ right to edit this page._
 
 == Calculator
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.ejb.Stateless;
@@ -28,17 +29,19 @@ public class Calculator {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == CalculatorTest
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import org.apache.commons.io.IOUtils;
@@ -86,10 +89,11 @@ public class CalculatorTest {
         assertTrue(IOUtils.readLines(url.openStream()).toString().contains("CalculatorWsService"));
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----

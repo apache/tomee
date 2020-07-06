@@ -16,7 +16,8 @@ This class placed in a jar or war and deployed into a compliant Java EE
 server like TomEE is enough to have the Calculator class discovered and
 deployed and the webservice online.
 
-....
+[source,java]
+----
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
@@ -36,14 +37,15 @@ public class Calculator implements CalculatorWs {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == @WebService Endpoint Interface
 
 Having an endpoint interface is not required, but it can make testing
 and using the web service from other Java clients far easier.
 
-....
+[source,java]
+----
 import javax.jws.WebService;
 
 @WebService(targetNamespace = "http://superbiz.org/wsdl")
@@ -53,7 +55,7 @@ public interface CalculatorWs {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == Calculator WSDL
 
@@ -61,7 +63,8 @@ The wsdl for our service is autmatically created for us and available at
 `http://127.0.0.1:4204/Calculator?wsdl`. In TomEE or Tomcat this would
 be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="CalculatorService"
                   targetNamespace="http://superbiz.org/wsdl"
@@ -148,7 +151,7 @@ be at `http://127.0.0.1:8080/simple-webservice/Calculator?wsdl`
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
-....
+----
 
 == Accessing the @WebService with javax.xml.ws.Service
 
@@ -160,7 +163,8 @@ With this we can get an implementation of the interfacce generated
 dynamically for us that can be used to send compliant SOAP messages to
 our service.
 
-....
+[source,java]
+----
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -197,7 +201,7 @@ public class CalculatorTest {
         assertEquals(12, calculator.multiply(3, 4));
     }
 }
-....
+----
 
 For easy testing we’ll use the Embeddable EJBContainer API part of EJB
 3.1 to boot CXF in our testcase. This will deploy our application in the
@@ -210,7 +214,8 @@ install' command run from the `simple-webservice' directory.
 
 When run you should see output similar to the following.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -284,7 +289,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.584 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 === Inspecting the messages
 
@@ -295,7 +300,8 @@ sent between the clien and server.
 
 Request SOAP message:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -305,11 +311,12 @@ Request SOAP message:
     </ns1:sum>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 Response SOAP message:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -318,13 +325,14 @@ Response SOAP message:
     </ns1:sumResponse>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 ==== multiply(int, int)
 
 Request SOAP message:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -334,11 +342,12 @@ Request SOAP message:
     </ns1:multiply>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 Response SOAP message:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -347,7 +356,7 @@ Response SOAP message:
     </ns1:multiplyResponse>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 === Inside the jar
 
@@ -358,7 +367,8 @@ code. That’s the benefit of having an app server.
 If we look at the jar built by maven, we’ll see the application itself
 is quite small:
 
-....
+[source,java]
+----
 $ jar tvf target/simple-webservice-1.1.0-SNAPSHOT.jar
      0 Sat Feb 18 19:17:06 PST 2012 META-INF/
    127 Sat Feb 18 19:17:04 PST 2012 META-INF/MANIFEST.MF
@@ -368,7 +378,7 @@ $ jar tvf target/simple-webservice-1.1.0-SNAPSHOT.jar
      0 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/
    855 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/Calculator.class
    288 Sat Feb 18 19:17:02 PST 2012 org/superbiz/calculator/ws/CalculatorWs.class
-....
+----
 
 This single jar could be deployed any any compliant Java EE
 implementation. In TomEE you’d simply place it in the

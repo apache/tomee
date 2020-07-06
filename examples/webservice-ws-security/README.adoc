@@ -6,7 +6,8 @@ right to edit this page._
 
 == CalculatorImpl
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.annotation.security.DeclareRoles;
@@ -39,11 +40,12 @@ public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == CalculatorRemote
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.ejb.Remote;
@@ -55,11 +57,12 @@ public interface CalculatorRemote {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == CalculatorWs
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.jws.WebService;
@@ -79,11 +82,12 @@ public interface CalculatorWs {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
          version="3.0" id="simple" metadata-complete="false">
@@ -165,11 +169,12 @@ public interface CalculatorWs {
   </enterprise-beans>
 
 </ejb-jar>
-....
+----
 
 == openejb-jar.xml
 
-....
+[source,xml]
+----
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
 
   <ejb-deployment ejb-name="CalculatorImpl">
@@ -234,11 +239,12 @@ public interface CalculatorWs {
   </ejb-deployment>
 
 </openejb-jar>
-....
+----
 
 == webservices.xml
 
-....
+[source,xml]
+----
 <webservices xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
 http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
@@ -289,11 +295,12 @@ http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
   </webservice-description>
 
 </webservices>
-....
+----
 
 == CalculatorTest
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import junit.framework.TestCase;
@@ -587,11 +594,12 @@ public class CalculatorTest extends TestCase {
     }
     //END SNIPPET: webservice
 }
-....
+----
 
 == CustomPasswordHandler
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import org.apache.ws.security.WSPasswordCallback;
@@ -616,11 +624,12 @@ public class CustomPasswordHandler implements CallbackHandler {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,java]
+----
 generate keys:
 
 do.sun.jdk:
@@ -726,4 +735,4 @@ Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.582 sec
 Results :
 
 Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -8,7 +8,8 @@ right to edit this page._
 
 == BlueBean
 
-....
+[source,java]
+----
 package org.superbiz.ejblookup;
 
 import javax.ejb.EJB;
@@ -35,11 +36,12 @@ public class BlueBean implements Friend {
         }
     }
 }
-....
+----
 
 == Friend
 
-....
+[source,java]
+----
 package org.superbiz.ejblookup;
 
 import javax.ejb.Local;
@@ -59,11 +61,12 @@ public interface Friend {
 
     public String helloFromFriend();
 }
-....
+----
 
 == RedBean
 
-....
+[source,java]
+----
 package org.superbiz.ejblookup;
 
 import javax.ejb.EJB;
@@ -90,11 +93,12 @@ public class RedBean implements Friend {
         }
     }
 }
-....
+----
 
 == EjbDependencyTest
 
-....
+[source,java]
+----
 package org.superbiz.ejblookup;
 
 import junit.framework.TestCase;
@@ -129,11 +133,12 @@ public class EjbDependencyTest extends TestCase {
         assertEquals("My friend Red says, Hello!", blue.helloFromFriend());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -173,4 +178,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.267 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

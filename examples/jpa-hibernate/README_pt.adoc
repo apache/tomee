@@ -20,7 +20,8 @@ ele indica que este atributo é o identificador da entidade e a outra anotação
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
 indica que a geração desses identificadores unicos serão gerenciados pelo provedor da persistência.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.persistence.Entity;
@@ -73,7 +74,7 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
@@ -89,7 +90,8 @@ link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.
 com 
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], um contexto de persistência é um gerenciamento de entidades onde, todo contexto de persistência é associado com uma unidade de persistência (persistence-unit), logo criaremos um persistence.xml para isso.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.ejb.Stateful;
@@ -118,7 +120,7 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
@@ -143,7 +145,8 @@ Aqui nós definimos qual banco de dados vai gravar nossos filmes (Movie) e reali
 
 Agora vamos realizar um teste, persistindo três filmes, em seguida realizamos uma busca e por fim nós os deletamos.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import junit.framework.TestCase;
@@ -181,25 +184,28 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 = Executando
 
 Para executar o exemplo com o maven, acesse a pasta do projeto:
 
-....
+[source,java]
+----
 cd jpa-hibernate
-....
+----
 
 E execute:
 
-....
+[source,java]
+----
 mvn clean install
-....
+----
 
 Com isso teremos uma saida no terminal similar a esta:
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -240,4 +246,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

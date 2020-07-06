@@ -28,7 +28,8 @@ todos os métodos @PostConstruct chamados e tudo será injetado.
 
 === Faculty +++<small>+++um pojo injetável básicoo+++</small>+++
 
-....
+[source,java]
+----
 public class Faculty {
 
     private List<String> facultyMembers;
@@ -52,11 +53,12 @@ public class Faculty {
     }
 
 }
-....
+----
 
 === Course +++<small>+++a simple session bean+++</small>+++
 
-....
+[source,java]
+----
 @Stateless
 public class Course {
 
@@ -89,11 +91,12 @@ public class Course {
         return faculty;
     }
 }
-....
+----
 
 == Caso de Teste
 
-....
+[source,java]
+----
 public class CourseTest extends TestCase {
 
     @EJB
@@ -123,11 +126,12 @@ public class CourseTest extends TestCase {
         assertEquals(faculty.getFacultyMembers().size(), 2);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -166,4 +170,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.126 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

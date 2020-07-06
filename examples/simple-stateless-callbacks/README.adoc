@@ -8,7 +8,8 @@ This example shows how to create a stateless session bean that uses the
 
 == CalculatorBean
 
-....
+[source,java]
+----
 package org.superbiz.stateless.basic;
 
 import javax.annotation.PostConstruct;
@@ -57,11 +58,12 @@ public class CalculatorBean {
     }
 
 }
-....
+----
 
 == ExecutionChannel
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import java.util.ArrayList;
@@ -86,11 +88,12 @@ public class ExecutionChannel {
         }
     }
 }
-....
+----
 
 == ExecutionObserver
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 public interface ExecutionObserver {
@@ -98,11 +101,12 @@ public interface ExecutionObserver {
     void onExecution(Object value);
 
 }
-....
+----
 
 == CalculatorTest
 
-....
+[source,java]
+----
 package org.superbiz.stateless.basic;
 
 import org.junit.Assert;
@@ -175,11 +179,12 @@ public class CalculatorTest implements ExecutionObserver {
         this.received.add(value);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -238,4 +243,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.884 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

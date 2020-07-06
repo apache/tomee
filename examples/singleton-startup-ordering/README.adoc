@@ -8,9 +8,10 @@ This examples shows in practice the  `@Startup` and `@DependsOn` annotations on 
 
 
 === Run the tests
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
 
 
@@ -27,7 +28,8 @@ mvn clean test
 
 `SingletonA.java`: Singleton EJB annotated with  `@Startup`. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 package org.foo;
 
 import javax.annotation.PostConstruct;
@@ -52,12 +54,13 @@ public class SingletonA {
         supervisor.addRecord(this.getClass().getSimpleName());
     }
 }
-....
+----
 
 
 `SingletonB.java`: Singleton EJB annotated with  `@Startup` and `DependsOn`. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 package org.foo;
 
 import javax.annotation.PostConstruct;
@@ -83,12 +86,13 @@ public class SingletonB {
         supervisor.addRecord(this.getClass().getSimpleName());
     }
 }
-....
+----
 
 
 `SingletonC.java`: Singleton EJB. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -112,12 +116,13 @@ public class SingletonC {
         return "Hello from SingletonC.class";
     }
 }
-....
+----
 
 
 `Supervisor.java`: Applicaiton scoped Bean that keep track of a list of Bean Names.
 
-....
+[source,java]
+----
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,7 +139,7 @@ public class Supervisor {
         return records.toString();
     }
 }
-....
+----
 
 
 === The tests
@@ -144,7 +149,8 @@ public class Supervisor {
 * `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
 
 `TestSingletonStartupOrder.java`
-....
+[source,java]
+----
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -194,7 +200,7 @@ public class TestSingletonStartupOrder {
         assertTrue(supervisor.getRecord().equals("[SingletonA, SingletonB, SingletonC]"));
     }
 }
-....
+----
 
 === About the Test architecture
 

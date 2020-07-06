@@ -7,7 +7,8 @@ Theses is a simple example to show how to use the security configured by the con
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import javax.persistence.Entity;
@@ -53,11 +54,12 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 //START SNIPPET: code
@@ -96,11 +98,12 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -113,11 +116,12 @@ public class Movies {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MovieTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
@@ -231,11 +235,12 @@ public class MovieTest extends TestCase {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -282,4 +287,4 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.546 sec
 Results :
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-....
+----

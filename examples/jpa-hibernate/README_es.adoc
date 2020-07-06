@@ -21,7 +21,8 @@ la anotación, indica que este atributo es el identificador de la entidad y la o
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
 indica que la generación de los identificadores únicos será administrada por el proveedor de persistencia.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.persistence.Entity;
@@ -74,7 +75,7 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
@@ -87,7 +88,8 @@ Anotamos el
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.html[EntityManager] 
 com 
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], um contexto de persistência é um gerenciamento de entidades onde, todo contexto de persistência é associado com uma unidade de persistência (persistence-unit), un contexto de persistencia es una gestión de entidad donde cada contexto de persistencia asociado con una unidad de persistencia, crearemos un persistence.xml para esto.
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.ejb.Stateful;
@@ -116,7 +118,7 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
@@ -140,7 +142,8 @@ Aquí definimos qué base de datos persistirá nuestras películas, y realizamos
 == MoviesTest
 
 Ahora hacemos una prueba, persistiendo tres películas, luego realizamos una búsqueda y finalmente las eliminamos.
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import junit.framework.TestCase;
@@ -178,7 +181,7 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 = Ejecutando
 
@@ -186,19 +189,22 @@ Para ejecutar el ejemplo a través de maven:
 
 Acceda a la carpeta del proyecto:
 
-....
+[source,java]
+----
 cd jpa-hibernate
-....
+----
 
 y ejecute:
 
-....
+[source,java]
+----
 mvn clean install
-....
+----
 
 Lo que generará una salida similar a la siguiente:
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -239,4 +245,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

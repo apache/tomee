@@ -45,4 +45,3 @@ Running:
     mvn clean install tomee:build
 
 will provide a zipped up TomEE with the appropriate libraries in the lib directory, and this sample application in the webapps folder.
-

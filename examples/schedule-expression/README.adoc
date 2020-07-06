@@ -26,7 +26,8 @@ will timeout a couple of times.
 Each timer contains an info attribute, which can be inspected at
 timeout.
 
-....
+[source,java]
+----
 package org.superbiz.corn;
 
 import javax.annotation.PostConstruct;
@@ -98,14 +99,15 @@ public class FarmerBrown {
         return checks.get();
     }
 }
-....
+----
 
 == FarmerBrownTest
 
 The test class acquires an instance from the context and waits for 5
 seconds to give the timers a chance to timeout.
 
-....
+[source,java]
+----
 package org.superbiz.corn;
 
 import junit.framework.TestCase;
@@ -133,11 +135,12 @@ public class FarmerBrownTest extends TestCase {
         assertTrue(checks + "", checks > 4);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -173,4 +176,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.141 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

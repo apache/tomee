@@ -15,9 +15,10 @@ mvn clean package tomee:run
 
 
 ==== Open:
-....
+[source,java]
+----
 http://localhost:8080/myfaces-codi-demo-8.0.1-SNAPSHOT/
-....
+----
 
 This example shows how to improve JSF2/CDI/BV/JPA applications with
 features provided by Apache MyFaces CODI and ExtVal.

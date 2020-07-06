@@ -20,17 +20,19 @@ classe de serviço de lógica de negócios, verificando se a solicitação pode 
 
 A lógica de negócios que verifica se uma solicitação é registrável é definida pela seguinte interface:
 
-....
+[source,java]
+----
 import java.util.Date;
 
 public interface Agenda {
     boolean isBookable(Date d);
 }
-....
+----
 
 A implementação é simples, sem muitos detalhes:
 
-....
+[source,java]
+----
 import java.util.Date;
 
 public class LazyAgenda implements Agenda {
@@ -39,11 +41,12 @@ public class LazyAgenda implements Agenda {
         return d.after(new Date());
     }
 }
-....
+----
 
 O serviço JAX-WS é definido pela seguinte interface:
 
-....
+[source,java]
+----
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import java.util.Date;
@@ -54,11 +57,12 @@ public interface MeetingPlanner {
     @WebMethod(operationName = "book", exclude = false)
     boolean book(final Date date);
 }
-....
+----
 
 A classe que implementa essa interface é:
 
-....
+[source,java]
+----
 import javax.inject.Inject;
 import javax.jws.WebService;
 import java.util.Date;
@@ -73,7 +77,7 @@ public class MeetingPlannerImpl implements MeetingPlanner {
         return agenda.isBookable(date);
     }
 }
-....
+----
 
 == Usando o Application Composer
 
@@ -81,7 +85,8 @@ Agora, que a aplicação está completa, é hora de testa-la. Pra isto, iremos a
 
 O teste completo:
 
-....
+[source,java]
+----
 import org.apache.openejb.jee.WebApp;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Classes;
@@ -130,7 +135,7 @@ public class MeetingPlannerTest {
         assertTrue(planner.book(new Date(System.currentTimeMillis() + 1000000)));
     }
 }
-....
+----
 
 A primeira coisa que podemos notar é que, nós usamos o  Application Composer como executor JUnit. Então, Nosso teste se integra com as ferramentas atuais, assim como qualquer outro teste JUnit. A configuração do teste é definida no método anotado com `@ Configuration`.
 
@@ -142,7 +147,8 @@ Nosso teste faz um pedido de reserva, enviando uma data no futuro, ele verifica 
 
 Executando o teste nós podemos ver que a aplicação iniciou com sucesso, que o serviço JAX-WS está em execução e que atende corretamente as solicitações recebidas.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -226,6 +232,6 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.076 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 Um exemplo completo pode ser encontrado aqui:  https://github.com/apache/tomee/tree/master/examples/applicationcomposer-jaxws-cdi[here].

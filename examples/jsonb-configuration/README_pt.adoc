@@ -13,7 +13,8 @@ O aplicativo pode ser executado com `mvn clean install tomee:run' se a porta
 8080 está disponível, você pode chamar o seguinte terminal:(GET)
 http://localhost:8080/jsonb-configuration/api/users que deve responder com o seguinte json: 
 
-....
+[source,java]
+----
 [
    {
       "Id":1,
@@ -26,13 +27,14 @@ http://localhost:8080/jsonb-configuration/api/users que deve responder com o seg
       "Registration":"2018-12-28"
    }
 ]
-....
+----
 
 == @ApplicationPath
 
 Classe de ponto de entrada JAXRS, da seguinte maneira jaxrs carregará todas as classes e métodos @Path anotados sem especificá-los.
 
-....
+[source,java]
+----
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
@@ -40,13 +42,14 @@ import javax.ws.rs.core.Application;
 public class JAXRSApplication extends Application {
 
 }
-....
+----
 
 == Recurso @Path Rest
 
 Classe jaxrs simples com um endpoint GET
 
-....
+[source,java]
+----
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,13 +79,14 @@ public class UserService {
         return users;
     }
 }
-....
+----
 
 == Configuração JSONB
 
 Implementando ContextResolver<>, você pode personalizar os padrões jaxrs; neste exemplo, vamos personalizar a serialização/desserialização JSONB
 
-....
+[source,java]
+----
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -110,13 +114,14 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
     }
 
 }
-....
+----
 
 == Acessando o endpoint rest
 
 O teste gera uma aplicação web openejb e chama o endpoint do usuário
 
-....
+[source,java]
+----
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -157,7 +162,7 @@ public class UserServiceTest {
     }
 
 }
-....
+----
 
 == Executando
 
@@ -165,7 +170,8 @@ A execução do exemplo pode ser feita no maven com um simples comando `mvn clea
 
 Ao executar, você verá uma saída semelhante à seguinte.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -260,7 +266,7 @@ Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
     
-....
+----
 
 === Dentro do jar
 
@@ -269,7 +275,8 @@ um aplicativo REST que esteja funcionando.
 
 Se olharmos para o jar construído por maven, veremos que o aplicativo em si é bem pequeno:
 
-....
+[source,java]
+----
 $ jar tvf target/jsonb-configuration-8.0.0-SNAPSHOT.war 
      0 Fri Dec 28 19:36:10 CET 2018 META-INF/
    134 Fri Dec 28 19:36:08 CET 2018 META-INF/MANIFEST.MF
@@ -289,6 +296,6 @@ $ jar tvf target/jsonb-configuration-8.0.0-SNAPSHOT.war
      0 Fri Dec 28 19:36:10 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/
   1791 Fri Dec 28 19:10:44 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/pom.xml
    128 Fri Dec 28 19:36:08 CET 2018 META-INF/maven/org.superbiz/jsonb-configuration/pom.properties
-....
+----
 
 Esse jar único pode ser implantado em qualquer Java EE compatível implementação. No TomEE, basta colocá-lo no diretório `tomee.home/webapps/`.

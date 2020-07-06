@@ -21,7 +21,8 @@ usuário / senha, se necessário.
 
 Simplesmente uma anotação para obter o objeto
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import java.lang.annotation.Retention;
@@ -41,11 +42,12 @@ public @interface ObjectName {
     String user() default "";
     String password() default "";
 }
-....
+----
 
 == DynamicMBean Handler (a implementação de proxy)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import javax.annotation.PreDestroy;
@@ -272,13 +274,14 @@ public class DynamicMBeanHandler implements InvocationHandler {
         }
     }
 }
-....
+----
 
 == Proxies dinâmicos
 
 === DynamicMBeanClient (o cliente JMX dinâmico)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
@@ -300,11 +303,12 @@ public interface DynamicMBeanClient {
     void setCounter(int i);
     int length(String aString);
 }
-....
+----
 
 === DynamicRemoteMBeanClient (o Cliente JMX Dinâmico Remoto)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
@@ -325,13 +329,14 @@ public interface DynamicRemoteMBeanClient {
 
     @PreDestroy void clean();
 }
-....
+----
 
 == O MBean usado para o teste
 
 === SimpleMBean
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean.simple;
 
 public interface SimpleMBean {
@@ -340,11 +345,12 @@ public interface SimpleMBean {
     int getCounter();
     void setCounter(int c);
 }
-....
+----
 
 == Simple
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean.simple;
 
 public class Simple implements SimpleMBean {
@@ -365,11 +371,12 @@ public class Simple implements SimpleMBean {
         counter = c;
     }
 }
-....
+----
 
 == DynamicMBeanClientTest (O teste)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.junit.After;
@@ -448,4 +455,4 @@ public class DynamicMBeanClientTest {
         }
     }
 }
-....
+----

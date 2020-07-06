@@ -31,9 +31,10 @@ para más detalles.
 
 === Ejecutar la aplicación
 
-....
+[source,java]
+----
 mvn clean install tomee:run
-....
+----
 
 === Ejemplo 1
 
@@ -62,23 +63,26 @@ public class WeatherGateway{
 
 Llamada de estado del día
 
-....
+[source,java]
+----
 GET http://localhost:8080/mp-faulttolerance-retry/weather/day/status
-....
+----
 
 Registro del servidor
 
-....
+[source,java]
+----
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
-....
+----
 
 Respuesta
 
-....
+[source,java]
+----
 Today is a sunny day! (¡Hoy es un día soleado!)
-....
+----
 
 === Ejemplo 2
 
@@ -105,24 +109,27 @@ public String statusOfWeek(){
 
 Llamada de estado de la semana
 
-....
+[source,java]
+----
 GET http://localhost:8080/mp-faulttolerance-retry/weather/week/status
-....
+----
 
 Registro del servidor
 
-....
+[source,java]
+----
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (1)
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (2)
 WARNING - Timeout when accessing AccuWeather Forecast Service. Max of Attempts: (3), Attempts: (3)
 SEVERE  - Error AccuWeather Forecast Service is busy. Number of Attempts: (4) 
-....
+----
 
 Respuesta
 
-....
+[source,java]
+----
 WeatherGateway Service is Busy. Retry later
-....
+----
 
 === Ejemplo 3
 
@@ -150,19 +157,21 @@ public String statusOfWeekend() {
 
 Llamada de estado de la semana
 
-....
+[source,java]
+----
 GET http://localhost:8080/mp-faulttolerance-retry/weather/weekend/status
-....
+----
 
 Registro del servidor
 
-....
+[source,java]
+----
 WARNING - Timeout when accessing AccuWeather Forecast Service.
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (501) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (500) millis
-....
+----
 
 === Ejemplo 4 
 
@@ -189,17 +198,19 @@ public String statusOfMonth() {
 
 Llamada de estado del mes
 
-....
+[source,java]
+----
 GET http://localhost:8080/mp-faulttolerance-retry/weather/month/status
-....
+----
 
 Registro del servidor
 
-....
+[source,java]
+----
 WARNING - Timeout when accessing AccuWeather Forecast Service.
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (417) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (90) millis
-....
+----
 
 === Ejemplo 5 
 
@@ -222,29 +233,33 @@ public String statusOfYear(){
 
 Llamada de estado del año
 
-....
+[source,java]
+----
 GET http://localhost:8080/mp-faulttolerance-retry/weather/year/statusk
-....
+----
 
 Registro del servidor
 
-....
+[source,java]
+----
 WARNING - Timeout when accessing AccuWeather Forecast Service.
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (666) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (266) millis
 WARNING - Timeout when accessing AccuWeather Forecast Service. Delay before this attempt: (66) millis
-....
+----
 
 === Ejecutar las pruebas
 
 También puede probarlo utilizando el enlace:src/test/java/org/superbiz/rest/WeatherServiceTest.java[WeatherServiceTest.java] disponible en el proyecto.
 
-....
+[source,java]
+----
 mvn clean test
-....
+----
 
-....
+[source,java]
+----
 [INFO] Results:
 [INFO] 
 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+----

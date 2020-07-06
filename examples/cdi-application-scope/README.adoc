@@ -19,7 +19,8 @@ The `Waiter` session bean receives a request from the test class via the `orderS
 and sets the name for the `soup` field. The `orderWhatTheOtherGuyHad()` method returns
 the name of the `soup` field.
 
-....
+[source,java]
+----
 @Stateless
 public class Waiter {
 
@@ -36,7 +37,7 @@ public class Waiter {
         return name;
     }
 }
-....
+----
 
 === Soup
 
@@ -44,7 +45,8 @@ The `Soup` class is an injectable POJO, defined as `@ApplicationScoped`. This me
 will be created only once for the duration of the whole application. Try changing the `@ApplicationScoped`
 annotation to `@RequestScoped` and see what happens.
 
-....
+[source,java]
+----
 @ApplicationScoped
 public class Soup {
 
@@ -63,7 +65,7 @@ public class Soup {
         this.name = name;
     }
 }
-....
+----
 
 == Test Case
 
@@ -71,7 +73,8 @@ This is the entry class for this example. First a soup is ordered via `orderSoup
 This initiates the `soup` field. Next, `orderWhatTheOtherGuyHad()` method returns the soup
 from the application context.
 
-....
+[source,java]
+----
 public class RestaurantTest {
 
     private static String TOMATO_SOUP = "Tomato Soup";
@@ -100,14 +103,15 @@ public class RestaurantTest {
         container.close();
     }
 }
-....
+----
 
 == Running
 
 In the output you can see that there is just one `Soup` instance created - one for
 the whole application.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -140,4 +144,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.42 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

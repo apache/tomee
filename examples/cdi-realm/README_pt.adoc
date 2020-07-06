@@ -24,7 +24,8 @@ No servidor de aplicação TomEE, o mecanismo usado pelo Tomcat para definir um 
 Este exemplo mostra um secured servlet (servlet seguro/protegido) usando um realm. O secured servlet 
 tem uma funcionalidade simples, apenas ilustrar os conceitos aqui explicados:
 
-....
+[source,java]
+----
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -39,11 +40,12 @@ public class SecuredServlet extends HttpServlet {
         resp.getWriter().write("Servlet!");
     }
 }
-....
+----
 
 Para proteger este servlet, adicionaremos a seguinte classe:
 
-....
+[source,java]
+----
 import javax.enterprise.context.RequestScoped;
 import java.security.Principal;
 
@@ -74,19 +76,20 @@ public class AuthBean {
         );
     }
 }
-....
+----
 
 A classe define dois métodos: `authenticate` e `hasRole`.
 Ambos métodos vão ser utilizados pela classe `LazyRealm`, implementada no servidor de aplicação TomEE.
 Este realm é configurado no arquivo `webapp/META-INF/context.xml`:
 
-....
+[source,xml]
+----
 <Context preemptiveAuthentication="true">
   <Valve className="org.apache.catalina.authenticator.BasicAuthenticator" />
   <Realm className="org.apache.tomee.catalina.realm.LazyRealm"
          cdi="true" realmClass="org.superbiz.AuthBean"/>
 </Context>
-....
+----
 
 A classe `AuthBean` define um "banco de dados" com dois usuários: userA (papel de admin) e 
 userB (papel de usuário), ambos possuem a senha test.
@@ -95,7 +98,8 @@ para verificar se um usuário tem acesso ao conteúdo fornecido pelo nosso servl
 
 == Testes
 
-....
+[source,java]
+----
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -180,7 +184,7 @@ public class AuthBeanTest {
         }
     }
 }
-....
+----
 
 O teste usa o Arquillian para iniciar o servidor de aplicação e carregar o servlet.
 Existem dois métodos de teste: `success`, onde nosso servlet é acessado com o usuário e senha corretos,

@@ -24,7 +24,8 @@ Esté exemplo é apenas uma ilustração de como os conceitos dentro do CDI func
 
 == ConsoleHandler
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 public class ConsoleHandler implements LogHandler {
@@ -45,11 +46,12 @@ public class ConsoleHandler implements LogHandler {
         System.out.printf("##### Handler: %s, Writing to the console!\n", getName());
     }
 }
-....
+----
 
 == DatabaseHandler
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 public class DatabaseHandler implements LogHandler {
@@ -71,11 +73,12 @@ public class DatabaseHandler implements LogHandler {
         // Use conexão para gravar log no banco de dados
     }
 }
-....
+----
 
 == FileHandler
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 public class FileHandler implements LogHandler {
@@ -97,11 +100,12 @@ public class FileHandler implements LogHandler {
         // Escreva para o arquivo de log
     }
 }
-....
+----
 
 == LogFactory
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 import javax.enterprise.inject.Disposes;
@@ -138,11 +142,12 @@ public class LogFactory {
         }
     }
 }
-....
+----
 
 == Logger
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 public interface Logger {
@@ -151,11 +156,12 @@ public interface Logger {
 
     public LogHandler getHandler();
 }
-....
+----
 
 == LoggerImpl
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 import javax.inject.Inject;
@@ -176,11 +182,12 @@ public class LoggerImpl implements Logger {
         return handler;
     }
 }
-....
+----
 
 == LogHandler
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 public interface LogHandler {
@@ -189,21 +196,23 @@ public interface LogHandler {
 
     public void writeLog(String s);
 }
-....
+----
 
 == beans.xml
 
-....
+[source,xml]
+----
 <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
                             http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
 
 </beans>
-....
+----
 
 == LoggerTest
 
-....
+[source,java]
+----
 package org.superbiz.cdi.produces.disposes;
 
 import org.junit.After;
@@ -256,11 +265,12 @@ public class LoggerTest {
     }
 
 }
-....
+----
 
 = Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -294,4 +304,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.02 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

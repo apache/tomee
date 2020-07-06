@@ -9,7 +9,8 @@ This example shows how to create a stateful session bean that uses the
 
 == CallbackCounter
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import javax.annotation.PostConstruct;
@@ -67,11 +68,12 @@ public class CallbackCounter implements Serializable {
         return (count = 0);
     }
 }
-....
+----
 
 == ExecutionChannel
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import java.util.ArrayList;
@@ -96,11 +98,12 @@ public class ExecutionChannel {
         }
     }
 }
-....
+----
 
 == ExecutionObserver
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 public interface ExecutionObserver {
@@ -108,11 +111,12 @@ public interface ExecutionObserver {
     void onExecution(Object value);
 
 }
-....
+----
 
 == CounterCallbacksTest
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import junit.framework.Assert;
@@ -217,11 +221,12 @@ public class CounterCallbacksTest implements ExecutionObserver {
         received.add(value);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -302,4 +307,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Finished at: Sat Jul 21 08:18:35 EDT 2012
 [INFO] Final Memory: 11M/247M
 [INFO] ------------------------------------------------------------------------
-....
+----

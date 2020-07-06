@@ -178,7 +178,7 @@ A execução do exemplo pode ser feita a partir do maven com um simples comando 
 
 Quando executado, você deve ver uma saída semelhante à seguinte:
 
-[source,java]
+[source,console]
 ----
 -------------------------------------------------------
  T E S T S
