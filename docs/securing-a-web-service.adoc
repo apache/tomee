@@ -34,7 +34,7 @@ configured JAAS provider. This will honour any EJB security roles you
 have setup using
 
 . See the webservice-security example in the OpenEJB codebase
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/
+https://github.com/apache/tomee/tree/master/examples
 
 _Warning: Currently only BASIC is the only HTTP authentication mechanism
 available when running OpenEJB standalone or in a unit test, but we hope
@@ -79,7 +79,9 @@ you can configure either one or the other or both. You can decide to
 check client credentials for incoming messages and sign outgoing
 messages (response).
 
-= Configuration principles The configuration is made in the
+= Configuration principles
+
+The configuration is made in the
 _openejb-jar.xml_. Each endpoint web service can provide a set of
 properties to customize WS-Security behavior through the element. The
 content of this element is consistent with the overall structure of
@@ -100,8 +102,9 @@ naming conventions. Each property is made of .<in|out>.=
 
 For example : _wss4j.in.action = UsernameToken_
 
-= Username Token (Password digest) example #### Excerpt from
-_openejb-jar.xml_.
+= Username Token (Password digest) example 
+
+Excerpt from _openejb-jar.xml_.
 
 [source,xml]
 ----
@@ -126,7 +129,9 @@ _openejb-jar.xml_.
 </openejb-jar>
 ----
 
-== Request sent by the client. This request contains SOAP headers to
+== Request sent by the client.
+
+This request contains SOAP headers to
 manage security. You can see _UsernameToken_ tag from the WS-Security
 specification.
 
@@ -236,5 +241,6 @@ public class CustomPasswordHandler implements CallbackHandler {
 }
 ----
 
-= Examples A full example (webservice-ws-security) is available with
-OpenEJB Examples.
+= Examples
+
+A full example (webservice-ws-security) is available with https://github.com/apache/tomee/tree/master/examples/webservice-ws-security[OpenEJB Examples].
