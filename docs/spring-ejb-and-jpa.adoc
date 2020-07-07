@@ -4,7 +4,9 @@
 :jbake-type: page
 :jbake-status: published
 
-\{note}OpenEJB 3.1 or later required\{note} This example shows
+NOTE: OpenEJB 3.1 or later required
+
+This example shows
 how to combine Spring, OpenEJB and Hibernate using the integration code
 provided by OpenEJB. Here, OpenEJB is used as an embeddable EJB
 container inside of Spring. See the link:spring.html[Spring] page for
@@ -16,123 +18,417 @@ objects in one application. The premise of the example is a Cineplex
 that has a number of Theaters (viewing screens), each playing a number
 of Movies. The basic object layout is as follows:
 
-Object
+|===
+|Object |Type |Description
 
-Type
-
-Description
-
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/CineplexImpl.java[CineplexImpl]
-
-@Stateless
-
-Shows the use of `@Resource` to have Spring beans injected. Specifically,
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/CineplexImpl.java[CineplexImpl]
+|@Stateless
+|Shows the use of `@Resource` to have Spring beans injected. Specifically,
 the _Theaters_ Spring bean
 
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/Theaters.java[Theaters]
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/Theaters.java[Theaters]
+|Spring bean
+|Simple wrapper object injected into _CineplexImpl_
 
-Spring bean
-
-Simple wrapper object injected into _CineplexImpl_
-
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/Theater.java[Theater]
-
-Spring bean
-
-Shows that EJBs can be injected into Spring beans. Uses both the
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/Theater.java[Theater]
+|Spring bean
+|Shows that EJBs can be injected into Spring beans. Uses both the
 _Movies_ EJB and the _Movie_ JPA objects
 
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/MoviesImpl.java[MoviesImpl]
-
-@Stateful
-
-Wraps a JPA EntityManager and provides transactional access to the
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/MoviesImpl.java[MoviesImpl]
+|@Stateful
+|Wraps a JPA EntityManager and provides transactional access to the
 persistent _Movie_ objects
 
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/Movie.java[Movie]
-
-@Entity
-
-Basic JPA bean that is used both by Spring beans and EJBs. The same
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/Movie.java[Movie]
+|@Entity
+|Basic JPA bean that is used both by Spring beans and EJBs. The same
 _Movie_ object as in all the other persistence related examples.
 
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration/src/main/java/org/superbiz/spring/AvailableMovies.java[AvailableMovies]
-
-Spring bean
-
-Simple object used as a clever way to seed the EntityManager (and
+|https://github.com/apache/tomee/tree/master/examples/spring-integration/src/main/java/org/superbiz/spring/AvailableMovies.java[AvailableMovies]
+|Spring bean
+|Simple object used as a clever way to seed the EntityManager (and
 really, the database) with persistent _Movie_ objects
+|===
 
-# Required jars
+== Required jars
 
 To setup the integration you'll need:
 
 [arabic]
 . The standard OpenEJB 3.1 libraries
 . The
-https://repository.apache.org/content/groups/public/org/apache/openejb/openejb-spring/3.1.2/openejb-spring-3.1.2.jar[openejb-spring-3.1.jar]
+https://repository.apache.org/content/groups/public/org/apache/openejb/openejb-spring/3.1/openejb-spring-3.1.jar[openejb-spring-3.1.jar]
 or later
 . Spring 2.5 or other (any version should work)
 
-In Maven2 this can be done by adding the following dependencies to your
-pom.xml
-\{snippet:id=required|url=openejb3/examples/spring-integration/pom.xml|lang=xml}
+In Maven2 this can be done by adding the following dependencies to your pom.xml
+
+[source,xml]
+----
+<dependencies>
+    ...
+    <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-core</artifactId>
+        <version>3.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.openejb</groupId>
+        <artifactId>openejb-spring</artifactId>
+        <version>3.1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring</artifactId>
+        <version>2.5.5</version>
+    </dependency>
+    ...
+</dependencies>
+----
+
 For other environments, you can simply link:downloads.html[download an
 openejb-3.1.zip] or later and include all the jars under the lib/
 directory in your classpath. Then download and add the
-[openejb-spring-3.1.jar|http://people.apache.org/repo/m2-ibiblio-rsync-repository/org/apache/openejb/openejb-spring/3.1/openejb-spring-3.1.jar]
+http://people.apache.org/repo/m2-ibiblio-rsync-repository/org/apache/openejb/openejb-spring/3.1/openejb-spring-3.1.jar[openejb-spring-3.1.jar]
 along with your Spring jars.
 
-# The Spring xml
+== The Spring xml
 
 Bootstrapping and Configuring OpenEJB is fairly simple.
-\{snippet:id=bootstrapping|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans">
+  ...
+  <!--
+  Required:  Set up a TransactionManager for use by OpenEJB or Spring.
+  The Spring PlatformTransactionManager may be used instead.
+  In future versions this will not be a required step.
+  -->
+  <bean name="TransactionManager" class="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
+
+  <!--
+  Required:  Set up a SecurityService for use by OpenEJB.
+  In future versions this will not be a required step.
+  -->
+  <bean name="SecurityService" class="org.apache.openejb.core.security.SecurityServiceImpl"/>
+
+  <!--
+  Loads the EJBs from the classpath just as when embedding OpenEJB via
+  the org.apache.openejb.client.LocalInitialContextFactory.  All the discovered
+  EJBs are imported into this context and available for injection here.
+  -->
+  <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>
+  ...
+</beans>
+----
+
 As well, you can optionally declare any resources or containers.
 Anything declarable as a or in the openejb.xml can instead be declared
 in the Spring xml file as shown here.
-\{snippet:id=resources|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans">
+  ...
+  <bean name="MovieDatabase" class="org.apache.openejb.spring.Resource">
+    <property name="type" value="DataSource"/>
+    <property name="properties">
+      <props>
+        <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+        <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean name="MovieDatabaseUnmanaged" class="org.apache.openejb.spring.Resource">
+    <property name="type" value="DataSource"/>
+    <property name="properties">
+      <props>
+        <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+        <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+        <prop key="JtaManaged">false</prop>
+      </props>
+    </property>
+  </bean>
+  ...
+</beans>
+----
+
 And finally our Spring beans.
-\{snippet:id=pojos|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
-{title= Don't forget}
-\{snippet:id=annotations|url=openejb3/examples/spring-integration/src/main/resources/movies.xml|lang=xml}
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+  ...
+  <bean name="AvailableMovies" class="org.superbiz.spring.AvailableMovies">
+    <property name="movies">
+      <list>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Fargo"/>
+          <property name="director" value="Joel Coen"/>
+          <property name="year" value="1996"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Reservoir Dogs"/>
+          <property name="director" value="Quentin Tarantino"/>
+          <property name="year" value="1992"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="The Big Lebowski"/>
+          <property name="director" value="Joel Coen"/>
+          <property name="year" value="1998"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="You, Me and Dupree"/>
+          <property name="director" value="Anthony Russo"/>
+          <property name="year" value="2006"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Wedding Crashers"/>
+          <property name="director" value="David Dobkin"/>
+          <property name="year" value="2005"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Zoolander"/>
+          <property name="director" value="Ben Stiller"/>
+          <property name="year" value="2001"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Shanghai Noon"/>
+          <property name="director" value="Tom Dey"/>
+          <property name="year" value="2000"/>
+        </bean>
+      </list>
+    </property>
+    <property name="moviesEjb">
+      <ref bean="MoviesLocal" />
+    </property>
+  </bean>
+
+  <bean name="theater1" class="org.superbiz.spring.Theater">
+    <property name="nowPlaying">
+      <list>
+        <value>Fargo</value>
+        <value>Reservoir Dogs</value>
+        <value>The Big Lebowski</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="theater2" class="org.superbiz.spring.Theater">
+    <property name="nowPlaying">
+      <list>
+        <value>You, Me and Dupree</value>
+        <value>Wedding Crashers</value>
+        <value>Zoolander</value>
+        <value>Shanghai Noon</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="theaters" class="org.superbiz.spring.Theaters">
+    <property name="theaters">
+      <list>
+        <ref bean="theater1"/>
+        <ref bean="theater2"/>
+      </list>
+    </property>
+  </bean>
+  ...
+  <!-- Don't forget -->
+  <context:annotation-config/>
+  ...
+</beans>
+----
+
 It allows various annotations to be detected in bean classes: Spring's
-@Required and `@Autowired`, as well as JSR 250's `@PostConstruct`,
-@PreDestroy and `@Resource` (if available), JAX-WS's `@WebServiceRef` (if
+`@Required` and `@Autowired`, as well as JSR 250's `@PostConstruct`,
+`@PreDestroy` and `@Resource` (if available), JAX-WS's `@WebServiceRef` (if
 available), EJB3's `@EJB` (if available), and JPA's `@PersistenceContext`
 and `@PersistenceUnit` (if available). Alternatively, you may choose to
 activate the individual BeanPostProcessors for those annotations.
-\{note}
 
-# The Code
+== The Code
 
 In efforts to keep the example page somewhat short, we'll show just
 three beans, each demonstrating a particular relationship.
 
 The first is the CineplexImpl EJB which shows EJB -> Spring.
-\{snippet:id=code|url=openejb3/examples/spring-integration/src/main/java/org/superbiz/spring/CineplexImpl.java|lang=java}
+
+[source,java]
+----
+@Stateless
+public class CineplexImpl implements Cineplex {
+
+    /**
+     * The Theaters Spring bean will be injected
+     */
+    @Resource
+    private Theaters theaters;
+
+    public List<Theater> getTheaters() {
+        return theaters.getTheaters();
+    }
+}
+----
 
 The second is the Theater Spring bean which shows Spring -> EJB.
-\{snippet:id=code|url=openejb3/examples/spring-integration/src/main/java/org/superbiz/spring/Theater.java|lang=java}
 
-The last is the AvailableMovies Spring bean which Shows Spring -> EJB ->
-JPA
-\{snippet:id=code|url=openejb3/examples/spring-integration/src/main/java/org/superbiz/spring/AvailableMovies.java|lang=java}
+[source,java]
+----
+/**
+ * Spring bean that references the Movies EJB and the Movie JPA bean.
+ * <p/>
+ * This bean shows that Spring beans can have references to EJBs.
+ */
+public class Theater {
 
-# The TestCase
+    /**
+     * The Movies @Stateless EJB
+     */
+    private final Movies movies;
+
+    private final List<Movie> nowPlaying = new ArrayList<Movie>();
+
+    /**
+     * The Movies EJB is passed in on the constructor which
+     * guarantees we can use it in the setNowPlaying method.
+     *
+     * @param movies
+     */
+    @Autowired
+    public Theater(Movies movies) {
+        this.movies = movies;
+    }
+
+    /**
+     * For every title in the list we will use the Movies EJB
+     * to lookup the actual Movie JPA object.
+     *
+     * @param nowPlaying
+     * @throws Exception
+     */
+    public void setNowPlaying(List<String> nowPlaying) throws Exception {
+        for (String title : nowPlaying) {
+            this.nowPlaying.add(movies.getMovieByTitle(title));
+        }
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        return nowPlaying;
+    }
+}
+----
+
+The last is the AvailableMovies Spring bean which Shows Spring -> EJB -> JPA
+
+[source,java]
+----
+/**
+ * This is a simple Spring bean that we use as an easy way
+ * to seed the example with a list of persistent Movie objects
+ * <p/>
+ * The individual Movie objects are constructed by Spring, then
+ * passed into the Movies EJB where they are transactionally
+ * persisted with the EntityManager.
+ */
+public class AvailableMovies {
+
+    @EJB
+    private Movies moviesEjb;
+
+    private List<Movie> movies;
+
+    @PostConstruct
+    public void construct() throws Exception {
+        for (Movie movie : movies) {
+            moviesEjb.addMovie(movie);
+        }
+    }
+
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
+    public void setMovies(List<Movie> movies) {
+        this.movies = movies;
+    }
+}
+----
+
+== The TestCase
 
 The JUnit TestCase uses a ClassPathXmlApplicationContext to load the
 Spring ApplicationContext. Anything that loads your Spring xml file
 should work fine. The following code would work a plain java app as
 well.
 
-\{snippet:id=code|url=openejb3/examples/spring-integration/src/test/java/org/superbiz/spring/MoviesTest.java|lang=java}
+[source,java]
+----
+public class MoviesTest extends TestCase {
 
-# Running
+    public void test() throws Exception {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("movies.xml");
+
+        // Can I lookup the Cineplex EJB via the Spring ApplicationContext
+        Cineplex cineplex = (Cineplex) context.getBean("CineplexImplLocal");
+        assertNotNull(cineplex);
+
+        // Does the Cineplex EJB have a reference to the Theaters Spring bean?
+        List<Theater> theaters = cineplex.getTheaters();
+        assertNotNull(theaters);
+
+        assertEquals(2, theaters.size());
+
+        Theater theaterOne = theaters.get(0);
+        Theater theaterTwo = theaters.get(1);
+
+
+        // Were the Theater Spring beans able to use the
+        // Movies EJB to get references to the Movie JPA objects?
+        List<Movie> theaterOneMovies = theaterOne.getMovies();
+        assertNotNull(theaterOneMovies);
+
+        List<Movie> theaterTwoMovies = theaterTwo.getMovies();
+        assertNotNull(theaterTwoMovies);
+
+        // The first Theater should have used the Movies EJB
+        // to get a reference to three Movie JPA objects
+        assertEquals(3, theaterOneMovies.size());
+
+        assertEquals("Fargo", theaterOneMovies.get(0).getTitle());
+        assertEquals("Reservoir Dogs", theaterOneMovies.get(1).getTitle());
+        assertEquals("The Big Lebowski", theaterOneMovies.get(2).getTitle());
+
+        // The second Theater should have used the Movies EJB
+        // to get a reference to four Movie JPA objects
+
+        assertEquals(4, theaterTwoMovies.size());
+
+        assertEquals("You, Me and Dupree", theaterTwoMovies.get(0).getTitle());
+        assertEquals("Wedding Crashers", theaterTwoMovies.get(1).getTitle());
+        assertEquals("Zoolander", theaterTwoMovies.get(2).getTitle());
+        assertEquals("Shanghai Noon", theaterTwoMovies.get(3).getTitle());
+    }
+}
+----
+
+== Running
 
 The source for this example can be downloaded from svn via:
 
-$ svn co
-http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration
+ $ svn co http://svn.apache.org/repos/asf/tomee/tomee/trunk/examples/spring-integration
 
 Then, in the "spring-integration" directory, run:
 
@@ -140,58 +436,42 @@ $ mvn clean install
 
 Which should create output like the following.
 
-[source,java]
-----
+....
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
 Running org.superbiz.spring.MoviesTest
-log4j:WARN No appenders could be found for logger
-----
+log4j:WARN No appenders could be found for logger (org.springframework.context.support.ClassPathXmlApplicationContext).
+log4j:WARN Please initialize the log4j system properly. Apache OpenEJB 3.1 build: 20081009-03:31 http://tomee.apache.org/
+INFO - openejb.home =
+ /Users/dblevins/work/openejb3/examples/spring-integration
+INFO - openejb.base =
+ /Users/dblevins/work/openejb3/examples/spring-integration
+INFO - Configuring Service(id=Default JDK 1.3 ProxyFactory, type=ProxyFactory, provider-id=Default JDK 1.3 ProxyFactory)
+INFO - Configuring Service(id=MovieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Configuring Service(id=MovieDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/work/openejb3/examples/spring-integration/target/classes
+INFO - Beginning load: /Users/dblevins/work/openejb3/examples/spring-integration/target/classes
+INFO - Configuring enterprise application: classpath.ear
+INFO - Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+INFO - Auto-creating a container for bean CineplexImpl: Container(type=STATELESS, id=Default Stateless Container)
+INFO - Auto-linking resource-ref 'org.superbiz.spring.CineplexImpl/theaters' in bean CineplexImpl to Resource(id=theaters)
+INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+INFO - Configuring PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
+INFO - Enterprise application "classpath.ear" loaded.
+INFO - Assembling app: classpath.ear
+INFO - PersistenceUnit(name=movie-unit, provider=org.hibernate.ejb.HibernatePersistence)
+INFO - Jndi(name=CineplexImplLocal) --> Ejb(deployment-id=CineplexImpl)
+INFO - Jndi(name=MoviesLocal) --> Ejb(deployment-id=Movies)
+INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Created Ejb(deployment-id=CineplexImpl, ejb-name=CineplexImpl, container=Default Stateless Container)
+INFO - Deployed Application(path=classpath.ear)
+INFO - Exported EJB Movies with interface org.superbiz.spring.Movies to Spring bean MoviesLocal
+INFO - Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to Spring bean CineplexImplLocal
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.141 sec
 
-(org.springframework.context.support.ClassPathXmlApplicationContext).
-log4j:WARN Please initialize the log4j system properly. Apache OpenEJB
-3.1 build: 20081009-03:31 http://tomee.apache.org/ INFO - openejb.home =
-/Users/dblevins/work/openejb3/examples/spring-integration INFO -
-openejb.base = /Users/dblevins/work/openejb3/examples/spring-integration
-INFO - Configuring Service(id=Default JDK 1.3 ProxyFactory,
-type=ProxyFactory, provider-id=Default JDK 1.3 ProxyFactory) INFO -
-Configuring Service(id=MovieDatabase, type=Resource, provider-id=Default
-JDBC Database) INFO - Configuring Service(id=MovieDatabaseUnmanaged,
-type=Resource, provider-id=Default JDBC Database) INFO - Found EjbModule
-in classpath:
-/Users/dblevins/work/openejb3/examples/spring-integration/target/classes
-INFO - Beginning load:
-/Users/dblevins/work/openejb3/examples/spring-integration/target/classes
-INFO - Configuring enterprise application: classpath.ear INFO -
-Configuring Service(id=Default Stateless Container, type=Container,
-provider-id=Default Stateless Container) INFO - Auto-creating a
-container for bean CineplexImpl: Container(type=STATELESS, id=Default
-Stateless Container) INFO - Auto-linking resource-ref
-'org.superbiz.spring.CineplexImpl/theaters' in bean CineplexImpl to
-Resource(id=theaters) INFO - Configuring Service(id=Default Stateful
-Container, type=Container, provider-id=Default Stateful Container) INFO
-- Auto-creating a container for bean Movies: Container(type=STATEFUL,
-id=Default Stateful Container) INFO - Configuring
-PersistenceUnit(name=movie-unit,
-provider=org.hibernate.ejb.HibernatePersistence) INFO - Enterprise
-application "classpath.ear" loaded. INFO - Assembling app: classpath.ear
-INFO - PersistenceUnit(name=movie-unit,
-provider=org.hibernate.ejb.HibernatePersistence) INFO -
-Jndi(name=CineplexImplLocal) --> Ejb(deployment-id=CineplexImpl) INFO -
-Jndi(name=MoviesLocal) --> Ejb(deployment-id=Movies) INFO - Created
-Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful
-Container) INFO - Created Ejb(deployment-id=CineplexImpl,
-ejb-name=CineplexImpl, container=Default Stateless Container) INFO -
-Deployed Application(path=classpath.ear) INFO - Exported EJB Movies with
-interface org.superbiz.spring.Movies to Spring bean MoviesLocal INFO -
-Exported EJB CineplexImpl with interface org.superbiz.spring.Cineplex to
-Spring bean CineplexImplLocal Tests run: 1, Failures: 0, Errors: 0,
-Skipped: 0, Time elapsed: 3.141 sec
-
-[source,properties]
-----
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-----
+....

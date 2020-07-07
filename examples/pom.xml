@@ -207,6 +207,7 @@
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
+    <module>spring-integration</module>
   </modules>
   <dependencies>
     <dependency>
