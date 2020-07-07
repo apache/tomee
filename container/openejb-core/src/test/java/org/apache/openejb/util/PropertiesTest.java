@@ -359,7 +359,7 @@ public class PropertiesTest extends TestCase {
             } else {
                 final Object expectedValue = expected.get(key);
                 final Object actualValue = actual.get(key);
-                if (expectedValue != expectedValue && (expectedValue == null || !expectedValue.equals(actual))) {
+                if (actualValue != expectedValue && (expectedValue == null || !expectedValue.equals(actualValue))) {
                     message.append("C ").append(key).append("=").append(expectedValue).append("\n");
                     message.append("  ").append(key).append("=").append(actualValue).append("\n");
                 }
