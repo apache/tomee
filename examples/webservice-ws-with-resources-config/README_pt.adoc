@@ -1,0 +1,86 @@
+:index-group: Webservice
+:jbake-type: page
+:jbake-status: published
+= Webservice JAX-WS - Configuração de Recursos
+
+TomEE conta com o Apache CXF para JAX-RS (RESTful Services) e JAX-WS (Web Services). Este é um exemplo de como desenvolver EJB webservices graças a implementação CXF.
+
+== openejb-jar.xml Configuração
+Você pode usar (http://tomee.apache.org/details-on-openejb-jar.html[openejb-jar.xml]) para configurar seu webservice.
+
+CXF API é reutilizável mas além disso você pode configurar os interceptadores através do `openejb-jar.xml`(localizados na WEB-INF).
+Como um rápido lembrete, a configuração no `openejb-jar.xml`, você pode utilizar uma configuração parecida a esta, com o seu próximo EJB:
+
+[source,xml]
+----
+
+<openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
+  <ejb-deployment ejb-name="CalculatorBean"> <!-- configurar os valores do bean, no resources.xml -->
+    <properties>
+      cxf.jaxws.in-interceptors = wss4j
+    </properties>
+  </ejb-deployment>
+</openejb-jar>
+----
+Para um webservice Pojo é da mesma forma, mas usando o pojo-deployment em vez do ejb-deployment.
+
+Então uma vez que fez sua seleção de prefixo, e conhece onde é para escrever a configuração, basta utilizar as seguintes entradas:
+
+* *properties*: propriedades da fábrica servidora
+
+* *features*: recursos CXF
+
+* *in-interceptors*:  interceptadores de entrada do CXF
+
+* *out-interceptors*: interceptadores de saída do CXF
+
+* *in-fault-interceptors*: interceptadores de entrada do CXF para tratamento de erros 
+
+* *out-fault-interceptors*: interceptadores de saída do CXF para tratamento de erros 
+
+* *databinding*: servidor de vinculação de dados
+
+* *providers (somente para endpoint JAX-RS)*: lista de provedores JAX-RS
+
+* *skip-provider-scanning (somente para JAX-RS)*: utilizar ou não um provedor de varredura (por padrão true)
+
+Para características e interceptadores, a regra é a mesma: lista de valores separados por vírgula. Cada valor da lista, é um nome de classe qualificado ou um id de serviço, é um ou o outro, no resources.xml.
+
+== Exemplo para JAX-WS
+Para configurar o WSS4J no EJB `CalculatorBean` para adicionar uma instância no openejb-jar.xml:
+
+[source,xml]
+----
+
+<resources>
+  <!-- os interceptadores -->
+  <Service id="wss4j1" class-name="org.apache.openejb.server.cxf.config.WSS4JInInterceptorFactory" factory-name="create">
+    action = UsernameToken
+    passwordType = PasswordText
+    passwordCallbackClass = org.superbiz.ws.security.PasswordCallbackHandler
+  </Service>
+</resources>
+----
+== passwordCallbackClass
+
+`passwordCallbackClass` é uma propriedade do `WSS4JInInterceptorFactory` e seu valor é a classe `PasswordCallbackHandler`.
+
+`PasswordCallbackHandler` utiliza `org.apache.wss4j.common.ext.WSPasswordCallback` para prover senhas no mecanismo de callback.
+
+
+==== Exemplo
+
+Exemplo completo pode ser encontrado https://github.com/apache/tomee/blob/master/examples/webservice-ws-with-resources-config/src/main/java/org/superbiz/ws/security/PasswordCallbackHandler.java[aqui]:
+
+
+=== Executando os testes
+
+Exemplo de projeto completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/webservice-ws-with-resources-config[aqui].
+Este é um projeto maven, e todos os testes pode ser executados rodando o comando `mvn clean test`.
+
+    mvn clean test
+    
+```
+[INFO] Resultados:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
