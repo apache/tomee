@@ -4,7 +4,6 @@
 :jbake-type: page
 :jbake-status: published
 
-
 _Also see link:testing-transactions-example.html[Testing Transactions]
 for an example of how to use and test EJB transaction attributes_
 
@@ -31,27 +30,19 @@ applications is _REQUIRED_. The default transaction attribute for EJB
 
 A simplistic way to visualize the transaction attributes is as follows.
 
-Failing
+|===
+| |Failing |Correcting |No Change
 
-Correcting
+|*Transacted*
+|MANDATORY
+|REQUIRED, REQUIRES_NEW
+|SUPPORTS
 
-No Change
-
-Transacted
-
-MANDATORY
-
-REQUIRED, REQUIRES_NEW
-
-SUPPORTS
-
-Not Transacted
-
-NEVER
-
-NOT_SUPPORTED
-
-SUPPORTS
+|*Not Transacted*
+|NEVER
+|NOT_SUPPORTED
+|SUPPORTS
+|===
 
 The "_Transacted_" and "_Not Transacted_" categories represent the
 container guarantee, i.e. if the bean method will or will not be invoked
@@ -124,11 +115,11 @@ public static class MyBean implements MyBusinessInterface {
 
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public String codeRed(String s) {
-    return s;
+        return s;
     }
 
     public String codeBlue(String s) {
-    return s;
+        return s;
     }
 }
 ----
@@ -145,11 +136,11 @@ public static class MyBean implements MyBusinessInterface {
 public static class MyBean implements MyBusinessInterface {
 
     public String codeRed(String s) {
-    return s;
+        return s;
     }
 
     public String codeBlue(String s) {
-    return s;
+        return s;
     }
 }
 ----
@@ -167,16 +158,16 @@ public static class MyBean implements MyBusinessInterface {
 
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public String codeRed(String s) {
-    return s;
+        return s;
     }
 
     public String codeBlue(String s) {
-    return s;
+        return s;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public String codeGreen(String s) {
-    return s;
+        return s;
     }
 }
 ----
@@ -185,7 +176,7 @@ public static class MyBean implements MyBusinessInterface {
 * _codeBlue_ will be invoked with the attribute of _SUPPORTS_
 * _codeGreen_ will be invoked with the attribute of _REQUIRED_
 
-= Illegal Usage
+== Illegal Usage
 
 Generally, transaction annotationss cannot be made on AroundInvoke
 methods and most callbacks.
@@ -199,31 +190,31 @@ public class MyStatefulBean implements  MyBusinessInterface  {
 
     @PostConstruct
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void constructed(){
+    public void constructed() {
 
     }
 
     @PreDestroy
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void destroy(){
+    public void destroy() {
 
     }
 
     @AroundInvoke
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Object invoke(InvocationContext invocationContext) throws Exception {
-    return invocationContext.proceed();
+        return invocationContext.proceed();
     }
 
     @PostActivate
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void activated(){
+    public void activated() {
 
     }
 
     @PrePassivate
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void passivate(){
+    public void passivate() {
 
     }
 }

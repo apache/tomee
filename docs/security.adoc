@@ -4,7 +4,7 @@
 :jbake-type: page
 :jbake-status: published
 
-= Security - How To.
+== Security - How To.
 
 We currently have two authentication mechanisms to choose from: *
 _PropertiesLoginModule_ (a basic text file based login that looks up
@@ -18,58 +18,57 @@ for user/pass info, which is:
 
 [source,java]
 ----
-Properties props = new Properties();
-props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
-props.setProperty(Context.PROVIDER_URL, "ejbd://localhost:4201");
-props.setProperty(Context.SECURITY_PRINCIPAL, "someuser");
-props.setProperty(Context.SECURITY_CREDENTIALS, "thepass");
-props.setProperty("openejb.authentication.realmName", "PropertiesLogin");
-// optional
-InitialContext ctx = new InitialContext(props);
-ctx.lookup(...);
+class ClassName {
+
+    public ClassName() {
+        Properties props = new Properties();
+        props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.RemoteInitialContextFactory");
+        props.setProperty(Context.PROVIDER_URL, "ejbd://localhost:4201");
+        props.setProperty(Context.SECURITY_PRINCIPAL, "someuser");
+        props.setProperty(Context.SECURITY_CREDENTIALS, "thepass");
+        props.setProperty("openejb.authentication.realmName", "PropertiesLogin");
+        // optional
+        InitialContext ctx = new InitialContext(props);
+        ctx.lookup("...");
+    }
+
+}
 ----
 
 That will get you logged in and all your calls from that context should
 execute as you.
 
-_$\{openejb.base}/conf/login.config_ is a standard JAAS config file.
+_{openejb.base}/conf/login.config_ is a standard JAAS config file.
 Here, you can configure any number of security realms to authenticate
 against. To specify which of the realms you want to authenticate
 against, you can set the _openejb.authentication.realmName_ property to
 any of the configured realm names in _login.config_. If you don't
 speficy a realm name, the default (currently _PropertiesLogin_) is used.
 For examples and more information on JAAS configuration, see the
-http://java.sun.com/javase/6/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS
-Reference Guide] .
+http://java.sun.com/javase/6/docs/technotes/guides/security/jaas/JAASRefGuide.html[JAAS Reference Guide] .
 
-== PropertiesLoginModule
+=== PropertiesLoginModule
 
 Supported options:
 
-Option
+[cols="1,5,1"]
+|===
+|Option |Description |Required
 
-Description
+|UsersFile
+|name of the properties file that contains the users and their passwords
+|_yes_
 
-Required
-
-UsersFile
-
-name of the properties file that contains the users and their passwords
-
-_yes_
-
-GroupsFile
-
-name of the properties file that contains the groups and their member
-lists
-
-_yes_
+|GroupsFile
+|name of the properties file that contains the groups and their member lists
+|_yes_
+|===
 
 _UsersFile_ and _GroupsFile_ are read in on every login, so +you can
 update them+ on a running system and those users will "show up"
 immediately +without the need for a restart+ of any kind.
 
-== SQLLoginModule
+=== SQLLoginModule
 
 You can either use a data source or configure the JDBC URL through which
 the user/group lookups will be made.
@@ -94,68 +93,49 @@ their groups (or "roles" in the EJB world).
 
 Supported options:
 
-Option
+[cols="1,3,1"]
+|===
+|Option |Description |Required
 
-Description
+|dataSourceName
+|the name of a data source
+|_yes_ (alternative 1)
 
-Required
+|jdbcURL
+|a standard JDBC URL
+|_yes_ (alternative 2)
 
-dataSourceName
+|jdbcDriver
+|the fully qualified class name of the database driver
+|no
 
-the name of a data source
+|jdbcUser
+|the user name for accessing the database
+|no
 
-_yes_ (alternative 1)
+|jdbcPassword
+|the password for accessing the database
+|no
 
-jdbcURL
+|userSelect
+|the SQL query that returns a list of users and their passwords
+|_yes_
 
-a standard JDBC URL
+|groupSelect
+|the SQL query that returns a list of users and groups (roles)
+|_yes_
 
-_yes_ (alternative 2)
-
-jdbcDriver
-
-the fully qualified class name of the database driver
-
-no
-
-jdbcUser
-
-the user name for accessing the database
-
-no
-
-jdbcPassword
-
-the password for accessing the database
-
-no
-
-userSelect
-
-the SQL query that returns a list of users and their passwords
-
-_yes_
-
-groupSelect
-
-the SQL query that returns a list of users and groups (roles)
-
-_yes_
-
-digest
-
-the name of the digest algorithm (e.g. "MD5" or "SHA") for digest
+|digest
+|the name of the digest algorithm (e.g. "MD5" or "SHA") for digest
 authentication
+|no
 
-no
+|encoding
+|the digest encoding, can be "hex" or "base64"
+|no
+|===
 
-encoding
-
-the digest encoding, can be "hex" or "base64"
-
-no
-
-= PLUG POINTS
+== PLUG POINTS
 
 There are four-five different plug points where you could customize the
 functionality. From largest to smallest: - _The SecurityService
@@ -190,8 +170,7 @@ LoginModule, but you would have to supply your clients with your own way
 to authenticate to it and write a strategy for telling the OpenEJB
 client what data to send to the server with each invocation request. See
 the
-http://java.sun.com/javase/6/docs/technotes/guides/security/jaas/JAASLMDevGuide.html[JAAS
-LoginModule Developer's Guide] for more information.
+http://java.sun.com/javase/6/docs/technotes/guides/security/jaas/JAASLMDevGuide.html[JAAS LoginModule Developer's Guide] for more information.
 * _Client IdentityResolver_. This is the just mentioned interface you
 would have to implement to supply the OpenEJB client with alternate data
 to send to the server with each invocation request. If you're plugging

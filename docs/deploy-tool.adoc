@@ -4,18 +4,15 @@
 :jbake-type: page
 :jbake-status: published
 
-
-= NAME
+== NAME
 
 openejb deploy - OpenEJB Deploy Tool
 
-= SYNOPSIS
+== SYNOPSIS
 
-____________________________________________________________________
-openejb deploy link:#DeployTool-OPTIONS[options] <file> [<file> ...]
-____________________________________________________________________
+&gt; openejb deploy link:#DeployTool-OPTIONS[options] <file> [<file> ...]
 
-= NOTE
+== NOTE
 
 The OpenEJB Deploy tool is an OPTIONAL tool that allows you to deploy
 into a running server and get feedback as if the app was deployed and
@@ -34,33 +31,25 @@ of this document we will assume you unpacked OpenEJB into the directory
 
 In Windows, the deploy tool can be executed as follows:
 
-________________________
-C:-3.0> bindeploy --help
-________________________
+ C:\openejb-3.0> bindeploy --help
 
 In UNIX, Linux, or Mac OS X, the deploy tool can be executed as follows:
 
-____________________________________
-user@host# bin/openejb deploy --help
-____________________________________
+ user@host# bin/openejb deploy --help
 
 Depending on your OpenEJB version, you may need to change execution bits
 to make the scripts executable. You can do this with the following
 command.
 
-_______________________________
-user@host# chmod +x bin/openejb
-_______________________________
+ user@host# chmod +x bin/openejb
 
 From here on out, it will be assumed that you know how to execute the
 right openejb script for your operating system and commands will appear
 in shorthand as show below.
 
-_____________________
-openejb deploy --help
-_____________________
+ openejb deploy --help
 
-= DESCRIPTION
+== DESCRIPTION
 
 The files passed to the Deploy Tool can be any combination of the
 following:
@@ -84,71 +73,62 @@ it an EJB 3.0 application by nature.
 `META-INF/MANIFEST.MF` containing the `Main-Class` attribute, are
 assumed to be _Application Client_ archives.
 
-= OPTIONS
+[#DeployTool-OPTIONS]
+== OPTIONS
 
--d, --debug
-
-Increases the level of detail on validation errors and deployment
+[cols=2]
+|===
+|-d, --debug
+|Increases the level of detail on validation errors and deployment
 summary.
 
---dir
-
-Sets the destination directory where the app will be deployed. The
+|--dir
+|Sets the destination directory where the app will be deployed. The
 default is /apps/ directory. Note when changing this setting make sure
 the directory is listed in the openejb.xml via a tag or the app will not
 be picked up again on restart.
 
--conf file
+|-conf file
+|Sets the OpenEJB configuration to the specified file.
 
-Sets the OpenEJB configuration to the specified file.
+|-h, --help
+|Lists these options and exit.
 
--h, --help
-
-Lists these options and exit.
-
--o, --offline
-
-Deploys the app to an offline server by copying the archive into the
+|-o, --offline
+|Deploys the app to an offline server by copying the archive into the
 server's apps/ directory. The app will be deployed when the server is
 started. The default is online.
 
--q, --quiet
-
-Decreases the level of detail on validation and skips the deployment
+|-q, --quiet
+|Decreases the level of detail on validation and skips the deployment
 summary.
 
--s, --server-url <url>
-
-Sets the url of the OpenEJB server to which the app will be deployed.
+|-s, --server-url <url>
+|Sets the url of the OpenEJB server to which the app will be deployed.
 The value should be the same as the JNDI Provider URL used to lookup
 EJBs. The default is 'ejbd://localhost:4201'.
 
--v, --version
+|-v, --version
+|Prints the OpenEJB version and exits.
+|===
 
-Prints the OpenEJB version and exits.
+== EXAMPLES
 
-= EXAMPLES
+=== Deploying multiple jar files
 
-== Deploying multiple jar files
-
-__________________________________
-openejb deploy myapp.jar myapp.jar
-__________________________________
+ openejb deploy myapp.jar myapp.jar
 
 Deploys the beans in the fooEjbs.jar first, then deploys the beans in
 the barEjbs.jar. Wildcards can be used as well.
 
-_________________________
-openejb deploy myapp*.jar
-_________________________
+ openejb deploy myapp*.jar
 
-= OUTPUT
+== OUTPUT
 
 On running the deploy tool with a valid EJB jar the following output is
 printed on the console
 
-[source,properties]
-----
+....
 Application deployed successfully at {0}
 App(id=C:\samples\Calculator-new\hello-addservice.jar)
     EjbJar(id=hello-addservice.jar, path=C:\samples\Calculator-new\hello-addservice.jar)
@@ -159,7 +139,7 @@ App(id=C:\samples\Calculator-new\hello-addservice.jar)
     Ejb(ejb-name=AddServiceBean, id=AddServiceBean)
         Jndi(name=AddServiceBean)
         Jndi(name=AddServiceBeanLocal)
-----
+....
 
 Note: In the above case the command used is: > openejb deploy
 hello-addservice.jar
