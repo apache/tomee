@@ -135,7 +135,7 @@ public class LoginToContinueInterceptor {
             if (loginToContinue.useForwardToLogin()) {
                 return httpMessageContext.forward(loginToContinue.loginPage());
             } else {
-                return httpMessageContext.redirect(loginToContinue.loginPage());
+                return httpMessageContext.redirect(toAbsoluteUrl(httpMessageContext.getRequest(), loginToContinue.loginPage()));
             }
         }
 
@@ -160,8 +160,9 @@ public class LoginToContinueInterceptor {
 
             } else if (authenticationStatus.equals(SEND_FAILURE)) {
                 final LoginToContinue loginToContinue = getLoginToContinue(invocationContext);
+
                 if (!loginToContinue.errorPage().isEmpty()) {
-                    return httpMessageContext.forward(loginToContinue.errorPage());
+                    return httpMessageContext.redirect(toAbsoluteUrl(httpMessageContext.getRequest(), loginToContinue.errorPage()));
                 }
 
                 return authenticationStatus;
@@ -186,6 +187,18 @@ public class LoginToContinueInterceptor {
         }
 
         return (AuthenticationStatus) invocationContext.proceed();
+    }
+
+    // when using redirect (client) as opposed to forward (server), we need the absolute URL
+    // take the full URL, remove the full URI and then add the context path so the page is relative to base context URL
+    private String toAbsoluteUrl(final HttpServletRequest request, final String page) {
+        final String url = request.getRequestURL().toString();
+        final String baseContextUrl = url.substring(0, url.length() - request.getRequestURI().length()) + request.getContextPath();
+
+        // when context path is / and page is /login, we may end up with double /
+        return baseContextUrl.endsWith("/") && page.startsWith("/")
+            ? baseContextUrl.substring(0, baseContextUrl.length() - 2) + page
+               : baseContextUrl + page;
     }
 
     private boolean isOnInitialProtectedURL(final HttpMessageContext httpMessageContext) {

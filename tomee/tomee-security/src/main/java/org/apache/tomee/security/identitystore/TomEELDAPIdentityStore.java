@@ -33,6 +33,7 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.IdentityStorePermission;
 import javax.security.enterprise.identitystore.LdapIdentityStoreDefinition;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -95,7 +96,7 @@ public class TomEELDAPIdentityStore implements IdentityStore {
             }
 
             // do a direct bind with the caller DN we found and the provided password
-            if(!authenticateWithCallerDn(usernamePasswordCredential, callerDn)) {
+            if (!authenticateWithCallerDn(usernamePasswordCredential, callerDn)) {
                 return INVALID_RESULT;
             }
 
@@ -222,7 +223,7 @@ public class TomEELDAPIdentityStore implements IdentityStore {
 
         if (StringUtils.isNotEmpty(definition.callerBaseDn())
             && StringUtils.isNotEmpty(definition.callerNameAttribute())
-            && StringUtils.isEmpty(definition.callerBaseDn())) {
+            && StringUtils.isEmpty(definition.callerSearchBase())) {
 
             // caller DN may be provided in annotation
             callerDn = format("%s=%s,%s", definition.callerNameAttribute(), callerName,
@@ -257,6 +258,12 @@ public class TomEELDAPIdentityStore implements IdentityStore {
 
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
+
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
+        }
+
         LdapContext ldapContext = null;
         try {
             ldapContext = lookup(definition.url(), definition.bindDn(), definition.bindDnPassword());
@@ -264,7 +271,7 @@ public class TomEELDAPIdentityStore implements IdentityStore {
             String callerDn = validationResult.getCallerDn();
 
             // if not set as CallerDn, try to find it based on the principal name
-            if (StringUtils.isNotEmpty(callerDn)) {
+            if (StringUtils.isEmpty(callerDn)) {
                 callerDn = getCallerDn(ldapContext, validationResult.getCallerPrincipal().getName());
             }
 

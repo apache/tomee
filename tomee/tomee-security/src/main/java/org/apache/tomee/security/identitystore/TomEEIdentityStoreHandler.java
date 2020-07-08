@@ -24,6 +24,8 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -69,19 +71,28 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
 
         CredentialValidationResult validationResult = null;
         IdentityStore authorizedStore = null;
-        for (final IdentityStore identityStore : identityStores) {
+        boolean validationHappened = false;
+        for (final IdentityStore identityStore : authenticationStores) {
             validationResult = identityStore.validate(credential);
             if (validationResult.getStatus().equals(VALID)) {
                 authorizedStore = identityStore;
+                validationHappened = true;
                 break;
+
+            } else if (validationResult.getStatus().equals(INVALID)) {
+                validationHappened = true;
             }
         }
 
-        if (authorizedStore == null && validationResult.getStatus().equals(INVALID)) {
-            return INVALID_RESULT;
+        if (authorizedStore == null || !validationResult.getStatus().equals(VALID)) {
 
-        } else if(authorizedStore == null) {
-            return NOT_VALIDATED_RESULT;
+            if (validationHappened) {
+                return INVALID_RESULT;
+
+            } else {
+                return NOT_VALIDATED_RESULT;
+            }
+
         }
 
         final Set<String> groups = new HashSet<>();

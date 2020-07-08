@@ -66,7 +66,8 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public <T extends Principal> Set<T> getPrincipalsByType(final Class<T> pType) {
-        return null;
+        // todo
+        return Collections.emptySet();
     }
 
     @Override
@@ -76,6 +77,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
+        // todo
         return false;
     }
 

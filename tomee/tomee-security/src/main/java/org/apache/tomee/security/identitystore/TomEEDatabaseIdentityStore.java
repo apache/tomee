@@ -32,6 +32,7 @@ import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.IdentityStorePermission;
 import javax.security.enterprise.identitystore.PasswordHash;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -43,6 +44,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -51,6 +55,8 @@ import static java.util.stream.Collectors.toMap;
 
 @ApplicationScoped
 public class TomEEDatabaseIdentityStore implements IdentityStore {
+
+    private final Pattern elExpressionPattern = Pattern.compile("^[#$]\\{(.+)}$");
 
     @Inject
     private BeanManager beanManager;
@@ -74,7 +80,7 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
         elProcessor.getELManager().addELResolver(beanManager.getELResolver());
 
         passwordHash.initialize(stream(definition.hashAlgorithmParameters())
-                    .flatMap(s -> stream((String[]) eval(elProcessor, s, String[].class)))
+                    .flatMap(s -> toStream(eval(elProcessor, s, String.class)))
                     .collect(toMap(s -> (String) s.substring(0, s.indexOf('=')) ,
                                    s -> (String) eval(elProcessor, s.substring(s.indexOf('=') + 1), String.class)))
                                );
@@ -107,6 +113,12 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
 
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
+
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
+        }
+
         return getGroups(validationResult.getCallerPrincipal().getName());
     }
 
@@ -177,8 +189,26 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
     private Object eval(final ELProcessor processor, final String expression, final Class<?> expectedType) {
         // expression maybe #{expression} instead of ${expression}
         // the ELProcessor anyways wraps it with ${}
-        final String sanitizedExpression = expression.replaceAll("^[#$]\\{(.+)}$", "$1");
+
+        final Matcher matcher = elExpressionPattern.matcher(expression);
+
+        if (!matcher.matches()) {
+            return expression;
+        }
+
+        final String sanitizedExpression = matcher.replaceAll("$1");
         return processor.getValue(sanitizedExpression, expectedType);
+    }
+
+    private Stream<String> toStream(final Object raw) {
+        if (raw instanceof String[]) {
+            return stream((String[])raw);
+        }
+        if (raw instanceof Stream<?>) {
+            return ((Stream<String>) raw).map(String::toString);
+        }
+
+        return Stream.of(raw.toString());
     }
 
     private <T extends PasswordHash> T getInstance(final Class<T> beanType) {

@@ -29,6 +29,7 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.IdentityStorePermission;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,6 +80,12 @@ public class TomEEDefaultIdentityStore implements IdentityStore {
 
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
+
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
+        }
+
         final User user = getUser(validationResult.getCallerPrincipal().getName());
         return getUserRoles(user);
     }

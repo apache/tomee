@@ -97,7 +97,9 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public void cleanClientSubject() {
-        clientSubject.getPrincipals().clear();
+        if (clientSubject != null) {
+            clientSubject.getPrincipals().clear();
+        }
     }
 
     @Override
