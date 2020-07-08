@@ -27,36 +27,39 @@ And we use 2.0 version of faces-config
 To make this a cdi-aware-archive (i.e bean archive) an empty beans.xml
 is added in WEB-INF
 
-....
+[source,java]
+----
    <?xml version="1.0" encoding="UTF-8"?>
 
    <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
      http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
    </beans>
-....
+----
 
 We’ll first declare the FacesServlet in the web.xml
 
-....
+[source,java]
+----
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-....
+----
 
 FacesServlet acts as the master controller.
 
 We’ll then create the calculator.xhtml file.
 
-....
+[source,java]
+----
        <h:outputText value='Enter first number'/>
        <h:inputText value='#{calculatorBean.x}'/>
        <h:outputText value='Enter second number'/>
        <h:inputText value='#{calculatorBean.y}'/>
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
-....
+----
 
 Notice how we’ve used the bean here. By default, the bean name would be
 the simple name of the bean class with the first letter in lower case.
@@ -87,7 +90,8 @@ the result from the request-scoped `calculatorBean`.
 
 == CalculatorBean
 
-....
+[source,java]
+----
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
@@ -130,11 +134,12 @@ public class CalculatorBean {
         return "success";
     }
 }
-....
+----
 
 == Calculator
 
-....
+[source,java]
+----
 package org.superbiz.jsf;
 
 import javax.ejb.Stateless;
@@ -146,7 +151,7 @@ public class Calculator{
         return x + y;
     }
 }
-....
+----
 
 #web.xml
 
@@ -168,12 +173,13 @@ index.jsp index.html
 <!DOCTYPE html PUBLIC ``-//W3C//DTD XHTML 1.0 Transitional//EN''
 ``http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd''>
 
-....
+[source,java]
+----
     <h:commandLink action="back">
         <h:outputText value="Home"/>
     </h:commandLink>
 </h:form>
-....
+----
 
 #faces-config.xml
 

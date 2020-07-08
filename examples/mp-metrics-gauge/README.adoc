@@ -1,5 +1,4 @@
 = MicroProfile Metrics Gauge
-
 :index-group: MicroProfile
 :jbake-type: page
 :jbake-status: published

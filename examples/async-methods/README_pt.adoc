@@ -79,7 +79,8 @@ private void doSomeHeavyLifting() {
 
 == Teste
 
-....
+[source,java]
+----
 public class JobProcessorTest extends TestCase {
 
 public void test() throws Exception {
@@ -119,7 +120,7 @@ public void test() throws Exception {
 }
 ----
 
-[source,java]
+[source,console]
 ----
 -------------------------------------------------------
  T E S T S

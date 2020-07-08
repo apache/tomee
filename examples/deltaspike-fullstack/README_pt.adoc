@@ -20,15 +20,17 @@ Passo para executar o exemplo
 
 Build e start da demo:
 
-....
+[source,java]
+----
 mvn clean package tomee:run
-....
+----
 
 Abrir:
 
-....
+[source,java]
+----
 http://localhost:8080/
-....
+----
 
 Este exemplo mostra como melhorar os aplicativos JSF2/CDI/BV/JPA com
 recursos fornecidos pelo Apache DeltaSpike e MyFaces ExtVal.

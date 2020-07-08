@@ -12,9 +12,10 @@ This scenario is useful when REST applications are migrated from TomEE 1.7.x int
 === Run the tests
 This example contains 2 test cases, one using Jettison and one without it for comparison purposes.
 
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
 
 === Enabling Jettison as Json Provider
@@ -22,7 +23,8 @@ mvn clean test
 You need to provide the following 2 files in your `WEB-INF` folder:
 
 * openejb-jar.xml
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <openejb-jar xmlns="http://www.openejb.org/openejb-jar/1.1">
     <pojo-deployment class-name="org.superbiz.JAXRSApplication">
@@ -32,11 +34,12 @@ You need to provide the following 2 files in your `WEB-INF` folder:
     </pojo-deployment>
 </openejb-jar>
 
-....
+----
 
 * resources.xml
 
-....
+[source,java]
+----
 
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
@@ -48,7 +51,7 @@ You need to provide the following 2 files in your `WEB-INF` folder:
     </Service>
 </resources>
 
-....
+----
 
 And finally make sure the Jettison JAR 1.3.7 is available in TomEE /lib folder.
 
@@ -56,7 +59,8 @@ And finally make sure the Jettison JAR 1.3.7 is available in TomEE /lib folder.
 
 `Item.java` is the POJO we are going to process:
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import javax.xml.bind.annotation.*;
@@ -119,19 +123,21 @@ public class Item {
         this.available = available;
     }
 }
-....
+----
 
 
 Legacy JSON output using Jettison 1.3.7:
-....
+[source,java]
+----
 {"book":{"@id":"134","@availableSince":"2019-05-27 15:27:16.878","@available":"false","$":"TomEE Tutorial"}}
-....
+----
 
 Current JSON output:
 
-....
+[source,java]
+----
 {"available":false,"availableSince":"2019-05-27 15:27:16.878","id":134,"name":"TomEE Tutorial"}
-....
+----
 
 === About the Test architecture
 
@@ -141,8 +147,9 @@ Remote. The arquillian configuration can be found in
 
 An important part for this configuration is the inclusion of Jettison jar during test execution:
 
-....
+[source,xml]
+----
 <property name="additionalLibs">mvn:org.codehaus.jettison:jettison:1.3.7</property>
-....
+----
 
 If a version > 1.3.7 is used, the JSON output start to change into a modern default format: Boolean and numeric values are not longer surrounded with double quotes.

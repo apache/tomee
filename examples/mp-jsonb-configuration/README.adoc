@@ -182,7 +182,7 @@ install' command run from the `mp-jsonb-configuration' directory.
 
 When run you should see output similar to the following:
 
-[source,java]
+[source,console]
 ----
 -------------------------------------------------------
  T E S T S

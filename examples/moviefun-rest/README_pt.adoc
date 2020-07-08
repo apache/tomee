@@ -15,7 +15,8 @@ Aqui, use anotações JAX-RS para criar recursos.
 @ApplicationPath identifica o caminho do aplicativo que serve como o URI base para todos os recursos.
 A implementação do método getClasses será chamada pela estrutura JAX-RS para obter informações sobre este aplicativo. No exemplo a seguir, ele define dois recursos: LoadRest e MoviesRest.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import javax.ws.rs.ApplicationPath;
@@ -33,13 +34,14 @@ public class ApplicationConfig extends Application {
         return new HashSet<Class<?>>(Arrays.asList(LoadRest.class, MoviesRest.class));
     }
 }
-....
+----
 
 === LoadRest
 
 É um POJO que é mapeado para um URL raiz (`load`) com o anotação @Path e possui métodos Java para servir solicitações a este URL raiz e seus sub-URLs. Nesse caso, só tem uma solicitação POST onde usa um EJB (MoviesBean) injetado na sua classe para fazer um carregamento inicial de dados no banco de dados.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.superbiz.moviefun.Movie;
@@ -66,13 +68,14 @@ public class LoadRest {
     }
 
 }
-....
+----
 
 === MovieRest
 
 É um POJO que é mapeado para um URL raiz (`filmes`) com o anotação @Path e possui métodos Java para veicular solicitações de filmes de entidades no formato JSON de acordo com a anotação @Produces. Aqui tem um método para cada método HTTP (GET, POST, PUT, DELETE).
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.superbiz.moviefun.Movie;
@@ -139,13 +142,14 @@ public class MoviesRest {
     }
 
 }
-....
+----
 
 === Movie
 
 Essa é a entidade Movie que será persistida pela JPA.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import javax.persistence.Entity;
@@ -232,12 +236,13 @@ public class Movie {
         this.rating = rating;
     }
 }
-....
+----
 
 === MoviesBean
 
 Este é o EJB de acordo com a anotação @Stateless. Ele usa a persistência da unidade `movie-unit` para persistir persistir entidades de filmes.
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import javax.ejb.Stateless;
@@ -313,19 +318,21 @@ public class MoviesBean {
         entityManager.createQuery("delete from Movie").executeUpdate();
     }
 }
-....
+----
 
 == Executando
 
 A execução do exemplo é bastante simples. No diretório `moviefun-rest` execute:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 O que deve criar uma saída como a seguir.
 
-....
+[source,java]
+----
 INFO: OpenJPA dynamically loaded a validation provider.
 Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory createDelegate
 INFO: PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 36ms
@@ -406,4 +413,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.77 sec - in o
 Results :
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-....
+----

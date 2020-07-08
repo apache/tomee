@@ -10,7 +10,8 @@ Este exemplo mostra como configurar o
 
 A entidade em si é simplesmente um pojo anotado com `@Entity`.  Nós criamos um pojo chamado `Movie` que podemos usar para armazenar registros de filmes.
 
-....
+[source,java]
+----
 package org.superbiz.eclipselink;
 
 import javax.persistence.Entity;
@@ -63,14 +64,15 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Operações de banco de dados
 
 Este é o bean responsável pelas operações de banco de dados; ele nos permite persistir ou deletar entidades.
 Para mais informações nós recomendamos que você veja http://tomee.apache.org/examples-trunk/injection-of-entitymanager/README.html[injection-of-entitymanager]
 
-....
+[source,java]
+----
 package org.superbiz.eclipselink;
 
 import javax.ejb.Stateful;
@@ -99,7 +101,7 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == Persistence.xml com a configuração do EclipseLink 
 
@@ -127,7 +129,8 @@ Para uma lista completa das propriedades da unidade de persistência consulte ht
 
 Testar a JPA é muito fácil, nos podemos simplesmente usar a API `EJBContainer` para criar um container no nosso caso de teste.
 
-....
+[source,java]
+----
 package org.superbiz.eclipselink;
 
 import junit.framework.TestCase;
@@ -166,13 +169,14 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 = Executando
 
 Quando executamos nosso caso de teste, devemos ver uma saída semelhante a seguinte.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -213,4 +217,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.188 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

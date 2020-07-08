@@ -1,4 +1,7 @@
 = Application Composer Advanced
+:jbake-type: page
+:jbake-status: published
+:index-group: Testing
 
 link:getting-started.html[Getting Started] page gives you already a lot
 of inputs but you caneven go further.

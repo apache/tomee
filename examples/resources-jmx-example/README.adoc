@@ -19,7 +19,8 @@ particular instance, as the application also wants to register this
 resource as an MBean, the resource class needs to follow the MBean
 specification.
 
-....
+[source,java]
+----
 public class Hello implements HelloMBean {
 
     private AtomicInteger count = new AtomicInteger(0);
@@ -60,7 +61,7 @@ public interface HelloMBean {
     public void increment();
 
 }
-....
+----
 
 == Create method
 
@@ -68,7 +69,8 @@ To avoid adding the logic to register the resource as an MBean in every
 resource, the application provides a single class with a create() method
 that takes care of this logic for us.
 
-....
+[source,java]
+----
 public class JMXBeanCreator {
 
     private static Logger LOGGER = Logger.getLogger(JMXBeanCreator.class.getName());
@@ -147,7 +149,7 @@ public class JMXBeanCreator {
         this.properties = properties;
     }
 }
-....
+----
 
 Note that this class uses the properties defined in the configuration
 (below), combined with reflection, to instantiate the resource, and set
@@ -159,7 +161,8 @@ under.
 
 The resource can be defined in `META-INF/resources.xml` as follows:
 
-....
+[source,xml]
+----
 <Resources>
   <Resource id="Hello" class-name="org.superbiz.resource.jmx.factory.JMXBeanCreator" factory-name="create">
     code org.superbiz.resource.jmx.resources.Hello
@@ -167,7 +170,7 @@ The resource can be defined in `META-INF/resources.xml` as follows:
     count 12345
   </Resource>
 </Resources>
-....
+----
 
 Note that the class-name attribute refers to the factory class, and not
 the resource. Once the resource has been created and bound in TomEE’s
@@ -178,7 +181,8 @@ JNDI tree the factory is no longer used.
 The test case for this example demonstrates injection into an EJB as one
 way of accessing the resource, and also accessing the resource via JMX.
 
-....
+[source,java]
+----
 @RunWith(Arquillian.class)
 public class JMXTest {
 
@@ -255,7 +259,7 @@ public class JMXTest {
         }
     }
 }
-....
+----
 
 The name `<appname>/<resource-id>` attribute is used on the `@Resource`
 annotation to perform the injection. No further configuration is needed
@@ -313,7 +317,8 @@ effectively force a lazily loaded resource to be instantiated when the
 application is starting - in the same way that the
 `InitializeAfterDeployment` property does.
 
-....
+[source,java]
+----
 public class Alternative implements AlternativeMBean {
 
     private static Logger LOGGER = Logger.getLogger(Alternative.class.getName());
@@ -409,7 +414,7 @@ public class Alternative implements AlternativeMBean {
         count++;
     }
 }
-....
+----
 
 == Running
 
@@ -418,7 +423,8 @@ install' command run from the `resources-jmx-example' directory.
 
 When run you should see output similar to the following.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -778,11 +784,12 @@ INFO: Destroying ProtocolHandler ["ajp-bio-8009"]
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 Note the following lines showing the creation of the resource.
 
-....
+[source,java]
+----
 Apr 15, 2015 12:40:24 PM org.apache.openejb.config.ConfigurationFactory configureService
 INFO: Configuring Service(id=jmx/Hello, type=Resource, provider-id=jmx/Hello)
-....
+----

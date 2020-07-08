@@ -22,7 +22,8 @@ of the JNDI API.
 
 == DataReader
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.EJB;
@@ -66,11 +67,12 @@ public class DataReader {
         return "REMOTE:" + dataStoreRemote.getData();
     }
 }
-....
+----
 
 == DataStore
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.LocalBean;
@@ -92,11 +94,12 @@ public class DataStore implements DataStoreLocal, DataStoreRemote {
         return "42";
     }
 }
-....
+----
 
 == DataStoreLocal
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.Local;
@@ -113,11 +116,12 @@ public interface DataStoreLocal {
 
     public String getData();
 }
-....
+----
 
 == DataStoreRemote
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.Remote;
@@ -133,11 +137,12 @@ public interface DataStoreRemote {
 
     public String getData();
 }
-....
+----
 
 == EjbDependencyTest
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import junit.framework.TestCase;
@@ -163,11 +168,12 @@ public class EjbDependencyTest extends TestCase {
         assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -208,4 +214,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.225 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -43,4 +43,3 @@ Etapas para replicar:
       * Aqui você deve ser redirecionado para uma página dizendo 401 Unauthorized
    3. Anexe o parâmetro de consulta app_session_id=foobarbaz à mesma URL(http://localhost:8080/jaxrs-filter/test?app_session_id=foobarbaz)
       * Aqui você deve obter acesso. O filtro permite que a solicitação continue e você deve ver algumas informações HTTP básicas sobre a solicitação.
-

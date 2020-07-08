@@ -18,7 +18,8 @@ In TomEE application server, the mechanism used by Tomcat to define a realm for 
 
 This example shows a servlet secured using a realm. The secured servlet has a simple functionality, just for illustrating the concepts explained here:
 
-....
+[source,java]
+----
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,11 +34,12 @@ public class SecuredServlet extends HttpServlet {
         resp.getWriter().write("Servlet!");
     }
 }
-....
+----
 
 For securing this servlet, we will add the following class:
 
-....
+[source,java]
+----
 import javax.enterprise.context.RequestScoped;
 import java.security.Principal;
 
@@ -68,26 +70,28 @@ public class AuthBean {
         );
     }
 }
-....
+----
 
 The class defines 2 methods: `authenticate` and `hasRole`.
 Both these methods will be used by a class, `LazyRealm`, implemented in TomEE application server.
 In the file `webapp/META-INF/context.xml` this realm is configured:
 
-....
+[source,xml]
+----
 <Context preemptiveAuthentication="true">
   <Valve className="org.apache.catalina.authenticator.BasicAuthenticator" />
   <Realm className="org.apache.tomee.catalina.realm.LazyRealm"
          cdi="true" realmClass="org.superbiz.AuthBean"/>
 </Context>
-....
+----
 
 The class `AuthBean` defines a "database" with 2 users: userA (having role admin) and userB (having role user), both having the password test.
 Class `org.apache.tomee.catalina.realm.LazyRealm` will load our `AuthBean` class and will use it to check if a user has access to the content provided by our servlet.
 
 == Tests
 
-....
+[source,java]
+----
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -172,7 +176,7 @@ public class AuthBeanTest {
         }
     }
 }
-....
+----
 
 The test uses Arquillian to start an application server and load the servlet.
 There are two tests methods: `success`, where our servlet is accessed with the correct username and password, and `failure`, where our servlet is accessed with an incorrect password.

@@ -9,7 +9,8 @@ This test shows how to use multiple JPA providers, Hibernate and Openjpa. Using 
 
 Simple POJO class that follows JPA standard
 
-....
+[source,java]
+----
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,13 +36,14 @@ public class Person {
         this.name = name;
     }
 }
-....
+----
 
 == persistence.xml
 
 Create and drop Person table
 
-....
+[source,xml]
+----
 <persistence version="2.0"
          xmlns="http://java.sun.com/xml/ns/persistence"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -62,13 +64,14 @@ Create and drop Person table
     </properties>
 </persistence-unit>
 </persistence>
-....
+----
 
 == JPA test
 
 The entity manager is injected through cdi and an Object Person is created and inserted into the inmemory database
 
-....
+[source,java]
+----
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.transaction.api.annotation.TransactionMode;
@@ -110,7 +113,7 @@ public class JPATest {
         em.persist(p);
     }
 }
-....
+----
 
 Inside the example there are no reference to the JPA implementations.
 
@@ -124,7 +127,8 @@ Running the example can be done from maven with a simple 'mvn clean install' com
 
 When run you should see output similar to the following.
 
-....
+[source,console]
+----
 -------------------------------------------------------
 T E S T S
 -------------------------------------------------------
@@ -262,7 +266,7 @@ INFO - Closing DataSource: Default Unmanaged JDBC Database
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 From the log you can see that both implementations are used: INFO - Using 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl', INFO - Using 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'.
 

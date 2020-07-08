@@ -25,7 +25,8 @@ That gives us the following files in our project:
 The normal `ejb-jar.xml` simply contains `<ejb-jar/>`, however the
 `test.ejb-jar.xml` we add an extra interceptor:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee">
   <assembly-descriptor>
@@ -35,7 +36,7 @@ The normal `ejb-jar.xml` simply contains `<ejb-jar/>`, however the
     </interceptor-binding>
   </assembly-descriptor>
 </ejb-jar>
-....
+----
 
 == The TestCase
 
@@ -43,7 +44,8 @@ To enable our `test.ejb-jar.xml` in the test case, we simply set the
 `openejb.altdd.prefix` property when creating the embedded
 `EJBContainer`
 
-....
+[source,java]
+----
  public class MoviesTest extends TestCase {
 
      @EJB
@@ -108,14 +110,15 @@ To enable our `test.ejb-jar.xml` in the test case, we simply set the
          }
      }
  }
-....
+----
 
 As noted in link:../../alternate-descriptors.html[the documentation],
 several prefixes can be used at once.
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -158,7 +161,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.569 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 == Warning on Tooling
 

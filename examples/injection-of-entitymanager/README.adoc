@@ -12,7 +12,8 @@ data to a database.
 
 The entity itself is simply a pojo annotated with `@Entity`.  We create one called `Movie` which we can use to hold movie records.
 
-....
+[source,java]
+----
 package org.superbiz.injection.jpa;
 
 import javax.persistence.Entity;
@@ -68,14 +69,15 @@ public class Movie {
         this.year = year;
     }
 }
-....
+----
 
 == Configure the EntityManager via a persistence.xml file
 
 The above `Movie` entity can be created, removed, updated or deleted via an `EntityManager` object.  The `EntityManager` itself is
 configured via a `META-INF/persistence.xml` file that is placed in the same jar as the `Movie` entity.
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -88,7 +90,7 @@ configured via a `META-INF/persistence.xml` file that is placed in the same jar 
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 Notice that the `Movie` entity is listed via a `<class>` element.  This is not required, but can help when testing or when the
 `Movie` class is located in a different jar than the jar containing the `persistence.xml` file.
@@ -100,7 +102,8 @@ runtime, we simply need to request it be injected into one of our components.  W
 
 The `@PersistenceContext` annotation can be used on any CDI bean, EJB, Servlet, Servlet Listener, Servlet Filter, or JSF ManagedBean.  If you don't use an EJB you will need to use a `UserTransaction` begin and commit transactions manually.  A transaction is required for any of the create, update or delete methods of the EntityManager to work.
 
-....
+[source,java]
+----
 package org.superbiz.injection.jpa;
 
 import javax.ejb.Stateful;
@@ -129,7 +132,7 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 This particular `EntityManager` is injected as an `EXTENDED` persistence context, which simply means that the `EntityManager`
 is created when the `@Stateful` bean is created and destroyed when the `@Stateful` bean is destroyed.  Simply put, the
@@ -141,7 +144,8 @@ The use of `EXTENDED` persistence contexts is *only* available to `@Stateful` be
 
 Testing JPA is quite easy, we can simply use the `EJBContainer` API to create a container in our test case.
 
-....
+[source,java]
+----
 package org.superbiz.injection.jpa;
 
 import junit.framework.TestCase;
@@ -179,13 +183,14 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 = Running
 
 When we run our test case we should see output similar to the following.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -226,4 +231,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.301 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -14,28 +14,31 @@ The Apache DeltaSpike I18n is a module of Apache DeltaSpike project that enables
 === @MessageBundle interface
 Create an interface with a method for each type-safe message. The interface should be annotated with `@MessageBundle` and for each message it is needed to annotaated with `@MessageTemplate`:
 
-....
+[source,java]
+----
 @MessageBundle
 public interface MessageHelper {
 
     @MessageTemplate("{openejb.and.deltaspike}")
     String openejbAndDeltaspike();
 }
-....
+----
 
 === MessageHelper property file
 It will lookup for the string "openejb.and.deltaspike" (without the curly brackets "{}") in a property file with the same name of the interface but with the extension .properties instead of .java or .class.
 
 MessageHelper.properties
 
-....
+[source,java]
+----
 openejb.and.deltaspike = OpenEJB and DeltaSpike are cool products!
-....
+----
 
 === Using the type safe messages
 Now you can inject the interface and retrieve the type-safe message:
 
-....
+[source,java]
+----
     @Inject
     private MessageHelper msg;
 
@@ -44,7 +47,7 @@ Now you can inject the interface and retrieve the type-safe message:
         assertEquals("OpenEJB and DeltaSpike are cool products!", msg.openejbAndDeltaspike());
     }
 }
-....
+----
 
 == Running
 
@@ -55,7 +58,8 @@ $ mvn clean install
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 Running org.superbiz.deltaspike.i18n.MessageHelperTest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
@@ -106,4 +110,4 @@ INFO - Destroying container system
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -19,12 +19,13 @@ O objetivo é ser capaz de configurar com um grão mais fino seu contrato. No
 exemplo você pode especificar os centímetros mínimos de um homem do esporte que deve pular
 no salto com vara:
 
-....
+[source,java]
+----
 @Local
 public interface PoleVaultingManager {
     int points(@Min(120) int centimeters);
 }
-....
+----
 
 == Usando
 
@@ -37,7 +38,8 @@ Então basicamente você não necessita configurar qualquer coisa para usar isto
 Se um paramentro não é validado uma exceção é lançada, é um
 EJBException que envolve um `ConstraintViolationException`:
 
-....
+[source,java]
+----
 try {
     gamesManager.addSportMan("I lose", "EN");
     fail("no space should be in names");
@@ -46,13 +48,14 @@ try {
     ConstraintViolationException exception = ConstraintViolationException.class.cast(wrappingException.getCausedByException());
     assertEquals(1, exception.getConstraintViolations().size());
 }
-....
+----
 
 == Exemplo
 
 === OlympicGamesManager
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
@@ -69,11 +72,12 @@ public class OlympicGamesManager {
         return new StringBuilder(name).append(" [").append(country).append("]").toString();
     }
 }
-....
+----
 
 === PoleVaultingManager
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Local;
@@ -83,11 +87,12 @@ import javax.validation.constraints.Min;
 public interface PoleVaultingManager {
     int points(@Min(120) int centimeters);
 }
-....
+----
 
 === PoleVaultingManagerBean
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
@@ -99,11 +104,12 @@ public class PoleVaultingManagerBean implements PoleVaultingManager {
         return centimeters - 120;
     }
 }
-....
+----
 
 === OlympicGamesTest
 
-....
+[source,java]
+----
 public class OlympicGamesTest {
     private static Context context;
 
@@ -178,11 +184,12 @@ public class OlympicGamesTest {
         }
     }
 }
-....
+----
 
 == Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -221,4 +228,4 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.245 sec
 Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+----

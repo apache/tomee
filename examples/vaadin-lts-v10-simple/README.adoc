@@ -1,5 +1,4 @@
 == Vaadin V10 (LTS) - Simple WebApp in Java
-
 :index-group: Frameworks
 :jbake-type: page
 :jbake-status: published

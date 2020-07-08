@@ -1,4 +1,7 @@
 = Application Composer History
+:jbake-type: page
+:jbake-status: published
+:index-group: Testing
 
 ApplicationComposer can look like a long story but following it you'll
 realize it is finally quite natural.

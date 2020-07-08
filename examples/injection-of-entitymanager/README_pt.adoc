@@ -181,7 +181,8 @@ public class MoviesTest extends TestCase {
 
 Quando executamos nosso caso de teste, devemos ver uma saída semelhante à seguinte.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -222,4 +223,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.301 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -11,7 +11,8 @@ http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Applicati
 
 The REST service example is defined by the following class:
 
-....
+[source,java]
+----
 @Singleton
 @Path("/greeting")
 public class GreetingService {
@@ -24,24 +25,26 @@ public class GreetingService {
         return messager.message();
     }
 }
-....
+----
 
 A bean, `messager`, is injected. When a client accesses the resource `GET /greeting`, the content returned to the client will be the result of `messager.message()` method execution.
 
 `Messager` functionality is defined by this interface:
 
-....
+[source,java]
+----
 public interface Messager {
 
     String message();
 }
-....
+----
 
 == Testing the REST service
 
 For testing this REST service, Application Composer will be used in combination with Mockito:
 
-....
+[source,java]
+----
 @RunWith(ApplicationComposer.class)
 public class GreetingServiceTest {
 
@@ -73,7 +76,7 @@ public class GreetingServiceTest {
         assertEquals("mockito", message);
     }
 }
-....
+----
 
 We can see the usage and configuration of ApplicationComposer. More information about it can be found http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[here].
 An other interesting annotation is `@MockInjector`. This informs the container started by Application composer that Mockito is used, so mock proprieties will be injected.

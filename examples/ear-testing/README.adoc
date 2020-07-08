@@ -17,7 +17,8 @@ As the names imply, we keep our `@Entity` beans in the `business-model`
 module and our session beans in the `business-logic` model. The tests
 located and run from the business logic module.
 
-....
+[source,java]
+----
 ear-testing
 ear-testing/business-logic
 ear-testing/business-logic/pom.xml
@@ -32,13 +33,14 @@ ear-testing/business-model/pom.xml
 ear-testing/business-model/src/main/java/org/superbiz/model/Movie.java
 ear-testing/business-model/src/main/resources/META-INF/persistence.xml
 ear-testing/pom.xml
-....
+----
 
 == Project configuration
 
 The parent pom, trimmed to the minimum, looks like so:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -68,11 +70,12 @@ The parent pom, trimmed to the minimum, looks like so:
     </dependencies>
   </dependencyManagement>
 </project>
-....
+----
 
 The `business-model/pom.xml` as follows:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
@@ -100,12 +103,13 @@ The `business-model/pom.xml` as follows:
   </dependencies>
 
 </project>
-....
+----
 
 And finally, the `business-logic/pom.xml` which is setup to support
 embedded testing with OpenEJB:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
@@ -146,13 +150,14 @@ embedded testing with OpenEJB:
     </dependency>
   </dependencies>
 </project>
-....
+----
 
 == Test Code
 
 The test code is the same as always:
 
-....
+[source,java]
+----
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
@@ -188,11 +193,12 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -228,4 +234,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.393 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

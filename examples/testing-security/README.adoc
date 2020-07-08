@@ -9,7 +9,8 @@ These is a simple example that demonstrate how to use the security anotations to
 
 First, we create a entity class with movie info.
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import javax.persistence.Entity;
@@ -55,12 +56,13 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
 After, we created a DAO class. Look that we used the security anotations to set the need roles to use each DAO action. For example, adition of a movie is able to a user that has "Manager" or "Employee" `ROLE`, but to remove a movie the user need to has Manager `ROLE`.
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 //START SNIPPET: code
@@ -99,13 +101,14 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
 We set JPA with these xml.
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -118,13 +121,14 @@ We set JPA with these xml.
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MovieTest
 
 To test, we created a class with access tests to DAO.
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
@@ -260,13 +264,14 @@ public class MovieTest extends TestCase {
         }
     }
 }
-....
+----
 
 == Running
 
 All tests passed.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -321,4 +326,4 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.574 sec
 Results :
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-....
+----

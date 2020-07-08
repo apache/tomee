@@ -20,7 +20,8 @@ A `Soup` insance will be created in this method and will be shared throughout th
 the `Chef` bean. The method passes the request to the `Chef` bean. It then returns the name of
 the soup to the test class.
 
-....
+[source,java]
+----
 @Stateless
 public class Waiter {
 
@@ -35,14 +36,15 @@ public class Waiter {
         return chef.prepareSoup().getName();
     }
 }
-....
+----
 
 === Soup
 
 The `Soup` class is an injectable POJO, defined as `@RequestScoped`. This means that an instance
 will be created only once for every request and will be shared by all the beans injecting it.
 
-....
+[source,java]
+----
 @RequestScoped
 public class Soup {
 
@@ -61,7 +63,7 @@ public class Soup {
         this.name = name;
     }
 }
-....
+----
 
 === Chef
 
@@ -69,7 +71,8 @@ The `Chef` class is a simple session bean with an injected `Soup` field. Normall
 parameter would be passed as a `prepareSoup()` argument, but for the need of this example
 it's passed by the request context.
 
-....
+[source,java]
+----
 @Stateless
 public class Chef {
 
@@ -80,13 +83,14 @@ public class Chef {
         return soup;
     }
 }
-....
+----
 
 == Test Case
 
 This is the entry class for this example.
 
-....
+[source,java]
+----
 public class RestaurantTest {
 
     private static String TOMATO_SOUP = "Tomato Soup";
@@ -114,14 +118,15 @@ public class RestaurantTest {
         container.close();
     }
 }
-....
+----
 
 == Running
 
 In the output you can see that there were two `Soup` instances created - one for
 each request.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -159,4 +164,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.412 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

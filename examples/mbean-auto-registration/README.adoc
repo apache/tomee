@@ -10,14 +10,15 @@ TomEE features.
 
 To be able to use it you need to import the mbean api (annotations):
 
-....
+[source,xml]
+----
 <dependency>
   <groupId>org.apache.openejb</groupId>
   <artifactId>mbean-annotation-api</artifactId>
   <version>4.5.0</version>
   <scope>provided</scope>
 </dependency>
-....
+----
 
 == The MBean
 
@@ -25,7 +26,8 @@ The mbean implements a simple game where the goal is to guess a number.
 
 It allows the user to change the value too.
 
-....
+[source,java]
+----
 package org.superbiz.mbean;
 
 import javax.management.Description;
@@ -57,23 +59,25 @@ public class GuessHowManyMBean {
         return "not the correct value, please have another try";
     }
 }
-....
+----
 
 To register a MBean you simply have to specify a property either in
 system.properties, or in intial context properties.
 
-....
+[source,java]
+----
 Properties properties = new Properties();
 properties.setProperty("openejb.user.mbeans.list", GuessHowManyMBean.class.getName());
 EJBContainer.createEJBContainer(properties);
-....
+----
 
 == Accessing the MBean
 
 Then simply get the platform server and you can play with parameters and
 operations:
 
-....
+[source,java]
+----
 package org.superbiz.mbean;
 
 import org.junit.Test;
@@ -109,7 +113,7 @@ public class GuessHowManyMBeanTest {
         container.close();
     }
 }
-....
+----
 
 === Note
 
@@ -119,7 +123,8 @@ start even if the example has only the mbean as java class, we added a
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -156,4 +161,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.063 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

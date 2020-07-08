@@ -17,7 +17,8 @@ resources. The implementation of method getClasses will be called by the
 JAX-RS framework to get information about this application. In the
 following example, it defines two resources: LoadRest and MoviesRest.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import javax.ws.rs.ApplicationPath;
@@ -35,7 +36,7 @@ public class ApplicationConfig extends Application {
         return new HashSet<Class<?>>(Arrays.asList(LoadRest.class, MoviesRest.class));
     }
 }
-....
+----
 
 === LoadRest
 
@@ -45,7 +46,8 @@ URL and its sub-URLs. In this case, only have a POST request where use
 an EJB (MoviesBean) injected to it class for do an initial load of data
 in the database.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.superbiz.moviefun.Movie;
@@ -72,7 +74,7 @@ public class LoadRest {
     }
 
 }
-....
+----
 
 === MovieRest
 
@@ -81,7 +83,8 @@ annotation @Path and has Java methods for serving requests of entities
 movies in JSON format according to the @Produces annotation. Here has a
 method for each HTTP method (GET, POST, PUT, DELETE).
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.superbiz.moviefun.Movie;
@@ -148,13 +151,14 @@ public class MoviesRest {
     }
 
 }
-....
+----
 
 === Movie
 
 This is the entity Movie that will be persisted by JPA.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import javax.persistence.Entity;
@@ -241,14 +245,15 @@ public class Movie {
         this.rating = rating;
     }
 }
-....
+----
 
 === MoviesBean
 
 This is the EJB according to the @Stateless annotation. It uses the unit persistence "movie-unit" for persist 
 entities movie.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import javax.ejb.Stateless;
@@ -324,7 +329,7 @@ public class MoviesBean {
         entityManager.createQuery("delete from Movie").executeUpdate();
     }
 }
-....
+----
 
 == Running
 
@@ -335,7 +340,8 @@ $ mvn clean install
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 INFO: OpenJPA dynamically loaded a validation provider.
 Dec 18, 2018 1:31:44 PM org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory createDelegate
 INFO: PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 36ms
@@ -416,4 +422,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.77 sec - in o
 Results :
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -20,7 +20,8 @@ annotation, it indicates that this attribute is the identifier of the entity and
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/GeneratedValue.html[@GeneratedValue] 
 indicates that the unique identifier value generation of the entity will be managed by the persistence provider.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.persistence.Entity;
@@ -73,7 +74,7 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
@@ -90,7 +91,8 @@ link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/EntityManager.
 with 
 link:https://tomee.apache.org/tomee-8.0/javadoc/javax/persistence/PersistenceContext.html[@PersistenceContext], a persistence context is an entity management where  every persistence context associated with a persistence unit, we will create a persistence.xml soon for this.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import javax.ejb.Stateful;
@@ -119,7 +121,7 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
@@ -144,7 +146,8 @@ Here we define which database will persist our movies, and we perform other conf
 
 Now we do a test, persisting three films, then we perform a search and finally we delete them.
 
-....
+[source,java]
+----
 package org.superbiz.injection.h3jpa;
 
 import junit.framework.TestCase;
@@ -182,24 +185,27 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 = Running
 
 To run the example via maven:
 
 Access the project folder:
-....
+[source,java]
+----
 cd jpa-hibernate
-....
+----
 And execute:
-....
+[source,java]
+----
 mvn clean install
-....
+----
 
 Which will generate output similar to the following:
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -240,4 +246,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.22 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

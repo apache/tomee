@@ -97,7 +97,7 @@ public class MdbContainerFactory {
     }
 
     public void setMaxSize(final int max) {
-        this.instanceLimit = instanceLimit;
+        this.instanceLimit = max;
         this.poolBuilder.setPoolSize(max);
     }
 

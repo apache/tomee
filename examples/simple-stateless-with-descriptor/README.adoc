@@ -10,7 +10,8 @@ difference is the explicite use of Local and Remote interfaces.
 
 == CalculatorImpl
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 /**
@@ -29,11 +30,12 @@ public class CalculatorImpl implements CalculatorRemote, CalculatorLocal {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == CalculatorLocal
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 /**
@@ -46,11 +48,12 @@ public interface CalculatorLocal {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == CalculatorRemote
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 
@@ -64,14 +67,15 @@ public interface CalculatorRemote {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == ejb-jar.xml
 
 The XML descriptor defines the EJB class and both local and remote
 interfaces.
 
-....
+[source,xml]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
@@ -87,7 +91,7 @@ interfaces.
     </session>
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 == CalculatorTest
 
@@ -96,7 +100,8 @@ time an `InitialContext` object is directly created, as opposed to
 getting the context from `EJBContainer`, as we did in the previous
 example.
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import junit.framework.TestCase;
@@ -146,11 +151,12 @@ public class CalculatorTest extends TestCase {
         assertEquals(12, calc.multiply(3, 4));
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -181,4 +187,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.475 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

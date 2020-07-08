@@ -17,7 +17,8 @@ completada através de um método `@ AroundInvoke` no bean e no
 
 Simples e efetiva. O resultado é um inicialização rápida da aplicação que ainda é thread-safe.
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import javax.annotation.PostConstruct;
@@ -71,13 +72,14 @@ public class SlowStarter {
         return shape;
     }
 }
-....
+----
 
 O `Executor` é um simples padrão, útil para muitas coisas, que expõe uma 
 interface funcionalmente equivalente a `java.util.concurrent.ExecutorService`, 
 mas com o conjunto de encadeamentos subjacente controlado pelo contêiner.
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import javax.ejb.AsyncResult;
@@ -98,12 +100,13 @@ public class Executor {
     }
 
 }
-....
+----
 
 Finalmente um caso de teste mostrando a  utilidade do `@AroundInvoke` chamado no nosso
 bean que chama o `construct.get()`
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import junit.framework.Assert;
@@ -129,4 +132,4 @@ public class SlowStarterTest {
         Assert.assertEquals("circle", slowStarter.getShape());
     }
 }
-....
+----

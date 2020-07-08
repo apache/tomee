@@ -11,7 +11,8 @@ A Aplicação pode ser executado com `mvn clean install tomee:run' se porta
 8080 está disponível, você pode invocar o seguinte endpoint: (GET)
 http://localhost:8080/jsonb-custom-serializer/api/users que deve responder com o seguinte json:
 
-....
+[source,java]
+----
 [
   {
     "address":{
@@ -30,35 +31,38 @@ http://localhost:8080/jsonb-custom-serializer/api/users que deve responder com o
     "registration":"2018-12-29T18:13:40.028"
   }
 ]
-....
+----
 
 e o endpoint: (POST)
 http://localhost:8080/jsonb-custom-serializer/api/users com um corpo como:
 
-....
+[source,java]
+----
 { 
     "id": 1, 
     "name": "name1", 
     "extra": "extra1" 
 }
-....
+----
 
 que respondem com o seguinte json:
 
-....
+[source,java]
+----
 { 
     "id": 1, 
     "name": "name1extra1", 
     "registration": "Sat Dec 29 19:48:05 CET 2018",
     "address": null 
 }
-....
+----
 
 == @ApplicationPath
 
 Classe JAXRS de ponto de entrada, da seguinte maneira, o jaxrs carregará todas as classes e métodos anotados com @Path sem especificá-los.
 
-....
+[source,java]
+----
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
@@ -66,13 +70,14 @@ import javax.ws.rs.core.Application;
 public class JAXRSApplication extends Application {
 
 }
-....
+----
 
 == Recurso @Path Rest
 
 Classe jaxrs simples com um endpoint GET e um POST
 
-....
+[source,java]
+----
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,13 +115,14 @@ public class UserService {
         return u;
     }
 }
-....
+----
 
 == Configuração JSONB
 
 Implementando ContextResolver<> você pode personalizar os padrões jaxrs; neste exemplo, personalizaremos a serialização JSONB para todos os objetos do tipo Address, definidos na classe AddressSerializer
 
-....
+[source,java]
+----
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -140,13 +146,14 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
     }
 
 }
-....
+----
 
 == Address serializer
 
 Classe serializadora de objetos simples que adiciona `modified` durante a serialização
 
-....
+[source,java]
+----
 import javax.json.bind.serializer.JsonbSerializer;
 import javax.json.bind.serializer.SerializationContext;
 import javax.json.stream.JsonGenerator;
@@ -165,13 +172,14 @@ public class AddressSerializer implements JsonbSerializer<Address> {
     }
 
 }
-....
+----
 
 == User Deserializer
 
 Cria um objeto a partir de um json
 
-....
+[source,java]
+----
 import java.lang.reflect.Type;
 
 import javax.json.JsonObject;
@@ -196,13 +204,14 @@ public class UserDeserializer implements JsonbDeserializer<User> {
     }
 
 }
-....
+----
 
 == Usando o desserializador @JsonbTypeDeserializer @JsonbTypeSerializer
 
 Com a anotação @JsonbTypeDeserializer ou @JsonbTypeSerializer, você pode notificar o jsonb para usar o desserializador personalizado
 
-....
+[source,java]
+----
 import java.util.Date;
 
 import javax.json.bind.annotation.JsonbTypeDeserializer;
@@ -231,13 +240,14 @@ public class User {
     // ... GET/SET
 
 } 
-....
+----
 
 == Acessando o endpoint rest
 
 O teste gera um aplicativo da web openejb e chama o endpoint do usuário
 
-....
+[source,java]
+----
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
@@ -283,7 +293,7 @@ public class UserServiceTest {
     }
 
 }
-....
+----
 
 == Executando
 
@@ -291,7 +301,8 @@ A execução do exemplo pode ser feita no maven com um simples comando `mvn clea
 
 Ao executar, você verá uma saída semelhante à seguinte.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -448,7 +459,7 @@ Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
-....
+----
 
 === Dentro do jar
 
@@ -456,7 +467,8 @@ javaee-api:8.0 traz todas as dependências necessárias para iniciar uma aplica�
 
 Se olharmos para o jar construído pelo maven, veremos que a aplicação:
 
-....
+[source,java]
+----
 $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
      0 Sat Dec 29 19:10:44 CET 2018 META-INF/
    134 Sat Dec 29 19:10:42 CET 2018 META-INF/MANIFEST.MF
@@ -479,7 +491,7 @@ $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war
      0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/
   1811 Sat Dec 29 17:53:36 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.xml
    132 Sat Dec 29 19:10:42 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.properties
-....
+----
 
 Esse simples jar poderia ser implantado em qualquer implementação Java EE compliant. 
 No TomEE você simplesmente colocaria-o no diretório `tomee.home/webapps/` .

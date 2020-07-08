@@ -8,7 +8,8 @@ right to edit this page._
 
 == AddUser
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import javax.naming.Context;
@@ -74,11 +75,12 @@ public class AddUser {
         return "success";
     }
 }
-....
+----
 
 == AddUserForm
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -86,11 +88,12 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class AddUserForm extends ActionSupport {
 }
-....
+----
 
 == FindUser
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import javax.naming.Context;
@@ -145,11 +148,12 @@ public class FindUser {
         return "success";
     }
 }
-....
+----
 
 == FindUserForm
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import com.opensymphony.xwork2.ActionSupport;
@@ -157,11 +161,12 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class FindUserForm extends ActionSupport {
 }
-....
+----
 
 == ListAllUsers
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import javax.naming.Context;
@@ -217,11 +222,12 @@ public class ListAllUsers {
         return "success";
     }
 }
-....
+----
 
 == User
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import javax.persistence.Entity;
@@ -271,11 +277,12 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 }
-....
+----
 
 == UserService
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import java.util.List;
@@ -287,11 +294,12 @@ public interface UserService {
 
     public List<User> findAll();
 }
-....
+----
 
 == UserServiceImpl
 
-....
+[source,java]
+----
 package org.superbiz.struts;
 
 import javax.ejb.Stateless;
@@ -317,20 +325,22 @@ public class UserServiceImpl implements UserService {
         return manager.createQuery("select u from User u").getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 </persistence-unit>
 
   -->
 </persistence>
-....
+----
 
 == struts.xml
 
-....
+[source,xml]
+----
 <struts>
   <constant name="struts.devMode" value="true"></constant>
   <package name="default" namespace="/" extends="struts-default">
@@ -354,21 +364,23 @@ public class UserServiceImpl implements UserService {
 
   </package>
 </struts>
-....
+----
 
 == decorators.xml
 
-....
+[source,xml]
+----
 <decorators defaultdir="/decorators">
   <decorator name="main" page="layout.jsp">
     <pattern>/*</pattern>
   </decorator>
 </decorators>
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
@@ -412,4 +424,4 @@ public class UserServiceImpl implements UserService {
     </jsp-property-group>
   </jsp-config>
 </web-app>
-....
+----

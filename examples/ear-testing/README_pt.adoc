@@ -12,7 +12,8 @@ Este exemplo pega o código moviefun básico que nós temos em muitos exemplos e
 
 Como os nomes sugerem, mantemos nossos beans `@ Entity` no módulo `business-model` e nossos beans de sessão no modelo `business-logic` Os testes localizados e executados a partir do módulo de lógica de negócios.
 
-....
+[source,java]
+----
 ear-testing
 ear-testing/business-logic
 ear-testing/business-logic/pom.xml
@@ -27,13 +28,14 @@ ear-testing/business-model/pom.xml
 ear-testing/business-model/src/main/java/org/superbiz/model/Movie.java
 ear-testing/business-model/src/main/resources/META-INF/persistence.xml
 ear-testing/pom.xml
-....
+----
 
 == Configuração do projeto
 
 O pom principal, aparado ao mínimo, tem a seguinte aparência:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -63,11 +65,12 @@ O pom principal, aparado ao mínimo, tem a seguinte aparência:
     </dependencies>
   </dependencyManagement>
 </project>
-....
+----
 
 O `business-model/pom.xml` é da seguinte maneira:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
@@ -95,12 +98,13 @@ O `business-model/pom.xml` é da seguinte maneira:
   </dependencies>
 
 </project>
-....
+----
 
 E finalmente, o `business-logic/pom.xml` que está configurado para suportar
 teste incorporado com o OpenEJB:
 
-....
+[source,xml]
+----
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.superbiz</groupId>
@@ -141,13 +145,14 @@ teste incorporado com o OpenEJB:
     </dependency>
   </dependencies>
 </project>
-....
+----
 
 == Código de teste
 
 O código de teste é o mesmo de sempre:
 
-....
+[source,java]
+----
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
@@ -183,11 +188,12 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
     }
 }
-....
+----
 
 == Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -223,4 +229,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.393 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

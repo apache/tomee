@@ -16,9 +16,10 @@ mvn clean package tomee:run
 
 
 ==== Abrir:
-....
+[source,java]
+----
 http://localhost:8080/myfaces-codi-demo-8.0.1-SNAPSHOT/
-....
+----
 
 
 Este ejemplo muestra como mejorar aplicaciones JSF2/CDI/BV/JPA usando

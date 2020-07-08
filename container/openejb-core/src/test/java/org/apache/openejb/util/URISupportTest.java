@@ -19,6 +19,9 @@ package org.apache.openejb.util;
 import junit.framework.TestCase;
 
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Rev$ $Date$
@@ -48,4 +51,61 @@ public class URISupportTest extends TestCase {
         assertTrue(resolvedB.equals(absoluteB));
     }
 
+    public void testAddNewParameters() throws Exception {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("create", "false");
+
+        final URI uri = URISupport.addParameters(URLs.uri("vm://broker"), parameters);
+        assertEquals("vm://broker?create=false", uri.toString());
+    }
+
+    public void testDoNotReplaceAnExistingParameters() throws Exception {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("create", "false");
+
+        final URI uri = URISupport.addParameters(URLs.uri("vm://broker?create=true"), parameters);
+        assertEquals("vm://broker?create=true", uri.toString());
+    }
+
+    public void testAddToSetOfAlreadyExistingParameters() throws Exception {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("create", "false");
+
+        final URI uri = URISupport.addParameters(URLs.uri("vm://broker?foo=bar&boo=baz&welcome=helloworld"), parameters);
+        final Map<String, String> actual = URISupport.parseParamters(uri);
+
+        assertEquals(4, actual.size());
+        assertEquals("bar", actual.get("foo"));
+        assertEquals("baz", actual.get("boo"));
+        assertEquals("helloworld", actual.get("welcome"));
+        assertEquals("false", actual.get("create"));
+    }
+
+    public void testAddToSetOfAlreadyExistingParametersButDontOverwriteExistingParameter() throws Exception {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("create", "false");
+
+        final URI uri = URISupport.addParameters(URLs.uri("vm://broker?foo=bar&boo=baz&welcome=helloworld&create=true"), parameters);
+        final Map<String, String> actual = URISupport.parseParamters(uri);
+
+        assertEquals(4, actual.size());
+        assertEquals("bar", actual.get("foo"));
+        assertEquals("baz", actual.get("boo"));
+        assertEquals("helloworld", actual.get("welcome"));
+        assertEquals("true", actual.get("create"));
+    }
+
+    public void testNullParameters() throws Exception {
+        final URI initial = URLs.uri("vm://broker?foo=bar&boo=baz&welcome=helloworld&create=true");
+        final URI uri = URISupport.addParameters(initial, null);
+
+        assertEquals(initial, uri);
+    }
+
+    public void testEmptyParameters() throws Exception {
+        final URI initial = URLs.uri("vm://broker?foo=bar&boo=baz&welcome=helloworld&create=true");
+        final URI uri = URISupport.addParameters(initial, Collections.emptyMap());
+
+        assertEquals(initial, uri);
+    }
 }

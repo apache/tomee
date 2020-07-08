@@ -7,7 +7,8 @@ Para alterar a URI de um web service, uma solução é usar o arquivo `openejb-j
 
 Neste exemplo temos um web service através da classe `Rot13`:
 
-....
+[source,java]
+----
 package org.superbiz.jaxws;
 
 import javax.ejb.Lock;
@@ -35,13 +36,14 @@ public class Rot13 {
         return builder.toString();
     }
 }
-....
+----
 
 Decidimos fazer o deploy na url `/tool/rot13`.
 
 Para fazer isso, primeiro temos que definir a rota no arquivo `openejb-jar.xml`:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
   <enterprise-beans>
@@ -51,7 +53,7 @@ Para fazer isso, primeiro temos que definir a rota no arquivo `openejb-jar.xml`:
     </session>
   </enterprise-beans>
 </openejb-jar>
-....
+----
 
 Isto não é o bastante, por que, por padrão o TomEE faz o deploy do web service 
 com um subcontexto chamado `webservices`. Para evitar isto simplesmente informe 
@@ -61,7 +63,8 @@ para nosso teste).
 Agora fizemos o deploy do nosso web service `Rot13` como esperado no contexto 
 `/tool/rot13` e vamos verificar isto com o Arquillian e o TomEE embedded:
 
-....
+[source,java]
+----
  package org.superbiz.jaxws;
 
  import org.apache.ziplock.IO;
@@ -100,4 +103,4 @@ Agora fizemos o deploy do nosso web service `Rot13` como esperado no contexto
          assertThat(wsdl, containsString("Rot13"));
      }
  }
-....
+----

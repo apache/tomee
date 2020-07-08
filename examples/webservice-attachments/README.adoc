@@ -8,7 +8,8 @@ right to edit this page._
 
 == AttachmentImpl
 
-....
+[source,java]
+----
 package org.superbiz.attachment;
 
 import javax.activation.DataHandler;
@@ -64,11 +65,12 @@ public class AttachmentImpl implements AttachmentWs {
         return "";
     }
 }
-....
+----
 
 == AttachmentWs
 
-....
+[source,java]
+----
 package org.superbiz.attachment;
 
 import javax.activation.DataHandler;
@@ -87,17 +89,19 @@ public interface AttachmentWs {
 
     public String stringFromDataHandler(DataHandler handler);
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == AttachmentTest
 
-....
+[source,java]
+----
 package org.superbiz.attachment;
 
 import junit.framework.TestCase;
@@ -166,11 +170,12 @@ public class AttachmentTest extends TestCase {
     }
     //END SNIPPET: webservice
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -211,4 +216,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.034 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

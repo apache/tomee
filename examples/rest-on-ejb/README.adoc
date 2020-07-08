@@ -8,7 +8,8 @@ right to edit this page._
 
 == User
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import javax.persistence.Entity;
@@ -22,11 +23,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
         @NamedQuery(name = "user.list", query = "select u from User u")
 }
-....
+----
 
 == UserService
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import javax.ejb.Lock;
@@ -123,11 +125,12 @@ public class UserService {
         return Response.ok(user.copy()).build();
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence version="2.0"
              xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -142,11 +145,12 @@ public class UserService {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == UserServiceTest
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -274,11 +278,12 @@ public class UserServiceTest {
         assertEquals("it@is.ok", modified.getEmail());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -337,4 +342,4 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.102 sec
 Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+----
