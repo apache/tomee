@@ -1,4 +1,12 @@
-= TomEE EAP 8.0.2-TT.1
+= TomEE EAP 8.0.4-TT.1
+
+=== Changes in TomEE EAP 8.0.4-TT.1
+
+
+* Update to Tomcat 9.0.37
+* Update to commons-codec 1.14
+* Update to commons-dbcp 2.1 to mask passwords in JMX
+* Prevent ActiveMQ embedded brokers from creating JMX interfaces
 
 === Changes in TomEE EAP 8.0.2-TT.1
 
