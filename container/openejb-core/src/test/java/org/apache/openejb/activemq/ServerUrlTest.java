@@ -16,9 +16,10 @@
  */
 package org.apache.openejb.activemq;
 
+import org.apache.openejb.jee.StatelessBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
 import org.apache.openejb.testing.SimpleLog;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.junit.Assert;
@@ -27,20 +28,18 @@ import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
-import javax.resource.ResourceException;
 import java.util.Properties;
 
 @SimpleLog
 @RunWith(ApplicationComposer.class)
-@Classes(cdi = true, innerClassesAsBean = true)
 public class ServerUrlTest {
 
     @EJB
-    private ConnectionTestBean testBean;
+    private ConnectionTest testBean;
 
     @Configuration
     public Properties config() {
@@ -54,6 +53,11 @@ public class ServerUrlTest {
                 .build();
     }
 
+    @Module
+    public StatelessBean jar() {
+        return new StatelessBean(ConnectionTestBean.class);
+    }
+
     @Test
     public void test() throws Exception {
         try {
@@ -64,8 +68,13 @@ public class ServerUrlTest {
         }
     }
 
-    @Singleton
-    public static class ConnectionTestBean {
+    public interface ConnectionTest {
+        void testConnection() throws Exception;
+    }
+
+
+    @Stateless
+    public static class ConnectionTestBean implements ConnectionTest {
 
         @Resource
         private ConnectionFactory cf;

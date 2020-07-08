@@ -23,8 +23,10 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -391,7 +393,7 @@ public class URISupport {
             return uri;
         }
 
-        final Map<String, String> parameters = new HashMap<>(parseParamters(uri));
+        final Map<String, String> parameters = new HashMap<String, String>(parseParamters(uri));
 
         final Set<String> keys = newParameters.keySet();
         for (final String key : keys) {
