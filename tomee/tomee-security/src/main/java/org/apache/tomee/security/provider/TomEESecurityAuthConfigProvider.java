@@ -18,11 +18,17 @@ package org.apache.tomee.security.provider;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.AuthException;
+import javax.security.auth.message.config.AuthConfigFactory;
 import javax.security.auth.message.config.AuthConfigProvider;
 import javax.security.auth.message.config.ClientAuthConfig;
 import javax.security.auth.message.config.ServerAuthConfig;
+import java.util.Map;
 
 public class TomEESecurityAuthConfigProvider implements AuthConfigProvider {
+
+    public TomEESecurityAuthConfigProvider(final Map properties, final AuthConfigFactory authConfigFactory) {
+    }
+
     @Override
     public ClientAuthConfig getClientAuthConfig(final String layer, final String appContext,
                                                 final CallbackHandler handler)

@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.security.http;
 
-import org.apache.catalina.authenticator.jaspic.MessageInfoImpl;
 import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.message.TomEEMessageInfo;
 
@@ -44,6 +43,7 @@ import static javax.security.enterprise.AuthenticationStatus.SEND_CONTINUE;
 import static javax.security.enterprise.AuthenticationStatus.SEND_FAILURE;
 import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 public final class TomEEHttpMessageContext implements HttpMessageContext {
@@ -71,22 +71,23 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
             final MessageInfo messageInfo,
             final Subject clientSubject,
             final Subject serviceSubject) {
+
         return new TomEEHttpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
     }
 
     @Override
     public boolean isProtected() {
-        return Boolean.valueOf((String) messageInfo.getMap().getOrDefault(MessageInfoImpl.IS_MANDATORY, "false"));
+        return Boolean.parseBoolean((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.IS_MANDATORY, "false"));
     }
 
     @Override
     public boolean isAuthenticationRequest() {
-        return Boolean.valueOf((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.AUTHENTICATE, "false"));
+        return Boolean.parseBoolean((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.AUTHENTICATE, "false"));
     }
 
     @Override
     public boolean isRegisterSession() {
-        return false;
+        return Boolean.parseBoolean((String) messageInfo.getMap().getOrDefault(TomEEMessageInfo.REGISTER_SESSION, "false"));
     }
 
     @Override
@@ -96,7 +97,9 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public void cleanClientSubject() {
-
+        if (clientSubject != null) {
+            clientSubject.getPrincipals().clear();
+        }
     }
 
     @Override
@@ -151,8 +154,9 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
     public AuthenticationStatus redirect(final String location) {
         try {
             getResponse().sendRedirect(location);
+
         } catch (final IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
 
         return SEND_CONTINUE;
@@ -162,8 +166,9 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
     public AuthenticationStatus forward(final String path) {
         try {
             getRequest().getRequestDispatcher(path).forward(getRequest(), getResponse());
+
         } catch (final ServletException | IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
 
         return SEND_CONTINUE;
@@ -173,6 +178,7 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
     public AuthenticationStatus responseUnauthorized() {
         try {
             getResponse().sendError(SC_UNAUTHORIZED);
+
         } catch (final IOException e) {
             throw new IllegalStateException(e);
         }
@@ -181,7 +187,13 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationStatus responseNotFound() {
-        return null;
+        try {
+            getResponse().sendError(SC_NOT_FOUND);
+
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return SEND_FAILURE;
     }
 
     @Override
@@ -220,6 +232,21 @@ public final class TomEEHttpMessageContext implements HttpMessageContext {
 
     @Override
     public AuthenticationStatus doNothing() {
+
+        this.principal = null;
+        this.groups = null;
+        try {
+            handler.handle(new Callback[] {
+                new CallerPrincipalCallback(clientSubject, (String) null),
+                new GroupPrincipalCallback(clientSubject, null)
+            });
+        } catch (final IOException | UnsupportedCallbackException e) {
+            e.printStackTrace();
+        }
+
+
+        TomEESecurityContext.registerContainerAboutLogin(new CallerPrincipal(null), null);
+
         return NOT_DONE;
     }
 

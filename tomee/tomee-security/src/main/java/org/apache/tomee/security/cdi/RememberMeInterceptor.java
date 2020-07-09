@@ -16,10 +16,14 @@
  */
 package org.apache.tomee.security.cdi;
 
+import org.apache.tomee.security.TomEEELInvocationHandler;
+
 import javax.annotation.Priority;
+import javax.el.ELProcessor;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Intercepted;
 import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -41,6 +45,7 @@ import java.util.Set;
 import static javax.interceptor.Interceptor.Priority.PLATFORM_BEFORE;
 import static javax.security.enterprise.AuthenticationStatus.SUCCESS;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @RememberMe
 @Interceptor
@@ -53,13 +58,16 @@ public class RememberMeInterceptor {
     @Inject
     private Instance<RememberMeIdentityStore> rememberMeIdentityStore;
 
+    @Inject
+    private BeanManager beanManager;
+
     @AroundInvoke
     public Object intercept(final InvocationContext invocationContext) throws Exception {
         if (invocationContext.getMethod().getName().equals("validateRequest") &&
             Arrays.equals(invocationContext.getMethod().getParameterTypes(), new Class<?>[]{
-                    HttpServletRequest.class,
-                    HttpServletResponse.class,
-                    HttpMessageContext.class
+                HttpServletRequest.class,
+                HttpServletResponse.class,
+                HttpMessageContext.class
             })) {
 
             if (rememberMeIdentityStore.isUnsatisfied()) {
@@ -70,7 +78,7 @@ public class RememberMeInterceptor {
 
             if (rememberMeIdentityStore.isAmbiguous()) {
                 throw new IllegalStateException(
-                        "Multiple implementations of RememberMeIndentityStore found. Only one should be supplied.");
+                    "Multiple implementations of RememberMeIndentityStore found. Only one should be supplied.");
             }
 
             return validateRequest(invocationContext);
@@ -78,9 +86,9 @@ public class RememberMeInterceptor {
 
         if (invocationContext.getMethod().getName().equals("cleanSubject") &&
             Arrays.equals(invocationContext.getMethod().getParameterTypes(), new Class<?>[]{
-                    HttpServletRequest.class,
-                    HttpServletResponse.class,
-                    HttpMessageContext.class
+                HttpServletRequest.class,
+                HttpServletResponse.class,
+                HttpMessageContext.class
             })) {
             cleanSubject(invocationContext);
         }
@@ -91,10 +99,11 @@ public class RememberMeInterceptor {
     private AuthenticationStatus validateRequest(final InvocationContext invocationContext) throws Exception {
         final HttpMessageContext httpMessageContext = (HttpMessageContext) invocationContext.getParameters()[2];
 
-        final RememberMe rememberMe = getRememberMe();
+        final RememberMe rememberMe =
+            TomEEELInvocationHandler.of(RememberMe.class, getRememberMe(), getElProcessor(invocationContext, httpMessageContext));
         final Optional<Cookie> cookie = getCookie(httpMessageContext.getRequest(), rememberMe.cookieName());
 
-        if (cookie.isPresent()) {
+        if (cookie.isPresent() && !isEmpty(cookie.get().getValue())) {
             final RememberMeCredential rememberMeCredential = new RememberMeCredential(cookie.get().getValue());
             final CredentialValidationResult validate = rememberMeIdentityStore.get().validate(rememberMeCredential);
 
@@ -108,16 +117,23 @@ public class RememberMeInterceptor {
 
         final AuthenticationStatus status = (AuthenticationStatus) invocationContext.proceed();
 
-        if (SUCCESS.equals(status) && rememberMe.isRememberMe()) {
-            final CallerPrincipal principal = new CallerPrincipal(httpMessageContext.getCallerPrincipal().getName());
-            final Set<String> groups = httpMessageContext.getGroups();
-            final String loginToken = rememberMeIdentityStore.get().generateLoginToken(principal, groups);
+        if (SUCCESS.equals(status) && httpMessageContext.getCallerPrincipal() != null) {
 
-            final Cookie rememberMeCookie = new Cookie(rememberMe.cookieName(), loginToken);
-            rememberMeCookie.setMaxAge(rememberMe.cookieMaxAgeSeconds());
-            rememberMeCookie.setHttpOnly(rememberMe.cookieHttpOnly());
-            rememberMeCookie.setSecure(rememberMe.cookieSecureOnly());
-            httpMessageContext.getResponse().addCookie(rememberMeCookie);
+            if (rememberMe.isRememberMe()) {
+                final CallerPrincipal principal =
+                    new CallerPrincipal(httpMessageContext.getCallerPrincipal().getName());
+                final Set<String> groups = httpMessageContext.getGroups();
+                final String loginToken = rememberMeIdentityStore.get().generateLoginToken(principal, groups);
+
+                final Cookie rememberMeCookie = new Cookie(rememberMe.cookieName(), loginToken);
+                rememberMeCookie.setPath(isEmpty(httpMessageContext.getRequest().getContextPath()) ?
+                                         "/" :
+                                         httpMessageContext.getRequest().getContextPath());
+                rememberMeCookie.setMaxAge(rememberMe.cookieMaxAgeSeconds());
+                rememberMeCookie.setHttpOnly(rememberMe.cookieHttpOnly());
+                rememberMeCookie.setSecure(rememberMe.cookieSecureOnly());
+                httpMessageContext.getResponse().addCookie(rememberMeCookie);
+            }
         }
 
         return status;
@@ -126,20 +142,34 @@ public class RememberMeInterceptor {
     private void cleanSubject(final InvocationContext invocationContext) throws Exception {
         final HttpMessageContext httpMessageContext = (HttpMessageContext) invocationContext.getParameters()[2];
 
-        final RememberMe rememberMe = getRememberMe();
-        getCookie(httpMessageContext.getRequest(), rememberMe.cookieName())
-                .ifPresent(cookie -> {
-                    rememberMeIdentityStore.get().removeLoginToken(cookie.getValue());
+        final RememberMe rememberMe =
+            TomEEELInvocationHandler.of(RememberMe.class, getRememberMe(), getElProcessor(invocationContext, httpMessageContext));
+        final Optional<Cookie> cookie = getCookie(httpMessageContext.getRequest(), rememberMe.cookieName());
 
-                    cookie.setMaxAge(0);
-                    httpMessageContext.getResponse().addCookie(cookie);
-                });
+        if (cookie.isPresent() && !isEmpty(cookie.get().getValue())) {
+
+            // remove the cookie
+            cookie.get().setValue(null);
+            cookie.get().setMaxAge(0);
+            cookie.get()
+                  .setPath(isEmpty(httpMessageContext.getRequest().getContextPath()) ?
+                           "/" :
+                           httpMessageContext.getRequest().getContextPath());
+            httpMessageContext.getResponse().addCookie(cookie.get());
+
+            // remove the token from the store
+            rememberMeIdentityStore.get().removeLoginToken(cookie.get().getValue());
+        }
 
         invocationContext.proceed();
     }
 
     private Optional<Cookie> getCookie(final HttpServletRequest request, final String name) {
-        return Arrays.stream(request.getCookies())
+        final Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(cookies)
                      .filter(c -> c.getName().equals(name))
                      .findFirst();
     }
@@ -148,4 +178,16 @@ public class RememberMeInterceptor {
         return Optional.ofNullable(httpMechanismBean.getBeanClass().getAnnotation(RememberMe.class))
                        .orElseThrow(IllegalStateException::new);
     }
+
+    private ELProcessor getElProcessor(InvocationContext invocationContext, HttpMessageContext httpMessageContext) {
+        ELProcessor elProcessor = new ELProcessor();
+
+        elProcessor.getELManager().addELResolver(beanManager.getELResolver());
+        elProcessor.defineBean("self", invocationContext.getTarget());
+        elProcessor.defineBean("this", invocationContext.getTarget());
+        elProcessor.defineBean("httpMessageContext", httpMessageContext);
+
+        return elProcessor;
+    }
+
 }

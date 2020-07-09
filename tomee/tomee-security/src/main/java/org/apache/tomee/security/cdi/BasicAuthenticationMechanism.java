@@ -29,11 +29,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 @ApplicationScoped
 public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism {
+
     @Inject
     private IdentityStoreHandler identityStoreHandler;
 
@@ -43,13 +45,9 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
                                                 final HttpMessageContext httpMessageContext)
             throws AuthenticationException {
 
-        if (!httpMessageContext.isProtected()) {
-            return httpMessageContext.doNothing();
-        }
-
         try {
-            final CredentialValidationResult result =
-                    identityStoreHandler.validate(parseAuthenticationHeader(request.getHeader(AUTHORIZATION)));
+            final BasicAuthenticationCredential credential = parseAuthenticationHeader(request.getHeader(AUTHORIZATION));
+            final CredentialValidationResult result = identityStoreHandler.validate(credential);
 
             if (result.getStatus().equals(VALID)) {
                 return httpMessageContext.notifyContainerAboutLogin(result);
@@ -59,8 +57,16 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
             // Something was sent in the header was not valid. Fallthrough to the authenticate challenge again.
         }
 
-        response.setHeader("WWW-Authenticate", "Basic");
-        return httpMessageContext.responseUnauthorized();
+        if (httpMessageContext.isProtected()) {
+            response.setHeader("WWW-Authenticate", "Basic");
+
+            // todo use the annotation to define the realm
+            // response.setHeader("WWW-Authenticate", format("Basic realm=\"%s\"", realm));
+
+            return httpMessageContext.responseUnauthorized();
+        }
+
+        return httpMessageContext.doNothing();
     }
 
     private BasicAuthenticationCredential parseAuthenticationHeader(final String authenticationHeader) {

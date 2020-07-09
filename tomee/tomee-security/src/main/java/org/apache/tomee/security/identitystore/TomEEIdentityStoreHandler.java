@@ -24,6 +24,8 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
+import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.INVALID;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.PROVIDE_GROUPS;
 import static javax.security.enterprise.identitystore.IdentityStore.ValidationType.VALIDATE;
@@ -55,8 +58,7 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
 
         authorizationStores =
                 identityStores.stream()
-                              .filter(i -> i.validationTypes().contains(PROVIDE_GROUPS))
-                              .filter(i -> !i.validationTypes().contains(VALIDATE))
+                              .filter(i -> i.validationTypes().contains(PROVIDE_GROUPS) && !i.validationTypes().contains(VALIDATE))
                               .sorted(Comparator.comparing(IdentityStore::priority))
                               .collect(Collectors.toList());
     }
@@ -69,21 +71,33 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
 
         CredentialValidationResult validationResult = null;
         IdentityStore authorizedStore = null;
-        for (final IdentityStore identityStore : identityStores) {
+        boolean validationHappened = false;
+        for (final IdentityStore identityStore : authenticationStores) {
             validationResult = identityStore.validate(credential);
             if (validationResult.getStatus().equals(VALID)) {
                 authorizedStore = identityStore;
+                validationHappened = true;
                 break;
+
+            } else if (validationResult.getStatus().equals(INVALID)) {
+                validationHappened = true;
             }
         }
 
-        if (authorizedStore == null) {
-            return INVALID_RESULT;
+        if (authorizedStore == null || !validationResult.getStatus().equals(VALID)) {
+
+            if (validationHappened) {
+                return INVALID_RESULT;
+
+            } else {
+                return NOT_VALIDATED_RESULT;
+            }
+
         }
 
         final Set<String> groups = new HashSet<>();
         if (authorizedStore.validationTypes().contains(PROVIDE_GROUPS)) {
-            groups.addAll(authorizedStore.getCallerGroups(validationResult));
+            groups.addAll(validationResult.getCallerGroups());
         }
 
         final CredentialValidationResult authorizedValidationResult = validationResult;

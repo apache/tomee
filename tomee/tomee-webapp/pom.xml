@@ -384,5 +384,17 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-security</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 </project>
