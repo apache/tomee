@@ -65,6 +65,7 @@ public class EndpointHandlerTest {
             .p("mdbs.pool", "false")
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
+            .p("mdbs.InstanceLimit", "100")
 
             .p("cf", "new://Resource?type=" + SampleConnectionFactory.class.getName() + "&class-name=" + SampleManagedConnectionFactory.class.getName())
             .p("cf.ResourceAdapter", "sra")
