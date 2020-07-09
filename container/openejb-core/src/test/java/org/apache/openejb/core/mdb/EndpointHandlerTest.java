@@ -63,6 +63,7 @@ public class EndpointHandlerTest {
             .p("mdbs", "new://Container?type=MESSAGE")
             .p("mdbs.ResourceAdapter", "sra")
             .p("mdbs.pool", "false")
+            .p("mdbs.InstanceLimit", "100")
             .p("mdbs.ActivationSpecClass", SampleActivationSpec.class.getName())
             .p("mdbs.MessageListenerInterface", InboundListener.class.getName())
 
