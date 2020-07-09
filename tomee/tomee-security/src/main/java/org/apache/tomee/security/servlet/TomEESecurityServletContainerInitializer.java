@@ -19,6 +19,7 @@ package org.apache.tomee.security.servlet;
 import org.apache.tomee.security.cdi.TomEESecurityExtension;
 import org.apache.tomee.security.provider.TomEESecurityAuthConfigProvider;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContainerInitializer;
@@ -30,8 +31,21 @@ import java.util.Set;
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
+        BeanManager beanManager;
+        try {
+            beanManager = getBeanManager();
+        } catch (IllegalStateException e) {
+
+            // CDI not enabled?
+            return;
+        }
+
+        if (beanManager == null) {
+            return;
+        }
+
         final TomEESecurityExtension securityExtension =
-                CDI.current().getBeanManager().getExtension(TomEESecurityExtension.class);
+                beanManager.getExtension(TomEESecurityExtension.class);
 
         if (securityExtension.hasAuthenticationMechanisms()) {
             AuthConfigFactory.getFactory().registerConfigProvider(
@@ -40,5 +54,9 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
                     ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
                 "TomEE Security JSR-375");
         }
+    }
+
+    private BeanManager getBeanManager() throws IllegalStateException {
+        return CDI.current().getBeanManager();
     }
 }
