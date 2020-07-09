@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 

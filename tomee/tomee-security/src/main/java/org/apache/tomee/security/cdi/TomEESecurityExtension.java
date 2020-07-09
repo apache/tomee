@@ -21,7 +21,6 @@ import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
-import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
 import org.apache.tomee.security.identitystore.TomEELDAPIdentityStore;
 
