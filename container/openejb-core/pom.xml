@@ -336,6 +336,8 @@
             <exclude>**/TestHandler.java</exclude>
             <exclude>org/apache/openejb/cdi/**</exclude>
             <exclude>**/ConnectionFactoryJMXTest.java</exclude>
+            <exclude>**/JMS2AMQDefaultConnectionFactoryTest.java</exclude>
+            <exclude>**/AutoConnectionTrackerTest.java</exclude>
           </excludes>
           <!--
                     <properties>
@@ -361,6 +363,8 @@
               <includes>
                 <include>org/apache/openejb/cdi/**</include>
                 <include>**/ConnectionFactoryJMXTest.java</include>
+                <include>**/JMS2AMQDefaultConnectionFactoryTest.java</include>
+                <include>**/AutoConnectionTrackerTest.java</include>
               </includes>
             </configuration>
           </execution>
