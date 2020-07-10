@@ -2294,49 +2294,51 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
 
             final Context globalContext = containerSystem.getJNDIContext();
             final AppContext appContext = containerSystem.getAppContext(appInfo.appId);
+
+            if (null == appContext) {
+                logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
+                return;
+            }
+
             final ClassLoader classLoader = appContext.getClassLoader();
 
             SystemInstance.get().fireEvent(new AssemblerBeforeApplicationDestroyed(appInfo, appContext));
 
             //noinspection ConstantConditions
-            if (null == appContext) {
-                logger.warning("Application id '" + appInfo.appId + "' not found in: " + Arrays.toString(containerSystem.getAppContextKeys()));
-                return;
-            } else {
-                final WebBeansContext webBeansContext = appContext.getWebBeansContext();
-                if (webBeansContext != null) {
-                    final ClassLoader old = Thread.currentThread().getContextClassLoader();
-                    Thread.currentThread().setContextClassLoader(classLoader);
-                    try {
-                        final ServletContext context = appContext.isStandaloneModule() && appContext.getWebContexts().iterator().hasNext() ?
-                                appContext.getWebContexts().iterator().next().getServletContext() : null;
-                        webBeansContext.getService(ContainerLifecycle.class).stopApplication(context);
-                    } finally {
-                        Thread.currentThread().setContextClassLoader(old);
-                    }
-                }
-                final Map<String, Object> cb = appContext.getBindings();
-                for (final Entry<String, Object> value : cb.entrySet()) {
-                    String path = value.getKey();
-                    if (path.startsWith("global")) {
-                        path = "java:" + path;
-                    }
-                    if (!path.startsWith("java:global")) {
-                        continue;
-                    }
 
-                    if(IvmContext.class.isInstance(globalContext)) {
-                        IvmContext.class.cast(globalContext).setReadOnly(false);
-                    }
-                    
-                    unbind(globalContext, path);
-                    unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
-                    unbind(globalContext, path.substring("java:global".length()));
+            final WebBeansContext webBeansContext = appContext.getWebBeansContext();
+            if (webBeansContext != null) {
+                final ClassLoader old = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(classLoader);
+                try {
+                    final ServletContext context = appContext.isStandaloneModule() && appContext.getWebContexts().iterator().hasNext() ?
+                            appContext.getWebContexts().iterator().next().getServletContext() : null;
+                    webBeansContext.getService(ContainerLifecycle.class).stopApplication(context);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(old);
                 }
-                if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
-                    unbind(globalContext, "global/" + appInfo.appId);
-                    unbind(globalContext, appInfo.appId);
+            }
+            final Map<String, Object> cb = appContext.getBindings();
+            for (final Entry<String, Object> value : cb.entrySet()) {
+                String path = value.getKey();
+                if (path.startsWith("global")) {
+                    path = "java:" + path;
                 }
+                if (!path.startsWith("java:global")) {
+                    continue;
+                }
+
+                if(IvmContext.class.isInstance(globalContext)) {
+                    IvmContext.class.cast(globalContext).setReadOnly(false);
+                }
+
+                unbind(globalContext, path);
+                unbind(globalContext, "openejb/global/" + path.substring("java:".length()));
+                unbind(globalContext, path.substring("java:global".length()));
+            }
+            if (appInfo.appId != null && !appInfo.appId.isEmpty() && !"openejb".equals(appInfo.appId)) {
+                unbind(globalContext, "global/" + appInfo.appId);
+                unbind(globalContext, appInfo.appId);
             }
 
             final EjbResolver globalResolver = new EjbResolver(null, EjbResolver.Scope.GLOBAL);
