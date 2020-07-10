@@ -338,6 +338,7 @@
             <exclude>**/ConnectionFactoryJMXTest.java</exclude>
             <exclude>**/JMS2AMQDefaultConnectionFactoryTest.java</exclude>
             <exclude>**/AutoConnectionTrackerTest.java</exclude>
+            <exclude>**/MaxInstanceEndpointHandlerTest.java</exclude>
           </excludes>
           <!--
                     <properties>
@@ -365,6 +366,7 @@
                 <include>**/ConnectionFactoryJMXTest.java</include>
                 <include>**/JMS2AMQDefaultConnectionFactoryTest.java</include>
                 <include>**/AutoConnectionTrackerTest.java</include>
+                <include>**/MaxInstanceEndpointHandlerTest.java</include>
               </includes>
             </configuration>
           </execution>
