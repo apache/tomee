@@ -23,7 +23,7 @@
 
     <groupId>org.superbiz</groupId>
     <artifactId>spring-integration</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>8.0.4-SNAPSHOT</version>
     <name>TomEE :: Examples :: Spring Integration</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,13 +32,20 @@
         <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <groupId>org.tomitribe.transformer</groupId>
+                <artifactId>org.eclipse.transformer.maven</artifactId>
+                <version>0.1.1a</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <classifier>jakartaee9</classifier>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+			</goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -67,7 +74,7 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>6.0-5</version>
+            <version>6.0-3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -85,7 +92,7 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-core-hibernate</artifactId>
-            <version>4.0.0-beta-2-SNAPSHOT</version>
+            <version>4.0.0-beta-2</version>
             <type>pom</type>
             <exclusions>
                 <exclusion>
@@ -103,7 +110,7 @@
         <dependency>
             <groupId>org.apache.openejb</groupId>
             <artifactId>openejb-spring</artifactId>
-            <version>4.0.0-beta-2-SNAPSHOT</version>
+            <version>4.0.0-beta-2</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
