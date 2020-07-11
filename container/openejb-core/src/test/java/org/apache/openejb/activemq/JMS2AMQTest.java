@@ -93,6 +93,8 @@ public class JMS2AMQTest {
 
                 .p("mdbs", "new://Container?type=MESSAGE")
                 .p("mdbs.ResourceAdapter", "amq")
+                .p("mdbs.InstanceLimit", "30")
+                .p("mdbs.activation.maxSessions", "50")
 
                 .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
                 .p("cf.ResourceAdapter", "amq")
