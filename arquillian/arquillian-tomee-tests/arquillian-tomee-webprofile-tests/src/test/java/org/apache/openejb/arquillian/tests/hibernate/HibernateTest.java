@@ -47,15 +47,15 @@ public class HibernateTest {
     public static WebArchive war() {
         File[] hibernate;
         try { // try offline first since it is generally faster
-            hibernate = Maven.resolver()
-                    .offline(true)
+            hibernate = Maven.configureResolver()
+                    .workOffline()
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                     .asFile();
         } catch (ResolutionException re) { // try on central
             hibernate = Maven.resolver()
                     .loadPomFromFile("src/test/resources/hibernate-pom.xml")
-                    .importRuntimeAndTestDependencies().resolve().withTransitivity()
+                    .importCompileAndRuntimeDependencies().resolve().withTransitivity()
                     .asFile();
         }
 
