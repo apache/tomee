@@ -152,6 +152,7 @@ public class NewLoaderLogic {
             final Filter unwanted = Filters.packages(
                 "java.",
                 "javax.",
+                "jakarta.",
                 "sun.reflect."
             );
 

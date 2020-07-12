@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class SystemInstance {
     private static final String PROFILE_PROP = "openejb.profile";
     private static final String DEFAULT_PROFILE = "development";
+    public static final String ACTIVEMQ_CREATE_JMX_CONNECTOR = "org.apache.activemq.broker.jmx.createConnector";
 
     private final long startTime = System.currentTimeMillis();
 
@@ -111,6 +112,9 @@ public final class SystemInstance {
             }
         }
         this.internalProperties.putAll(properties);
+
+        setDefaults();
+
         this.options = new Options(internalProperties, new Options(System.getProperties()));
         this.home = new FileUtils("openejb.home", "user.dir", this.internalProperties);
         this.base = new FileUtils("openejb.base", "openejb.home", this.internalProperties);
@@ -127,6 +131,16 @@ public final class SystemInstance {
         this.internalProperties.setProperty("openejb.home", homeDirCanonicalPath);
         this.internalProperties.setProperty("openejb.base", baseDirCanonicalPath);
         System.setProperty("derby.system.home", System.getProperty("derby.system.home", baseDirCanonicalPath));
+    }
+
+    /**
+     * This method sets some specific defaults. We shouldn't add to this unless there's a really good reason -
+     * e.g. we need to override an upstream component's defaults.
+     */
+    private void setDefaults() {
+        if (! this.internalProperties.containsKey(ACTIVEMQ_CREATE_JMX_CONNECTOR)) {
+            this.internalProperties.setProperty(ACTIVEMQ_CREATE_JMX_CONNECTOR, Boolean.FALSE.toString());
+        }
     }
 
     public <E> E fireEvent(final E event) {

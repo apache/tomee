@@ -8,7 +8,8 @@ right to edit this page._
 
 == AnnotatedEJB
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.annotation.Resource;
@@ -44,11 +45,12 @@ public class AnnotatedEJB implements AnnotatedEJBLocal, AnnotatedEJBRemote {
         return "AnnotatedEJB[name=" + name + "]";
     }
 }
-....
+----
 
 == AnnotatedEJBLocal
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.Local;
@@ -64,11 +66,12 @@ public interface AnnotatedEJBLocal {
 
     void setDs(DataSource ds);
 }
-....
+----
 
 == AnnotatedEJBRemote
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.Remote;
@@ -79,11 +82,12 @@ public interface AnnotatedEJBRemote {
 
     void setName(String name);
 }
-....
+----
 
 == AnnotatedServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.annotation.Resource;
@@ -156,11 +160,12 @@ public class AnnotatedServlet extends HttpServlet {
         }
     }
 }
-....
+----
 
 == ClientHandler
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.xml.ws.handler.Handler;
@@ -181,11 +186,12 @@ public class ClientHandler implements Handler {
         return true;
     }
 }
-....
+----
 
 == HelloEjb
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.jws.WebService;
@@ -194,11 +200,12 @@ import javax.jws.WebService;
 public interface HelloEjb {
     String hello(String name);
 }
-....
+----
 
 == HelloEjbService
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.Stateless;
@@ -220,11 +227,12 @@ public class HelloEjbService implements HelloEjb {
         return "Hello " + name + " from EJB Webservice!";
     }
 }
-....
+----
 
 == HelloPojo
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.jws.WebService;
@@ -233,11 +241,12 @@ import javax.jws.WebService;
 public interface HelloPojo {
     String hello(String name);
 }
-....
+----
 
 == HelloPojoService
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.jws.HandlerChain;
@@ -257,11 +266,12 @@ public class HelloPojoService implements HelloPojo {
         return "Hello " + name + " from Pojo Webservice!";
     }
 }
-....
+----
 
 == JndiServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.naming.Context;
@@ -329,11 +339,12 @@ public class JndiServlet extends HttpServlet {
         }
     }
 }
-....
+----
 
 == JpaBean
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.persistence.Column;
@@ -369,11 +380,12 @@ public class JpaBean {
         return "[JpaBean id=" + id + ", name=" + name + "]";
     }
 }
-....
+----
 
 == JpaServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.persistence.EntityManager;
@@ -430,11 +442,12 @@ public class JpaServlet extends HttpServlet {
         transaction.commit();
     }
 }
-....
+----
 
 == ResourceBean
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 public class ResourceBean {
@@ -452,11 +465,12 @@ public class ResourceBean {
         return "[ResourceBean " + value + "]";
     }
 }
-....
+----
 
 == RunAsServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.EJB;
@@ -532,11 +546,12 @@ public class RunAsServlet extends HttpServlet {
         out.println();
     }
 }
-....
+----
 
 == SecureEJB
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.annotation.Resource;
@@ -581,11 +596,12 @@ public class SecureEJB implements SecureEJBLocal {
         return "SecureEJB[userName=" + getCallerPrincipal() + "]";
     }
 }
-....
+----
 
 == SecureEJBLocal
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.Local;
@@ -605,11 +621,12 @@ public interface SecureEJBLocal {
 
     void denyAllMethod();
 }
-....
+----
 
 == SecureServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.ejb.EJB;
@@ -685,11 +702,12 @@ public class SecureServlet extends HttpServlet {
         out.println();
     }
 }
-....
+----
 
 == ServerHandler
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.xml.ws.handler.Handler;
@@ -710,11 +728,12 @@ public class ServerHandler implements Handler {
         return true;
     }
 }
-....
+----
 
 == WebserviceClient
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.xml.ws.Service;
@@ -777,11 +796,12 @@ public class WebserviceClient {
         out.println();
     }
 }
-....
+----
 
 == WebserviceServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import javax.jws.HandlerChain;
@@ -835,11 +855,12 @@ public class WebserviceServlet extends HttpServlet {
         }
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
   <persistence-unit transaction-type="RESOURCE_LOCAL" name="jpa-example">
     <jta-data-source>java:openejb/Connector/Default JDBC Database</jta-data-source>
@@ -851,11 +872,12 @@ public class WebserviceServlet extends HttpServlet {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == client-handlers.xml
 
-....
+[source,xml]
+----
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
   <jws:handler-chain>
     <jws:handler>
@@ -864,11 +886,12 @@ public class WebserviceServlet extends HttpServlet {
     </jws:handler>
   </jws:handler-chain>
 </jws:handler-chains>
-....
+----
 
 == server-handlers.xml
 
-....
+[source,xml]
+----
 <jws:handler-chains xmlns:jws="http://java.sun.com/xml/ns/javaee">
   <jws:handler-chain>
     <jws:handler>
@@ -877,11 +900,12 @@ public class WebserviceServlet extends HttpServlet {
     </jws:handler>
   </jws:handler-chain>
 </jws:handler-chains>
-....
+----
 
 == context.xml
 
-....
+[source,xml]
+----
 <Context>
   <!-- This only works if the context is installed under the correct name -->
   <Realm className="org.apache.catalina.realm.MemoryRealm"
@@ -920,11 +944,12 @@ public class WebserviceServlet extends HttpServlet {
       global="server.xml/environment"
       type="java.lang.String"/>
 </Context>
-....
+----
 
 == jetty-web.xml
 
-....
+[source,xml]
+----
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
   <Get name="securityHandler">
     <Set name="loginService">
@@ -936,20 +961,22 @@ public class WebserviceServlet extends HttpServlet {
     </Set>
   </Get>
 </Configure>
-....
+----
 
 == tomcat-users.xml
 
-....
+[source,xml]
+----
 <tomcat-users>
   <user name="manager" password="manager" roles="manager,user"/>
   <user name="user" password="user" roles="user"/>
 </tomcat-users>
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
@@ -1095,4 +1122,4 @@ public class WebserviceServlet extends HttpServlet {
     <persistence-context-type>Transactional</persistence-context-type>
   </persistence-context-ref>
 </web-app>
-....
+----

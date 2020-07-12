@@ -6,7 +6,8 @@ right to edit this page._
 
 == CalculatorImpl
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.annotation.security.DeclareRoles;
@@ -40,11 +41,12 @@ public class CalculatorImpl implements CalculatorWs, CalculatorRemote {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == CalculatorRemote
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.ejb.Remote;
@@ -56,11 +58,12 @@ public interface CalculatorRemote {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == CalculatorWs
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.jws.WebService;
@@ -80,17 +83,19 @@ public interface CalculatorWs {
 
     public int multiply(int mul1, int mul2);
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == openejb-jar.xml
 
-....
+[source,xml]
+----
 <openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2">
   <enterprise-beans>
     <session>
@@ -103,11 +108,12 @@ public interface CalculatorWs {
     </session>
   </enterprise-beans>
 </openejb-jar>
-....
+----
 
 == CalculatorTest
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import junit.framework.TestCase;
@@ -154,11 +160,12 @@ public class CalculatorTest extends TestCase {
     }
     //END SNIPPET: webservice
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -202,4 +209,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.481 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

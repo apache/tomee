@@ -16,17 +16,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-lts-v10-simple</artifactId>
-  <version>8.0.2-SNAPSHOT</version>
-
+  <version>8.0.4-SNAPSHOT</version>
   <name>TomEE :: Examples :: Vaadin LTS V10</name>
   <packaging>war</packaging>
-
   <!--
 This section allows you to configure where to publish libraries for sharing.
 It is not required and may be deleted.  For more information see:
@@ -42,43 +38,34 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
   <properties>
     <!--<maven.compiler.release>11</maven.compiler.release>-->
     <maven.compiler.target>8</maven.compiler.target>
     <maven.compiler.source>8</maven.compiler.source>
-
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
     <vaadin.version>10.0.16</vaadin.version>
-
     <transpilation.output>${project.build.directory}/build</transpilation.output>
     <webapp.directory>src/main/webapp</webapp.directory>
   </properties>
-
   <pluginRepositories>
     <pluginRepository>
       <id>vaadin-prereleases</id>
       <url>https://maven.vaadin.com/vaadin-prereleases</url>
     </pluginRepository>
   </pluginRepositories>
-
   <repositories>
     <!--Releases-->
     <repository>
       <id>vaadin-addons</id>
       <url>http://maven.vaadin.com/vaadin-addons</url>
     </repository>
-
     <!--Pre-Releases-->
     <repository>
       <id>vaadin-prereleases</id>
       <url>http://maven.vaadin.com/vaadin-prereleases</url>
     </repository>
   </repositories>
-
-
   <dependencyManagement>
     <dependencies>
       <!--Specs-->
@@ -88,7 +75,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
         <version>[8.0,)</version>
         <scope>provided</scope>
       </dependency>
-
       <!--Vaadin -->
       <dependency>
         <groupId>com.vaadin</groupId>
@@ -99,7 +85,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <!--Vaadin -->
     <dependency>
@@ -111,7 +96,6 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <!--<artifactId>vaadin-cdi</artifactId>-->
     <!--</dependency>-->
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -135,21 +119,18 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
       </plugin>
     </plugins>
   </build>
-
   <profiles>
     <profile>
       <id>_vaadin_v10_productionMode</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-
       <dependencies>
         <dependency>
           <groupId>com.vaadin</groupId>
           <artifactId>flow-server-production-mode</artifactId>
         </dependency>
       </dependencies>
-
       <build>
         <plugins>
           <plugin>

@@ -16,7 +16,8 @@ In addition, directly related to this this example, you can observe 2 elements: 
 
 You ca see the simplicity of using the JMSContext object to send messages to and consume messages from the queue.
 
-....
+[source,java]
+----
 package org.superbiz.jms;
 
 import javax.annotation.Resource;
@@ -59,7 +60,7 @@ public class CustomJmsService {
 }
 
 
-....
+----
 
 == Testing
 
@@ -71,7 +72,8 @@ Then, similar to the POST, we perform a GET request that consumes the previously
 
 Finally, in order to verify both HTTP status from the responses are asserted as equals to the expected HTTP codes (204/200), as well as the message's content.
 
-....
+[source,java]
+----
 @RunWith(Arquillian.class)
 @RunAsClient
 public class CustomJmsServiceTest {
@@ -105,20 +107,22 @@ public class CustomJmsServiceTest {
         }
     }
 }
-....
+----
 
 
 === Running the Test for the JMS service
 
 Building and testing the example is simple. In the ``simple-jms-context`` directory run:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 [WARNING]
 [WARNING] Some problems were encountered while building the effective settings
 [WARNING] 'servers.server.id' must be unique but found duplicate server with id tomitribe-all @ /home/jgallimore/.m2/settings.xml
@@ -430,21 +434,23 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] Finished at: 2020-03-31T20:38:15+01:00
 [INFO] ------------------------------------------------------------------------
 
-....
+----
 
 
 = Running the app
 
 Running the example is simple. In the ``simple-jms`` directory run:
 
-....
+[source,java]
+----
 $ mvn tomee:run
-....
+----
 
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 31-Mar-2020 20:39:14.341 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@418f890f
 31-Mar-2020 20:39:14.344 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
 31-Mar-2020 20:39:14.344 INFO [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-context-8.0.2-SNAPSHOT/message ->      String receiveMessage() throws JMSException
@@ -456,17 +462,19 @@ Which should create output like the following.
 31-Mar-2020 20:39:14.370 INFO [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
 31-Mar-2020 20:39:14.378 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
 31-Mar-2020 20:39:14.385 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [2,986] milliseconds
-....
+----
 
 
 Note: now you can use the ``CURL`` command (or a browser-client tool) to send a POST request and then a GET request to the equivalent URL:
 
-....
+[source,java]
+----
 http://localhost:8080/simple-jms-context<-TOMEE-VERSION>/message
-....
+----
 
 Finally, you can ``quit``, ``exit``, ``reload`` the example, by typing one of the available commands
 
-....
+[source,java]
+----
 [WARNING] Command '' not understood. Use one of [quit, exit, reload]
-....
+----

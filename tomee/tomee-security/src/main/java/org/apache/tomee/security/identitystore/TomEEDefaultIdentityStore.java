@@ -29,12 +29,15 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
+import javax.security.enterprise.identitystore.IdentityStorePermission;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Collections.emptySet;
 
 @ApplicationScoped
 public class TomEEDefaultIdentityStore implements IdentityStore {
+
     private UserDatabase userDatabase;
 
     @PostConstruct
@@ -47,23 +50,50 @@ public class TomEEDefaultIdentityStore implements IdentityStore {
 
     @Override
     public CredentialValidationResult validate(final Credential credential) {
-        if (credential instanceof UsernamePasswordCredential) {
-            final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
-            return Optional.ofNullable(userDatabase.findUser(usernamePasswordCredential.getCaller()))
-                           .filter(user -> user.getPassword().equals(usernamePasswordCredential.getPasswordAsString()))
-                           .map(user -> new CredentialValidationResult(user.getUsername(), getUserRoles(user)))
-                           .orElse(CredentialValidationResult.INVALID_RESULT);
+        if (!(credential instanceof UsernamePasswordCredential)) {
+            return CredentialValidationResult.NOT_VALIDATED_RESULT;
+        }
+
+        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        final User user = getUser(usernamePasswordCredential.getCaller());
+
+        if (user == null) {
+            return CredentialValidationResult.INVALID_RESULT;
+        }
+
+        // deal with hashed passwords in tomcat-users.xml
+        if (user.getPassword().equals(usernamePasswordCredential.getPasswordAsString())) {
+            Set<String> groups = emptySet();
+            if (validationTypes().contains(ValidationType.PROVIDE_GROUPS)) {
+                groups = new HashSet<>(getUserRoles(user));
+            }
+
+            return new CredentialValidationResult(usernamePasswordCredential.getCaller(), groups);
         }
 
         return CredentialValidationResult.NOT_VALIDATED_RESULT;
     }
 
+    private User getUser(final String callerPrincipal) {
+        return userDatabase.findUser(callerPrincipal);
+    }
+
     @Override
     public Set<String> getCallerGroups(final CredentialValidationResult validationResult) {
-        return validationResult.getCallerGroups();
+
+        final SecurityManager securityManager = System.getSecurityManager();
+        if (securityManager != null) {
+            securityManager.checkPermission(new IdentityStorePermission("getGroups"));
+        }
+
+        final User user = getUser(validationResult.getCallerPrincipal().getName());
+        return getUserRoles(user);
     }
 
     private Set<String> getUserRoles(final User user) {
+        if (user == null) {
+            return emptySet();
+        }
         final Set<String> roles = new HashSet<>();
         user.getRoles().forEachRemaining(role -> roles.add(role.getRolename()));
         return roles;

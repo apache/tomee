@@ -20,7 +20,8 @@ Uma instância de `Soup` será criada nesse método e ela será compartilhada em
 bean `Chef`. O método passa o request para o bean `Chef`. Ele então retorna o nome da sopa para a 
 classe de teste.
 
-....
+[source,java]
+----
 @Stateless
 public class Waiter {
 
@@ -35,14 +36,15 @@ public class Waiter {
         return chef.prepareSoup().getName();
     }
 }
-....
+----
 
 === Soup (sopa)
 
 A classe `Soup` é um POJO injetável, definida como `@RequestScoped`. Isso significa que uma instância 
 será criada apenas uma vez para cada request e será compartilhada por todos os beans que a injetam.
 
-....
+[source,java]
+----
 @RequestScoped
 public class Soup {
 
@@ -61,7 +63,7 @@ public class Soup {
         this.name = name;
     }
 }
-....
+----
 
 === Chef
 
@@ -69,7 +71,8 @@ A classe `Chef` é um simples session bean com um campo `Soup` injetado. Normalm
 seria passado para o `prepareSoup()` como argumento, mas para as necessidades deste exemplo será 
 passado pelo contexto da requisição.
 
-....
+[source,java]
+----
 @Stateless
 public class Chef {
 
@@ -80,13 +83,14 @@ public class Chef {
         return soup;
     }
 }
-....
+----
 
 == Caso de teste
 
 Esta é a classe de entrada para este exemplo.
 
-....
+[source,java]
+----
 public class RestaurantTest {
 
     private static String TOMATO_SOUP = "Tomato Soup";
@@ -114,13 +118,14 @@ public class RestaurantTest {
         container.close();
     }
 }
-....
+----
 
 == Executando
 
 Na saida você pode ver que existem duas instâncias de `Soup` criadas - uma para cada requisição.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -158,4 +163,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.412 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

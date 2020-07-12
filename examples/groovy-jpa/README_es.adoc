@@ -40,13 +40,15 @@ include::src/main/resources/META-INF/persistence.xml[]
 
 Ejecutar el ejemplo es bastante simple. En el directorio `/tomee/examples/groovy-jpa` ejecute:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 Lo que debería crear un resultado como el siguiente:
 
-....
+[source,java]
+----
 [INFO] Running org.superbiz.groovy.GroovyJPATest
 INFO - ********************************************************************************
 INFO - OpenEJB http://tomee.apache.org/
@@ -100,4 +102,4 @@ INFO - Closing DataSource: Default Unmanaged JDBC Database
 [INFO] Results:
 [INFO]
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

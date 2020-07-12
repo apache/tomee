@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+        
+    - name: Set up JDK 1.8
+      uses: joschi/setup-jdk@v2
+      with:
+        java-version: '8'
+
+    - name: Create tmp dirs
+      run: mkdir -p /tmp/tomee-trunk-ubuntu-jvm8
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Checkstyle
+      run: mvn help:system checkstyle:check -Pstyle
+      env:
+        MAVEN_OPTS: -Xmx1536m
+
+    - name: Pmd
+      run: mvn help:system pmd:check -Pstyle
+      env:
+        MAVEN_OPTS: -Xmx1536m
+
+    - name: Compile
+      run: mvn help:system -e --show-version --update-snapshots --fail-at-end -Djava.io.tmpdir=/tmp/tomee-trunk-ubuntu-jvm8 clean install -DfailIfNoTests=false -DskipTests
+      env:
+        MAVEN_OPTS: -Xmx1536m
+
+

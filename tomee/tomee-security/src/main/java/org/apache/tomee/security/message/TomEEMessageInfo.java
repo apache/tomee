@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 public class TomEEMessageInfo extends MessageInfoImpl {
     public static final String AUTH_PARAMS = "org.apache.tomee.security.context.authParams";
     public static final String AUTHENTICATE = "org.apache.tomee.security.context.authenticate";
+    public static final String IS_MANDATORY = "javax.security.auth.message.MessagePolicy.isMandatory";
+    public static final String REGISTER_SESSION = "javax.servlet.http.registerSession";
 
     public TomEEMessageInfo(final HttpServletRequest request,
                             final HttpServletResponse response,

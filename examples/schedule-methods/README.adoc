@@ -8,7 +8,8 @@ right to edit this page._
 
 == FarmerBrown
 
-....
+[source,java]
+----
 package org.superbiz.corn;
 
 import javax.ejb.Lock;
@@ -54,11 +55,12 @@ public class FarmerBrown {
         return checks.get();
     }
 }
-....
+----
 
 == FarmerBrownTest
 
-....
+[source,java]
+----
 package org.superbiz.corn;
 
 import junit.framework.TestCase;
@@ -85,11 +87,12 @@ public class FarmerBrownTest extends TestCase {
         assertTrue(farmerBrown.getChecks() > 4);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -124,4 +127,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.121 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

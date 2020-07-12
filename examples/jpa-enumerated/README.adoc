@@ -24,7 +24,8 @@ For our example we will leverage the familiar `Movie` entity and add a new field
 
 In our `Movie` entity, we add a `rating` field of the enum type `Rating` and annotate it with `@Enumerated(EnumType.STRING)` to declare that its value should be converted from what is effectively a `String` in the database to the `Rating` type.
 
-....
+[source,java]
+----
 @Entity
 public class Movie {
 
@@ -80,7 +81,7 @@ public class Movie {
         this.rating = rating;
     }
 }
-....
+----
 
 The above is enough and we are effectively done.  For the sake of completeness we'll show a sample `Query`
 
@@ -91,7 +92,8 @@ Note the `findByRating` method which creates a `Query` with a `rating` named par
 
 Regardless if you use `EnumType.STRING` or `EnumType.ORDINAL`, you still always pass the enum itself in calls to `query.setParameter`.
 
-....
+[source,java]
+----
 @Stateful
 public class Movies {
 
@@ -118,7 +120,7 @@ public class Movies {
     }
 
 }
-....
+----
 
 == EnumType.STRING vs EnumType.ORDINAL
 
@@ -174,7 +176,8 @@ If the order of the enum values is significant to your code, avoid `EnumType.ORD
 
 == Unit Testing the JPA @Enumerated
 
-....
+[source,java]
+----
 public class MoviesTest extends TestCase {
 
     public void test() throws Exception {
@@ -205,7 +208,7 @@ public class MoviesTest extends TestCase {
         container.close();
     }
 }
-....
+----
 
 = Running
 
@@ -216,7 +219,8 @@ To run the example via maven:
 
 Which will generate output similar to the following:
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -256,4 +260,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.831 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

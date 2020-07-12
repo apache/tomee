@@ -8,7 +8,8 @@ right to edit this page._
 
 == SocialBean
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 import org.apache.openejb.api.Proxy;
@@ -26,11 +27,12 @@ public interface SocialBean {
 
     public String status();
 }
-....
+----
 
 == SocialHandler
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 import java.lang.reflect.InvocationHandler;
@@ -48,18 +50,20 @@ public class SocialHandler implements InvocationHandler {
         return "Hey, you have no virtual friend!";
     }
 }
-....
+----
 
 == SocialInterceptor
 
-....
+[source,java]
+----
 packagenull
 }
-....
+----
 
 == SocialTest
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 import org.junit.AfterClass;
@@ -92,11 +96,12 @@ public class SocialTest {
         assertTrue(social.status().contains("virtual"));
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -132,4 +137,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.107 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

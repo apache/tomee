@@ -3,12 +3,9 @@
 :jbake-status: status=published
 = Dynamic Proxy to Access MBean
 
-_Help us document this example! Click the blue pencil icon in the upper
-right to edit this page._
-
 == Example
 
-Acessing MBean is something simple through the JMX API but it is often
+Accessing MBean is something simple through the JMX API but it is often
 technical and not very interesting.
 
 This example simplify this work simply doing it generically in a proxy.
@@ -24,7 +21,8 @@ user/password if needed.
 
 Simply an annotation to get the object
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import java.lang.annotation.Retention;
@@ -44,11 +42,12 @@ public @interface ObjectName {
     String user() default "";
     String password() default "";
 }
-....
+----
 
-== DynamicMBeanHandler (thr proxy implementation)
+== DynamicMBeanHandler (the proxy implementation)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import javax.annotation.PreDestroy;
@@ -275,13 +274,14 @@ public class DynamicMBeanHandler implements InvocationHandler {
         }
     }
 }
-....
+----
 
 == Dynamic Proxies
 
 === DynamicMBeanClient (the dynamic JMX client)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
@@ -303,11 +303,12 @@ public interface DynamicMBeanClient {
     void setCounter(int i);
     int length(String aString);
 }
-....
+----
 
-=== DynamicMBeanClient (the dynamic JMX client)
+=== DynamicRemoteMBeanClient (the dynamic JMX client remote)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.apache.openejb.api.Proxy;
@@ -328,13 +329,14 @@ public interface DynamicRemoteMBeanClient {
 
     @PreDestroy void clean();
 }
-....
+----
 
 == The MBean used for the test
 
 === SimpleMBean
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean.simple;
 
 public interface SimpleMBean {
@@ -343,11 +345,12 @@ public interface SimpleMBean {
     int getCounter();
     void setCounter(int c);
 }
-....
+----
 
 == Simple
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean.simple;
 
 public class Simple implements SimpleMBean {
@@ -368,11 +371,12 @@ public class Simple implements SimpleMBean {
         counter = c;
     }
 }
-....
+----
 
 == DynamicMBeanClientTest (The test)
 
-....
+[source,java]
+----
 package org.superbiz.dynamic.mbean;
 
 import org.junit.After;
@@ -451,4 +455,4 @@ public class DynamicMBeanClientTest {
         }
     }
 }
-....
+----

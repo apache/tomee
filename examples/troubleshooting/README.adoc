@@ -8,7 +8,8 @@ right to edit this page._
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.troubleshooting;
 
 import javax.persistence.Entity;
@@ -61,11 +62,12 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
-....
+[source,java]
+----
 package org.superbiz.troubleshooting;
 
 import javax.ejb.Stateless;
@@ -95,11 +97,12 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -112,11 +115,12 @@ public class Movies {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MoviesTest
 
-....
+[source,java]
+----
 package org.superbiz.troubleshooting;
 
 import junit.framework.TestCase;
@@ -198,11 +202,12 @@ public class MoviesTest extends TestCase {
         assertEquals("List.size()", 3, list.size());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -457,4 +462,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.642 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

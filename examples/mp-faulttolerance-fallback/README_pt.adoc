@@ -121,4 +121,3 @@ Você também pode usar o teste link:src/test/java/org/superbiz/rest/WeatherServ
 [INFO] 
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 ```
-

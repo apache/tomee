@@ -25,7 +25,8 @@ methods are exposed as a local view.
 
 == Counter
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import javax.ejb.Stateful;
@@ -62,7 +63,7 @@ public class Counter {
         return (count = 0);
     }
 }
-....
+----
 
 == CounterTest
 
@@ -71,7 +72,8 @@ performing a JNDI lookup on it, to retrieve an instance of the `Counter`
 bean. After some state manipulation, a new instance is fetched from the
 container and we can see that it’s a new instance.
 
-....
+[source,java]
+----
 package org.superbiz.counter;
 
 import junit.framework.TestCase;
@@ -109,11 +111,12 @@ public class CounterTest extends TestCase {
     }
     //END SNIPPET: local
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -148,4 +151,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.098 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

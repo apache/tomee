@@ -94,7 +94,7 @@ public class TempClassLoader extends URLClassLoader {
     }
 
     public URL getInternalResource(final String name) {
-        if (!name.startsWith("java/") && !name.startsWith("javax/") && name.endsWith(".class")) {
+        if (!name.startsWith("java/") && !name.startsWith("javax/") && !name.startsWith("jakarta/") && name.endsWith(".class")) {
             try {
                 final Enumeration<URL> resources = getResources(name);
                 if (!resources.hasMoreElements()) {

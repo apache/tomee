@@ -18,21 +18,23 @@ In our test (`FinalizePaymentTest`) we injected the FinalizePayment class, and c
 
 This method will dynamically inject the correct implementation using CDI features.
 
-....
+[source,java]
+----
 public String finishWithCash () {
 
 	paymentChoosed = paymentsLazy.select(Cash.class).get ();
 	return paymentChoosed.pay ();
 }
-....
+----
 
 note that a variable called `paymentsLazy` is variable will contain all implementations of the `Payment` interface
 
-....
+[source,java]
+----
 @Inject
 @Any
 private Instance <Payment> paymentsLazy;
-....
+----
 
 
 In this variable we are using:
@@ -51,9 +53,10 @@ Object responsible for knowing all possible implementations and instantiating th
 
 With this variable ready we can call it using:
 
-....
+[source,java]
+----
 paymentsLazy.select(Cash.class).get ();
-....
+----
 
 where `Cash.class` tells you the implementation and `.get()` returns the ready-to-use instance.
 
@@ -68,17 +71,19 @@ In our test (`FinalizePaymentQualifierTest`) we injected the FinalizePayment cla
 
 This method will dynamically inject the correct implementation using a `Qualifier` (PaymentType).
 
-....
+[source,java]
+----
 public String finishByQualifier (PaymentType type) {
 
     paymentChoosed = paymentsLazy.select (new PayByQualifier (type)) .get ();
     return paymentChoosed.pay ();
 }
-....
+----
 
 For this approach to work we will need to create a new class called `PayByQualifier` that extends `AnnotationLiteral` that expects a qualifier to pass into its `T extends Annotation` (Generics) parameter.
 
-....
+[source,java]
+----
 public class PayByQualifier extends AnnotationLiteral <PaymentQualifier> implements PaymentQualifier {
 
 	private PaymentType type;
@@ -92,23 +97,25 @@ public class PayByQualifier extends AnnotationLiteral <PaymentQualifier> impleme
 		return this.type;
 	}
 }
-....
+----
 
 the important thing is to implement the Annotation method in our case the `public PaymentType type();`
 
 To facilitate this implementation we receive this value from constructor class.
 
-....
+[source,java]
+----
 public PayByQualifier (PaymentType type) {
 
     this.type = type;
 }
-....
+----
 
 With this class ready we can use it in our business class:
 
-....
+[source,java]
+----
 paymentChoosed = paymentsLazy.select (new PayByQualifier(type)).get ();
-....
+----
 
 Obs: The qualifier structure was reused from https://github.com/cassunde/tomee/tree/master/examples/cdi-qualifier project 

@@ -13,7 +13,8 @@ the application can be run with `mvn clean install tomee:run' if port
 http://localhost:8080/jsonb-custom-serializer/api/users that should
 respond with the following json:
 
-....
+[source,java]
+----
 [
   {
     "address":{
@@ -32,37 +33,40 @@ respond with the following json:
     "registration":"2018-12-29T18:13:40.028"
   }
 ]
-....
+----
 
 and the endpoint: (POST)
 http://localhost:8080/jsonb-custom-serializer/api/users with a body
 like:
 
-....
+[source,java]
+----
 { 
     "id": 1, 
     "name": "name1", 
     "extra": "extra1" 
 }
-....
+----
 
 which respond with the following json:
 
-....
+[source,java]
+----
 { 
     "id": 1, 
     "name": "name1extra1", 
     "registration": "Sat Dec 29 19:48:05 CET 2018",
     "address": null 
 }
-....
+----
 
 == @ApplicationPath
 
 JAXRS entry point class, as follows jaxrs will load all the annotated
 @Path classes and methods without specifying them.
 
-....
+[source,java]
+----
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
@@ -70,13 +74,14 @@ import javax.ws.rs.core.Application;
 public class JAXRSApplication extends Application {
 
 }
-....
+----
 
 == @Path Rest resource
 
 Simple jaxrs class with a GET and a POST endpoint
 
-....
+[source,java]
+----
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,7 +119,7 @@ public class UserService {
         return u;
     }
 }
-....
+----
 
 == JSONB Configuration
 
@@ -122,7 +127,8 @@ Implementing ContextResolver<> you can customize jaxrs defaults, in this
 example we are going to customize JSONB serialization for all objects of
 type Address, defined in AddressSerializer class
 
-....
+[source,java]
+----
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
@@ -146,13 +152,14 @@ public class JSONBConfiguration implements ContextResolver<Jsonb> {
     }
 
 }
-....
+----
 
 == Address serializer
 
 Simple Object serializer class that add `modified' during serialization
 
-....
+[source,java]
+----
 import javax.json.bind.serializer.JsonbSerializer;
 import javax.json.bind.serializer.SerializationContext;
 import javax.json.stream.JsonGenerator;
@@ -171,13 +178,14 @@ public class AddressSerializer implements JsonbSerializer<Address> {
     }
 
 }
-....
+----
 
 == User Deserializer
 
 Create an object from a json
 
-....
+[source,java]
+----
 import java.lang.reflect.Type;
 
 import javax.json.JsonObject;
@@ -202,14 +210,15 @@ public class UserDeserializer implements JsonbDeserializer<User> {
     }
 
 }
-....
+----
 
 == Using the deserializer @JsonbTypeDeserializer @JsonbTypeSerializer
 
 With the annotation @JsonbTypeDeserializer or @JsonbTypeSerializer you
 can notify jsonb to use the custom deserializer
 
-....
+[source,java]
+----
 import java.util.Date;
 
 import javax.json.bind.annotation.JsonbTypeDeserializer;
@@ -238,13 +247,14 @@ public class User {
     // ... GET/SET
 
 } 
-....
+----
 
 == Accessing the rest endpoint
 
 The test spin up an openejb webapp and invoke the users endpoint
 
-....
+[source,java]
+----
 import java.io.IOException;
 
 import javax.ws.rs.core.MediaType;
@@ -290,7 +300,7 @@ public class UserServiceTest {
     }
 
 }
-....
+----
 
 == Running
 
@@ -299,7 +309,8 @@ install' command run from the `jsonb-custom-serializer' directory.
 
 When run you should see output similar to the following.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -456,7 +467,7 @@ Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
     
-....
+----
 
 === Inside the jar
 
@@ -466,7 +477,8 @@ working REST application.
 If we look at the jar built by maven, we’ll see the application itself
 is quite small:
 
-....
+[source,java]
+----
 $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war 
      0 Sat Dec 29 19:10:44 CET 2018 META-INF/
    134 Sat Dec 29 19:10:42 CET 2018 META-INF/MANIFEST.MF
@@ -489,7 +501,7 @@ $ jar tvf target/jsonb-custom-serializer-8.0.0-SNAPSHOT.war
      0 Sat Dec 29 19:10:44 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/
   1811 Sat Dec 29 17:53:36 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.xml
    132 Sat Dec 29 19:10:42 CET 2018 META-INF/maven/org.superbiz/jsonb-custom-serializer/pom.properties
-....
+----
 
 This single jar could be deployed any any compliant Java EE
 implementation. In TomEE you’d simply place it in the

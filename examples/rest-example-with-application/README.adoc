@@ -8,7 +8,8 @@ right to edit this page._
 
 == ApplicationConfig
 
-....
+[source,java]
+----
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.Arrays;
@@ -21,11 +22,12 @@ public class ApplicationConfig extends Application {
         return new HashSet<Class<?>>(Arrays.asList(SimpleRESTPojo.class, SimpleRESTEJB.class));
     }
 }
-....
+----
 
 == SimpleRESTEJB
 
-....
+[source,java]
+----
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -42,11 +44,12 @@ public class SimpleRESTEJB {
         return "ejb ok @ " + new Date().toString();
     }
 }
-....
+----
 
 == SimpleRESTPojo
 
-....
+[source,java]
+----
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.util.Date;
@@ -58,11 +61,12 @@ public class SimpleRESTPojo {
         return "pojo ok @ " + new Date().toString();
     }
 }
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
@@ -71,4 +75,4 @@ public class SimpleRESTPojo {
 
   <display-name>OpenEJB REST Example</display-name>
 </web-app>
-....
+----

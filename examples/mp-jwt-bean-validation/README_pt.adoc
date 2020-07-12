@@ -1,0 +1,48 @@
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+= MicroProfile JWT com validação de bean
+
+TomEE tem uma caracteristica particular que permite o uso de Validação de Bean como alternativa ao complemento da anotação `@RolesAllowed`.
+
+A motivação para esta função é que `JsonWebToken` é efetivamente um bean, e uma verificação de seguraça é, em última instância, um ato de produzir um resultado booleano utilizando uma entrada mínima. É um problema perfeito para a validação de Bean.
+
+A funcionalidade lhe permite implementar um método como este:
+
+[source,java]
+----
+@Override
+public boolean isValid(final JsonWebToken jsonWebToken, final ConstraintValidatorContext context) {
+    // seu código aqui
+    return ...;
+}
+----
+
+Em seguida, anexe a seguinte lógica a qualquer anotação da sua criação como `@Issuer`. Em seguida, use essa anotação em seus métodos, e o código acima será executado toda vez que o serviço JAX-RS for chamado.
+
+[source,java]
+----
+@GET
+@Issuer("https://movies.example.com")
+@RolesAllowed({"manager", "user"})
+public List<Movie> getAllMovies() {
+    return new ArrayList<>(store.values());
+}
+----
+
+Se deseja receber informação através da anotação, sobreescreva o método `initialize`.
+
+[source,java]
+----
+    @Override
+    public void initialize(final Issuer issuer) {
+        this.issuer = issuer;
+    }
+----
+
+Aqui, `Issuer` é uma anotação no código do aplicativo.
+
+Você pode validar as 'roles' ou partes personalizadas, como 'email' ou qualquer dado no token que desejar. A interface `JsonWebToken` pode fornecer todo o JWT codificado ou partes individuais. Portanto, a partir daqui não há limites; se você pode colocá-lo em um token, pode validá-lo.
+
+A validação de bean permite que você tenha muitas anotações de validação. Uma anotação pode reutilizar outra, para que você possa até ter uma anotação de validação composta de várias anotações menores de validação, todas as quais deseja criar.

@@ -58,7 +58,8 @@ converted to its JPA equivalent.
 
 === CMP2 EntityBean, MovieBean
 
-....
+[source,java]
+----
 package org.superbiz.cmp2;
 
 import javax.ejb.EntityBean;
@@ -92,11 +93,12 @@ public abstract class MovieBean implements EntityBean {
     public abstract void setYear(int year);
 
 }
-....
+----
 
 === CMP2 Home interface, Movies
 
-....
+[source,java]
+----
 package org.superbiz.cmp2;
 
 import javax.ejb.CreateException;
@@ -115,11 +117,12 @@ interface Movies extends javax.ejb.EJBLocalHome {
 
     Collection<Movie> findByDirector(String director) throws FinderException;
 }
-....
+----
 
 === CMP2 mapping in ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar>
   <enterprise-beans>
     <entity>
@@ -164,11 +167,12 @@ interface Movies extends javax.ejb.EJBLocalHome {
     </entity>
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 === openejb-jar.xml
 
-....
+[source,xml]
+----
 <openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
   <enterprise-beans>
     <entity>
@@ -179,11 +183,12 @@ interface Movies extends javax.ejb.EJBLocalHome {
     </entity>
   </enterprise-beans>
 </openejb-jar>
-....
+----
 
 === MoviesTest
 
-....
+[source,java]
+----
 package org.superbiz.cmp2;
 
 import junit.framework.TestCase;
@@ -228,11 +233,12 @@ public class MoviesTest extends TestCase {
         assertEquals("Movies.findAll()", 0, movies.findAll().size());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -267,7 +273,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.919 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 == CMP2 to JPA
 
@@ -279,7 +285,8 @@ Both of these files will be written to disk by setting the system
 property `openejb.descriptors.output` to `true`. In the testcase above,
 this can be done via the `InitialContext` parameters via code like this:
 
-....
+[source,java]
+----
 Properties p = new Properties();
 p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
 
@@ -289,14 +296,15 @@ p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialCont
 p.put("openejb.descriptors.output", "true");
 
 Context context = new InitialContext(p);
-....
+----
 
 Below are the generated `persistence.xml` and `mapping.xml` files for
 our CMP2 `EntityBean`
 
 === CMP2 to JPA generated persistence.xml file
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     <persistence-unit name="cmp" transaction-type="JTA">
@@ -311,7 +319,7 @@ our CMP2 `EntityBean`
         </properties>
     </persistence-unit>
 </persistence>
-....
+----
 
 All of this `persitence.xml` can be changed, however the
 `persistence-unit` must have the `name` fixed to `cmp`.
@@ -323,7 +331,8 @@ Note that the `persistence.xml` above refers to this mappings file as
 file to whatever name you prefer, just make sure to update the
 `<mapping-file>` element of the `cmp` persistence unit accordingly.
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
     <entity class="openejb.org.superbiz.cmp2.MovieBean" name="MovieBean">
@@ -345,4 +354,4 @@ file to whatever name you prefer, just make sure to update the
         </attributes>
     </entity>
 </entity-mappings>
-....
+----

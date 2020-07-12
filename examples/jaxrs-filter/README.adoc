@@ -45,4 +45,3 @@ Steps to replicate:
       * Here you should be redirected to a page saying 401 Unauthorized
    3. Append the query-parameter app_session_id=foobarbaz to he same URL (http://localhost:8080/jaxrs-filter/test?app_session_id=foobarbaz)
       * Here you should gain access. The filter permits the request to proceed, and you should see some basic HTTP information about the request.
-

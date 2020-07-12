@@ -6,7 +6,8 @@ right to edit this page._
 
 == Item
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.persistence.Entity;
@@ -59,11 +60,12 @@ public class Item implements Serializable {
         this.price = price;
     }
 }
-....
+----
 
 == Tower
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.persistence.Entity;
@@ -95,11 +97,12 @@ public class Tower extends Item {
 
     ;
 }
-....
+----
 
 == Wakeboard
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.persistence.Entity;
@@ -107,11 +110,12 @@ import javax.persistence.Entity;
 @Entity
 public class Wakeboard extends Wearable {
 }
-....
+----
 
 == WakeboardBinding
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.persistence.Entity;
@@ -119,11 +123,12 @@ import javax.persistence.Entity;
 @Entity
 public class WakeboardBinding extends Wearable {
 }
-....
+----
 
 == WakeRiderImpl
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.ejb.Stateless;
@@ -164,11 +169,12 @@ public class WakeRiderImpl implements WakeRiderWs {
         return items;
     }
 }
-....
+----
 
 == WakeRiderWs
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.jws.WebService;
@@ -187,11 +193,12 @@ public interface WakeRiderWs {
 
     public List<Item> getItems() throws Exception;
 }
-....
+----
 
 == Wearable
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import javax.persistence.MappedSuperclass;
@@ -208,17 +215,19 @@ public abstract class Wearable extends Item {
         this.size = size;
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="wakeboard-unit">
@@ -238,11 +247,12 @@ public abstract class Wearable extends Item {
 
   </persistence-unit>
 </persistence>
-....
+----
 
 == InheritanceTest
 
-....
+[source,java]
+----
 package org.superbiz.inheritance;
 
 import junit.framework.TestCase;
@@ -379,11 +389,12 @@ public class InheritanceTest extends TestCase {
         return wakeBoardBinding;
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -432,4 +443,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.442 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

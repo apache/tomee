@@ -8,7 +8,8 @@ right to edit this page._
 
 == Manager
 
-....
+[source,java]
+----
 package org.superbiz.bean;
 
 import org.superbiz.resource.ManagerResource;
@@ -25,11 +26,12 @@ public class Manager {
         return "manage a resource of type " + resource.resourceType();
     }
 }
-....
+----
 
 == ManagerResource
 
-....
+[source,java]
+----
 package org.superbiz.resource;
 
 public class ManagerResource {
@@ -37,11 +39,12 @@ public class ManagerResource {
         return "team";
     }
 }
-....
+----
 
 == ManagerServlet
 
-....
+[source,java]
+----
 package org.superbiz.servlet;
 
 import org.superbiz.bean.Manager;
@@ -63,11 +66,12 @@ public class ManagerServlet extends HttpServlet {
         resp.getOutputStream().print(manager.work());
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -85,29 +89,32 @@ public class ManagerServlet extends HttpServlet {
   limitations under the License.
 -->
 <ejb-jar/>
-....
+----
 
 == service-jar.xml
 
-....
+[source,xml]
+----
 <ServiceJar>
   <ServiceProvider id="ManagerResource" service="Resource"
                    type="org.superbiz.resource.ManagerResource"
                    class-name="org.superbiz.resource.ManagerResource"/>
 </ServiceJar>
-....
+----
 
 == resources.xml
 
-....
+[source,xml]
+----
 <resources>
   <Resource id="My Manager Team" type="org.superbiz.resource.ManagerResource" provider="org.superbiz#ManagerResource"/>
 </resources>
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -127,4 +134,4 @@ public class ManagerServlet extends HttpServlet {
 -->
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"/>
-....
+----

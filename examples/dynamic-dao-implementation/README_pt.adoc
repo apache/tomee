@@ -41,7 +41,8 @@ String like é usado e para outro tipo igual é usado.
 
 === User
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 import javax.persistence.Entity;
@@ -86,11 +87,12 @@ public class User {
         this.age = age;
     }
 }
-....
+----
 
 === UserDao
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 
@@ -128,11 +130,12 @@ public interface UserDao {
 
     User update(User u);
 }
-....
+----
 
 === persistence.xml
 
-....
+[source,xml]
+----
 <persistence version="2.0"
              xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -147,11 +150,12 @@ public interface UserDao {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 === DynamicUserDaoTest
 
-....
+[source,java]
+----
 package org.superbiz.dynamic;
 
 import junit.framework.Assert;
@@ -322,11 +326,12 @@ public class DynamicUserDaoTest {
         }
     }
 }
-....
+----
 
 == Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -375,4 +380,4 @@ Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.471 sec
 Results :
 
 Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
-....
+----

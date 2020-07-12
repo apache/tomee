@@ -7,21 +7,24 @@
 
 To test it:
 
-....
+[source,java]
+----
 mvn clean package tomee:run
-....
+----
 
 == How does it work?
 
 A datasource is defined in tomee.xml:
 
-....
+[source,xml]
+----
 <Resource id="myDataSource" type="DataSource" /> <!-- standard properties -->
-....
+----
 
 Then this datasource is referenced in server.xml:
 
-....
+[source,xml]
+----
 <Realm
     className="org.apache.catalina.realm.DataSourceRealm"
     dataSourceName="myDataSource"
@@ -30,7 +33,7 @@ Then this datasource is referenced in server.xml:
     userCredCol="user_pass"
     userRoleTable="user_roles"
     roleNameCol="role_name"/>
-....
+----
 
 To initialize the datasource (for the test) we used the TomEE hook which
 provides a file import-.sql. The file should be in the classpath of the

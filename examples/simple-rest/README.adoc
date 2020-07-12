@@ -12,7 +12,8 @@ Defining a REST service is pretty easy, simply ad ``@Path`` annotation to a clas
 
 Here we have a simple REST, we annotate the class with ``@Path("/greeting")`` to indicate the route corresponding to class ``GreetingService``. So we define ``message()`` as ``@GET`` and ``lowerCase()`` as ``@POST`` for this ``/greeting`` route. There we have a service, pretty simple huh?
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import javax.ws.rs.GET;
@@ -31,7 +32,7 @@ public class GreetingService {
         return "Hi REST!".toLowerCase();
     }
 }
-....
+----
 
 == Testing
 
@@ -45,7 +46,8 @@ Then we create on the fly the application simply returning an object representin
 
 Finally to test it we use cxf client API to call the REST service in ``get()`` and ``post()`` methods.
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -80,19 +82,21 @@ public class GreetingServiceTest {
         assertEquals("hi rest!", message);
     }
 }
-....
+----
 
 = Running
 
 Running the example is fairly simple. In the ``simple-rest`` directory run:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 Which should create output like the following.
 
-....
+[source,java]
+----
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -136,4 +140,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

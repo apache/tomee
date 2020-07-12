@@ -1,0 +1,45 @@
+= JAX-RS Filter
+:index-group: Misc
+:jbake-type: page
+:jbake-status: published
+
+== ContainerRequestFilter e ContainerResponseFilter
+
+Os filtros podem ser utilizados no seu projeto através da implementação das interfaces ContainerRequestFilter ou ContainerResponseFilter. Cada interface lida com um cenário de filtro separado - entrada ou saída - com parâmetros de função exclusivos para o método *filter * substituído. Note: a anotação **@Provider** na classe é necessária para executar o mapeamento do servlet independente do web.xml.
+
+[note]
+
+NOTE: É possível fazer redirecionamentos usando o argumento ContextRequestFilter fornecido. O método abortWith(Response response) permite que o desenvolvedor altere o destino da solicitação conforme ele é recebido, de acordo com a lógica de filtro fornecida. O código incluído neste exemplo pode ser executado no servidor de aplicação TomEE. As etapas para replicar estão abaixo do snippet de código.
+
+[source,java,numbered]
+----
+@Provider
+public class GenericServletFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
+	/**
+	 * Incoming (request) filter
+	 */
+	@Override
+	public void filter(ContainerRequestContext ctx) {
+	    // your filter logic
+	}
+
+	/**
+	 * Outbound (response) filter
+	 */
+	@Override
+	public void filter(ContainerRequestContext requestCtx,
+		ContainerResponseContext responseCtx) {
+	    // your filter logic
+	}
+
+}
+----
+
+Etapas para replicar:
+
+   1. Deploy do application e jaxrs-filter.war no diretório webapps.
+   2. Servidor de inicialização e vá para http://localhost:8080/jaxrs-filter/test
+      * Aqui você deve ser redirecionado para uma página dizendo 401 Unauthorized
+   3. Anexe o parâmetro de consulta app_session_id=foobarbaz à mesma URL(http://localhost:8080/jaxrs-filter/test?app_session_id=foobarbaz)
+      * Aqui você deve obter acesso. O filtro permite que a solicitação continue e você deve ver algumas informações HTTP básicas sobre a solicitação.

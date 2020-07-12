@@ -8,7 +8,8 @@ right to edit this page._
 
 == HelloBean
 
-....
+[source,java]
+----
 package org.superbiz.hello;
 
 import javax.ejb.LocalHome;
@@ -25,11 +26,12 @@ public class HelloBean {
         return "Hello, World!";
     }
 }
-....
+----
 
 == HelloEjbLocal
 
-....
+[source,java]
+----
 package org.superbiz.hello;
 
 import javax.ejb.EJBLocalObject;
@@ -41,11 +43,12 @@ public interface HelloEjbLocal extends EJBLocalObject {
 
     String sayHello();
 }
-....
+----
 
 == HelloEjbLocalHome
 
-....
+[source,java]
+----
 package org.superbiz.hello;
 
 import javax.ejb.CreateException;
@@ -57,28 +60,31 @@ import javax.ejb.EJBLocalHome;
 public interface HelloEjbLocalHome extends EJBLocalHome {
     HelloEjbLocal create() throws CreateException;
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == weblogic-ejb-jar.xml
 
-....
+[source,xml]
+----
 <weblogic-ejb-jar>
   <weblogic-enterprise-bean>
     <ejb-name>HelloBean</ejb-name>
     <local-jndi-name>MyHello</local-jndi-name>
   </weblogic-enterprise-bean>
 </weblogic-ejb-jar>
-....
+----
 
 == HelloTest
 
-....
+[source,java]
+----
 package org.superbiz.hello;
 
 import junit.framework.TestCase;
@@ -105,11 +111,12 @@ public class HelloTest extends TestCase {
         assertEquals(message, "Hello, World!");
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -138,4 +145,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.414 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

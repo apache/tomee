@@ -7,7 +7,8 @@ _Help us document this example! Click the blue pencil icon in the upper right to
 
 == ChatBean
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 import javax.annotation.Resource;
@@ -79,11 +80,12 @@ public class ChatBean implements MessageListener {
         }
     }
 }
-....
+----
 
 == ChatRespondCreator
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 public class ChatRespondCreator {
@@ -98,11 +100,12 @@ public class ChatRespondCreator {
         return null;
     }
 }
-....
+----
 
 == beans.xml
 
-....
+[source,xml]
+----
 <!--
 
     Licensed to the Apache Software Foundation (ASF) under one or more
@@ -121,11 +124,12 @@ public class ChatRespondCreator {
 -->
 
 <beans/>
-....
+----
 
 == ChatBeanTest
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 import junit.framework.TestCase;
@@ -192,4 +196,4 @@ public class ChatBeanTest extends TestCase {
         return ((TextMessage) answers.receive(1000)).getText();
     }
 }
-....
+----
