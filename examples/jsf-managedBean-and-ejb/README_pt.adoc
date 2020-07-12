@@ -3,19 +3,20 @@
 :jbake-status: status=published
 = Aplicação JSF que usa managed-bean e ejb
 
-Este é um aplicativo Web simples, que mostra como usar a injeção de dependência nos beans gerenciados JSF usando o TomEE.
+Este é um aplicativo Web simples, que mostra como usar a injeção de dependência nos managed beans do JSF usando o TomEE.
 
-Ele contém um bean de sessão Stateless local `CalculatorImpl`, que adiciona dois números e retorna o resultado. O aplicativo também contém um bean gerenciado JSF `CalculatorBean`, que usa o EJB para adicionar dois números e exibir os resultados ao usuário. O EJB é injetado no bean gerenciado usando a anotação `@ EJB`.
+Ele contém um bean de sessão Stateless local `CalculatorImpl`, que adiciona dois números e retorna o resultado. O aplicativo também contém um managed beans do JSF `CalculatorBean`, que usa o EJB para adicionar dois números e exibir os resultados ao usuário. O EJB é injetado no managed beans usando a anotação `@ EJB`.
 
 == Uma pequena nota sobre a configuração:
 
 Você pode executar isso no Apache TomEE mais recente
-https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/[snapshot]
+https://repository.apache.org/content/repositories/snapshots/org/apache/tomee/apache-tomee/[snapshot]
 
-Quanto às bibliotecas, myfaces-api e myfaces-impl são fornecidos em tomee/lib e, portanto, não devem fazer parte do war. Em termos práticos, eles estariam com o escopo `provided'
+Quanto às bibliotecas, myfaces-api e myfaces-impl são fornecidos em tomee/lib e portanto, não devem fazer parte do war. Em termos práticos, eles estariam com o escopo `provided`
 
 Observe também que usamos a declaração do servlet 2.5 no web.xml
 
+[source,xml]
 ....
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns="http://java.sun.com/xml/ns/javaee"
@@ -31,6 +32,7 @@ O código fonte completo é fornecido abaixo, mas vamos analisar alguns trechos 
 
 Primeiro declararemos o `FacesServlet` no `web.xml`
 
+[source,xml]
 ....
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
@@ -43,6 +45,7 @@ O `FacesServlet` atua como o controlador mestre.
 
 Em seguida, criaremos o arquivo `calculator.xhtml`.
 
+[source,html]
 ....
        <h:outputText value='Enter first number'/>
        <h:inputText value='#{calculatorBean.x}'/>
@@ -52,15 +55,16 @@ Em seguida, criaremos o arquivo `calculator.xhtml`.
 ....
 
 Observe como usamos o bean aqui. Por padrão, é a classe simples
-nome do bean gerenciado.
+nome do Managed Bean.
 
-Quando uma solicitação é recebida, o bean é instanciado e colocado no escopo apropriado. Por padrão, o bean é colocado no escopo da solicitação.
+Quando uma requisição é recebida, o bean é instanciado e colocado no escopo apropriado. Por padrão, o bean é colocado no escopo request.
 
+[source,html]
 ....
         <h:inputText value='#{calculatorBean.x}'/>
 ....
 
-Aqui, o método getX() de calculatorBean é chamado e o valor resultante é exibido. x sendo um duplo, com razão, devemos ver 0,0 exibidos.
+Aqui, o método `getX()` de calculatorBean é chamado e o valor resultante é exibido. `x` sendo um duplo, com razão, devemos ver 0,0 exibidos.
 
 Quando você altera o valor e envia o formulário, esses valores inseridos são vinculados usando os setters no bean e, em seguida, o método commandButton-action é chamado.
 
@@ -79,6 +83,7 @@ A solicitação no escopo `calculatorBean` está disponível aqui e usamos EL pa
 
 == Calculator
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -92,6 +97,7 @@ public interface Calculator {
 
 == CalculatorBean
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -139,6 +145,7 @@ public class CalculatorBean {
 
 == CalculatorImpl
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -155,6 +162,7 @@ public class CalculatorImpl implements Calculator {
 
 == web.xml
 
+[source,xml]
 ....
 <?xml version="1.0"?>
 
@@ -188,8 +196,9 @@ public class CalculatorImpl implements Calculator {
     </web-app>
 ....
 
-##Calculator.xhtml
+== Calculator.xhtml
 
+[source,html]
 ....
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -215,8 +224,9 @@ xmlns:h="http://java.sun.com/jsf/html">
 </html>
 ....
 
-##Result.xhtml
+== Result.xhtml
 
+[source,html]
 ....
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -238,8 +248,9 @@ xmlns:h="http://java.sun.com/jsf/html">
 </html>
 ....
 
-#faces-config.xml
+== faces-config.xml
 
+[source,xml]
 ....
 <?xml version="1.0"?>
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee"

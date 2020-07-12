@@ -15,7 +15,7 @@ using `@EJB` annotation.
 == A little note on the setup:
 
 You could run this in the latest Apache TomEE
-https://repository.apache.org/content/repositories/snapshots/org/apache/openejb/apache-tomee/[snapshot]
+https://repository.apache.org/content/repositories/snapshots/org/apache/tomee/apache-tomee/[snapshot]
 
 As for the libraries, myfaces-api and myfaces-impl are provided in
 tomee/lib and hence they should not be a part of the war. In maven
@@ -23,6 +23,7 @@ terms, they would be with scope `provided'
 
 Also note that we use servlet 2.5 declaration in web.xml
 
+[source,xml]
 ....
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xmlns="http://java.sun.com/xml/ns/javaee"
@@ -39,6 +40,7 @@ at some smaller snippets and see how it works.
 
 We’ll first declare the `FacesServlet` in the `web.xml`
 
+[source,xml]
 ....
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
@@ -51,6 +53,7 @@ We’ll first declare the `FacesServlet` in the `web.xml`
 
 We’ll then create the `calculator.xhtml` file.
 
+[source,html]
 ....
        <h:outputText value='Enter first number'/>
        <h:inputText value='#{calculatorBean.x}'/>
@@ -65,6 +68,7 @@ name of the managed bean.
 When a request comes in, the bean is instantiated and placed in the
 appropriate scope. By default, the bean is placed in the request scope.
 
+[source,html]
 ....
         <h:inputText value='#{calculatorBean.x}'/>
 ....
@@ -93,6 +97,7 @@ display the values.
 
 == Calculator
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -106,6 +111,7 @@ public interface Calculator {
 
 == CalculatorBean
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -153,6 +159,7 @@ public class CalculatorBean {
 
 == CalculatorImpl
 
+[source,java]
 ....
 package org.superbiz.jsf;
 
@@ -168,7 +175,7 @@ public class CalculatorImpl implements Calculator {
 ....
 
 == web.xml
-
+[source,xml]
 ....
 <?xml version="1.0"?>
 
@@ -202,8 +209,9 @@ public class CalculatorImpl implements Calculator {
     </web-app>
 ....
 
-##Calculator.xhtml
+== Calculator.xhtml
 
+[source,html]
 ....
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -229,8 +237,9 @@ xmlns:h="http://java.sun.com/jsf/html">
 </html>
 ....
 
-##Result.xhtml
+== Result.xhtml
 
+[source,html]
 ....
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -252,8 +261,9 @@ xmlns:h="http://java.sun.com/jsf/html">
 </html>
 ....
 
-#faces-config.xml
+== faces-config.xml
 
+[source,xml]
 ....
 <?xml version="1.0"?>
 <faces-config xmlns="http://java.sun.com/xml/ns/javaee"
