@@ -54,8 +54,7 @@ Em seguida, criaremos o arquivo `calculator.xhtml`.
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
 ----
 
-Observe como usamos o bean aqui. Por padrão, o nome do Managed Bean é o nome da classe.é a classe simples
-nome do Managed Bean.
+Observe como usamos o bean aqui. Por padrão, o nome do Managed Bean é o nome da classe.
 
 Quando uma requisição é recebida, o bean é instanciado e colocado no escopo apropriado. Por padrão, o bean é colocado no escopo request.
 
