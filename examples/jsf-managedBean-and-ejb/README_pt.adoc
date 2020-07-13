@@ -54,7 +54,7 @@ Em seguida, criaremos o arquivo `calculator.xhtml`.
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
 ----
 
-Observe como usamos o bean aqui. Por padrão, é a classe simples
+Observe como usamos o bean aqui. Por padrão, o nome do Managed Bean é o nome da classe.é a classe simples
 nome do Managed Bean.
 
 Quando uma requisição é recebida, o bean é instanciado e colocado no escopo apropriado. Por padrão, o bean é colocado no escopo request.
@@ -64,7 +64,7 @@ Quando uma requisição é recebida, o bean é instanciado e colocado no escopo 
         <h:inputText value='#{calculatorBean.x}'/>
 ----
 
-Aqui, o método `getX()` de calculatorBean é chamado e o valor resultante é exibido. `x` sendo um duplo, com razão, devemos ver 0,0 exibidos.
+Aqui, o método `getX()` de calculatorBean é chamado e o valor resultante é exibido. `x` sendo um double, corretamente duplo, com razão, devemos ver 0.0 exibidos.
 
 Quando você altera o valor e envia o formulário, esses valores inseridos são vinculados usando os setters no bean e, em seguida, o método commandButton-action é chamado.
 
@@ -77,7 +77,7 @@ Você está certo. O valor de retorno `success` é verificado nas regras de nave
 
 No nosso caso, a página `result.xhtml` é renderizada.
 
-A solicitação no escopo `calculatorBean` está disponível aqui e usamos EL para exibir os valores.
+O bean com escopo de request `calculatorBean` está disponível aqui e usamos EL para exibir os valores.
 
 == Fonte
 
