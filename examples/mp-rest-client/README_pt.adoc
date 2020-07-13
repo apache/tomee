@@ -5,8 +5,6 @@
 
 Este é um exemplo básico sobre como configurar e utilizar o Cliente Rest do MicroProfile no Tomee.
 
-=== Execute testes para diferentes cenários relacionados à validação JWT
-
 [source,java]
 ----
 mvn clean test 
