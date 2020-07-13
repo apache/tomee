@@ -1,27 +1,20 @@
 :index-group: Misc
 :jbake-type: page
 :jbake-status: status=published
-= JSF Application that uses managed-bean and ejb
+= Aplicação JSF que usa managed-bean e ejb
 
-This is a simple web-app showing how to use dependency injection in JSF
-managed beans using TomEE.
+Este é um aplicativo Web simples, que mostra como usar a injeção de dependência nos managed beans do JSF usando o TomEE.
 
-It contains a Local Stateless session bean `CalculatorImpl` which adds
-two numbers and returns the result. The application also contains a JSF
-managed bean `CalculatorBean`, which uses the EJB to add two numbers and
-display the results to the user. The EJB is injected in the managed bean
-using `@EJB` annotation.
+Ele contém um bean de sessão Stateless local `CalculatorImpl`, que adiciona dois números e retorna o resultado. O aplicativo também contém um managed beans do JSF `CalculatorBean`, que usa o EJB para adicionar dois números e exibir os resultados ao usuário. O EJB é injetado no managed beans usando a anotação `@ EJB`.
 
-== A little note on the setup:
+== Uma pequena nota sobre a configuração:
 
-You could run this in the latest Apache TomEE
+Você pode executar isso no Apache TomEE mais recente
 https://repository.apache.org/content/repositories/snapshots/org/apache/tomee/apache-tomee/[snapshot]
 
-As for the libraries, myfaces-api and myfaces-impl are provided in
-tomee/lib and hence they should not be a part of the war. In maven
-terms, they would be with scope `provided'
+Quanto às bibliotecas, myfaces-api e myfaces-impl são fornecidos em tomee/lib e portanto, não devem fazer parte do war. Em termos práticos, eles estariam com o escopo `provided`
 
-Also note that we use servlet 2.5 declaration in web.xml
+Observe também que usamos a declaração do servlet 2.5 no web.xml
 
 [source,xml]
 ----
@@ -33,12 +26,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 version="2.5">
 ----
 
-And we use 2.0 version of faces-config
+E usamos a versão 2.0 do faces-config
 
-The complete source code is provided below but let’s break down to look
-at some smaller snippets and see how it works.
+O código fonte completo é fornecido abaixo, mas vamos analisar alguns trechos menores e ver como ele funciona.
 
-We’ll first declare the `FacesServlet` in the `web.xml`
+Primeiro declararemos o `FacesServlet` no `web.xml`
 
 [source,java]
 ----
@@ -49,9 +41,9 @@ We’ll first declare the `FacesServlet` in the `web.xml`
   </servlet>
 ----
 
-`FacesServlet` acts as the master controller.
+O `FacesServlet` atua como o controlador mestre.
 
-We’ll then create the `calculator.xhtml` file.
+Em seguida, criaremos o arquivo `calculator.xhtml`.
 
 [source,java]
 ----
@@ -62,38 +54,31 @@ We’ll then create the `calculator.xhtml` file.
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
 ----
 
-Notice how we’ve use the bean here. By default it is the simple class
-name of the managed bean.
+Observe como usamos o bean aqui. Por padrão, o nome do Managed Bean é o nome da classe.
 
-When a request comes in, the bean is instantiated and placed in the
-appropriate scope. By default, the bean is placed in the request scope.
+Quando uma requisição é recebida, o bean é instanciado e colocado no escopo apropriado. Por padrão, o bean é colocado no escopo request.
 
 [source,java]
 ----
         <h:inputText value='#{calculatorBean.x}'/>
 ----
 
-Here, getX() method of calculatorBean is invoked and the resulting value
-is displayed. x being a Double, we rightly should see 0.0 displayed.
+Aqui, o método `getX()` de calculatorBean é chamado e o valor resultante é exibido. `x` sendo um double, corretamente duplo, com razão, devemos ver 0.0 exibidos.
 
-When you change the value and submit the form, these entered values are
-bound using the setters in the bean and then the commandButton-action
-method is invoked.
+Quando você altera o valor e envia o formulário, esses valores inseridos são vinculados usando os setters no bean e, em seguida, o método commandButton-action é chamado.
 
-In this case, `CalculatorBean#add()` is invoked.
+Nesse caso, `CalculatorBean#add()` é chamado.
 
-`Calculator#add()` delegates the work to the ejb, gets the result,
-stores it and then instructs what view is to be rendered.
+`Calculator#add()` delega o trabalho para o ejb, obtém o resultado,
+armazena e depois instrui qual visualização deve ser renderizada.
 
-You’re right. The return value ``success'' is checked up in faces-config
-navigation-rules and the respective page is rendered.
+Você está certo. O valor de retorno `success` é verificado nas regras de navegação faces-config e a respectiva página é renderizada.
 
-In our case, `result.xhtml` page is rendered.
+No nosso caso, a página `result.xhtml` é renderizada.
 
-The request scoped `calculatorBean` is available here, and we use EL to
-display the values.
+O bean com escopo de request `calculatorBean` está disponível aqui e usamos EL para exibir os valores.
 
-== Source
+== Fonte
 
 == Calculator
 
