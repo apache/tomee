@@ -64,6 +64,7 @@ explicitamente, o nome do objeto anotado é usado.
 *boolean absolute* Se verdadeiro, use o nome fornecido como o nome absoluto
 da métrica. Se falso, ele prefixa o nome do pacote e o nome da classe antes do nome fornecido. 
 O valor padrão é falso.
+
 *String displayName* Opcional. Um nome de exibição legível para metadados.
 
 *String description* Opcional. Uma descrição da métrica.
