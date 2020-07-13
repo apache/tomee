@@ -18,7 +18,6 @@
 package org.superbiz.mdb;
 
 import javax.annotation.Resource;
-import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -31,10 +30,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-@MessageDriven(activationConfig = {
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "TEST"),
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
-})
+@MessageDriven
 public class ChatBean implements MessageListener {
 
     @Resource
@@ -62,10 +58,7 @@ public class ChatBean implements MessageListener {
                 respond("Once every day, as usual.");
 
             }
-
-            System.out.println("Hello");
-            Thread.sleep(5000);
-        } catch (JMSException | InterruptedException e) {
+        } catch (JMSException e) {
             throw new IllegalStateException(e);
         }
     }
