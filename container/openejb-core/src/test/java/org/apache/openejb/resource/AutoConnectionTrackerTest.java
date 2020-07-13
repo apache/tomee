@@ -39,6 +39,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
+import org.junit.Ignore;
 
 import javax.annotation.Resource;
 import javax.ejb.Remote;
@@ -80,6 +81,7 @@ import java.util.logging.LogRecord;
 /**
  * @version $Rev$ $Date$
  */
+@Ignore
 public class AutoConnectionTrackerTest extends TestCase {
 
     public static final int LOOP_SIZE = 200;
