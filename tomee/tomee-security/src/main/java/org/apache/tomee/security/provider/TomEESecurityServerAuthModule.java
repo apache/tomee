@@ -51,12 +51,40 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
 
     @Override
     public void cleanSubject(final MessageInfo messageInfo, final Subject subject) throws AuthException {
+        final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, subject, null);
 
+        CDI.current()
+           .select(TomEESecurityServletAuthenticationMechanismMapper.class)
+           .get()
+           .getCurrentAuthenticationMechanism(httpMessageContext)
+           .cleanSubject(httpMessageContext.getRequest(), httpMessageContext.getResponse(), httpMessageContext);
     }
 
     @Override
-    public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject serviceSubject) throws AuthException {
-        return AuthStatus.SUCCESS;
+    public AuthStatus secureResponse(final MessageInfo messageInfo, final Subject subject) throws AuthException {
+        final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, subject, null);
+
+        final HttpAuthenticationMechanism authenticationMechanism =
+            CDI.current()
+               .select(TomEESecurityServletAuthenticationMechanismMapper.class)
+               .get()
+               .getCurrentAuthenticationMechanism(httpMessageContext);
+
+        final AuthenticationStatus authenticationStatus;
+        try {
+            authenticationStatus =
+                authenticationMechanism.secureResponse(httpMessageContext.getRequest(),
+                                                        httpMessageContext.getResponse(),
+                                                        httpMessageContext);
+
+
+        } catch (final AuthenticationException e) {
+            final AuthException authException = new AuthException(e.getMessage());
+            authException.initCause(e);
+            throw authException;
+        }
+
+        return mapToAuthStatus(authenticationStatus);
     }
 
     @Override
@@ -64,8 +92,7 @@ public class TomEESecurityServerAuthModule implements ServerAuthModule {
                                       final Subject serviceSubject)
             throws AuthException {
 
-        final HttpMessageContext httpMessageContext =
-                httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
+        final HttpMessageContext httpMessageContext = httpMessageContext(handler, messageInfo, clientSubject, serviceSubject);
 
         final HttpAuthenticationMechanism authenticationMechanism =
                 CDI.current()
