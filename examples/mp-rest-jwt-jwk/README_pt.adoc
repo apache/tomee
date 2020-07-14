@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
  
-Este é um exemplo de como usar MicroProfile JWT em TomEE usando  a public ke como JWKs.
+Este é um exemplo de como usar MicroProfile JWT em TomEE usando a public key como JWKs.
 
 == Executando a aplicação:
 
@@ -12,7 +12,7 @@ Este é um exemplo de como usar MicroProfile JWT em TomEE usando  a public ke co
 mvn clean install tomee:run
 ----
 
-Este exemplo é um aplicativo CRUD para produtos disponíveis.
+Este exemplo é uma aplicação CRUD para produtos disponíveis.
 
 == Requisitos e configuração
 
@@ -64,6 +64,6 @@ O aplicativo nos permite manipular e visualizar produtos com usuários específi
 
 == Acesse os endpoints com JWT token
 
-Acessamos pontos de extremidade de nossa classe de teste criando um `JWT` com a ajuda do nosso `TokenUtils.generateJWTString (String jsonResource, String keyId)` que assina nossos dados de usuário no formato json com a ajuda do nosso private key `src/test/resources/{keyId}` .
+Acessamos os endpoints de nossa classe de teste criando um `JWT` com a ajuda do nosso `TokenUtils.generateJWTString (String jsonResource, String keyId)` que assina nossos dados de usuário no formato json com a ajuda do nosso private key `src/test/resources/{keyId}` .
 
 Também podemos gerar novos `privateKey.pem` e `publicKey.pem` com o método `GenerateKeyUtils.generateKeyPair (String keyAlgorithm, int keySize)` que cria o `publicKey.pem` também no formato` JWK`.
