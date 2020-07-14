@@ -5,8 +5,6 @@
 
 Este es un ejemplo básico sobre cómo configurar y utilizar Cliente Rest de MicroProfile en TomEE.
 
-=== Ejecutar las pruebas para los diferentes escenarios relacionados con la validación de JWT
-
 [source,java]
 ----
 mvn clean test 
