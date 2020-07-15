@@ -36,7 +36,7 @@ public class SimpleServletTest extends AbstractTomEESecurityTest {
     public void testWebApp() throws Exception {
         final Client client = ClientBuilder.newBuilder().build();
         final Response response =
-                client.target("http://localhost:" + container.getConfiguration().getHttpPort() + "/servlet")
+                client.target(getAppUrl() + "/servlet")
                       .request()
                       .get();
         assertEquals(200, response.getStatus());

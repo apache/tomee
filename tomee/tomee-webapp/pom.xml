@@ -384,7 +384,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--<dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tomee-security</artifactId>
       <version>${project.version}</version>
@@ -395,6 +395,6 @@
           <artifactId>javaee-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>-->
+    </dependency>
   </dependencies>
 </project>
