@@ -17,6 +17,7 @@
 package org.apache.tomee.security.servlet;
 
 import org.apache.tomee.security.AbstractTomEESecurityTest;
+import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.junit.Test;
 
 import javax.servlet.ServletException;
@@ -42,6 +43,7 @@ public class SimpleServletTest extends AbstractTomEESecurityTest {
         assertEquals(200, response.getStatus());
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/servlet")
     public static class TestServlet extends HttpServlet {
         @Override

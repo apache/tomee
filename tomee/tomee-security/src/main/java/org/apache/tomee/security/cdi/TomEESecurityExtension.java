@@ -57,6 +57,7 @@ public class TomEESecurityExtension implements Extension {
     private final Set<AnnotatedType> formAuthentication = new HashSet<>();
     private final Set<AnnotatedType> customAuthentication = new HashSet<>();
 
+    private final Set<AnnotatedType> tomcatUserIdentityStore = new HashSet<>();
     private final Set<AnnotatedType> databaseIdentityStore = new HashSet<>();
     private final Set<AnnotatedType> ldapIdentityStore = new HashSet<>();
 
@@ -82,11 +83,16 @@ public class TomEESecurityExtension implements Extension {
     void processIdentityStores(
         @Observes
         @WithAnnotations({
+                             TomcatUserIdentityStoreDefinition.class,
                              DatabaseIdentityStoreDefinition.class,
                              LdapIdentityStoreDefinition.class
                          }) final ProcessAnnotatedType<?> processAnnotatedType) {
 
         final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
+
+        if (annotatedType.isAnnotationPresent(TomcatUserIdentityStoreDefinition.class)) {
+            tomcatUserIdentityStore.add(annotatedType);
+        }
 
         if (annotatedType.isAnnotationPresent(DatabaseIdentityStoreDefinition.class)) {
             databaseIdentityStore.add(annotatedType);
@@ -125,7 +131,17 @@ public class TomEESecurityExtension implements Extension {
         @Observes final AfterBeanDiscovery afterBeanDiscovery,
         final BeanManager beanManager) {
 
-        if (databaseIdentityStore.isEmpty() && ldapIdentityStore.isEmpty()) { // add out identity store
+        if (!tomcatUserIdentityStore.isEmpty()) {
+            afterBeanDiscovery
+                .addBean()
+                .id(TomEEDefaultIdentityStore.class.getName() + "#" + TomcatUserIdentityStoreDefinition.class.getName())
+                .beanClass(Supplier.class)
+                .addType(Object.class)
+                .addType(new TypeLiteral<Supplier<TomcatUserIdentityStoreDefinition>>() {})
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith(creationalContext -> createTomcatUserIdentityStoreDefinitionSupplier(beanManager));
+
             afterBeanDiscovery
                 .addBean()
                 .id(TomEEDefaultIdentityStore.class.getName())
@@ -310,6 +326,17 @@ public class TomEESecurityExtension implements Extension {
                                                                         .loginToContinue();
 
             return TomEEELInvocationHandler.of(LoginToContinue.class, loginToContinue, beanManager);
+        };
+    }
+
+    private Supplier<TomcatUserIdentityStoreDefinition> createTomcatUserIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
+        return () -> {
+            final TomcatUserIdentityStoreDefinition annotation = tomcatUserIdentityStore.iterator()
+                                                                                    .next()
+                                                                                    .getAnnotation(
+                                                                                        TomcatUserIdentityStoreDefinition.class);
+
+            return TomEEELInvocationHandler.of(TomcatUserIdentityStoreDefinition.class, annotation, beanManager);
         };
     }
 

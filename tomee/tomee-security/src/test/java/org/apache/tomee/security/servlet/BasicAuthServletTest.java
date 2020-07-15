@@ -17,6 +17,7 @@
 package org.apache.tomee.security.servlet;
 
 import org.apache.tomee.security.AbstractTomEESecurityTest;
+import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.apache.tomee.security.client.BasicAuthFilter;
 import org.junit.Test;
 
@@ -79,6 +80,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
                                        .get().getStatus());
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/basic")
     @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
     @BasicAuthenticationMechanismDefinition
