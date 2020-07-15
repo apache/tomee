@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        final String servlet = getAppUrl() + "/basic";
         assertEquals(200, ClientBuilder.newBuilder().register(new BasicAuthFilter("tomcat", "tomcat")).build()
                                        .target(servlet)
                                        .request()
@@ -45,7 +45,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
 
     @Test
     public void missingAuthorizationHeader() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        final String servlet = getAppUrl() + "/basic";
         assertEquals(401, ClientBuilder.newBuilder().build()
                                        .target(servlet)
                                        .request()
@@ -54,7 +54,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
 
     @Test
     public void noUser() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        final String servlet = getAppUrl() + "/basic";
         assertEquals(401, ClientBuilder.newBuilder().register(new BasicAuthFilter("unknown", "tomcat")).build()
                                        .target(servlet)
                                        .request()
@@ -63,7 +63,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
 
     @Test
     public void wrongPassword() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        final String servlet = getAppUrl() + "/basic";
         assertEquals(401, ClientBuilder.newBuilder().register(new BasicAuthFilter("tomcat", "wrong")).build()
                                        .target(servlet)
                                        .request()
@@ -72,7 +72,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
 
     @Test
     public void missingRole() throws Exception {
-        final String servlet = "http://localhost:" + container.getConfiguration().getHttpPort() + "/basic";
+        final String servlet = getAppUrl() + "/basic";
         assertEquals(403, ClientBuilder.newBuilder().register(new BasicAuthFilter("user", "user")).build()
                                        .target(servlet)
                                        .request()
