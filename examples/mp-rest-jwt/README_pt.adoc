@@ -69,7 +69,7 @@ public class MoviesMPJWTConfigurationProvider {
 
 == Usando o MicroProfile JWT no TomEE
 
-O recurso JAX-RS `MoviesRest.java` contém vários pontos de extremidade seguros, que são alcançados usando a anotação padrão `@ RolesAllowed`. O MicroProfile JWT é responsável por validar solicitações recebidas com o cabeçalho `Authorization' que fornece um token de acesso assinado.
+O recurso JAX-RS `MoviesRest.java` contém vários contém vários endpoints que estão protegidos usando a anotação padrão `@ RolesAllowed`. O MicroProfile JWT é responsável por validar solicitações recebidas com o cabeçalho `Authorization' que fornece um token de acesso assinado.
 
 [source,java]
 ----
@@ -143,11 +143,11 @@ O recurso JAX-RS `MoviesRest.java` contém vários pontos de extremidade seguros
 
 == Sobre a arquitetura de teste
 
-Os casos de teste para este projeto são construídos com o Arquillian. A configuração Arquillian pode ser encontrada em `src/test/resources/arquillian.xml`
+Os casos de teste para este projeto são construídos com o Arquillian. A configuração do Arquillian pode ser encontrada em `src/test/resources/arquillian.xml`
 
-A classe `TokenUtils.java` é usada durante o teste para atuar como um servidor de Autorização que gera `Access Tokens` com base nos arquivos de configuração `privateKey.pem`,` publicKey.pem`, `Token1.json` e` Token2 .json`.
+A classe `TokenUtils.java` é usada durante o teste para atuar como um servidor de Autorização que gera `Access Tokens` com base nos arquivos de configuração `privateKey.pem`,`publicKey.pem`, `Token1.json` e `Token2.json`.
 
-`nimbus-jose-jwt` é a biblioteca usada para a geração JWT durante as provas.
+`nimbus-jose-jwt` é a biblioteca usada para a geração do JWT durante os testes.
 
 `Token1.json`
 
@@ -194,7 +194,7 @@ A classe `TokenUtils.java` é usada durante o teste para atuar como um servidor 
 
 == Cenários de teste
 
-`MovieTest.java` Contém 4 cenários OAuth2 para diferentes combinações de JWT.
+`MovieTest.java` contém 4 cenários OAuth2 para diferentes combinações de JWT.
 
 [source,java]
 ----
