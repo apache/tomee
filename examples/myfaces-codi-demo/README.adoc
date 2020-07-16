@@ -40,38 +40,38 @@ shows how it improves the default integration of Bean-Validation
 
 Illustrated Features
 
-Apache MyFaces CODI
+* Apache MyFaces CODI
 
-Type-safe view-config
+* Type-safe view-config
 
-Type-safe (custom) view-meta-data
+* Type-safe (custom) view-meta-data
 
-Type-safe navigation
+* Type-safe navigation
 
-Type-safe (specialized) config
+* Type-safe (specialized) config
 
-Type-safe custom project-stage
+* Type-safe custom project-stage
 
-@WindowScoped
+* @WindowScoped
 
-Controlling CODI scopes with WindowContext
+* Controlling CODI scopes with WindowContext
 
-@ViewAccessScoped
+* @ViewAccessScoped
 
-Manual conversation handling
+* Manual conversation handling
 
-Secured pages (AccessDecisionVoter)
+* Secured pages (AccessDecisionVoter)
 
-@Transactional
+* @Transactional
 
-I18n (fluent API)
+* I18n (fluent API)
 
-Dependency-Injection for JSR303 (BV) constraint-validators
+* Dependency-Injection for JSR303 (BV) constraint-validators
 
-Dependency-Injection for JSF phase-listeners
+* Dependency-Injection for JSF phase-listeners
 
-Apache MyFaces ExtVal
+* Apache MyFaces ExtVal
 
-Cross-Field validation (@Equals)
+* Cross-Field validation (@Equals)
 
-Type-safe group-validation (@BeanValidation) for JSF action-methods
+* Type-safe group-validation (@BeanValidation) for JSF action-methods
