@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este é um exemplo básico sobre como configurar e utilizar o Cliente Rest do MicroProfile no Tomee.
+Este é um exemplo básico sobre como configurar e utilizar o Cliente Rest do MicroProfile no TomEE.
 
 [source,java]
 ----
@@ -147,4 +147,4 @@ public class BookResourceTest {
 
 === Sobre a arquitetura de teste
 
-Os casos de teste para este projeto são criados usando o Arquillian e o TomEE Remote. A configuração Arquillian pode ser encontrada em `src/test/resources/arquillian.xml`.
+Os casos de teste para este projeto são criados usando o Arquillian e o TomEE Remote. A configuração do Arquillian pode ser encontrada em `src/test/resources/arquillian.xml`.
