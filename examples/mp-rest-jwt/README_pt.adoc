@@ -69,7 +69,7 @@ public class MoviesMPJWTConfigurationProvider {
 
 == Usando o MicroProfile JWT no TomEE
 
-O recurso JAX-RS `MoviesRest.java` contém vários contém vários endpoints que estão protegidos usando a anotação padrão `@ RolesAllowed`. O MicroProfile JWT é responsável por validar solicitações recebidas com o cabeçalho `Authorization' que fornece um token de acesso assinado.
+O recurso JAX-RS `MoviesRest.java` contém vários endpoints que estão protegidos usando a anotação padrão `@RolesAllowed`. O MicroProfile JWT é responsável por validar solicitações recebidas com o cabeçalho `Authorization' que fornece um token de acesso assinado.
 
 [source,java]
 ----
