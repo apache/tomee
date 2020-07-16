@@ -1,0 +1,179 @@
+= Métricas com MicroProfile `@Timed`
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este é um exemplo sobre como utilizar as métricas do MicroProfile em TomEE.
+
+== Executando a aplicação:
+
+[source,bash]
+----
+$ mvn clean install tomee:run
+----
+
+Dentro da aplicação, há um endpoint que vai fornecer o estado do clima para o dia.
+
+== Obtendo o clima para o dia:
+
+[source,bash]
+----
+$ curl -X GET http://localhost:8080/mp-metrics-timed/weather/day/status
+----
+
+== Resposta:
+
+[source,text]
+----
+Hi, today is a sunny day!
+----
+
+== Usando `@Timed`
+
+As métricas de MicroProfile tem uma função que se pode usar para rastrear
+a duração de um evento.
+
+Para utilizar esta função, você deve anotar os métodos dos recursos JAX-RS com `@Timed`.
+
+[source,java]
+----
+@Path("/weather")
+@ApplicationScoped
+public class WeatherService {
+
+    @Path("/day/status")
+    @Timed(name = "weather_day_status", absolute = true,
+            displayName = "Weather Day Status",
+            description = "This metric shows the weather status of the day.")
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String dayStatus() {
+        return "Hi, today is a sunny day!";
+    }
+...
+}
+----
+
+Existem algumas configurações, como parte do `@Timed`, que você precisa saber:
+
+*String name* Opcional. Define o nome da métrica. Se não for fornecido explicitamente, o nome do objeto anotado é usado.
+
+*boolean absolute* Se verdadeiro, usa o nome fornecido como o nome absoluto da métrica. Se falso, ele prefixa o nome do pacote e o nome da classe antes do nome fornecido. O valor padrão é falso.
+
+*String displayName* Opcional. Um nome de exibição legível para metadados.
+
+*String description* Opcional. Uma descrição da métrica.
+
+*String[] tags* Opcional.  Matriz do tipo String no formato 'chave=valor' para fornecer etiquetas especiais para uma métrica.
+
+*String unit* Unidade da métrica. O valor padrão para `@Timed` é nanossegundos.
+
+== Dados Métricos
+
+Verifique a métrica do medidor fazendo uma solicitação _GET_:
+
+=== Formato Prometheus:
+
+[source,bash]
+----
+$curl -X GET http://localhost:8080/mp-metrics-timed/metrics/application/weather_day_status
+----
+
+=== Resposta Prometheus:
+
+[source,text]
+----
+# TYPE application:weather_day_status_seconds summary timer
+# TYPE application:weather_day_status_seconds_count timer
+application:weather_day_status_seconds_count 1.0
+# TYPE application:weather_day_status_rate_per_second timer
+application:weather_day_status_rate_per_second 0.0
+# TYPE application:weather_day_status_one_min_rate_per_second timer
+application:weather_day_status_one_min_rate_per_second 0.0
+# TYPE application:weather_day_status_five_min_rate_per_second timer
+application:weather_day_status_five_min_rate_per_second 0.0
+# TYPE application:weather_day_status_fifteen_min_rate_per_second timer
+application:weather_day_status_fifteen_min_rate_per_second 0.0
+# TYPE application:weather_day_status_min_seconds timer
+application:weather_day_status_min_seconds 48352.0
+# TYPE application:weather_day_status_max_seconds timer
+application:weather_day_status_max_seconds 48352.0
+# TYPE application:weather_day_status_mean_seconds timer
+application:weather_day_status_mean_seconds 48352.0
+# TYPE application:weather_day_status_stddev_seconds timer
+application:weather_day_status_stddev_seconds 0.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.5"} 48352.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.75"} 48352.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.95"} 48352.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.98"} 48352.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.99"} 48352.0
+# TYPE application:weather_day_status_seconds timer
+application:weather_day_status_seconds{quantile="0.999"} 48352.0
+----
+
+=== Formato JSON:
+
+Para o formato json, adicione o cabeçalho `Accept: application/json` na requisição.
+
+=== Resposta JSON:
+
+[source,javascript]
+----
+{
+    "weather_day_status": {
+        "count": 1,
+        "fifteenMinRate": 0,
+        "fiveMinRate": 0,
+        "max": 48352,
+        "mean": 48352,
+        "meanRate": 0,
+        "min": 48352,
+        "oneMinRate": 0,
+        "p50": 48352,
+        "p75": 48352,
+        "p95": 48352,
+        "p98": 48352,
+        "p99": 48352,
+        "p999": 48352,
+        "stddev": 0
+    }
+}
+----
+
+== Metadados de Métrica
+
+Uma métrica terá metadados na qual você pode saber mais sobre ele,, como `displayName`,`description`, `tags`, etc.
+
+Verifique os metadados da métrica fazendo uma solicitação HTTP _OPTIONS_:
+
+=== Solicitação HTTP _OPTIONS_
+
+[source,bash]
+----
+$ curl -X OPTIONS http://localhost:8080/mp-metrics-timed/metrics/application/weather_day_status
+----
+
+=== Resposta:
+
+[source,javascript]
+----
+{
+    "weather_day_status": {
+        "description": "This metric shows the weather status of the day.",
+        "displayName": "Weather Day Status",
+        "name": "weather_day_status",
+        "reusable": false,
+        "tags": "",
+        "type": "timer",
+        "typeRaw": "TIMER",
+        "unit": "nanoseconds"
+    }
+}
+----
+
+Você também pode experimentá-lo usando o `WeatherServiceTest.java`, disponível no projeto.
