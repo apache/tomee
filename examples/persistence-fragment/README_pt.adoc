@@ -3,11 +3,11 @@
 :jbake-type: page
 :jbake-status: published
 
-The JPA provides Java developers with an object/relational mapping facility for managing relational data in Java applications.
+O JPA fornece aos desenvolvedores Java um recurso de mapeamento objeto/relacional para gerenciar dados relacionais em aplicações Java.
 
-@Entity define the entity class that you want to convert into a table in a database.
-@Id define the main key of the table.
-@GeneratedValue provides for the specification of generation strategies for the values of primary keys.
+`@Entity` define a classe de entidade que você deseja converter em uma tabela em um banco de dados.
+`@Id` define a chave principal da tabela.
+O `@GeneratedValue` fornece a especificação de estratégias de geração para os valores das chaves primárias.
 
 == Movie
 
