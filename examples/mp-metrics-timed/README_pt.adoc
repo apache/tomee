@@ -5,7 +5,7 @@
 
 Este é um exemplo sobre como utilizar as métricas do MicroProfile em TomEE.
 
-== Executando a aplicação::
+== Executando a aplicação:
 
 [source,bash]
 ----
@@ -30,8 +30,8 @@ Hi, today is a sunny day!
 
 == Usando `@Timed`
 
-Las métricas de MicroProfile tienen una función que se puede usar para tracker
-el tiempo de un evento.
+As métricas de MicroProfile tem uma função que se pode usar para rastrear
+a duração de um evento.
 
 Para utilizar esta função, você deve anotar os métodos dos recursos JAX-RS com `@Timed`.
 
@@ -58,13 +58,13 @@ Existem algumas configurações, como parte do `@Timed`, que você precisa saber
 
 *String name* Opcional. Define o nome da métrica. Se não for fornecido explicitamente, o nome do objeto anotado é usado.
 
-*boolean absolute* Se verdadeiro, use o nome fornecido como o nome absoluto da métrica. Se falso, ele prefixa o nome do pacote e o nome da classe antes do nome fornecido. O valor padrão é falso.
+*boolean absolute* Se verdadeiro, usa o nome fornecido como o nome absoluto da métrica. Se falso, ele prefixa o nome do pacote e o nome da classe antes do nome fornecido. O valor padrão é falso.
 
 *String displayName* Opcional. Um nome de exibição legível para metadados.
 
 *String description* Opcional. Uma descrição da métrica.
 
-*String[] tags* Opcional. Matriz de cadeia no formato = para fornecer etiquetas especiais para uma métrica.
+*String[] tags* Opcional.  Matriz do tipo String no formato 'chave=valor' para fornecer etiquetas especiais para uma métrica.
 
 *String unit* Unidade da métrica. O valor padrão para `@Timed` é nanossegundos.
 
@@ -118,7 +118,7 @@ application:weather_day_status_seconds{quantile="0.999"} 48352.0
 
 === Formato JSON:
 
-Para o formato json, adicione o cabeçalho `Accept: application/json` ao diretório Solicitação HTTP.
+Para o formato json, adicione o cabeçalho `Accept: application/json` na requisição.
 
 === Resposta JSON:
 
@@ -145,9 +145,9 @@ Para o formato json, adicione o cabeçalho `Accept: application/json` ao diretó
 }
 ----
 
-== Metadatos Métrica
+== Metadados de Métrica
 
-Uma métrica terá metadados para que você possa aprender mais sobre ela, como `displayName`,`description`, `tags`, etc.
+Uma métrica terá metadados na qual você pode saber mais sobre ele,, como `displayName`,`description`, `tags`, etc.
 
 Verifique os metadados da métrica fazendo uma solicitação HTTP _OPTIONS_:
 
