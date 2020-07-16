@@ -1,0 +1,95 @@
+= MicroProfile JWT Principal
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este é um exemplo de como usar o MicroProfile JWT no TomEE, acessando o `Principal` no JsonWebToken.
+
+== Executando a aplicação:
+
+[source, bash]
+----
+mvn clean install tomee:run
+----
+
+Este exemplo é uma aplicação CRUD para pedidos na loja.
+
+== Requisitos e configuração
+
+Para o uso do MicroProfile JWT, precisamos alterar o seguinte em nosso projeto:
+
+[arabic]
+. Adicione a dependência ao nosso arquivo `pom.xml`:
++
+[source,xml]
+----
+<dependency>
+    <groupId>org.eclipse.microprofile.jwt</groupId>
+    <artifactId>microprofile-jwt-auth-api</artifactId>
+    <version>${mp-jwt.version}</version>
+    <scope>provided</scope>
+</dependency>
+----
+. Anote nossa `Application.class` com `@LoginConfig(authMethod = "MP-JWT")`
+
+. Forneça `public` and `private key` para autenticação. E especifique a localização da `public key` e do `issuer` no nosso arquivo `microprofile-config.properties`.
++
+[source,properties]
+----
+mp.jwt.verify.publickey.location=/publicKey.pem
+mp.jwt.verify.issuer=https://example.com
+----
+
+. Defina `@RolesAllowed()` nos endpoints que queremos proteger.
+
+== Obtenção do JWT Principal
+
+Obtemos o `Principal` na classe MicroProfile `org.eclipse.microprofile.jwt.JsonWebToken`. De lá
+podemos adquirir o nome de usuário e os grupos do usuário que está acessando o endpoint.
+
+[source,java]
+----
+@Inject
+private JsonWebToken jwtPrincipal;
+----
+
+== Sobre a arquitetura da aplicação
+
+A aplicação nos permite manipular pedidos com usuários específicos. Temos dois usuários: `Alice Wonder` e `John Doe`. Eles podem ler, criar, editar e excluir entradas específicas. E para cada criação, salvamos o usuário que criou o pedido. Caso um usuário edite a entrada, registramos que, acessando o `Principal` que enviou a solicitação ao nosso back-end.
+
+`alice-wonder-jwt.json`
+
+[source,json]
+----
+{
+  "iss": "https://example.com",
+  "upn": "alice",
+  "sub": "alice.wonder@example.com",
+  "name": "Alice Wonder",
+  "iat": 1516239022,
+  "groups": [
+    "buyer"
+  ]
+}
+----
+
+`john-doe-jwt.json`
+[source,json]
+----
+{
+  "iss": "https://example.com",
+  "upn": "john",
+  "sub": "john.doe@example.com",
+  "name": "John Doe",
+  "iat": 1516239022,
+  "groups": [
+    "merchant"
+  ]
+}
+----
+
+== Acesse os endpoints com JWT token
+
+Acessamos os endpoints da nossa classe de teste criando um `JWT` com a ajuda do nosso `TokenUtils.generateJWTString(String jsonResource)`, que assina nossos dados do usuário no formato json com a ajuda do nossa chave `src/test/resources/privateKey.pem.`
+
+Também podemos gerar o novo `privateKey.pem` e `publicKey.pem` com o método `GenerateKeyUtils.generateKeyPair(String keyAlgorithm, int keySize)`.
