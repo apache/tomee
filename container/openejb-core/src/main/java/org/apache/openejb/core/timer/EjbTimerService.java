@@ -45,7 +45,5 @@ public interface EjbTimerService {
 
     void stop();
 
-    TimerStore getTimerStore();
-
     boolean isStarted();
 }

@@ -78,10 +78,6 @@ public class NullEjbTimerServiceImpl implements EjbTimerService {
     public void stop() {
     }
 
-    public TimerStore getTimerStore() {
-        return null;
-    }
-
     @Override
     public boolean isStarted() {
         return true;

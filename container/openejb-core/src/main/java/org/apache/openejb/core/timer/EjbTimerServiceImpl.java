@@ -17,6 +17,36 @@
 
 package org.apache.openejb.core.timer;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.Timer;
+import javax.ejb.TimerConfig;
+import javax.transaction.Status;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+
 import org.apache.openejb.ApplicationException;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
@@ -38,6 +68,7 @@ import org.apache.openejb.quartz.TriggerKey;
 import org.apache.openejb.quartz.impl.StdSchedulerFactory;
 import org.apache.openejb.quartz.impl.jdbcjobstore.JobStoreSupport;
 import org.apache.openejb.quartz.impl.jdbcjobstore.StdJDBCDelegate;
+import org.apache.openejb.quartz.impl.matchers.GroupMatcher;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 import org.apache.openejb.quartz.listeners.SchedulerListenerSupport;
 import org.apache.openejb.quartz.simpl.RAMJobStore;
@@ -46,30 +77,6 @@ import org.apache.openejb.spi.ContainerSystem;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.SetAccessible;
-
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.ScheduleExpression;
-import javax.ejb.Timer;
-import javax.ejb.TimerConfig;
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
@@ -85,26 +92,32 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     public static final String EJB_TIMER_RETRY_ATTEMPTS = "EjbTimer.RetryAttempts";
     public static final String OPENEJB_QUARTZ_USE_TCCL = "openejb.quartz.use-TCCL";
 
+    /**
+     * Counts references to Schedulers (represented by its name).
+     */
+    private static final ConcurrentHashMap<String,AtomicInteger> SCHEDULERS=new ConcurrentHashMap<String,AtomicInteger>();
+
     private boolean transacted;
     private int retryAttempts;
 
     private transient TransactionManager transactionManager;
     private transient BeanContext deployment;
-    private transient TimerStore timerStore;
     private transient Scheduler scheduler;
+    private transient List<TimerData> initialTimers=null;
 
-    public EjbTimerServiceImpl(final BeanContext deployment, final TimerStore timerStore) {
-        this(deployment, getDefaultTransactionManager(), timerStore, -1);
+    private final AtomicLong counter = new AtomicLong(0);
+
+    public EjbTimerServiceImpl(final BeanContext deployment) {
+        this(deployment, getDefaultTransactionManager(), -1);
     }
 
     public static TransactionManager getDefaultTransactionManager() {
         return SystemInstance.get().getComponent(TransactionManager.class);
     }
 
-    public EjbTimerServiceImpl(final BeanContext deployment, final TransactionManager transactionManager, final TimerStore timerStore, final int retryAttempts) {
+    public EjbTimerServiceImpl(final BeanContext deployment, final TransactionManager transactionManager, final int retryAttempts) {
         this.deployment = deployment;
         this.transactionManager = transactionManager;
-        this.timerStore = timerStore;
         final TransactionType transactionType = deployment.getTransactionType(deployment.getEjbTimeout());
         this.transacted = transactionType == TransactionType.Required || transactionType == TransactionType.RequiresNew;
         this.retryAttempts = retryAttempts;
@@ -126,7 +139,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         deployment = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(dId);
         transactionManager = getDefaultTransactionManager();
-        timerStore = deployment.getEjbTimerService().getTimerStore();
         scheduler = (Scheduler) Proxy.newProxyInstance(deployment.getClassLoader(), new Class<?>[]{Scheduler.class}, new LazyScheduler(deployment));
     }
 
@@ -171,7 +183,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                 final boolean useTccl = "true".equalsIgnoreCase(properties.getProperty(OPENEJB_QUARTZ_USE_TCCL, "false"));
 
                 defaultQuartzConfiguration(properties, deployment, newInstance, useTccl);
-
+                final String schedulerName;
                 try {
                     // start in container context to avoid thread leaks
                     final ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
@@ -195,10 +207,17 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                         .requestRecovery(false)
                         .build();
                     thisScheduler.addJob(job, true);
+                    schedulerName=thisScheduler.getSchedulerName();
                 } catch (final SchedulerException e) {
                     throw new OpenEJBRuntimeException("Fail to initialize the default scheduler", e);
                 }
 
+                AtomicInteger refCount=SCHEDULERS.get(schedulerName);
+                if (refCount==null) {
+                    SCHEDULERS.put(schedulerName,new AtomicInteger(1));
+                } else {
+                    refCount.incrementAndGet();
+                }
                 if (!newInstance) {
                     systemInstance.setComponent(Scheduler.class, thisScheduler);
                 }
@@ -320,26 +339,32 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     }
 
     private void cleanTimerData() {
-        if (timerStore == null || scheduler == null || deployment == null) {
+        if (scheduler == null || deployment == null) {
             return;
         }
 
-        final Collection<TimerData> timerDatas = timerStore.getTimers(deployment.getDeploymentID().toString());
-        if (timerDatas == null) {
+
+        final Set<TriggerKey> keys;
+        try {
+            keys=scheduler.getTriggerKeys
+                (GroupMatcher.triggerGroupEquals(TimerData.OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deployment.getId()));
+        } catch (SchedulerException se) {
+            log.warning("An error occured loading triggers",se);
             return;
         }
 
-        for (final TimerData data : timerDatas) {
-            final Trigger trigger = data.getTrigger();
-            if (trigger == null) {
-                continue;
-            }
-
-            final TriggerKey key = trigger.getKey();
+        for (TriggerKey key:keys) {
             try {
-                data.stop();
-            } catch (final EJBException ignored) {
-                log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID());
+                Trigger t=scheduler.getTrigger(key);
+                if (t!=null) {
+                    JobDataMap map=t.getJobDataMap();
+                    TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
+                    if (td!=null) {
+                        td.stop();
+                    }
+                }
+            } catch (final Exception ignored) {
+                log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID(),ignored);
             }
         }
     }
@@ -373,6 +398,12 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
             if (null != s && !s.isShutdown() && s.isStarted()) {
 
                 try {
+                    String schedulerName=s.getSchedulerName();
+                    AtomicInteger refCount=SCHEDULERS.get(schedulerName);
+                    if (refCount!=null) {
+                        if (refCount.decrementAndGet()>0) return; // Still referenced
+                        SCHEDULERS.remove(schedulerName);
+                    }
                     s.pauseAll();
                 } catch (final SchedulerException e) {
                     // no-op
@@ -481,17 +512,75 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
 
         scheduler = getDefaultScheduler(deployment);
+        final String deploymentID=(String) deployment.getDeploymentID();
 
-        // load saved timers
-        final Collection<TimerData> timerDatas = timerStore.loadTimers(this, (String) deployment.getDeploymentID());
-        // schedule the saved timers
-        for (final TimerData timerData : timerDatas) {
-            initializeNewTimer(timerData);
+        /* TODO: We want to use zero here. But SingleActionTimerTest is able to create a timer before we are started.
+         * Perhaps it should not create the first time in @PostConstruct.
+         */
+        long maxId=counter.get();
+
+        // Look for highest known id.
+        try {
+            Set<TriggerKey> keys=scheduler.getTriggerKeys
+                    (GroupMatcher.triggerGroupEquals(TimerData.OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deploymentID));
+            for (TriggerKey key:keys) {
+                Trigger t=scheduler.getTrigger(key);
+                if (t==null) continue;
+                JobDataMap map=t.getJobDataMap();
+                TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
+                if (td==null) continue;
+                if (!td.isPersistent()) {
+                    /* Non persistent timers may still be here, if the server did not shutdown gracefully last time.
+                     * TODO Use a second JobStore for non persistent timers or remove them before scheduler.start().
+                     */
+                    scheduler.unscheduleJob(key);
+                    continue;
+                }
+                if (td.getId()>maxId) maxId=td.getId();
+            }
+        } catch (SchedulerException se) {
+            throw new TimerStoreException(se);
+        }
+        counter.set(maxId);
+
+        if (initialTimers!=null) {
+            for (final TimerData timerData : initialTimers) {
+                timerData.setId(counter.incrementAndGet());
+                initializeNewTimer(timerData);
+            }
+            initialTimers=null;
         }
     }
 
     public TransactionManager getTransactionManager() {
         return transactionManager;
+    }
+
+    public TimerData createIntervalTimer(final Object primaryKey, final Method timeoutMethod, final Date initialExpiration, final long intervalDuration, final TimerConfig timerConfig)
+    {
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new IntervalTimerData(id, this,deployment.getId(), primaryKey, timeoutMethod, timerConfig, initialExpiration, intervalDuration);
+        return timerData;
+    }
+
+    public TimerData createSingleActionTimer(final Object primaryKey, final Method timeoutMethod, final Date expiration, final TimerConfig timerConfig) {
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new SingleActionTimerData(id, this, deployment.getId(), primaryKey, timeoutMethod, timerConfig, expiration);
+        return timerData;
+    }
+
+    public TimerData createCalendarTimer(final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig, final boolean auto)
+    {
+        final long id = counter.incrementAndGet();
+        final TimerData timerData = new CalendarTimerData(id, this, deployment.getId(), primaryKey, timeoutMethod, timerConfig, scheduleExpression, auto);
+        return timerData;
+    }
+
+    public void scheduleCalendarTimer(final Object primaryKey, final Method timeoutMethod, final ScheduleExpression scheduleExpression, final TimerConfig timerConfig, final boolean auto)
+    {
+        final TimerData timerData = new CalendarTimerData(0 /* Will be modified later */, this, deployment.getId(), primaryKey, timeoutMethod, timerConfig, scheduleExpression, auto);
+        if (initialTimers==null) initialTimers=new ArrayList<TimerData>();
+        initialTimers.add(timerData);
     }
 
     /**
@@ -550,50 +639,55 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
     }
 
-    /**
-     * Call back from TimerData and ejbTimeout when a timer has been cancelled (or is complete) and should be removed from stores.
-     *
-     * @param timerData the timer that was cancelled
-     */
-    public void cancelled(final TimerData timerData) {
-        // make sure it was removed from the store
-        timerStore.removeTimer(timerData.getId());
-    }
-
-    /**
-     * Returns a timerData to the TimerStore, if a cancel() is rolled back.
-     *
-     * @param timerData the timer to be returned to the timer store
-     */
-    public void addTimerData(final TimerData timerData) {
-        try {
-            timerStore.addTimerData(timerData);
-        } catch (final Exception e) {
-            log.warning("Could not add timer of type " + timerData.getType().name() + " due to " + e.getMessage());
-        }
-    }
-
     @Override
     public Timer getTimer(final long timerId) {
-        final TimerData timerData = timerStore.getTimer((String) deployment.getDeploymentID(), timerId);
-        if (timerData != null) {
-            return timerData.getTimer();
-        } else {
-            return null;
+        TriggerKey key=TriggerKey.triggerKey(TimerData.OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX+deployment.getId()+'_'+timerId,
+                      TimerData.OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deployment.getId());
+
+        Trigger t;
+        try {
+            t=scheduler.getTrigger(key);
+        } catch (SchedulerException se) {
+            throw new EJBException(se);
         }
+
+        if (t!=null) {
+            JobDataMap map=t.getJobDataMap();
+            TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
+            if (td!=null) return td.getTimer();
+        }
+        return null;
     }
 
     @Override
     public Collection<Timer> getTimers(final Object primaryKey) throws IllegalStateException {
         checkState();
 
-        final Collection<Timer> timers = new ArrayList<Timer>();
-        for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
-            if (!CalendarTimerData.class.isInstance(timerData) || !CalendarTimerData.class.cast(timerData).isAutoCreated()) {
-                timers.add(timerData.getTimer());
+        try {
+            final Set<TriggerKey> keys=scheduler.getTriggerKeys
+                (GroupMatcher.triggerGroupEquals(TimerData.OPEN_EJB_TIMEOUT_TRIGGER_GROUP_PREFIX+deployment.getId()));
+            final Collection<Timer> timers = new ArrayList<Timer>(keys.size());
+            for (TriggerKey key:keys) {
+                try {
+                    Trigger t=scheduler.getTrigger(key);
+                    if (t!=null) {
+                        JobDataMap map=t.getJobDataMap();
+                        TimerData td=(TimerData) map.get(EjbTimeoutJob.TIMER_DATA);
+                        if (td!=null) {
+                            if (!CalendarTimerData.class.isInstance(td) || !CalendarTimerData.class.cast(td).isAutoCreated()) {
+                                timers.add(td.getTimer());
+                            }
+                        }
+                    }
+                } catch (final Exception ignored) {
+                    log.warning("An error occured deleting trigger '" + key + "' on bean " + deployment.getDeploymentID(),ignored);
+                }
             }
+            return timers;
+        } catch (SchedulerException se) {
+            throw new EJBException(se);
         }
-        return timers;
+
     }
 
     @Override
@@ -607,13 +701,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         checkState();
 
         final Date expiration = new Date(System.currentTimeMillis() + duration);
-        try {
-            final TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
-            initializeNewTimer(timerData);
-            return timerData.getTimer();
-        } catch (final TimerStoreException e) {
-            throw new EJBException(e);
-        }
+        final TimerData timerData = createSingleActionTimer(primaryKey, timeoutMethod, expiration, timerConfig);
+        initializeNewTimer(timerData);
+        return timerData.getTimer();
     }
 
     @Override
@@ -631,19 +721,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         checkState();
 
         final Date initialExpiration = new Date(System.currentTimeMillis() + initialDuration);
-        try {
-            final TimerData timerData = timerStore.createIntervalTimer(this,
-                (String) deployment.getDeploymentID(),
+        final TimerData timerData = createIntervalTimer(
                 primaryKey,
                 timeoutMethod,
                 initialExpiration,
                 intervalDuration,
                 timerConfig);
-            initializeNewTimer(timerData);
-            return timerData.getTimer();
-        } catch (final TimerStoreException e) {
-            throw new EJBException(e);
-        }
+        initializeNewTimer(timerData);
+        return timerData.getTimer();
     }
 
     @Override
@@ -659,13 +744,9 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
         checkState();
 
-        try {
-            final TimerData timerData = timerStore.createSingleActionTimer(this, (String) deployment.getDeploymentID(), primaryKey, timeoutMethod, expiration, timerConfig);
-            initializeNewTimer(timerData);
-            return timerData.getTimer();
-        } catch (final TimerStoreException e) {
-            throw new EJBException(e);
-        }
+        final TimerData timerData = createSingleActionTimer(primaryKey, timeoutMethod, expiration, timerConfig);
+        initializeNewTimer(timerData);
+        return timerData.getTimer();
     }
 
     @Override
@@ -685,19 +766,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
         checkState();
 
-        try {
-            final TimerData timerData = timerStore.createIntervalTimer(this,
-                (String) deployment.getDeploymentID(),
+        final TimerData timerData = createIntervalTimer(
                 primaryKey,
                 timeoutMethod,
                 initialExpiration,
                 intervalDuration,
                 timerConfig);
-            initializeNewTimer(timerData);
-            return timerData.getTimer();
-        } catch (final TimerStoreException e) {
-            throw new EJBException(e);
-        }
+        initializeNewTimer(timerData);
+        return timerData.getTimer();
     }
 
     @Override
@@ -707,24 +783,14 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         }
         //TODO add more schedule expression validation logic ?
         checkState();
-        try {
-            final TimerData timerData = timerStore.createCalendarTimer(this,
-                (String) deployment.getDeploymentID(),
+        final TimerData timerData = createCalendarTimer(
                 primaryKey,
                 timeoutMethod,
                 scheduleExpression,
                 timerConfig,
                 false);
-            initializeNewTimer(timerData);
-            return timerData.getTimer();
-        } catch (final TimerStoreException e) {
-            throw new EJBException(e);
-        }
-    }
-
-    @Override
-    public TimerStore getTimerStore() {
-        return timerStore;
+        initializeNewTimer(timerData);
+        return timerData.getTimer();
     }
 
     @Override
@@ -739,6 +805,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
     private void initializeNewTimer(final TimerData timerData) {
         // mark this as a new timer... when the transaction completes it will schedule the timer
         timerData.newTimer();
+        // TODO schedule after completion;
     }
 
     /**
@@ -761,17 +828,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         final Thread thread = Thread.currentThread();
         final ClassLoader loader = thread.getContextClassLoader(); // container loader
         try {
-            Timer timer = getTimer(timerData.getId());
-            // quartz can be backed by some advanced config (jdbc for instance)
-            if (timer == null && timerStore instanceof MemoryTimerStore && timerData.getTimer() != null) {
-                try {
-                    timerStore.addTimerData(timerData);
-                    timer = timerData.getTimer(); // TODO: replace memoryjobstore by the db one?
-                } catch (final TimerStoreException e) {
-                    // shouldn't occur
-                }
-                // return;
-            }
+            Timer timer = timerData.getTimer();
             for (int tries = 0; tries < 1 + retryAttempts; tries++) {
                 boolean retry = false;
                 // if transacted, begin the transaction
@@ -854,20 +911,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         } catch (final Error e) {
             log.warning("Error occured while calling ejbTimeout", e);
             throw e;
-        } finally {
-            thread.setContextClassLoader(loader);
-
-            // clean up the timer store
-            //TODO shall we do all this via Quartz listener ???
-            if (timerData.getType() == TimerType.SingleAction) {
-                timerStore.removeTimer(timerData.getId());
-                timerData.setExpired(true);
-            } else if (timerData.getType() == TimerType.Calendar && timerData.getNextTimeout() == null) {
-                timerStore.removeTimer(timerData.getId());
-                timerData.setExpired(true);
-            } else {
-                timerStore.updateIntervalTimer(timerData);
-            }
         }
     }
 
