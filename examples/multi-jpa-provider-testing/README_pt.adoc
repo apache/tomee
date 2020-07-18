@@ -42,7 +42,7 @@ public class Person {
 
 == persistence.xml
 
-Criar e soltar tabela Pessoa
+Cria e descarta a tabela Pessoa.
 
 [source,xml]
 ----
@@ -70,7 +70,7 @@ Criar e soltar tabela Pessoa
 
 == JPA Teste
 
-O `entity manager` é injetado pelo cdi e um objeto Pessoa é criada e inserida no banco de dados de em memória
+O `entity manager` é injetado pelo cdi e um objeto Pessoa é criado e inserido no banco de dados em memória
 
 [source,java]
 ----
@@ -270,13 +270,11 @@ Results :
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-From the log you can see that both implementations are used: INFO - Using 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl', INFO - Using 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'.
-
-No log, é possível ver que as duas implementações são usadas: INFO - Usando 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl', INFO - Usando 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'
+No log, é possível ver que as duas implementações são usadas: INFO - Using 'javax.persistence.provider=org.apache.openjpa.persistence.PersistenceProviderImpl', INFO - Using 'javax.persistence.provider=org.hibernate.ejb.HibernatePersistence'
 
 == Dentro do jar
 
-Se olharmos para o jar construído por maven, veremos que a aplicação em si é bem pequeno:
+Se olharmos para o jar construído pelo maven, veremos que a aplicação em si é bem pequena:
 
  jar tvf multi-jpa-provider-testing-8.0.0-SNAPSHOT.jar
      0 Wed Dec 26 17:55:40 CET 2018 META-INF/
