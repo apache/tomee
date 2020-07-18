@@ -8,7 +8,7 @@ Este é um exemplo de como configurar e usar o MicroProfile JWT 1.1 no TomEE.
 
 == Executando o teste
 
-Este projeto inclui uma aplicação de amostra e um teste do Arquillian para mostrar o controle de acesso baseado em função (RBAC) com JWT no MicroProfile.
+Este projeto inclui uma aplicação de exemplo e um teste do Arquillian para mostrar o controle de acesso baseado em função (RBAC) com JWT no MicroProfile.
 Para executar o cenário, você pode executar o seguinte comando:
 
 [source, bash]
@@ -17,8 +17,8 @@ mvn clean test
 ----
 
 A aplicação representa um recurso REST de livraria com alguns endpoints.
-Todos esperam que o cliente forneça um token da web JSON (JWT) válido, representando um usuário com determinadas funções.
-O teste Arquillian é responsável por gerar os JWTs e anexá-los os requests.
+Todos esperam que o cliente forneça um JSON Web Token (JWT) válido, representando um usuário com determinadas funções.
+O teste do Arquillian é responsável por gerar os JWTs e anexá-los os requests.
 
 == Configuração no TomEE
 
@@ -27,16 +27,16 @@ Neste exemplo, a classe é `ApplicationConfig`.
 
 Outra coisa que precisa ser feita é configurar a `public key` para verificar a assinatura do JWT anexada no cabeçalho `Authorization'.
 É assinado na criação com a `private key` do issuer.
-Isso é feito para evitar o uso moderado do token enquanto ele viaja do chamador até o endpoint.
+Isso é feito para evitar adulteração do token enquanto ele trafega do chamador até o endpoint.
 Geralmente, a emissão do JWT ocorre em um módulo ou microsserviço especial responsável pela autenticação dos usuários.
-Neste projeto de amostra, isso acontece no `BookstoreTest`.
+Neste projeto de exemplo, isso acontece no `BookstoreTest`.
 
-Cada tempo de execução de suporte ao MicroProfile JWT deve poder verificar se a assinatura está correta e se o conteúdo assinado não é alterado ao longo do caminho.
+Cada ambiente de execução que suporta o MicroProfile JWT deveria ser capaz de verificar se a assinatura está correta e se o conteúdo assinado não é alterado ao longo do caminho.
 Para fazer isso, ele precisa ter acesso a uma `public key`.
 Essa `public key` pode estar no formato `PKCS#8 PEM, JWK ou JWKS`.
 Desde o MP JWT 1.1 (que é suportado pelo TomEE), a chave pode ser fornecida como uma string na propriedade de configuração `mp.jwt.verify.publickey` ou como um local ou URL de arquivo especificado em `mp.jwt.verify.publickey.location` na propriedade de configuração.
 
-Neste projeto de amostra, você pode ver a primeira opção.
+Neste projeto de exemplo, você pode ver a primeira opção.
 O arquivo `src/main/resource/META-INF/microprofile-config.properties` contém a seguinte entrada:
 
 [source,properties]
@@ -44,13 +44,13 @@ O arquivo `src/main/resource/META-INF/microprofile-config.properties` contém a 
 mp.jwt.verify.publickey=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlivFI8qB4D0y2jy0CfEqFyy46R0o7S8TKpsx5xbHKoU1VWg6QkQm+ntyIv1p4kE1sPEQO73+HY8+Bzs75XwRTYL1BmR1w8J5hmjVWjc6R2BTBGAYRPFRhor3kpM6ni2SPmNNhurEAHw7TaqszP5eUF/F9+KEBWkwVta+PZ37bwqSE4sCb1soZFrVz/UT/LF4tYpuVYt3YbqToZ3pZOZ9AX2o1GCG3xwOjkc4x0W7ezbQZdC9iftPxVHR8irOijJRRjcPDtA6vPKpzLl6CyYnsIYPd99ltwxTHjr3npfv/3Lw50bAkbT4HeLFxTx4flEoZLKO/g0bAoV2uqBhkA9xnQIDAQAB
 ----
 
-== trabalhando com JWT
+== Trabalhando com JWT
 
-A classe `BookResource` neste projeto de amostra mostra dois casos em que você pode usar a especificação MP JWT: obter o valor de uma declaração JWT e o controle de acesso baseado em função dos endpoints REST.
+A classe `BookResource` neste projeto de exemplo mostra dois casos em que você pode usar a especificação MP JWT: obter o valor de uma declaração JWT e o controle de acesso baseado em função dos endpoints REST.
 
 === Obtenção de valores de claim
 
-O token da web JSON (JWT) anexado no cabeçalho HTTP `Authorization` é essencialmente um objeto JSON que contém vários atributos.
+O JSON Web Token (JWT) anexado no cabeçalho HTTP `Authorization` é essencialmente um objeto JSON que contém vários atributos.
 Esses atributos são chamados _claims_.
 Você pode obter o valor de cada claim dentro de um bean CDI injetando-o e qualificando-o com a anotação `@Claim`.
 
@@ -100,10 +100,10 @@ No entanto, o método abaixo resultará no código HTTP 403 se chamado por um us
 
 == O teste do bookstore
 
-O projeto de amostra contém um teste Arquillian (`org.superbiz.bookstore.BookstoreTest`) usado por alguns motivos:
+O projeto de exemplo contém um teste Arquillian (`org.superbiz.bookstore.BookstoreTest`) usado por alguns motivos:
 
-* Generating the JSON web token (JWT)
-* Apresentando o comportamento do TomEE em diferentes situações
+* Geração do JSON Web Token (JWT)
+* Apresentação do comportamento do TomEE em diferentes situações
 ** Recuperando um valor de Claim
 ** Chamando endpoints REST com funções apropriadas
 ** Chamando um endpoint REST com uma função incorreta (resultando no código de status HTTP 403)
