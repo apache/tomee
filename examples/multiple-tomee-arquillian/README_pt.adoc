@@ -3,10 +3,6 @@
 :jbake-type: page
 :jbake-status: published
 
-This example shows how to deploy two different applications if the need for it shows.
-That sometimes happens if we need communication between two different web applications. In our
-example we will deploy two applications web resources and test their content.
-
 Este exemplo mostra como implantar duas aplicações diferentes, se necessário.
 Às vezes, isso acontece se precisarmos de comunicação entre duas aplicações da web diferentes. Na nossa
 por exemplo, implantaremos dois recursos da Web de aplicações e testaremos seu conteúdo.
@@ -17,7 +13,7 @@ por exemplo, implantaremos dois recursos da Web de aplicações e testaremos seu
 ----
 mvn clean test
 ----
-Este comando executa o teste em que especificamos as duas implantações que queremos teste. 
+Este comando executa o teste em que especificamos as duas implantações que queremos testar. 
 O teste implementa dois aplicativos nos quais testamos seu conteúdo que definimos como recurso da web nos métodos `createDep1()` e `createDep2() `.
 
 == Anotação @Deployment
@@ -45,7 +41,7 @@ public static WebArchive createDep2() {
 == Definir o contexto de `Deployment`
 
 Para cada método de teste, precisamos definir em qual contexto de `Deployment` os testes
-deve ser executado. Para isso, usamos a anotação `@OperateOnDeployment("war2")` no nosso método de teste.
+devem ser executados. Para isso, usamos a anotação `@OperateOnDeployment("war2")` no nosso método de teste.
 
 [source,java]
 ----
