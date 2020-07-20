@@ -3,7 +3,7 @@
 :jbake-status: status=published
 = Exemplo JAX-WS @WebService
 
-Criar serviços da Web com JAX-WS é bastante fácil. Pouco é preciso ser feito, além de anotar uma classe com `@WebService`. Este exemplo mostra o uso do CDI com anotação de webservice. O `web.xml` expõe o servlet de webservice no endereço `http://latexmath:[${host}:$]\{port}/ pojo-webservice?Wsdl`. Para executar o exemplo, você pode usar o plugin mavne do tomee, `mvn tomee:run`.
+Criar serviços da Web com JAX-WS é bastante fácil. Pouco é preciso ser feito, além de anotar uma classe com `@WebService`. Este exemplo mostra o uso do CDI com anotação de webservice. O `web.xml` expõe o servlet de webservice no endereço `http://latexmath:[${host}:$]\{port}/ pojo-webservice?Wsdl`. Para executar o exemplo, você pode usar o plugin maven do tomee, `mvn tomee:run`.
 
 == web.xml
 
@@ -78,7 +78,7 @@ public interface WS {
 
 == PojoWS WSDL
 
-O wsdl para nosso serviço é criado automaticamente para nós e disponível em
+O wsdl para nosso serviço é criado automaticamente para nós e está disponível em
 `http://127.0.0.1:8080/pojo-webservice?wsdl`.
 
 [source,xml]
