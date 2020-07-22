@@ -29,9 +29,9 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.loader.provisining.ProvisioningResolver;
 import org.apache.openejb.util.Join;
 import org.apache.openejb.util.PropertyPlaceHolderHelper;
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm8.ClassWriter;
+import org.apache.xbean.asm8.MethodVisitor;
+import org.apache.xbean.asm8.Opcodes;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,11 +53,11 @@ import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.apache.xbean.asm7.Opcodes.ACC_PUBLIC;
-import static org.apache.xbean.asm7.Opcodes.ACC_SUPER;
-import static org.apache.xbean.asm7.Opcodes.ALOAD;
-import static org.apache.xbean.asm7.Opcodes.INVOKESPECIAL;
-import static org.apache.xbean.asm7.Opcodes.RETURN;
+import static org.apache.xbean.asm8.Opcodes.ACC_PUBLIC;
+import static org.apache.xbean.asm8.Opcodes.ACC_SUPER;
+import static org.apache.xbean.asm8.Opcodes.ALOAD;
+import static org.apache.xbean.asm8.Opcodes.INVOKESPECIAL;
+import static org.apache.xbean.asm8.Opcodes.RETURN;
 
 /**
  * @version $Rev$ $Date$

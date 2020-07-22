@@ -1157,7 +1157,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm7-shaded</artifactId>
+      <artifactId>xbean-asm8-shaded</artifactId>
       <version>${xbeanVersion}</version>
       <exclusions>
         <exclusion>
@@ -1202,17 +1202,6 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>${xbeanVersion}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm-util</artifactId>
       <version>${xbeanVersion}</version>
       <exclusions>
         <exclusion>

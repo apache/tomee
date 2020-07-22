@@ -26,10 +26,10 @@ import org.apache.openejb.persistence.PersistenceClassLoaderHandler;
 import org.apache.openejb.persistence.PersistenceUnitInfoImpl;
 import org.apache.openejb.resource.jdbc.dbcp.BasicDataSource;
 import org.apache.openejb.resource.jdbc.dbcp.BasicManagedDataSource;
-import org.apache.xbean.asm7.ClassReader;
-import org.apache.xbean.asm7.ClassVisitor;
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.Opcodes;
+import org.apache.xbean.asm8.ClassReader;
+import org.apache.xbean.asm8.ClassVisitor;
+import org.apache.xbean.asm8.ClassWriter;
+import org.apache.xbean.asm8.Opcodes;
 import org.apache.xbean.naming.context.ImmutableContext;
 
 import javax.naming.Context;
@@ -54,8 +54,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
-import static org.apache.xbean.asm7.Opcodes.ACC_PRIVATE;
-import static org.apache.xbean.asm7.Opcodes.ACC_TRANSIENT;
+import static org.apache.xbean.asm8.Opcodes.ACC_PRIVATE;
+import static org.apache.xbean.asm8.Opcodes.ACC_TRANSIENT;
 
 public class JpaTest extends TestCase {
     static {

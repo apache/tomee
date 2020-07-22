@@ -17,10 +17,10 @@
 
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Opcodes;
-import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm8.ClassWriter;
+import org.apache.xbean.asm8.MethodVisitor;
+import org.apache.xbean.asm8.Opcodes;
+import org.apache.xbean.asm8.Type;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

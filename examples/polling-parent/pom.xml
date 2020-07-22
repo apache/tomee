@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: Polling</name>
 
   <properties>
-    <xbean.version>4.14</xbean.version>
+    <xbean.version>4.17</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.4-SNAPSHOT</tomee.version>
     <cxf.version>3.3.1</cxf.version>
@@ -163,11 +163,6 @@
       <dependency>
         <groupId>org.apache.xbean</groupId>
         <artifactId>xbean-reflect</artifactId>
-        <version>${xbean.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm-util</artifactId>
         <version>${xbean.version}</version>
       </dependency>
       <dependency>

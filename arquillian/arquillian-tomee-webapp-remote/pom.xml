@@ -172,7 +172,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm7-shaded</artifactId>
+          <artifactId>xbean-asm8-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
@@ -181,10 +181,6 @@
         </exclusion>
         <exclusion>
           <artifactId>xbean-reflect</artifactId>
-          <groupId>org.apache.xbean</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>xbean-asm-util</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>

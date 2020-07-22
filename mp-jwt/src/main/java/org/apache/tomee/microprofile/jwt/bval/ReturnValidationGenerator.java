@@ -16,10 +16,10 @@
  */
 package org.apache.tomee.microprofile.jwt.bval;
 
-import org.apache.xbean.asm7.AnnotationVisitor;
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm8.AnnotationVisitor;
+import org.apache.xbean.asm8.ClassWriter;
+import org.apache.xbean.asm8.MethodVisitor;
+import org.apache.xbean.asm8.Type;
 
 import java.lang.reflect.Method;
 import java.util.List;

@@ -19,12 +19,12 @@ package org.apache.openejb.config;
 
 import org.apache.openejb.OpenEJBException;
 import org.apache.openejb.loader.IO;
-import org.apache.xbean.asm7.AnnotationVisitor;
-import org.apache.xbean.asm7.ClassReader;
-import org.apache.xbean.asm7.FieldVisitor;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Opcodes;
-import org.apache.xbean.asm7.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm8.AnnotationVisitor;
+import org.apache.xbean.asm8.ClassReader;
+import org.apache.xbean.asm8.FieldVisitor;
+import org.apache.xbean.asm8.MethodVisitor;
+import org.apache.xbean.asm8.Opcodes;
+import org.apache.xbean.asm8.shade.commons.EmptyVisitor;
 
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceProperty;

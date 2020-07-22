@@ -53,10 +53,6 @@
       <artifactId>xbean-reflect</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm-util</artifactId>
-    </dependency>
-    <dependency>
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
     </dependency>

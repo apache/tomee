@@ -160,7 +160,7 @@ public class Misc {
             }
 
 
-            // /Users/dblevins/.m2/repository//org/apache/xbean/xbean-naming/4.14/xbean-naming-4.14.jar
+            // /Users/dblevins/.m2/repository//org/apache/xbean/xbean-naming/4.17/xbean-naming-4.17.jar
             final File file = getFile(jar);
             final File versionDir = file.getParentFile();
             final File artifactDir = versionDir.getParentFile();

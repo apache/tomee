@@ -294,7 +294,7 @@
           </dependency>
           <dependency>
             <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-asm7-shaded</artifactId>
+            <artifactId>xbean-asm8-shaded</artifactId>
             <version>${xbeanVersion}</version>
           </dependency>
           <dependency>
