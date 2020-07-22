@@ -166,6 +166,10 @@
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
+          <artifactId>xbean-asm-util</artifactId>
+          <groupId>org.apache.xbean</groupId>
+        </exclusion>
+        <exclusion>
           <artifactId>xbean-naming</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>

@@ -166,6 +166,11 @@
         <version>${xbean.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.xbean</groupId>
+        <artifactId>xbean-asm-util</artifactId>
+        <version>${xbean.version}</version>
+      </dependency>
+      <dependency>
         <groupId>jline</groupId>
         <artifactId>jline</artifactId>
         <version>0.9.94</version>

@@ -587,6 +587,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-asm-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
     </dependency>
     <dependency>
