@@ -31,6 +31,11 @@ import java.util.Set;
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
+
+        // this needs to be investigated because the BeanManager is not yet available in TomEE at this moment and time
+        // we are still deploying the app
+        if (true) return;
+
         BeanManager beanManager;
         try {
             beanManager = getBeanManager();
