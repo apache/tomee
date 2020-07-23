@@ -115,7 +115,7 @@
     <geronimo-javamail_1.4_mail.version>1.9.0-alpha-2</geronimo-javamail_1.4_mail.version>
 
     <openjpa.version>3.1.0</openjpa.version>
-    <openwebbeans.version>2.0.17</openwebbeans.version>
+    <openwebbeans.version>2.0.18-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.5</johnzon.version>
 
