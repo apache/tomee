@@ -22,7 +22,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.tomee.security.AbstractTomEESecurityTest;
 import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
@@ -38,7 +37,6 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-@Ignore("Until we fix the container initializer")
 public class FormAuthServletTest extends AbstractTomEESecurityTest {
     @Test
     public void authenticate() throws Exception {

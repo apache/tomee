@@ -32,16 +32,10 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
 
-        // this needs to be investigated because the BeanManager is not yet available in TomEE at this moment and time
-        // we are still deploying the app
-        if (true) {
-            return;
-        }
-
         BeanManager beanManager;
         try {
             beanManager = getBeanManager();
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
 
             // CDI not enabled?
             return;
