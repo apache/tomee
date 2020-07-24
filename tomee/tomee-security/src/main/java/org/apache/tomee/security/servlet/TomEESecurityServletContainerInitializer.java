@@ -39,7 +39,12 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
 
         } catch (final IllegalStateException e) {
 
-            // CDI not enabled? Extension not available?
+            // CDI not enabled?
+            return;
+
+        } catch (final IllegalArgumentException e) {
+
+            // Extension not available?
             return;
         }
 
