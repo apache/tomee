@@ -32,21 +32,16 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
 
-        BeanManager beanManager;
+        TomEESecurityExtension securityExtension;
         try {
-            beanManager = getBeanManager();
+            final BeanManager beanManager = getBeanManager();
+            securityExtension = beanManager.getExtension(TomEESecurityExtension.class);
+
         } catch (final IllegalStateException e) {
 
-            // CDI not enabled?
+            // CDI not enabled? Extension not available?
             return;
         }
-
-        if (beanManager == null) {
-            return;
-        }
-
-        final TomEESecurityExtension securityExtension =
-                beanManager.getExtension(TomEESecurityExtension.class);
 
         if (securityExtension.hasAuthenticationMechanisms()) {
             AuthConfigFactory.getFactory().registerConfigProvider(
