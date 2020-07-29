@@ -243,7 +243,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 == Inspecting the messages
 
-The result above would generate the following messages.
+The execution above would generate the following messages.
 
 === Calculator wsdl
 
