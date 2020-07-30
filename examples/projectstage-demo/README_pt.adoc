@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Este exemplo mostra como usar https://deltaspike.apache.org/documentation/projectstage.html[deltaSpike estágio do projeto] nos testes do Arquillian em execução no TomEE.
+Este exemplo mostra como usar https://deltaspike.apache.org/documentation/projectstage.html[deltaSpike project stage] nos testes do Arquillian em execução no TomEE.
 
 == Exemplo
 
@@ -36,7 +36,7 @@ No exemplo acima, uma instância do `Manager` é criada com base no ProjectStage
 
 == Configurando o Project stage
 
-Existem algumas maneiras de configurar o project stage,neste exemplo, usaremos um
+Existem algumas maneiras de configurar o project stage, neste exemplo, usaremos um
 https://deltaspike.apache.org/documentation/configuration.html#ProvidingconfigurationusingConfigSources[DeltaSpike config source ^] que lê o project stage a partir de um arquivo chamado `project-stage.properties`:
 
 .src/main/resources/project-stage.properties
