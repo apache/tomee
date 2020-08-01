@@ -1,16 +1,16 @@
 :index-group: REST
 :jbake-type: page
 :jbake-status: status=published
-= Simple REST with CDI
+= REST simples com CDI
 
-Defining a REST service is pretty easy, simply ad @Path annotation to a
-class then define on methods the HTTP method to use (@GET, @POST, …).
+Definir um serviço REST é bastante fácil, basta adicionar a anotação `@Path` a uma
+classe define então nos métodos o método HTTP a ser usado (`@GET`, `@POST`,…).
 
-== The REST service: @Path, @Produces, @Consumes
+== Serviço REST: @Path, @Produces, @Consumes
 
-Here we have a simple REST, we annotate the class with `@Path("/greeting")` to indicate the route corresponding to the `GreetingService` class. We define `message()` as `@GET` and `lowerCase()` as `@POST` for this `/greeting` route and inject the` Greeting` class using the annotation `@Inject`. There, we have a service! Simple isn't it?
+Aqui nós temos um REST simples, anotamos a classe com `@Path("/greeting")` para indicar a rota correspondente a classe `GreetingService`. Definimos `message()` como `@GET` e `lowerCase()` como `@POST` para esta rota `/greeting` e fazemos a injeçao da classe `Greeting` usando a anotação `@Inject`. Pronto, temos um serviço! Simples não?
 
-Actually lines:
+Atual linhas:
 
 [source,java]
 ----
@@ -18,8 +18,8 @@ Actually lines:
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 ----
 
-are optional since it is the default configuration. And these lines can
-be configured by method too if you need to be more precise.
+são opcionais, pois é a configuração padrão. E essas linhas podem
+também seja configurado pelo método se você precisar ser mais preciso.
 
 [source,java]
 ----
@@ -64,27 +64,20 @@ public class GreetingService {
 }
 ----
 
-== Testing
 
-=== Test for the JAXRS service
+=== Teste para o serviço JAXRS
 
-The test uses the OpenEJB ApplicationComposer to make it trivial.
+Usamos o OpenEJB ApplicationComposer para facilitar o teste.
 
-The idea is first to activate the jaxrs services. This is done using
-@EnableServices annotation.
+A ideia é primeiro ativar os serviços jaxrs. Isto é feito usando a anotação `@EnableServices`.
 
-Then we create on the fly the application simply returning an object
-representing the web.xml. Here we simply use it to define the context
-root but you can use it to define your REST Application too. And to
-complete the application definition we add @Classes annotation to define
-the set of classes to use in this app.
+Então nós criamos a aplicação simplesmente retornando um objeto representando o web.xml. Aqui nós simplesmente o usamos para definir o contexto raiz mas você também pode usar para definir sua aplicação REST também. E para completar a aplicação nós adicionamos a anotação `@Classes` para definir o conjunto de classes a ser utilizado nesse app.
 
-Finally to test it we use cxf client API to call the REST service in
-get() and post() methods.
+Finalmente para testar nós usamos o client API do cfx para chamar o serviço REST nos métodos get() e post().
 
-NOTE: to show we use JSON or XML depending on the test method we
-activated on EnableServices the attribute httpDebug which prints the
-http messages in the logs.
+NOTE: para mostrar que usamos JSON ou XML, dependendo do método de teste
+ativado em EnableServices o atributo httpDebug que imprime o
+mensagens http nos logs.
 
 [source,java]
 ----
@@ -163,16 +156,16 @@ public class GreetingServiceTest {
 }
 ----
 
-#Running
+== Executando
 
-Running the example is fairly simple. In the ``rest-cdi'' directory run:
+A execução do exemplo é bastante simples. No diretório `rest-cdi`, execute:
 
 [source,java]
 ----
 $ mvn clean install
 ----
 
-Which should create output like the following.
+O que deve criar uma saída como a seguir.
 
 [source,java]
 ----
