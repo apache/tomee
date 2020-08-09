@@ -1,13 +1,13 @@
-= JPA with EclipseLink and Jersey
+= JPA com EclipseLink e Jersey
 :index-group: JPA
 :jbake-type: page
 :jbake-status: published
 
-In this example a web service is created that stores and retrieves data from the database.
-https://jersey.github.io/[Jersey] will be used to create the web service.
-For the database, https://www.eclipse.org/eclipselink/[EclipseLink] JPA provider will be used.
+Neste exemplo, um serviço da web é criado para armazenar e recuperar dados do banco de dados.
+https://jersey.github.io/[Jersey] será usado para criar o serviço da web..
+Para o banco de dados, https://www.eclipse.org/eclipselink/[EclipseLink] Provedor JPA será usado.
 
-The web service will store and retrieve information about persons:
+O serviço da web irá armazenar e recuperar informações sobre pessoas:
 
 [source,java]
 ----
@@ -38,7 +38,7 @@ public class Person {
     }
 ----
 
-The two services our application provide are: persisting a person, retrieving all persons from the database:
+Os dois serviços que nosso aplicativo oferece são: persistir uma pessoa, recuperando todas as pessoas do banco de dados:
 
 [source,java]
 ----
@@ -61,7 +61,7 @@ public class PersonDAO {
     }
 ----
 
-Next, we are ready to expose as a service this business logic:
+A seguir, estamos prontos para expor como um serviço esta lógica de negócios:
 
 [source,java]
 ----
@@ -89,7 +89,7 @@ public class PersonService {
     }
 ----
 
-Now, that we have a service class, defining the resources provided by the application, we extend the `javax.ws.rs.core.Application` class and we add our `PersonService`:
+Agora que temos uma classe de serviço, definindo os recursos fornecidos pelo aplicativo, estendemos a classe `javax.ws.rs.core.Application` e adicionamos nosso `PersonService`:
 
 [source,java]
 ----
@@ -104,8 +104,8 @@ public class JerseyApplication extends Application {
 }
 ----
 
-There is one more step to do, to configure a servlet provided by Jersey.
-This can be done in `webapp/WEB-INF/web.xml`:
+Há mais uma etapa a ser executada para configurar um servlet fornecido por Jersey.
+Isso pode ser feito em `webapp/WEB-INF/web.xml`:
 
 [source,xml]
 ----
@@ -182,7 +182,7 @@ public class JerseyApplicationTest {
 }
 ----
 
-We use Arquillian to programmatically start a new test container. In a test a person is persisted, then it's presence in database is checked by retrieving all person entities.
+Usamos o Arquillian para iniciar programaticamente um novo container de teste. Em um teste, uma pessoa é persistida e sua presença no banco de dados é verificada recuperando todas as entidades de pessoa.
 
-Full example can be found https://github.com/apache/tomee/tree/master/examples/tomee-jersey-eclipselink[here].
-It's a maven project, and the test can be run with `mvn clean install` command.
+Um exemplo completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/tomee-jersey-eclipselink[here].
+É um projeto maven, e o teste pode ser executado com `mvn clean install` comando.
