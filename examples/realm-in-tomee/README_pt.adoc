@@ -1,0 +1,42 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= DataSourceRealm e TomEE DataSource
+
+== Inicio Rápido
+
+Para testá-lo:
+
+[source,java]
+----
+mvn clean package tomee:run
+----
+
+== Como funciona?
+
+Um DataSource é definida em tomee.xml:
+
+[source,xml]
+----
+<Resource id="myDataSource" type="DataSource" /> <!-- standard properties -->
+----
+
+Em seguida, esse DataSource é referenciada em server.xml:
+
+[source,xml]
+----
+<Realm
+    className="org.apache.catalina.realm.DataSourceRealm"
+    dataSourceName="myDataSource"
+    userTable="users"
+    userNameCol="user_name"
+    userCredCol="user_pass"
+    userRoleTable="user_roles"
+    roleNameCol="role_name"/>
+----
+
+Para inicializar o datasource (para o teste), usamos o hook TomEE, que fornece um arquivo `import-.sql`. O arquivo deve estar no classpath do datasource, então o adicionamos à lib (por padrão, no classloader). isto simplesmente contém as criações da tabela e a inserção do `admin` `tomee` com a senha `tomee`.
+
+== Teste-o
+
+Acesse http://localhost:8080/realm-in-tomee-1.1.0-SNAPSHOT/ e conecte-se usando o login/password tomee/tomee. Você deve ver a `Home`.
