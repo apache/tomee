@@ -10,7 +10,7 @@ Este exemplo demonstra o uso do método `create` para registrar adicionalmente o
 
 == Resource
 
-Recursos customizados podem ser definidos usando classes Java muito simples. Nesse caso específico, como o aplicativo também deseja registrar esse como MBean, a classe de recurso precisa seguir o MBean especificação.
+Recursos customizados podem ser definidos usando classes Java muito simples. Nesse caso específico, como o aplicativo também deseja registrar esse como MBean, a classe de recurso precisa seguir a especificação de MBean.
 
 [source,java]
 ----
@@ -57,10 +57,6 @@ public interface HelloMBean {
 ----
 
 == Método Criar(Create)
-
-To avoid adding the logic to register the resource as an MBean in every
-resource, the application provides a single class with a create() method
-that takes care of this logic for us.
 
 Para evitar adicionar a lógica para registrar o recurso como um MBean em todos os recursos, a aplicação fornece a uma única classe um método `create()` que cuida dessa lógica para nós.
 
@@ -149,8 +145,7 @@ public class JMXBeanCreator {
 NOTE: que esta classe usa as propriedades definidas na configuração
 (abaixo), combinada com reflexão, para instanciar o recurso e definir
 seus atributos. O código acima requer duas propriedades `code` e `name`
-para saber qual classe criar e o nome JMX para registrá-la
-debaixo.
+para saber qual classe criar e o nome JMX sob o qual será registrada.
 
 == Resource
 
@@ -168,8 +163,8 @@ O recurso pode ser definido em `META-INF/resources.xml` da seguinte maneira:
 ----
 
 NOTE: que o atributo class-name se refere à classe factory, e não
-o recurso. Depois que o recurso for criado e vinculado ao TomEE,
-Árvore JNDI da fábrica não é mais usada.
+o recurso. Depois que o recurso for criado e vinculado ao recurso. 
+Depois que o recurso for criado e vinculado à árvore JNDI do TomEE, a fábrica não é mais usada.
 
 == Usando o @Resource para injeção
 
@@ -269,18 +264,18 @@ As seguintes propriedades podem ser usadas para alterar esse comportamento.
 * Lazy
 
 é um valor booleano que, quando verdadeiro, cria um proxy que adia
-a instanciação real do recurso até a primeira vez que ele olhou para cima do JNDI. 
+a instanciação real do recurso até a primeira vez que ele é procurado pelo JNDI. 
 Isso pode ser útil se o recurso exigir o classpath da aplicação ou para melhorar o tempo de inicialização não totalmente inicializando recursos que podem não ser usados.
 
 * UseAppClassLoader
 
 Esse valor booleano força um recurso instanciado Lazy a usar o
-classloaders da aplicação, em vez do classloader disponível quando o
+classloaders da aplicação, em vez do classloader disponível quando
 os recursos foram processados primeiro.
 
 * InitializeAfterDeployment
 
-Essa configuração booleana força um recurso criado com a propriedade Lazy a ser instanciado depois que a aplicação é iniciado, em vez de esperar que ele seja procurado. Use esse sinalizador se precisar que o recurso seja carregado,independentemente de ser injetado em um componente gerenciado ou consultado manualmente.
+Essa configuração booleana força um recurso criado com a propriedade Lazy a ser instanciado depois que a aplicação é iniciada, em vez de esperar que ele seja procurado. Use esse sinalizador se precisar que o recurso seja carregado,independentemente de ser injetado em um componente gerenciado ou consultado manualmente.
 
 Por padrão, todas essas configurações são `false`, a menos que o TomEE encontre um recurso da aplicação personalizado que não possa ser instanciado até que a aplicação seja iniciada. 
 Nesse caso, ele definirá esses três sinalizadores para `true`, a menos que o sinalizador `Lazy` tenha sido definido explicitamente.
@@ -292,8 +287,8 @@ e `@PreDestroy` dentro da sua classe de recurso (observe que você não pode
 usar isso dentro de uma classe de fábrica) para gerenciar qualquer criação ou
 atividades de limpeza. O TomEE chama automaticamente esses métodos quando o
 aplicativo é iniciado e destruído. O uso do `@PostConstruct`
-efetivamente forçar um recurso carregado lentamente a ser instanciado quando o
-aplicativo está sendo iniciado - da mesma maneira que o a propriedade `InitializeAfterDeployment` faz.
+efetivamente força um recurso carregado lentamente a ser instanciado quando o
+aplicativo está sendo iniciado - da mesma maneira que a propriedade `InitializeAfterDeployment` faz.
 
 [source,java]
 ----
@@ -763,7 +758,7 @@ Results :
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-NOTE:as seguintes linhas mostrando a criação do recurso.
+NOTE: as seguintes linhas mostrando a criação do recurso.
 
 [source,java]
 ----
