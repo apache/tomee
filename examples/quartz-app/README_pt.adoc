@@ -6,8 +6,8 @@
 NOTE: Este exemplo é um pouco datado. Ele antecede a API de agendamento que
 foi adicionado ao EJB 3.1. Aplicações modernas devem usar a API de agendamento, que possui muitos, se não todos, os mesmos recursos que o Quartz. De fato, o Quartz é o mecanismo que aciona o suporte `@Schedule` e `ScheduleExpression` no OpenEJB e TomEE.
 
-Apesar de datado de uma perspectiva de programação, ainda é um
-excelente referência sobre como conectar e testar um customizado Adaptador de Recursos do Java EE.
+Apesar de datado de uma perspectiva de programação, ainda é uma
+excelente referência sobre como conectar e testar um Java EE Resource Adapter personalizado..
 
 == Estrutura do projeto
 
@@ -43,10 +43,8 @@ quartz-app/quartz-ra/src/main/resources/META-INF/ra.xml
 === ra.xml
 
 O conector em questão possui adaptadores de recursos de entrada e saída. 
-O adaptador de recursos de entrada pode ser usado para conduzir a mensagem
-beans acionados (MDBs)
-
-o adaptador de recursos de saída, `QuartzResourceAdapter`, pode ser injetado em qualquer componente via`@Resource` e usado para originar e enviar mensagens ou eventos.
+O adaptador de recursos de entrada pode ser usado para conduzir message driven beans (MDBs).
+O adaptador de recursos de saída, `QuartzResourceAdapter`, pode ser injetado em qualquer componente via`@Resource` e usado para originar e enviar mensagens ou eventos.
 
 [source,xml]
 ----
