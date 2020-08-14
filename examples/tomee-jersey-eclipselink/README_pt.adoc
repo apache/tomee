@@ -5,7 +5,7 @@
 
 Neste exemplo, um serviço da web é criado para armazenar e recuperar dados do banco de dados.
 https://jersey.github.io/[Jersey] será usado para criar o serviço da web..
-Para o banco de dados, https://www.eclipse.org/eclipselink/[EclipseLink] Provedor JPA será usado.
+Para o banco de dados, o provedor JPA usado será https://www.eclipse.org/eclipselink/[EclipseLink].
 
 O serviço da web irá armazenar e recuperar informações sobre pessoas:
 
@@ -129,7 +129,7 @@ Isso pode ser feito em `webapp/WEB-INF/web.xml`:
 </web-app>
 ----
 
-The web service is ready to be tested. For this, we will write an unit test using http://arquillian.org/[Arquillian]:
+O serviço da web está pronto para ser testado. Para isso, vamos escrever um teste de unidade usando http://arquillian.org/[Arquillian]:
 
 [source,java]
 ----
@@ -184,5 +184,5 @@ public class JerseyApplicationTest {
 
 Usamos o Arquillian para iniciar programaticamente um novo container de teste. Em um teste, uma pessoa é persistida e sua presença no banco de dados é verificada recuperando todas as entidades de pessoa.
 
-Um exemplo completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/tomee-jersey-eclipselink[here].
-É um projeto maven, e o teste pode ser executado com `mvn clean install` comando.
+Um exemplo completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/tomee-jersey-eclipselink[aqui].
+É um projeto maven, e o teste pode ser executado com o comando `mvn clean install`.
