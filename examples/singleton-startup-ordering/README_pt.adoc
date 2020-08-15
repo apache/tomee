@@ -1,34 +1,34 @@
-= Singleton Startup Ordering
 :index-group: Session Beans
 :jbake-type: page
 :jbake-status: status=published
+= Ordem de Inicialização Singleton
 
-This examples shows in practice the  `@Startup` and `@DependsOn` annotations on `singleton` EJB's.
+Estes exemplos mostram na prática as anotações `@Startup` e `@DependsOn` em EJB's `singleton`.
 
 
 
-=== Run the tests
-[source,java]
+=== Executando os testes 
+[código,java]
 ----
 mvn clean test 
 ----
 
 
 
-=== The scenario
+=== O cenário
 
-* The example is composed by three singleton beans: `SingletonA`, `SingletonB`, `SingletonC`.
-* The three EJB's contains a `@PostConstruct` annotation for the `init` method that is executed after dependency injection is done to perform any initialization. This method is invoked before the class is put into service.
-* The `init` method store the name of the bean class that is been initialized in the `Supervisor` bean.
-* The `Supervisor` bean is annotated with `@ApplicationScoped` to be able to share the list of bean names stored in the `records` attribute.
-* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initialized until the bean is going to be used in later injection point.
-* `SingletonB` is annotated with `@DependsOn("SingletonA")` to enforce a initialization order with respect to `SingletonA`.
+* O exemplo é composto por três beans singleton : `SingletonA`, `SingletonB`, `SingletonC`.
+* Os três EJB's contém uma anotação `@PostConstruct` para o método `init`que é executado depois da injeção de dependência estar terminada, para otimizar qualquer inicialização. O método é invocado antes que classe seja colocada no serviço.
+* O método `init` armazena o nome do classe bean que foi inicializada no bean `Supervisor`.
+* O bean `Supervisor` está anotado com `@ApplicationScoped` para ser capaz de compartilhar a lista de nomes do bean armazenadas no atributo `records`.
+* `SingletonA` e `SingletonB` são anotados com `@Startup` o que siginifica, que eles serão inicializados na inicialização do aplicativo. `SingletonC` será inicializado, até que o bean seja usado, no ponto de injeção posterior.
+* `SingletonB` é anotado com `@DependsOn("SingletonA")` para obrigar uma inicialização ordenada com relação ao `SingletonA`.
 
 
 
-`SingletonA.java`: Singleton EJB annotated with  `@Startup`. It depends on the EJB `Supervisor`.
+`SingletonA.java`: Singleton EJB anotado com `@Startup`. Depende do `Supervisor` EJB.
 
-[source,java]
+[código,java]
 ----
 package org.foo;
 
@@ -57,9 +57,9 @@ public class SingletonA {
 ----
 
 
-`SingletonB.java`: Singleton EJB annotated with  `@Startup` and `DependsOn`. It depends on the EJB `Supervisor`.
+`SingletonB.java`: Singleton EJB anotado com `@Startup` e `DependsOn`. Depende do `Supervisor` EJB.
 
-[source,java]
+[código,java]
 ----
 package org.foo;
 
@@ -89,9 +89,9 @@ public class SingletonB {
 ----
 
 
-`SingletonC.java`: Singleton EJB. It depends on the EJB `Supervisor`.
+`SingletonC.java`: Singleton EJB. Depende do `Supervisor` EJB.
 
-[source,java]
+[código,java]
 ----
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -119,9 +119,9 @@ public class SingletonC {
 ----
 
 
-`Supervisor.java`: Applicaiton scoped Bean that keep track of a list of Bean Names.
+`Supervisor.java`: Bean com escopo de aplicação que mantém uma lista de Nomes do Bean.
 
-[source,java]
+[código,java]
 ----
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
@@ -142,14 +142,14 @@ public class Supervisor {
 ----
 
 
-=== The tests
+=== Os testes
 
-* The class `TestSingletonStartupOrder.java` contains two test that are executed in order via the annotation `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
-* `firstTest`: assert true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initialized since it's not annotated with `@Startup`.
-* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
+* A classe `TestSingletonStartupOrder.java` contem dois testes, que são executados em ordem, via a anotação `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
+* `primeiroTest`: afirmar verdadeiro se e somente, se os registros armazenados no `Supervisor.record` forem iguais para `[SingletonA, SingletonB]`. Observe que a ordem também é validada. Neste teste, nós não esperamos ver `SingletonC` inicializado, uma vez que não está anotado com `@Startup`.
+* `segundoTest`:  Este teste injeta `SingletonC` como um parâmetro nos testes, portanto, é afirmado verdadeiro se e somente, se os registros armazenados no `Supervisor.record` forem iguais para `[SingletonA, SingletonB, SingletonC]`
 
 `TestSingletonStartupOrder.java`
-[source,java]
+[código,java]
 ----
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -202,8 +202,8 @@ public class TestSingletonStartupOrder {
 }
 ----
 
-=== About the Test architecture
+=== Sobre a arquitetura de Teste
 
-The test cases from this project are built using Arquillian and TomEE
-Remote. The arquillian configuration can be found in
+Os casos de teste deste projeto, estão construidos, usando Arquillian e TomEE
+Remoto. A configuração arquillian pode ser encontrada em 
 `src/test/resources/arquillian.xml`
