@@ -7,7 +7,7 @@ Este exemplo mostra como usar a anotação `@EJB` em uma classe bean para refere
 
 Essa funcionalidade é geralmente chamada de injeção de dependência (consulte
 http://www.martinfowler.com/articles/injection.html) e foi
-recentemente introduzido no Java EE 5.
+ introduzido no Java EE 5.
 
 Neste exemplo em particular, nós vamos criar dois bean de sessão sem estado
 
