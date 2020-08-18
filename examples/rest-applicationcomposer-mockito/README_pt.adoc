@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-Neste exemplo, um serviço REST vai ser testado, usando Aplication Composer e MOckito.
+Neste exemplo, um serviço REST vai ser testado, usando Aplication Composer e Mockito.
 
 http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Application Composer] é uma API de teste para o TomEE. É mais rápido inicializar do que o Arquillian. https://site.mockito.org/[Mockito] é uma estrutura de simulação. Ambos serão usados para testar um serviço REST.
 
