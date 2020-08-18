@@ -1,0 +1,87 @@
+= Exemplo do Application Composer e Mockito
+:index-group: Testing Techniques
+:jbake-type: page
+:jbake-status: published
+
+Neste exemplo, um serviço REST vai ser testado, usando Aplication Composer e Mockito.
+
+http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[Application Composer] é uma API de teste para o TomEE. É mais rápido inicializar do que o Arquillian. https://site.mockito.org/[Mockito] é uma estrutura de simulação. Ambos serão usados para testar um serviço REST.
+
+== Exemplo
+
+O exemplo de serviço REST é definido pela seguinte classe:
+
+[source,java]
+----
+@Singleton
+@Path("/greeting")
+public class GreetingService {
+
+    @Inject
+    private Messager messager;
+
+    @GET
+    public String message() {
+        return messager.message();
+    }
+}
+----
+
+Um bean, `messenger`, é injetado. Quando um cliente acessa o recurso `GET/greeting`, o conteúdo retornado ao cliente será o resultado da execução do método `messenger.message()`.
+
+A funcionalidade `Messager` é definida por esta interface:
+
+[source,java]
+----
+public interface Messager {
+
+    String message();
+}
+----
+
+== Testando o serviço REST
+
+Para testar este serviço REST, o Application Composer será usado em combinação com o Mockito:
+
+[source,java]
+----
+@RunWith(ApplicationComposer.class)
+public class GreetingServiceTest {
+
+    @Mock
+    private Messager messager;
+
+    @Configuration
+    public Properties configuration() {
+        return new Properties() {{
+            setProperty(OpenEjbContainer.OPENEJB_EMBEDDED_REMOTABLE, Boolean.TRUE.toString());
+        }};
+    }
+
+    @MockInjector
+    public Class<?> mockitoInjector() {
+        return MockitoInjector.class;
+    }
+
+    @Module
+    public Class<?>[] app() {
+        return new Class<?>[]{GreetingService.class, Messager.class};
+    }
+
+    @Test
+    public void checkMockIsUsed() throws IOException {
+        when(messager.message()).thenReturn("mockito");
+
+        final String message = IO.slurp(new URL("http://localhost:4204/GreetingServiceTest/greeting/"));
+        assertEquals("mockito", message);
+    }
+}
+----
+
+Podemos ver o uso e a configuração do ApplicationComposer. Mais informações podem ser encontradas em http://tomee.apache.org/tomee-8.0/docs/application-composer/index.html[aqui].
+
+Outra anotação interessante é `@MockInjector`. Isso informa ao contêiner iniciado pelo application composer que o Mockito é usado, para que as propriedades simuladas sejam injetadas.
+
+O método de teste substitui o método `messenger.message()`, retornando o valor "mockito". Em seguida, verifica se, acessando `GET greeting`, o conteúdo recuperado é "mockito ".
+
+Exemplo de código completo pode ser encontrado em https://github.com/apache/tomee/tree/master/examples/rest-applicationcomposer-mockito[aqui]. É um projeto maven, e os testes podem ser executados pelo comando `mvn clean install`.
