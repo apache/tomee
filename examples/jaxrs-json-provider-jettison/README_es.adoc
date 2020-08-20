@@ -3,10 +3,9 @@
 :jbake-type: page
 :jbake-status: status=published
 
-Este es un ejemplo de como configurar en TomEE 7.x o posterior el proveedor antiguo de JSON, Jettison, usado por TomEE1.7.x.
+Este es un ejemplo de como configurar en TomEE 7.x o posterior el proveedor antiguo de JSON, Jettison, usado por TomEE 1.7.x.
 
-
-Este escenario es útil cuando las aplicaciones REST son migradas de TomEE1.7.x hacia TomEE1.x o posterior y se desea continuar con la antigua salida JSON de Jettison 1.3.7.
+Este escenario es útil cuando las aplicaciones REST son migradas de TomEE 1.7.x hacia TomEE 7.x o posterior y se desea continuar con la antigua salida JSON de Jettison 1.3.7.
 
 
 === Corre las pruebas
