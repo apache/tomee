@@ -3,8 +3,8 @@
 :jbake-status: status=published
 = REST Simples
 
-Definir um serviço REST é muito fácil, simplesmente anúncio a anotação @Path para a
-classe, então definir nos métodos, o método HTTP para usar (@GET, @POST, …).
+Definir um serviço REST é muito fácil, simplesmente adicionamos a anotação @Path para a
+classe, então definimos nos métodos, o método HTTP para usar (@GET, @POST, …).
 
 O Código
 
@@ -12,14 +12,14 @@ O Código
 
 Aqui nós vemos um bean que usa as anotações @Path, @Produces e @Consumes.  
 A anotação @Path identifica o modelo de caminho URI ao qual o recurso responde e é especificado no nível de classe de um recurso. O valor da anotação @Path 
-é um modelo de caminho de URI parcial relativo ao URI de base do servidor no qual o recurso está implementado, a raiz de contexto do WAR e o padrão de URL 
+é um modelo de caminho de URI parcial relativo ao URI de base do servidor no qual o recurso está implementado, o contexto raiz do WAR e o padrão de URL 
 para o qual o servlet auxiliar Jersey responde.
 A anotação @Produces é usada para especificar os tipos de mídia MIME ou representações que um recurso pode produzir e enviar de volta ao cliente. Se @Produces 
 for aplicado no nível da classe, todos os métodos em um recurso podem produzir os tipos MIME especificados por padrão. Se for aplicado no nível de método, substitui 
 quaisquer anotações @Produces aplicadas no nível da classe.
 A anotação @Consumes é usada para especificar quais tipos de mídia MIME de representações um recurso pode aceitar ou consumir do cliente. Se @Consumes for 
 aplicado no nível da classe, todos os métodos de resposta aceitarão os tipos MIME especificados por padrão. Se @Consumes for aplicado no nível do método, ele 
-substituirá qualquer @Consumes anotações aplicadas no nível da classe.
+substituirá qualquer anotação @Consumes aplicadas no nível da classe.
 
 Na realidade linhas:
 
@@ -68,7 +68,7 @@ o grupo de classes para ser usado nessa aplicação.
 Finalmente para testá-lo, usamos a API cliente cxf, para chamar o serviço 
 REST em métodos get() e post().
 
-Notação lateral: para mostrar que usamos JSON ou XML, dependendo no método de teste nós
+Observação: para mostrar que usamos JSON ou XML, dependendo no método de teste nós
 ativamos em EnableServices o atributo httpDebug, que imprime as 
 mensagens http nos logs.
 
