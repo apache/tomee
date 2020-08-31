@@ -146,6 +146,24 @@ public class IO {
         }
     }
 
+    public static byte[] readBytes(final File file) throws IOException {
+        try (InputStream in = read(file)) {
+            return readBytes(in);
+        }
+    }
+
+    public static byte[] readBytes(final URL url) throws IOException {
+        try (InputStream in = read(url)) {
+            return readBytes(in);
+        }
+    }
+
+    public static byte[] readBytes(final InputStream in) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        copy(in, out);
+        return out.toByteArray();
+    }
+
     public static String slurp(final File file) throws IOException {
         try (final InputStream is = read(file)) {
             return slurp(is);

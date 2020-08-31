@@ -34,6 +34,7 @@
 
   <modules>
     <module>tomee-config</module>
+    <module>tomee-bootstrap</module>
     <module>tomee-loader</module>
     <module>tomee-catalina</module>
     <module>tomee-common</module>
