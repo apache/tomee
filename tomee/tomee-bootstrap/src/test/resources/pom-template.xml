@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
     this work for additional information regarding copyright ownership.
@@ -17,29 +16,25 @@
     limitations under the License.
 -->
 
-<!-- $Rev$ $Date$ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
-    <artifactId>tomee-project</artifactId>
-    <groupId>org.apache.tomee</groupId>
+    <groupId>org.apache.tomee.bom</groupId>
+    <artifactId>boms</artifactId>
     <version>8.0.5-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.apache.tomee.bom</groupId>
-  <artifactId>boms</artifactId>
+  <artifactId>tomee-microprofile</artifactId>
   <packaging>pom</packaging>
-  <name>TomEE :: BOMs</name>
+  <name>TomEE :: BOMs :: TomEE MicroProfile</name>
 
-  <modules>
-    <module>jaxb-runtime</module>
-    <module>tomee-microprofile</module>
-    <module>tomee-webprofile</module>
-    <module>tomee-plume</module>
-    <module>tomee-plus</module>
-  </modules>
-
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>tomee-bootstrap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+<!--dependencies-->  </dependencies>
 </project>
 
