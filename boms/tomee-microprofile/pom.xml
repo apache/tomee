@@ -1302,7 +1302,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-javaagent.jar</artifactId>
+      <artifactId>openejb-javaagent</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
