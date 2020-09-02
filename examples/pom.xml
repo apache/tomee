@@ -154,6 +154,7 @@
     <module>testing-transactions</module>
     <module>testing-transactions-bmt</module>
     <module>tomee-jersey-eclipselink</module>
+    <module>tomee-webprofile-embedded</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
     <module>webservice-attachments</module>
