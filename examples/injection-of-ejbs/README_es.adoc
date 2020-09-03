@@ -1,24 +1,24 @@
 :index-group: Referencing EJBs
 :jbake-type: page
 :jbake-status: status=published
-= Injection Of Ejbs
+= Inyección de Ejbs
 
-This example shows how to use the `@EJB` annotation on a bean class to
-refer to other beans.
+Este ejemplo muestra cómo usar la anotación `@EJB` en una clase de bean para
+referenciar otros beans.
 
-This functionality is often referred as dependency injection (see
-http://www.martinfowler.com/articles/injection.html), and has been
-introduced in Java EE 5.
+Esta funcionalidad a menudo se denomina inyección de dependencia (consulte
+http://www.martinfowler.com/articles/injection.html), y ha sido
+introducido en Java EE 5.
 
-In this particular example, we will create two session stateless beans
+En este ejemplo particular, crearemos dos beans de sesión sin estado (stateless) 
 
-* a DataStore session bean
-* a DataReader session bean
+* un bean de sesión de DataStore
+* un bean de sesión DataReader
 
-The DataReader bean uses the DataStore to retrieve some informations,
-and we will see how we can, inside the DataReader bean, get a reference
-to the DataStore bean using the `@EJB` annotation, thus avoiding the use
-of the JNDI API.
+El bean DataReader usa el bean DataStore para recuperar información,
+dentro del bean DataReader se obtiene una referencia
+al bean DataStore usando la anotación `@EJB`, evitando así el uso
+de la API JNDI.
 
 == DataReader
 
@@ -30,19 +30,18 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /**
- * This is an EJB 3.1 style pojo stateless session bean
- * Every stateless session bean implementation must be annotated
- * using the annotation @Stateless
- * This EJB has 2 business interfaces: DataReaderRemote, a remote business
- * interface, and DataReaderLocal, a local business interface
- * <p/>
- * The instance variables 'dataStoreRemote' is annotated with the @EJB annotation:
- * this means that the application server, at runtime, will inject in this instance
- * variable a reference to the EJB DataStoreRemote
- * <p/>
- * The instance variables 'dataStoreLocal' is annotated with the @EJB annotation:
- * this means that the application server, at runtime, will inject in this instance
- * variable a reference to the EJB DataStoreLocal
+ * Este es un bean pojo sesión sin estado estilo EJB 3.1
+ * Cada implementación de bean de sesión sin estado debe estar anotada
+ * usando la anotación @Stateless
+ * Este EJB tiene 2 interfaces de negocio: DataReaderRemote, una interfaz remota
+ *  negocio y DataReaderLocal, una interfaz de nogocio local
+ * <p />
+ * Las variables de instancia 'dataStoreRemote' están anotadas con la anotación @EJB:
+ * esto significa que el servidor de aplicaciones, en tiempo de ejecución, inyectará en esta instancia variable una referencia al EJB DataStoreRemote
+ * <p />
+ * Las variables de instancia 'dataStoreLocal' están anotadas con la anotación @EJB:
+ * esto significa que el servidor de aplicaciones, en tiempo de ejecución inyectará en esta instancia
+ * variable una referencia a EJB DataStoreLocal
  */
 
 @Stateless
@@ -79,11 +78,11 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 /**
- * This is an EJB 3 style pojo stateless session bean
- * Every stateless session bean implementation must be annotated
- * using the annotation @Stateless
- * This EJB has 2 business interfaces: DataStoreRemote, a remote business
- * interface, and DataStoreLocal, a local business interface
+ * Este es un bean pojo de sesión sin estado estilo EJB 3
+ * Cada implementación de bean de sesión sin estado debe estar anotada
+ * usando la anotación @Stateless
+ * Este EJB tiene 2 interfaces de negocio: DataStoreRemote, una interfaz de negocio remota
+ * y DataStoreLocal, una interfaz de negocio local
  */
 
 @Stateless
@@ -105,10 +104,10 @@ package org.superbiz.injection;
 import javax.ejb.Local;
 
 /**
- * This is an EJB 3 local business interface
- * A local business interface may be annotated with the @Local
- * annotation, but it's optional. A business interface which is
- * not annotated with @Local or @Remote is assumed to be Local
+ * Esta es una interfaz de negociolocal EJB 3
+ * Una interfaz de negocio local se puede anotar con la anotación @Local,
+ * @Local es una anotación opcional. Una interfaz de negocio que
+ * no esta anotado con @Local o @Remote se supone se asume como Local
  */
 
 @Local
@@ -127,9 +126,8 @@ package org.superbiz.injection;
 import javax.ejb.Remote;
 
 /**
- * This is an EJB 3 remote business interface
- * A remote business interface must be annotated with the @Remote
- * annotation
+ * Esta es una interfaz de negocio remota EJB 3
+ * Se debe anotar una interfaz de negocio remota con la anotación @Remote
  */
 
 @Remote
@@ -151,7 +149,8 @@ import javax.ejb.embeddable.EJBContainer;
 import javax.naming.Context;
 
 /**
- * A test case for DataReaderImpl ejb, testing both the remote and local interface
+ * Un caso de prueba para DataReaderImpl ejb, probando tanto la interfaz remota 
+ * como la local
  */
 
 public class EjbDependencyTest extends TestCase {
@@ -170,7 +169,7 @@ public class EjbDependencyTest extends TestCase {
 }
 ----
 
-== Running
+== Ejecución
 
 [source,console]
 ----

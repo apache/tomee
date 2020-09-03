@@ -22,9 +22,11 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.deploy.NamingResourcesImpl;
 import org.apache.tomcat.util.descriptor.web.ContextResource;
 import org.apache.tomee.loader.TomcatHelper;
+import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
@@ -32,19 +34,26 @@ import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.IdentityStorePermission;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static java.util.Collections.emptySet;
 
 @ApplicationScoped
 public class TomEEDefaultIdentityStore implements IdentityStore {
 
+    @Inject
+    private Supplier<TomcatUserIdentityStoreDefinition> definitionSupplier;
+    private TomcatUserIdentityStoreDefinition definition;
+
     private UserDatabase userDatabase;
 
     @PostConstruct
     private void init() throws Exception {
+        definition = definitionSupplier.get();
+
         final StandardServer server = TomcatHelper.getServer();
         final NamingResourcesImpl resources = server.getGlobalNamingResources();
-        final ContextResource userDataBaseResource = resources.findResource("UserDatabase");
+        final ContextResource userDataBaseResource = resources.findResource(definition.resource());
         userDatabase = (UserDatabase) server.getGlobalNamingContext().lookup(userDataBaseResource.getName());
     }
 

@@ -1,11 +1,11 @@
-= DeltaSpike Project Stage
+= Estágio do Projeto DeltaSpike
 :index-group: Testing Techniques
 :jbake-type: page
 :jbake-status: published
 
-This example shows how to use https://deltaspike.apache.org/documentation/projectstage.html[DeltaSpike project stage^] within Arquillian tests running on TomEE.
+Este exemplo mostra como usar https://deltaspike.apache.org/documentation/projectstage.html[deltaSpike project stage] nos testes do Arquillian em execução no TomEE.
 
-== Example
+== Exemplo
 
 [source, java]
 ----
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 public final class ManagerFactory {
 
     @Inject
-    private ProjectStage projectStage; <1>
+    private ProjectStage projectStage; // <1>
 
     @Produces
     public Manager currentManager() {
@@ -30,13 +30,14 @@ public final class ManagerFactory {
     }
 }
 ----
-<<1>> Current project stage injected via CDI.
+<<1>> Aqui o `ProjectStage` é injetado via CDI .
 
-On the example above a `Manager` instance is created based on current ProjectStage.
+No exemplo acima, uma instância do `Manager` é criada com base no ProjectStage atual.
 
-== Setting the Project stage
+== Configurando o Project stage
 
-There is a few ways to set current project stage, on this example we will use a https://deltaspike.apache.org/documentation/configuration.html#ProvidingconfigurationusingConfigSources[DeltaSpike config source^] which reads the project stage from a file named `project-stage.properties`:
+Existem algumas maneiras de configurar o project stage, neste exemplo, usaremos um
+https://deltaspike.apache.org/documentation/configuration.html#ProvidingconfigurationusingConfigSources[DeltaSpike config source ^] que lê o project stage a partir de um arquivo chamado `project-stage.properties`:
 
 .src/main/resources/project-stage.properties
 ----
@@ -45,11 +46,11 @@ org.apache.deltaspike.ProjectStage=Development
 
 [tip]
 
-TIP: Full source of our project stage producer can be https://github.com/apache/tomee/blob/master/examples/projectstage-demo/src/test/java/org/superbiz/projectstage/util/ProjectStageProducer.java[found here^].
+TIP: A fonte completa do produtor do project stage pode ser https://github.com/apache/tomee/blob/master/examples/projectstage-demo/src/test/java/org/superbiz/projectstage/util/ProjectStageProducer.java[encontrado aqui^].
 
-=== Configuring project stage on tests
+=== Configurando o project stage nos Testes
 
-On our `Arquillian` test we have an utility which will create the `project-stage.properties` file and add on the test war:
+No nosso teste `Arquillian`, temos um utilitário que criará o arquivo `project-stage.properties` e adicionará o war de teste:
 
 [source,java]
 ----
@@ -75,7 +76,7 @@ public abstract class BaseTestForProjectStage {
 }
 ----
 
-Now we can test our project with different ProjectStages, see for example how a test using `dev stage` look like:
+Agora podemos testar nosso projeto com diferentes ProjectStages. Veja, por exemplo, como um teste usando o `dev stage` se parece com:
 
 [source,java]
 ----
@@ -94,14 +95,14 @@ public class DevProjectStageTest extends BaseTestForProjectStage {
 }
 ----
 
-== Running
+== Executando
 
 [source,bash]
 ----
 mvn clean test
 ----
 
-=== Output
+=== Saída
 [source,bash]
 ----
 -------------------------------------------------------
