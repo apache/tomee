@@ -63,7 +63,7 @@ For example, if you want to retrieve the preferred username claim, you can do it
     private String userName;
 ----
 
-Note that you cannot inject claims this way in a REST resource class that contains unauthenticated endpoints too.
+NOTE: Note that you cannot inject claims this way in a REST resource class that contains unauthenticated endpoints too.
 TomEE will nevertheless try to extract the claim from the JWT.
 So if there is no JWT or if the claim is not there, the request will fail.
 

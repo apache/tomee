@@ -3,19 +3,19 @@
 :jbake-type: page
 :jbake-status: published
 
-Este es un ejemplo básico sobre cómo configurar y utilizar Cliente Rest de MicroProfile en TomEE.
+Este é um exemplo básico sobre como configurar e utilizar o Cliente Rest do MicroProfile no TomEE.
 
 [source,java]
 ----
 mvn clean test 
 ----
 
-=== Requisitos y configuración
+=== Requisitos e configuração
 
-Para utilizar el Cliente Rest de MicroProfile se requieren 3 cambios en su proyecto:
+Para usar o MicroProfile Rest Client, são necessárias 3 alterações no seu projeto:
 
 [arabic]
-. Agregar la siguiente dependencia al `pom.xml`:
+. Adicione a seguinte dependência ao `pom.xml`:
 +
 [source,java]
 ----
@@ -26,14 +26,13 @@ Para utilizar el Cliente Rest de MicroProfile se requieren 3 cambios en su proye
      <scope>provided</scope>
  </dependency>
 ----
-. Proveer el archivo de configuración: `microprofile-config.properties`
+. Forneça o arquivo de configuração: `microprofile-config.properties`
 +
 [source,java]
 ----
  org.superbiz.rest.BookResourceClient/mp-rest/url=http://localhost:4444
 ----
-. Proporcionar una interfaz que pueda crear a partir del recurso JAX-RS 
-que desea consumir: `BookResourceClient.java`
+. Forneça uma interface que você possa criar a partir do recurso JAX-RS que deseja consumir: `BookResourceClient.java`
 +
 [source,java]
 ----
@@ -78,11 +77,9 @@ que desea consumir: `BookResourceClient.java`
  }
 ----
 
-=== Uso del Client Rest de MicroProfile en TomEE
+=== Usando o Client Rest do MicroProfile no TomEE
 
-La clase `BookResourceTest.java` muestra lo fácil que es utilizar el enfoque 
-con seguridad de tipos (type-safe) proporcionado por el Client Rest de MicroProfile
-para consumir un recurso JAX-RS existente.
+A classe `BookResourceTest.java` mostra como é fácil usar a abordagem de segurança de tipo fornecida pelo MicroProfile Client Rest para consumir um recurso JAX-RS existente.
 
 [source,java]
 ----
@@ -148,8 +145,6 @@ public class BookResourceTest {
 }
 ----
 
-=== Acerca de la arquitectura de prueba
+=== Sobre a arquitetura de teste
 
-Los casos de prueba de este proyecto se construyen utilizando Arquillian 
-y TomEE Remote. La configuración del arquillianse se puede encontrar en 
-`src/test/resources/arquillian.xml`
+Os casos de teste para este projeto são criados usando o Arquillian e o TomEE Remote. A configuração do Arquillian pode ser encontrada em `src/test/resources/arquillian.xml`.

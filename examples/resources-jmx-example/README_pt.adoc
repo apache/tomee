@@ -3,21 +3,14 @@
 :jbake-status: status=published
 = Custom resources in an EAR archive
 
-TomEE allows you to define your own resources within your application,
-and declare them in `META-INF/resources.xml`. This allows you do inject
-these resource into any managed component within your application.
+O TomEE permite que você defina seus próprios recursos na sua aplicação e declare-os em `META-INF/resources.xml`. Isso permite que você injete esses recursos em qualquer componente gerenciado na sua aplicação.
 
-In addition to this, you can also define a `create` method on either the
-resource itself, or on a POJO that acts as a factory. This example
-demonstrates using the `create` method to additionally register the
-resource as a JMX MBean, as well as make it available for injection.
+Além disso, você também pode definir um método `create` no próprio recurso ou em um POJO que atua como uma fábrica.
+Este exemplo demonstra o uso do método `create` para registrar adicionalmente o recurso como um JMX MBean, além de disponibilizá-lo para injeção.
 
 == Resource
 
-Custom resources can be defined using very simple Java classes. In this
-particular instance, as the application also wants to register this
-resource as an MBean, the resource class needs to follow the MBean
-specification.
+Recursos customizados podem ser definidos usando classes Java muito simples. Nesse caso específico, como o aplicativo também deseja registrar esse como MBean, a classe de recurso precisa seguir a especificação de MBean.
 
 [source,java]
 ----
@@ -63,11 +56,9 @@ public interface HelloMBean {
 }
 ----
 
-== Create method
+== Método Criar(Create)
 
-To avoid adding the logic to register the resource as an MBean in every
-resource, the application provides a single class with a create() method
-that takes care of this logic for us.
+Para evitar adicionar a lógica para registrar o recurso como um MBean em todos os recursos, a aplicação fornece a uma única classe um método `create()` que cuida dessa lógica para nós.
 
 [source,java]
 ----
@@ -151,15 +142,14 @@ public class JMXBeanCreator {
 }
 ----
 
-NOTE: that this class uses the properties defined in the configuration
-(below), combined with reflection, to instantiate the resource, and set
-its attributes. The code above requires two properties `code` and `name`
-in order to know what class to create, and the JMX name to register it
-under.
+NOTE: que esta classe usa as propriedades definidas na configuração
+(abaixo), combinada com reflexão, para instanciar o recurso e definir
+seus atributos. O código acima requer duas propriedades `code` e `name`
+para saber qual classe criar e o nome JMX sob o qual será registrada.
 
 == Resource
 
-The resource can be defined in `META-INF/resources.xml` as follows:
+O recurso pode ser definido em `META-INF/resources.xml` da seguinte maneira:
 
 [source,xml]
 ----
@@ -172,14 +162,13 @@ The resource can be defined in `META-INF/resources.xml` as follows:
 </Resources>
 ----
 
-NOTE: that the class-name attribute refers to the factory class, and not
-the resource. Once the resource has been created and bound in TomEE’s
-JNDI tree the factory is no longer used.
+NOTE: que o atributo class-name se refere à classe factory, e não
+o recurso. Depois que o recurso for criado e vinculado ao recurso. 
+Depois que o recurso for criado e vinculado à árvore JNDI do TomEE, a fábrica não é mais usada.
 
-== Using @Resource for injection
+== Usando o @Resource para injeção
 
-The test case for this example demonstrates injection into an EJB as one
-way of accessing the resource, and also accessing the resource via JMX.
+O caso de teste para este exemplo demonstra a injeção em um EJB como uma maneira de acessar o recurso e também acessar o recurso via JMX.
 
 [source,java]
 ----
@@ -261,61 +250,45 @@ public class JMXTest {
 }
 ----
 
-The name `<appname>/<resource-id>` attribute is used on the `@Resource`
-annotation to perform the injection. No further configuration is needed
-to inject the resource.
+O atributo name `<name>/<resource-id>`é usado na anotação `@Resource` para executar a injeção. Nenhuma configuração adicional é necessária para injetar o recurso.
 
-== Additional properties
+== Propriedades adicionais
 
-In addition to the `code` and `name` properties that the code above uses
-to instantiate the resource, TomEE itself provides some properties to
-provide more control over the creation of resources.
+Além das propriedades `code` e `name` que o código acima usa para instanciar o recurso, o próprio TomEE fornece algumas propriedades para fornecer mais controle sobre a criação de recursos.
 
-Resources are typically discovered, created, and bound to JNDI very
-early on in the deployment process, as other components depend on them.
-This may lead to problems where the final classpath for the application
-has not yet been determined, and therefore TomEE is unable to load your
-custom resource.
+Os recursos são normalmente descobertos, criados e vinculados ao
+JNDI muito cedo no processo de implementação, pois outros componentes dependem deles. Isso pode levar a problemas nos quais o classpath final da aplicação ainda não foi determinado e, portanto, o TomEE não pode carregar seu recurso personalizado.
 
-The following properties can be used to change this behavior.
+As seguintes propriedades podem ser usadas para alterar esse comportamento.
 
 * Lazy
 
-This is a boolean value, which when true, creates a proxy that defers
-the actual instantiation of the resource until the first time it is
-looked up from JNDI. This can be useful if the resource requires the
-application classpath, or to improve startup time by not fully
-initializing resources that might not be used.
+é um valor booleano que, quando verdadeiro, cria um proxy que adia
+a instanciação real do recurso até a primeira vez que ele é procurado pelo JNDI. 
+Isso pode ser útil se o recurso exigir o classpath da aplicação ou para melhorar o tempo de inicialização não totalmente inicializando recursos que podem não ser usados.
 
 * UseAppClassLoader
 
-This boolean value forces a lazily instantiated resource to use the
-application classloader, instead of the classloader available when the
-resources were first processed.
+Esse valor booleano força um recurso instanciado Lazy a usar o
+classloaders da aplicação, em vez do classloader disponível quando
+os recursos foram processados primeiro.
 
 * InitializeAfterDeployment
 
-This boolean setting forces a resource created with the Lazy property to
-be instantiated once the application has started, as opposed to waiting
-for it to be looked up. Use this flag if you require the resource to be
-loaded, irrespective of whether it is injected into a managed component
-or manually looked up.
+Essa configuração booleana força um recurso criado com a propriedade Lazy a ser instanciado depois que a aplicação é iniciada, em vez de esperar que ele seja procurado. Use esse sinalizador se precisar que o recurso seja carregado,independentemente de ser injetado em um componente gerenciado ou consultado manualmente.
 
-By default, all of these settings are `false`, unless TomEE encounters a
-custom application resource that cannot be instantiated until the
-application has started. In this case, it will set these three flags to
-`true`, unless the `Lazy` flag has been explicitly set.
+Por padrão, todas essas configurações são `false`, a menos que o TomEE encontre um recurso da aplicação personalizado que não possa ser instanciado até que a aplicação seja iniciada. 
+Nesse caso, ele definirá esses três sinalizadores para `true`, a menos que o sinalizador `Lazy` tenha sido definido explicitamente.
 
 == PostConstruct / PreDestroy
 
-As an alternative to using a factory method, you can use @PostConstruct
-and @PreDestroy methods within your resource class (note that you cannot
-use this within a factory class) to manage any additional creation or
-cleanup activities. TomEE will automatically call these methods when the
-application is started and destroyed. Using @PostConstruct will
-effectively force a lazily loaded resource to be instantiated when the
-application is starting - in the same way that the
-`InitializeAfterDeployment` property does.
+Como alternativa ao uso de um método de fábrica, você pode usar `@PostConstruct`
+e `@PreDestroy` dentro da sua classe de recurso (observe que você não pode
+usar isso dentro de uma classe de fábrica) para gerenciar qualquer criação ou
+atividades de limpeza. O TomEE chama automaticamente esses métodos quando o
+aplicativo é iniciado e destruído. O uso do `@PostConstruct`
+efetivamente força um recurso carregado lentamente a ser instanciado quando o
+aplicativo está sendo iniciado - da mesma maneira que a propriedade `InitializeAfterDeployment` faz.
 
 [source,java]
 ----
@@ -416,17 +389,16 @@ public class Alternative implements AlternativeMBean {
 }
 ----
 
-== Running
+== Executando
 
-Running the example can be done from maven with a simple `mvn clean
-install' command run from the `resources-jmx-example' directory.
+A execução do exemplo pode ser feita no maven com um simples comando `mvn clean install`, executado no diretório `resources-jmx-example`.
 
-When run you should see output similar to the following.
+Ao executar, você verá uma saída semelhante à seguinte.
 
 [source,console]
 ----
 -------------------------------------------------------
- T E S T S
+ T E S T E S
 -------------------------------------------------------
 Running org.superbiz.resource.jmx.JMXTest
 Apr 15, 2015 12:40:09 PM org.jboss.arquillian.container.impl.MapObject populate
@@ -786,7 +758,7 @@ Results :
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-NOTE: the following lines showing the creation of the resource.
+NOTE: as seguintes linhas mostrando a criação do recurso.
 
 [source,java]
 ----

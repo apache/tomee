@@ -17,6 +17,7 @@
 package org.apache.tomee.security.context;
 
 import org.apache.tomee.security.AbstractTomEESecurityTest;
+import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -97,6 +98,7 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
                                        .get().getStatus());
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/securityContext")
     public static class TestServlet extends HttpServlet {
         @Inject
@@ -118,6 +120,7 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
         }
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/securityContextPrincipal")
     public static class PrincipalServlet extends HttpServlet {
         @Inject
@@ -141,6 +144,7 @@ public class SecurityContextTest extends AbstractTomEESecurityTest {
         }
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/securityContextRole")
     public static class RoleServlet extends HttpServlet {
         @Inject

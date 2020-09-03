@@ -1,24 +1,22 @@
 :index-group: Web Services
 :jbake-type: page
 :jbake-status: status=published
-= @WebService handlers with @HandlerChain
+= Mantenedores @WebService com @HandlerChain
 
-In this example we see a basic JAX-WS `@WebService` component use a
-handler chain to alter incoming and outgoing SOAP messages. SOAP
-Handlers are similar to Servlet Filters or EJB/CDI Interceptors.
+Neste exemplo nós vemos um básico componente `@WebService` JAX-WS usar uma 
+cadeia de mantenedores para alterar mensagens SOAP enviadas e recebidas. 
+Mantenedores SOAP são parecidos com Filtros Servlet ou Interceptadores EJB/CDI.
 
-At high level, the steps involved are:
+Em alto nível, as etapas envolvidas são: 
 
 [arabic]
-. Create handler(s) implementing `javax.xml.ws.handler.soap.SOAPHandler`
-. Declare and order them in an xml file via `<handler-chain>`
-. Associate the xml file with an `@WebService` component via
-`@HandlerChain`
+. Crie mantenedores implementando `javax.xml.ws.handler.soap.SOAPHandler`
+. Declare e ordene-os em um arquivo xml via `<handler-chain>`
+. Associe o arquivo xml com um componente `@WebService` via `@HandlerChain`
 
-== The @HandlerChain
-
-First we’ll start with our plain `@WebService` bean, called
-`Calculator`, which is annotated with `@HandlerChain`
+== O @HandlerChain
+Primeiro, começaremos com nosso simples bean `@WebService`, chamado
+`Calculator`, que é anotado com `@HandlerChain`
 
 [source,java]
 ----
@@ -41,24 +39,24 @@ public class Calculator implements CalculatorWs {
 }
 ----
 
-Here we see `@HandlerChain` pointing to a file called `handlers.xml`.
-This file could be called anything, but it must be in the same jar and
-java package as our `Calculator` component.
+Aqui vemos `@HandlerChain` apontando para um arquivo chamado `handlers.xml`.
+Esse arquivo pode ser chamado de qualquer coisa, mas deve estar no mesmo jar e
+pacote java como nosso componente `Calculator`.
 
-== The <handler-chains> file
+== O arquivo <handler-chains>
 
-Our `Calculator` service is in the package
-`org.superbiz.calculator.wsh`, which means our handler chain xml file
-must be at `org/superbiz/calculator/wsh/handlers.xml` in our
-application’s classpath or the file will not be found and no handlers
-will be used.
+Nosso serviço `Calculator` está no pacote `org.superbiz.calculator.wsh`, 
+o que significa que o arquivo xml da cadeia de mantenedores
+deve estar em `org/superbiz/calculator/wsh/handlers.xml` em nosso
+classpath do aplicativo ou o arquivo não será encontrado e nenhum mantenedor
+será usado.
 
-In maven we achieve this by putting our handlers.xml in
-`src/main/resources` like so:
+No maven, conseguimos isso colocando nosso handlers.xml em
+`src/main/resources` igual a:
 
 * `src/main/resources/org/superbiz/calculator/wsh/handlers.xml`
 
-With this file we declare and *order* our handler chain.
+Com este arquivo nós declaramos e *ordenamos* nossa cadeia mantenedora.
 
 [source,xml]
 ----
@@ -77,19 +75,19 @@ With this file we declare and *order* our handler chain.
 </handler-chains>
 ----
 
-The order as you might suspect is:
+A ordem como você pode suspeitar é:
 
 * `Inflate`
 * `Increment`
 
-== The SOAPHandler implementation
+== A implementação SOAPHandler
 
-Our `Inflate` handler has the job of monitoring _responses_ to the `sum`
-and `multiply` operations and making them 1000 times better.
-Manipulation of the message is done by walking the `SOAPBody` and
-editing the nodes. The `handleMessage` method is invoked for both
-requests and responses, so it is important to check the `SOAPBody`
-before attempting to naviage the nodes.
+Nosso manipulador `Inflate` tem o trabalho de monitorar _retornos_ para as
+operações 'sum' e 'multiply' e fazê-las 1000 vezes melhores.
+A manipulação da mensagem é feita andando pelo `SOAPBody` e 
+editando os nódulos. O método `handleMessage` é invocado para ambos, 
+requisições e retornos, por isso é importante para verificar o `SOAPBody` 
+antes de tentar navegar os nódulos.
 
 [source,java]
 ----
@@ -140,16 +138,16 @@ public class Inflate implements SOAPHandler<SOAPMessageContext> {
 }
 ----
 
-The `Increment` handler is identical in code and therefore not shown.
-Instead of multiplying by 1000, it simply adds 1.
+O mantenedor `Increment` é identico no código e portanto não é mostrado.
+Ao invés de multiplicar por 1000, este simplesmente adiciona 1.
 
-== The TestCase
+== O Caso de Teste
 
-We use the JAX-WS API to create a Java client for our `Calculator` web
-service and use it to invoke both the `sum` and `multiply` operations.
-Note the clever use of math to assert both the existence and order of
-our handlers. If `Inflate` and `Increment` were reversed, the responses
-would be 11000 and 13000 respectively.
+Nós usamos a API JAX-WS para criar um cliente Java para o nosso serviço web 
+`Calculator` e o usamos para chamar as operações` sum` e `multiply`.
+Observemos o uso inteligente da matemática, para afirmar tanto a existência e 
+a ordem de nossos mantenedores. Se 'Inflate' e 'Increment' forem invertidos, 
+as respostas seriam 11000 e 13000, respectivamente.
 
 [source,java]
 ----
@@ -179,10 +177,9 @@ public class CalculatorTest {
 }
 ----
 
-== Running the example
+== Executando o exemplo
 
-Simply run `mvn clean install` and you should see output similar to the
-following:
+Simplesmente execute `mvn clean install` e você verá resultado semelhante o seguinte:
 
 [source,console]
 ----
@@ -241,9 +238,9 @@ Results :
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-== Inspecting the messages
+== Inspecionando as mensagens
 
-The execution above would generate the following messages.
+A execução acima geraria as seguintes mensagens.
 
 === Calculator wsdl
 
@@ -345,9 +342,9 @@ The execution above would generate the following messages.
 </wsdl:definitions>
 ----
 
-=== SOAP sum and sumResponse
+=== SOAP sum e sumResponse
 
-Request:
+Requisição:
 
 [source,xml]
 ----
@@ -362,7 +359,7 @@ Request:
 </soap:Envelope>
 ----
 
-Response:
+Retorno:
 
 [source,xml]
 ----
@@ -376,9 +373,9 @@ Response:
 </soap:Envelope>
 ----
 
-=== SOAP multiply and multiplyResponse
+=== SOAP multiply e multiplyResponse
 
-Request:
+Requisição:
 
 [source,xml]
 ----
@@ -393,7 +390,7 @@ Request:
 </soap:Envelope>
 ----
 
-Response:
+Retorno:
 
 [source,xml]
 ----

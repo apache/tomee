@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
+ * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setGroupId("org.apache.tomee");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion(System.getProperty("tomee.version"));
+        configuration.setVersion("7.1.3-TT.5");
         configuration.setHttpPort(-1);
 
         final RemoteTomEEContainer container = new RemoteTomEEContainer();
@@ -58,7 +58,7 @@ public class DeployInWebAppsDirectoryTest {
             final File webapps = new File(configuration.getDir(), "apache-tomee-" + configuration.getClassifier() + "-" + configuration.getVersion() + "/webapps");
             webapps.mkdirs();
 
-            final File enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:1.1.0-SNAPSHOT")
+            final File enterpriseArchive = Maven.resolver().resolve("org.superbiz:moviefun-ear:ear:7.1.3-SNAPSHOT")
                     .withoutTransitivity().asSingleFile();
 
             IO.copy(enterpriseArchive, new File(webapps, "moviefun-ear.ear"));

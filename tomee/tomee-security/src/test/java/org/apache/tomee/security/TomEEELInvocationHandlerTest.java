@@ -20,6 +20,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.el.ELProcessor;
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
@@ -51,13 +53,13 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         return CDI.current().getBeanManager();
     }
 
+    @Vetoed // so we don't break the other tests with this
     @DatabaseIdentityStoreDefinition(dataSourceLookup = "jdbc/securityAPIDB",
                                      callerQuery = "select password from caller where name = ?",
                                      groupsQuery = "select group_name from caller_groups where caller_name = ?",
                                      hashAlgorithm = CleartextPasswordHash.class,
                                      priority = 30, priorityExpression = "90")
     public static class Color {
-
     }
 
     public static class CleartextPasswordHash implements PasswordHash {

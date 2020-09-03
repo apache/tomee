@@ -21,6 +21,7 @@ import org.apache.tomee.security.TomEEPbkdf2PasswordHash;
 import org.apache.tomee.security.TomEEPlaintextPasswordHash;
 import org.apache.tomee.security.TomEESecurityContext;
 import org.apache.tomee.security.identitystore.TomEEDatabaseIdentityStore;
+import org.apache.tomee.security.identitystore.TomEEDefaultIdentityStore;
 import org.apache.tomee.security.identitystore.TomEEIdentityStoreHandler;
 import org.apache.tomee.security.identitystore.TomEELDAPIdentityStore;
 
@@ -30,13 +31,13 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanAttributes;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
-import javax.enterprise.inject.spi.ProcessAnnotatedType;
-import javax.enterprise.inject.spi.WithAnnotations;
+import javax.enterprise.inject.spi.ProcessBean;
 import javax.enterprise.util.TypeLiteral;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
@@ -46,18 +47,28 @@ import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
 import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.LdapIdentityStoreDefinition;
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class TomEESecurityExtension implements Extension {
 
-    private final Set<AnnotatedType> basicAuthentication = new HashSet<>();
-    private final Set<AnnotatedType> formAuthentication = new HashSet<>();
-    private final Set<AnnotatedType> customAuthentication = new HashSet<>();
+    final List<Class<? extends Annotation>> annotationsToFind = Arrays.asList(TomcatUserIdentityStoreDefinition.class,
+                                                                              DatabaseIdentityStoreDefinition.class,
+                                                                              LdapIdentityStoreDefinition.class,
+                                                                              BasicAuthenticationMechanismDefinition.class,
+                                                                              FormAuthenticationMechanismDefinition.class,
+                                                                              CustomFormAuthenticationMechanismDefinition.class);
 
-    private final Set<AnnotatedType> databaseIdentityStore = new HashSet<>();
-    private final Set<AnnotatedType> ldapIdentityStore = new HashSet<>();
+    private final AtomicReference<Annotated> basicMechanism = new AtomicReference<>();
+    private final AtomicReference<Annotated> formMechanism = new AtomicReference<>();
+    private final AtomicReference<Annotated> customMechanism = new AtomicReference<>();
+
+    private final AtomicReference<Annotated> tomcatUserStore = new AtomicReference<>();
+    private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
+    private final AtomicReference<Annotated> ldapStore = new AtomicReference<>();
 
     void observeBeforeBeanDiscovery(
         @Observes final BeforeBeanDiscovery beforeBeanDiscovery,
@@ -65,7 +76,6 @@ public class TomEESecurityExtension implements Extension {
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(DefaultAuthenticationMechanism.class));
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityServletAuthenticationMechanismMapper.class));
-        // beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class)); // only if at least idstore was found?
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEIdentityStoreHandler.class));
 
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEEPbkdf2PasswordHash.class));
@@ -78,45 +88,34 @@ public class TomEESecurityExtension implements Extension {
         beforeBeanDiscovery.addAnnotatedType(beanManager.createAnnotatedType(TomEESecurityContext.class));
     }
 
-    void processIdentityStores(
-        @Observes
-        @WithAnnotations({
-                             DatabaseIdentityStoreDefinition.class,
-                             LdapIdentityStoreDefinition.class
-                         }) final ProcessAnnotatedType<?> processAnnotatedType) {
+    // using CDI Observes with WithAnnotations seems to trigger loading of the ProcessAnnotatedType
+    // and it may fail into a NoClassDefFound pretty hard to pin down
+    public <T> void processBean(@Observes final ProcessBean<T> eventIn, final BeanManager beanManager) {
 
-        final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
+        final Annotated annotatedType = eventIn.getAnnotated();
 
-        if (annotatedType.isAnnotationPresent(DatabaseIdentityStoreDefinition.class)) {
-            databaseIdentityStore.add(annotatedType);
+        if (tomcatUserStore.get() == null && annotatedType.isAnnotationPresent(TomcatUserIdentityStoreDefinition.class)) {
+            tomcatUserStore.set(annotatedType);
         }
 
-        if (annotatedType.isAnnotationPresent(LdapIdentityStoreDefinition.class)) {
-            ldapIdentityStore.add(annotatedType);
+        if (databaseStore.get() == null && annotatedType.isAnnotationPresent(DatabaseIdentityStoreDefinition.class)) {
+            databaseStore.set(annotatedType);
         }
 
-    }
-
-    void processAuthenticationMechanismDefinitions(
-        @Observes
-        @WithAnnotations({
-                             BasicAuthenticationMechanismDefinition.class,
-                             FormAuthenticationMechanismDefinition.class,
-                             CustomFormAuthenticationMechanismDefinition.class
-                         }) final ProcessAnnotatedType<?> processAnnotatedType) {
-
-        final AnnotatedType<?> annotatedType = processAnnotatedType.getAnnotatedType();
-
-        if (annotatedType.isAnnotationPresent(BasicAuthenticationMechanismDefinition.class)) {
-            basicAuthentication.add(annotatedType);
+        if (ldapStore.get() == null && annotatedType.isAnnotationPresent(LdapIdentityStoreDefinition.class)) {
+            ldapStore.set(annotatedType);
         }
 
-        if (annotatedType.isAnnotationPresent(FormAuthenticationMechanismDefinition.class)) {
-            formAuthentication.add(annotatedType);
+        if (basicMechanism.get() == null && annotatedType.isAnnotationPresent(BasicAuthenticationMechanismDefinition.class)) {
+            basicMechanism.set(annotatedType);
         }
 
-        if (annotatedType.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
-            customAuthentication.add(annotatedType);
+        if (formMechanism.get() == null && annotatedType.isAnnotationPresent(FormAuthenticationMechanismDefinition.class)) {
+            formMechanism.set(annotatedType);
+        }
+
+        if (customMechanism.get() == null && annotatedType.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
+            customMechanism.set(annotatedType);
         }
     }
 
@@ -124,7 +123,37 @@ public class TomEESecurityExtension implements Extension {
         @Observes final AfterBeanDiscovery afterBeanDiscovery,
         final BeanManager beanManager) {
 
-        if (!databaseIdentityStore.isEmpty()) {
+        if (tomcatUserStore.get() != null) {
+            afterBeanDiscovery
+                .addBean()
+                .id(TomEEDefaultIdentityStore.class.getName() + "#" + TomcatUserIdentityStoreDefinition.class.getName())
+                .beanClass(Supplier.class)
+                .addType(Object.class)
+                .addType(new TypeLiteral<Supplier<TomcatUserIdentityStoreDefinition>>() {})
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith(creationalContext -> createTomcatUserIdentityStoreDefinitionSupplier(beanManager));
+
+            afterBeanDiscovery
+                .addBean()
+                .id(TomEEDefaultIdentityStore.class.getName())
+                .beanClass(TomEEDefaultIdentityStore.class)
+                .types(Object.class, IdentityStore.class, TomEEDefaultIdentityStore.class)
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith((CreationalContext<TomEEDefaultIdentityStore> creationalContext) -> {
+                    final AnnotatedType<TomEEDefaultIdentityStore> annotatedType =
+                        beanManager.createAnnotatedType(TomEEDefaultIdentityStore.class);
+                    final BeanAttributes<TomEEDefaultIdentityStore> beanAttributes =
+                        beanManager.createBeanAttributes(annotatedType);
+                    return beanManager.createBean(beanAttributes, TomEEDefaultIdentityStore.class,
+                                                  beanManager.getInjectionTargetFactory(annotatedType))
+                                      .create(creationalContext);
+                });
+
+        }
+
+        if (databaseStore.get() != null) {
             afterBeanDiscovery
                 .addBean()
                 .id(TomEEDatabaseIdentityStore.class.getName() + "#" + DatabaseIdentityStoreDefinition.class.getName())
@@ -153,7 +182,7 @@ public class TomEESecurityExtension implements Extension {
                 });
         }
 
-        if (!ldapIdentityStore.isEmpty()) {
+        if (ldapStore.get() != null) {
             afterBeanDiscovery
                 .addBean()
                 .id(TomEELDAPIdentityStore.class.getName() + "#" + LdapIdentityStoreDefinition.class.getName())
@@ -182,7 +211,7 @@ public class TomEESecurityExtension implements Extension {
                 });
         }
 
-        if (!basicAuthentication.isEmpty()) {
+        if (basicMechanism.get() != null) {
             afterBeanDiscovery
                 .addBean()
                 .id(BasicAuthenticationMechanism.class.getName())
@@ -202,7 +231,7 @@ public class TomEESecurityExtension implements Extension {
 
         }
 
-        if (!formAuthentication.isEmpty()) {
+        if (formMechanism.get() != null) {
             afterBeanDiscovery
                 .addBean()
                 .id(FormAuthenticationMechanism.class.getName() + "#" + LoginToContinue.class.getName())
@@ -233,7 +262,7 @@ public class TomEESecurityExtension implements Extension {
 
         }
 
-        if (!customAuthentication.isEmpty()) {
+        if (customMechanism.get() != null) {
             afterBeanDiscovery
                 .addBean()
                 .id(CustomFormAuthenticationMechanism.class.getName() + "#" + LoginToContinue.class.getName())
@@ -265,13 +294,12 @@ public class TomEESecurityExtension implements Extension {
     }
 
     public boolean hasAuthenticationMechanisms() {
-        return (basicAuthentication.size() + formAuthentication.size() + customAuthentication.size()) > 0;
+        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null;
     }
 
     private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final BeanManager beanManager) {
         return () -> {
-            final LoginToContinue loginToContinue = formAuthentication.iterator()
-                                                                      .next()
+            final LoginToContinue loginToContinue = formMechanism.get()
                                                                       .getAnnotation(
                                                                           FormAuthenticationMechanismDefinition.class)
                                                                       .loginToContinue();
@@ -282,8 +310,7 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<LoginToContinue> createCustomFormLoginToContinueSupplier(final BeanManager beanManager) {
         return () -> {
-            final LoginToContinue loginToContinue = customAuthentication.iterator()
-                                                                        .next()
+            final LoginToContinue loginToContinue = customMechanism.get()
                                                                         .getAnnotation(
                                                                             CustomFormAuthenticationMechanismDefinition.class)
                                                                         .loginToContinue();
@@ -292,10 +319,19 @@ public class TomEESecurityExtension implements Extension {
         };
     }
 
+    private Supplier<TomcatUserIdentityStoreDefinition> createTomcatUserIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
+        return () -> {
+            final TomcatUserIdentityStoreDefinition annotation = tomcatUserStore.get()
+                                                                                    .getAnnotation(
+                                                                                        TomcatUserIdentityStoreDefinition.class);
+
+            return TomEEELInvocationHandler.of(TomcatUserIdentityStoreDefinition.class, annotation, beanManager);
+        };
+    }
+
     private Supplier<DatabaseIdentityStoreDefinition> createDatabaseIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final DatabaseIdentityStoreDefinition annotation = databaseIdentityStore.iterator()
-                                                                                    .next()
+            final DatabaseIdentityStoreDefinition annotation = databaseStore.get()
                                                                                     .getAnnotation(
                                                                                         DatabaseIdentityStoreDefinition.class);
 
@@ -305,8 +341,7 @@ public class TomEESecurityExtension implements Extension {
 
     private Supplier<LdapIdentityStoreDefinition> createLdapIdentityStoreDefinitionSupplier(final BeanManager beanManager) {
         return () -> {
-            final LdapIdentityStoreDefinition annotation = ldapIdentityStore.iterator()
-                                                                                    .next()
+            final LdapIdentityStoreDefinition annotation = ldapStore.get()
                                                                                     .getAnnotation(
                                                                                         LdapIdentityStoreDefinition.class);
 
