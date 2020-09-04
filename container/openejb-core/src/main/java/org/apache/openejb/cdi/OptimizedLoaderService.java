@@ -156,10 +156,6 @@ public class OptimizedLoaderService implements LoaderService {
             return true;
         }
 
-        if (extClass.getClassLoader() != containerLoader) {
-            return false;
-        }
-
         switch (name) {
             case "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension":
                 return true;

@@ -148,9 +148,9 @@
     <module>server-events</module>
     <module>serverless-builder</module>
     <module>serverless-tomee-webprofile</module>
-<!--    <module>serverless-tomee-microprofile</module>-->
-<!--    <module>serverless-tomee-plume</module>-->
-<!--    <module>serverless-tomee-plus</module>-->
+    <module>serverless-tomee-microprofile</module>
+    <module>serverless-tomee-plume</module>
+    <module>serverless-tomee-plus</module>
     <module>singleton-startup-ordering</module>
     <module>simple-cdi-interceptor</module>
     <module>simple-ear</module>
