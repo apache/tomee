@@ -41,4 +41,10 @@
   <user username="both" password="<must-be-changed>" roles="tomcat,role1"/>
   <user username="role1" password="<must-be-changed>" roles="role1"/>
 -->
+  <!-- Activate those lines to get access to TomEE GUI if added (tomee-webaccess) -->
+  <!--
+  <role rolename="tomee-admin" />
+  <user username="tomee" password="tomee" roles="tomee-admin,manager-gui" />
+  -->
 </tomcat-users>
+

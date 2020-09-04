@@ -125,6 +125,23 @@ public class GenerateBoms {
         verify(distributions);
 
         distributions.forEach(this::toBom);
+        distributions.forEach(this::saveConfigs);
+    }
+
+    private void saveConfigs(final Distribution distribution) {
+        final File srcConf = new File(distribution.getInstall(), "conf");
+        final File dist = Files.mkdir(boms, distribution.getName());
+        final File destConf = new File(dist, "src/main/resources/tomee/conf");
+        Files.mkdirs(destConf);
+
+        for (File file : srcConf.listFiles()) {
+            if (file.getName().endsWith(".original")) continue;
+            try {
+                IO.copy(file, new File(destConf, file.getName()));
+            } catch (IOException e) {
+                throw new UncheckedIOException("Cannot copy configuration file: " + file.getName(), e);
+            }
+        }
     }
 
     /**
@@ -200,6 +217,11 @@ public class GenerateBoms {
         private final File zip;
 
         /**
+         * The corresponding apache-tomee-foo-1.2.3.zip
+         */
+        private final File install;
+
+        /**
          * The short name of the distribution.  For example
          * `tomee-webprofile` for apache-tomee-webprofile-1.2.3.zip
          */
@@ -211,8 +233,9 @@ public class GenerateBoms {
          */
         private final String displayName;
 
-        public Distribution(final File zip) {
+        public Distribution(final File zip, final File install) {
             this.zip = zip;
+            this.install = install;
             name = zip.getName()
                     .replaceFirst("-[0-9].*", "")
                     .replace("apache-", "");
@@ -251,9 +274,11 @@ public class GenerateBoms {
             throw new UncheckedIOException("Cannot unzip " + zip.getAbsolutePath(), e);
         }
 
-        final Distribution distribution = new Distribution(zip);
+        final File serverDir = getServerDir(tmpdir);
 
-        final List<File> jars = Files.collect(tmpdir, ".*.jar");
+        final Distribution distribution = new Distribution(zip, serverDir);
+
+        final List<File> jars = Files.collect(serverDir, ".*.jar");
 
         final Function<File, Artifact> from = file1 -> {
             try {
@@ -274,6 +299,33 @@ public class GenerateBoms {
                 .forEach(distribution.artifacts::add);
 
         return distribution;
+    }
+
+    private File getServerDir(final File tmpdir) {
+        final File[] files = tmpdir.listFiles();
+
+        if (files.length > 1) {
+            final List<String> names = Stream.of(files)
+                    .map(file -> "  - " + file.getName())
+                    .collect(Collectors.toList());
+
+            final String message = String.format("Expected a single apache-tomee-* directory.  Found %s files in '%s':%n%s",
+                    names.size(),
+                    tmpdir.getAbsolutePath(),
+                    Join.join("\n", names)
+            );
+            throw new IllegalStateException(message);
+        }
+
+        if (files.length == 0) {
+
+            final String message = String.format("Expected a single apache-tomee-* directory.  Found no files in '%s'",
+                    tmpdir.getAbsolutePath());
+
+            throw new IllegalStateException(message);
+        }
+
+        return files[0];
     }
 
     /**

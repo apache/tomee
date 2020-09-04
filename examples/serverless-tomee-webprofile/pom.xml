@@ -26,13 +26,12 @@
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.tomee>8.0.5-SNAPSHOT</version.tomee>
   </properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-webprofile</artifactId>
-      <version>${version.tomee}</version>
+      <version>8.0.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
