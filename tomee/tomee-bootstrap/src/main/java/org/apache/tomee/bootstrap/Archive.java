@@ -25,6 +25,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -69,10 +71,21 @@ public class Archive {
     }
 
     public Archive add(final String name, final File content) {
+        if (content.isDirectory()) {
+            return addDir(name, content);
+        }
         return add(name, () -> readBytes(content));
     }
 
-    public static byte[] readBytes(final File content) {
+    public Archive add(final String name, final Archive archive) {
+        this.manifest.putAll(archive.manifest);
+        for (final Map.Entry<String, Supplier<byte[]>> entry : archive.entries.entrySet()) {
+            this.entries.put(name + "/" + entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+    private static byte[] readBytes(final File content) {
         try {
             return IO.readBytes(content);
         } catch (IOException e) {
@@ -80,45 +93,39 @@ public class Archive {
         }
     }
 
-    public static byte[] readBytes(final URL content) {
+    public Archive add(final String name, final URL content) {
         try {
-            return IO.readBytes(content);
+            return add(name, IO.readBytes(content));
         } catch (IOException e) {
-            throw new IllegalStateException(e);
+            throw new UncheckedIOException(e);
         }
-    }
-
-    public Archive add(final String name, final URL content) throws IOException {
-        return add(name, IO.readBytes(content));
     }
 
     public Archive add(final Class<?> clazz) {
-        try {
-            final String name = clazz.getName().replace('.', '/') + ".class";
+        final String name = clazz.getName().replace('.', '/') + ".class";
 
-            final URL resource = this.getClass().getClassLoader().getResource(name);
+        final URL resource = this.getClass().getClassLoader().getResource(name);
+        if (resource == null) throw new IllegalStateException("Cannot find class file for " + clazz.getName());
+        add(name, resource);
 
-            if (resource == null) throw new IllegalStateException("Cannot find class file for " + clazz.getName());
-
-            return add(name, resource);
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
+        // Add any parent classes needed
+        if (!clazz.isAnonymousClass() && clazz.getDeclaringClass() != null) {
+            add(clazz.getDeclaringClass());
         }
-    }
 
-    public Archive addDir(final File dir) {
-        try {
-
-            addDir(null, dir);
-
-        } catch (final IOException e) {
-            throw new IllegalStateException(e);
-        }
+        // Add any anonymous nested classes
+        Stream.of(clazz.getDeclaredClasses())
+                .filter(Class::isAnonymousClass)
+                .forEach(this::add);
 
         return this;
     }
 
-    private void addDir(final String path, final File dir) throws IOException {
+    public Archive addDir(final File dir) {
+        return addDir(null, dir);
+    }
+
+    private Archive addDir(final String path, final File dir) {
         for (final File file : dir.listFiles()) {
 
             final String childPath = (path != null) ? path + "/" + file.getName() : file.getName();
@@ -129,6 +136,7 @@ public class Archive {
                 addDir(childPath, file);
             }
         }
+        return this;
     }
 
     public Archive addJar(final File file) {
@@ -148,36 +156,34 @@ public class Archive {
         }
     }
 
-    public File toJar() throws IOException {
-        final File file = File.createTempFile("archive-", ".jar");
+    public File toJar() {
+        final File file;
+        try {
+            file = File.createTempFile("archive-", ".jar");
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
         file.deleteOnExit();
 
         return toJar(file);
     }
 
-    public File toJar(final File file) throws IOException {
+    public File toJar(final File file) {
         // Create the ZIP file
-        final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-
-        for (final Map.Entry<String, Supplier<byte[]>> entry : entries().entrySet()) {
-            out.putNextEntry(new ZipEntry(entry.getKey()));
-            out.write(entry.getValue().get());
-        }
-
-        // Complete the ZIP file
-        out.close();
-        return file;
-    }
-
-    public File asJar() {
         try {
-            return toJar();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+            try (final ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+                for (final Map.Entry<String, Supplier<byte[]>> entry : entries().entrySet()) {
+                    out.putNextEntry(new ZipEntry(entry.getKey()));
+                    out.write(entry.getValue().get());
+                }
+            }
+            return file;
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    public File toDir() throws IOException {
+    public File toDir() {
 
         final File classpath = Files.tmpdir();
 
@@ -186,7 +192,7 @@ public class Archive {
         return classpath;
     }
 
-    public void toDir(final File dir) throws IOException {
+    public void toDir(final File dir) {
         Files.exists(dir);
         Files.dir(dir);
         Files.writable(dir);
@@ -207,17 +213,11 @@ public class Archive {
         }
     }
 
-    public File asDir() {
-        try {
-            return toDir();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private HashMap<String, Supplier<byte[]>> entries() {
         final HashMap<String, Supplier<byte[]>> entries = new HashMap<>(this.entries);
-        entries.put("META-INF/MANIFEST.MF", buildManifest()::getBytes);
+        if (manifest.size() > 0) {
+            entries.put("META-INF/MANIFEST.MF", buildManifest()::getBytes);
+        }
         return entries;
     }
 

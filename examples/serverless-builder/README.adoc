@@ -1,0 +1,210 @@
+:index-group: Serverless
+:jbake-type: page
+:jbake-status: status=published
+= Serverless Builder API
+
+The `Server.Builder` API allows you to build an embedded or serverless instance of Tomcat/TomEE inside your JVM, effectively running Tomcat/TomEE as a plain library.
+
+[source,java]
+----
+import org.apache.tomee.bootstrap.Server;
+
+public class Main {
+    public static void main(String[] args) {
+        final Server server = Server.builder().build();
+
+        System.out.println("Listening for requests at " + server.getURI());
+    }
+}
+----
+
+The design of the API might be best described as a functional-builder API (FBA) and effectively allows you to supply functions and method references that actually assist in the server building process.  Its through these functions that you can deploy applications, modify configurations and effectively run any code that you need that would help prepare the server instance.
+
+A high-level overview of the builder methods available after calling `Server.builder()` are as follows:
+
+[source,java]
+----
+public static class Builder
+    public Builder httpPort(final int port)
+    public Builder ajpPort(final int port)
+    public Builder add(final String name, final byte[] bytes)
+    public Builder add(final String name, final Supplier<byte[]> content)
+    public Builder add(final String name, final String content)
+    public Builder add(final String name, final File content)
+    public Builder add(final String name, final Archive contents)
+    public Builder home(final Consumer<File> customization)
+    public Builder and(final Consumer<Builder> consumer)
+    public Server build()
+----
+
+To really know how to use the API, we must first understand Tomcat's `catalina.home` and `catalina.base` concepts and what actually happens when we call `Server.builder().build()`
+
+
+=== Understanding Tomcat's home and base
+
+It's a little known fact that for decades Tomcat has had the ability to run several instances from a single Tomcat zip.  Tomcat uses a `catalina.home` variable to identify the location of the extracted zip where the server libraries can be found and a `catalina.base` per instance to define the location of that instance's configuration files, log files and webapps.
+
+In our situation, your JVM classpath is effectively the `catalina.home` and when we use the `Server` API we're creating a very thin `catalina.base` that holds the configuration files, log files and webapps for that built Server (Tomcat) instance.  If you use the `Server` API ten times in the same JVM, you will have 10 `catalina.base` directories.  These are considered temporary working locations, however, and will be deleted on JVM exit.
+
+=== Calling `Server.builder().build()`
+
+When the `build()` method of the `Server.Builder` is called the following actions are taken in this order:
+
+ 1. Any functions added via `and(final Consumer<Builder> consumer)` are executed.  This allows a function to be supplied that further modifies the builder just before any building is executed.  Several builder modifications can be wrapped into one function that installs them all.
+ 1. A temp directory is created that will serve as `catalina.home` and `catalina.base` and default configurations such as `server.xml`, `logging.properties`, and `tomee.xml` are copied in.
+ 1. Any functions added via `add(final String destinationPath, final Supplier<byte[]> content)` are executed and any supplied bytes, Strings or Files are written to the `destinationPath` inside the temp directory.  This allows the default configurations like `server.xml` to be overwritten or applications to be written to the `webapps/` directory.
+ 1. Ports are set by modifying the `conf/server.xml`.  If `httpPort` was not set, ports will be random.
+ 1. Any functions added via `home(final Consumer<File> customization)` are executed.  The temp directory will be supplied as the value of `File`.
+ 1. The Tomcat/TomEE instance is started and returned as an instance of `Server`
+
+=== Seeing the Result of `Server.builder().build()`
+
+It helps greatly to be able to see what was built.  We can do that by installing a function or method reference like the one below.
+
+[source,java]
+----
+import org.apache.tomee.bootstrap.Server;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
+
+public class Main {
+
+    public static void main(String[] args) {
+        Server.builder()
+                .home(Main::list)
+                .build();
+    }
+
+    private static void list(final File home) {
+        try {
+            Files.walk(home.toPath())
+                    .sorted()
+                    .forEach(System.out::println);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+}
+----
+
+When we run that we should see output similar to the following:
+
+[source,console]
+----
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/catalina.policy
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/catalina.properties
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/context.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/jaspic-providers.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/jaspic-providers.xsd
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/logging.properties
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/server.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/system.properties
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/tomcat-users.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/tomcat-users.xsd
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/tomee.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/conf/web.xml
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/logs
+/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp9107162877421339516dir/apache-tomee/webapps
+----
+
+The above represents what comes out of the box from calling `Server.builder().build()` with no modifications.
+
+== Creating Apps with `Archive`
+
+The second class to learn is `Archive` and is essentially a no-frills app builder.  With this approach all your classes are effectively already in the classpath and visible, so ultimately the only classes that need to be included are annotated Servlets, EJBs, CDI Beans, JAX-RS classes, etc.
+
+[source,java]
+----
+public class Archive
+    public static Archive archive()
+    public Archive manifest(final String key, final Object value)
+    public Archive manifest(final String key, final Class value)
+    public Archive add(final String name, final byte[] bytes)
+    public Archive add(final String name, final Supplier<byte[]> content)
+    public Archive add(final String name, final String content)
+    public Archive add(final String name, final File content)
+    public Archive add(final String name, final Archive archive)
+    public Archive add(final String name, final URL content)
+    public Archive add(final Class<?> clazz)
+    public Archive addDir(final File dir)
+    public Archive addJar(final File file)
+    public File toJar()
+    public File toJar(final File file)
+    public File toDir()
+    public void toDir(final File dir)
+----
+
+NOTE: You can use APIs like ShrinkWrap to build the jars and war files as an alternative to `Archive`.  Anything that can produce a jar file, war file or an exploded (unzipped) war directory structure will work.
+
+=== Creating a ROOT war
+
+In this example we are effectively adding three classes to an `Archive` which is itself added to a new `webapps/ROOT/WEB-INF/classes` directory.
+
+[source,java]
+----
+import org.apache.tomee.bootstrap.Archive;
+import org.apache.tomee.bootstrap.Server;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        final Server server = Server.builder()
+                .add("webapps/ROOT/WEB-INF/classes", Archive.archive()
+                        .add(Api.class)
+                        .add(Movie.class)
+                        .add(MovieService.class))
+                .home(Main::list)
+                .build();
+
+        System.out.println("Listening for requests at " + server.getURI());
+    }
+
+    private static void list(final File home) {
+        try {
+            Files.walk(home.toPath())
+                    .map(Path::toFile)
+                    .filter(File::isFile)
+                    .map(File::getAbsolutePath)
+                    .map(s -> "..." + s.substring(49))
+                    .sorted()
+                    .forEach(System.out::println);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+}
+----
+
+When this runs we'll see out `Main.list` method which executes just before server start will have printed the following:
+
+[source,console]
+----
+...temp710654453954858189dir/apache-tomee/conf/catalina.policy
+...temp710654453954858189dir/apache-tomee/conf/catalina.properties
+...temp710654453954858189dir/apache-tomee/conf/context.xml
+...temp710654453954858189dir/apache-tomee/conf/jaspic-providers.xml
+...temp710654453954858189dir/apache-tomee/conf/jaspic-providers.xsd
+...temp710654453954858189dir/apache-tomee/conf/logging.properties
+...temp710654453954858189dir/apache-tomee/conf/server.xml
+...temp710654453954858189dir/apache-tomee/conf/system.properties
+...temp710654453954858189dir/apache-tomee/conf/tomcat-users.xml
+...temp710654453954858189dir/apache-tomee/conf/tomcat-users.xsd
+...temp710654453954858189dir/apache-tomee/conf/tomee.xml
+...temp710654453954858189dir/apache-tomee/conf/web.xml
+...temp710654453954858189dir/apache-tomee/webapps/ROOT/WEB-INF/classes/org/superbiz/movie/Api.class
+...temp710654453954858189dir/apache-tomee/webapps/ROOT/WEB-INF/classes/org/superbiz/movie/Movie.class
+...temp710654453954858189dir/apache-tomee/webapps/ROOT/WEB-INF/classes/org/superbiz/movie/MovieService.class
+----

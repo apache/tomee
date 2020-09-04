@@ -36,7 +36,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-microprofile</artifactId>
-  <packaging>pom</packaging>
+
   <name>TomEE :: BOMs :: TomEE MicroProfile</name>
 
   <dependencies>

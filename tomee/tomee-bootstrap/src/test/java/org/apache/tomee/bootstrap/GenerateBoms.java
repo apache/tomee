@@ -141,7 +141,9 @@ public class GenerateBoms {
                 .filter(distribution -> distribution.getMissing().size() > 0)
                 .collect(Collectors.toList());
 
-        throw new IncompleteMappingException(incomplete);
+        if (incomplete.size() > 0) {
+            throw new IncompleteMappingException(incomplete);
+        }
     }
 
     /**
@@ -400,16 +402,14 @@ public class GenerateBoms {
                 return new Artifact("org.apache.tomee", "openejb-javaagent", "${project.version}");
             }
 
-            if (jar.getName().startsWith("openejb-")) {
+            if (jar.getName().startsWith("openejb-") ||
+                    jar.getName().startsWith("tomee-") ||
+                    jar.getName().startsWith("mp-common-") ||
+                    jar.getName().startsWith("mp-jwt-") ||
+                    jar.getName().startsWith("mbean-annotation-")) {
                 final String artifact = jar.getName().replaceAll("-8.0.*", "");
                 return new Artifact("org.apache.tomee", artifact, "${project.version}");
             }
-
-            if (jar.getName().startsWith("tomee-")) {
-                final String artifact = jar.getName().replaceAll("-8.0.*", "");
-                return new Artifact("org.apache.tomee", artifact, "${project.version}");
-            }
-
 
             // /Users/dblevins/.m2/repository//org/apache/xbean/xbean-naming/4.14/xbean-naming-4.14.jar
             final File file = getFile(jar);

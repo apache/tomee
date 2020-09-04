@@ -31,20 +31,13 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Server {
-
-    public static void main(String[] args) {
-        final Server server = Server.builder().build();
-        System.out.println(server.toURI());
-    }
 
     private static final Log log = LogFactory.getLog(Server.class);
 
@@ -56,7 +49,7 @@ public class Server {
         this.uri = URI.create("http://localhost:" + port);
     }
 
-    public URI toURI() {
+    public URI getURI() {
         return uri;
     }
 
@@ -125,7 +118,6 @@ public class Server {
         private int ajpPort;
         protected final ArrayList<Consumer<File>> homeConsumers = new ArrayList<>();
         protected final ArrayList<Consumer<Builder>> builderConsumers = new ArrayList<>();
-        protected final Map<String, String> env = new HashMap<>();
         protected final Archive modifications = Archive.archive();
 
         public Builder httpPort(final int port) {
@@ -143,23 +135,28 @@ public class Server {
             return this;
         }
 
-        public Builder add(final String name, final byte[] bytes) {
-            modifications.add(name, bytes);
+        public Builder add(final String destinationPath, final byte[] bytes) {
+            modifications.add(destinationPath, bytes);
             return this;
         }
 
-        public Builder add(final String name, final Supplier<byte[]> content) {
-            modifications.add(name, content);
+        public Builder add(final String destinationPath, final Supplier<byte[]> content) {
+            modifications.add(destinationPath, content);
             return this;
         }
 
-        public Builder add(final String name, final String content) {
-            modifications.add(name, content);
+        public Builder add(final String destinationPath, final String content) {
+            modifications.add(destinationPath, content);
             return this;
         }
 
-        public Builder add(final String name, final File content) {
-            modifications.add(name, content);
+        public Builder add(final String destinationPath, final File content) {
+            modifications.add(destinationPath, content);
+            return this;
+        }
+
+        public Builder add(final String name, final Archive contents) {
+            modifications.add(name, contents);
             return this;
         }
 
@@ -184,8 +181,8 @@ public class Server {
             // copy user files
             try {
                 modifications.toDir(home);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Failed to apply home modifications to " + home.getAbsolutePath(), e);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to apply home modifications to " + home.getAbsolutePath(), e);
             }
         }
 
@@ -201,13 +198,9 @@ public class Server {
             applyBuilderConsumers();
 
             final File home = Files.mkdir(Files.tmpdir(), "apache-tomee");
-            final File bin = Files.mkdir(home, "bin");
             final File conf = Files.mkdir(home, "conf");
-            final File lib = Files.mkdir(home, "lib");
             final File logs = Files.mkdir(home, "logs");
-            final File temp = Files.mkdir(home, "temp");
             final File webapps = Files.mkdir(home, "webapps");
-            final File work = Files.mkdir(home, "work");
 
             cp(conf, "catalina.policy");
             cp(conf, "catalina.properties");
