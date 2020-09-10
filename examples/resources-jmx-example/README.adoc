@@ -1,4 +1,4 @@
-:index-group: Unrevised
+:index-group: JMX
 :jbake-type: page
 :jbake-status: status=published
 = Custom resources in an EAR archive
@@ -151,7 +151,7 @@ public class JMXBeanCreator {
 }
 ----
 
-Note that this class uses the properties defined in the configuration
+NOTE: that this class uses the properties defined in the configuration
 (below), combined with reflection, to instantiate the resource, and set
 its attributes. The code above requires two properties `code` and `name`
 in order to know what class to create, and the JMX name to register it
@@ -172,7 +172,7 @@ The resource can be defined in `META-INF/resources.xml` as follows:
 </Resources>
 ----
 
-Note that the class-name attribute refers to the factory class, and not
+NOTE: that the class-name attribute refers to the factory class, and not
 the resource. Once the resource has been created and bound in TomEE’s
 JNDI tree the factory is no longer used.
 
@@ -786,7 +786,7 @@ Results :
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 ----
 
-Note the following lines showing the creation of the resource.
+NOTE: the following lines showing the creation of the resource.
 
 [source,java]
 ----

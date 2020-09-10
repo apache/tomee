@@ -30,7 +30,7 @@ public final class ManagerFactory {
     }
 }
 ----
-<1> Current project stage injected via CDI.
+<<1>> Current project stage injected via CDI.
 
 On the example above a `Manager` instance is created based on current ProjectStage.
 

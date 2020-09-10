@@ -89,7 +89,7 @@ public class PersonService {
     }
 ----
 
-Now, that we have a service class, defining the resources provided by the application, we extent the `javax.ws.rs.core.Application` class and we add our `PersonService`:
+Now, that we have a service class, defining the resources provided by the application, we extend the `javax.ws.rs.core.Application` class and we add our `PersonService`:
 
 [source,java]
 ----

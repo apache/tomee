@@ -31,21 +31,22 @@ import java.util.Set;
 public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
-        BeanManager beanManager;
+
+        TomEESecurityExtension securityExtension;
         try {
-            beanManager = getBeanManager();
-        } catch (IllegalStateException e) {
+            final BeanManager beanManager = getBeanManager();
+            securityExtension = beanManager.getExtension(TomEESecurityExtension.class);
+
+        } catch (final IllegalStateException e) {
 
             // CDI not enabled?
             return;
-        }
 
-        if (beanManager == null) {
+        } catch (final IllegalArgumentException e) {
+
+            // Extension not available?
             return;
         }
-
-        final TomEESecurityExtension securityExtension =
-                beanManager.getExtension(TomEESecurityExtension.class);
 
         if (securityExtension.hasAuthenticationMechanisms()) {
             AuthConfigFactory.getFactory().registerConfigProvider(

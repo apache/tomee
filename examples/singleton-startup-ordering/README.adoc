@@ -21,7 +21,7 @@ mvn clean test
 * The three EJB's contains a `@PostConstruct` annotation for the `init` method that is executed after dependency injection is done to perform any initialization. This method is invoked before the class is put into service.
 * The `init` method store the name of the bean class that is been initialized in the `Supervisor` bean.
 * The `Supervisor` bean is annotated with `@ApplicationScoped` to be able to share the list of bean names stored in the `records` attribute.
-* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initilized until the bean is going to be used in later injection point.
+* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initialized until the bean is going to be used in later injection point.
 * `SingletonB` is annotated with `@DependsOn("SingletonA")` to enforce a initialization order with respect to `SingletonA`.
 
 
@@ -145,8 +145,8 @@ public class Supervisor {
 === The tests
 
 * The class `TestSingletonStartupOrder.java` contains two test that are executed in order via the annotation `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
-* `firstTest`: assert true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initilized since it's not annotated with `@Startup`.
-* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
+* `firstTest`: assert true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initialized since it's not annotated with `@Startup`.
+* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
 
 `TestSingletonStartupOrder.java`
 [source,java]

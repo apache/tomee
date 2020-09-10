@@ -345,7 +345,7 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         context = AppFinder.findAppContextOrWeb(cl, AppFinder.WebBeansContextTransformer.INSTANCE);
         if (context == null) {
             context = contexts.get();
-            if (context == null) { // any "guess" algortithm there would break prod apps cause AppFinder failed already, let's try to not try to be more clever than we can
+            if (context == null) { // any "guess" algorithm there would break prod apps cause AppFinder failed already, let's try to not try to be more clever than we can
                 throw new IllegalStateException("On a thread without an initialized context nor a classloader mapping a deployed app");
             }
         } else { // some cache to avoid to browse each app each time

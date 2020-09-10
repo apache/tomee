@@ -14,31 +14,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.tomee.bootstrap;
+package org.superbiz.movie;
 
-import org.apache.catalina.startup.Catalina;
+import org.apache.tomee.bootstrap.Server;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-
-public class Start {
-
+public class Main {
     public static void main(String[] args) {
-        start();
-    }
-    public static void start() {
+        final Server server = Server.builder().build();
 
-        final long start = System.currentTimeMillis();
-        System.setProperty("catalina.home", "/tmp/apache-tomee-microprofile-8.0.0-M3");
-        System.setProperty("catalina.base", "/tmp/apache-tomee-microprofile-8.0.0-M3");
-        final URLClassLoader loader = new URLClassLoader(new URL[0], Start.class.getClassLoader());
-
-        final Catalina catalina = new Catalina();
-        catalina.setParentClassLoader(loader);
-        catalina.setAwait(false);
-        catalina.load();
-        catalina.start();
-        final long elapsed = System.currentTimeMillis() - start;
-        System.out.println("Elapsed "+elapsed);
+        System.out.println("Listening for requests at " + server.getURI());
     }
+
+
+//    public static void main(String[] args) {
+//        Server.builder()
+//                .home(file -> Stream.of(file.listFiles()).forEach(System.out::println))
+//                .build();
+//    }
+//
 }
