@@ -111,8 +111,8 @@
       to update and release the javaee-api.jar. Different lifecycle.
     -->
     <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <geronimo-javamail_1.4_mail.version>1.9.0-alpha-2</geronimo-javamail_1.4_mail.version>
+    <geronimo-javamail_1.6_spec.version>0.0.1-TT.M1</geronimo-javamail_1.6_spec.version>
+    <geronimo-javamail_1.6_mail.version>0.0.1-TT.M1</geronimo-javamail_1.6_mail.version>
 
     <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
@@ -1364,21 +1364,21 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-javamail_1.4_spec</artifactId>
-        <version>${geronimo-javamail_1.4_spec.version}</version>
+        <artifactId>geronimo-javamail_1.6_spec</artifactId>
+        <version>${geronimo-javamail_1.6_spec.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
-        <artifactId>geronimo-javamail_1.4_mail</artifactId>
-        <version>${geronimo-javamail_1.4_mail.version}</version>
+        <artifactId>geronimo-javamail_1.6_mail</artifactId>
+        <version>${geronimo-javamail_1.6_mail.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.javamail</groupId>
-            <artifactId>geronimo-javamail_1.4_provider</artifactId>
+            <artifactId>geronimo-javamail_1.6_provider</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+            <artifactId>geronimo-javamail_1.6_spec</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

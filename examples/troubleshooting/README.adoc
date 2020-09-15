@@ -349,7 +349,7 @@ http://tomee.apache.org/
 2011-10-29 11:50:20,016 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-net/commons-net/2.0/commons-net-2.0.jar!/
 2011-10-29 11:50:20,017 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/activemq/protobuf/activemq-protobuf/1.1/activemq-protobuf-1.1.jar!/
 2011-10-29 11:50:20,017 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/commons-dbcp/commons-dbcp/1.4/commons-dbcp-1.4.jar!/
-2011-10-29 11:50:20,017 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/geronimo/javamail/geronimo-javamail_1.4_mail/1.8.2/geronimo-javamail_1.4_mail-1.8.2.jar!/
+2011-10-29 11:50:20,017 - DEBUG - Descriptors path: jar:file:/Users/dblevins/.m2/repository/org/apache/geronimo/javamail/geronimo-javamail_1.6_mail/1.8.2/geronimo-javamail_1.6_mail-1.8.2.jar!/
 2011-10-29 11:50:20,017 - DEBUG - Searched 5 classpath urls in 80 milliseconds.  Average 16 milliseconds per url.
 2011-10-29 11:50:20,023 - INFO  - Beginning load: /Users/dblevins/examples/troubleshooting/target/classes
 2011-10-29 11:50:20,028 - DEBUG - Using default 'openejb.tempclassloader.skip=none'  Possible values are: none, annotations, enums or NONE or ALL

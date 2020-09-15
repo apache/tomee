@@ -138,7 +138,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.4_mail</artifactId>
+      <artifactId>geronimo-javamail_1.6_mail</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
