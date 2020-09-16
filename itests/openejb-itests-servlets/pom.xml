@@ -22,7 +22,7 @@
   <parent>
     <artifactId>itests</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.4-TT.3-SNAPSHOT</version>
+    <version>8.0.4-TT.3.M1</version>
   </parent>
 
   <artifactId>openejb-itests-servlets</artifactId>
