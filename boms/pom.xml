@@ -36,6 +36,9 @@
   <modules>
     <module>jaxb-runtime</module>
     <module>tomee-microprofile</module>
+    <module>tomee-webprofile</module>
+    <module>tomee-plume</module>
+    <module>tomee-plus</module>
   </modules>
 
 </project>

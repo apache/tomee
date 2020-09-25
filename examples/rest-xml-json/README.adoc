@@ -6,17 +6,20 @@
 Defining a REST service is pretty easy, simply ad @Path annotation to a
 class then define on methods the HTTP method to use (@GET, @POST, …).
 
-#The Code
+The Code
 
 == The REST service: @Path, @Produces, @Consumes
 
-Here we see a bean that uses the Bean-Managed Concurrency option as well
-as the @Startup annotation which causes the bean to be instantiated by
-the container when the application starts. Singleton beans with
-@ConcurrencyManagement(BEAN) are responsible for their own
-thread-safety. The bean shown is a simple properties ``registry'' and
-provides a place where options could be set and retrieved by all beans
-in the application.
+Here we see a bean that uses the @Path, @Produces and @Consumes annotations. 
+The @Path annotation identifies the URI path template to which the resource responds, and is specified at the class level of a resource. The @Path annotation's value 
+is a partial URI path template relative to the base URI of the server on which the resource is deployed, the context root of the WAR, and the URL pattern to which 
+the Jersey helper servlet responds.
+The @Produces annotation is used to specify the MIME media types or representations a resource can produce and send back to the client. If @Produces is applied at 
+the class level, all the methods in a resource can produce the specified MIME types by default. If it is applied at the method level, it overrides any @Produces 
+annotations applied at the class level.
+The @Consumes annotation is used to specify which MIME media types of representations a resource can accept, or consume, from the client. If @Consumes is applied 
+at the class level, all the response methods accept the specified MIME types by default. If @Consumes is applied at the method level, it overrides any @Consumes 
+annotations applied at the class level.
 
 Actually lines:
 
