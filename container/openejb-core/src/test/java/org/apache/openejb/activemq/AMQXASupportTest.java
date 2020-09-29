@@ -16,7 +16,6 @@
  */
 package org.apache.openejb.activemq;
 
-import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.apache.openejb.jee.MessageDrivenBean;
 import org.apache.openejb.junit.ApplicationComposer;
 import org.apache.openejb.testing.Configuration;
@@ -69,9 +68,6 @@ public class AMQXASupportTest {
             .p("cf", "new://Resource?type=" + ConnectionFactory.class.getName())
             .p("cf.ResourceAdapter", "amq")
 
-            .p("xaCf", "new://Resource?class-name=" + ActiveMQXAConnectionFactory.class.getName())
-            .p("xaCf.BrokerURL", "vm://localhost")
-
             .build();
     }
 
@@ -82,9 +78,6 @@ public class AMQXASupportTest {
 
     @Resource(name = "target")
     private Queue destination;
-
-    @Resource(name = "xaCf")
-    private XAConnectionFactory xacf;
 
     @Resource(name = "cf")
     private ConnectionFactory cf;
@@ -105,9 +98,9 @@ public class AMQXASupportTest {
 
     @Test
     public void xaCode() throws Exception {
-        assertNotNull(xacf);
+        assertNotNull(cf);
 
-        final Connection connection = xacf.createXAConnection();
+        final Connection connection = cf.createConnection();
         assertThat(connection, instanceOf(XAConnection.class));
         testConnection(connection);
     }
