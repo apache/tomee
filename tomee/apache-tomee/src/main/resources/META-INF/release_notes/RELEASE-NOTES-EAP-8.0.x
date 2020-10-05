@@ -3,6 +3,7 @@
 === Changes in TomEE EAP 8.0.4-TT.1
 
 * Update commons-io to mitigate sonatype-2018-0705
+* Update ActiveMQ to mitigate CVE-2020-11998 and CVE-2020-11998
 
 === Changes in TomEE EAP 8.0.4-TT.1
 
