@@ -21,7 +21,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.4-TT.3.M3-SNAPSHOT</version>
+    <version>8.0.4-TT.4</version>
   </parent>
 
   <groupId>org.apache.tomee.maven</groupId>
