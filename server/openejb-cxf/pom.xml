@@ -76,7 +76,16 @@
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>org.cryptacular</groupId>
+          <artifactId>cryptacular</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.cryptacular</groupId>
+      <artifactId>cryptacular</artifactId>
+      <version>1.1.4</version>
     </dependency>
     <!-- Override the bcprov from the previous artifact -->
     <dependency>
