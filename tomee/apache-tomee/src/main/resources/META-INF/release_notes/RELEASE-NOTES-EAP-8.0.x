@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.4-TT.2
+= TomEE EAP 8.0.4-TT.5
+
+=== Changes in TomEE EAP 8.0.4-TT.5
+* Update to Tomcat 9.0.39 to mitigate CVE-2020-13943
 
 === Changes in TomEE EAP 8.0.4-TT.1
 
