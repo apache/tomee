@@ -138,7 +138,7 @@
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm8-shaded</artifactId>
+          <artifactId>xbean-asm9-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
@@ -157,8 +157,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm8-shaded</artifactId>
-      <version>4.17</version>
+      <artifactId>xbean-asm9-shaded</artifactId>
+      <version>4.18</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

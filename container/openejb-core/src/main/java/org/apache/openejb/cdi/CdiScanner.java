@@ -64,8 +64,8 @@ public class CdiScanner implements BdaScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
-        MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
-        RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
+            MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
+            RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
     };
 
     private final Set<Class<?>> startupClasses = new HashSet<>();
@@ -177,7 +177,7 @@ public class CdiScanner implements BdaScannerService {
             if (!startupObject.isFromWebApp() && ejbJar.webapp && !appInfo.webAppAlone) {
                 continue;
             }*/
-            
+
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
                 // infoByBda.put() not needed since we know it means annotated
                 handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
@@ -226,9 +226,9 @@ public class CdiScanner implements BdaScannerService {
                 }
             }
 
-           if (!classes.isEmpty()) {
+            if (!classes.isEmpty()) {
                 addClasses(tomeeBeanArchiveInformation, classes);
-           }
+            }
         }
     }
 
