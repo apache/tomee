@@ -26,7 +26,7 @@
   <name>TomEE :: Examples :: Polling</name>
 
   <properties>
-    <xbean.version>4.17</xbean.version>
+    <xbean.version>4.18</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>8.0.5-SNAPSHOT</tomee.version>
     <cxf.version>3.3.1</cxf.version>

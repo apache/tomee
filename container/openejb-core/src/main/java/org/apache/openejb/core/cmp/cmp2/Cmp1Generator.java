@@ -17,11 +17,11 @@
 
 package org.apache.openejb.core.cmp.cmp2;
 
-import org.apache.xbean.asm8.ClassWriter;
-import org.apache.xbean.asm8.FieldVisitor;
-import org.apache.xbean.asm8.MethodVisitor;
-import org.apache.xbean.asm8.Opcodes;
-import org.apache.xbean.asm8.Type;
+import org.apache.xbean.asm9.ClassWriter;
+import org.apache.xbean.asm9.FieldVisitor;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Opcodes;
+import org.apache.xbean.asm9.Type;
 
 /**
  * Class for generating a class file that implements

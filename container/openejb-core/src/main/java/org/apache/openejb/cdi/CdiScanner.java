@@ -49,11 +49,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static java.util.Arrays.asList;
 
@@ -64,8 +69,8 @@ public class CdiScanner implements BdaScannerService {
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
-        MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
-        RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
+            MandatoryInterceptor.class, NeverInterceptor.class, NotSupportedInterceptor.class,
+            RequiredInterceptor.class, RequiredNewInterceptor.class, SupportsInterceptor.class
     };
 
     private final Set<Class<?>> startupClasses = new HashSet<>();
@@ -102,7 +107,7 @@ public class CdiScanner implements BdaScannerService {
 
     @Override
     public void init(final Object object) {
-        if (!StartupObject.class.isInstance (object)) {
+        if (!StartupObject.class.isInstance(object)) {
             return;
         }
         containerLoader = ParentClassLoaderFinder.Helper.get();
@@ -154,25 +159,7 @@ public class CdiScanner implements BdaScannerService {
             final BeanArchiveService beanArchiveService = webBeansContext.getBeanArchiveService();
             final boolean openejb = OpenEJBBeanInfoService.class.isInstance(beanArchiveService);
 
-            final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new HashMap<>();
-            for (final BeansInfo.BDAInfo bda : beans.bdas) {
-/*                if (!startupObject.isFromWebApp() &&
-                    ejbJar.webapp &&
-                    !appInfo.webAppAlone &&
-                    ejbJar.path != null &&
-                    bda.uri.toString().contains(ejbJar.path)) {
-                    continue;
-                }*/
-
-                if (bda.uri != null) {
-                    try {
-                        beansXml.add(bda.uri.toURL());
-                    } catch (final MalformedURLException e) {
-                        // no-op
-                    }
-                }
-                infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
-            }
+            final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = processBdas(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb);
 /*
             if (!startupObject.isFromWebApp() && ejbJar.webapp && !appInfo.webAppAlone) {
                 continue;
@@ -232,15 +219,50 @@ public class CdiScanner implements BdaScannerService {
         }
     }
 
-    private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<String> list, final ClassLoader loader) {
-        Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
+    private Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> processBdas(StartupObject startupObject, ClassLoader classLoader, ClassLoaderComparator comparator, BeansInfo beans, ClassLoader scl, boolean filterByClassLoader, BeanArchiveService beanArchiveService, boolean openejb) {
 
-        for (final String s : list) {
-            final Class<?> load = load(s, loader);
-            if (load != null) {
-                classes.add(load);
+        final Map<BeansInfo.BDAInfo, BeanArchiveService.BeanArchiveInformation> infoByBda = new ConcurrentHashMap<>();
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        List<Future> results = new ArrayList();
+        for (final BeansInfo.BDAInfo bda : beans.bdas) {
+            if (bda.uri != null) {
+                try {
+                    beansXml.add(bda.uri.toURL());
+                } catch (final MalformedURLException e) {
+                    // no-op
+                }
+            }
+            results.add(executor.submit(() -> {
+                BeanArchiveService.BeanArchiveInformation result = handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
+                synchronized (infoByBda) {
+                    infoByBda.put(bda, result);
+                }
+            }));
+        }
+        for(Future result: results) {
+            try {
+                result.get();
+            }catch (Exception e) {
+                throw new IllegalStateException(e);
             }
         }
+        Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName()).warning("estoy!");
+        executor.shutdown();
+        Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName()).warning("ya!");
+        return infoByBda;
+    }
+
+    private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<String> list, final ClassLoader loader) {
+        synchronized (beanClassesPerBda) {
+            Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
+            for (final String s : list) {
+                final Class<?> load = load(s, loader);
+                if (load != null) {
+                    classes.add(load);
+                }
+            }
+        }
+
     }
     private void addClasses(BeanArchiveService.BeanArchiveInformation bdaInfo, final Collection<Class<?>> list) {
         Set<Class<?>> classes = beanClassesPerBda.computeIfAbsent(bdaInfo, k -> new HashSet<>());
@@ -257,6 +279,8 @@ public class CdiScanner implements BdaScannerService {
                                                                 final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
                                                                 final BeanArchiveService beanArchiveService, final boolean openejb,
                                                                 final BeansInfo.BDAInfo bda) {
+        Date now =new Date();
+        Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName()).warning("shh!" + Thread.currentThread().getName()+" " + bda.uri.toString());
         BeanArchiveService.BeanArchiveInformation information;
         if (openejb) {
             final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
@@ -330,6 +354,7 @@ public class CdiScanner implements BdaScannerService {
 
             addClasses(information, classes);
         }
+        Logger.getInstance(LogCategory.OPENEJB, CdiScanner.class.getName()).warning("shhhhh!" + Thread.currentThread().getName()+" " + bda.uri.toString() + " en  "+ (new Date().getTime()-now.getTime()));
 
         return information;
     }
@@ -383,8 +408,8 @@ public class CdiScanner implements BdaScannerService {
     }
 
     private void tryToMakeItFail(final Class<?> loadClass) { // we try to avoid later NoClassDefFoundError
-        loadClass.getDeclaredFields();
-        loadClass.getDeclaredMethods();
+        //loadClass.getDeclaredFields();
+        //loadClass.getDeclaredMethods();
     }
 
     @Override

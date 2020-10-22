@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.config.rules;
 
-import org.apache.xbean.asm8.AnnotationVisitor;
-import org.apache.xbean.asm8.MethodVisitor;
-import org.apache.xbean.asm8.Type;
-import org.apache.xbean.asm8.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm9.AnnotationVisitor;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Type;
+import org.apache.xbean.asm9.shade.commons.EmptyVisitor;
 
 import java.util.HashSet;
 
