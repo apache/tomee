@@ -584,7 +584,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
                 for (final MessageDestinationRef ref : bean.getMessageDestinationRef()) {
                     // skip destination refs with a resource link already assigned
                     if (ref.getMappedName() == null && ejbDeployment.getResourceLink(ref.getName()) == null) {
-                        final String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
+                        final String destinationId = resolveDestinationId(ref, appModule, moduleUri, destinationResolver, destinationTypes);
                         if (destinationId != null) {
                             // build the link and add it
                             final ResourceLink resourceLink = new ResourceLink();
@@ -601,7 +601,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         for (final ClientModule clientModule : appModule.getClientModules()) {
             final URI moduleUri = clientModule.getModuleUri();
             for (final MessageDestinationRef ref : clientModule.getApplicationClient().getMessageDestinationRef()) {
-                final String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
+                final String destinationId = resolveDestinationId(ref, appModule, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {
                     // for client modules we put the destinationId in the mapped name
                     ref.setMappedName(destinationId);
@@ -612,7 +612,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         for (final WebModule webModule : appModule.getWebModules()) {
             final URI moduleUri = URLs.uri(webModule.getModuleId());
             for (final MessageDestinationRef ref : webModule.getWebApp().getMessageDestinationRef()) {
-                final String destinationId = resolveDestinationId(ref, moduleUri, destinationResolver, destinationTypes);
+                final String destinationId = resolveDestinationId(ref, appModule, moduleUri, destinationResolver, destinationTypes);
                 if (destinationId != null) {
                     // for web modules we put the destinationId in the mapped name
                     ref.setMappedName(destinationId);
@@ -706,7 +706,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private String resolveDestinationId(final MessageDestinationRef ref,
-                                        final URI moduleUri,
+                                        AppModule appModule, final URI moduleUri,
                                         final LinkResolver<MessageDestination> destinationResolver,
                                         final Map<MessageDestination, String> destinationTypes) throws OpenEJBException {
         // skip destination refs without a destination link
@@ -716,7 +716,25 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
         }
 
         // resolve the destination... if we don't find one it is a configuration bug
-        final MessageDestination destination = destinationResolver.resolveLink(link, moduleUri);
+        MessageDestination destination = destinationResolver.resolveLink(link, moduleUri);
+
+        if (destination == null && link.contains("#")) {
+            // try the app module URI + "/" + link instead
+
+            final List<EjbModule> ejbModules = appModule.getEjbModules();
+            for (final EjbModule ejbModule : ejbModules) {
+                final String shortModuleName = link.substring(0, link.indexOf("#"));
+                if (ejbModule.getModuleUri().toString().endsWith(shortModuleName)) {
+                    final String appModuleLink = ejbModule.getModuleUri() + "#" + link.substring(link.indexOf("#") + 1);
+                    destination = destinationResolver.resolveLink(appModuleLink, moduleUri);
+
+                    if (destination != null) {
+                        break;
+                    }
+                }
+            }
+        }
+
         if (destination == null) {
             throw new OpenEJBException("Message destination " + link + " for message-destination-ref " + ref.getMessageDestinationRefName() + " not found");
         }
