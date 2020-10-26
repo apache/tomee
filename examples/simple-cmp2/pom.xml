@@ -72,7 +72,7 @@
                 <artifactItem>
                   <groupId>org.apache.tomee</groupId>
                   <artifactId>openejb-javaagent</artifactId>
-                  <version>7.1.4-SNAPSHOT</version>
+                  <version>7.1.5-SNAPSHOT</version>
                   <outputDirectory>${project.build.directory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
