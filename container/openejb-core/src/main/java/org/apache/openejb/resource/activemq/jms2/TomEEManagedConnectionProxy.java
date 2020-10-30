@@ -36,6 +36,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import javax.transaction.Transaction;
 
 public class TomEEManagedConnectionProxy extends ManagedConnectionProxy
     // cause org.apache.openejb.resource.AutoConnectionTracker.proxyConnection() just uses getInterfaces()
@@ -131,7 +132,9 @@ public class TomEEManagedConnectionProxy extends ManagedConnectionProxy
         if (xa) {
             return createXASession();
         } else {
-            return connection.getPhysicalConnection().createSession(mode);
+            final Session session = connection.getPhysicalConnection().createSession(mode);
+            enlistInTransactionIfNeeded(session);
+            return session;
         }
     }
 
@@ -166,7 +169,9 @@ public class TomEEManagedConnectionProxy extends ManagedConnectionProxy
         if (xa) {
             return createXASession();
         } else {
-            return connection.getPhysicalConnection().createSession(mode);
+            final Session session = connection.getPhysicalConnection().createSession(mode);
+            enlistInTransactionIfNeeded(session);
+            return session;
         }
     }
 
@@ -186,11 +191,22 @@ public class TomEEManagedConnectionProxy extends ManagedConnectionProxy
     @Override
     public XASession createXASession() throws JMSException {
         XASession session = ((XAConnection) connection.getPhysicalConnection()).createXASession();
-        try {
-            OpenEJB.getTransactionManager().getTransaction().enlistResource(session.getXAResource());
-        } catch (IllegalStateException | SystemException | RollbackException e) {
-            throw new RuntimeException(e);
-        }
+        enlistInTransactionIfNeeded(session);
         return session;
+    }
+
+    private void enlistInTransactionIfNeeded(final Session session) {
+        if (session instanceof XASession) {
+            XASession xaSession = XASession.class.cast(session);
+
+            try {
+                final Transaction transaction = OpenEJB.getTransactionManager().getTransaction();
+                if (transaction != null) {
+                    transaction.enlistResource(xaSession.getXAResource());
+                }
+            } catch (IllegalStateException | SystemException | RollbackException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

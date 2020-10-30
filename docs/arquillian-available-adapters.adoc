@@ -96,25 +96,25 @@ dependencies to your Maven pom.xml:
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.openejb</groupId>
+  <groupId>org.apache.tomee</groupId>
   <artifactId>arquillian-tomee-embedded</artifactId>
-  <version>1.7.1</version> <!--Current version-->
+  <version>8.0.4</version> <!--Current version-->
 </dependency>
 <dependency>
-  <groupId>org.apache.openejb</groupId>
+  <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-embedded</artifactId>
-  <version>1.7.1</version>
+  <version>8.0.4</version>
 </dependency>
 <!--Required for WebServices and RESTful WebServices-->
 <dependency>
-  <groupId>org.apache.openejb</groupId>
+  <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-webservices</artifactId>
-  <version>1.7.1</version>
+  <version>8.0.4</version>
 </dependency>
 <dependency>
-  <groupId>org.apache.openejb</groupId>
+  <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-jaxrs</artifactId>
-  <version>1.7.1</version>
+  <version>8.0.4</version>
 </dependency>
 ----
 
@@ -160,7 +160,7 @@ The following shows a typical configuration for testing against TomEE
 [source,xml]
 ----
 <properties>
-  <tomee.version>1.7.1</tomee.version>
+  <tomee.version>8.0.4</tomee.version>
   <tomee.classifier>webprofile</tomee.classifier>
 </properties>
 <build>
@@ -179,12 +179,12 @@ The following shows a typical configuration for testing against TomEE
 </build>
 <dependencies>
   <dependency>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <artifactId>arquillian-tomee-remote</artifactId>
     <version>${tomee.version}</version>
   </dependency>
   <dependency>
-    <groupId>org.apache.openejb</groupId>
+    <groupId>org.apache.tomee</groupId>
     <artifactId>apache-tomee</artifactId>
     <version>${tomee.version}</version>
     <classifier>${tomee.classifier}</classifier>
@@ -236,9 +236,9 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
     </activation>
     <dependencies>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
-        <version>1.0.0</version>
+        <version>8.0.4</version>
       </dependency>
     </dependencies>
   </profile>
@@ -246,7 +246,7 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
   <profile>
     <id>tomee-webprofile-remote</id>
     <properties>
-      <tomee.version>1.0.0</tomee.version>
+      <tomee.version>8.0.4</tomee.version>
       <tomee.classifier>webprofile</tomee.classifier>
     </properties>
     <build>
@@ -265,12 +265,12 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
     </build>
     <dependencies>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
         <version>${tomee.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>apache-tomee</artifactId>
         <version>${tomee.version}</version>
         <classifier>${tomee.classifier}</classifier>
@@ -282,7 +282,7 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
   <profile>
     <id>tomee-plus-remote</id>
     <properties>
-      <tomee.version>1.0.0</tomee.version>
+      <tomee.version>8.0.4</tomee.version>
       <tomee.classifier>plus</tomee.classifier>
     </properties>
     <build>
@@ -301,12 +301,12 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
     </build>
     <dependencies>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
         <version>${tomee.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.openejb</groupId>
+        <groupId>org.apache.tomee</groupId>
         <artifactId>apache-tomee</artifactId>
         <version>${tomee.version}</version>
         <classifier>${tomee.classifier}</classifier>

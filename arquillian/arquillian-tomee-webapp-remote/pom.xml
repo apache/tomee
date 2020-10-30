@@ -168,7 +168,7 @@
           <groupId>org.objectweb.howl</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>geronimo-javamail_1.4_mail</artifactId>
+          <artifactId>geronimo-javamail_1.6_mail</artifactId>
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>

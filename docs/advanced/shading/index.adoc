@@ -166,7 +166,7 @@ def excludedDependenciesArtifacts = [
         'openejb-webservices',
         'tomee-webservices',
         'geronimo-connector',
-        'geronimo-javamail_1.4_mail'
+        'geronimo-javamail_1.6_mail'
 ]
 shadowJar {
     classifier = 'bundle'

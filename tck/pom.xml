@@ -30,7 +30,7 @@
     <cdi.tck.20.version>2.0.3.Final</cdi.tck.20.version>
     <cdi-tck.version>${cdi.tck.20.version}</cdi-tck.version>
 
-    <bval-tck.version>2.0.4.Final</bval-tck.version>
+    <bval-tck.version>2.0.6</bval-tck.version>
     <validation.provider>org.apache.bval.jsr.ApacheValidationProvider</validation.provider>
   </properties>
 

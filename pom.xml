@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-4</version.javaee-api>
+    <version.javaee-api>8.0-5</version.javaee-api>
 
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
@@ -111,8 +111,8 @@
       to update and release the javaee-api.jar. Different lifecycle.
     -->
     <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.4_spec.version>1.7.1</geronimo-javamail_1.4_spec.version>
-    <geronimo-javamail_1.4_mail.version>1.9.0-alpha-2</geronimo-javamail_1.4_mail.version>
+    <geronimo-javamail_1.6_spec.version>1.0.0</geronimo-javamail_1.6_spec.version>
+    <geronimo-javamail_1.6_mail.version>1.0.0</geronimo-javamail_1.6_mail.version>
 
     <openjpa.version>3.1.0</openjpa.version>
     <openwebbeans.version>2.0.18</openwebbeans.version>
@@ -145,7 +145,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.37</tomcat.version>
+    <tomcat.version>9.0.39</tomcat.version>
 
     <cxf.version>3.3.7</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -185,8 +185,8 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-net.version>3.3</commons-net.version>
 
-    <bval.version>2.0.3</bval.version>
-    <org.apache.activemq.version>5.15.12</org.apache.activemq.version>
+    <bval.version>2.0.5</bval.version>
+    <org.apache.activemq.version>5.16.0</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.12</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
@@ -1338,21 +1338,21 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-javamail_1.4_spec</artifactId>
-        <version>${geronimo-javamail_1.4_spec.version}</version>
+        <artifactId>geronimo-javamail_1.6_spec</artifactId>
+        <version>${geronimo-javamail_1.6_spec.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.javamail</groupId>
-        <artifactId>geronimo-javamail_1.4_mail</artifactId>
-        <version>${geronimo-javamail_1.4_mail.version}</version>
+        <artifactId>geronimo-javamail_1.6_mail</artifactId>
+        <version>${geronimo-javamail_1.6_mail.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.javamail</groupId>
-            <artifactId>geronimo-javamail_1.4_provider</artifactId>
+            <artifactId>geronimo-javamail_1.6_provider</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-javamail_1.4_spec</artifactId>
+            <artifactId>geronimo-javamail_1.6_spec</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
