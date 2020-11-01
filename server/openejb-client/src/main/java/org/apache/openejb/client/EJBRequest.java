@@ -16,8 +16,8 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.corba.Corbas;
 import org.apache.openejb.client.corba.InstanceOf;
+import org.apache.openejb.client.corba.MakeCorbas;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 
@@ -552,7 +552,11 @@ public class EJBRequest implements ClusterableRequest {
                     }
                 } else {
                     if (InstanceOf.isRemote(obj)) {
-                        obj = Corbas.toStub(obj);
+                        try {
+                            obj = EJBRequest.class.getClassLoader().loadClass(MakeCorbas.CORBAS).getDeclaredMethod("toStub").invoke(obj);
+                        } catch (Exception e) {
+                            throw new IOException("Could not load: " + MakeCorbas.CORBAS, e);
+                        }
                     }
                     out.write(OBJECT);
                     out.writeObject(clazz);
@@ -630,7 +634,11 @@ public class EJBRequest implements ClusterableRequest {
                         clazz = (Class) in.readObject();
                         final Object read = in.readObject();
                         if (InstanceOf.isStub(read)) {
-                            obj = Corbas.connect(read);
+                            try {
+                                obj = EJBRequest.class.getClassLoader().loadClass(MakeCorbas.CORBAS).getDeclaredMethod("connect").invoke(read);
+                            } catch (Exception e) {
+                                throw new IOException("Could not load: " + MakeCorbas.CORBAS, e);
+                            }
                         } else {
                             obj = read;
                         }
