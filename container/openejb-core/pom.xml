@@ -267,7 +267,7 @@
         <executions>
           <execution>
             <id>generate-integration</id>
-            <phase>process-classes</phase>
+            <phase>compile</phase>
             <goals>
               <goal>java</goal>
             </goals>
