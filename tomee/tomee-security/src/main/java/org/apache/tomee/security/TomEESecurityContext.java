@@ -120,7 +120,7 @@ public class TomEESecurityContext implements SecurityContext {
         final AuthConfigProvider authConfigProvider =
                 AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
         final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, CallbackHandlerImpl.getInstance());
+                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, new CallbackHandlerImpl());
 
         return serverAuthConfig.getAuthContext(null, null, null);
     }

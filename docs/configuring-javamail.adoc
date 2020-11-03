@@ -42,3 +42,67 @@ override of the above example mail session, you could do so like this:
 ----
 java ... -DSuperbizMail.mail.smtp.host=localhost
 ----
+
+== IMAP SASL XOAUTH2 mechanism configuration
+
+=== Code example for gmail XOAUTH2
+
+[source,bash]
+----
+Properties props = new Properties();
+props.setProperty("mail.imap.port", "993");
+props.setProperty("mail.debug", String.valueOf(true));
+props.setProperty("mail.debug.auth", String.valueOf(true));
+props.setProperty("mail.imap.sasl.enable", String.valueOf(true));
+props.setProperty("mail.imap.sasl.mechanisms", "XOAUTH2");
+props.setProperty("mail.imap.ssl.enable", "true");
+props.setProperty("mail.imap.starttls.enable", "true");
+props.setProperty("mail.imap.starttls.required", "true");
+props.setProperty("mail.imap.auth.login.disable", "true");
+props.setProperty("mail.imap.auth.plain.disable", "true");
+
+Session session = Session.getInstance(props);
+Store store = session.getStore("imap");
+store.connect("imap.gmail.com", "<username>@gmail.com", "<YourAccesToken>");
+----
+
+=== Using tomee.xml
+
+`tomee.xml` example:
+
+[source,bash]
+----
+<Resource id="ImapSession" type="javax.mail.Session">
+mail.imap.ssl.enable=true
+mail.imap.starttls.enable=true
+mail.imap.starttls.required=true
+mail.imap.sasl.enable=true
+mail.imap.sasl.mechanisms=XOAUTH2
+mail.host=imap.gmail.com
+useDefault=false
+accessToken=<YourAccesToken>
+</Resource>
+----
+
+Usage example:
+
+[source,bash]
+----
+private final String from = "<username>@gmail.com";
+
+@Resource(name = "ImapSession")
+Session imapSession;
+
+public class EmailService {
+
+ private void readTheLast5SentEmails(){
+    final Store store = imapSession.getStore("imap");
+    store.connect(from, imapSession.getProperty("accessToken"));
+    final Folder sentFolder = store.getFolder("[Gmail]/Sent Mail");
+    sentFolder.open(Folder.READ_ONLY);
+    final int messageCount = sentFolder.getMessageCount();
+    final Message[] messages = sentFolder.getMessages(messageCount - 5, messageCount);
+ }
+
+}
+----
