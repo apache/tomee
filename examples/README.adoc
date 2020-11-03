@@ -16,8 +16,8 @@ Like in the _cdi-basic_ example where @Inject is demontrated in the _Course_ cla
 making the required dependencies clear.
 * Make sure you only include dependencies that are realy needed.
 * Always include an integration test with Arquillian or ApplicationComposer.
-* Document the bahaviour of each method with javadoc.
-* Include a README file explining the purpose and what's doing on.
+* Document the behaviour of each method with javadoc.
+* Include a README file explaining the purpose and what's doing on.
 * Make sure you add the new project to the parent project _pom.xml_ modules section.
 
 == Translation
