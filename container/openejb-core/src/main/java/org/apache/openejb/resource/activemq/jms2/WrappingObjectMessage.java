@@ -20,7 +20,8 @@ import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import java.io.Serializable;
 
-public class WrappingObjectMessage extends DelegateMessage implements ObjectMessage {
+public class WrappingObjectMessage extends DelegateMessage implements ObjectMessage, Serializable {
+    private static final long serialVersionUID = -8022300929742786216L;
     private final ObjectMessage message;
 
     public WrappingObjectMessage(final ObjectMessage message) {

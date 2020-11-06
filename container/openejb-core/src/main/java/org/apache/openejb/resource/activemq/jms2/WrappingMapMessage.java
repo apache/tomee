@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
+import java.io.Serializable;
 import org.apache.activemq.command.ActiveMQMapMessage;
 
 import javax.jms.JMSException;
@@ -24,7 +25,8 @@ import javax.jms.MessageFormatException;
 import java.util.Enumeration;
 import java.util.Map;
 
-public class WrappingMapMessage extends DelegateMessage implements MapMessage {
+public class WrappingMapMessage extends DelegateMessage implements MapMessage, Serializable {
+    private static final long serialVersionUID = 1825581452359766628L;
     private final MapMessage message;
 
     public WrappingMapMessage(final MapMessage message) {

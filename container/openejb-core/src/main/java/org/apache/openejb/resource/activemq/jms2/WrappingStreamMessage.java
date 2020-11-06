@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
+import java.io.Serializable;
 import javax.jms.JMSException;
 import javax.jms.MessageFormatException;
 import javax.jms.StreamMessage;
 
-public class WrappingStreamMessage extends DelegateMessage implements StreamMessage {
+public class WrappingStreamMessage extends DelegateMessage implements StreamMessage, Serializable {
+    private static final long serialVersionUID = 529457360378030114L;
     private final StreamMessage message;
 
     public WrappingStreamMessage(final StreamMessage message) {

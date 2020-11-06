@@ -21,6 +21,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
 public class WrappingTextMessage extends DelegateMessage implements TextMessage, Serializable {
+    private static final long serialVersionUID = -6024351262070855992L;
     private final TextMessage message;
 
     public WrappingTextMessage(final TextMessage message) {

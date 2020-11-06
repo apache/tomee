@@ -16,12 +16,14 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
+import java.io.Serializable;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 
-public class WrappingByteMessage extends DelegateMessage implements BytesMessage {
+public class WrappingByteMessage extends DelegateMessage implements BytesMessage, Serializable {
+    private static final long serialVersionUID = 3667074820757131045L;
     private final BytesMessage message;
 
     public WrappingByteMessage(final BytesMessage message) {
