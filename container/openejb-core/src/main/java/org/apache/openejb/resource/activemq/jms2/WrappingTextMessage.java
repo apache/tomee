@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.resource.activemq.jms2;
 
+import java.io.Serializable;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
-public class WrappingTextMessage extends DelegateMessage implements TextMessage {
+public class WrappingTextMessage extends DelegateMessage implements TextMessage, Serializable {
     private final TextMessage message;
 
     public WrappingTextMessage(final TextMessage message) {
