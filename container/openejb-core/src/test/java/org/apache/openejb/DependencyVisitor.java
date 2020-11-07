@@ -45,16 +45,16 @@
  */
 package org.apache.openejb;
 
-import org.apache.xbean.asm8.AnnotationVisitor;
-import org.apache.xbean.asm8.Attribute;
-import org.apache.xbean.asm8.FieldVisitor;
-import org.apache.xbean.asm8.Label;
-import org.apache.xbean.asm8.MethodVisitor;
-import org.apache.xbean.asm8.Opcodes;
-import org.apache.xbean.asm8.Type;
-import org.apache.xbean.asm8.shade.commons.EmptyVisitor;
-import org.apache.xbean.asm8.signature.SignatureReader;
-import org.apache.xbean.asm8.signature.SignatureVisitor;
+import org.apache.xbean.asm9.AnnotationVisitor;
+import org.apache.xbean.asm9.Attribute;
+import org.apache.xbean.asm9.FieldVisitor;
+import org.apache.xbean.asm9.Label;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Opcodes;
+import org.apache.xbean.asm9.Type;
+import org.apache.xbean.asm9.shade.commons.EmptyVisitor;
+import org.apache.xbean.asm9.signature.SignatureReader;
+import org.apache.xbean.asm9.signature.SignatureVisitor;
 
 import java.util.HashMap;
 import java.util.HashSet;
