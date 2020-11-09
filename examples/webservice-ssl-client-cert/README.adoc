@@ -17,7 +17,8 @@ The test case shows how to interact with CXF API in order to configure the clien
 
 == CalculatorImpl
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.annotation.security.DeclareRoles;
@@ -51,11 +52,12 @@ public class CalculatorImpl implements CalculatorWs {
 
 }
 //END SNIPPET: code
-....
+----
 
 == CalculatorWs
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import javax.jws.WebService;
@@ -74,17 +76,19 @@ public interface CalculatorWs {
     int multiply(int mul1, int mul2);
 }
 //END SNIPPET: code
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar/>
-....
+----
 
 == openejb-jar.xml
 
-....
+[source,xml]
+----
 <openejb-jar xmlns="http://tomee.apache.org/xml/ns/openejb-jar-2.2">
   <enterprise-beans>
     <session>
@@ -96,11 +100,12 @@ public interface CalculatorWs {
     </session>
   </enterprise-beans>
 </openejb-jar>
-....
+----
 
 == CalculatorTest
 
-....
+[source,java]
+----
 package org.superbiz.calculator;
 
 import static org.junit.Assert.assertEquals;
@@ -239,11 +244,12 @@ public class CalculatorTest {
     }
 
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -391,4 +397,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.519 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

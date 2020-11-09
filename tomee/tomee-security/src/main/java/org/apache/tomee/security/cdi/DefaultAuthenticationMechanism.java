@@ -18,6 +18,7 @@ package org.apache.tomee.security.cdi;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Typed;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @ApplicationScoped
+@Typed(DefaultAuthenticationMechanism.class) // make sure it does not qualify with HttpAuthenticationMechanism so application can have its own
 public class DefaultAuthenticationMechanism implements HttpAuthenticationMechanism {
     private HttpAuthenticationMechanism delegate;
 

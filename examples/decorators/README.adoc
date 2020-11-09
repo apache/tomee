@@ -188,7 +188,7 @@ public class CalculatorSecurity implements Calculator {
 
 == beans.xml
 
-[source,java]
+[source,xml]
 ----
 <beans>
   <!--
@@ -407,4 +407,5 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.338 sec
 Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+[source,java]
+----

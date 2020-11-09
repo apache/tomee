@@ -8,7 +8,8 @@ right to edit this page._
 
 == ClassLevelInterceptorOne
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -24,11 +25,12 @@ public class ClassLevelInterceptorOne {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == ClassLevelInterceptorSuperClassOne
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -44,11 +46,12 @@ public class ClassLevelInterceptorSuperClassOne {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == ClassLevelInterceptorSuperClassTwo
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -64,11 +67,12 @@ public class ClassLevelInterceptorSuperClassTwo extends SuperClassOfClassLevelIn
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == ClassLevelInterceptorTwo
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -84,11 +88,12 @@ public class ClassLevelInterceptorTwo {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == DefaultInterceptorOne
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.annotation.PostConstruct;
@@ -110,11 +115,12 @@ public class DefaultInterceptorOne {
         Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == DefaultInterceptorTwo
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -130,11 +136,12 @@ public class DefaultInterceptorTwo {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == FullyIntercepted
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import java.util.List;
@@ -148,11 +155,12 @@ public interface FullyIntercepted {
 
     List<String> methodWithDefaultInterceptorsExcluded();
 }
-....
+----
 
 == FullyInterceptedBean
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.ejb.Local;
@@ -190,11 +198,12 @@ public class FullyInterceptedBean extends FullyInterceptedSuperClass implements 
         return Utils.addClassSimpleName(ic, "beanClassBusinessMethodInterceptor");
     }
 }
-....
+----
 
 == FullyInterceptedSuperClass
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.Interceptors;
@@ -205,11 +214,12 @@ import javax.interceptor.Interceptors;
 @Interceptors({ClassLevelInterceptorSuperClassOne.class, ClassLevelInterceptorSuperClassTwo.class})
 public class FullyInterceptedSuperClass {
 }
-....
+----
 
 == MethodLevelInterceptorOne
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -225,11 +235,12 @@ public class MethodLevelInterceptorOne {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == MethodLevelInterceptorOnlyIntf
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import java.io.Serializable;
@@ -238,11 +249,12 @@ import java.util.List;
 public interface MethodLevelInterceptorOnlyIntf<T extends Serializable> {
     public List<T> makePersistent(T entity);
 }
-....
+----
 
 == MethodLevelInterceptorOnlyParent
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import java.util.List;
@@ -251,11 +263,12 @@ public interface MethodLevelInterceptorOnlyParent extends MethodLevelInterceptor
 
     public List<String> makePersistent(String entity);
 }
-....
+----
 
 == MethodLevelInterceptorOnlySLSBean
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.ejb.Local;
@@ -275,11 +288,12 @@ public class MethodLevelInterceptorOnlySLSBean implements MethodLevelInterceptor
         return list;
     }
 }
-....
+----
 
 == MethodLevelInterceptorTwo
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.AroundInvoke;
@@ -295,11 +309,12 @@ public class MethodLevelInterceptorTwo {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == SecondStatelessInterceptedBean
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.ejb.Stateless;
@@ -328,11 +343,12 @@ public class SecondStatelessInterceptedBean implements SecondStatelessIntercepte
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == SecondStatelessInterceptedLocal
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import java.util.List;
@@ -343,11 +359,12 @@ import java.util.List;
 public interface SecondStatelessInterceptedLocal {
     List<String> methodWithDefaultInterceptorsExcluded();
 }
-....
+----
 
 == SuperClassOfClassLevelInterceptor
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.annotation.PostConstruct;
@@ -369,11 +386,12 @@ public class SuperClassOfClassLevelInterceptor {
         Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == ThirdSLSBean
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.ejb.Stateless;
@@ -414,11 +432,12 @@ public class ThirdSLSBean implements ThirdSLSBeanLocal {
         return Utils.addClassSimpleName(ic, this.getClass().getSimpleName());
     }
 }
-....
+----
 
 == ThirdSLSBeanLocal
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import java.util.List;
@@ -431,11 +450,12 @@ public interface ThirdSLSBeanLocal {
 
     List<String> anotherBusinessMethod();
 }
-....
+----
 
 == Utils
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import javax.interceptor.InvocationContext;
@@ -457,11 +477,12 @@ public class Utils {
         return list;
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd"
@@ -500,11 +521,12 @@ public class Utils {
     </interceptor-binding>
   </assembly-descriptor>
 </ejb-jar>
-....
+----
 
 == FullyInterceptedTest
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import junit.framework.TestCase;
@@ -583,11 +605,12 @@ public class FullyInterceptedTest extends TestCase {
         initCtx.close();
     }
 }
-....
+----
 
 == MethodLevelInterceptorOnlyTest
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import junit.framework.TestCase;
@@ -629,11 +652,12 @@ public class MethodLevelInterceptorOnlyTest extends TestCase {
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }
-....
+----
 
 == SecondStatelessInterceptedTest
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import junit.framework.TestCase;
@@ -681,11 +705,12 @@ public class SecondStatelessInterceptedTest extends TestCase {
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }
-....
+----
 
 == ThirdSLSBeanTest
 
-....
+[source,java]
+----
 package org.superbiz.interceptors;
 
 import junit.framework.TestCase;
@@ -747,11 +772,12 @@ public class ThirdSLSBeanTest extends TestCase {
         assert expected.equals(actual) : "Expected " + expected + ", but got " + actual;
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -802,4 +828,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
 Results :
 
 Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
-....
+----

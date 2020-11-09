@@ -17,6 +17,7 @@
 package org.apache.openejb.resource.activemq.jms2;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+
 import org.apache.activemq.ra.ActiveMQConnectionFactory;
 import org.apache.activemq.ra.ActiveMQConnectionRequestInfo;
 import org.apache.activemq.ra.ActiveMQManagedConnectionFactory;

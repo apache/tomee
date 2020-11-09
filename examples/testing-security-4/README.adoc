@@ -7,7 +7,8 @@ Theses is a simple example to show how to use the security configured by the con
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import javax.persistence.Entity;
@@ -53,11 +54,12 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 //START SNIPPET: code
@@ -96,11 +98,12 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == MyLoginProvider
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import org.apache.openejb.core.security.jaas.LoginProvider;
@@ -125,17 +128,19 @@ public class MyLoginProvider implements LoginProvider {
         throw new FailedLoginException("Bad user or password!");
     }
 }
-....
+----
 
 == org.apache.openejb.core.security.jaas.LoginProvider
 
-....
+[source,java]
+----
 org.superbiz.injection.secure.MyLoginProvider
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -148,11 +153,12 @@ org.superbiz.injection.secure.MyLoginProvider
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MovieTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.secure;
 
 import junit.framework.TestCase;
@@ -280,11 +286,12 @@ public class MovieTest extends TestCase {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -356,4 +363,4 @@ Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.069 sec
 Results :
 
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
-....
+----

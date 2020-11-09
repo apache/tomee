@@ -7,16 +7,18 @@ Este es un ejemplo básico sobre cómo configurar y usar MicroProfile JWT en Tom
 
 == Ejecute las pruebas para diferentes escenarios relacionados con la validación JWT
 
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
 == Configuración en TomEE
 
 La clase `MoviesMPJWTConfigurationProvider.java` proporciona a TomEE la configuración 
 necesaria para la validación JWT.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
@@ -64,7 +66,7 @@ public class MoviesMPJWTConfigurationProvider {
         return getOptionalContextInfo().get();
     }
 }
-....
+----
 
 == Utilizando MicroProfile JWT en TomEE
 
@@ -73,7 +75,8 @@ mediante el uso de anotación estándar `@RolesAllowed`. MicroProfile JWT se enc
 la validación de las solicitudes entrantes con el encabezado `Authorization` 
 que proveen un `Access Token` firmado
 
-....
+[source,java]
+----
    package org.superbiz.moviefun.rest;
    
    import org.superbiz.moviefun.Movie;
@@ -140,7 +143,7 @@ que proveen un `Access Token` firmado
  @ConfigProperty(name = "java.runtime.version")
  private String javaVersion;
  
-....
+----
 
 == Sobre la arquitectura de prueba
 
@@ -158,7 +161,8 @@ de configuración `privateKey.pem`, ` publicKey.pem`, `Token1.json` y
 
 `Token1.json`
 
-....
+[source,java]
+----
 {
     "iss": "https://server.example.com",
     "jti": "a-123",
@@ -176,11 +180,12 @@ de configuración `privateKey.pem`, ` publicKey.pem`, `Token1.json` y
         "read-only"
     ]
 }
-....
+----
 
 `Token2.json`
 
-....
+[source,java]
+----
 {
   "iss": "https://server.example.com",
   "jti": "a-123",
@@ -195,13 +200,14 @@ de configuración `privateKey.pem`, ` publicKey.pem`, `Token1.json` y
     "read-only"
   ]
 }
-....
+----
 
 == Escenarios de prueba
 
 `MovieTest.java` contiene 4 escenarios OAuth2 para diferentes combinaciones de JWT.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import org.apache.cxf.feature.LoggingFeature;
@@ -319,4 +325,4 @@ public class MoviesTest {
     }
 
 }
-....
+----

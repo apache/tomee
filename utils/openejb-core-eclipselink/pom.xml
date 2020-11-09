@@ -20,7 +20,7 @@
   <parent>
     <artifactId>utils</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -51,6 +51,10 @@
         <exclusion>
           <groupId>org.eclipse.persistence</groupId>
           <artifactId>javax.persistence</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.persistence</groupId>
+          <artifactId>jakarta.persistence</artifactId>
         </exclusion>
         <exclusion>
           <groupId>javax.validation</groupId>

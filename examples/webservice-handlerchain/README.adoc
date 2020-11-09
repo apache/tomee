@@ -20,7 +20,8 @@ At high level, the steps involved are:
 First we’ll start with our plain `@WebService` bean, called
 `Calculator`, which is annotated with `@HandlerChain`
 
-....
+[source,java]
+----
 @Singleton
 @WebService(
         portName = "CalculatorPort",
@@ -38,7 +39,7 @@ public class Calculator implements CalculatorWs {
         return mul1 * mul2;
     }
 }
-....
+----
 
 Here we see `@HandlerChain` pointing to a file called `handlers.xml`.
 This file could be called anything, but it must be in the same jar and
@@ -59,7 +60,8 @@ In maven we achieve this by putting our handlers.xml in
 
 With this file we declare and *order* our handler chain.
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <handler-chains xmlns="http://java.sun.com/xml/ns/javaee">
   <handler-chain>
@@ -73,7 +75,7 @@ With this file we declare and *order* our handler chain.
     </handler>
   </handler-chain>
 </handler-chains>
-....
+----
 
 The order as you might suspect is:
 
@@ -89,7 +91,8 @@ editing the nodes. The `handleMessage` method is invoked for both
 requests and responses, so it is important to check the `SOAPBody`
 before attempting to naviage the nodes.
 
-....
+[source,java]
+----
 import org.w3c.dom.Node;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPBody;
@@ -135,7 +138,7 @@ public class Inflate implements SOAPHandler<SOAPMessageContext> {
         return true;
     }
 }
-....
+----
 
 The `Increment` handler is identical in code and therefore not shown.
 Instead of multiplying by 1000, it simply adds 1.
@@ -148,7 +151,8 @@ Note the clever use of math to assert both the existence and order of
 our handlers. If `Inflate` and `Increment` were reversed, the responses
 would be 11000 and 13000 respectively.
 
-....
+[source,java]
+----
 public class CalculatorTest {
 
     @BeforeClass
@@ -173,14 +177,15 @@ public class CalculatorTest {
         assertEquals(12001, calculator.multiply(3, 4));
     }
 }
-....
+----
 
 == Running the example
 
 Simply run `mvn clean install` and you should see output similar to the
 following:
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -234,15 +239,16 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.783 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----
 
 == Inspecting the messages
 
-The above would generate the following messages.
+The execution above would generate the following messages.
 
 === Calculator wsdl
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   name="CalculatorService" targetNamespace="http://superbiz.org/wsdl"
@@ -337,13 +343,14 @@ The above would generate the following messages.
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
-....
+----
 
 === SOAP sum and sumResponse
 
 Request:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -353,11 +360,12 @@ Request:
     </ns1:sum>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 Response:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -366,13 +374,14 @@ Response:
     </ns1:sumResponse>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 === SOAP multiply and multiplyResponse
 
 Request:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -382,11 +391,12 @@ Request:
     </ns1:multiply>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 Response:
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -395,4 +405,4 @@ Response:
     </ns1:multiplyResponse>
   </soap:Body>
 </soap:Envelope>
-....
+----

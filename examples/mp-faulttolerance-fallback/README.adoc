@@ -122,4 +122,3 @@ You can also try it out using the link:src/test/java/org/superbiz/rest/WeatherSe
 [INFO] 
 [INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
 ```
-

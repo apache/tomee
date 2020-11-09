@@ -3,7 +3,7 @@
 :jbake-status: status=published
 = Quartz Resource Adapter usage
 
-Note: this example is somewhat dated. It predates the schedule API which
+NOTE: this example is somewhat dated. It predates the schedule API which
 was added to EJB 3.1. Modern applications should use the schedule API
 which has many, if not all, the same features as Quartz. In fact, Quartz
 is the engine that drives the `@Schedule` and `ScheduleExpression`
@@ -26,7 +26,8 @@ jars that would be inside the `.rar` as maven dependencies. The `ra.xml`
 file is added to the project in `src/main/resources/META-INF/ra.xml`
 where it will be visible to other modules.
 
-....
+[source,java]
+----
 quartz-app
 quartz-app/pom.xml
 quartz-app/quartz-beans
@@ -41,7 +42,7 @@ quartz-app/quartz-ra
 quartz-app/quartz-ra/pom.xml
 quartz-app/quartz-ra/src/main/resources/META-INF
 quartz-app/quartz-ra/src/main/resources/META-INF/ra.xml
-....
+----
 
 === ra.xml
 
@@ -53,7 +54,8 @@ the outbound Resource Adapter, `QuartzResourceAdapter`, can be injected
 into any component via `@Resource` and used to originate and send
 messages or events.
 
-....
+[source,xml]
+----
 <connector xmlns="http://java.sun.com/xml/ns/j2ee"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
@@ -83,14 +85,15 @@ messages or events.
 
   </resourceadapter>
 </connector>
-....
+----
 
 == Using the Outbound Resource Adapter
 
 Here we see the outbound resource adapter used in a stateless session
 bean to schedule a job that will be executed by the MDB
 
-....
+[source,java]
+----
 package org.superbiz.quartz;
 
 import org.apache.openejb.resource.quartz.QuartzResourceAdapter;
@@ -131,11 +134,12 @@ public class JobBean implements JobScheduler {
         }
     }
 }
-....
+----
 
 == Recieving data from the Inbound Resource Adapter
 
-....
+[source,java]
+----
 package org.superbiz.quartz;
 
 import org.quartz.Job;
@@ -154,11 +158,12 @@ public class QuartzMdb implements Job {
         System.out.println("Executing Job");
     }
 }
-....
+----
 
 == Test case
 
-....
+[source,java]
+----
 package org.superbiz.quartz;
 
 import org.junit.AfterClass;
@@ -208,11 +213,12 @@ public class QuartzMdbTest {
         Thread.sleep(3000);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -255,4 +261,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.971 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

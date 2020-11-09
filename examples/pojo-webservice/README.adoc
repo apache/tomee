@@ -14,7 +14,8 @@ sample you can use the tomee maven plugin, mvn tomee:run.
 
 Expose a servlet for the webservice
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -28,7 +29,7 @@ Expose a servlet for the webservice
     <url-pattern>/*</url-pattern>
 </servlet-mapping>
 </web-app>
-....
+----
 
 == @PojoWS
 
@@ -36,7 +37,8 @@ This is the only concrete class annotated as @WebService that expose one
 operation ws(), also WebServiceContext and UserTransaction are injected
 in the class and used in the operation.
 
-....
+[source,java]
+----
 import javax.annotation.Resource;
 import javax.jws.WebService;
 import javax.transaction.UserTransaction;
@@ -64,14 +66,15 @@ public class PojoWS implements WS {
         this.userTransaction = userTransaction;
     }
 }
-....
+----
 
 == @WebService Endpoint Interface
 
 Having an endpoint interface is not required, but it can make testing
 and using the web service from other Java clients far easier.
 
-....
+[source,java]
+----
 import javax.jws.WebService;
 
 @WebService
@@ -79,14 +82,15 @@ public interface WS {
 
     String ws();
 }
-....
+----
 
 == PojoWS WSDL
 
 The wsdl for our service is autmatically created for us and available at
 `http://127.0.0.1:8080/pojo-webservice?wsdl`.
 
-....
+[source,xml]
+----
 <?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://pojo.ws.superbiz.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="PojoWSService" targetNamespace="http://pojo.ws.superbiz.org/">
 <wsdl:types>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://pojo.ws.superbiz.org/" elementFormDefault="unqualified" targetNamespace="http://pojo.ws.superbiz.org/" version="1.0">
@@ -140,7 +144,7 @@ The wsdl for our service is autmatically created for us and available at
     <soap:address location="http://localhost:8080/pojo-webservice"/>
     </wsdl:port>
 </wsdl:service>
-....
+----
 
 == Invoke ws operation
 
@@ -151,18 +155,20 @@ the following request for the ws operation
 
 Request SOAP message:
 
-....
+[source,xml]
+----
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pojo="http://pojo.ws.superbiz.org/">
     <soapenv:Header/>
     <soapenv:Body>
         <pojo:ws/>
     </soapenv:Body>
 </soapenv:Envelope>
-....
+----
 
 Response SOAP message:
 
-....
+[source,xml]
+----
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
         <ns2:wsResponse xmlns:ns2="http://pojo.ws.superbiz.org/">
@@ -170,7 +176,7 @@ Response SOAP message:
         </ns2:wsResponse>
     </soap:Body>
 </soap:Envelope>
-....
+----
 
 This shows that WebServiceContext and UserTransaction are successfully
 injected.
@@ -182,7 +188,8 @@ command run from the `pojo-webservice' directory.
 
 When run you should see output similar to the following.
 
-....
+[source,java]
+----
 26-Dec-2018 21:20:55.667 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version:        Apache Tomcat (TomEE)/9.0.12 (8.0.0-SNAPSHOT)
 26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          Sep 4 2018 22:13:41 UTC
 26-Dec-2018 21:20:55.668 INFO [main] sun.reflect.NativeMethodAccessorImpl.invoke Server number:         9.0.12.0
@@ -270,7 +277,7 @@ When run you should see output similar to the following.
 26-Dec-2018 21:20:58.438 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
 26-Dec-2018 21:20:58.456 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-8009"]
 26-Dec-2018 21:20:58.463 INFO [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in 1681 ms
-....
+----
 
 === Inside the jar
 
@@ -281,7 +288,8 @@ code. That’s the benefit of having an app server.
 If we look at the jar built by maven, we’ll see the application itself
 is quite small:
 
-....
+[source,java]
+----
 $ jar tvf target/pojo-webservice.war 
     99 Wed Dec 26 21:08:26 CET 2018 META-INF/MANIFEST.MF
     0 Wed Dec 26 21:08:26 CET 2018 META-INF/
@@ -296,7 +304,7 @@ $ jar tvf target/pojo-webservice.war
 1349 Wed Dec 26 17:41:54 CET 2018 WEB-INF/web.xml
 3661 Wed Dec 26 17:41:54 CET 2018 META-INF/maven/org.superbiz/pojo-webservice/pom.xml
 102 Wed Dec 26 21:08:26 CET 2018 META-INF/maven/org.superbiz/pojo-webservice/pom.properties
-....
+----
 
 This single jar could be deployed any any compliant Java EE
 implementation.

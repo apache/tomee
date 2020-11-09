@@ -8,16 +8,18 @@ TomEE.
 
 == Run the tests for different scenarios related with JWT validation
 
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
 == Configuration in TomEE
 
 The class `MoviesMPJWTConfigurationProvider.java` provides to TomEE the
 figuration need it for JWT validation.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun.rest;
 
 import org.apache.tomee.microprofile.jwt.config.JWTAuthContextInfo;
@@ -65,7 +67,7 @@ public class MoviesMPJWTConfigurationProvider {
         return getOptionalContextInfo().get();
     }
 }
-....
+----
 
 == Use MicroProfile JWT in TomEE
 
@@ -74,7 +76,8 @@ secured using the standard annotation `@RolesAllowed`. MicroProfile JWT
 takes care of performing the validation for incoming requests with
 `Authorization` header providing a signed `Access Token`
 
-....
+[source,java]
+----
    package org.superbiz.moviefun.rest;
    
    import org.superbiz.moviefun.Movie;
@@ -141,7 +144,7 @@ takes care of performing the validation for incoming requests with
  @ConfigProperty(name = "java.runtime.version")
  private String javaVersion;
  
-....
+----
 
 == About the Test architecture
 
@@ -158,7 +161,8 @@ tests.
 
 `Token1.json`
 
-....
+[source,java]
+----
 {
     "iss": "https://server.example.com",
     "jti": "a-123",
@@ -176,11 +180,12 @@ tests.
         "read-only"
     ]
 }
-....
+----
 
 `Token2.json`
 
-....
+[source,java]
+----
 {
   "iss": "https://server.example.com",
   "jti": "a-123",
@@ -195,14 +200,15 @@ tests.
     "read-only"
   ]
 }
-....
+----
 
 == Test Scenarios
 
 `MovieTest.java` contains 4 OAuth2 scenarios for different JWT
 combinations.
 
-....
+[source,java]
+----
 package org.superbiz.moviefun;
 
 import org.apache.cxf.feature.LoggingFeature;
@@ -320,4 +326,4 @@ public class MoviesTest {
     }
 
 }
-....
+----

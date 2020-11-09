@@ -9,7 +9,8 @@ For the database, https://www.eclipse.org/eclipselink/[EclipseLink] JPA provider
 
 The web service will store and retrieve information about persons:
 
-....
+[source,java]
+----
 @Entity
 @XmlRootElement
 @NamedQuery(name = "Person.findAll", query = "select p from Person p")
@@ -35,11 +36,12 @@ public class Person {
     public void setName(String name) {
         this.name = name;
     }
-....
+----
 
 The two services our application provide are: persisting a person, retrieving all persons from the database:
 
-....
+[source,java]
+----
 @Singleton
 @Lock(LockType.READ)
 public class PersonDAO {
@@ -57,11 +59,12 @@ public class PersonDAO {
     public List<Person> findAll() {
         return em.createNamedQuery("Person.findAll", Person.class).getResultList();
     }
-....
+----
 
 Next, we are ready to expose as a service this business logic:
 
-....
+[source,java]
+----
 @Path("/person")
 @RequestScoped
 public class PersonService {
@@ -84,11 +87,12 @@ public class PersonService {
     public List<Person> list() {
         return dao.findAll();
     }
-....
+----
 
-Now, that we have a service class, defining the resources provided by the application, we extent the `javax.ws.rs.core.Application` class and we add our `PersonService`:
+Now, that we have a service class, defining the resources provided by the application, we extend the `javax.ws.rs.core.Application` class and we add our `PersonService`:
 
-....
+[source,java]
+----
 public class JerseyApplication extends Application {
 
     @Override
@@ -98,12 +102,13 @@ public class JerseyApplication extends Application {
         return classes;
     }
 }
-....
+----
 
 There is one more step to do, to configure a servlet provided by Jersey.
 This can be done in `webapp/WEB-INF/web.xml`:
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -122,11 +127,12 @@ This can be done in `webapp/WEB-INF/web.xml`:
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
-....
+----
 
 The web service is ready to be tested. For this, we will write an unit test using http://arquillian.org/[Arquillian]:
 
-....
+[source,java]
+----
 @RunWith(Arquillian.class)
 public class JerseyApplicationTest {
 
@@ -174,7 +180,7 @@ public class JerseyApplicationTest {
         }
     }
 }
-....
+----
 
 We use Arquillian to programmatically start a new test container. In a test a person is persisted, then it's presence in database is checked by retrieving all person entities.
 

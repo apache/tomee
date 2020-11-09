@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -36,6 +36,9 @@
   <modules>
     <module>jaxb-runtime</module>
     <module>tomee-microprofile</module>
+    <module>tomee-webprofile</module>
+    <module>tomee-plume</module>
+    <module>tomee-plus</module>
   </modules>
 
 </project>

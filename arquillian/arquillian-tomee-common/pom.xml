@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
   <artifactId>arquillian-tomee-common</artifactId>
   <packaging>jar</packaging>
@@ -150,7 +150,7 @@
           <groupId>org.objectweb.howl</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>geronimo-javamail_1.4_mail</artifactId>
+          <artifactId>geronimo-javamail_1.6_mail</artifactId>
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>

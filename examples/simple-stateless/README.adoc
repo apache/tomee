@@ -22,7 +22,8 @@ or renting a new bean instance on each method call.
 
 == CalculatorBean
 
-....
+[source,java]
+----
 package org.superbiz.stateless.basic;
 
 import javax.ejb.Stateless;
@@ -50,14 +51,15 @@ public class CalculatorBean {
         return a % b;
     }
 }
-....
+----
 
 == CalculatorTest
 
 Our `CalculatorBean` can be easily tested using the `EJBContainer` API
 in EJB 3.1
 
-....
+[source,java]
+----
 package org.superbiz.stateless.basic;
 
 import org.junit.AfterClass;
@@ -149,13 +151,14 @@ public class CalculatorTest {
     }
 
 }
-....
+----
 
 == Running
 
 Running the example should generate output similar to the following
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -206,4 +209,4 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.068 sec
 Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+----

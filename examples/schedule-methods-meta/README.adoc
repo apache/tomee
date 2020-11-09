@@ -8,7 +8,8 @@ right to edit this page._
 
 == BiAnnually
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -29,11 +30,12 @@ public @interface BiAnnually {
         public void method();
     }
 }
-....
+----
 
 == BiMonthly
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -54,11 +56,12 @@ public @interface BiMonthly {
         public void method();
     }
 }
-....
+----
 
 == Daily
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -79,11 +82,12 @@ public @interface Daily {
         public void method();
     }
 }
-....
+----
 
 == HarvestTime
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -108,11 +112,12 @@ public @interface HarvestTime {
         public void method();
     }
 }
-....
+----
 
 == Hourly
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -133,11 +138,12 @@ public @interface Hourly {
         public void method();
     }
 }
-....
+----
 
 == Metatype
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import java.lang.annotation.ElementType;
@@ -150,11 +156,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Metatype {
 }
-....
+----
 
 == Organic
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Lock;
@@ -173,11 +180,12 @@ import java.lang.annotation.Target;
 @Lock(LockType.READ)
 public @interface Organic {
 }
-....
+----
 
 == PlantingTime
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -202,11 +210,12 @@ public @interface PlantingTime {
         public void method();
     }
 }
-....
+----
 
 == Secondly
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta.api;
 
 import javax.ejb.Schedule;
@@ -227,11 +236,12 @@ public @interface Secondly {
         public void method();
     }
 }
-....
+----
 
 == FarmerBrown
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta;
 
 import org.superbiz.corn.meta.api.HarvestTime;
@@ -270,11 +280,12 @@ public class FarmerBrown {
         return checks.get();
     }
 }
-....
+----
 
 == FarmerBrownTest
 
-....
+[source,java]
+----
 package org.superbiz.corn.meta;
 
 import junit.framework.TestCase;
@@ -301,11 +312,12 @@ public class FarmerBrownTest extends TestCase {
         assertTrue(farmerBrown.getChecks() > 4);
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -340,4 +352,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.166 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

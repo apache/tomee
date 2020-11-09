@@ -7,7 +7,8 @@ _Help us document this example! Click the blue pencil icon in the upper right to
 
 == ChatBean
 
-....
+[source,java]
+----
 package org.superbiz.mdbdesc;
 
 import javax.jms.Connection;
@@ -76,11 +77,12 @@ public class ChatBean implements MessageListener {
         }
     }
 }
-....
+----
 
 == ejb-jar.xml
 
-....
+[source,xml]
+----
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" metadata-complete="true">
   <enterprise-beans>
 
@@ -125,11 +127,12 @@ public class ChatBean implements MessageListener {
 
   </enterprise-beans>
 </ejb-jar>
-....
+----
 
 == ChatBeanTest
 
-....
+[source,java]
+----
 package org.superbiz.mdb;
 
 import junit.framework.TestCase;
@@ -196,11 +199,12 @@ public class ChatBeanTest extends TestCase {
         return ((TextMessage) answers.receive(1000)).getText();
     }
 }
-....
+----
 
 = Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -246,4 +250,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.914 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

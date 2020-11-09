@@ -25,7 +25,8 @@ src/test/conf/tomee.xml to define the DataSources. Note the differing
 driver version paths, yet still using the same provider
 (org.apache.derby.jdbc.EmbeddedDriver):
 
-....
+[source,xml]
+----
 <tomee>
 
   <Resource id="DatabaseOne" type="DataSource" classpath="${catalina.base}/../../drivers/derby-10.10.1.1.jar">
@@ -41,18 +42,20 @@ driver version paths, yet still using the same provider
   </Resource>
 
 </tomee>
-....
+----
 
 == Developer Information
 
 When testing within a Maven environment it is also possible to use
 direct maven coordinates rather than a file link, like so:
 
-....
-....
+[source,console]
+----
+----
 <Resource id="DatabaseOne" type="DataSource" classpath="mvn:org.apache.derby:derby:10.10.1.1">
-....
-....
+[source,console]
+----
+----
 
 == AlternateDriverJarTest.java
 
@@ -61,7 +64,8 @@ are specified as a DataSource parameter. Both examples demonstrate the
 same, in that two driver versions can be loaded and used within the same
 application.
 
-....
+[source,java]
+----
 @Configuration
 public Properties config() {
 
@@ -93,11 +97,12 @@ public Properties config() {
     p.put("JdbcTwo.JtaManaged", "false");
     return p;
 }
-....
+----
 
 == Full Test Source for AlternateDataSourceTest.java
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -183,11 +188,12 @@ public class AlternateDataSourceTest {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -405,4 +411,4 @@ INFO - Destroying ProtocolHandler ["ajp-bio-55245"]
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-....
+----

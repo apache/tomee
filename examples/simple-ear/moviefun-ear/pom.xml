@@ -16,21 +16,18 @@
     limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>moviefun-ear-parent</artifactId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>moviefun-ear</artifactId>
   <packaging>ear</packaging>
   <name>TomEE :: Examples :: Simple EAR :: EAR Packaging</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.superbiz</groupId>
@@ -45,7 +42,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -67,6 +63,22 @@
             </ejbModule>
           </modules>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1a</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

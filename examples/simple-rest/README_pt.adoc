@@ -12,7 +12,8 @@ Definir um serviço REST é fácil, simplesmente adicione a anotação ``@Path``
 
 Aqui nós temos um REST simples, anotamos a classe com ``@Path("/greeting")`` para indicar a rota correspondente a classe ``GreetingService``. Definimos ``message()`` como ``@GET`` e ``lowerCase()`` como ``@POST`` para esta rota ``/greeting``. Pronto, temos um serviço! Simples não?
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import javax.ws.rs.GET;
@@ -31,7 +32,7 @@ public class GreetingService {
         return "Hi REST!".toLowerCase();
     }
 }
-....
+----
 
 == Testando
 
@@ -45,7 +46,8 @@ Então nós criamos a aplicação simplesmente retornando um objeto representand
 
 Finalmente para testar nós usamos o client API do ``cfx`` para chamar o serviço REST nos métodos ``get()`` e ``post()``.
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -80,16 +82,18 @@ public class GreetingServiceTest {
         assertEquals("hi rest!", message);
     }
 }
-....
+----
 
 = Running
 
 Executar o exemplo é bastante simples. No diretório ``simple-rest`` dê o seguinte comando:
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 Com isso, provavelmente você terá a seguinte saida.
-....
+[source,java]
+----
 INFO - Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
 INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
 INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
@@ -133,4 +137,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

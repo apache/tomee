@@ -182,7 +182,7 @@ Ejecutando el ejemplo se puede hacer desde maven con un simple comando `mvn clea
 
 Cuando se ejecute, debería ver una salida similar a la siguiente:
 
-[source,java]
+[source,console]
 ----
 -------------------------------------------------------
  T E S T S

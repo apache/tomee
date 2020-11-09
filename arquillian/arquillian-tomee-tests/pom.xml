@@ -16,7 +16,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
   
   <artifactId>arquillian-tomee-tests</artifactId>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-      <version>2.0.0</version>
+      <version>${version.shrinkwrap.resolver.bom}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -603,7 +603,7 @@
                   <goal>test</goal>
                 </goals>
                 <configuration>
-                  <skip>${maven.test.skip}</skip>
+                  <skip>false</skip>
                   <systemPropertyVariables>
                     <openejb.arquillian.debug>true</openejb.arquillian.debug>
                     <tomee.version>${project.version}</tomee.version>

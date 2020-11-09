@@ -3,12 +3,12 @@
 :jbake-status: status=published
 = Injection Of Ejbs
 
-This example shows how to use the @EJB annotation on a bean class to
+This example shows how to use the `@EJB` annotation on a bean class to
 refer to other beans.
 
 This functionality is often referred as dependency injection (see
 http://www.martinfowler.com/articles/injection.html), and has been
-recently introduced in Java EE 5.
+introduced in Java EE 5.
 
 In this particular example, we will create two session stateless beans
 
@@ -17,12 +17,13 @@ In this particular example, we will create two session stateless beans
 
 The DataReader bean uses the DataStore to retrieve some informations,
 and we will see how we can, inside the DataReader bean, get a reference
-to the DataStore bean using the @EJB annotation, thus avoiding the use
+to the DataStore bean using the `@EJB` annotation, thus avoiding the use
 of the JNDI API.
 
 == DataReader
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.EJB;
@@ -43,7 +44,7 @@ import javax.ejb.Stateless;
  * this means that the application server, at runtime, will inject in this instance
  * variable a reference to the EJB DataStoreLocal
  */
-//START SNIPPET: code
+
 @Stateless
 public class DataReader {
 
@@ -66,11 +67,12 @@ public class DataReader {
         return "REMOTE:" + dataStoreRemote.getData();
     }
 }
-....
+----
 
 == DataStore
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.LocalBean;
@@ -83,7 +85,7 @@ import javax.ejb.Stateless;
  * This EJB has 2 business interfaces: DataStoreRemote, a remote business
  * interface, and DataStoreLocal, a local business interface
  */
-//START SNIPPET: code
+
 @Stateless
 @LocalBean
 public class DataStore implements DataStoreLocal, DataStoreRemote {
@@ -92,11 +94,12 @@ public class DataStore implements DataStoreLocal, DataStoreRemote {
         return "42";
     }
 }
-....
+----
 
 == DataStoreLocal
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.Local;
@@ -107,17 +110,18 @@ import javax.ejb.Local;
  * annotation, but it's optional. A business interface which is
  * not annotated with @Local or @Remote is assumed to be Local
  */
-//START SNIPPET: code
+
 @Local
 public interface DataStoreLocal {
 
     public String getData();
 }
-....
+----
 
 == DataStoreRemote
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import javax.ejb.Remote;
@@ -127,17 +131,18 @@ import javax.ejb.Remote;
  * A remote business interface must be annotated with the @Remote
  * annotation
  */
-//START SNIPPET: code
+
 @Remote
 public interface DataStoreRemote {
 
     public String getData();
 }
-....
+----
 
 == EjbDependencyTest
 
-....
+[source,java]
+----
 package org.superbiz.injection;
 
 import junit.framework.TestCase;
@@ -148,7 +153,7 @@ import javax.naming.Context;
 /**
  * A test case for DataReaderImpl ejb, testing both the remote and local interface
  */
-//START SNIPPET: code
+
 public class EjbDependencyTest extends TestCase {
 
     public void test() throws Exception {
@@ -163,11 +168,12 @@ public class EjbDependencyTest extends TestCase {
         assertEquals("LOCALBEAN:42", dataReader.readDataFromLocalBeanStore());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -208,4 +214,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.225 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -166,7 +166,8 @@ public class ReadInterceptor {
         return context.proceed();
     }
 }
-....
+[source,java]
+----
 
 == persistence.xml
 
@@ -357,4 +358,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.418 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

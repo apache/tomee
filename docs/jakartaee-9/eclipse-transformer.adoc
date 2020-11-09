@@ -1,0 +1,122 @@
+:index-group: Jakarta EE 9 Work
+:jbake-date: 2020-04-17
+:jbake-type: page
+:jbake-status: published
+
+
+= Eclipse Transformer
+
+The Eclipse Transformer provides translation from javax to jakarta on various artifacts, including Java source source, compiled Java classes, along with jar, war and ear files.
+
+== Building
+
+The Transformer is a project at the Eclipse Foundation, and is built using Gradle. To checkout and build from source, do the following:
+
+[source,bash]
+----
+git clone https://github.com/tbitonti/jakartaee-prototype
+cd jakartaee-prototype
+./gradlew assembleDist
+----
+
+This will produce a tar and a zip in the `transformer/build/distributions` directory.
+
+== Running
+
+Unzip the resulting zip file, and add the `bin` directory to your `PATH` variable, and you should be able to run the transformer using the `transformer` script.
+
+Running `transformer -u` will provide the usage information:
+
+[source,bash]
+----
+usage: org.eclipse.transformer.Transformer input [ output ] [ options ]
+Options:
+ -d,--dryrun                    Dry run
+ -h,--help                      Display help
+ -i,--invert                    Invert transformation rules
+ -lf,--logFile <arg>            Logging file
+ -ll,--logLevel <arg>           Logging level
+ -ln,--logName <arg>            Logger name
+ -lp,--logProperty <arg>        Logging property
+ -lpf,--logPropertyFile <arg>   Logging properties file
+ -o,--overwrite                 Overwrite
+ -q,--quiet                     Display quiet output
+ -t,--type <arg>                Input file type
+ -tb,--bundles <arg>            Transformation bundle updates URL
+ -td,--direct <arg>             Transformation direct string replacements
+ -tf,--xml <arg>                Map of XML filenames to property files
+ -tr,--renames <arg>            Transformation package renames URL
+ -ts,--selection <arg>          Transformation selections URL
+ -tv,--versions <arg>           Transformation package versions URL
+ -u,--usage                     Display usage
+ -v,--verbose                   Display verbose output
+Actions:
+  [ NULL ]
+  [ CLASS ]
+  [ MANIFEST ]
+  [ FEATURE ]
+  [ SERVICE_LOADER_CONFIG ]
+  [ XML ]
+  [ ZIP ]
+  [ JAR ]
+  [ WAR ]
+  [ RAR ]
+  [ EAR ]
+  [ JAVA ]
+  [ DIRECTORY ]
+Logging Properties:
+  [ org.slf4j.simpleLogger.logFile ]
+  [ org.slf4j.simpleLogger.cacheOutputStream ]
+  [ org.slf4j.simpleLogger.defaultLogLevel ]
+  [ org.slf4j.simpleLogger.log.a.b.c ]
+  [ org.slf4j.simpleLogger.levelInBrackets ]
+  [ org.slf4j.simpleLogger.showDateTime ]
+  [ org.slf4j.simpleLogger.dateTimeFormat ]
+  [ org.slf4j.simpleLogger.showThreadName ]
+  [ org.slf4j.simpleLogger.showLogName ]
+  [ org.slf4j.simpleLogger.showShortLogName ]
+  [ org.slf4j.simpleLogger.warnLevelString ]
+
+----
+
+With an already built and extracted TomEE server, we can do some experimentation.
+
+Rename the lib folder:
+
+[source,bash]
+----
+mv lib javaee-lib
+----
+
+Create a Jakarta EE lib folder:
+
+[source,bash]
+----
+mkdir jakartaee-lib
+----
+
+Translate each of the jars in the javaee-lib folder:
+
+[source,bash]
+----
+cd javaee-lib
+
+for f in *; do transformer $f ../jakartaee-lib/$f -tr <path/to/rules/file>; done
+----
+
+See the rules section below for the rules file.
+
+Symlink jakartaee-lib folder to lib:
+
+[source,bash]
+----
+cd ..
+ln -s jakartaee-lib lib
+----
+
+You should now be able to start a Jakarta-ized version of TomEE. (Expect errors - these can be discussed on the list)
+
+
+== Rules
+
+The current rules for package renames are in the `transformer/jakarta-renames.properties` file in the main TomEE source repository.

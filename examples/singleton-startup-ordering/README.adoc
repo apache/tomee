@@ -8,9 +8,10 @@ This examples shows in practice the  `@Startup` and `@DependsOn` annotations on 
 
 
 === Run the tests
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
 
 
@@ -20,14 +21,15 @@ mvn clean test
 * The three EJB's contains a `@PostConstruct` annotation for the `init` method that is executed after dependency injection is done to perform any initialization. This method is invoked before the class is put into service.
 * The `init` method store the name of the bean class that is been initialized in the `Supervisor` bean.
 * The `Supervisor` bean is annotated with `@ApplicationScoped` to be able to share the list of bean names stored in the `records` attribute.
-* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initilized until the bean is going to be used in later injection point.
+* `SingletonA` and `SingletonB` are annotated with `@Startup` which means they are going to initialized upon application startup.  `SingletonC` will be initialized until the bean is going to be used in later injection point.
 * `SingletonB` is annotated with `@DependsOn("SingletonA")` to enforce a initialization order with respect to `SingletonA`.
 
 
 
 `SingletonA.java`: Singleton EJB annotated with  `@Startup`. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 package org.foo;
 
 import javax.annotation.PostConstruct;
@@ -52,12 +54,13 @@ public class SingletonA {
         supervisor.addRecord(this.getClass().getSimpleName());
     }
 }
-....
+----
 
 
 `SingletonB.java`: Singleton EJB annotated with  `@Startup` and `DependsOn`. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 package org.foo;
 
 import javax.annotation.PostConstruct;
@@ -83,12 +86,13 @@ public class SingletonB {
         supervisor.addRecord(this.getClass().getSimpleName());
     }
 }
-....
+----
 
 
 `SingletonC.java`: Singleton EJB. It depends on the EJB `Supervisor`.
 
-....
+[source,java]
+----
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -112,12 +116,13 @@ public class SingletonC {
         return "Hello from SingletonC.class";
     }
 }
-....
+----
 
 
 `Supervisor.java`: Applicaiton scoped Bean that keep track of a list of Bean Names.
 
-....
+[source,java]
+----
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,17 +139,18 @@ public class Supervisor {
         return records.toString();
     }
 }
-....
+----
 
 
 === The tests
 
 * The class `TestSingletonStartupOrder.java` contains two test that are executed in order via the annotation `@FixMethodOrder(MethodSorters.NAME_ASCENDING)`
-* `firstTest`: assert true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initilized since it's not annotated with `@Startup`.
-* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if an only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
+* `firstTest`: assert true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB]`. Notice that the order is validated too. In this test we don't expect to see `SingletonC` initialized since it's not annotated with `@Startup`.
+* `secondTest`:  This test inject `SingletonC` as a parameter in the tests, therefore it asserts to true if and only if the records stored in the `Supervisor.record` are equals to `[SingletonA, SingletonB, SingletonC]`
 
 `TestSingletonStartupOrder.java`
-....
+[source,java]
+----
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -194,7 +200,7 @@ public class TestSingletonStartupOrder {
         assertTrue(supervisor.getRecord().equals("[SingletonA, SingletonB, SingletonC]"));
     }
 }
-....
+----
 
 === About the Test architecture
 

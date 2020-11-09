@@ -19,7 +19,8 @@ The goal is to be able to configure with a finer grain your contract. In
 the example you specify the minimum centimeters a sport man should jump
 at pole vaulting:
 
-....
+[source,java]
+----
 @Stateless
 public class PoleVaultingManagerBean
 {
@@ -28,13 +29,14 @@ public class PoleVaultingManagerBean
         return centimeters - 120;
     }
 }
-....
+----
 
 == Example
 
 === OlympicGamesManager
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
@@ -51,11 +53,12 @@ public class OlympicGamesManager {
         return new StringBuilder(name).append(" [").append(country).append("]").toString();
     }
 }
-....
+----
 
 === PoleVaultingManager
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
@@ -69,11 +72,12 @@ public class PoleVaultingManagerBean
         return centimeters - 120;
     }
 }
-....
+----
 
 === PoleVaultingManagerBean
 
-....
+[source,java]
+----
 package org.superbiz.designbycontract;
 
 import javax.ejb.Stateless;
@@ -85,11 +89,12 @@ public class PoleVaultingManagerBean implements PoleVaultingManager {
         return centimeters - 120;
     }
 }
-....
+----
 
 === OlympicGamesTest
 
-....
+[source,java]
+----
 public class OlympicGamesTest {
     private static Context context;
 
@@ -164,11 +169,12 @@ public class OlympicGamesTest {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -207,4 +213,4 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.245 sec
 Results :
 
 Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-....
+----

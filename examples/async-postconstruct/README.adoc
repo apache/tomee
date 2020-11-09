@@ -18,7 +18,8 @@ complete via an `@AroundInvoke` method on the bean and the
 Simple and effective. The result is a faster starting application that
 is still thread-safe.
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import javax.annotation.PostConstruct;
@@ -72,14 +73,15 @@ public class SlowStarter {
         return shape;
     }
 }
-....
+----
 
 The `Executor` is a simple pattern, useful for many things, which
 exposes an interface functionally equivalent to
 `java.util.concurrent.ExecutorService`, but with the underlying thread
 pool controlled by the container.
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import javax.ejb.AsyncResult;
@@ -100,12 +102,13 @@ public class Executor {
     }
 
 }
-....
+----
 
 Finally a test case shows the usefulness of `@AroundInvoke` call in our
 bean that calls `construct.get()`
 
-....
+[source,java]
+----
 package org.superbiz.asyncpost;
 
 import junit.framework.Assert;
@@ -131,4 +134,4 @@ public class SlowStarterTest {
         Assert.assertEquals("circle", slowStarter.getShape());
     }
 }
-....
+----

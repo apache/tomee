@@ -9,19 +9,25 @@ It involves no classpath scanning at all.  If you want something to be in the ap
 With the `ApplicationComposer` you can do identical testing that OpenEJB uses internally, but with limited dependency on OpenEJB itself.  The main dependency is on the code
 that is used to build the actual applications:
 
-    <dependency>
-      <groupId>org.apache.openejb</groupId>
-      <artifactId>openejb-jee</artifactId>
-      <version>4.0.0-beta-1</version>
-    </dependency>
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.tomee</groupId>
+  <artifactId>openejb-core</artifactId>
+  <version>${openejb.version}</version>
+</dependency>
+----
 
 == Composing an Application
 
 The main difference to the embedded `EJBContainer` API is building the application in the test code.  This is done with one or more methods in the test case annotated
 with `org.apache.openejb.testing.Module` using the following format:
 
-    @Module
-    public <return-value> <module-name>() {
+[source,java]
+----
+@Module
+public <return-value> <module-name>() {
+----
 
 Where **module-name** is the name you wish to use for that module and **return-value** can be any one of the following:
 
@@ -38,6 +44,7 @@ Where **module-name** is the name you wish to use for that module and **return-v
 == Example
 
 Used in an actual testcase, that might look like so:
+
 [source,java,numbered]
 ----
     import junit.framework.TestCase;

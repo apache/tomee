@@ -1,0 +1,77 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= MyFaces CODI Demo
+
+
+== Passos para executar o exemplo
+
+[discrete]
+== Crie e inicie a demonstração:
+
+[source,bash]
+----
+mvn clean package tomee:run
+----
+
+==== Abrir:
+[source,java]
+----
+http://localhost:8080/myfaces-codi-demo-8.0.5-SNAPSHOT/
+----
+
+Este exemplo mostra como melhorar aplicativos JSF2/CDI/BV/JPA usando
+a funcionalidade fornecida pelo Apache MyFaces CODI e ExtVal.
+
+[discrete]
+=== Introdução ao MyFaces CODI e ExtVal
+
+O projeto CDI do Apache MyFaces Extensions (também conhecido como CODI)
+abriga extensões portáteis para contextos e injeção de dependência (CDI - JSR 299). CODI
+É uma caixa de ferramentas para o seu aplicativo CDI. Como o CDI, o CODI está focado
+em segurança de tipo. É uma estrutura modularizada e extensível. Então é
+fácil de escolher as peças necessárias para facilitar o trabalho diário em seu projeto.
+
+O MyFaces Extensions Validator (também conhecido como ExtVal) é uma estrutura focada
+na validação JSF compatível com JSF 1.xe JSF 2.x. Este exemplo
+mostra como melhorar a integração padrão do Bean-Validation
+(JSR-303) com JSF2 e validação de campos cruzados com base em metadados.
+
+
+Recursos ilustrados
+
+* Apache MyFaces CODI
+
+* Type-safe view-config
+
+* Type-safe (custom) view-meta-data
+
+* Type-safe navigation
+
+* Type-safe (specialized) config
+
+* Type-safe custom project-stage
+
+* @WindowScoped
+
+* Controlling CODI scopes with WindowContext
+
+* @ViewAccessScoped
+
+* Manual conversation handling
+
+* Secured pages (AccessDecisionVoter)
+
+* @Transactional
+
+* I18n (fluent API)
+
+* Dependency-Injection for JSR303 (BV) constraint-validators
+
+* Dependency-Injection for JSF phase-listeners
+
+* Apache MyFaces ExtVal
+
+* Cross-Field validation (@Equals)
+
+* Type-safe group-validation (@BeanValidation) for JSF action-methods

@@ -1,0 +1,324 @@
+= Banco de dados ConfigSource da configuração do MicroProfile
+:index-group: MicroProfile
+:jbake-type: page
+:jbake-status: published
+
+Este é um exemplo sobre como implementar um `ConfigSource` para a configuração personalizada de MicroProfile.
+O ConfigSource personalizado lê os valores de configuração de uma base de dados.
+
+[discrete]
+==== ConfigSource Feature
+
+Para proporcionar um ConfigSource personalizado de uma base de dados, devemos começar com uma classe que implemente a interface `ConfigSource`, sobrescrevendo 3 métodos: `getProperties`, `getValue`, e `getName`.
+
+[source,java]
+----
+public class DatabaseConfigSource implements ConfigSource {
+    private DataSource dataSource;
+
+    public DatabaseConfigSource() {
+        try {
+            dataSource = (DataSource) new InitialContext().lookup("openejb:Resource/config-source-database");
+        } catch (final NamingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        final Map<String, String> properties = new HashMap<>();
+
+        try {
+            final Connection connection = dataSource.getConnection();
+            final PreparedStatement query = connection.prepareStatement("SELECT NAME, VALUE FROM CONFIGURATIONS");
+            final ResultSet names = query.executeQuery();
+
+            while (names.next()) {
+                properties.put(names.getString(0), names.getString(1));
+            }
+
+            DbUtils.closeQuietly(names);
+            DbUtils.closeQuietly(query);
+            DbUtils.closeQuietly(connection);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+
+        return properties;
+    }
+
+    @Override
+    public String getValue(final String propertyName) {
+        try {
+            final Connection connection = dataSource.getConnection();
+            final PreparedStatement query =
+                    connection.prepareStatement("SELECT VALUE FROM CONFIGURATIONS WHERE NAME = ?");
+            query.setString(1, propertyName);
+            final ResultSet value = query.executeQuery();
+
+            if (value.next()) {
+                return value.getString(1);
+            }
+
+            DbUtils.closeQuietly(value);
+            DbUtils.closeQuietly(query);
+            DbUtils.closeQuietly(connection);
+        } catch (final SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return DatabaseConfigSource.class.getSimpleName();
+    }
+}
+----
+Para simplificar, no exemplo anterior, a definição da base de dados e os dados utilizados para a configuração correspondem a um `Resource`, declarado em um arquivo de configuração `tomee.xml` como `Resource` do tipo: `DataSource` da seguinte maneira: 
+
+[source,xml]
+----
+<tomee>
+  <Resource id="config-source-database" type="DataSource">
+
+  </Resource>
+</tomee>
+----
+
+e está vinculado a um conjunto de instruções SQL, definidas no script `import-config-source-database.sql`:
+
+[source,sql]
+----
+CREATE TABLE CONFIGURATIONS (NAME VARCHAR (255) NOT NULL PRIMARY KEY, VALUE VARCHAR(255) NOT NULL);
+INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.currency', 'Euro');
+INSERT INTO CONFIGURATIONS(NAME, VALUE) VALUES('application.country', 'PT');
+----
+
+== Executando a aplicação:
+
+[source,bash]
+----
+mvn clean install tomee:run
+----
+
+[source,bash]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.microprofile.config.source.database.DatabaseConfigSourceTest
+23-May-2020 00:34:50.330 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version name:   Apache Tomcat (TomEE)/9.0.35 (8.0.2-SNAPSHOT)
+23-May-2020 00:34:50.331 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Server built:          May 5 2020 20:36:20 UTC
+23-May-2020 00:34:50.331 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Server version number: 9.0.35.0
+23-May-2020 00:34:50.332 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Name:               Linux
+23-May-2020 00:34:50.332 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke OS Version:            5.0.0-23-generic
+23-May-2020 00:34:50.332 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Architecture:          amd64
+23-May-2020 00:34:50.333 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Java Home:             /home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre
+23-May-2020 00:34:50.333 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Version:           1.8.0_162-b12
+23-May-2020 00:34:50.334 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke JVM Vendor:            Eclipse OpenJ9
+23-May-2020 00:34:50.334 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_BASE:         /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:50.335 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke CATALINA_HOME:         /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:50.346 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xoptionsfile=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs/options.default
+23-May-2020 00:34:50.346 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xlockword:mode=default,noLockword=java/lang/String,noLockword=java/util/MapEntry,noLockword=java/util/HashMap$Entry,noLockword=org/apache/harmony/luni/util/ModifiedMap$Entry,noLockword=java/util/Hashtable$Entry,noLockword=java/lang/invoke/MethodType,noLockword=java/lang/invoke/MethodHandle,noLockword=java/lang/invoke/CollectHandle,noLockword=java/lang/invoke/ConstructorHandle,noLockword=java/lang/invoke/ConvertHandle,noLockword=java/lang/invoke/ArgumentConversionHandle,noLockword=java/lang/invoke/AsTypeHandle,noLockword=java/lang/invoke/ExplicitCastHandle,noLockword=java/lang/invoke/FilterReturnHandle,noLockword=java/lang/invoke/DirectHandle,noLockword=java/lang/invoke/ReceiverBoundHandle,noLockword=java/lang/invoke/DynamicInvokerHandle,noLockword=java/lang/invoke/FieldHandle,noLockword=java/lang/invoke/FieldGetterHandle,noLockword=java/lang/invoke/FieldSetterHandle,noLockword=java/lang/invoke/StaticFieldGetterHandle,noLockword=java/lang/invoke/StaticFieldSetterHandle,noLockword=java/lang/invoke/IndirectHandle,noLockword=java/lang/invoke/InterfaceHandle,noLockword=java/lang/invoke/VirtualHandle,noLockword=java/lang/invoke/PrimitiveHandle,noLockword=java/lang/invoke/InvokeExactHandle,noLockword=java/lang/invoke/InvokeGenericHandle,noLockword=java/lang/invoke/VarargsCollectorHandle,noLockword=java/lang/invoke/ThunkTuple
+23-May-2020 00:34:50.346 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Xjcl:jclse7b_29
+23-May-2020 00:34:50.347 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dcom.ibm.oti.vm.bootstrap.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64
+23-May-2020 00:34:50.348 INFORMAÇÕES [main] sun.reflect.NativeMethodAccessorImpl.invoke Command line argument: -Dsun.boot.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64
+23-May-2020 00:34:50.348 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.library.path=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64:/usr/lib64:/usr/lib
+23-May-2020 00:34:50.348 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.home=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre
+23-May-2020 00:34:50.348 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.ext.dirs=/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/ext
+23-May-2020 00:34:50.349 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Duser.dir=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:50.349 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.class.path=.
+23-May-2020 00:34:50.349 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -XX:+HeapDumpOnOutOfMemoryError
+23-May-2020 00:34:50.349 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Xmx512m
+23-May-2020 00:34:50.349 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Xms256m
+23-May-2020 00:34:50.350 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -XX:ReservedCodeCacheSize=64m
+23-May-2020 00:34:50.350 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.httpPort=40273
+23-May-2020 00:34:50.350 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=false
+23-May-2020 00:34:50.350 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.openejb.servlet.filters=org.apache.openejb.arquillian.common.ArquillianFilterRunner=/ArquillianServletRunner
+23-May-2020 00:34:50.350 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dopenejb.system.apps=true
+23-May-2020 00:34:50.351 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dtomee.remote.support=true
+23-May-2020 00:34:50.351 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.config.file=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/conf/logging.properties
+23-May-2020 00:34:50.351 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -javaagent:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/openejb-javaagent.jar
+23-May-2020 00:34:50.351 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+23-May-2020 00:34:50.351 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.io.tmpdir=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/temp
+23-May-2020 00:34:50.352 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.base=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:50.352 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.home=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:50.352 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dcatalina.ext.dirs=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib
+23-May-2020 00:34:50.352 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dorg.apache.tomcat.util.http.ServerCookie.ALLOW_HTTP_SEPARATORS_IN_V0=true
+23-May-2020 00:34:50.353 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -ea
+23-May-2020 00:34:50.353 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Djava.class.path=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/bin/bootstrap.jar:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/bin/tomcat-juli.jar
+23-May-2020 00:34:50.353 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.command=org.apache.catalina.startup.Bootstrap start
+23-May-2020 00:34:50.353 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.launcher=SUN_STANDARD
+23-May-2020 00:34:50.353 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Command line argument: -Dsun.java.launcher.pid=21434
+23-May-2020 00:34:50.354 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke The Apache Tomcat Native library which allows using OpenSSL was not found on the java.library.path: [/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64/compressedrefs:/home/daniel/desenvolvimento/jdk8u162-b12_openj9-0.8.0/jre/lib/amd64:/usr/lib64:/usr/lib]
+23-May-2020 00:34:51.272 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Initializing ProtocolHandler ["http-nio-40273"]
+23-May-2020 00:34:52.125 INFORMAÇÕES [main] org.apache.openejb.util.OptionsLog.info Using 'tomee.remote.support=true'
+23-May-2020 00:34:52.189 INFORMAÇÕES [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jdbc.datasource-creator=org.apache.tomee.jdbc.TomEEDataSourceCreator'
+23-May-2020 00:34:52.556 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+23-May-2020 00:34:52.558 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> OpenEJB http://tomee.apache.org/
+23-May-2020 00:34:52.561 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Startup: Sat May 23 00:34:52 BRT 2020
+23-May-2020 00:34:52.561 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Copyright 1999-2018 (C) Apache OpenEJB Project, All Rights Reserved.
+23-May-2020 00:34:52.563 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Version: 8.0.2-SNAPSHOT
+23-May-2020 00:34:52.564 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build date: 20200513
+23-May-2020 00:34:52.567 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> Build time: 04:10
+23-May-2020 00:34:52.567 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> ********************************************************************************
+23-May-2020 00:34:52.567 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.home = /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:52.568 INFORMAÇÕES [main] org.apache.openejb.OpenEJB$Instance.<init> openejb.base = /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT
+23-May-2020 00:34:52.578 INFORMAÇÕES [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@e293a2b2
+23-May-2020 00:34:52.584 INFORMAÇÕES [main] org.apache.openejb.cdi.CdiBuilder.initializeOWB Succeeded in installing singleton service
+23-May-2020 00:34:52.665 INFORMAÇÕES [main] org.apache.openejb.config.ConfigurationFactory.init TomEE configuration file is '/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/conf/tomee.xml'
+23-May-2020 00:34:52.831 INFORMAÇÕES [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Tomcat Security Service, type=SecurityService, provider-id=Tomcat Security Service)
+23-May-2020 00:34:52.839 INFORMAÇÕES [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+23-May-2020 00:34:52.848 INFORMAÇÕES [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=config-source-database, type=Resource, provider-id=Default JDBC Database)
+23-May-2020 00:34:52.855 INFORMAÇÕES [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.system.apps=true'
+23-May-2020 00:34:52.861 INFORMAÇÕES [main] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+23-May-2020 00:34:52.872 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating TransactionManager(id=Default Transaction Manager)
+23-May-2020 00:34:52.990 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating SecurityService(id=Tomcat Security Service)
+23-May-2020 00:34:53.025 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=config-source-database)
+23-May-2020 00:34:53.742 INFORMAÇÕES [main] org.hsqldb.persist.Logger.logInfoEvent Checkpoint start
+23-May-2020 00:34:53.754 INFORMAÇÕES [main] org.hsqldb.persist.Logger.logInfoEvent checkpointClose start
+23-May-2020 00:34:53.782 INFORMAÇÕES [main] org.hsqldb.persist.Logger.logInfoEvent checkpointClose end
+23-May-2020 00:34:53.784 INFORMAÇÕES [main] org.hsqldb.persist.Logger.logInfoEvent Checkpoint end - txts: 1
+23-May-2020 00:34:53.944 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.ImportSql.doImport importing file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/import-config-source-database.sql
+23-May-2020 00:34:54.047 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Singleton Container)
+23-May-2020 00:34:54.124 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: openejb
+23-May-2020 00:34:54.354 INFORMAÇÕES [main] org.apache.openejb.util.OptionsLog.info Using 'openejb.jndiname.format={deploymentId}{interfaceType.openejbLegacyName}'
+23-May-2020 00:34:54.388 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/DeployerBusinessRemote) --> Ejb(deployment-id=openejb/Deployer)
+23-May-2020 00:34:54.394 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.Deployer) --> Ejb(deployment-id=openejb/Deployer)
+23-May-2020 00:34:54.401 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer) --> Ejb(deployment-id=openejb/Deployer)
+23-May-2020 00:34:54.410 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=openejb/ConfigurationInfoBusinessRemote) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+23-May-2020 00:34:54.415 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!org.apache.openejb.assembler.classic.cmd.ConfigurationInfo) --> Ejb(deployment-id=openejb/ConfigurationInfo)
+23-May-2020 00:34:54.427 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=MEJB) --> Ejb(deployment-id=MEJB)
+23-May-2020 00:34:54.433 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.JndiBuilder.bind Jndi(name=global/openejb/openejb/openejb/Deployer!javax.management.j2ee.ManagementHome) --> Ejb(deployment-id=MEJB)
+23-May-2020 00:34:54.467 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.481 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.499 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Created Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.504 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=MEJB, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.509 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/ConfigurationInfo, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.514 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.startEjbs Started Ejb(deployment-id=openejb/Deployer, ejb-name=openejb/Deployer, container=Default Singleton Container)
+23-May-2020 00:34:54.529 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.deployMBean Deployed MBean(openejb.user.mbeans:application=openejb,group=org.apache.openejb.assembler.monitoring,name=JMXDeployer)
+23-May-2020 00:34:54.535 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=openejb)
+23-May-2020 00:34:54.630 INFORMAÇÕES [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf)
+23-May-2020 00:34:55.024 INFORMAÇÕES [main] org.apache.openejb.server.ServiceManager.initServer Creating ServerService(id=cxf-rs)
+23-May-2020 00:34:55.133 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.start   ** Bound Services **
+23-May-2020 00:34:55.133 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.printRow   NAME                 IP              PORT  
+23-May-2020 00:34:55.134 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.start -------
+23-May-2020 00:34:55.134 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.start Ready!
+23-May-2020 00:34:55.137 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server initialization in [5.233] milliseconds
+23-May-2020 00:34:55.176 INFORMAÇÕES [main] org.apache.tomee.catalina.OpenEJBNamingContextListener.bindResource Importing a Tomcat Resource with id 'UserDatabase' of type 'org.apache.catalina.UserDatabase'.
+23-May-2020 00:34:55.179 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Resource(id=UserDatabase)
+23-May-2020 00:34:55.199 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting service [Catalina]
+23-May-2020 00:34:55.201 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting Servlet engine: [Apache Tomcat (TomEE)/9.0.35 (8.0.2-SNAPSHOT)]
+23-May-2020 00:34:55.284 INFORMAÇÕES [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesRmiTargets] to [true] as the property does not exist.
+23-May-2020 00:34:55.285 INFORMAÇÕES [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+23-May-2020 00:34:55.286 INFORMAÇÕES [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesObjectStreamClassCaches] to [true] as the property does not exist.
+23-May-2020 00:34:55.289 INFORMAÇÕES [main] org.apache.catalina.core.StandardContext.setClassLoaderProperty Unable to set the web application class loader property [clearReferencesThreadLocals] to [true] as the property does not exist.
+23-May-2020 00:34:55.330 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-40273"]
+23-May-2020 00:34:55.347 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [208] milliseconds
+23-May-2020 00:34:56.103 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.util.JarExtractor.extract Extracting jar: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test.war
+23-May-2020 00:34:56.144 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.util.JarExtractor.extract Extracted path: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test
+23-May-2020 00:34:56.145 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.tomee.catalina.TomcatWebAppBuilder.deployWebApps using default host: localhost
+23-May-2020 00:34:56.146 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.tomee.catalina.TomcatWebAppBuilder.init ------------------------- localhost -> /test
+23-May-2020 00:34:56.149 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.util.OptionsLog.info Using 'openejb.session.manager=org.apache.tomee.catalina.session.QuickSessionManager'
+23-May-2020 00:34:56.283 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.util.OptionsLog.info Using 'tomee.mp.scan=all'
+23-May-2020 00:34:57.009 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.config.ConfigurationFactory.configureApplication Configuring enterprise application: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test
+23-May-2020 00:34:57.384 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.config.ConfigurationFactory.configureService Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+23-May-2020 00:34:57.385 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.config.AutoConfig.createContainer Auto-creating a container for bean test.Comp-1457185299: Container(type=MANAGED, id=Default Managed Container)
+23-May-2020 00:34:57.385 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.assembler.classic.Assembler.createRecipe Creating Container(id=Default Managed Container)
+23-May-2020 00:34:57.394 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.core.managed.SimplePassivater.init Using directory /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/temp for stateful session passivation
+23-May-2020 00:34:57.413 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.config.AppInfoBuilder.build Enterprise application "/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test" loaded.
+23-May-2020 00:34:57.413 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.assembler.classic.Assembler.createApplication Assembling app: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test
+23-May-2020 00:34:57.455 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.cdi.CdiBuilder.initSingleton Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@e293a2b2
+23-May-2020 00:34:57.558 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container is starting...
+23-May-2020 00:34:57.564 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.webbeans.plugins.PluginLoader.startUp Adding OpenWebBeansPlugin : [CdiPlugin]
+23-May-2020 00:34:57.741 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for jar:file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/geronimo-config-impl-1.2.1.jar!/META-INF/beans.xml looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+23-May-2020 00:34:57.860 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.cdi.CdiScanner.handleBda Using annotated mode for file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test/WEB-INF/classes/ looking all classes to find CDI beans, maybe think to add a beans.xml if not there or add the jar to exclusions.list
+23-May-2020 00:34:58.103 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.util.OptionsLog.info Using 'tomee.mp.scan=all'
+23-May-2020 00:34:59.104 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.webbeans.config.BeansDeployer.validateInjectionPoints All injection points were validated successfully.
+23-May-2020 00:34:59.137 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.cdi.OpenEJBLifecycle.startApplication OpenWebBeans Container has started, it took 1579 ms.
+23-May-2020 00:34:59.188 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.assembler.classic.Assembler.createApplication Deployed Application(path=/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test)
+23-May-2020 00:34:59.300 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Using org.apache.myfaces.ee.MyFacesContainerInitializer
+23-May-2020 00:34:59.325 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.ee.MyFacesContainerInitializer.onStartup Added FacesServlet with mappings=[/faces/*, *.jsf, *.faces, *.xhtml]
+23-May-2020 00:34:59.363 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.jasper.servlet.TldScanner.scanJars At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+23-May-2020 00:34:59.375 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.tomee.myfaces.TomEEMyFacesContainerInitializer.addListener Installing <listener>org.apache.myfaces.webapp.StartupServletContextListener</listener>
+23-May-2020 00:34:59.452 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getStandardFacesConfig Reading standard config META-INF/standard-faces-config.xml
+23-May-2020 00:34:59.758 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/openwebbeans-jsf-2.0.12.jar!/META-INF/faces-config.xml
+23-May-2020 00:34:59.762 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.DefaultFacesConfigurationProvider.getClassloaderFacesConfig Reading config : jar:file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/openwebbeans-el22-2.0.12.jar!/META-INF/faces-config.xml
+23-May-2020 00:35:00.022 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-api' was found in version '2.3.6' from path 'file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/myfaces-api-2.3.6.jar'
+23-May-2020 00:35:00.022 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.LogMetaInfUtils.logArtifact Artifact 'myfaces-impl' was found in version '2.3.6' from path 'file:/home/daniel/git/apache/tomee/examples/mp-config-source-database/target/tomee/apache-tomee-microprofile-8.0.2-SNAPSHOT/lib/myfaces-impl-2.3.6.jar'
+23-May-2020 00:35:00.035 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.util.ExternalSpecifications.isCDIAvailable MyFaces CDI support enabled
+23-May-2020 00:35:00.037 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.spi.impl.DefaultInjectionProviderFactory.getInjectionProvider Using InjectionProvider org.apache.myfaces.spi.impl.CDIAnnotationDelegateInjectionProvider
+23-May-2020 00:35:00.096 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.util.ExternalSpecifications.isBeanValidationAvailable MyFaces Bean Validation support enabled
+23-May-2020 00:35:00.134 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.application.ApplicationImpl.getProjectStage Couldn't discover the current project stage, using Production
+23-May-2020 00:35:00.135 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.FacesConfigurator.handleSerialFactory Serialization provider : class org.apache.myfaces.shared_impl.util.serial.DefaultSerialFactory
+23-May-2020 00:35:00.141 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.config.annotation.DefaultLifecycleProviderFactory.getLifecycleProvider Using LifecycleProvider org.apache.myfaces.config.annotation.Tomcat7AnnotationLifecycleProvider
+23-May-2020 00:35:00.179 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.webapp.AbstractFacesInitializer.initFaces ServletContext initialized.
+23-May-2020 00:35:00.185 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.view.facelets.ViewPoolProcessor.initialize org.apache.myfaces.CACHE_EL_EXPRESSIONS web config parameter is set to "noCache". To enable view pooling this param must be set to "alwaysRecompile". View Pooling disabled.
+23-May-2020 00:35:00.206 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.myfaces.webapp.StartupServletContextListener.contextInitialized MyFaces Core has started, it took [818] ms.
+23-May-2020 00:35:00.921 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using readers:
+23-May-2020 00:35:00.922 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@e4a5eaa7
+23-May-2020 00:35:00.923 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@5e634b27
+23-May-2020 00:35:00.924 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@22f2dce9
+23-May-2020 00:35:00.924 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@837a58b0
+23-May-2020 00:35:00.926 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@53d93293
+23-May-2020 00:35:00.926 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@6df684b0
+23-May-2020 00:35:00.927 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@170bdab4
+23-May-2020 00:35:00.928 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@25e7bfe7
+23-May-2020 00:35:00.928 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@163ac130
+23-May-2020 00:35:00.929 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@cbe54303
+23-May-2020 00:35:00.930 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@426e0f35
+23-May-2020 00:35:00.931 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
+23-May-2020 00:35:00.931 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@34d8d554
+23-May-2020 00:35:00.932 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@7af29c85
+23-May-2020 00:35:00.933 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.StringTextProvider@163ac130
+23-May-2020 00:35:00.933 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider@53d93293
+23-May-2020 00:35:00.934 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.PrimitiveTextProvider@e4a5eaa7
+23-May-2020 00:35:00.935 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.FormEncodingProvider@5e634b27
+23-May-2020 00:35:00.935 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.MultipartProvider@22f2dce9
+23-May-2020 00:35:00.936 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.geronimo.microprofile.openapi.jaxrs.JacksonOpenAPIYamlBodyWriter@19eda297
+23-May-2020 00:35:00.937 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.SourceProvider@837a58b0
+23-May-2020 00:35:00.937 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.JAXBElementProvider@6df684b0
+23-May-2020 00:35:00.938 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider@170bdab4
+23-May-2020 00:35:00.939 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider@25e7bfe7
+23-May-2020 00:35:00.940 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.BinaryDataProvider@cbe54303
+23-May-2020 00:35:00.940 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.provider.DataSourceProvider@426e0f35
+23-May-2020 00:35:00.941 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using exception mappers:
+23-May-2020 00:35:00.942 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.impl.WebApplicationExceptionMapper@90891f49
+23-May-2020 00:35:00.943 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.tomee.microprofile.jwt.MPJWTFilter$MPJWTExceptionMapper@a24f88d5
+23-May-2020 00:35:00.943 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.openejb.server.cxf.rs.EJBExceptionMapper@4c71062c
+23-May-2020 00:35:00.944 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@5e9cb606
+23-May-2020 00:35:00.949 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:40273/test/                            -> org.apache.openejb.server.rest.InternalApplication@d226e0d8
+23-May-2020 00:35:00.956 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:40273/test/health                      -> Pojo org.apache.geronimo.microprofile.impl.health.cdi.CdiHealthChecksEndpoint
+23-May-2020 00:35:00.957 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/health                      ->      Response getChecks()
+23-May-2020 00:35:00.958 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:40273/test/metrics                     -> Pojo org.apache.geronimo.microprofile.metrics.jaxrs.CdiMetricsEndpoints      
+23-May-2020 00:35:00.959 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics                     ->      Object getJson(SecurityContext, UriInfo)                    
+23-May-2020 00:35:00.959 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics                     ->      String getText(SecurityContext, UriInfo)                    
+23-May-2020 00:35:00.960 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics/{registry}          ->      Object getJson(String, SecurityContext, UriInfo)            
+23-May-2020 00:35:00.960 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics/{registry}          ->      String getText(String, SecurityContext, UriInfo)            
+23-May-2020 00:35:00.960 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics/{registry}/{metric} ->      Object getJson(String, String, SecurityContext, UriInfo)    
+23-May-2020 00:35:00.961 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/metrics/{registry}/{metric} ->      String getText(String, String, SecurityContext, UriInfo)    
+23-May-2020 00:35:00.961 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints           OPTIONS http://localhost:40273/test/metrics/{registry}          ->      Object getMetadata(String, SecurityContext, UriInfo)        
+23-May-2020 00:35:00.962 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints           OPTIONS http://localhost:40273/test/metrics/{registry}/{metric} ->      Object getMetadata(String, String, SecurityContext, UriInfo)
+23-May-2020 00:35:00.963 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:40273/test/openapi                     -> Pojo org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint          
+23-May-2020 00:35:00.963 INFORMAÇÕES [http-nio-40273-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:40273/test/openapi                     ->      OpenAPI get()
+applicationCurrrency = Euro
+applicationCountry = PT
+23-May-2020 00:35:01.677 INFORMAÇÕES [http-nio-40273-exec-7] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: /home/daniel/git/apache/tomee/examples/mp-config-source-database/target/workdir/0/test
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 15.831 sec
+23-May-2020 00:35:01.848 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke A valid shutdown command was received via the shutdown port. Stopping the Server instance.
+23-May-2020 00:35:01.849 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Pausing ProtocolHandler ["http-nio-40273"]
+23-May-2020 00:35:01.862 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping service [Catalina]
+23-May-2020 00:35:01.865 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Stopping ProtocolHandler ["http-nio-40273"]
+23-May-2020 00:35:01.867 INFORMAÇÕES [main] org.apache.openejb.server.SimpleServiceManager.stop Stopping server services
+23-May-2020 00:35:01.876 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.destroyApplication Undeploying app: openejb
+23-May-2020 00:35:01.880 GRAVE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+23-May-2020 00:35:01.881 GRAVE [main] org.apache.openejb.core.singleton.SingletonInstanceManager.undeploy Unable to unregister MBean openejb.management:J2EEServer=openejb,J2EEApplication=<empty>,EJBModule=openejb,SingletonSessionBean=openejb/Deployer,name=openejb/Deployer,j2eeType=Invocations
+23-May-2020 00:35:01.908 INFORMAÇÕES [main] org.apache.openejb.assembler.classic.Assembler.doResourceDestruction Closing DataSource: config-source-database
+23-May-2020 00:35:01.920 INFORMAÇÕES [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Destroying ProtocolHandler ["http-nio-40273"]
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----

@@ -26,7 +26,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.1-SNAPSHOT</version>
+    <version>8.0.5-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -570,7 +570,7 @@
     <!-- JavaMail -->
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
-      <artifactId>geronimo-javamail_1.4_mail</artifactId>
+      <artifactId>geronimo-javamail_1.6_mail</artifactId>
     </dependency>
     <!-- End: JavaMail -->
     <dependency>

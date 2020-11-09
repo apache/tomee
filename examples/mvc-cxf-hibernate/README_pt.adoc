@@ -44,4 +44,3 @@ Executando:
     mvn clean install tomee:build
 
 será gerado um TomEE compactado com as bibliotecas apropriadas no diretório lib e esse aplicativo de exemplo na pasta webapps.
-

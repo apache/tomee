@@ -16,22 +16,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <!-- $Rev: 636494 $ $Date: 2008-03-12 21:24:02 +0100 (Wed, 12 Mar 2008) $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>alternate-descriptors</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.1-SNAPSHOT</version>
+  <version>8.0.5-SNAPSHOT</version>
   <name>TomEE :: Examples :: Alternate Descriptors</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -52,9 +47,24 @@
           <argLine>-Djdk.attach.allowAttachSelf</argLine>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1a</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -62,7 +72,6 @@
       <url>https://repository.apache.org/content/groups/snapshots</url>
     </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -99,7 +108,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.1-SNAPSHOT</version>
+      <version>8.0.5-SNAPSHOT</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

@@ -8,7 +8,8 @@ UserTransaction via a Stateful Bean.
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import javax.persistence.Entity;
@@ -67,11 +68,12 @@ public class Movie {
         this.year = year;
     }
 }
-....
+----
 
 == Movies
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import javax.annotation.Resource;
@@ -118,11 +120,12 @@ public class Movies {
         return Long.class.cast(query.getSingleResult());
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -135,11 +138,12 @@ public class Movies {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MoviesTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import org.junit.Assert;
@@ -174,11 +178,12 @@ public class MoviesTest {
     }
 
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -257,4 +262,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.471 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

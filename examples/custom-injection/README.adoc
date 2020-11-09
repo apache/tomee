@@ -8,7 +8,8 @@ right to edit this page._
 
 == Pickup
 
-....
+[source,java]
+----
 package org.superbiz.enventries;
 
 
@@ -28,11 +29,12 @@ public enum Pickup {
         PropertyEditorManager.registerEditor(Pickup.class, PickupEditor.class);
     }
 }
-....
+----
 
 == PickupEditor
 
-....
+[source,java]
+----
 package org.superbiz.enventries;
 
 /**
@@ -57,11 +59,12 @@ public class PickupEditor extends java.beans.PropertyEditorSupport {
         else throw new IllegalStateException("H and S are the only supported Pickup aliases");
     }
 }
-....
+----
 
 == Stratocaster
 
-....
+[source,java]
+----
 package org.superbiz.enventries;
 
 import javax.annotation.Resource;
@@ -122,11 +125,12 @@ public class Stratocaster {
         return certificateOfAuthenticity;
     }
 }
-....
+----
 
 == Style
 
-....
+[source,java]
+----
 package org.superbiz.enventries;
 
 /**
@@ -139,11 +143,12 @@ public enum Style {
     DELUX,
     VINTAGE;
 }
-....
+----
 
 == StratocasterTest
 
-....
+[source,java]
+----
 package org.superbiz.enventries;
 
 import junit.framework.TestCase;
@@ -190,11 +195,12 @@ public class StratocasterTest extends TestCase {
 
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -230,4 +236,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.11 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

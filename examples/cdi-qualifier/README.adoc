@@ -18,7 +18,8 @@ In our test (Payment Test) we inject only the interface Payment, without the Qua
 
 We created a **Qualifier** called `PaymentQualifier` a single qualifier with only one difference, the annotation `@Qualifier`.
 
-....
+[source,java]
+----
 @Retention(RUNTIME)
 @Target({ TYPE, FIELD, METHOD })
 @Qualifier
@@ -26,21 +27,23 @@ public @interface PaymentQualifier {
 
 	PaymentType type();	
 }
-....
+----
 
 This qualifier has a method named `type()`, this method will help the CDI to inject correctly implementation. see this enum:
 
-....
+[source,java]
+----
 public enum PaymentType {
 
 	CASH,
 	CREDITCARD
 }
-....
+----
 
 now see an implementation
 
-....
+[source,java]
+----
 @PaymentQualifier(type=PaymentType.CASH)
 public class Cash implements Payment {
 
@@ -50,13 +53,14 @@ public class Cash implements Payment {
 		return "cash";
 	}
 }
-....
+----
 
 Each implementation should marked with this qualifier.
 
 How to inject? see simplicity
 
-....
+[source,java]
+----
 public class PaymentTest {
 
     private static EJBContainer container;
@@ -97,4 +101,4 @@ public class PaymentTest {
     }
 }
 
-....
+----

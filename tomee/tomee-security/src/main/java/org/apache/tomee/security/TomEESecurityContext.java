@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import static javax.security.auth.message.AuthStatus.SEND_CONTINUE;
@@ -65,7 +66,8 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public <T extends Principal> Set<T> getPrincipalsByType(final Class<T> pType) {
-        return null;
+        // todo
+        return Collections.emptySet();
     }
 
     @Override
@@ -75,6 +77,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
+        // todo
         return false;
     }
 
@@ -117,18 +120,22 @@ public class TomEESecurityContext implements SecurityContext {
         final AuthConfigProvider authConfigProvider =
                 AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
         final ServerAuthConfig serverAuthConfig =
-                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, CallbackHandlerImpl.getInstance());
+                authConfigProvider.getServerAuthConfig("HttpServlet", appContext, new CallbackHandlerImpl());
 
         return serverAuthConfig.getAuthContext(null, null, null);
     }
 
     public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
-        if (TomcatSecurityService.class.isInstance(securityService)) {
+        if (securityService instanceof TomcatSecurityService) {
             final TomcatSecurityService tomcatSecurityService = (TomcatSecurityService) securityService;
             final Request request = OpenEJBSecurityListener.requests.get();
             final GenericPrincipal genericPrincipal =
-                    new GenericPrincipal(principal.getName(), null, new ArrayList<>(groups), principal);
+                    new GenericPrincipal(
+                        principal.getName(),
+                        null,
+                        groups == null ? Collections.emptyList() : new ArrayList<>(groups),
+                        principal);
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());

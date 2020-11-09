@@ -1,0 +1,41 @@
+:index-group: Misc
+:jbake-type: page
+:jbake-status: status=published
+= Eleição
+
+== Exemplo
+
+Este exemplo implementa uma simples aplicação de votação.
+
+Você pode criar eleições e então votar (+1 ou -1) para cada voto (chamado
+Assunto).
+
+O front, é um front JAX-RS e o backend utilizam EJBs e JPA.
+
+== Módulo
+
+A aplicação contém vários módulos:
+
+* polling-domain: entidades usadas do lado cliente também
+* polling-core: a camada meio/dao
+* polling-web: camada front (serviços REST)
+
+== O que está perceptível
+
+A camada front contém um MBean controlado por CDI (VoteCounter) que é 
+usado pelos serviços REST para atualizar informações você pode recuperar por meio do 
+protocolo JMX (cliente JConsole está bom para ver isto;)).
+
+Ele gerencia um datasource dinâmico também. Ele gerencia na configuração 
+de exemplo 2 clientes.
+
+Isto é um round robin simples por requisição. É porque da origem do cliente, se você
+simplesmente criar uma votação, e então você procurar bem isso, não encontrará a votação persistida,
+você precisa fazer isto mais uma vez.
+
+== Cliente
+
+Isto permite você criar a votação, então retorna, encontre a melhor votação, e vote para
+qualquer votação.
+
+Por favor digite ajuda para mais informações.

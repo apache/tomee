@@ -1,0 +1,188 @@
+= JPA com EclipseLink e Jersey
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+Neste exemplo, um serviço da web é criado para armazenar e recuperar dados do banco de dados.
+https://jersey.github.io/[Jersey] será usado para criar o serviço da web..
+Para o banco de dados, o provedor JPA usado será https://www.eclipse.org/eclipselink/[EclipseLink].
+
+O serviço da web irá armazenar e recuperar informações sobre pessoas:
+
+[source,java]
+----
+@Entity
+@XmlRootElement
+@NamedQuery(name = "Person.findAll", query = "select p from Person p")
+public class Person {
+
+    @Id
+    @GeneratedValue
+    private long id;
+    private String name;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+----
+
+Os dois serviços que nosso aplicativo oferece são: persistir uma pessoa, recuperando todas as pessoas do banco de dados:
+
+[source,java]
+----
+@Singleton
+@Lock(LockType.READ)
+public class PersonDAO {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public Person save(final String name) {
+        final Person person = new Person();
+        person.setName(name);
+        em.persist(person);
+        return person;
+    }
+
+    public List<Person> findAll() {
+        return em.createNamedQuery("Person.findAll", Person.class).getResultList();
+    }
+----
+
+A seguir, estamos prontos para expor como um serviço esta lógica de negócios:
+
+[source,java]
+----
+@Path("/person")
+@RequestScoped
+public class PersonService {
+
+    @Inject
+    private PersonDAO dao;
+
+    public PersonService() {
+        System.out.println();
+    }
+
+    @GET
+    @Path("/create/{name}")
+    public Person create(@PathParam("name") final String name) {
+        return dao.save(name);
+    }
+
+    @GET
+    @Path("/all")
+    public List<Person> list() {
+        return dao.findAll();
+    }
+----
+
+Agora que temos uma classe de serviço, definindo os recursos fornecidos pelo aplicativo, estendemos a classe `javax.ws.rs.core.Application` e adicionamos nosso `PersonService`:
+
+[source,java]
+----
+public class JerseyApplication extends Application {
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(PersonService.class);
+        return classes;
+    }
+}
+----
+
+Há mais uma etapa a ser executada para configurar um servlet fornecido por Jersey.
+Isso pode ser feito em `webapp/WEB-INF/web.xml`:
+
+[source,xml]
+----
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+  <servlet>
+    <servlet-name>Jersey Web Application</servlet-name>
+    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>javax.ws.rs.Application</param-name>
+      <param-value>org.superbiz.service.JerseyApplication</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Jersey Web Application</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>
+----
+
+O serviço da web está pronto para ser testado. Para isso, vamos escrever um teste de unidade usando http://arquillian.org/[Arquillian]:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class JerseyApplicationTest {
+
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "jersey-application.war")
+                .addPackage(JerseyApplication.class.getPackage())
+                .addPackage(Person.class.getPackage())
+                .addPackage(PersonDAO.class.getPackage())
+                .addAsManifestResource(new FileAsset(new File("src/main/webapp/WEB-INF/web.xml")), "web.xml")
+                .addAsManifestResource(new ClassLoaderAsset("META-INF/persistence.xml"), "persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+    }
+
+    @ArquillianResource
+    private URL webapp;
+
+    @Test
+    public void test() {
+        get("person/create/TestPerson");
+
+        String allPersons = get("person/all");
+
+        assertTrue(allPersons.contains("<name>TestPerson</name>"));
+    }
+
+    private String get(String url) {
+        final CloseableHttpClient client = HttpClients.custom().build();
+        final HttpHost httpHost = new HttpHost(webapp.getHost(), webapp.getPort(), webapp.getProtocol());
+        final HttpClientContext context = HttpClientContext.create();
+
+        final HttpGet get = new HttpGet(webapp.toExternalForm() + url);
+        CloseableHttpResponse response = null;
+        try {
+            response = client.execute(httpHost, get, context);
+            return EntityUtils.toString(response.getEntity());
+        } catch (final IOException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            try {
+                IO.close(response);
+            } catch (final IOException e) {
+                // no-op
+            }
+        }
+    }
+}
+----
+
+Usamos o Arquillian para iniciar programaticamente um novo container de teste. Em um teste, uma pessoa é persistida e sua presença no banco de dados é verificada recuperando todas as entidades de pessoa.
+
+Um exemplo completo pode ser encontrado https://github.com/apache/tomee/tree/master/examples/tomee-jersey-eclipselink[aqui].
+É um projeto maven, e o teste pode ser executado com o comando `mvn clean install`.

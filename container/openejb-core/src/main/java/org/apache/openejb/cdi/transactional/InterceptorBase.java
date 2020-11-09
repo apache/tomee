@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 import static java.util.Arrays.asList;
 
 public abstract class InterceptorBase implements Serializable {
-    private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transaction call");
+    private static final IllegalStateException ILLEGAL_STATE_EXCEPTION = new IllegalStateException("Can't use UserTransaction from @Transactional call");
     private static final boolean HANDLE_EXCEPTION_ONLY_FOR_CLIENT = SystemInstance.get().getOptions().get("openejb.cdi.jta.exception.client-only", false);
 
     private transient volatile ConcurrentMap<Method, Boolean> rollback = new ConcurrentHashMap<>();

@@ -9,27 +9,21 @@
   License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
   OF ANY KIND, either express or implied. See the License for the specific
   language governing permissions and limitations under the License. -->
-
 <!-- $Rev: 1387962 $ $Date: 2012-09-20 05:53:17 -0500 (Thu, 20 Sep 2012)
   $ -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>connector-ear</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.1-SNAPSHOT</version>
+  <version>8.0.5-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in EAR</name>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
     <surefire.version>2.21.0</surefire.version>
   </properties>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -37,7 +31,6 @@
       <url>http://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -54,7 +47,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <modules>
     <module>connector-sample-api</module>
     <module>connector-sample-impl</module>
@@ -63,7 +55,6 @@
     <module>connector-sample-ear</module>
     <module>connector-sample-functional-tests</module>
   </modules>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -78,7 +69,6 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -93,9 +83,24 @@
           </systemProperties>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1a</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <!-- This section allows you to configure where to publish libraries for
     sharing. It is not required and may be deleted. For more information see:
     http://maven.apache.org/plugins/maven-deploy-plugin/ -->

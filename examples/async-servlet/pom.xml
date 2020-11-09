@@ -15,24 +15,21 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>async-servlet</artifactId>
   <packaging>war</packaging>
-  <version>8.0.1-SNAPSHOT</version>
+  <version>8.0.5-SNAPSHOT</version>
   <name>OpenEJB :: Examples :: Async Servlet</name>
   <url>http://maven.apache.org</url>
-
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.graphene.webdriver>2.3.1</version.graphene.webdriver>
-    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -62,7 +59,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
-      <version>8.0.1-SNAPSHOT</version>
+      <version>8.0.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -78,7 +75,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
     <finalName>async-servlet</finalName>
     <plugins>
@@ -99,15 +95,29 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.1-SNAPSHOT</version>
+        <version>8.0.5-SNAPSHOT</version>
         <configuration>
           <args>-Xmx512m -XX:PermSize=256m</args>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1a</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
@@ -123,6 +133,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>
-

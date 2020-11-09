@@ -39,11 +39,10 @@ import java.io.File;
  * </Context>
  */
 public class TomEEWebappLoader extends WebappLoader {
-    public static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
+    private static final boolean SKIP_BACKGROUND_PROCESS = "true".equals(SystemInstance.get().getProperty("tomee.classloader.skip-background-process", "false"));
+    private static final String FORCE_SKIP = SystemInstance.get().getProperty("tomee.webapp.classloader.forced-skip", null);
 
     private volatile ClassLoader loader;
-    private String forceSkip;
-    private String[] forceSkipRuntime;
 
     @Override
     public void backgroundProcess() {
@@ -113,8 +112,8 @@ public class TomEEWebappLoader extends WebappLoader {
             TomEEWebappClassLoader.cleanContext();
         }
 
-        if (forceSkip != null && WebAppFirstEarClassLoader.class.isInstance(getClassLoader())) {
-            WebAppFirstEarClassLoader.class.cast(getClassLoader()).setForceSkip(forceSkip.split(" *, *"));
+        if (FORCE_SKIP != null && TomEEWebappClassLoader.class.isInstance(getClassLoader())) {
+            TomEEWebappClassLoader.class.cast(getClassLoader()).setForceSkip(FORCE_SKIP.split(" *, *"));
         }
     }
 

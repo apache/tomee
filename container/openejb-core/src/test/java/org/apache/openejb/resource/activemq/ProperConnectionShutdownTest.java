@@ -83,6 +83,21 @@ public class ProperConnectionShutdownTest {
             Thread.sleep(1000);
         }
 
+        int retry = 0;
+        boolean threadsCompleted = false;
+        while (retry < 30) {
+
+            threadsCompleted = checkThreads(threadsBefore);
+            if (threadsCompleted) break;
+            retry++;
+
+            Thread.sleep(1000);
+        }
+
+        assertTrue(threadsCompleted);
+    }
+
+    private boolean checkThreads(Thread[] threadsBefore) {
         // ensure no connection are leaking
         final Thread[] threadsAfter = listThreads();
 
@@ -99,12 +114,12 @@ public class ProperConnectionShutdownTest {
             }
         }
 
-        final String debugMessage = Join.join(", ", threadsAfter);
+        if (countAMQ > 0) {
+            return false;
+        }
 
-        assertEquals(debugMessage, 0, countAMQ);
-
-        // geronimo libs spawn 2 threads we know: PoolIdleReleaseTimer and CurrentTime so we can get initial + 2 threads there
-        assertTrue(debugMessage, countOthers <= threadsBefore.length + 2);
+        // we expect PoolIdleReleaseTimer, CurrentTime and LogAsyncStream
+        return countOthers <= threadsBefore.length + 3;
     }
 
     private Thread[] listThreads() {

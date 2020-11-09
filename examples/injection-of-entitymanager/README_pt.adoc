@@ -1,0 +1,226 @@
+= Injeção de Entitymanager
+:index-group: JPA
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo mostra o uso de `@PersistenceContext` para ter um `EntityManager` com um contexto de persistência `EXTENDED` injetado em um `@Stateful bean`. Um bean JPA `@ Entity` é usado com o `EntityManager` para criar, persistir e mesclar dados em um banco de dados.
+
+== Criando a entidade JPA
+
+A própria entidade é simplesmente um pote anotado com `@Entity`. Criamos um chamado `Movie`, que podemos usar para armazenar registros de filmes.
+
+[source,java,numbered]
+----
+package org.superbiz.injection.jpa;
+
+import javax.persistence.Entity;
+
+@Entity
+public class Movie {
+
+    @Id @GeneratedValue
+    private long id;
+
+    private String director;
+    private String title;
+    private int year;
+
+    public Movie() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Movie(String director, String title, int year) {
+        this.director = director;
+        this.title = title;
+        this.year = year;
+    }
+
+    public String getDirector() {
+        return director;
+    }
+
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+}
+----
+
+== Configure o EntityManager por meio de um arquivo persistence.xml
+
+A entidade `Movie` acima pode ser criada, removida, atualizada ou excluída através de um objeto` EntityManager`.
+O próprio `EntityManager` é configurado através de um arquivo `META-INF/persistence.xml` que é colocado no mesmo jar que a entidade `Movie`.
+
+[source,xml,numbered]
+----
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+
+  <persistence-unit name="movie-unit">
+    <jta-data-source>movieDatabase</jta-data-source>
+    <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+    <class>org.superbiz.injection.jpa.Movie</class>
+
+    <properties>
+      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)"/>
+    </properties>
+  </persistence-unit>
+</persistence>
+----
+
+Observe que a entidade `Movie` é listada através de um elemento `<class>`. Isso não é necessário, mas pode ajudar no teste ou quando a classe `Movie` estiver localizada em um jar diferente do jar que contém o arquivo `persistence.xml`.
+
+==Injeção via @PersistenceContext
+
+O próprio `EntityManager` é criado pelo contêiner usando as informações no `persistence.xml`, portanto, para usá-lo em tempo de execução, basta solicitar que ele seja injetado em um de nossos componentes. Fazemos isso via `@PersistenceContext`
+
+A anotação `@PersistenceContext` pode ser usada em qualquer bean CDI, EJB, Servlet, Servlet Listener, Servlet Filter ou JSF ManagedBean. Se você não usar um EJB, precisará usar um `UserTransaction` para iniciar e confirmar transações manualmente. É necessária uma transação para que qualquer um dos métodos de criação, atualização ou exclusão do EntityManager funcione.
+
+[source,java,numbered]
+----
+package org.superbiz.injection.jpa;
+
+import javax.ejb.Stateful;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.Query;
+import java.util.List;
+
+@Stateful
+public class Movies {
+
+    @PersistenceContext(unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
+    private EntityManager entityManager;
+
+    public void addMovie(Movie movie) throws Exception {
+        entityManager.persist(movie);
+    }
+
+    public void deleteMovie(Movie movie) throws Exception {
+        entityManager.remove(movie);
+    }
+
+    public List<Movie> getMovies() throws Exception {
+        Query query = entityManager.createQuery("SELECT m from Movie as m");
+        return query.getResultList();
+    }
+}
+----
+
+Este `EntityManager` específico é injetado como um contexto de persistência `EXTENDED`, o que significa simplesmente que o `EntityManager` é criado quando o bean `@Stateful` é criado e destruído quando o bean `@Stateful` é destruído. Simplificando, os dados no `EntityManager` são armazenados em cache durante o tempo de vida do bean `@ Stateful`.
+
+O uso de contextos de persistência `EXTENDED` está *apenas* disponível para beans `@Stateful`. Consulte o link: ../../jpa-concepts.html [Conceitos da JPA] para obter uma explicação de alto nível sobre o que realmente é um "contexto de persistência" e como é significativo para a JPA.
+
+== MoviesTest
+
+Testar o JPA é bastante fácil, podemos simplesmente usar a API `EJBContainer` para criar um contêiner em nosso caso de teste.
+
+[source,java,numbered]
+----
+package org.superbiz.injection.jpa;
+
+import junit.framework.TestCase;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+import java.util.List;
+import java.util.Properties;
+
+public class MoviesTest extends TestCase {
+
+    public void test() throws Exception {
+
+        final Properties p = new Properties();
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+        final Context context = EJBContainer.createEJBContainer(p).getContext();
+
+        Movies movies = (Movies) context.lookup("java:global/injection-of-entitymanager/Movies");
+
+        movies.addMovie(new Movie("Quentin Tarantino", "Reservoir Dogs", 1992));
+        movies.addMovie(new Movie("Joel Coen", "Fargo", 1996));
+        movies.addMovie(new Movie("Joel Coen", "The Big Lebowski", 1998));
+
+        List<Movie> list = movies.getMovies();
+        assertEquals("List.size()", 3, list.size());
+
+        for (Movie movie : list) {
+            movies.deleteMovie(movie);
+        }
+
+        assertEquals("Movies.getMovies()", 0, movies.getMovies().size());
+    }
+}
+----
+
+= Executando
+
+Quando executamos nosso caso de teste, devemos ver uma saída semelhante à seguinte.
+
+[source,console]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.injection.jpa.MoviesTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/injection-of-entitymanager
+INFO - openejb.base = /Users/dblevins/examples/injection-of-entitymanager
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-entitymanager/target/classes
+INFO - Beginning load: /Users/dblevins/examples/injection-of-entitymanager/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-entitymanager
+INFO - Configuring Service(id=Default Stateful Container, type=Container, provider-id=Default Stateful Container)
+INFO - Auto-creating a container for bean Movies: Container(type=STATEFUL, id=Default Stateful Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.injection.jpa.MoviesTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Configuring PersistenceUnit(name=movie-unit)
+INFO - Auto-creating a Resource with id 'movieDatabaseNonJta' of type 'DataSource for 'movie-unit'.
+INFO - Configuring Service(id=movieDatabaseNonJta, type=Resource, provider-id=movieDatabase)
+INFO - Adjusting PersistenceUnit movie-unit <non-jta-data-source> to Resource ID 'movieDatabaseNonJta' from 'movieDatabaseUnmanaged'
+INFO - Enterprise application "/Users/dblevins/examples/injection-of-entitymanager" loaded.
+INFO - Assembling app: /Users/dblevins/examples/injection-of-entitymanager
+INFO - PersistenceUnit(name=movie-unit, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 462ms
+INFO - Jndi(name="java:global/injection-of-entitymanager/Movies!org.superbiz.injection.jpa.Movies")
+INFO - Jndi(name="java:global/injection-of-entitymanager/Movies")
+INFO - Jndi(name="java:global/EjbModule1461341140/org.superbiz.injection.jpa.MoviesTest!org.superbiz.injection.jpa.MoviesTest")
+INFO - Jndi(name="java:global/EjbModule1461341140/org.superbiz.injection.jpa.MoviesTest")
+INFO - Created Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Created Ejb(deployment-id=org.superbiz.injection.jpa.MoviesTest, ejb-name=org.superbiz.injection.jpa.MoviesTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=Movies, ejb-name=Movies, container=Default Stateful Container)
+INFO - Started Ejb(deployment-id=org.superbiz.injection.jpa.MoviesTest, ejb-name=org.superbiz.injection.jpa.MoviesTest, container=Default Managed Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-entitymanager)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.301 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----

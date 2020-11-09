@@ -12,7 +12,8 @@ However please note you can choose only one datasource by transaction.
 It means the goal of this feature is not to switch more than once of
 datasource in a transaction. The following code will not work:
 
-....
+[source,java]
+----
 @Stateless
 public class MyEJB {
     @Resource private MyRouter router;
@@ -26,7 +27,7 @@ public class MyEJB {
         em.persist(new MyEntity());
     }
 }
-....
+----
 
 In this example the implementation simply use a datasource from its name
 and needs to be set before using any JPA operation in the transaction
@@ -47,7 +48,8 @@ currently used datasource. Keep in mind JPA used more than once the
 getDatasource() method for one operation. To change the datasource in
 one transaction is dangerous and should be avoid.
 
-....
+[source,java]
+----
 package org.superbiz.dynamicdatasourcerouting;
 
 import org.apache.openejb.resource.jdbc.AbstractRouter;
@@ -139,7 +141,7 @@ public class DeterminedRouter extends AbstractRouter {
         this.defaultDataSourceName = name;
     }
 }
-....
+----
 
 === Declaring the implementation
 
@@ -150,7 +152,8 @@ you can of course change the package name).
 
 It contains the following code:
 
-....
+[source,xml]
+----
 <ServiceJar>
   <ServiceProvider id="DeterminedRouter" <!-- the name you want to use -->
       service="Resource"
@@ -163,14 +166,15 @@ It contains the following code:
     DefaultDataSourceName
   </ServiceProvider>
 </ServiceJar>
-....
+----
 
 == Using the Router
 
 Here we have a `RoutedPersister` stateless bean which uses our
 `DeterminedRouter`
 
-....
+[source,java]
+----
 package org.superbiz.dynamicdatasourcerouting;
 
 import javax.annotation.Resource;
@@ -191,14 +195,15 @@ public class RoutedPersister {
         em.persist(new Person(id, name));
     }
 }
-....
+----
 
 == The test
 
 In test mode and using property style configuration the foolowing
 configuration is used:
 
-....
+[source,java]
+----
 public class DynamicDataSourceTest {
     @Test
     public void route() throws Exception {
@@ -252,14 +257,15 @@ public class DynamicDataSourceTest {
         ctx.close();
     }
 }
-....
+----
 
 == Configuration via openejb.xml
 
 The testcase above uses properties for configuration. The identical way
 to do it via the `conf/openejb.xml` is as follows:
 
-....
+[source,xml]
+----
 <!-- Router and datasource -->
 <Resource id="My Router" type="org.apache.openejb.router.test.DynamicDataSourceTest$DeterminedRouter" provider="org.routertest:DeterminedRouter">
     DatasourceNames = database1 database2 database3
@@ -291,7 +297,7 @@ to do it via the `conf/openejb.xml` is as follows:
     Password
     JtaManaged = true
 </Resource>
-....
+----
 
 === Some hack for OpenJPA
 
@@ -308,7 +314,8 @@ Of course OpenEJB provides @Singleton and @Startup features of Java EE 6
 and we can do a bean just making a simple find, even on none existing
 entities, just to force the database creation:
 
-....
+[source,java]
+----
 @Startup
 @Singleton
 public class BoostrapUtility {
@@ -333,7 +340,7 @@ public class BoostrapUtility {
         em3.find(Person.class, 0);
     }
 }
-....
+----
 
 === Using the routed datasource
 
@@ -341,7 +348,8 @@ Now you configured the way you want to route your JPA operation, you
 registered the resources and you initialized your databases you can use
 it and see how it is simple:
 
-....
+[source,java]
+----
 @Stateless
 public class RoutedPersister {
     // injection of the "proxied" datasource
@@ -357,11 +365,12 @@ public class RoutedPersister {
         em.persist(new Person(id, name)); // will use ds database automatically
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -426,4 +435,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.504 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

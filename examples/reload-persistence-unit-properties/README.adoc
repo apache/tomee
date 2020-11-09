@@ -34,7 +34,8 @@ queries that one is enough to do the same.
 
 In the ouput we find the 3 parts described just before.
 
-....
+[source,java]
+----
 INFO - TEST, data initialization
 DEBUG - <t 1523828380, conn 93608538> executing stmnt 1615782385 CREATE TABLE Person (id BIGINT NOT NULL, name VARCHAR(255), PRIMARY KEY (id))
 DEBUG - <t 1523828380, conn 93608538> [1 ms] spent
@@ -57,4 +58,4 @@ INFO - TEST, doing some queries with cache
 DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1532943889 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
 DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
 INFO - TEST, queries with cache done
-....
+----

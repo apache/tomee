@@ -117,7 +117,7 @@ public void test() throws Exception {
 }
 ----
 
-[source,java]
+[source,console]
 ----
 -------------------------------------------------------
  T E S T S

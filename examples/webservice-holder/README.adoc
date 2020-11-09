@@ -17,7 +17,8 @@ Holders as `WebParam.Mode.OUT` parameters. As mentioned, these holders
 are simply empty buckets the application can fill in with data to have
 sent to the client. The server will pass them in uninitialized.
 
-....
+[source,java]
+----
 @Stateless
 @WebService(
         portName = "CalculatorPort",
@@ -33,7 +34,7 @@ public class Calculator implements CalculatorWs {
         multiply.value = a * b;
     }
 }
-....
+----
 
 If the Holders were specified as `WebParam.Mode.INOUT` params, then the
 client could use them to send data and the application as well. The
@@ -48,7 +49,8 @@ that will be created automatically. Note the `sumAndMultiplyResponse`
 complext type returns two elements. These match the `@WebParam`
 declarations and our two `Holder<Integer>` params.
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
                   name="CalculatorService"
@@ -107,7 +109,7 @@ declarations and our two `Holder<Integer>` params.
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
-....
+----
 
 == Testing the OUT params
 
@@ -120,7 +122,8 @@ completes.
 The holders themselves are not actually sent in the request unless they
 are configured as INOUT params via WebParam.Mode.INOUT on `@WebParam`
 
-....
+[source,java]
+----
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -164,7 +167,7 @@ public class CalculatorTest {
         assertEquals(24, (int) multiply.value);
     }
 }
-....
+----
 
 == Inspecting the messages
 
@@ -172,7 +175,8 @@ The above execution results in the following SOAP message.
 
 === SOAP sumAndMultiply client request
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -182,11 +186,12 @@ The above execution results in the following SOAP message.
     </ns1:sumAndMultiply>
   </soap:Body>
 </soap:Envelope>
-....
+----
 
 === SOAP sumAndMultiplyResponse server response
 
-....
+[source,xml]
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
@@ -196,4 +201,4 @@ The above execution results in the following SOAP message.
     </ns1:sumAndMultiplyResponse>
   </soap:Body>
 </soap:Envelope>
-....
+----

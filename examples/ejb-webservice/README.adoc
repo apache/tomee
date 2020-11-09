@@ -8,7 +8,8 @@ right to edit this page._
 
 == Calculator
 
-....
+[source,java]
+----
 package org.superbiz.ws;
 
 import javax.ejb.Stateless;
@@ -27,11 +28,12 @@ public class Calculator {
         return mul1 * mul2;
     }
 }
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
@@ -39,4 +41,4 @@ public class Calculator {
          version="2.5">
 
 </web-app>
-....
+----

@@ -156,11 +156,9 @@ public class OptimizedLoaderService implements LoaderService {
             return true;
         }
 
-        if (extClass.getClassLoader() != containerLoader) {
-            return false;
-        }
-
         switch (name) {
+            case "org.apache.geronimo.microprofile.openapi.cdi.GeronimoOpenAPIExtension":
+                return true;
             case "org.apache.bval.cdi.BValExtension":
                 for (final Extension e : extensions) {
                     final String en = e.getClass().getName();

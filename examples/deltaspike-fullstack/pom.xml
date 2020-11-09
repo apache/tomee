@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
     license agreements. See the NOTICE file distributed with this work for additional
     information regarding copyright ownership. The ASF licenses this file to
@@ -10,23 +11,18 @@
     language governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.superbiz</groupId>
   <artifactId>deltaspike-fullstack</artifactId>
   <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/DeltaSpike</name>
-  <version>8.0.1-SNAPSHOT</version>
-
+  <version>8.0.5-SNAPSHOT</version>
   <packaging>war</packaging>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     <version.myfaces2>2.3.0</version.myfaces2>
-    <version.deltaspike>1.9.1</version.deltaspike>
+    <version.deltaspike>1.9.3</version.deltaspike>
     <version.extval>2.0.8</version.extval>
-    <tomee.version>8.0.1-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
   </properties>
-
   <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
@@ -90,9 +86,24 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.tomitribe.transformer</groupId>
+        <artifactId>org.eclipse.transformer.maven</artifactId>
+        <version>0.1.1a</version>
+        <configuration>
+          <classifier>jakartaee9</classifier>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
@@ -109,7 +120,6 @@
       <layout>default</layout>
     </repository>
   </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.tomee</groupId>
@@ -269,7 +279,6 @@
       <version>${version.deltaspike}</version>
       <scope>test</scope>
     </dependency>
-
     <!-- only needed for mocked cdi-beans -->
     <dependency>
       <groupId>org.mockito</groupId>
@@ -277,7 +286,6 @@
       <version>1.9.5</version>
       <scope>test</scope>
     </dependency>
-
     <!-- for full page-bean tests -->
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
@@ -319,7 +327,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-
     <!-- 3rd party libs -->
     <dependency>
       <groupId>org.primefaces</groupId>
@@ -327,7 +334,6 @@
       <version>2.2</version>
     </dependency>
   </dependencies>
-
   <!--
   This section allows you to configure where to publish libraries for sharing.
   It is not required and may be deleted.  For more information see:
@@ -343,6 +349,4 @@
       <url>file://${basedir}/target/snapshot-repo/</url>
     </snapshotRepository>
   </distributionManagement>
-
 </project>
-

@@ -21,6 +21,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.tomee.security.AbstractTomEESecurityTest;
+import org.apache.tomee.security.cdi.TomcatUserIdentityStoreDefinition;
 import org.junit.Test;
 
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
@@ -54,6 +55,7 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         assertEquals("ok!", webClient.getPage(getAppUrl() + "/form").getWebResponse().getContentAsString());
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/login")
     public static class LoginServlet extends HttpServlet {
         @Override
@@ -86,6 +88,7 @@ public class FormAuthServletTest extends AbstractTomEESecurityTest {
         }
     }
 
+    @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/form")
     @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
     @FormAuthenticationMechanismDefinition(

@@ -23,6 +23,7 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
 import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
+import javax.security.enterprise.authentication.mechanism.http.CustomFormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.FormAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
@@ -61,13 +62,17 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
                                                     CDI.current().select(FormAuthenticationMechanism.class).get());
                 }
 
+                if (servletClass.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
+                    servletAuthenticationMapper.put(servletName,
+                                                    CDI.current().select(CustomFormAuthenticationMechanism.class).get());
+                }
+
             } catch (final ClassNotFoundException e) {
                 // Ignore
             }
         });
 
-        final Set<HttpAuthenticationMechanism> availableBeans =
-                authenticationMechanisms.stream().collect(Collectors.toSet());
+        final Set<HttpAuthenticationMechanism> availableBeans = authenticationMechanisms.stream().collect(Collectors.toSet());
         availableBeans.removeAll(servletAuthenticationMapper.values());
         availableBeans.remove(defaultAuthenticationMechanism);
 

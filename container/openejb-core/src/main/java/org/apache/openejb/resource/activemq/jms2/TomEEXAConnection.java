@@ -42,7 +42,7 @@ public class TomEEXAConnection extends ActiveMQXAConnection {
 
     @Override
     public Session createSession(final int sessionMode) throws JMSException {
-        return super.createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
+        return createSession(sessionMode == Session.SESSION_TRANSACTED, sessionMode);
     }
 
     @Override

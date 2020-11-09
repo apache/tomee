@@ -6,36 +6,38 @@
 This is a basic example on how to configure and use MicroProfile Rest
 Client in TomEE.
 
-=== Run the tests for different scenarios related with JWT validation
-
-....
+[source,java]
+----
 mvn clean test 
-....
+----
 
-=== Requirementes and configuration
+=== Requirements and configuration
 
 To use MicroProfile Rest Client you need 3 changes in your project:
 
 [arabic]
 . Add the to the `pom.xml` the dependency:
 +
-....
+[source,java]
+----
  <dependency>
      <groupId>org.eclipse.microprofile.rest.client</groupId>
      <artifactId>microprofile-rest-client-api</artifactId>
      <version>${microprofile.rest-client.version}</version>
      <scope>provided</scope>
  </dependency>
-....
+----
 . Provide configuration files: `microprofile-config.properties`
 +
-....
+[source,java]
+----
  org.superbiz.rest.BookResourceClient/mp-rest/url=http://localhost:4444
-....
+----
 . Provide an interface that you can build from the JAX-RS resource you
 want to consume: `BookResourceClient.java`
 +
-....
+[source,java]
+----
  package org.superbiz.rest;
 
  import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -75,7 +77,7 @@ want to consume: `BookResourceClient.java`
      List<Book> getListOfBooks();
 
  }
-....
+----
 
 === Use of MicroProfile Rest Client in TomEE
 
@@ -83,7 +85,8 @@ The class `BookResourceTest.java` shows how easy is to use the type-safe
 approach provided by MicroProfile Rest Client to consume an existing
 JAX-RS resource.
 
-....
+[source,java]
+----
 package org.superbiz.rest;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -144,7 +147,7 @@ public class BookResourceTest {
     }
 
 }
-....
+----
 
 === About the Test architecture
 

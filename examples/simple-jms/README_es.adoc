@@ -17,7 +17,8 @@ Además, directamente relacionado con este ejemplo, se pueden observar 2 element
 
 Finalmente, interactuando con instancias de ``Connection``, ``Session``, y ``Queue`` se pueden ver instancias de ``MessageProducer`` y ``MessageConsumer``, responsables de escribir y leer hacia la / desde la cola: ``Queue`` respectivamente.
 
-....
+[source,java]
+----
 @Stateless
 @Path("message")
 public class CustomJmsService {
@@ -79,7 +80,7 @@ public class CustomJmsService {
     }
 }
 
-....
+----
 
 == Probando
 
@@ -92,7 +93,8 @@ Luego, de manera similar a la petición POST, se lleva a cabo una petición GET 
 Finalmente, se verifican los HTTP status de las respuestas de manera que sean equivalentes a los códigos HTTP esperados (204/200), así como también que el contenido del mensaje recibido sea igual al mensaje enviado.
 
 
-....
+[source,java]
+----
 @RunWith(Arquillian.class)
 @RunAsClient
 public class CustomJmsServiceTest {
@@ -126,20 +128,22 @@ public class CustomJmsServiceTest {
         }
     }
 }
-....
+----
 
 
 === Ejecutando el test del servicio JMS
 
 Construir y probar el ejemplo es simple. En el directorio ``simple-jms`` hay que ejecutar:
 
-....
+[source,java]
+----
 $ mvn clean install
-....
+----
 
 Esto creara una salida similar a lo siguiente:
 
-....
+[source,java]
+----
 INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication Using writers:
 INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.johnzon.jaxrs.WadlDocumentMessageBodyWriter@7a6a8b01
 INFO [http-nio-6586-exec-2] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.deployApplication      org.apache.cxf.jaxrs.nio.NioMessageBodyWriter@58be749c
@@ -210,20 +214,22 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
 [INFO] Total time:  50.089 s
-....
+----
 
 
 = Running the app
 
 Ejecutar el ejemplo es simple. En el directorio ``simple-jms`` ingrese:
 
-....
+[source,java]
+----
 $ mvn tomee:run
-....
+----
 
 Esto creara una salida similiar a lo siguiente.
 
-....
+[source,java]
+----
 [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints REST Application: http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/        -> org.apache.openejb.server.rest.InternalApplication@3b8b5b40
 [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints      Service URI: http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/message ->  EJB org.superbiz.jms.CustomJmsService
 [main] org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logEndpoints               GET http://localhost:8080/simple-jms-8.0.1-SNAPSHOT/message ->      String receiveMessage() throws JMSException
@@ -236,18 +242,20 @@ Esto creara una salida similiar a lo siguiente.
 [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["http-nio-8080"]
 [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Starting ProtocolHandler ["ajp-nio-8009"]
 [main] sun.reflect.DelegatingMethodAccessorImpl.invoke Server startup in [8,367] milliseconds
-....
+----
 
 
 Nota: es posible usar el comando ``CURL`` (o una herramienta cliente) para enviar una solicitud POST y luego una solicitud GET a la URL del servicio equivalente a:
 
-....
+[source,java]
+----
 http://localhost:8080/simple-jms<-TOMEE-VERSION>/message
-....
+----
 
 Finalmente, puedes salir o recargar el ejemplo ingresando uno de los comandos disponibles:
 ``quit``, ``exit``, ``reload``,
 
-....
+[source,java]
+----
 [WARNING] Command '' not understood. Use one of [quit, exit, reload]
-....
+----

@@ -39,7 +39,8 @@ classpath. A number of ServerServices are available currently:
 
 == Telephone
 
-....
+[source,java]
+----
 package org.superbiz.telephone;
 
 public interface Telephone {
@@ -48,11 +49,12 @@ public interface Telephone {
 
     String listen();
 }
-....
+----
 
 == TelephoneBean
 
-....
+[source,java]
+----
 package org.superbiz.telephone;
 
 import javax.ejb.Remote;
@@ -91,11 +93,12 @@ public class TelephoneBean implements Telephone {
         return answers[Math.abs(lastThingSaid.hashCode()) % answers.length];
     }
 }
-....
+----
 
 == TelephoneTest
 
-....
+[source,java]
+----
 package org.superbiz.telephone;
 
 import junit.framework.TestCase;
@@ -185,11 +188,12 @@ public class TelephoneTest extends TestCase {
         assertEquals("Definitely.", telephone.listen());
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -230,4 +234,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.448 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

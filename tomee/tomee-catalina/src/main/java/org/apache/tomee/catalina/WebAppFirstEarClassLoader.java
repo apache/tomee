@@ -24,8 +24,6 @@ public class WebAppFirstEarClassLoader extends TomEEWebappClassLoader {
         ClassLoader.registerAsParallelCapable();
     }
 
-    private String[] forceSkip;
-
     public WebAppFirstEarClassLoader() {
         super();
     }
@@ -56,7 +54,4 @@ public class WebAppFirstEarClassLoader extends TomEEWebappClassLoader {
         return false;
     }
 
-    void setForceSkip(final String[] forceSkip) {
-        this.forceSkip = forceSkip;
-    }
 }

@@ -34,7 +34,7 @@ public class UpdateChecker {
     private static final String TOMEE_ARTIFACT = "apache-tomee";
 
     // config
-    private String repoUrl = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "http://repo1.maven.org/maven2/");
+    private String repoUrl = SystemInstance.get().getOptions().get("openejb.version.check.repo.url", "https://repo1.maven.org/maven2/");
     private String groupId = "org/apache/openejb/";
     private String metadata = "/maven-metadata.xml";
     private String checkerProxy = SystemInstance.get().getOptions().get("openejb.version.check.proxy", (String) null);

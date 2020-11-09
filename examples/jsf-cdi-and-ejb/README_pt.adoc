@@ -24,36 +24,39 @@ E nós usamos a versão 2.0 do faces-config
 Para tornar este em um cdi-aware-archive (ou seja, arquivo Bean) um beans.xml vazio
 é adicionado no WEB-INF
 
-....
+[source,java]
+----
    <?xml version="1.0" encoding="UTF-8"?>
 
    <beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
      http://java.sun.com/xml/ns/javaee/beans_1_0.xsd">
    </beans>
-....
+----
 
 Nós primeiro vamos declarar o FacesServlet no web.xml
 
-....
+[source,java]
+----
   <servlet>
     <servlet-name>Faces Servlet</servlet-name>
     <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
-....
+----
 
 FacesServlet atua como o controlador mestre.
 
 Em seguida criaremos o arquivo calculator.xhtml.
 
-....
+[source,java]
+----
        <h:outputText value='Enter first number'/>
        <h:inputText value='#{calculatorBean.x}'/>
        <h:outputText value='Enter second number'/>
        <h:inputText value='#{calculatorBean.y}'/>
        <h:commandButton action="#{calculatorBean.add}" value="Add"/>
-....
+----
 
 Observe como usamos o bean aqui. Por padrão, o nome do bean seria o nome simples da classe bean com a primeira letra minúscula 
 
@@ -77,7 +80,8 @@ No nosso caso, a página `result.xhtml` é renderizada onde usar EL e mostra o r
 
 == CalculatorBean
 
-....
+[source,java]
+----
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 import javax.inject.Inject;
@@ -120,11 +124,12 @@ public class CalculatorBean {
         return "success";
     }
 }
-....
+----
 
 == Calculator
 
-....
+[source,java]
+----
 package org.superbiz.jsf;
 
 import javax.ejb.Stateless;
@@ -136,7 +141,7 @@ public class Calculator{
         return x + y;
     }
 }
-....
+----
 
 #web.xml
 
@@ -158,12 +163,13 @@ index.jsp index.html
 <!DOCTYPE html PUBLIC ``-//W3C//DTD XHTML 1.0 Transitional//EN''
 ``http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd''>
 
-....
+[source,java]
+----
     <h:commandLink action="back">
         <h:outputText value="Home"/>
     </h:commandLink>
 </h:form>
-....
+----
 
 #faces-config.xml
 

@@ -13,20 +13,22 @@ Como nós podemos marcar quais métodos serão interceptados?
 Não seria interessante 
 poder anotar o método desta forma?
 
-....
+[source,java]
+----
 @Log
 public void aMethod(){...} 
-....
+----
 
 Vamos criar uma anotação que "marca" nosso método para interceptação.
 
-....
+[source,java]
+----
 @InterceptorBinding
 @Target({ TYPE, METHOD })
 @Retention(RUNTIME)
 public @interface Log {
 }
-....
+----
 
 Tenha certeza que você não esqueceu da anotação `@InterceptorBinding` acima! 
 Agora que nossa anotação customizada foi criada, vamos anexa-la (ou "vincula-la") 
@@ -35,7 +37,8 @@ a um interceptador.
 Aqui está nosso interceptador de log. Um método `@AroundInvoke` e estamos quase 
 terminando.
 
-....
+[source,java]
+----
 @Interceptor
 @Log  //binding the interceptor here. now any method annotated with @Log would be intercepted by logMethodEntry
 public class LoggingInterceptor {
@@ -46,13 +49,14 @@ public class LoggingInterceptor {
         return ctx.proceed();
     }
 }
-....
+----
 
 Agora a anotação `@Log` que criamos está vinculada a este interceptador.
 
 Tudo pronto, vamos anotar em nível de classe ou método e nos divertir interceptando !
 
-....
+[source,java]
+----
 @Log
 @Stateful
 public class BookShow implements Serializable {
@@ -68,7 +72,7 @@ public class BookShow implements Serializable {
     }
     // assume more methods are present
 }
-....
+----
 
 A anotação `@Log` aplicada em nível de classe diz que todos os métodos desta 
 classe devem ser interceptados pelo `LoggingInterceptor`.
@@ -78,20 +82,22 @@ os interceptadores!
 
 Vamos criar rapidamente um arquivo `beans.xml` na pasta `META-INF`
 
-....
+[source,xml]
+----
 <beans>
   <interceptors>
     <class>org.superbiz.cdi.bookshow.interceptors.LoggingInterceptor
     </class>
   </interceptors>
 </beans>
-....
+----
 
 Essas linhas em `beans.xml` não apenas "habilitam" os interceptadores, mas também 
 definem sua "ordem de execução". Mas veremos isso em outro exemplo multiple-cdi-interceptors.
 
 Execute o teste, e veremos um `Entering method: getMovieList` impresso no terminal.
-....
+[source,java]
+----
 #Tests Apache OpenEJB 4.0.0-beta-2 build: 20111103-01:00
 http://tomee.apache.org/ 
 INFO - openejb.home = /media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors
@@ -114,4 +120,4 @@ INFO - Created Ejb(deployment-id=BookShow, ejb-name=BookShow, container=Default 
 INFO - Started Ejb(deployment-id=BookShow, ejb-name=BookShow, container=Default Stateful Container) 
 INFO - Deployed Application(path=/media/fthree/Workspace/open4/openejb/examples/cdi-simple-interceptors) 
 Entering method: getMoviesList
-....
+----

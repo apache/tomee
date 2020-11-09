@@ -8,7 +8,8 @@ right to edit this page._
 
 == CommentDAO
 
-....
+[source,java]
+----
 package org.superbiz.rest.dao;
 
 import org.superbiz.rest.model.Comment;
@@ -61,11 +62,12 @@ public class CommentDAO extends DAO {
         return dao.update(comment);
     }
 }
-....
+----
 
 == DAO
 
-....
+[source,java]
+----
 package org.superbiz.rest.dao;
 
 import javax.ejb.Stateless;
@@ -119,11 +121,12 @@ public class DAO {
         return query;
     }
 }
-....
+----
 
 == PostDAO
 
-....
+[source,java]
+----
 package org.superbiz.rest.dao;
 
 import org.superbiz.rest.model.Post;
@@ -176,11 +179,12 @@ public class PostDAO {
         return dao.update(post);
     }
 }
-....
+----
 
 == UserDAO
 
-....
+[source,java]
+----
 package org.superbiz.rest.dao;
 
 import org.superbiz.rest.model.User;
@@ -226,11 +230,12 @@ public class UserDAO {
         return dao.update(user);
     }
 }
-....
+----
 
 == Comment
 
-....
+[source,java]
+----
 package org.superbiz.rest.model;
 
 import javax.persistence.Entity;
@@ -249,11 +254,12 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
         @NamedQuery(name = "comment.list", query = "select c from Comment c")
 }
-....
+----
 
 == DatedModel
 
-....
+[source,java]
+----
 package org.superbiz.rest.model;
 
 import javax.persistence.MappedSuperclass;
@@ -277,11 +283,12 @@ public abstract class DatedModel extends Model {
         this.created = created;
     }
 }
-....
+----
 
 == Model
 
-....
+[source,java]
+----
 package org.superbiz.rest.model;
 
 import javax.persistence.Access;
@@ -309,11 +316,12 @@ public abstract class Model {
         this.id = id;
     }
 }
-....
+----
 
 == Post
 
-....
+[source,java]
+----
 package org.superbiz.rest.model;
 
 import javax.persistence.Entity;
@@ -334,11 +342,12 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(name = "post.list", query = "select p from Post p")
 }
-....
+----
 
 == User
 
-....
+[source,java]
+----
 package org.superbiz.rest.model;
 
 import javax.persistence.Entity;
@@ -353,11 +362,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
         @NamedQuery(name = "user.list", query = "select u from User u")
 }
-....
+----
 
 == CommentService
 
-....
+[source,java]
+----
 package org.superbiz.rest.service;
 
 import org.superbiz.rest.dao.CommentDAO;
@@ -408,11 +418,12 @@ public class CommentService {
         return commentDao.update(id, author, content);
     }
 }
-....
+----
 
 == PostService
 
-....
+[source,java]
+----
 package org.superbiz.rest.service;
 
 import org.superbiz.rest.dao.PostDAO;
@@ -472,11 +483,12 @@ public class PostService {
         return dao.update(id, userId, title, content);
     }
 }
-....
+----
 
 == UserService
 
-....
+[source,java]
+----
 package org.superbiz.rest.service;
 
 import org.superbiz.rest.dao.UserDAO;
@@ -536,11 +548,12 @@ public class UserService {
         return dao.update(id, name, pwd, mail);
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence version="2.0"
              xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -559,11 +572,12 @@ public class UserService {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == web.xml
 
-....
+[source,xml]
+----
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
@@ -572,18 +586,20 @@ public class UserService {
 
   <display-name>OpenEJB REST Example</display-name>
 </web-app>
-....
+----
 
 == UserDaoTest
 
-....
+[source,java]
+----
 packagenull
 }
-....
+----
 
 == UserServiceTest
 
-....
+[source,java]
+----
 packagenull
 }
-....
+----

@@ -71,4 +71,20 @@ public class ActiveMQ5FactoryTest {
             assertEquals("duplex is " + b, b, nc.isDuplex());
         }
     }
+
+    @Test
+    public void checkManagementContext() throws Exception {
+        final URI brokerURI = new URI("amq5factory:broker:(tcp://localhost:" + getNextAvailablePort() + ")?" +
+                "useJmx=true");
+
+        BrokerService bs = null;
+        try {
+            bs = new ActiveMQ5Factory().createBroker(brokerURI);
+            assertFalse(bs.getManagementContext().isCreateConnector());
+        } finally {
+            if (bs != null) {
+                bs.stop();
+            }
+        }
+    }
 }

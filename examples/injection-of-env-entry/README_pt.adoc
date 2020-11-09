@@ -1,0 +1,276 @@
+:index-group: Environment Entries
+:jbake-type: page
+:jbake-status: status=published
+= Usando EnvEntries
+
+A anotação `@Resource` pode ser usada para injetar várias coisas, incluindo fontes de dados, tópicos, filas etc. A maioria delas são objetos fornecidos por contêiner.
+
+É possível, no entanto, fornecer seus próprios valores para serem injetados através de um
+`<env-entry>` no seu descritor de implementação `ejb-jar.xml` ou `web.xml`.
+Os tipos `<env-entry>` suportados pelo Java EE 6 são limitados ao seguinte:
+
+* java.lang.String
+* java.lang.Integer
+* java.lang.Short
+* java.lang.Float
+* java.lang.Double
+* java.lang.Byte
+* java.lang.Character
+* java.lang.Boolean
+* java.lang.Class
+* java.lang.Enum (any enum)
+
+Consulte também o link:../custom-injection[Injeção personalizada] exemplo para um
+recurso TomEE e OpenEJB permitem que você use mais do que apenas os tipos acima, além de declarar itens `<env-entry>` com um arquivo de propriedades simples.
+
+== Usando @Resource para propriedades básicas
+
+O uso da anotação `@Resource` não se limita aos setters.
+Por exemplo, esta anotação poderia ter sido usada no correspondente
+_campo_ assim:
+
+[source,java]
+----
+@Resource
+private int maxLineItems;
+----
+
+Um exemplo mais completo pode ser assim:
+
+[source,java]
+----
+package org.superbiz.injection.enventry;
+
+import javax.annotation.Resource;
+import javax.ejb.Singleton;
+import java.util.Date;
+
+@Singleton
+public class Configuration {
+
+    @Resource
+    private String color;
+
+    @Resource
+    private Shape shape;
+
+    @Resource
+    private Class strategy;
+
+    @Resource(name = "date")
+    private long date;
+
+    public String getColor() {
+        return color;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+
+    public Class getStrategy() {
+        return strategy;
+    }
+
+    public Date getDate() {
+        return new Date(date);
+    }
+}
+----
+
+Aqui temos um bean `@Singleton` chamado `Configuration` que possui as seguintes propriedades (itens `<env-entry> `)
+
+* String color
+* Shape shape
+* Class strategy
+* long date
+
+=== Fornecendo valores @Resource para itens em ejb-jar.xml
+
+Os valores para nossas propriedades `color`,`shape`, `strategy` e `date`
+são fornecidos através dos elementos `<env-entry>` no arquivo `ejb-jar.xml` ou no arquivo
+arquivo `web.xml` da seguinte forma:
+
+[source,xml]
+----
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" version="3.0" metadata-complete="false">
+  <enterprise-beans>
+    <session>
+      <ejb-name>Configuration</ejb-name>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>orange</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
+        <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
+        <env-entry-value>TRIANGLE</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/strategy</env-entry-name>
+        <env-entry-type>java.lang.Class</env-entry-type>
+        <env-entry-value>org.superbiz.injection.enventry.Widget</env-entry-value>
+      </env-entry>
+      <env-entry>
+        <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
+        <env-entry-name>date</env-entry-name>
+        <env-entry-type>java.lang.Long</env-entry-type>
+        <env-entry-value>123456789</env-entry-value>
+      </env-entry>
+    </session>
+  </enterprise-beans>
+</ejb-jar>
+----
+
+==== Usando o atributo @Resource `name'
+
+Note que `date` foi referenciado por `name` como:
+
+[source,java]
+----
+@Resource(name = "date")
+private long date;
+----
+
+Quando o `@Resource (name)` é usado, você não precisa especificar o nome completo da classe do bean e pode fazê-lo brevemente da seguinte maneira:
+
+[source,java]
+----
+  <env-entry>
+    <description>The name was explicitly set in the annotation so the classname prefix isn't required</description>
+    <env-entry-name>date</env-entry-name>
+    <env-entry-type>java.lang.Long</env-entry-type>
+    <env-entry-value>123456789</env-entry-value>
+  </env-entry>
+----
+
+Por outro lado, `color` não foi referenciado por `name`
+
+[source,java]
+----
+@Resource
+private String color;
+----
+
+Quando algo não é referenciado por `name` na anotação `@Resource`, um nome padrão é criado. O formato é essencialmente este:
+
+[source,java]
+----
+bean.getClass() + "/" + field.getName()
+----
+
+Portanto, o `name` padrão da propriedade `color` acima acaba sendo
+`org.superbiz.injection.enventry.Configuration/color`. Esse é o nome
+devemos usar quando tentamos decalcar um valor para ele em xml.
+
+[source,java]
+----
+  <env-entry>
+    <env-entry-name>org.superbiz.injection.enventry.Configuration/color</env-entry-name>
+    <env-entry-type>java.lang.String</env-entry-type>
+    <env-entry-value>orange</env-entry-value>
+  </env-entry>
+----
+
+==== @Resource e Enum (enumerações)
+
+O campo `shape` é realmente um tipo Java Enum personalizado
+
+[source,java]
+----
+package org.superbiz.injection.enventry;
+
+public enum Shape {
+
+    CIRCLE,
+    TRIANGLE,
+    SQUARE
+}
+----
+
+No Java EE 6, os tipos java.lang.Enum são permitidos como `<ententent>`
+Itens. A declaração de um em xml é feita usando o nome da classe da enumeração real:
+
+[source,java]
+----
+      <env-entry>
+        <env-entry-name>org.superbiz.injection.enventry.Configuration/shape</env-entry-name>
+        <env-entry-type>org.superbiz.injection.enventry.Shape</env-entry-type>
+        <env-entry-value>TRIANGLE</env-entry-value>
+      </env-entry>
+----
+
+Não use `<env-entry-type>java.lang.Enum</env-entry-type>` ou não funcionará!
+
+=== ConfigurationTest
+
+[source,java]
+----
+package org.superbiz.injection.enventry;
+
+import junit.framework.TestCase;
+
+import javax.ejb.embeddable.EJBContainer;
+import javax.naming.Context;
+import java.util.Date;
+
+public class ConfigurationTest extends TestCase {
+
+
+    public void test() throws Exception {
+        final Context context = EJBContainer.createEJBContainer().getContext();
+
+        final Configuration configuration = (Configuration) context.lookup("java:global/injection-of-env-entry/Configuration");
+
+        assertEquals("orange", configuration.getColor());
+
+        assertEquals(Shape.TRIANGLE, configuration.getShape());
+
+        assertEquals(Widget.class, configuration.getStrategy());
+
+        assertEquals(new Date(123456789), configuration.getDate());
+    }
+}
+----
+
+== Executando
+
+[source,console]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.injection.enventry.ConfigurationTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/injection-of-env-entry
+INFO - openejb.base = /Users/dblevins/examples/injection-of-env-entry
+INFO - Using 'javax.ejb.embeddable.EJBContainer=true'
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/injection-of-env-entry/target/classes
+INFO - Beginning load: /Users/dblevins/examples/injection-of-env-entry/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/injection-of-env-entry
+WARN - Method 'lookup' is not available for 'javax.annotation.Resource'. Probably using an older Runtime.
+INFO - Configuring Service(id=Default Singleton Container, type=Container, provider-id=Default Singleton Container)
+INFO - Auto-creating a container for bean Configuration: Container(type=SINGLETON, id=Default Singleton Container)
+INFO - Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+INFO - Auto-creating a container for bean org.superbiz.injection.enventry.ConfigurationTest: Container(type=MANAGED, id=Default Managed Container)
+INFO - Enterprise application "/Users/dblevins/examples/injection-of-env-entry" loaded.
+INFO - Assembling app: /Users/dblevins/examples/injection-of-env-entry
+INFO - Jndi(name="java:global/injection-of-env-entry/Configuration!org.superbiz.injection.enventry.Configuration")
+INFO - Jndi(name="java:global/injection-of-env-entry/Configuration")
+INFO - Jndi(name="java:global/EjbModule1355224018/org.superbiz.injection.enventry.ConfigurationTest!org.superbiz.injection.enventry.ConfigurationTest")
+INFO - Jndi(name="java:global/EjbModule1355224018/org.superbiz.injection.enventry.ConfigurationTest")
+INFO - Created Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
+INFO - Created Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
+INFO - Started Ejb(deployment-id=org.superbiz.injection.enventry.ConfigurationTest, ejb-name=org.superbiz.injection.enventry.ConfigurationTest, container=Default Managed Container)
+INFO - Started Ejb(deployment-id=Configuration, ejb-name=Configuration, container=Default Singleton Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/injection-of-env-entry)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.664 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----

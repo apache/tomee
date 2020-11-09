@@ -8,7 +8,8 @@ right to edit this page._
 
 == AddInterceptor
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import javax.interceptor.AroundInvoke;
@@ -25,11 +26,12 @@ public class AddInterceptor {
         return context.proceed();
     }
 }
-....
+----
 
 == Add
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.AddInterceptor;
@@ -57,11 +59,12 @@ public @interface Add {
         public void method();
     }
 }
-....
+----
 
 == Delete
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx.api;
 
 import org.superbiz.injection.tx.DeleteInterceptor;
@@ -89,11 +92,12 @@ public @interface Delete {
         public void method();
     }
 }
-....
+----
 
 == Metatype
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx.api;
 
 import java.lang.annotation.ElementType;
@@ -106,11 +110,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 public @interface Metatype {
 }
-....
+----
 
 == MovieUnit
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx.api;
 
 import javax.persistence.PersistenceContext;
@@ -128,11 +133,12 @@ import java.lang.annotation.Target;
 @PersistenceContext(name = "movie-unit", unitName = "movie-unit", type = PersistenceContextType.EXTENDED)
 public @interface MovieUnit {
 }
-....
+----
 
 == Read
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx.api;
 
 import javax.annotation.security.PermitAll;
@@ -156,11 +162,12 @@ public @interface Read {
         public void method();
     }
 }
-....
+----
 
 == DeleteInterceptor
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import javax.interceptor.AroundInvoke;
@@ -177,11 +184,12 @@ public class DeleteInterceptor {
         return context.proceed();
     }
 }
-....
+----
 
 == Movie
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import javax.persistence.Entity;
@@ -227,11 +235,12 @@ public class Movie {
     }
 
 }
-....
+----
 
 == Movies
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import org.superbiz.injection.tx.api.Add;
@@ -269,11 +278,12 @@ public class Movies {
         return query.getResultList();
     }
 }
-....
+----
 
 == persistence.xml
 
-....
+[source,xml]
+----
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
   <persistence-unit name="movie-unit">
@@ -286,11 +296,12 @@ public class Movies {
     </properties>
   </persistence-unit>
 </persistence>
-....
+----
 
 == MoviesTest
 
-....
+[source,java]
+----
 package org.superbiz.injection.tx;
 
 import junit.framework.TestCase;
@@ -400,11 +411,12 @@ public class MoviesTest extends TestCase {
         }
     }
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -458,4 +470,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.869 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

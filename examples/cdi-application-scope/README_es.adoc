@@ -10,11 +10,12 @@ Un objeto deberia ser definido como `@ApplicationScoped` y se crea una vez duran
 
 Este ejemplo muestra un escenario similar a cdi-request-scope.
 
-....
+[source,java]
+----
 Un huésped del restaurante ordena una sopa al camarero.
 El camarero luego le devuelve la sopa al huésped.
 Otro huésped puede pedir la misma sopa que ordenó el cliente anterior.
-....
+----
 
 Aquí es donde se utiliza el alcance de la aplicación.
 
@@ -25,7 +26,8 @@ El bean de sesión `Waiter` recibe una solicitud de la clase de ejemplo a travé
 El método `orderWhatTheOtherGuyHad()` devuelve el nombre del campo `soup`.
 
 
-....
+[source,java]
+----
 @Stateless
 public class Waiter {
 
@@ -42,7 +44,7 @@ public class Waiter {
         return name;
     }
 }
-....
+----
 
 === Sopa
 
@@ -50,7 +52,8 @@ La clase `Soup` es un POJO inyectable, definido como `@ApplicationScoped`.
 Esto significa que una instancia se creará solo una vez durante toda la aplicación.
 Ahora intente cambiar la anotación `@ApplicationScoped` a `@RequestScoped` y vea qué sucede.
 
-....
+[source,java]
+----
 @ApplicationScoped
 public class Soup {
 
@@ -69,7 +72,7 @@ public class Soup {
         this.name = name;
     }
 }
-....
+----
 
 == Caso de prueba
 
@@ -78,7 +81,8 @@ Primero se ordena una sopa a través del método `orderSoup()`.
 Esto inicia el campo `soup`.
 A continuación, el método `orderWhatTheOtherGuyHad()` devuelve la sopa del contexto de la aplicación.
 
-....
+[source,java]
+----
 public class RestaurantTest {
 
     private static String TOMATO_SOUP = "Tomato Soup";
@@ -107,13 +111,14 @@ public class RestaurantTest {
         container.close();
     }
 }
-....
+----
 
 == Ejecución
 
 En el resultado de la ejecución puede ver que solo se creó una instancia de `Soup`, una para toda la aplicación.
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -146,4 +151,4 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.42 sec
 Results :
 
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-....
+----

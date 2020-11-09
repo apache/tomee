@@ -91,6 +91,8 @@
         <exclude>*:pom</exclude>
         <exclude>org.apache.geronimo.specs:geronimo-javamail_1.5_spec</exclude>
         <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.5_mail</exclude>
+        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+        <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>
@@ -99,6 +101,13 @@
       <includes>
         <include>org.apache.tomee:tomee-loader</include>
         <include>org.codehaus.swizzle:swizzle-stream</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>WEB-INF/lib</outputDirectory>
+      <scope>compile</scope>
+      <includes>
+        <include>org.apache.tomee:tomee-common</include>
       </includes>
     </dependencySet>
   </dependencySets>

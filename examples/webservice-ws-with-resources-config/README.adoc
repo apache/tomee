@@ -84,4 +84,3 @@ It's a maven project, and all the tests can be executed by running `mvn clean te
 [INFO] Results:
 [INFO] 
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-

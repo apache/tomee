@@ -18,7 +18,8 @@ usar.
 
 Exemplo usando a criptografia Static3DES:
 
-....
+[source,java]
+----
     properties.setProperty("ProtectedDatasource", "new://Resource?type=DataSource");
     properties.setProperty("ProtectedDatasource.JdbcDriver", "org.hsqldb.jdbcDriver");
     properties.setProperty("ProtectedDatasource.JdbcUrl", "jdbc:hsqldb:mem:protected");
@@ -27,7 +28,7 @@ Exemplo usando a criptografia Static3DES:
     properties.setProperty("ProtectedDatasource.Password", "fEroTNXjaL5SOTyRQ92x3DNVS/ksbtgs");
     properties.setProperty("ProtectedDatasource.PasswordCipher", "Static3DES");
     properties.setProperty("ProtectedDatasource.JtaManaged", "true");
-....
+----
 
 == Usando sua própria implementação
 
@@ -37,7 +38,8 @@ senha para criptografar/descriptografar.
 A implementação é feita com a biblioteca commons-lang:
 
 [source,java,numered]
-....
+[source,java]
+----
 public static class ReverseEncryption implements PasswordCipher {
     @Override public char[] encrypt(String plainPassword) {
         return StringUtils.reverse(plainPassword).toCharArray();
@@ -47,7 +49,7 @@ public static class ReverseEncryption implements PasswordCipher {
         return new String(encrypt(new String(encryptedPassword)));
     }
 }
-....
+----
 
 Para ser funcional, ele precisa do arquivo
 `META-INF/org.apache.openejb.resource.jdbc.PasswordCipher/reverse`.
@@ -59,7 +61,8 @@ Este arquivo simplesmente contém a classe de implementação da criptografia.
 
 Então você simplesmente declara essa criptografia para sua fonte de dados:
 
-....
+[source,java]
+----
     properties.setProperty("ProtectedDatasource", "new://Resource?type=DataSource");
     properties.setProperty("ProtectedDatasource.JdbcDriver", "org.hsqldb.jdbcDriver");
     properties.setProperty("ProtectedDatasource.JdbcUrl", "jdbc:hsqldb:mem:protected");
@@ -67,7 +70,7 @@ Então você simplesmente declara essa criptografia para sua fonte de dados:
     properties.setProperty("ProtectedDatasource.Password", "3MdniFr3v3NLLuoY");
     properties.setProperty("ProtectedDatasource.PasswordCipher", "reverse");
     properties.setProperty("ProtectedDatasource.JtaManaged", "true");
-....
+----
 
 == Documentação
 
@@ -77,7 +80,8 @@ http://tomee.apache.org/3.0/datasource-password-encryption.html[documentação]
 == Fonte de teste completa
 
 [source,java,numered]
-....
+[source,java]
+----
 package org.superbiz;
 
 import org.apache.commons.lang.StringUtils;
@@ -178,11 +182,12 @@ public class DataSourceCipheredExampleTest {
         }
     }
 }
-....
+----
 
 == Executando
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -220,4 +225,4 @@ Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.331 sec
 Results :
 
 Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-....
+----

@@ -36,6 +36,7 @@ import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.WebResourceSet;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.connector.Request;
 import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.NamingContextListener;
 import org.apache.catalina.core.StandardContext;
@@ -1780,10 +1781,18 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 for (final WebAppInfo webAppInfo : contextInfo.appInfo.webApps) {
                     final String wId = getId(webAppInfo.host, webAppInfo.contextRoot, contextInfo.version);
                     if (id.equals(wId)) {
+                        // Allow any post-deployment to happen without the RequestContext of a call to /tomee/ejb
+                        final Request request = OpenEJBSecurityListener.requests.get();
+                        OpenEJBSecurityListener.requests.remove();
+
                         SystemInstance.get().fireEvent(
                                 new AfterApplicationCreated(contextInfo.appInfo,
                                                             webAppInfo,
                                                             standardContext.getServletContext()));
+
+                        if (request != null) {
+                            OpenEJBSecurityListener.requests.set(request);
+                        }
                         break;
                     }
                 }

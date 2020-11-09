@@ -8,7 +8,8 @@ right to edit this page._
 
 == FriendlyPerson
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import javax.ejb.Init;
@@ -119,11 +120,12 @@ public class FriendlyPerson implements FriendlyPersonLocal, FriendlyPersonRemote
         this.defaultLanguage = defaultLanguage;
     }
 }
-....
+----
 
 == FriendlyPersonEjbHome
 
-....
+[source,java]
+----
 package org.superbiz;
 
 //START SNIPPET: code
@@ -135,11 +137,12 @@ import java.rmi.RemoteException;
 public interface FriendlyPersonEjbHome extends EJBHome {
     FriendlyPersonEjbObject create() throws CreateException, RemoteException;
 }
-....
+----
 
 == FriendlyPersonEjbLocalHome
 
-....
+[source,java]
+----
 package org.superbiz;
 
 //START SNIPPET: code
@@ -151,11 +154,12 @@ import java.rmi.RemoteException;
 public interface FriendlyPersonEjbLocalHome extends EJBLocalHome {
     FriendlyPersonEjbLocalObject create() throws CreateException, RemoteException;
 }
-....
+----
 
 == FriendlyPersonEjbLocalObject
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import javax.ejb.EJBLocalObject;
@@ -173,11 +177,12 @@ public interface FriendlyPersonEjbLocalObject extends EJBLocalObject {
 
     void setDefaultLanguage(String defaultLanguage);
 }
-....
+----
 
 == FriendlyPersonEjbObject
 
-....
+[source,java]
+----
 package org.superbiz;
 
 //START SNIPPET: code
@@ -198,11 +203,12 @@ public interface FriendlyPersonEjbObject extends EJBObject {
 
     void setDefaultLanguage(String defaultLanguage) throws RemoteException;
 }
-....
+----
 
 == FriendlyPersonLocal
 
-....
+[source,java]
+----
 package org.superbiz;
 
 //START SNIPPET: code
@@ -223,11 +229,12 @@ public interface FriendlyPersonLocal {
 
     void setDefaultLanguage(String defaultLanguage);
 }
-....
+----
 
 == FriendlyPersonRemote
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import javax.ejb.Remote;
@@ -247,11 +254,12 @@ public interface FriendlyPersonRemote {
 
     void setDefaultLanguage(String defaultLanguage);
 }
-....
+----
 
 == FriendlyPersonTest
 
-....
+[source,java]
+----
 package org.superbiz;
 
 import junit.framework.TestCase;
@@ -417,11 +425,12 @@ public class FriendlyPersonTest extends TestCase {
     }
 
 }
-....
+----
 
 == Running
 
-....
+[source,console]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
@@ -462,4 +471,4 @@ Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.444 sec
 Results :
 
 Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-....
+----
