@@ -170,6 +170,14 @@
             </goals>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.tomee.bom</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
