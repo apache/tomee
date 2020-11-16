@@ -26,6 +26,7 @@
   <name>TomEE :: Examples :: Webservice Inheritance</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -101,6 +102,13 @@
       <artifactId>jaxp-ri</artifactId>
       <version>1.4.5</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>${tomee.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
   <!--

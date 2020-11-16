@@ -90,6 +90,13 @@
         <version>${tomee.version}</version>
         <scope>provided</scope>
       </dependency>
+      <dependency>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>jaxb-runtime</artifactId>
+        <version>${tomee.version}</version>
+        <type>pom</type>
+        <scope>provided</scope>
+      </dependency>
 
       <!-- impl - for standard code scope test is fine -->
       <dependency>
