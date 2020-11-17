@@ -188,7 +188,7 @@ public abstract class ValidationGenerator implements Opcodes {
     public class CopyMethodAnnotations extends ClassVisitor {
 
         public CopyMethodAnnotations() {
-            super(Opcodes.ASM7);
+            super(Opcodes.ASM9);
         }
 
         @Override
@@ -201,7 +201,7 @@ public abstract class ValidationGenerator implements Opcodes {
 
             final MethodVisitor sourceMethod = super.visitMethod(access, name, desc, signature, exceptions);
 
-            return new MethodVisitor(Opcodes.ASM7, sourceMethod) {
+            return new MethodVisitor(Opcodes.ASM9, sourceMethod) {
                 @Override
                 public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
                     return generatedMethod.visitAnnotation(desc, visible);
@@ -224,7 +224,7 @@ public abstract class ValidationGenerator implements Opcodes {
         private final List<String> approved;
 
         public ConstrainedMethodVisitor(final MethodVisitor methodVisitor, final MethodConstraints methodConstraints) {
-            super(Opcodes.ASM7, methodVisitor);
+            super(Opcodes.ASM9, methodVisitor);
             this.approved = methodConstraints.getAnnotations().stream()
                     .map(Type::getDescriptor)
                     .collect(Collectors.toList());

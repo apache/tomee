@@ -248,7 +248,7 @@ public class PersistenceContextAnnFactory {
         private final AsmPersistenceContext persistenceContext = new AsmPersistenceContext();
 
         public PersistenceContextVisitor(final String className, final String memberName, final Map<String, AsmPersistenceContext> contexts) {
-            super(Opcodes.ASM7);
+            super(Opcodes.ASM9);
             this.contexts = contexts;
             persistenceContext.name = className + "/" + memberName;
         }

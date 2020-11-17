@@ -367,7 +367,7 @@ public class JpaTest extends TestCase {
 
     public static class FieldAdderClassVisitor extends ClassVisitor {
         public FieldAdderClassVisitor(final ClassVisitor classVisitor) {
-            super(Opcodes.ASM7, classVisitor);
+            super(Opcodes.ASM9, classVisitor);
         }
 
         public void visitEnd() {
