@@ -118,6 +118,12 @@
       <version>${tomee.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.7</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.arquillian.graphene</groupId>
       <artifactId>graphene-webdriver</artifactId>
       <version>${version.graphene.webdriver}</version>
