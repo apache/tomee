@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mp-rest-jwt-principal</artifactId>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>TomEE :: Examples :: MP REST JWT PRINCIPAL</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.6-SNAPSHOT</tomee.version>
     <version.javaee-api>8.0</version.javaee-api>
     <junit.version>4.23</junit.version>
     <arquillian-bom.version>1.4.1.Final</arquillian-bom.version>

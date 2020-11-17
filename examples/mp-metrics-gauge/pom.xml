@@ -18,14 +18,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <artifactId>mp-metrics-gauge</artifactId>
   <packaging>war</packaging>
   <properties>
     <junit.version>4.12</junit.version>
     <version.javaee-api>8.0-1</version.javaee-api>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
-    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.6-SNAPSHOT</tomee.version>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
   </properties>
   <dependencies>

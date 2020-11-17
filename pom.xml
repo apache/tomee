@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -175,8 +175,8 @@
     <commons-cli.version>1.4</commons-cli.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
-    <commons-dbcp.version>2.8.0</commons-dbcp.version>
-    <commons-pool.version>2.9.0</commons-pool.version>
+    <commons-dbcp.version>2.1</commons-dbcp.version>
+    <commons-pool.version>2.3</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
@@ -199,7 +199,7 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
-    <version.hsqldb>2.5.1</version.hsqldb>
+    <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.4.10.Final</version.hibernate>
@@ -613,6 +613,23 @@
         <module>itests/microprofile-jwt-itests</module>
         <module>arquillian/arquillian-tomee-tests</module>
         <module>tck</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>no-examples</id>
+      <modules>
+        <module>boms</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>gradle</module>
+        <module>container</module>
+        <module>server</module>
+        <module>mp-jwt</module>
+        <module>assembly</module>
+        <module>tck</module>
+        <module>arquillian</module>
+        <module>utils</module>
+        <module>tomee</module>
       </modules>
     </profile>
     <profile>
@@ -1818,12 +1835,12 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbynet</artifactId>
-        <version>10.15.2.0</version>
+        <version>10.11.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derbyclient</artifactId>
-        <version>10.15.2.0</version>
+        <version>10.11.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
