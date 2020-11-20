@@ -44,7 +44,7 @@ public class TomEEConfigurableJohnzon<T> extends ConfigurableJohnzonProvider<T> 
     public void setConverters(final Collection<Converter<?>> converters) {
         for (final Converter<?> converter : converters) {
             final Type type = findType(converter, Converter.class);
-            builder().addAdapter(ParameterizedType.class.cast(type).getActualTypeArguments()[0], String.class, new ConverterAdapter(converter));
+            builder().addAdapter(ParameterizedType.class.cast(type).getActualTypeArguments()[0], String.class, new ConverterAdapter(converter, type));
         }
     }
 
@@ -67,7 +67,7 @@ public class TomEEConfigurableJohnzon<T> extends ConfigurableJohnzonProvider<T> 
     }
 
     public void setDatePattern(final String datePattern) {
-        builder().addAdapter(Date.class, String.class, new ConverterAdapter<>(new DateConverter(datePattern)));
+        builder().addAdapter(Date.class, String.class, new ConverterAdapter<>(new DateConverter(datePattern), Date.class));
     }
 
     private Type findType(final Object ref, final Class<?> api) { // need to impl adapters directly

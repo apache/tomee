@@ -32,6 +32,7 @@ import java.util.Locale;
 public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
+        setThrowNoContentExceptionOnEmptyStreams(true); // this is to make TCK tests happy
     }
 
     public void setDateFormat(String dateFormat) {
