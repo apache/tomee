@@ -92,8 +92,11 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.context.spi.CreationalContext;
+import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.spi.Bean;
+import javax.inject.Singleton;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 import javax.naming.Context;
@@ -109,6 +112,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.metadata.MethodDescriptor;
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
@@ -462,9 +466,11 @@ public class CxfRsHttpListener implements RsHttpListener {
                 factory.setServiceClass(clazz);
             }
 
-            server = factory.create();
-            destination = (HttpDestination) server.getDestination();
+            factory.setTransportId("http://cxf.apache.org/transports/http/sse");
 
+            server = factory.create();
+
+            destination = (HttpDestination) server.getDestination();
             fireServerCreated(oldLoader);
         } finally {
             if (oldLoader != null) {
@@ -664,6 +670,33 @@ public class CxfRsHttpListener implements RsHttpListener {
                         final Object proxy = ProxyEJB.subclassProxy(restServiceInfo.context);
                         factory.setResourceProvider(clazz, new NoopResourceProvider(restServiceInfo.context.getBeanClass(), proxy));
                     } else {
+                        // check if its a singleton.
+
+                        if (owbCtx != null) {
+                            final BeanManagerImpl bm = owbCtx.getBeanManagerImpl();
+                            Bean<?> bean = null;
+
+                            if (bm != null && bm.isInUse()) {
+                                try {
+                                    final Set<Bean<?>> beans = bm.getBeans(clazz);
+                                    bean = bm.resolve(beans);
+                                } catch (final InjectionException ie) {
+                                    final String msg = "Resource class " + clazz.getName() + " can not be instantiated";
+                                    LOGGER.warning(msg, ie);
+                                    throw new WebApplicationException(Response.serverError().entity(msg).build());
+                                }
+
+                                if (bean != null && isConsideredSingleton(bean.getScope())) {
+                                    final Object reference = bm.getReference(bean, bean.getBeanClass(), bm.createCreationalContext(bean));
+                                    factory.setResourceProvider(clazz, new CdiSingletonResourceProvider(
+                                            classLoader, clazz, reference, injections, context, owbCtx));
+
+                                    continue;
+                                }
+                            }
+                        }
+
+
                         factory.setResourceProvider(clazz, new OpenEJBPerRequestPojoResourceProvider(
                                 classLoader, clazz, injections, context, owbCtx));
                     }
@@ -756,6 +789,10 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    private boolean isConsideredSingleton(final Class<?> scope) {
+        return Singleton.class == scope || Dependent.class == scope;
     }
 
     private void fixProviderIfKnown() {

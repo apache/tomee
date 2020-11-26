@@ -229,7 +229,9 @@ public class CxfRSService extends RESTService {
             if (userConfiguredJsonProviders == null) {
                 jsonProviders = asList(
                         "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider",
-                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider");
+                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider",
+                        "org.apache.cxf.jaxrs.sse.SseContextProvider",
+                        "org.apache.cxf.jaxrs.sse.SseEventSinkContextProvider");
             } else {
                 jsonProviders = asList(userConfiguredJsonProviders.split(","));
             }
