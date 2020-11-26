@@ -38,6 +38,8 @@ import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
+import org.apache.cxf.jaxrs.sse.SseContextProvider;
+import org.apache.cxf.jaxrs.sse.SseEventSinkContextProvider;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
@@ -74,6 +76,7 @@ import org.apache.openejb.rest.ThreadLocalContextManager;
 import org.apache.openejb.server.cxf.rs.event.ExtensionProviderRegistration;
 import org.apache.openejb.server.cxf.rs.event.ServerCreated;
 import org.apache.openejb.server.cxf.rs.event.ServerDestroyed;
+import org.apache.openejb.server.cxf.rs.sse.TomEESseEventSinkContextProvider;
 import org.apache.openejb.server.cxf.transport.HttpDestination;
 import org.apache.openejb.server.cxf.transport.util.CxfUtil;
 import org.apache.openejb.server.httpd.HttpRequest;
@@ -741,6 +744,9 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
 
             try {
+                factory.setProvider(new SseContextProvider());
+                factory.setProvider(new TomEESseEventSinkContextProvider());
+
                 server = factory.create();
                 fixProviderIfKnown();
                 fireServerCreated(oldLoader);
