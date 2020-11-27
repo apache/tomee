@@ -25,6 +25,7 @@ import org.junit.Test;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
+import static javax.ws.rs.client.Entity.entity;
 import static org.junit.Assert.assertEquals;
 
 public class MovieServiceTest {
@@ -66,8 +67,8 @@ public class MovieServiceTest {
         final WebClient client = WebClient.create(serverURI).accept(MediaType.APPLICATION_JSON);
 
         final Movie movie = new Movie("Shanghai Noon", "Tom Dey", "Comedy", 7, 2000);
-        final Movie posted = client.path("/api/movies").post(movie, Movie.class);
 
+        final Movie posted = client.path("/api/movies").post(entity(movie, MediaType.APPLICATION_JSON_TYPE)).readEntity(Movie.class);
 
         assertEquals("Tom Dey", posted.getDirector());
         assertEquals("Shanghai Noon", posted.getTitle());
