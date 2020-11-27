@@ -40,6 +40,12 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-sse</artifactId>
+      <version>3.3.8</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

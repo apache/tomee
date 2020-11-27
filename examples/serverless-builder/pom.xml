@@ -22,7 +22,7 @@
   <artifactId>serverless-builder</artifactId>
   <version>8.0.6-SNAPSHOT</version>
 
-  <name>TomEE :: Examples :: Serverless Apache TomEE WebProfile</name>
+  <name>TomEE :: Examples :: Serverless Apache TomEE Builder</name>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,6 +38,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-sse</artifactId>
+      <version>3.3.8</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
