@@ -733,7 +733,7 @@
   <ServiceProvider
           id="Default ORB"
           service="Resource"
-          types="org.apache.openejb.corba.ORBAdapter, ORBAdapter"
+          types="org.apache.openejb.spi.corba.ORBAdapter, ORBAdapter"
           factory-name="create"
           class-name="org.apache.openejb.corba.ORBFactoryProviderImpl">
 

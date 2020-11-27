@@ -14,17 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.corba;
+package org.apache.openejb.spi.corba;
 
-import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.Observes;
-import org.apache.openejb.observer.event.ObserverAdded;
+public interface ORBAdapter {
 
-public class ORBFactoryProviderInstaller {
-
-    public void install(@Observes final ObserverAdded added) {
-        if (added.getObserver() == this) {
-            SystemInstance.get().setComponent(ORBFactoryProvider.class, new ORBFactoryProviderImpl());
-        }
-    }
+    Object getORB();
 }

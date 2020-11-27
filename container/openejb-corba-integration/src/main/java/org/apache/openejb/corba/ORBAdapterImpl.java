@@ -16,19 +16,19 @@
  */
 package org.apache.openejb.corba;
 
-import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.corba.ORBAdapter;
 import org.omg.CORBA.ORB;
 
-public class ORBFactoryProviderImpl implements ORBFactoryProvider {
+public class ORBAdapterImpl implements ORBAdapter {
+
+    private final ORB orb;
+
+    public ORBAdapterImpl(ORB orb) {
+        this.orb = orb;
+    }
 
     @Override
-    public ORBAdapter create() {
-        ORB orb = SystemInstance.get().getComponent(ORB.class);
-        if (orb == null) {
-            // todo add support for args and properties
-            orb = ORB.init();
-            SystemInstance.get().setComponent(ORB.class, orb);
-        }
-        return new ORBAdapterImpl(orb);
+    public Object getORB() {
+        return orb;
     }
 }

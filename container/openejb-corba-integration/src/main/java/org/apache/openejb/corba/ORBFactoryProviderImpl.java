@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.corba.client;
+package org.apache.openejb.corba;
 
-import org.apache.openejb.client.corba.CorbasProvider;
 import org.apache.openejb.loader.SystemInstance;
-import org.apache.openejb.observer.Observes;
-import org.apache.openejb.observer.event.ObserverAdded;
+import org.apache.openejb.spi.corba.ORBAdapter;
+import org.apache.openejb.spi.corba.ORBFactoryProvider;
+import org.omg.CORBA.ORB;
 
-public class CorbasProviderInstaller {
+public class ORBFactoryProviderImpl implements ORBFactoryProvider {
 
-    public void install(@Observes final ObserverAdded added) {
-        if (added.getObserver() == this) {
-            SystemInstance.get().setComponent(CorbasProvider.class, new CorbasProviderImpl());
+    @Override
+    public ORBAdapter create() {
+        ORB orb = SystemInstance.get().getComponent(ORB.class);
+        if (orb == null) {
+            // todo add support for args and properties
+            orb = ORB.init();
+            SystemInstance.get().setComponent(ORB.class, orb);
         }
+        return new ORBAdapterImpl(orb);
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.client.corba;
+package org.apache.openejb.spi.client.corba;
 
 public final class InstanceOf {
     private static final Class<?> STUB;

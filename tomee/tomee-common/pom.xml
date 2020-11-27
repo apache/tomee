@@ -52,6 +52,12 @@
       <artifactId>openejb-client</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- FIXME Is this the right place to add the integration to the /lib folder?? -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-corba-integration</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

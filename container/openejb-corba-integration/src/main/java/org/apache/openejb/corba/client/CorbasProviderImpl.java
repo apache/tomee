@@ -16,7 +16,7 @@
  */
 package org.apache.openejb.corba.client;
 
-import org.apache.openejb.client.corba.CorbasProvider;
+import org.apache.openejb.spi.client.corba.CorbasProvider;
 import org.omg.CORBA.ORB;
 
 import javax.naming.InitialContext;

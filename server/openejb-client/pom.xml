@@ -142,16 +142,10 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-corba-integration-api</artifactId>
+      <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>openejb-corba-integration-impl</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <!-- FIXME: Is this allowed here (client vs server???) -->
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>

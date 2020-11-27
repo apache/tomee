@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.corba;
+package org.apache.openejb.spi.client.corba;
 
-public interface ORBFactoryProvider {
+import java.io.IOException;
 
-    ORBAdapter create();
+public interface CorbasProvider {
+
+    Object toStub(final Object obj) throws IOException;
+
+    Object connect(final Object obj) throws IOException;
 }

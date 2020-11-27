@@ -14,13 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.client.corba;
+package org.apache.openejb.corba;
 
-import java.io.IOException;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.observer.Observes;
+import org.apache.openejb.observer.event.ObserverAdded;
+import org.apache.openejb.spi.corba.ORBFactoryProvider;
 
-public interface CorbasProvider {
+public class ORBFactoryProviderInstaller {
 
-    Object toStub(final Object obj) throws IOException;
-
-    Object connect(final Object obj) throws IOException;
+    public void install(@Observes final ObserverAdded added) {
+        if (added.getObserver() == this) {
+            SystemInstance.get().setComponent(ORBFactoryProvider.class, new ORBFactoryProviderImpl());
+        }
+    }
 }

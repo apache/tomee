@@ -14,20 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.openejb.corba;
+package org.apache.openejb.spi.corba;
 
-import org.omg.CORBA.ORB;
+public interface ORBFactoryProvider {
 
-public class ORBAdapterImpl implements ORBAdapter {
-
-    private final ORB orb;
-
-    public ORBAdapterImpl(ORB orb) {
-        this.orb = orb;
-    }
-
-    @Override
-    public Object getORB() {
-        return orb;
-    }
+    ORBAdapter create();
 }

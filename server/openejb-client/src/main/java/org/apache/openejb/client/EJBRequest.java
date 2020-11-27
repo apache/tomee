@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.corba.CorbasProvider;
-import org.apache.openejb.client.corba.InstanceOf;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
 import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.client.corba.CorbasProvider;
+import org.apache.openejb.spi.client.corba.InstanceOf;
 
 import java.io.IOException;
 import java.io.ObjectInput;
