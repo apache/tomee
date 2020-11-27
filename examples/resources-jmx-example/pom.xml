@@ -22,11 +22,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>resources-jmx</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <name>TomEE :: Examples :: Resources/JMX Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.6-SNAPSHOT</tomee.version>
   </properties>
   <modules>
     <module>resources-jmx-ejb</module>

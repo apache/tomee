@@ -19,6 +19,8 @@ package org.apache.openejb.server.cxf.rs;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.BindingFactoryManager;
 import org.apache.cxf.jaxrs.JAXRSBindingFactory;
+import org.apache.cxf.jaxrs.sse.SseContextProvider;
+import org.apache.cxf.jaxrs.sse.SseEventSinkContextProvider;
 import org.apache.cxf.transport.DestinationFactory;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.openejb.cdi.WebBeansContextBeforeDeploy;
@@ -218,7 +220,7 @@ public class CxfRSService extends RESTService {
     }
 
     private void initCxfProviders(final Bus bus) {
-        if (bus.getProperty("org.apache.cxf.jaxrs.bus.providers") == null) {
+        if (noProvidersExplicitlyAdded(bus)) {
             bus.setProperty("skip.default.json.provider.registration", "true"); // client jaxrs, we want johnzon not jettison
 
             final Collection<Object> defaults = new ArrayList<>();
@@ -266,6 +268,25 @@ public class CxfRSService extends RESTService {
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    private boolean noProvidersExplicitlyAdded(final Bus bus) {
+        final Object property = bus.getProperty("org.apache.cxf.jaxrs.bus.providers");
+
+        final Set<Class> currentProviders = new HashSet<>();
+
+        if (property instanceof List) {
+            for (final Object item : List.class.cast(property)) {
+                if (item != null) {
+                    currentProviders.add(item.getClass());
+                }
+            }
+        }
+
+        currentProviders.remove(SseContextProvider.class);
+        currentProviders.remove(SseEventSinkContextProvider.class);
+
+        return currentProviders.isEmpty();
     }
 
     @Override
