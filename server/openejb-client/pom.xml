@@ -141,6 +141,17 @@
       <artifactId>geronimo-javamail_1.6_mail</artifactId>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-corba-integration-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <!-- FIXME: Is this allowed here (client vs server???) -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-loader</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>jaxb-runtime</artifactId>
       <type>pom</type>

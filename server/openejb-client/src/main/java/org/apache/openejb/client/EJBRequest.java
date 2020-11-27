@@ -16,10 +16,11 @@
  */
 package org.apache.openejb.client;
 
-import org.apache.openejb.client.corba.Corbas;
+import org.apache.openejb.client.corba.CorbasProvider;
 import org.apache.openejb.client.corba.InstanceOf;
 import org.apache.openejb.client.serializer.EJBDSerializer;
 import org.apache.openejb.client.serializer.SerializationWrapper;
+import org.apache.openejb.loader.SystemInstance;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -552,7 +553,12 @@ public class EJBRequest implements ClusterableRequest {
                     }
                 } else {
                     if (InstanceOf.isRemote(obj)) {
-                        obj = Corbas.toStub(obj);
+                        CorbasProvider corbasProvider = SystemInstance.get().getComponent(CorbasProvider.class);
+                        if(corbasProvider != null) {
+                            obj = corbasProvider.toStub(obj);
+                        } else {
+                            throw new IOException("No CorbasProvider present.");
+                        }
                     }
                     out.write(OBJECT);
                     out.writeObject(clazz);
@@ -630,7 +636,12 @@ public class EJBRequest implements ClusterableRequest {
                         clazz = (Class) in.readObject();
                         final Object read = in.readObject();
                         if (InstanceOf.isStub(read)) {
-                            obj = Corbas.connect(read);
+                            CorbasProvider corbasProvider = SystemInstance.get().getComponent(CorbasProvider.class);
+                            if(corbasProvider != null) {
+                                obj = corbasProvider.connect(read);
+                            } else {
+                                throw new IOException("No CorbasProvider present.");
+                            }
                         } else {
                             obj = read;
                         }

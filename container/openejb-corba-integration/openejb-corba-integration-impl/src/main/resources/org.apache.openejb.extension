@@ -1,0 +1,2 @@
+org.apache.openejb.corba.client.CorbasProviderInstaller
+org.apache.openejb.corba.ORBFactoryProviderInstaller
