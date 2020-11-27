@@ -21,23 +21,6 @@
 <ServiceJar>
 
     <!--
-    #===================================================================#
-    #       D E F A U L T    O P E N E J B    S E R V I C E S           #
-    #===================================================================#
-    #
-    #
-    #  This file defines all the default configurations of containers,
-    #  factories, managers and services that come with OpenEJB.
-    #
-    #  Can contain numerous configurations of the standard services
-    #  making it easy for users to simply name the one they want in
-    #  their configuration files.
-    #
-    #  Over time this will be become a library of default
-    #  configurations
-    -->
-
-    <!--
     # ================================================
     # Default ORB
     # ================================================
