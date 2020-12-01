@@ -23,8 +23,13 @@ import javax.activation.DataSource;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
+import java.io.File;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Locale;
@@ -47,6 +52,18 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
             return false;
         }
 
+        if (byte[].class.isAssignableFrom(type)) {
+            return false;
+        }
+
+        if (File.class.isAssignableFrom(type)) {
+            return false;
+        }
+
+        if (Reader.class.isAssignableFrom(type)) {
+            return false;
+        }
+
         return super.isWriteable(type, genericType, annotations, mediaType);
     }
 
@@ -55,6 +72,10 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
         // let the CXF built-in writer handle this one
         // TODO: add a setting?
         if (DataSource.class.isAssignableFrom(type)) {
+            return false;
+        }
+
+        if (byte[].class.isAssignableFrom(type)) {
             return false;
         }
 
