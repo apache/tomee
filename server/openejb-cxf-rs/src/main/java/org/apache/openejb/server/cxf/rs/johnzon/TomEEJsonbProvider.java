@@ -19,10 +19,14 @@ package org.apache.openejb.server.cxf.rs.johnzon;
 import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
 import org.apache.johnzon.mapper.access.AccessMode;
 
+import javax.activation.DataSource;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.Locale;
 
 @Provider
@@ -33,6 +37,28 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
         setThrowNoContentExceptionOnEmptyStreams(true); // this is to make TCK tests happy
+    }
+
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        // let the CXF built-in writer handle this one
+        // TODO: add a setting?
+        if (DataSource.class.isAssignableFrom(type)) {
+            return false;
+        }
+
+        return super.isWriteable(type, genericType, annotations, mediaType);
+    }
+
+    @Override
+    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        // let the CXF built-in writer handle this one
+        // TODO: add a setting?
+        if (DataSource.class.isAssignableFrom(type)) {
+            return false;
+        }
+
+        return super.isReadable(type, genericType, annotations, mediaType);
     }
 
     public void setDateFormat(String dateFormat) {
