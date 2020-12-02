@@ -109,6 +109,7 @@ import javax.validation.ValidatorFactory;
 import javax.validation.metadata.MethodDescriptor;
 import javax.ws.rs.ConstrainedTo;
 import javax.ws.rs.RuntimeType;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
@@ -557,6 +558,11 @@ public class CxfRsHttpListener implements RsHttpListener {
             }
             throw new IllegalArgumentException(clazz + " is not a SERVER provider");
         }
+
+        if (ClientRequestFilter.class.isAssignableFrom(clazz)) {
+            return true;
+        }
+
         return false;
     }
 

@@ -22,12 +22,12 @@
   <groupId>org.superbiz</groupId>
   <artifactId>xa-datasource</artifactId>
   <packaging>war</packaging>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <name>TomEE :: Examples :: XA Datasource configuration and usage</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <derby.version>10.12.1.1</derby.version>
-    <tomee.version>8.0.5-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.6-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <finalName>dbtest</finalName>
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.5-SNAPSHOT</version>
+      <version>8.0.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>

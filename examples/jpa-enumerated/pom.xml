@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jpa-enumerated</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <name>TomEE :: Examples :: JPA @Enumerated</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.5-SNAPSHOT</version>
+      <version>8.0.6-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

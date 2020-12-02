@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.5-SNAPSHOT</version>
+    <version>8.0.6-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -41,6 +41,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-core-eclipselink</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
@@ -191,6 +192,22 @@
 
   <build>
     <plugins>
+      <!-- Looks like the war still have myfaces or openjpa because of the overlay with tomee-webapp -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <dependentWarExcludes>
+            %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
+            %regex[(WEB-INF/)?lib/openjpa-.*.jar]
+          </dependentWarExcludes>
+          <packagingExcludes>
+            %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
+            %regex[(WEB-INF/)?lib/openjpa-.*.jar]
+          </packagingExcludes>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>

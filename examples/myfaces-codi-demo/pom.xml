@@ -14,7 +14,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>myfaces-codi-demo</artifactId>
   <name>TomEE :: Examples :: JSF2/CDI/BV/JPA/CODI</name>
-  <version>8.0.5-SNAPSHOT</version>
+  <version>8.0.6-SNAPSHOT</version>
   <packaging>war</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,7 +42,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>8.0.5-SNAPSHOT</version>
+        <version>8.0.6-SNAPSHOT</version>
       </plugin>
       <plugin>
         <groupId>org.tomitribe.transformer</groupId>
