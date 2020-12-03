@@ -58,7 +58,7 @@ public class AlternateDriverJarTest {
         p.put("JdbcOne.Password", PASSWORD);
         p.put("JdbcOne.JtaManaged", "false");
 
-        final File file = new File(drivers, "derby-10.9.1.0.jar");
+        final File file = new File(drivers, "derby-10.14.2.0.jar");
         Assert.assertTrue("Failed to find: " + file, file.exists());
 
         p.put("JdbcTwo", "new://Resource?type=DataSource&classpath="

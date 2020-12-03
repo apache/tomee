@@ -1,4 +1,4 @@
-<!--
+<%--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
   this work for additional information regarding copyright ownership.
@@ -13,7 +13,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
--->
+--%>
 <%@ page import="javax.naming.InitialContext"%><%@ page import="java.util.Properties"%><%@ page import="javax.naming.Context"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusinessHome"%><%@ page import="javax.rmi.PortableRemoteObject"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.DataBusiness"%><%@ page import="org.apache.openejb.arquillian.tests.jsp.Data"%><%@ page contentType="text/plain;charset=UTF-8" language="java" %>
 <%
 
