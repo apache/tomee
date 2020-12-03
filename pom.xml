@@ -805,6 +805,7 @@
                 <exclude>.github/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/js/livereload.js</exclude>
+                <exclude>**/*.ser</exclude>
                 <exclude>doap_tomee.rdf</exclude>
                 <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
                 <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
@@ -812,14 +813,16 @@
                 <exclude>**/META-INF/org.apache.openejb**</exclude>
                 <exclude>**/META-INF/org.apache.openejb**/**</exclude>
 
-                <exclude>**/src/main/resources/login.config</exclude>
+                <exclude>**/src/**/resources/*login.config</exclude>
+                <exclude>**/src/**/resources/META-INF/*login.config</exclude>
                 <exclude>**/src/main/resources/default.exclusions</exclude>
                 <exclude>**/src/main/resources/default.openejb.conf</exclude>
                 <exclude>**/src/test/resources/altddapp2/META-INF/test.env-entries.properties</exclude>
                 <exclude>**/src/test/resources/META-INF/multiple</exclude>
-                <exclude>**/src/test/resources/cdi-login.config</exclude>
                 <exclude>**/src/test/resources/openejb.json</exclude>
                 <exclude>**/src/test/resources/appresource.resources.json</exclude>
+
+                <exclude>**/tomee-deb/src/main/resources/**/*.template</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
