@@ -46,19 +46,6 @@
     </openejb.osgi.export>
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rat-maven-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>src/main/resources/META-INF/schema/soap_encoding_1_1.xsd</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
