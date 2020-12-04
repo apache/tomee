@@ -149,8 +149,17 @@ public abstract class ValidationBase implements ValidationRule {
         final ClassLoader cl = module.getClassLoader();
         try {
             return Classes.forName(clazz, cl);
-        } catch (final ClassNotFoundException cnfe) {
-            throw new OpenEJBException(messages().format("cl0007", clazz, module.getJarLocation()), cnfe);
+        } catch (final ClassNotFoundException cnfe1) {
+			try {
+				String innerClazz = clazz;
+				int pos = innerClazz.lastIndexOf(".");
+				if (pos >= 0) {
+					innerClazz = innerClazz.substring(0,pos) + "$" + innerClazz.substring(pos+1);
+				}
+				return Classes.forName(innerClazz, cl);
+			} catch (final ClassNotFoundException cnfe2) {
+				throw new OpenEJBException(messages().format("cl0007", clazz, module.getJarLocation()), cnfe1);
+			}
         }
     }
 
