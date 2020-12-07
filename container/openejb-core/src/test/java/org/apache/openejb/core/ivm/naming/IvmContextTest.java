@@ -342,14 +342,14 @@ public class IvmContextTest extends TestCase {
         }
     }
 
-    public void testCloseThrowsExceptionIfReadOnly() throws NamingException {
+    public void testCloseDoesNotThrowExceptionIfReadOnly() throws NamingException {
         final IvmContext context = new IvmContext();
         context.setReadOnly(true);
         try {
             context.close();
-            fail();
-        } catch (OperationNotSupportedException e) {
             //ok
+        } catch (OperationNotSupportedException e) {
+            fail();
         }
     }
     
