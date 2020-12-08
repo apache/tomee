@@ -1,0 +1,173 @@
+= Agendamento de Eventos CDI
+:index-group: CDI
+:jbake-type: page
+:jbake-status: published
+
+Este exemplo utiliza uma boa combinação CDI/EJB para agendar Eventos CDI. Isto é util se você quiser Eventos CDI para disparar regularmente ou em um horário específico ou data do calendário.
+
+Efetivamente este é um simples empacotador em volta do método `+BeanManager.fireEvent(Object,Annotations...)+` que adiciona `ScheduleExpression` na mistura. 
+
+== @Timeout e ScheduleExpression
+
+A lógica aqui é simples, nós efetivamente expômos um método identico para `+BeanManager.fireEvent(Object, Annotations...)+` e empacotamos isso como `+scheduleEvent(ScheduleExpression, Object, Annotation...)+`  
+
+Para fazer isso nós usamos o `TimerService` EJB (embaixo dessa cobertura isso é Quartz) e criamos um método `@Timeout` que vai ser executado quando ativada a `ScheduleExpression`.
+
+O método `@Timeout`, simplesmente chamado `timeout`, pega o evento e dispara ele.
+
+[source,java]
+----
+@Singleton
+@Lock(LockType.READ)
+public class Scheduler {
+
+    @Resource
+    private TimerService timerService;
+
+    @Resource
+    private BeanManager beanManager;
+
+    public void scheduleEvent(ScheduleExpression schedule, Object event, Annotation... qualifiers) {
+
+        timerService.createCalendarTimer(schedule, new TimerConfig(new EventConfig(event, qualifiers), false));
+    }
+
+    @Timeout
+    private void timeout(Timer timer) {
+        final EventConfig config = (EventConfig) timer.getInfo();
+
+        beanManager.fireEvent(config.getEvent(), config.getQualifiers());
+    }
+
+    //Na verdade não precisa ser serializável, só tem que implementá-lo
+    private final class EventConfig implements Serializable {
+
+        private final Object event;
+        private final Annotation[] qualifiers;
+
+        private EventConfig(Object event, Annotation[] qualifiers) {
+            this.event = event;
+            this.qualifiers = qualifiers;
+        }
+
+        public Object getEvent() {
+            return event;
+        }
+
+        public Annotation[] getQualifiers() {
+            return qualifiers;
+        }
+    }
+}
+----
+
+Então para usar isto, temos de injetar `Scheduler` como um EJB e aproveitar.
+
+[source,java]
+----
+public class SomeBean {
+
+    @EJB
+    private Scheduler scheduler;
+
+    public void doit() throws Exception {
+
+        // a cada cinco minutos
+        final ScheduleExpression schedule = new ScheduleExpression()
+                .hour("*")
+                .minute("*")
+                .second("*/5");
+
+        scheduler.scheduleEvent(schedule, new TestEvent("five"));
+    }
+
+    /**
+     * Evento será disparado a cada cinco minutos
+     */
+    public void observe(@Observes TestEvent event) {
+        // process the event
+    }
+
+}
+----
+
+== Caso de Teste
+
+Um caso de teste de trabalho para o acima seria como segue:
+
+[source,java]
+----
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.ejb.AccessTimeout;
+import javax.ejb.EJB;
+import javax.ejb.ScheduleExpression;
+import javax.ejb.embeddable.EJBContainer;
+import javax.enterprise.event.Observes;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @version $Revision$ $Date$
+ */
+public class SchedulerTest {
+
+    public static final CountDownLatch events = new CountDownLatch(3);
+
+    @EJB
+    private Scheduler scheduler;
+
+    @Test
+    public void test() throws Exception {
+
+        final ScheduleExpression schedule = new ScheduleExpression()
+                .hour("*")
+                .minute("*")
+                .second("*/5");
+
+        scheduler.scheduleEvent(schedule, new TestEvent("five"));
+
+        Assert.assertTrue(events.await(1, TimeUnit.MINUTES));
+    }
+
+
+    @AccessTimeout(value = 1, unit = TimeUnit.MINUTES)
+    public void observe(@Observes TestEvent event) {
+        if ("five".equals(event.getMessage())) {
+            events.countDown();
+        }
+    }
+
+    public static class TestEvent {
+        private final String message;
+
+        public TestEvent(String message) {
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
+
+    @Before
+    public void setup() throws Exception {
+        EJBContainer.createEJBContainer().getContext().bind("inject", this);
+    }
+}
+----
+
+== Você deve conhecer
+
+* Eventos CDI não são mutli-tarefas 
+
+Se houver 0 observadores e cada um deles levar 7 minutos para executar, então o tempo total de execução para um evento são 70 minutos. Ele iria fazer você absolutamente, não gostar de agendar este evento, para disparar frequentemente com mais que 70 minutos.    
+
+O que aconteceria se você fizesse ? Depende da política `@Singleton` `@Lock`
+
+* `@Lock(WRITE)` é o padrão. Neste modo o método `timeout` seria essencialemnte bloqueado até que a invocação anterior se complete. Tendo ele disparado a cada 5 minutos, mesmo que você só possa processar um a cada 70 minutos, eventualmente faria com que todas as tarefas agrupadas de temporizador estivessem esperando em seu Singleton.
+* `@Lock(READ)` pemitir a execução paralela do método `timeout`. Eventos serão disparados em paralelo por um tempo. Contudo, desde que eles estejam levando 70 minutos cada, dentro de uma hora mais ou menos, ficaremos sem tarefas agrupadas de temporizador exatamente como acima.
+
+A solução elegante é usar `@Lock(WRITE)` então especifique algum tempo limite curto como `@AccessTimeout(value = 1, unit = TimeUnit.MINUTES)` no método `timeout`. Quando a próxima invocação de 5 minutos for disparada, ela aguardará até 1 minuto para ter acesso ao Singleton antes de desistir.
