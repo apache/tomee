@@ -1289,6 +1289,13 @@ public class ToHTMLStream extends ToStream
                 {
                     writer.write(ch);
                 }
+                else if (Encodings.isHighUTF16Surrogate(ch)) {
+                    writeUTF16Surrogate(ch, chars, i, end);
+                    i++;
+                    // two input characters processed
+                    // this increments by one and the for()
+                    // loop itself increments by another one.
+                }
                 else
                 {
                     writer.write("&#");
@@ -1435,20 +1442,17 @@ public class ToHTMLStream extends ToStream
                 {
                     i = pos - 1;
                 }
-                else
-                {
-                    if (Encodings.isHighUTF16Surrogate(ch))
-                    {
-
-                        writeUTF16Surrogate(ch, chars, i, end);
-                        i++; // two input characters processed
-                        // this increments by one and the for()
-                        // loop itself increments by another one.
-                    }
+                else if (Encodings.isHighUTF16Surrogate(ch)) {
+                    writeUTF16Surrogate(ch, chars, i, end);
+                    i++;
+                    // two input characters processed
+                    // this increments by one and the for()
+                    // loop itself increments by another one.
 
                     // The next is kind of a hack to keep from escaping in the case
                     // of Shift_JIS and the like.
-
+                }
+                else {
                     /*
                     else if ((ch < m_maxCharacter) && (m_maxCharacter == 0xFFFF)
                     && (ch != 160))
