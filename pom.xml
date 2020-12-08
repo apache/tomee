@@ -103,7 +103,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.javaee-api>8.0-4</version.javaee-api>
+    <version.javaee-api>8.0-5</version.javaee-api>
 
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
@@ -111,10 +111,10 @@
       to update and release the javaee-api.jar. Different lifecycle.
     -->
     <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.6_spec.version>0.0.1-TT.M1</geronimo-javamail_1.6_spec.version>
-    <geronimo-javamail_1.6_mail.version>0.0.1-TT.M2</geronimo-javamail_1.6_mail.version>
+    <geronimo-javamail_1.6_spec.version>1.0.0</geronimo-javamail_1.6_spec.version>
+    <geronimo-javamail_1.6_mail.version>1.0.0</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.1.0</openjpa.version>
+    <openjpa.version>3.1.2</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.5</johnzon.version>
@@ -178,17 +178,17 @@
     <commons-dbcp.version>2.1-TT.0</commons-dbcp.version>
     <commons-pool.version>2.3</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-codec.version>1.14</commons-codec.version>
-    <commons-fileupload.version>1.3.3</commons-fileupload.version>
+    <commons-codec.version>1.15</commons-codec.version>
+    <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.8.1</commons-lang3.version>
-    <commons-io.version>2.7</commons-io.version>
-    <commons-net.version>3.3</commons-net.version>
+    <commons-lang3.version>3.11</commons-lang3.version>
+    <commons-io.version>2.8.0</commons-io.version>
+    <commons-net.version>3.7.2</commons-net.version>
 
-    <bval.version>2.0.3</bval.version>
+    <bval.version>2.0.5</bval.version>
     <org.apache.activemq.version>5.16.0</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
@@ -232,8 +232,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.10.0</jackson.version>
-    <jackson.dataformat.version>2.10.0</jackson.dataformat.version>
+    <jackson.version>2.12.0-rc1</jackson.version>
+    <jackson.dataformat.version>2.12.0-rc1</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
@@ -613,6 +613,23 @@
         <module>itests/microprofile-jwt-itests</module>
         <module>arquillian/arquillian-tomee-tests</module>
         <module>tck</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>no-examples</id>
+      <modules>
+        <module>boms</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>gradle</module>
+        <module>container</module>
+        <module>server</module>
+        <module>mp-jwt</module>
+        <module>assembly</module>
+        <module>tck</module>
+        <module>arquillian</module>
+        <module>utils</module>
+        <module>tomee</module>
       </modules>
     </profile>
     <profile>
@@ -1789,7 +1806,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.8.1</version>
+        <version>1.20</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
