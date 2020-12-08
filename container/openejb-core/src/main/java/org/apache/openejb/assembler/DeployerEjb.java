@@ -174,7 +174,7 @@ public class DeployerEjb implements Deployer {
             AUTO_DEPLOY.set(autoDeploy);
             try {
                 final AppInfo appInfo = SystemInstance.get().getComponent(WebAppDeployer.class)
-                        .deploy(host, contextRoot(properties, file.getAbsolutePath()), file);
+                                                      .deploy(host, contextRoot(properties, file), file);
                 if (appInfo != null) {
                     saveIfNeeded(properties, file, appInfo);
                     return appInfo;
@@ -454,7 +454,14 @@ public class DeployerEjb implements Deployer {
     }
 
     private String contextRoot(final Properties properties, final String jarPath) {
-        return properties.getProperty("webapp." + jarPath + ".context-root");
+        final File file = new File(jarPath);
+        return file.exists()
+               ? contextRoot(properties, file)
+               : properties.getProperty("webapp." + jarPath + ".context-root");
+    }
+
+    private String contextRoot(final Properties properties, final File jarPath) {
+        return properties.getProperty("webapp." + jarPath.getName() + ".context-root");
     }
 
     @Override

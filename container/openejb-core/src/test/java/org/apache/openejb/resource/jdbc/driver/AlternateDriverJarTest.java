@@ -58,7 +58,7 @@ public class AlternateDriverJarTest {
         p.put("JdbcOne.Password", PASSWORD);
         p.put("JdbcOne.JtaManaged", "false");
 
-        final File file = new File(drivers, "derby-10.9.1.0.jar");
+        final File file = new File(drivers, "derby-10.14.2.0.jar");
         Assert.assertTrue("Failed to find: " + file, file.exists());
 
         p.put("JdbcTwo", "new://Resource?type=DataSource&classpath="
@@ -93,7 +93,7 @@ public class AlternateDriverJarTest {
 
         final String twoDriverVersion = two.getDriverVersion();
         System.out.println("twoDriverVersion = " + twoDriverVersion);
-        Assert.assertEquals("Should be using 10.9.1.0 - (1344872)", "10.9.1.0 - (1344872)", twoDriverVersion);
+        Assert.assertEquals("Should be using 10.14.2.0 - (1828579)", "10.14.2.0 - (1828579)", twoDriverVersion);
     }
 
     @LocalBean

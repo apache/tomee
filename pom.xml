@@ -199,6 +199,7 @@
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
+    <derby.version>10.14.2.0</derby.version>
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
@@ -393,7 +394,7 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>4.0.0</version>
+          <version>6.0.3</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -660,13 +661,17 @@
     <profile>
       <id>style</id>
       <modules>
-        <module>container/openejb-core</module>
-        <module>container/openejb-loader</module>
-        <module>container/openejb-junit</module>
-        <module>container/openejb-jpa-integration</module>
-        <module>container/openejb-javaagent</module>
-        <module>container/openejb-api</module>
+        <module>boms</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>gradle</module>
+        <module>container</module>
+        <module>server</module>
+        <module>mp-jwt</module>
+        <module>assembly</module>
+        <module>tck</module>
         <module>arquillian</module>
+        <module>utils</module>
         <module>tomee</module>
       </modules>
       <properties>
@@ -780,18 +785,6 @@
     </profile>
     <profile>
       <id>rat</id>
-      <modules>
-        <module>itests</module>
-        <module>maven</module>
-        <module>gradle</module>
-        <module>container</module>
-        <module>server</module>
-        <module>examples</module>
-        <module>arquillian</module>
-        <module>assembly</module>
-        <module>utils</module>
-        <module>tomee</module>
-      </modules>
       <build>
         <plugins>
           <plugin>
@@ -808,8 +801,38 @@
             <configuration>
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
+                <exclude>doap_tomee.rdf</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>.github/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/js/livereload.js</exclude>
+                <exclude>**/*.ser</exclude>
+                <exclude>**/*.pem</exclude>
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.jwk</exclude>
+                <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
+                <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
+                <exclude>**/META-INF/services/**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**/**</exclude>
+
+                <exclude>**/src/**/*login.config</exclude>
+                <exclude>**/src/main/resources/DATA-README.txt</exclude>
+                <exclude>**/src/test/resources/test.getresources</exclude>
+                <exclude>**/src/test/resources/test/log/localhost_access_log.2014-02-07.txt</exclude>
+                <exclude>**/src/main/resources/service.readme.txt</exclude>
+                <exclude>**/src/main/resources/default.exclusions</exclude>
+                <exclude>**/src/main/resources/default.openejb.conf</exclude>
+                <exclude>**/src/test/resources/altddapp2/META-INF/test.env-entries.properties</exclude>
+                <exclude>**/src/test/resources/META-INF/multiple</exclude>
+                <exclude>**/src/test/resources/openejb.json</exclude>
+                <exclude>**/src/test/resources/appresource.resources.json</exclude>
+
+                <exclude>**/tomee-deb/src/main/resources/**/*.template</exclude>
+                <exclude>**/tomee-deb/**/precompiled-changelog</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -819,6 +842,7 @@
                 <exclude>**/hsqldb.log</exclude>
 
                 <!-- IDEA files -->
+                <exclude>.idea/**</exclude>
                 <exclude>**/*.iml</exclude>
                 <exclude>**/*.ipr</exclude>
                 <exclude>**/*.iws</exclude>
@@ -827,6 +851,19 @@
                 <exclude>**/.*</exclude>
                 <exclude>**/.*/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
+
+                <!-- ASCIIDOC files -->
+                <exclude>docs/**</exclude>
+
+                <!-- examples -->
+                <exclude>examples/**/*.jsp</exclude>
+                <exclude>examples/**/*.css</exclude>
+                <exclude>examples/**/*.properties</exclude>
+                <exclude>examples/**/*.feature</exclude>
+                <exclude>examples/**/placeholder</exclude>
+                <exclude>examples/**/Dockerfile</exclude>
+                <exclude>examples/**/bootstrap/**</exclude>
+
               </excludes>
             </configuration>
           </plugin>
