@@ -145,7 +145,7 @@
         <artifactId>tomee-patch-plugin</artifactId>
         <version>0.1</version>
         <configuration>
-          <select>apache-tomee.*\.zip</select>
+          <select>tomee-webapp.*\.war</select>
         </configuration>
         <executions>
           <execution>
