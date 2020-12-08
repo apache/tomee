@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 /*
- * $Id: ToHTMLStream.java 1225444 2011-12-29 05:52:39Z mrglavas $
+ * $Id$
  */
 package org.apache.xml.serializer;
 
@@ -1289,10 +1289,10 @@ public class ToHTMLStream extends ToStream
                 {
                     writer.write(ch);
                 }
-                else if (Encodings.isHighUTF16Surrogate(ch)) {
+                else if (Encodings.isHighUTF16Surrogate(ch))
+                {
                     writeUTF16Surrogate(ch, chars, i, end);
-                    i++;
-                    // two input characters processed
+                    i++; // two input characters processed
                     // this increments by one and the for()
                     // loop itself increments by another one.
                 }
@@ -1442,17 +1442,18 @@ public class ToHTMLStream extends ToStream
                 {
                     i = pos - 1;
                 }
-                else if (Encodings.isHighUTF16Surrogate(ch)) {
+                else if (Encodings.isHighUTF16Surrogate(ch))
+                {
+
                     writeUTF16Surrogate(ch, chars, i, end);
-                    i++;
-                    // two input characters processed
+                    i++; // two input characters processed
                     // this increments by one and the for()
                     // loop itself increments by another one.
+                } else {
 
                     // The next is kind of a hack to keep from escaping in the case
                     // of Shift_JIS and the like.
-                }
-                else {
+
                     /*
                     else if ((ch < m_maxCharacter) && (m_maxCharacter == 0xFFFF)
                     && (ch != 160))
@@ -2344,11 +2345,13 @@ public class ToHTMLStream extends ToStream
         }
 
         /**
-         * Get the length of the longest key used in the table. 
+         * Get the length of the longest key used in the table.
          */
         public int getLongestKeyLength()
         {
             return m_charBuffer.length;
         }
     }
+
+
 }
