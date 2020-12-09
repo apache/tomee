@@ -36,6 +36,14 @@
     <tomee.build.name>${project.groupId}.tomee.catalina</tomee.build.name>
   </properties>
 
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
