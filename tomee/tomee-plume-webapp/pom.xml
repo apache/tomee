@@ -192,7 +192,7 @@
 
   <build>
     <plugins>
-      <!-- Looks like the war still have myfaces or openjpa because of the overlay with tomee-webapp -->
+      <!-- Looks like the war still have myfaces because of the overlay with tomee-webapp -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
@@ -200,11 +200,9 @@
         <configuration>
           <dependentWarExcludes>
             %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
-            %regex[(WEB-INF/)?lib/openjpa-.*.jar]
           </dependentWarExcludes>
           <packagingExcludes>
             %regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar],
-            %regex[(WEB-INF/)?lib/openjpa-.*.jar]
           </packagingExcludes>
         </configuration>
       </plugin>
