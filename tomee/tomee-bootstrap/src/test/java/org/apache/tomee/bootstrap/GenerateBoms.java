@@ -521,21 +521,18 @@ public class GenerateBoms {
          * and all such data would be in the parent pom.
          */
         public String asBomDep() {
-            final String g = groupId;
-            final String a = artifactId;
-            final String v = version;
             return "" +
-                    "    <dependency>\n" +
-                    "      <groupId>" + g + "</groupId>\n" +
-                    "      <artifactId>" + a + "</artifactId>\n" +
-                    "      <version>" + v + "</version>\n" +
-                    "      <exclusions>\n" +
-                    "        <exclusion>\n" +
-                    "          <artifactId>*</artifactId>\n" +
-                    "          <groupId>*</groupId>\n" +
-                    "        </exclusion>\n" +
-                    "      </exclusions>\n" +
-                    "    </dependency>\n";
+                   "    <dependency>\n" +
+                   "      <groupId>" + groupId + "</groupId>\n" +
+                   "      <artifactId>" + artifactId + "</artifactId>\n" +
+                   "      <version>" + version + "</version>\n" +
+                   "      <exclusions>\n" +
+                   "        <exclusion>\n" +
+                   "          <artifactId>*</artifactId>\n" +
+                   "          <groupId>*</groupId>\n" +
+                   "        </exclusion>\n" +
+                   "      </exclusions>\n" +
+                   "    </dependency>\n";
         }
 
         /**
@@ -544,15 +541,12 @@ public class GenerateBoms {
          * the dependencies needed, but not duplicate the version information.
          */
         public String asManagedDep() {
-            final String g = groupId;
-            final String a = artifactId;
-            final String v = version;
             return "" +
-                    "    <dependency>\n" +
-                    "      <groupId>" + g + "</groupId>\n" +
-                    "      <artifactId>" + a + "</artifactId>\n" +
-                    "      <version>" + v + "</version>\n" +
-                    "    </dependency>\n";
+                   "    <dependency>\n" +
+                   "      <groupId>" + groupId + "</groupId>\n" +
+                   "      <artifactId>" + artifactId + "</artifactId>\n" +
+                   "      <version>" + version + "</version>\n" +
+                   "    </dependency>\n";
         }
     }
 
