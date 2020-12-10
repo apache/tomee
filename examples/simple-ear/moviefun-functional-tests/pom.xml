@@ -34,6 +34,19 @@
     <version.shrinkwrap.resolver>2.0.0</version.shrinkwrap.resolver>
   </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <project.version>${project.parent.version}</project.version>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencyManagement>
     <dependencies>
       <!-- Override dependency resolver with test version. This must go *BEFORE*
