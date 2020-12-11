@@ -204,7 +204,7 @@
           <forkCount>1</forkCount>
           <argLine>${surefire.argline}</argLine>
           <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
+          <disableXmlReport>false</disableXmlReport>
           <suiteXmlFiles>
             <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
           </suiteXmlFiles>
