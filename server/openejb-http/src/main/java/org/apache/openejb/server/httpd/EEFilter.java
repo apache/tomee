@@ -40,7 +40,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 
-// its pupose is to start/stop request scope in async tasks
+// its purpose is to start/stop request scope in async tasks
 // and ensure logout is propagated to security service
 public class EEFilter implements Filter {
     private SecurityService securityService;
@@ -93,6 +93,18 @@ public class EEFilter implements Filter {
             } finally {
                 filter.onLogout(HttpServletRequest.class.cast(getRequest()));
             }
+        }
+
+        @Override
+        public int hashCode() {
+            // unwrap and delegate
+            return getRequest().hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            // unwrap and delegate
+            return getRequest().equals(obj);
         }
     }
 
