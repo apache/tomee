@@ -25,19 +25,20 @@ import org.apache.openejb.testing.Module;
 import org.apache.openejb.testng.PropertiesBuilder;
 import org.apache.openejb.util.NetworkUtil;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
@@ -80,54 +81,34 @@ public class CDISSEApplicationTest {
             .addInitParam("REST Application", "javax.ws.rs.Application", MyCdiRESTApplication.class.getName());
     }
 
+    @Inject
+    private Event<Message> messageEvent;
+
     @Test
     public void testSse() throws Exception {
         final List<Message> messages = new ArrayList<>();
-        final Client client = ClientBuilder.newClient();
-        final WebTarget target = client.target("http://localhost:" + port + "/foo/sse");
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        final AtomicBoolean complete = new AtomicBoolean(false);
+        final Runnable r = () -> {
+            final Client client = ClientBuilder.newClient();
+            final WebTarget target = client.target("http://localhost:" + port + "/foo/sse");
 
-        new Thread(() -> {
-            try (SseEventSource source = SseEventSource.target(target).build()) {
-                source.register((inboundSseEvent) -> {
-                    final Message message = inboundSseEvent.readData(Message.class);
-                    System.out.println("*** Received ***");
-                    messages.add(message);
-                    latch.countDown();
-                    complete.set(true);
-                });
-                source.open();
-            }
+            final SseEventSource source = SseEventSource
+                    .target(target)
+                    .reconnectingEvery(500, TimeUnit.MILLISECONDS)
+                    .build();
 
-            System.out.println("Is open");
+            source.register((inboundSseEvent) -> {
+                final Message message = inboundSseEvent.readData(Message.class);
+                messages.add(message);
+            });
 
-            while (! complete.get()) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
-            }
+            source.open();
+        };
 
-        }).start();
+        new Thread(r).start();
 
-        new Thread(() -> {
-            while (! complete.get()) {
-                final WebTarget sendTarget = ClientBuilder.newClient().target("http://localhost:" + port + "/foo/sse");
-                sendTarget.request().buildPost(Entity.entity("Test message", MediaType.TEXT_PLAIN_TYPE)).invoke();
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                }
-            }
-
-        }).start();
-
-        latch.await(1, TimeUnit.MINUTES);
-        assertEquals(1, messages.size());
-        assertEquals("Test message", messages.get(0).getText());
+        Control.getInstance().waitUntilListening();
+        messageEvent.fire(new Message(new Date().getTime(), "Hello"));
     }
 
     public static class MyCdiRESTApplication extends Application {
@@ -135,6 +116,7 @@ public class CDISSEApplicationTest {
     }
 
     @Path("sse")
+    @Singleton
     public static class Resource {
 
         private SseBroadcaster broadcaster;
@@ -157,9 +139,7 @@ public class CDISSEApplicationTest {
             this.builder = sse.newEventBuilder();
         }
 
-        @POST
-        @Consumes(MediaType.TEXT_PLAIN)
-        public void send(final String message) {
+        public void send(@Observes final Message message) {
             broadcaster.broadcast(createEvent(builder, eventId.incrementAndGet(), message));
         }
 
@@ -167,13 +147,13 @@ public class CDISSEApplicationTest {
         @Produces(MediaType.SERVER_SENT_EVENTS)
         public void stats(final @Context SseEventSink sink) {
             broadcaster.register(sink);
-            broadcaster.broadcast(createEvent(builder, eventId.incrementAndGet(), "Connected"));
+            Control.getInstance().listening();
         }
 
-        private static OutboundSseEvent createEvent(final OutboundSseEvent.Builder builder, final long eventId, final String text) {
+        private static OutboundSseEvent createEvent(final OutboundSseEvent.Builder builder, final long eventId, final Message message) {
             return builder
                     .id("" + eventId)
-                    .data(Message.class, new Message(new Date().getTime(), text))
+                    .data(Message.class, message)
                     .mediaType(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         }
@@ -207,6 +187,26 @@ public class CDISSEApplicationTest {
 
         public void setText(final String text) {
             this.text = text;
+        }
+    }
+
+    public static class Control {
+        private static final Control INSTANCE = new Control();
+        private final CountDownLatch listen = new CountDownLatch(1);
+
+        private Control() {
+        }
+
+        public static Control getInstance() {
+            return INSTANCE;
+        }
+
+        public void listening() {
+            listen.countDown();
+        }
+
+        public void waitUntilListening() throws InterruptedException {
+            listen.await(1, TimeUnit.MINUTES);
         }
     }
 }

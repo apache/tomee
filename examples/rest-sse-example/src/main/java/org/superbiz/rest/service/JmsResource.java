@@ -1,7 +1,7 @@
 package org.superbiz.rest.service;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.inject.Singleton;
 import javax.jms.Message;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,7 +14,7 @@ import javax.ws.rs.sse.SseBroadcaster;
 import javax.ws.rs.sse.SseEventSink;
 
 @Path("jms")
-@ApplicationScoped
+@Singleton
 public class JmsResource {
 
     private SseBroadcaster broadcaster;
