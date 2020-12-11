@@ -27,6 +27,7 @@ public class MvnTest {
     @Test
     public void main() {
         final Archive<?> war = Mvn.war();
+        System.out.println(war.toString(true));
         assertTrue(war.get("/WEB-INF/classes/org/apache/ziplock/maven/Mvn.class") != null);
         assertTrue(war.getContent(new Filter<ArchivePath>() {
             @Override
@@ -45,6 +46,7 @@ public class MvnTest {
     @Test
     public void test() {
         final Archive<?> war = Mvn.testWar();
+        System.out.println(war.toString(true));
         assertTrue(war.get("/WEB-INF/classes/org/apache/ziplock/maven/Mvn.class") != null);
         assertTrue(war.getContent(new Filter<ArchivePath>() {
             @Override
