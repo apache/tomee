@@ -497,7 +497,16 @@ public class IvmContext implements Context, Serializable {
     }
 
     public void close() throws NamingException {
-        checkReadOnly();
+        /*
+         * 10.4.4. Container Provider Responsibility
+         *
+         * The container must ensure that the enterprise bean instances have only read access to their environment
+         * variables. The container must throw the javax.naming.OperationNotSupportedException from all the methods of
+         * the javax.naming.Context interface that modify the environment naming context and its subcontexts.
+         *
+         * We can question if close() is modifying the context. But from what TCK does, it looks like no.
+         * So no need to check read only here. Tomcat does consider it to be a write operation so it fails
+         */
     }
 
     /*

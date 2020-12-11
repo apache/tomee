@@ -72,7 +72,6 @@
       </includes>
       <excludes>
         <exclude>%regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar]</exclude>
-        <exclude>%regex[(WEB-INF/)?lib/openjpa-.*.jar]</exclude>
       </excludes>
     </fileSet>
   </fileSets>
@@ -86,7 +85,6 @@
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>
         <exclude>org.apache.myfaces:*</exclude>
-        <exclude>org.apache.openjpa:*</exclude>
 
         <!-- should be in a pom exclusion but it does perfectly the trick -->
         <exclude>org.springframework:*</exclude>
