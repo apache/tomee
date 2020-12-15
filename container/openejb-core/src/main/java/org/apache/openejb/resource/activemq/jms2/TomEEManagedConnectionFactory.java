@@ -50,7 +50,7 @@ public class TomEEManagedConnectionFactory extends ActiveMQManagedConnectionFact
 
     @Override
     protected ActiveMQConnectionFactory createConnectionFactory(final ActiveMQConnectionRequestInfo connectionRequestInfo, final MessageActivationSpec activationSpec) {
-        final TomEEConnectionFactory connectionFactory = new TomEEConnectionFactory();
+        final TomEEConnectionFactory connectionFactory = new TomEEConnectionFactory(transactionSupportLevel);
         connectionRequestInfo.configure(connectionFactory, activationSpec);
         return connectionFactory;
     }

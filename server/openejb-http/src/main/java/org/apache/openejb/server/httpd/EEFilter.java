@@ -38,8 +38,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 
-// its pupose is to start/stop request scope in async tasks
+// its purpose is to start/stop request scope in async tasks
 // and ensure logout is propagated to security service
 public class EEFilter implements Filter {
     private SecurityService securityService;
@@ -93,10 +94,25 @@ public class EEFilter implements Filter {
                 filter.onLogout(HttpServletRequest.class.cast(getRequest()));
             }
         }
+
+        @Override
+        public int hashCode() {
+            // unwrap and delegate
+            return getRequest().hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            // unwrap and delegate
+            return getRequest().equals(obj);
+        }
     }
 
     public static class CdiRequest extends NoCdiRequest {
         private final WebBeansContext webBeansContext;
+
+        // it's a request so not multi-threaded
+        private final AtomicReference<AsynContextWrapper> asyncContextWrapperReference = new AtomicReference<>();
 
         public CdiRequest(final HttpServletRequest cast, final WebBeansContext webBeansContext, final EEFilter filter) {
             super(cast, filter);
@@ -105,12 +121,22 @@ public class EEFilter implements Filter {
 
         @Override
         public AsyncContext startAsync() throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(), this, webBeansContext);
+            asyncContextWrapperReference.compareAndSet(null,
+                                                       new AsynContextWrapper(super.startAsync(), this, webBeansContext));
+            return asyncContextWrapperReference.get();
         }
 
         @Override
         public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
-            return new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest, webBeansContext);
+            asyncContextWrapperReference.compareAndSet(null,
+                                                       new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest, webBeansContext));
+            return asyncContextWrapperReference.get();
+        }
+
+        @Override
+        public AsyncContext getAsyncContext() {
+            // tomcat won't return our wrapper
+            return asyncContextWrapperReference.get();
         }
     }
 
@@ -163,7 +189,16 @@ public class EEFilter implements Filter {
 
         @Override
         public boolean hasOriginalRequestAndResponse() {
-            return delegate.hasOriginalRequestAndResponse();
+            final boolean tomcatHasOriginalRequestAndResponse = delegate.hasOriginalRequestAndResponse();
+            if (!tomcatHasOriginalRequestAndResponse) {
+                // unfortunately in the startAsync() Tomcat computes the hasOriginalRequestAndResponse flag
+                // Unfortunately we pass in the wrapped request so the flag is false
+                // we need to override the value returned by Tomcat in case we are wrapping the request
+                if (request instanceof NoCdiRequest) { // and CdiRequest
+                    return request == delegate.getRequest(); // Tomcat should have this as the request and not the RequestFacade
+                }
+            }
+            return tomcatHasOriginalRequestAndResponse;
         }
 
         @Override

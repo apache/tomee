@@ -234,6 +234,22 @@ public class Installer implements InstallerInterface {
         if (!tomeeXml.exists()) {
             Installers.writeAll(tomeeXml,
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                            "<!--\n" +
+                            "    Licensed to the Apache Software Foundation (ASF) under one or more\n" +
+                            "    contributor license agreements.  See the NOTICE file distributed with\n" +
+                            "    this work for additional information regarding copyright ownership.\n" +
+                            "    The ASF licenses this file to You under the Apache License, Version 2.0\n" +
+                            "    (the \"License\"); you may not use this file except in compliance with\n" +
+                            "    the License.  You may obtain a copy of the License at\n" +
+                            "\n" +
+                            "       http://www.apache.org/licenses/LICENSE-2.0\n" +
+                            "\n" +
+                            "    Unless required by applicable law or agreed to in writing, software\n" +
+                            "    distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+                            "    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+                            "    See the License for the specific language governing permissions and\n" +
+                            "    limitations under the License.\n" +
+                            "-->\n" +
                             "<tomee>\n" +
                             "  <!-- see http://tomee.apache.org/containers-and-resources.html -->\n\n" +
                             "  <!-- activate next line to be able to deploy applications in apps -->\n" +
@@ -704,6 +720,23 @@ public class Installer implements InstallerInterface {
             FileWriter systemPropertiesWriter = null;
             try {
                 systemPropertiesWriter = new FileWriter(openejbSystemProperties);
+
+                systemPropertiesWriter.write("# Licensed to the Apache Software Foundation (ASF) under one or more\n" +
+                                             "# contributor license agreements.  See the NOTICE file distributed with\n" +
+                                             "# this work for additional information regarding copyright ownership.\n" +
+                                             "# The ASF licenses this file to You under the Apache License, Version 2.0\n" +
+                                             "# (the \"License\"); you may not use this file except in compliance with\n" +
+                                             "# the License.  You may obtain a copy of the License at\n" +
+                                             "#\n" +
+                                             "#     http://www.apache.org/licenses/LICENSE-2.0\n" +
+                                             "#\n" +
+                                             "# Unless required by applicable law or agreed to in writing, software\n" +
+                                             "# distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+                                             "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+                                             "# See the License for the specific language governing permissions and\n" +
+                                             "# limitations under the License.\n" +
+                                             "\n");
+
 
                 systemPropertiesWriter.write("# all this properties are added at JVM system properties at startup\n");
                 systemPropertiesWriter.write("# here some default Apache TomEE system properties\n");

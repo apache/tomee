@@ -117,7 +117,7 @@
     <openjpa.version>3.1.2</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.9-SNAPSHOT</johnzon.version>
+    <johnzon.version>1.2.9</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -580,6 +580,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -619,6 +620,7 @@
     <profile>
       <id>no-examples</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -636,6 +638,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>maven</module>
         <module>gradle</module>
@@ -661,6 +664,7 @@
     <profile>
       <id>style</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -732,6 +736,10 @@
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
+        </repository>
+        <repository>
+          <id>Johnzon-Staging</id>
+          <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1045</url>
         </repository>
       </repositories>
     </profile>
@@ -1922,13 +1930,13 @@
         <version>1.16</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-jstlel</artifactId>
-        <version>1.2.5</version>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>taglibs-shade</artifactId>
+	<version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
