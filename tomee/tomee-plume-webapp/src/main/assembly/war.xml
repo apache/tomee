@@ -66,11 +66,12 @@
         <include>**/*.html</include>
         <include>**/*.css</include>
         <include>**/*.js</include>
+        <!-- libs are handled with dependencies because exclude don't work too well bellow -->
+        <!-- if some deps are missing, they should be added as project dependencies -->
         <include>lib/*.jar</include>
       </includes>
       <excludes>
-        <exclude>lib/myfaces*.jar</exclude>
-        <exclude>lib/tomee-myfaces*.jar</exclude>
+        <exclude>%regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar]</exclude>
       </excludes>
     </fileSet>
   </fileSets>
@@ -78,6 +79,8 @@
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
       <scope>runtime</scope>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
         <!-- provided -->
         <exclude>org.apache.tomcat:*</exclude>

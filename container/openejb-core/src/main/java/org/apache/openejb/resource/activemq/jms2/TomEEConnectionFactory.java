@@ -22,11 +22,22 @@ import org.apache.activemq.management.JMSStatsImpl;
 import org.apache.activemq.transport.Transport;
 
 import javax.jms.JMSContext;
+import javax.resource.spi.TransactionSupport;
 
 public class TomEEConnectionFactory extends ActiveMQXASslConnectionFactory {
+    private final TransactionSupport.TransactionSupportLevel transactionSupportLevel;
+
+    public TomEEConnectionFactory(TransactionSupport.TransactionSupportLevel transactionSupportLevel) {
+        this.transactionSupportLevel = transactionSupportLevel;
+    }
+
     @Override
     protected ActiveMQConnection createActiveMQConnection(final Transport transport, final JMSStatsImpl stats) throws Exception {
-        return new TomEEXAConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
+        if (TransactionSupport.TransactionSupportLevel.NoTransaction.equals(transactionSupportLevel)) {
+            return new TomEEConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
+        } else {
+            return new TomEEXAConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
+        }
     }
 
     @Override
