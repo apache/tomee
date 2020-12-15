@@ -34,7 +34,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import java.util.List;
 import java.util.Properties;
 
