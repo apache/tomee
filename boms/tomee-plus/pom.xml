@@ -851,18 +851,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.9-SNAPSHOT</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-      <version>1.2.9-SNAPSHOT</version>
+      <version>1.2.9</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -873,7 +862,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.9-SNAPSHOT</version>
+      <version>1.2.9</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -884,7 +873,18 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.9-SNAPSHOT</version>
+      <version>1.2.9</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-jsonp-strict</artifactId>
+      <version>1.2.9</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -895,7 +895,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.9-SNAPSHOT</version>
+      <version>1.2.9</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1054,17 +1054,6 @@
         <exclusion>
           <artifactId>*</artifactId>
           <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>taglibs-shade</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>*</groupId>
-          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -1512,6 +1501,17 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-webservices</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>taglibs-shade</artifactId>
+      <version>8.0.6-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

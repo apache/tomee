@@ -1816,6 +1816,33 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-core</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-mapper</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jaxrs</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonb</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonp-strict</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
