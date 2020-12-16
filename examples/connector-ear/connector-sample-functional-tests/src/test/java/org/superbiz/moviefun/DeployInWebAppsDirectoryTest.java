@@ -105,7 +105,7 @@ public class DeployInWebAppsDirectoryTest {
         configuration.setGroupId("org.apache.tomee");
         configuration.setArtifactId("apache-tomee");
         configuration.setClassifier("plus");
-        configuration.setVersion("7.0.8-SNAPSHOT");
+        configuration.setVersion(System.getProperty("project.version", "7.0.10-SNAPSHOT"));
 //        configuration.setDebug(true);
         configuration.setHttpPort(-1);
 
