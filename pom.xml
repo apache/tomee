@@ -117,7 +117,7 @@
     <openjpa.version>3.1.2</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.9</johnzon.version>
+    <johnzon.version>1.2.9-SNAPSHOT</johnzon.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -736,10 +736,6 @@
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
-        </repository>
-        <repository>
-          <id>Johnzon-Staging</id>
-          <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1045</url>
         </repository>
       </repositories>
     </profile>
@@ -1816,6 +1812,33 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-core</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-mapper</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jaxrs</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonb</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonp-strict</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
