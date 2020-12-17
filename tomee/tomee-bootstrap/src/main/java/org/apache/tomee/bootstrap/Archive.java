@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.bootstrap;
 
-
 import org.apache.openejb.loader.Files;
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Join;
@@ -29,7 +28,6 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -123,7 +121,9 @@ public class Archive {
             final String name = clazz.getName().replace('.', '/') + ".class";
 
             final URL resource = this.getClass().getClassLoader().getResource(name);
-            if (resource == null) throw new IllegalStateException("Cannot find class file for " + clazz.getName());
+            if (resource == null) {
+                throw new IllegalStateException("Cannot find class file for " + clazz.getName());
+            }
             add(name, resource);
 
             // Add any parent classes needed

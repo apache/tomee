@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * and nothing stops an external process from grabbing the port.  The one minute
  * reserved status is only effective for code in this VM using this utility.
  */
-public class Ports {
+final class Ports {
 
     private static final List<Port> allocated = new CopyOnWriteArrayList<>();
 
@@ -63,7 +63,9 @@ public class Ports {
         final ListIterator<Port> iterator = allocated.listIterator();
         while (iterator.hasNext()) {
             final Port port = iterator.next();
-            if (port.isOld()) iterator.remove();
+            if (port.isOld()) {
+                iterator.remove();
+            }
         }
 
         // Allocate new ports
@@ -156,7 +158,9 @@ public class Ports {
         }
 
         public int release() {
-            if (serverSocket.isClosed()) throw new IllegalStateException("Port has already been consumed");
+            if (serverSocket.isClosed()) {
+                throw new IllegalStateException("Port has already been consumed");
+            }
 
             final int port = serverSocket.getLocalPort();
             try {
@@ -170,12 +174,18 @@ public class Ports {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
 
             Port port1 = (Port) o;
 
-            if (port != port1.port) return false;
+            if (port != port1.port) {
+                return false;
+            }
 
             return true;
         }
