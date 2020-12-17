@@ -31,10 +31,10 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-#      - name: Checkstyle
-#        run: mvn help:system checkstyle:check -Pstyle
-#        env:
-#          MAVEN_OPTS: -Xmx1536m
+      - name: Checkstyle
+        run: mvn help:system checkstyle:check -Pstyle
+        env:
+          MAVEN_OPTS: -Xmx1536m
 
       - name: Pmd
         run: mvn help:system pmd:check -Pstyle
