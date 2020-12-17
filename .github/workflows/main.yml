@@ -36,10 +36,10 @@ jobs:
 #        env:
 #          MAVEN_OPTS: -Xmx1536m
 
-#      - name: Pmd
-#        run: mvn help:system pmd:check -Pstyle
-#        env:
-#          MAVEN_OPTS: -Xmx1536m
+      - name: Pmd
+        run: mvn help:system pmd:check -Pstyle
+        env:
+          MAVEN_OPTS: -Xmx1536m
 
       - name: Compile
         run: mvn help:system -e --show-version --update-snapshots --fail-at-end -Djava.io.tmpdir=/tmp/tomee-trunk-ubuntu-jvm8 clean install -DfailIfNoTests=false -DskipTests
