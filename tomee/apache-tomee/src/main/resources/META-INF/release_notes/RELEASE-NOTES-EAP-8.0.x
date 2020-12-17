@@ -1,4 +1,9 @@
-= TomEE EAP 8.0.4-TT.5
+= TomEE EAP 8.0.5-TT.1
+
+=== Changes in TomEE EAP 8.0.5-TT.1
+* Updated Apache CXF to mitigate CVE-2020-13954
+* Updated Buncy castle to mitigate CVE-2020-0187 & sonatype-2020-0770
+* Updated Apache Tomcat to mitigate CVE-2020-17527
 
 === Changes in TomEE EAP 8.0.4-TT.5
 * Update to Tomcat 9.0.39 to mitigate CVE-2020-13943
