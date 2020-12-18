@@ -18,8 +18,8 @@ github:
   description: "Apache TomEE"
   homepage: https://tomee.apache.org/
   labels:
-    - JakartaEE
-    - MicroProfile
+    - jakarta-ee
+    - microprofile
     - network-server
     - java
     - tomee
