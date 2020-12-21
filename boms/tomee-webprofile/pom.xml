@@ -487,6 +487,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-jsonp-strict</artifactId>
+      <version>1.2.9-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
       <version>1.2.9-SNAPSHOT</version>
       <exclusions>
@@ -621,39 +632,6 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
       <version>2.0.12</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-impl</artifactId>
-      <version>1.2.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-jstlel</artifactId>
-      <version>1.2.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-spec</artifactId>
-      <version>1.2.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1061,6 +1039,17 @@
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-server</artifactId>
       <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>taglibs-shade</artifactId>
+      <version>8.0.6-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

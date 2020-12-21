@@ -580,6 +580,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -619,6 +620,7 @@
     <profile>
       <id>no-examples</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -636,6 +638,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>maven</module>
         <module>gradle</module>
@@ -661,6 +664,7 @@
     <profile>
       <id>style</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -1808,6 +1812,33 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-core</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-mapper</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jaxrs</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonb</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonp-strict</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
@@ -1922,13 +1953,13 @@
         <version>1.16</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-jstlel</artifactId>
-        <version>1.2.5</version>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>taglibs-shade</artifactId>
+	<version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
