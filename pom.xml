@@ -117,7 +117,8 @@
     <openjpa.version>3.1.2</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.9-SNAPSHOT</johnzon.version>
+    <johnzon.version>1.2.9</johnzon.version>
+    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -239,7 +240,6 @@
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-
   </properties>
 
   <build>
@@ -1561,7 +1561,7 @@
       <dependency>
         <groupId>org.apache.openejb.shade</groupId>
         <artifactId>quartz-openejb-shade</artifactId>
-        <version>2.2.1</version>
+        <version>${quartz-openejb-shade.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.quartz-scheduler</groupId>

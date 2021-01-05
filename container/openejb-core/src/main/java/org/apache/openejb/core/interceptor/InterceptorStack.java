@@ -37,9 +37,9 @@ public class InterceptorStack {
     private final Method targetMethod;
     private final Operation operation;
 
-    public InterceptorStack(final Object beanInstance, final Method targetMethod, final Operation operation, final List<InterceptorData> interceptorDatas, final Map<String, Object> interceptorInstances) {
-        if (interceptorDatas == null) {
-            throw new NullPointerException("interceptorDatas is null");
+    public InterceptorStack(final Object beanInstance, final Method targetMethod, final Operation operation, final List<InterceptorData> interceptorData, final Map<String, Object> interceptorInstances) {
+        if (interceptorData == null) {
+            throw new NullPointerException("interceptorData is null");
         }
         if (interceptorInstances == null) {
             throw new NullPointerException("interceptorInstances is null");
@@ -48,16 +48,16 @@ public class InterceptorStack {
         this.targetMethod = targetMethod;
         this.operation = operation;
 
-        interceptors = new ArrayList<>(interceptorDatas.size());
+        interceptors = new ArrayList<>(interceptorData.size());
 
-        for (final InterceptorData interceptorData : interceptorDatas) {
-            final Class interceptorClass = interceptorData.getInterceptorClass();
+        for (final InterceptorData data : interceptorData) {
+            final Class interceptorClass = data.getInterceptorClass();
             final Object interceptorInstance = interceptorInstances.get(interceptorClass.getName());
             if (interceptorInstance == null) {
                 throw new IllegalArgumentException("No interceptor of type " + interceptorClass.getName());
             }
 
-            final Set<Method> methods = interceptorData.getMethods(operation);
+            final Set<Method> methods = data.getMethods(operation);
             for (final Method method : methods) {
                 final Interceptor interceptor;
                 final Object handler = DynamicProxyImplFactory.realHandler(interceptorInstance);
