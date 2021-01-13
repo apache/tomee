@@ -382,9 +382,16 @@ public class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
     // not the shouldSkip() method from UrlClassLoaderFirst since we skip more here
     // we just need JPA stuff so all the tricks we have for the server part are useless
     @SuppressWarnings("RedundantIfStatement")
-    public static boolean isServerClass(final String name) {
+    public static boolean isServerClass(final String input) {
+
+        String name = input;
+
         if (name == null) {
             return false;
+        }
+
+        if (name.startsWith("openejb.shade.")) {
+            name = name.substring("openejb.shade.".length());
         }
 
         for (final String prefix : URLClassLoaderFirst.FORCED_SKIP) {

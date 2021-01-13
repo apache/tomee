@@ -204,7 +204,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
     //
     // /!\ please check org.apache.openejb.persistence.PersistenceUnitInfoImpl.isServerClass() too
     // when updating this method
-    public static boolean shouldSkip(final String name) {
+    public static boolean shouldSkip(final String input) {
+
+        String name = input;
+
         if (name == null) { // can happen with rest servlet definition or errors
             return false;
         }
@@ -218,6 +221,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (name.startsWith(prefix)) {
                 return false;
             }
+        }
+
+        if (name.startsWith("openejb.shade.")) {
+            name = name.substring("openejb.shade.".length());
         }
 
         if (name.startsWith("java.")) {
