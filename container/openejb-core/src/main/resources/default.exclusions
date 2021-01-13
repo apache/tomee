@@ -255,6 +255,7 @@ surefire-
 swizzle-
 sxc-
 taglibs-standard-
+taglibs-shade-
 testng-
 tomcat-annotations
 tomcat-api
