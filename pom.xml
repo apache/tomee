@@ -867,6 +867,7 @@
                 <exclude>examples/**/placeholder</exclude>
                 <exclude>examples/**/Dockerfile</exclude>
                 <exclude>examples/**/bootstrap/**</exclude>
+                <exclude>examples/**/.idea/**</exclude>
 
               </excludes>
             </configuration>
