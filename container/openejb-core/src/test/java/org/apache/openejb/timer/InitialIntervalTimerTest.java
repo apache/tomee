@@ -16,10 +16,10 @@
  */
 package org.apache.openejb.timer;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.openejb.jee.EnterpriseBean;
-import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Module;
+import org.apache.openejb.testing.Classes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,6 +29,9 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
+import javax.ejb.NoMoreTimeoutsException;
+import javax.ejb.NoSuchObjectLocalException;
+import javax.ejb.ScheduleExpression;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Timeout;
@@ -36,22 +39,69 @@ import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(ApplicationComposer.class)
+@Classes(innerClassesAsBean = true)
 public class InitialIntervalTimerTest {
-    @Module
-    public EnterpriseBean bean() {
-        return new SingletonBean(TimerWithDelay.class).localBean();
-    }
 
     @EJB
     private TimerWithDelay bean;
+
+    @EJB
+    private TimerNeverExpires scheduleBean;
 
     @Test
     public void test() throws InterruptedException {
         Thread.sleep(5400);
         assertEquals(3, bean.getOk());
+    }
+
+    @Test
+    public void endNeverExpires() {
+        final Calendar cal = Calendar.getInstance();
+        final int currentYear = getForSchedule(Calendar.YEAR, cal);
+        cal.add(Calendar.SECOND, 10);
+        final ScheduleExpression exp = getPreciseScheduleExpression(cal);
+        final Date end = DateUtils.setYears(cal.getTime(), cal.get(Calendar.YEAR) - 1);
+        exp.end(end);
+        exp.year((currentYear) + " - " + (currentYear + 1));
+
+        final Timer timer = scheduleBean.createTimer(exp);
+        scheduleBean.passIfNoMoreTimeouts(timer);
+    }
+
+    public static ScheduleExpression getPreciseScheduleExpression(final Calendar... cals) {
+        Calendar cal = (cals.length == 0) ? Calendar.getInstance() : cals[0];
+        return new ScheduleExpression()
+            .year(cal.get(Calendar.YEAR)).month(getForSchedule(Calendar.MONTH, cal))
+            .dayOfMonth(getForSchedule(Calendar.DAY_OF_MONTH, cal))
+            .hour(getForSchedule(Calendar.HOUR_OF_DAY, cal))
+            .minute(getForSchedule(Calendar.MINUTE, cal))
+            .second(getForSchedule(Calendar.SECOND, cal));
+    }
+
+    public static int getForSchedule(final int field, final Calendar... calendars) {
+        int result = 0;
+        Calendar cal = null;
+        if (calendars.length == 0) {
+            cal = Calendar.getInstance();
+        } else {
+            cal = calendars[0];
+        }
+        result = cal.get(field);
+        if (field == Calendar.DAY_OF_WEEK) {
+            result--; // 0 and 7 are both Sunday
+            if (result == 0) {
+                result = (Math.random() < 0.5) ? 0 : 7;
+            }
+        } else if (field == Calendar.MONTH) {
+            result++;
+        }
+        return result;
     }
 
     @Singleton
@@ -84,5 +134,59 @@ public class InitialIntervalTimerTest {
         public void stop() {
             timer.cancel();
         }
+    }
+
+    @Singleton
+    @Startup
+    @Lock(LockType.READ)
+    public static class TimerNeverExpires {
+
+        @Resource
+        private TimerService timerService;
+
+        private int ok = 0;
+
+        @Timeout
+        public void timeout(final Timer timer) {
+            ok++;
+        }
+
+        public Timer createTimer(final ScheduleExpression exp) {
+            return timerService.createCalendarTimer(exp, new TimerConfig("TimerNeverExpires", false));
+        }
+
+        public String passIfNoMoreTimeouts(final Timer t) {
+            String result = "";
+            try {
+                Date nextTimeout = t.getNextTimeout();
+                throw new RuntimeException(
+                    "Expecting NoSuchObjectLocalException or NoMoreTimeoutsException "
+                    + "when accessing getNextTimeout, but actual " + nextTimeout);
+
+            } catch (final NoMoreTimeoutsException e) {
+                result += " Got expected " + e;
+
+            } catch (final NoSuchObjectLocalException e) {
+                result += " Got expected " + e;
+
+            }
+
+            try {
+                long timeRemaining = t.getTimeRemaining();
+                throw new RuntimeException(
+                    "Expecting NoSuchObjectLocalException or NoMoreTimeoutsException "
+                    + "when accessing getTimeRemaining, but actual " + timeRemaining);
+
+            } catch (final NoMoreTimeoutsException e) {
+                result += " Got expected " + e;
+
+            } catch (final NoSuchObjectLocalException e) {
+                result += " Got expected " + e;
+
+            }
+            return result;
+        }
+
+
     }
 }
