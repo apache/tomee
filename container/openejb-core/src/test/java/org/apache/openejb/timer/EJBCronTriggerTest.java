@@ -19,6 +19,7 @@ package org.apache.openejb.timer;
 
 import org.apache.openejb.core.timer.EJBCronTrigger;
 import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
+import org.apache.openejb.core.timer.TimerExpiredException;
 import org.junit.Test;
 
 import javax.ejb.ScheduleExpression;
@@ -27,11 +28,27 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
 public class EJBCronTriggerTest {
+
+    @Test
+    public void shouldBeAbleToCreateExpiredTrigger() throws ParseException {
+        final ScheduleExpression expr = new ScheduleExpression().year(2008).month(12).dayOfMonth(1).end(new Date(0));
+        final EJBCronTrigger trigger = new EJBCronTrigger(expr);
+        assertNotNull(trigger);
+    }
+
+    @Test(expected = TimerExpiredException.class)
+    public void computeFailsOnExpiredTriggers() throws ParseException {
+        final ScheduleExpression expr = new ScheduleExpression().year(2008).month(12).dayOfMonth(1).end(new Date(0));
+        final EJBCronTrigger trigger = new EJBCronTrigger(expr);
+        assertNotNull(trigger);
+        trigger.computeFirstFireTime(null);
+    }
 
     @Test(timeout = 1000)
     public void testSimpleDate() throws ParseException {

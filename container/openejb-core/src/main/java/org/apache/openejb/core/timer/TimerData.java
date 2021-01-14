@@ -219,13 +219,19 @@ public abstract class TimerData implements Serializable {
 
     public void newTimer() {
         //Initialize the Quartz Trigger
-        trigger = initializeTrigger();
-        trigger.computeFirstFireTime(null);
-        trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
-        trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
-        newTimer = true;
         try {
+            trigger = initializeTrigger();
+            trigger.computeFirstFireTime(null);
+            trigger.setGroup(OPEN_EJB_TIMEOUT_TRIGGER_GROUP_NAME);
+            trigger.setName(OPEN_EJB_TIMEOUT_TRIGGER_NAME_PREFIX + deploymentId + "_" + id);
+            newTimer = true;
+
             registerTimerDataSynchronization();
+
+        } catch (final TimerExpiredException e) {
+            setExpired(true);
+            log.warning("Timer {} is expired and will never trigger.", trigger);
+
         } catch (final TimerStoreException e) {
             throw new EJBException("Failed to register new timer data synchronization", e);
         }
