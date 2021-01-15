@@ -17,6 +17,7 @@
 
 package org.apache.openejb.core.timer;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.openejb.core.timer.EJBCronTrigger.ParseException;
 import org.apache.openejb.quartz.impl.triggers.AbstractTrigger;
 
@@ -83,6 +84,6 @@ public class CalendarTimerData extends TimerData {
 
     @Override
     public String toString() {
-        return TimerType.Calendar.name() + " scheduleExpression = [" + scheduleExpression + "]";
+        return TimerType.Calendar.name() + " scheduleExpression = [" + ToStringBuilder.reflectionToString(scheduleExpression) + "]";
     }
 }

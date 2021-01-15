@@ -773,7 +773,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     try {
                         transactionManager.begin();
                     } catch (final Exception e) {
-                        log.warning("Exception occured while starting container transaction", e);
+                        log.warning("Exception occurred while starting container transaction", e);
                         return;
                     }
                 }
