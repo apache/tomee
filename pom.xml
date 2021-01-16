@@ -395,6 +395,9 @@
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
           <version>6.0.3</version>
+          <configuration>
+            <suppressionFile>owasp-dc-suppression.xml</suppressionFile>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -750,7 +753,6 @@
             <configuration>
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>
@@ -774,7 +776,6 @@
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
               <failBuildOnCVSS>8.0</failBuildOnCVSS>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>
