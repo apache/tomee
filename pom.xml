@@ -364,7 +364,10 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>4.0.0</version>
+          <version>6.0.5</version>
+          <configuration>
+            <suppressionFiles>owasp-dc-suppression.xml</suppressionFiles>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -661,7 +664,6 @@
             <configuration>
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>
@@ -685,7 +687,6 @@
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
               <failBuildOnCVSS>8.0</failBuildOnCVSS>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>
