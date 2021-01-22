@@ -18,11 +18,11 @@ Para tornar as coisas o mais fáceis possível, há apenas uma dependência que 
 </dependency>
 ----
 
-NOTE: O `org.apache.tomee.bom:tomee-microprofile` é, na verdade, gerado pela análise do apache-tomee-microprofile-xyzzip, portanto, é garantido ser 100% idêntico, facilitando a transição de um arquivo zip para um maven simples dependência.
+NOTE: O `org.apache.tomee.bom:tomee-microprofile` é, na verdade, gerado pela análise do apache-tomee-microprofile-xyz.zip, portanto, é garantido ser 100% idêntico, facilitando a transição de um arquivo zip para um maven simples dependência.
 
 == Escrevendo um código regular
 
-Aqui a gente ve um simples API JAX-RS para enviar/receber objetos 'Movie' como JSON.
+Aqui a gente ve um simples API JAX-RS para enviar/receber objetos `Movie` como JSON.
 
 [source,java]
 ----
