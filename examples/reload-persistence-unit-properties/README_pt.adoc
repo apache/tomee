@@ -8,7 +8,7 @@ Este exemplo tem como objetivo simular uma campanha de benchmark no JPA.
 Primeiro, você executará seu aplicativo e perceberá que precisa de um L2
 cache para estar em conformidade com o SLA (Service Level Agreement).
 
-Então, você altera sua configuração persistence.xml e reinicia seu
+Então, você altera sua configuração persistence.xml e reinicia sua
 aplicação, você espera um pouco porque está usando o OpenEJB;)… mas você
 espera.
 
