@@ -221,9 +221,6 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
         if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME)) {
             properties.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "OpenEJB-TimerService-Scheduler");
         }
-        if (!properties.containsKey(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK)) {
-            properties.put(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
-        }
         if (!properties.containsKey("org.terracotta.quartz.skipUpdateCheck")) {
             properties.put("org.terracotta.quartz.skipUpdateCheck", "true");
         }
@@ -776,7 +773,7 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
                     try {
                         transactionManager.begin();
                     } catch (final Exception e) {
-                        log.warning("Exception occured while starting container transaction", e);
+                        log.warning("Exception occurred while starting container transaction", e);
                         return;
                     }
                 }

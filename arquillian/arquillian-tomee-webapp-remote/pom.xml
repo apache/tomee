@@ -252,10 +252,6 @@
           <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>openejb-bval</artifactId>
-          <groupId>org.apache.openejb.patch</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>mbean-annotation-api</artifactId>
           <groupId>${project.groupId}</groupId>
         </exclusion>

@@ -16,8 +16,6 @@
  */
 package org.apache.tomee.security.identitystore;
 
-import org.apache.openjpa.lib.util.StringUtil;
-
 import javax.annotation.PostConstruct;
 import javax.el.ELProcessor;
 import javax.enterprise.context.ApplicationScoped;
@@ -160,7 +158,7 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
     }
 
     public static DataSource lookup(final String name) {
-        if (StringUtil.isEmpty(name)) {
+        if (name == null || name.trim().equals("")) {
             throw new RuntimeException(
                 "Can't lookup datasource because dataSourceLookup is null/empty in DatabaseIdentityStoreDefinition.");
         }
