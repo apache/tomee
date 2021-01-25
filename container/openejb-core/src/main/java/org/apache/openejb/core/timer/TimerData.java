@@ -230,7 +230,7 @@ public abstract class TimerData implements Serializable {
 
         } catch (final TimerExpiredException e) {
             setExpired(true);
-            log.warning("Timer {} is expired and will never trigger.", trigger);
+            log.warning("Timer " + trigger + " is expired and will never trigger.");
 
         } catch (final TimerStoreException e) {
             throw new EJBException("Failed to register new timer data synchronization", e);
