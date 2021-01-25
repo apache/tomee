@@ -80,7 +80,11 @@ public class JaxbPersistenceFactory {
 
         @Override
         protected String eeUri(final String uri) {
-            return "http://xmlns.jcp.org/xml/ns/persistence".equals(uri) ? "http://java.sun.com/xml/ns/persistence": uri;
+            // there should not be any other namespace, but let's see if we can match all of them
+            // http://java.sun.com/xml/ns/persistence
+            // http://xmlns.jcp.org/xml/ns/persistence
+            // https://jakarta.ee/xml/ns/persistence
+            return uri != null && uri.contains("/persistence") ? PERSISTENCE_SCHEMA: uri;
         }
 
         @Override
