@@ -1,49 +1,39 @@
-name: CI
+name: CI tomee-8.0.x-TT.x
 
 on:
   push:
     branches:
-      - master
+      - tomee-8.0.x-TT.x
   pull_request:
     branches:
-      - master
+      - tomee-8.0.x-TT.x
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-        
-    - name: Set up JDK 1.8
-      uses: joschi/setup-jdk@v2
-      with:
-        java-version: '8'
+      - uses: actions/checkout@v2
 
-    - name: Create tmp dirs
-      run: mkdir -p /tmp/tomee-trunk-ubuntu-jvm8
+      - name: Set up Apache Maven Central
+        uses: actions/setup-java@v1
+        with: 
+          java-version: 1.8
 
-    - name: Cache Maven packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2
-        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-m2
-
-    - name: Checkstyle
-      run: mvn help:system checkstyle:check -Pstyle
-      env:
-        MAVEN_OPTS: -Xmx1536m
-
-    - name: Pmd
-      run: mvn help:system pmd:check -Pstyle
-      env:
-        MAVEN_OPTS: -Xmx1536m
-
-    - name: Compile
-      run: mvn help:system -e --show-version --update-snapshots --fail-at-end -Djava.io.tmpdir=/tmp/tomee-trunk-ubuntu-jvm8 clean install -DfailIfNoTests=false -DskipTests
-      env:
-        MAVEN_OPTS: -Xmx1536m
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v14
+        with:
+          repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
+          plugin_repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" }}]'
+          servers: '[{ "id": "tomitribe-all", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}" }]'
 
 
+      - name: maven-settings-xml-cat
+        run: cat ~/.m2/settings.xml
+
+      - name: Build with Maven
+        run: mvn --show-version -U --fail-at-end clean install -DfailIfNoTests=false -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
