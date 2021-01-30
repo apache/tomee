@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.5-TT.1
+= TomEE EAP 8.0.7-TT.1
+
+=== Changes in TomEE EAP 8.0.7-TT.1
+* Update ActiveMQ to 5.16.1 to mitigate CVE-2021-26117
 
 === Changes in TomEE EAP 8.0.5-TT.1
 * Updated Apache CXF to mitigate CVE-2020-13954
