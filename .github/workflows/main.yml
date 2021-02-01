@@ -14,26 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Set up Apache Maven Central
-        uses: actions/setup-java@v1
-        with: 
-          java-version: 1.8
+    - name: Set up Apache Maven Central
+      uses: actions/setup-java@v1
+      with: 
+        java-version: 1.8
 
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v14
-        with:
-          repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
-          plugin_repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" }}]'
-          servers: '[{ "id": "tomitribe-all", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}" }]'
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v14
+      with:
+        repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
+        plugin_repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" }}]'
+        servers: '[{ "id": "tomitribe-all", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}" }]'
 
 
-      - name: maven-settings-xml-cat
-        run: cat ~/.m2/settings.xml
+    - name: maven-settings-xml-cat
+      run: cat ~/.m2/settings.xml
 
-      - name: Build with Maven
-        run: mvn --show-version -U --fail-at-end clean install -DfailIfNoTests=false -DskipTests
-        env:
-          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
+    - name: Build with Maven
+      run: mvn --show-version -U --fail-at-end clean install -DfailIfNoTests=false -DskipTests
+      env:
+        MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+        MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
