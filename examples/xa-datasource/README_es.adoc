@@ -9,7 +9,7 @@ utiliza con el `EntityManager` para crear y actualizar los datos en una base de 
 
 ## La creación de una entidad JPA
 
-La entidad por sí es simplesmente un pojo con la anotación `@Entity`. Nosotros creamos una llamada `Movie` Lo que podemos usar para mantener registros de películas.
+La entidad por sí es simplemente un pojo con la anotación `@Entity`. Nosotros creamos una llamada `Movie` Lo que podemos usar para mantener registros de películas.
 
     package org.superbiz.injection.jpa;
 
