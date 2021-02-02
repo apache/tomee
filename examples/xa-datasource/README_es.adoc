@@ -5,11 +5,11 @@
 
 En éste ejemplo y se muestra el uso de `@PersistenceContext` para tener um `EntityManager` con un 
 persistence context `EXTENDED`, inyecctado en un bean `@Stateful`. Un bean del tipo `@Entity` JPA, se 
-utiliza con el `EntityManager` para crear, inserir e alterar datos en un banco de datos.
+utiliza con el `EntityManager` para crear y actualizar los datos en una base de datos.
 
 ## La creación de una entidad JPA
 
-La entidad por sí es simple un pojo con la anotación `@Entity`. Nosotros creamos una llamada `Movie` Lo que podemos usar para mantener registros de películas.
+La entidad por sí es simplesmente un pojo con la anotación `@Entity`. Nosotros creamos una llamada `Movie` Lo que podemos usar para mantener registros de películas.
 
     package org.superbiz.injection.jpa;
 
@@ -69,7 +69,7 @@ La entidad por sí es simple un pojo con la anotación `@Entity`. Nosotros cream
 
 ## Configure el EntityManager a través de un archivo persistence.xml
 
-La entidad `Movie` encima se puede crear, eliminado, actualizado o eliminado a través de un objeto `EntityManager`. Lo `EntityManager` sí mismo es configurado a través de un archivo `META-INF/persistence.xml` que se coloca en el mismo jar como el entidad `Movie`.
+La entidad `Movie` encima se puede crear, eliminado, actualizado a través de un objeto `EntityManager`. Lo `EntityManager` sí mismo es configurado a través de un archivo `META-INF/persistence.xml` que se coloca en el mismo jar como la entidad `Movie`.
 
     <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 
@@ -84,12 +84,12 @@ La entidad `Movie` encima se puede crear, eliminado, actualizado o eliminado a t
       </persistence-unit>
     </persistence>
 
-Note que el entidad `Movie` aparece a través de un elemento `<class>`. Esto no es necesario, pero puede ayudar al realizar la prueba o cuando clase `Movie` se encuentra en un jar diferente que el jar que contiene el archivo `persistence.xml`.
+Note que la entidad `Movie` aparece a través de un elemento `<class>`. Esto no es necesario, pero puede ayudar a realizar la prueba o cuando clase `Movie` se encuentra en un jar diferente que el jar que contiene el archivo `persistence.xml`.
 
 ## Inyección vía @PersistenceContext
 
-Lo `EntityManager` sí mismo es creado por el contenedor utilizando la información en el `persistence.xml`, así que para usarlo en
-tiempo de ejecución, simplemente necesitamos solicitar que se inyecte en uno de nuestros componentes. Nosotros hacer esto a través de `@PersistenceContext`
+El `EntityManager` en sí mismo es creado por el contenedor utilizando la información en el `persistence.xml`, así que para usarlo en
+tiempo de ejecución, simplemente necesitamos solicitar que se inyecte en uno de nuestros componentes. Nosotros podemos hacer esto a través de `@PersistenceContext`
 
 La anotación `@PersistenceContext` se puede utilizar en cualquier bean CDI, EJB, Servlet, Servlet Listener, Servlet Filter, o JSF ManagedBean.
 
@@ -122,7 +122,7 @@ La anotación `@PersistenceContext` se puede utilizar en cualquier bean CDI, EJB
         }
     }
 
-Este particular `EntityManager` se inyecta como un contexto de persistencia `EXTENDED`, lo que simplemente significa que el `EntityManager` se crea cuando el `@Stateful` el frijol se crea y destruye cuando el `@Stateful` frijol es destruido. En pocas palabras, el datos en el `EntityManager` se almacena en caché durante la vida útil del bean `@Stateful`.
+Este particular `EntityManager` se inyecta como un contexto de persistencia `EXTENDED`, lo que simplemente significa que el `EntityManager` se crea cuando el `@Stateful` el bean se crea y destruye cuando el `@Stateful` bean es destruido. En pocas palabras, el datos en el `EntityManager` se almacena en caché durante la vida útil del bean `@Stateful`.
 
 El uso de `EXTENDED` contextos de persistencia es **solamente** disponible para beans `@Stateful`. Ver el [JPA Concepts](../../jpa-concepts.html)
 
