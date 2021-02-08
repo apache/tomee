@@ -1,7 +1,8 @@
 = TomEE EAP 8.0.7-TT.1
 
 === Changes in TomEE EAP 8.0.7-TT.1
-* Update ActiveMQ to 5.16.1 to mitigate CVE-2021-26117
+* Update  ActiveMQ to 5.16.1 to mitigate CVE-2021-26117
+* Updated commons-dbcp to 2.1-TT.1 to mitigate sonatype-2020-1349
 
 === Changes in TomEE EAP 8.0.5-TT.1
 * Updated Apache CXF to mitigate CVE-2020-13954
