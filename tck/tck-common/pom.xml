@@ -79,7 +79,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
+          <disableXmlReport>false</disableXmlReport>
         </configuration>
       </plugin>
     </plugins>

@@ -68,16 +68,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.taglibs</groupId>
-      <artifactId>taglibs-standard-jstlel</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>taglibs-shade</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>xalan</groupId>
-      <artifactId>xalan</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -203,7 +204,7 @@
           <forkCount>1</forkCount>
           <argLine>${surefire.argline}</argLine>
           <useFile>false</useFile>
-          <disableXmlReport>true</disableXmlReport>
+          <disableXmlReport>false</disableXmlReport>
           <suiteXmlFiles>
             <suiteXmlFile>${testngSuiteXml}</suiteXmlFile>
           </suiteXmlFiles>

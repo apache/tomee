@@ -117,7 +117,8 @@
     <openjpa.version>3.1.2</openjpa.version>
     <openwebbeans.version>2.0.12</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.5</johnzon.version>
+    <johnzon.version>1.2.9</johnzon.version>
+    <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
@@ -145,7 +146,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.40</tomcat.version>
+    <tomcat.version>9.0.41</tomcat.version>
 
     <cxf.version>3.3.8</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -175,7 +176,7 @@
     <commons-cli.version>1.4</commons-cli.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
-    <commons-dbcp.version>2.1-TT.0</commons-dbcp.version>
+    <commons-dbcp.version>2.1-TT.1</commons-dbcp.version>
     <commons-pool.version>2.3</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
@@ -186,24 +187,25 @@
     <commons-net.version>3.7.2</commons-net.version>
 
     <bval.version>2.0.5</bval.version>
-    <org.apache.activemq.version>5.16.0</org.apache.activemq.version>
+    <org.apache.activemq.version>5.16.1</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.13.1</junit.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>2.3.6</myfaces.version>
+    <myfaces.version>2.3.7</myfaces.version>
     <mojarra.version>2.3.14</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
+    <derby.version>10.14.2.0</derby.version>
     <version.hsqldb>2.3.2</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.4.10.Final</version.hibernate>
-    <version.eclipselink>2.7.4</version.eclipselink>
+    <version.eclipselink>2.7.7</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
 
     <!-- arquillian related -->
@@ -238,7 +240,6 @@
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
     <asciidoclet.version>1.5.0</asciidoclet.version>
-
   </properties>
 
   <build>
@@ -393,7 +394,7 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>4.0.0</version>
+          <version>6.0.3</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -579,6 +580,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -618,6 +620,7 @@
     <profile>
       <id>no-examples</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>itests</module>
         <module>maven</module>
@@ -635,6 +638,7 @@
     <profile>
       <id>quick</id>
       <modules>
+        <module>deps</module>
         <module>boms</module>
         <module>maven</module>
         <module>gradle</module>
@@ -660,13 +664,18 @@
     <profile>
       <id>style</id>
       <modules>
-        <module>container/openejb-core</module>
-        <module>container/openejb-loader</module>
-        <module>container/openejb-junit</module>
-        <module>container/openejb-jpa-integration</module>
-        <module>container/openejb-javaagent</module>
-        <module>container/openejb-api</module>
+        <module>deps</module>
+        <module>boms</module>
+        <module>itests</module>
+        <module>maven</module>
+        <module>gradle</module>
+        <module>container</module>
+        <module>server</module>
+        <module>mp-jwt</module>
+        <module>assembly</module>
+        <module>tck</module>
         <module>arquillian</module>
+        <module>utils</module>
         <module>tomee</module>
       </modules>
       <properties>
@@ -785,18 +794,6 @@
     </profile>
     <profile>
       <id>rat</id>
-      <modules>
-        <module>itests</module>
-        <module>maven</module>
-        <module>gradle</module>
-        <module>container</module>
-        <module>server</module>
-        <module>examples</module>
-        <module>arquillian</module>
-        <module>assembly</module>
-        <module>utils</module>
-        <module>tomee</module>
-      </modules>
       <build>
         <plugins>
           <plugin>
@@ -813,8 +810,38 @@
             <configuration>
               <reportFile>${project.build.directory}/${project.build.finalName}.rat</reportFile>
               <excludes>
+                <exclude>doap_tomee.rdf</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>.github/**</exclude>
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/js/livereload.js</exclude>
+                <exclude>**/*.ser</exclude>
+                <exclude>**/*.pem</exclude>
+                <exclude>**/*.adoc</exclude>
+                <exclude>**/*.md</exclude>
+                <exclude>**/*.log</exclude>
+                <exclude>**/*.json</exclude>
+                <exclude>**/*.jwk</exclude>
+                <exclude>**/src/main/resources/META-INF/**/*.xsd</exclude>
+                <exclude>**/src/main/xsdlist/xsdlist.txt</exclude>
+                <exclude>**/META-INF/services/**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**</exclude>
+                <exclude>**/META-INF/org.apache.openejb**/**</exclude>
+
+                <exclude>**/src/**/*login.config</exclude>
+                <exclude>**/src/main/resources/DATA-README.txt</exclude>
+                <exclude>**/src/test/resources/test.getresources</exclude>
+                <exclude>**/src/test/resources/test/log/localhost_access_log.2014-02-07.txt</exclude>
+                <exclude>**/src/main/resources/service.readme.txt</exclude>
+                <exclude>**/src/main/resources/default.exclusions</exclude>
+                <exclude>**/src/main/resources/default.openejb.conf</exclude>
+                <exclude>**/src/test/resources/altddapp2/META-INF/test.env-entries.properties</exclude>
+                <exclude>**/src/test/resources/META-INF/multiple</exclude>
+                <exclude>**/src/test/resources/openejb.json</exclude>
+                <exclude>**/src/test/resources/appresource.resources.json</exclude>
+
+                <exclude>**/tomee-deb/src/main/resources/**/*.template</exclude>
+                <exclude>**/tomee-deb/**/precompiled-changelog</exclude>
 
                 <!-- left around after creating the site -->
                 <exclude>**/cobertura.ser</exclude>
@@ -824,6 +851,7 @@
                 <exclude>**/hsqldb.log</exclude>
 
                 <!-- IDEA files -->
+                <exclude>.idea/**</exclude>
                 <exclude>**/*.iml</exclude>
                 <exclude>**/*.ipr</exclude>
                 <exclude>**/*.iws</exclude>
@@ -832,6 +860,20 @@
                 <exclude>**/.*</exclude>
                 <exclude>**/.*/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
+
+                <!-- ASCIIDOC files -->
+                <exclude>docs/**</exclude>
+
+                <!-- examples -->
+                <exclude>examples/**/*.jsp</exclude>
+                <exclude>examples/**/*.css</exclude>
+                <exclude>examples/**/*.properties</exclude>
+                <exclude>examples/**/*.feature</exclude>
+                <exclude>examples/**/placeholder</exclude>
+                <exclude>examples/**/Dockerfile</exclude>
+                <exclude>examples/**/bootstrap/**</exclude>
+                <exclude>examples/**/.idea/**</exclude>
+
               </excludes>
             </configuration>
           </plugin>
@@ -1546,7 +1588,7 @@
       <dependency>
         <groupId>org.apache.openejb.shade</groupId>
         <artifactId>quartz-openejb-shade</artifactId>
-        <version>2.2.1</version>
+        <version>${quartz-openejb-shade.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.quartz-scheduler</groupId>
@@ -1797,6 +1839,33 @@
           </exclusion>
         </exclusions>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-core</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-mapper</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jaxrs</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonb</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.johnzon</groupId>
+        <artifactId>johnzon-jsonp-strict</artifactId>
+        <version>${johnzon.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
@@ -1911,13 +1980,13 @@
         <version>1.16</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.taglibs</groupId>
-        <artifactId>taglibs-standard-jstlel</artifactId>
-        <version>1.2.5</version>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>taglibs-shade</artifactId>
+	<version>${project.version}</version>
         <exclusions>
           <exclusion>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
       </dependency>

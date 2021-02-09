@@ -47,6 +47,7 @@ import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.TransactionSupport;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -327,7 +328,7 @@ public class ActiveMQResourceAdapter extends org.apache.activemq.ra.ActiveMQReso
             }
         }
 
-        final ActiveMQConnectionFactory factory = new TomEEConnectionFactory();
+        final ActiveMQConnectionFactory factory = new TomEEConnectionFactory(TransactionSupport.TransactionSupportLevel.XATransaction);
         connectionRequestInfo.configure(factory, activationSpec);
         return factory;
     }

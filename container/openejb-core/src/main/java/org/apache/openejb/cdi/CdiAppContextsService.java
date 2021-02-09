@@ -32,6 +32,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestWrapper;
+import javax.servlet.http.HttpServletRequest;
 
 
 public class CdiAppContextsService extends WebContextsService implements ContextsService {
@@ -114,4 +118,26 @@ public class CdiAppContextsService extends WebContextsService implements Context
     }
 
     public interface FiredManually {}
+
+    @Override
+    protected void initRequestContext(final Object startupObject) {
+        if(startupObject instanceof ServletRequestEvent) {
+
+            // OWB gets the ServletContextWrapper from the event and attempts to cast it to an HttpServletRequest
+            // in TCK, some tests are actually downgrading the HttpServletRequest to a regular ServletRequest
+            // See com.sun.ts.tests.servlet.api.jakarta_servlet.asynccontext
+            // In the look bellow, we try to check if we can find an HttpServletRequest in the hierarchy.
+            // otherwise, we let the call being delegated to OWB
+
+            ServletRequest current = ((ServletRequestEvent) startupObject).getServletRequest();
+            while (!HttpServletRequest.class.isInstance(current) && ServletRequestWrapper.class.isInstance(current)) {
+                current = ServletRequestWrapper.class.cast(current).getRequest();
+            }
+            super.initRequestContext(new ServletRequestEvent(((ServletRequestEvent) startupObject).getServletContext(), current));
+
+        } else {
+            super.initRequestContext(startupObject);
+
+        }
+    }
 }

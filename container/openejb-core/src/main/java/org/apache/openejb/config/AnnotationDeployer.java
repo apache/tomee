@@ -1157,6 +1157,9 @@ public class AnnotationDeployer implements DynamicDeployer {
                 webModule.getRestClasses().addAll(findRestClasses(webModule, finder));
                 addJaxRsProviders(finder, webModule.getJaxrsProviders(), Provider.class);
 
+                // CXF actually does this in its own CDI setup - org.apache.cxf.cdi.JAXRSCdiResourceExtension#collect(javax.enterprise.inject.spi.ProcessBean<T>)
+                //addJaxRsProviders(finder, webModule.getJaxrsProviders(), Path.class);
+
                 // Applications with a default constructor
                 // findSubclasses will not work by default to gain a lot of time
                 // look FinderFactory for the flag to activate it or
