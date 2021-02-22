@@ -1,4 +1,9 @@
-= TomEE EAP 8.0.7-TT.1
+= TomEE EAP 8.0.7-TT.2
+
+=== Changes in TomEE EAP 8.0.7-TT.2
+* Update  myface to 2.3.8 to mitigate CVE-2021-26296
+* Update Tomcat to 9.0.43
+
 
 === Changes in TomEE EAP 8.0.7-TT.1
 * Update  ActiveMQ to 5.16.1 to mitigate CVE-2021-26117
