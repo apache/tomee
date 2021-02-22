@@ -136,7 +136,9 @@ public class OpenEjbTestContext implements TestContext {
     @Override
     public void close() {
         try {
-            initialContext.close();
+            if(initialContext != null) {
+                initialContext.close();
+            }
         } catch (final NamingException e) {
             // ignored
         }
