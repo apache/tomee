@@ -55,11 +55,12 @@ public class TomcatDataSourceConfigurationTest {
                 .p(prefix + ".MaxWait", "5000")
                 .p(prefix + ".MinEvictableIdleTimeMillis", "7200000")
                 .p(prefix + ".TimeBetweenEvictionRuns", "7300000")
+                .p(prefix + ".password", "tiger...}")
                 .build();
     }
 
     /*
-     * TOMEE-2125
+     * TOMEE-2125 and TOMEE-2968
      */
     @Test
     public void testPoolConfiguration() {
@@ -77,6 +78,7 @@ public class TomcatDataSourceConfigurationTest {
         assertEquals(5000, poolConfig.getMaxWait());
         assertEquals(7200000, poolConfig.getMinEvictableIdleTimeMillis());
         assertEquals(7300000, poolConfig.getTimeBetweenEvictionRunsMillis());
+        assertEquals("tiger...}", poolConfig.getPassword());
     }
 
 
