@@ -50,8 +50,9 @@
 
     <classes>
       <!-- fails due to integration issue within openejb-http, but passes on cdi-tomee -->
-      <class name="org.jboss.cdi.tck.tests.implementation.builtin.metadata.session.BuiltinMetadataSessionBeanTest">
-        <methods><include name="testInterceptorMetadata"/></methods>
+        <!--      <class name="org.jboss.cdi.tck.tests.lookup.modules.specialization.alternative.Specialization06Test">-->
+        <class name="org.jboss.cdi.tck.tests.event.observer.inheritance.enterprise.EnterpriseObserverInheritanceTest">
+<!--        <methods><include name="testNonStaticObserverMethodInherited"/></methods>-->
       </class>
 
     </classes>
