@@ -1,38 +1,34 @@
 :index-group: JPA
 :jbake-type: page
 :jbake-status: status=published
-= Reload Persistence Unit Properties
+= Recarregar propriedades do persistence unit
 
-This example aims to simulate a benchmark campaign on JPA.
+Este exemplo tem como objetivo simular uma campanha de benchmark no JPA.
 
-First you’ll run your application then you’ll realize you need an L2
-cache to conform to your Service Level Agreement (SLA).
+Primeiro, você executará seu aplicativo e perceberá que precisa de um L2
+cache para estar em conformidade com o SLA (Service Level Agreement).
 
-So you change your persistence.xml configuration, then restart your
-application, you wait a bit because you are using OpenEJB ;)…but you
-wait…
+Então, você altera sua configuração persistence.xml e reinicia sua
+aplicação, você espera um pouco porque está usando o OpenEJB;)… mas você
+espera.
 
-So to try to go faster on long campaign simply change your configuration
-at runtime to test it then when it works change your configuration file
-to keep the modification.
+Portanto, para tentar ir mais rápido em uma campanha longa, basta alterar sua configuração em tempo de execução para testá-la e, quando funcionar, alterar seu arquivo de configuração para manter a modificação.
 
-To do it we can simply use JMX.
+Para fazer isso, podemos simplesmente usar o JMX.
 
-OpenEJB automatically registers one MBean by entitymanager (persistence
-unit).
+O OpenEJB registra automaticamente um MBean por entitymanager (persistence unit).
 
-It allows you to change your persistence unit properties even if more is
-possible.
+Ele permite que você altere as propriedades do persistence unit, mesmo que mais seja possível.
 
-== The test itself
+== Testando
 
-The test is simple: we persist an entity, we query it three times
-without cache then we activate cache and realize running again our
-queries that one is enough to do the same.
+O teste é simples: persistimos uma entidade, a consultamos três vezes
+sem cache, então ativamos o cache e realizamos a execução novamente
+consulta que um é suficiente para fazer o mesmo.
 
-== The output
+== Saída
 
-In the ouput we find the 3 parts described just before.
+Na saída, encontramos as 3 partes descritas antes.
 
 [source,java]
 ----
