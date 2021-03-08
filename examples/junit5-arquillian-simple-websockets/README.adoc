@@ -1,0 +1,22 @@
+= JUnit 5: Simple Websocket Tests with Arquillian
+:index-group: Arquillian
+:jbake-type: page
+:jbake-status: published
+
+
+== junit5-simple-websockets-arquillian
+
+Websocket example project using SSL and basic authentication.
+
+This was originally created for TomEE 8.0.7 using Jave EE 8 and Websocket
+API 1.1.
+
+The example was created with a server to server typo of connection in
+mind. For Browser to server connections, you will need to refer to your
+frontend framework of choice but many server side configurations in here
+can be reused.
+
+There is an Arquillian test that will test the connection and sent a message using **JUnit 5**.
+
+The _…/conf/server.xml_ file used in the Arquillian test can serve as a
+starting point to a real server configuration.
