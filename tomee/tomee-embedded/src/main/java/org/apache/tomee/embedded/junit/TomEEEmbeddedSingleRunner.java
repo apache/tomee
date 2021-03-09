@@ -16,7 +16,6 @@
  */
 package org.apache.tomee.embedded.junit;
 
-import org.apache.tomee.embedded.TomEEEmbeddedApplicationRunner;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -28,31 +27,29 @@ import org.junit.runners.model.Statement;
 
 import javax.enterprise.inject.Vetoed;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * see org.apache.tomee.embedded.SingleInstanceRunnerTest for a sample.
  * idea is to reuse some part of ApplicationComposer API to get a single container for all tests in embedded mode.
- *
+ * <p>
  * Base is to declare an @Application class which holds the model and some injections.
  * Note: this can be replaced setting tomee.application-composer.application property to the fully qualified name of the app.
  * Note: @Application classes are only searched in the same jar as the test.
- *
+ * <p>
  * Model:
  * - @Configuration: programmatic properties - note injections don't work there.
  * - @Classes: only context value is used.
  * - @ContainerProperties: to configure the container
  * - @WebResource: first value can be used to set the docBase (other values are ignored)
  * - @TomEEEmbeddedSingleRunner.LifecycleTasks: allow to add some lifecycle tasks (like starting a ftp/sft/elasticsearch... server)
- *
+ * <p>
  * Injections:
  * - CDI
  * - @RandomPort: with the value http or https. Supported types are URL (context base) and int (the port).
  */
 @Vetoed
 public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
-    private static final AtomicReference<TomEEEmbeddedApplicationRunner> RUNNER = new AtomicReference<>();
+    private static final TomEEEmbeddedBase BASE = new TomEEEmbeddedBase();
 
     // use when you use another runner like Parameterized of JUnit
     public static class Rule implements TestRule {
@@ -67,8 +64,8 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
             return new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
-                    start(test);
-                    RUNNER.get().composerInject(test);
+                    BASE.start(test);
+                    BASE.composerInject(test);
                     base.evaluate();
                 }
             };
@@ -78,31 +75,17 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
     public static class Start extends RunListener {
         @Override
         public void testStarted(final Description description) throws Exception {
-            start(null);
+            BASE.start(null);
         }
-    }
-
-    private static void start(final Object marker) throws Exception {
-        getRunner().start(marker.getClass(), (Properties) null);
     }
 
     public static void setApp(final Object o) {
-        getRunner().setApp(o);
+        BASE.setApp(o);
     }
 
-    private static TomEEEmbeddedApplicationRunner getRunner() {
-        final TomEEEmbeddedApplicationRunner runner = RUNNER.get();
-        if (runner == null) {
-            RUNNER.compareAndSet(null, new TomEEEmbeddedApplicationRunner());
-        }
-        return RUNNER.get();
-    }
 
     public static void close() {
-        final TomEEEmbeddedApplicationRunner runner = RUNNER.get();
-        if (runner != null) {
-            runner.close();
-        }
+        BASE.close();
     }
 
     public TomEEEmbeddedSingleRunner(final Class<?> klass) throws InitializationError {
@@ -118,8 +101,8 @@ public class TomEEEmbeddedSingleRunner extends BlockJUnit4ClassRunner {
                 return new Statement() {
                     @Override
                     public void evaluate() throws Throwable {
-                        start(test);
-                        getRunner().composerInject(target);
+                        BASE.start(test);
+                        BASE.composerInject(target);
                         base.evaluate();
                     }
                 };

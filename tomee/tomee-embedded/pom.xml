@@ -65,6 +65,7 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
                 </excludes>
@@ -81,7 +82,7 @@
               <shadedClassifierName>jaxrs</shadedClassifierName>
               <artifactSet>
                 <excludes>
-                  <exclude>junit:junit</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
                   <exclude>org.apache.activemq:*</exclude>
@@ -132,6 +133,7 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
+                  <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
                   <exclude>org.apache.activemq:*</exclude>
@@ -210,7 +212,9 @@
             <configuration>
               <excludes>
                 <exclude>**/SingleInstanceRunnerTest*</exclude>
+                <exclude>**/SingleInstanceRunnerExtensionTest*</exclude>
                 <exclude>**/NoScannerSingleRunnerTest*</exclude>
+                <exclude>**/NoScannerSingleRunnerExtensionTest*</exclude>
               </excludes>
             </configuration>
           </execution>
@@ -423,6 +427,22 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Required for running JUnit 4 via JUnit 5 environment -->
+    <dependency>
+      <groupId>org.junit.vintage</groupId>
+      <artifactId>junit-vintage-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.jdt.core.compiler</groupId>
       <artifactId>ecj</artifactId>
       <type>jar</type>
@@ -480,5 +500,6 @@
       <version>1.60</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 </project>

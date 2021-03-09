@@ -96,6 +96,7 @@
     <module>jpa-enumerated</module>
     <module>jsf-managedBean-and-ejb</module>
     <module>jsf-cdi-and-ejb</module>
+    <module>junit5-application-composer</module>
     <module>lookup-of-ejbs</module>
     <module>lookup-of-ejbs-with-descriptor</module>
     <!-- Does not work with Java 9+ because of the modules. Needs more work
