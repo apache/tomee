@@ -26,10 +26,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomee.version>8.0.7-SNAPSHOT</tomee.version>
-        <junit.jupiter.version>5.7.0</junit.jupiter.version>
+        <tomcat.version>9.0.43</tomcat.version>
 
+        <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
         <arquillian.version>1.7.0.Alpha8</arquillian.version>
+
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -112,6 +114,19 @@
             <groupId>org.apache.tomee</groupId>
             <artifactId>arquillian-tomee-remote</artifactId>
             <version>${tomee.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- required for the test client to connect -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-api</artifactId>
+            <version>${tomcat.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-websocket</artifactId>
+            <version>${tomcat.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
