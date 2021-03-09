@@ -104,8 +104,12 @@ public class Server {
         final String b = o2.toExternalForm();
 
         int modifier = 0;
-        if (a.contains("tomee-bootstrap")) modifier += 1000;
-        if (b.contains("tomee-bootstrap")) modifier -= 1000;
+        if (a.contains("tomee-bootstrap")) {
+            modifier += 1000;
+        }
+        if (b.contains("tomee-bootstrap")) {
+            modifier -= 1000;
+        }
 
         return a.compareTo(b) + modifier;
     }
@@ -273,9 +277,13 @@ public class Server {
         }
 
         private String addServerListener(final String serverXml) {
-            if (serverXml.contains("<Listener className=\"org.apache.tomee.catalina.ServerListener\"\"")) return serverXml;
-            return serverXml.replaceFirst("<Listener ",
-                    "<Listener className=\"org.apache.tomee.catalina.ServerListener\" />\n  <Listener ");
+            if (serverXml.contains("<Listener className=\"org.apache.tomee.catalina.ServerListener\"\"")) {
+                return serverXml;
+            } else {
+
+                return serverXml.replaceFirst("<Listener ",
+                                              "<Listener className=\"org.apache.tomee.catalina.ServerListener\" />\n  <Listener ");
+            }
         }
     }
 }

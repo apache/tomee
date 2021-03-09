@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - tomee-7.0.x
+  pull_request:
+    branches:
+      - tomee-7.0.x
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: '8'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v4
+        with:
+          repositories: '[{ "id": "central-repo", "url": "https://repo.maven.apache.org/maven2" }]'
+          plugin_repositories: '[{ "id": "central-plugin-repository", "url": "https://repo.maven.apache.org/maven2" }]'
+
+      - name: Checkstyle
+        run: mvn help:system checkstyle:check -Pstyle
+        env:
+          MAVEN_OPTS: -Xmx2048m
+
+      - name: Pmd
+        run: mvn help:system pmd:check -Pstyle
+        env:
+          MAVEN_OPTS: -Xmx2048m
+
+      - name: Compile
+        run: mvn help:system -U --show-version --fail-at-end install -DfailIfNoTests=false
+        env:
+          MAVEN_OPTS: -Xmx2048m
+

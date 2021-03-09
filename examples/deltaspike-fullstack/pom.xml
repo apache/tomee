@@ -154,7 +154,7 @@
     <dependency>
       <artifactId>commons-lang3</artifactId>
       <groupId>org.apache.commons</groupId>
-      <version>3.3.2</version>
+      <version>3.8</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

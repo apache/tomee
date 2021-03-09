@@ -25,7 +25,7 @@
       <property name="httpPort">-1</property>
       <property name="stopPort">-1</property>
       <property name="tomcatVersion"></property>
-      <property name="dßßir">target/apache-tomee-remote</property>
+      <property name="dir">target/apache-tomee-remote</property>
       <property name="appWorkingDir">target/arquillian-test-working-dir</property>
     </configuration>
   </container>
