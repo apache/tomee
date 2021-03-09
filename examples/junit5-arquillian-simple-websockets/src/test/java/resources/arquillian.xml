@@ -23,10 +23,12 @@
               http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
     <container qualifier="tomee" default="true">
         <configuration>
-            <property name="serverXml">src/main/conf/server.xml</property>
-            <property name="httpPort">8081</property>
+            <property name="httpPort">-1</property>
+            <property name="stopPort">-1</property>
+            <property name="ajpPort">-1</property>
+            <property name="classifier">webprofile</property>
             <property name="dir">target/apache-tomee</property>
-            <property name="conf">src/main/conf</property>
+            <property name="appWorkingDir">target/arquillian-test-working-dir</property>
         </configuration>
     </container>
 

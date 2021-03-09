@@ -40,13 +40,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(ArquillianExtension.class)
 public class WebSocketResourceTest {
 
-    private static final int PORT = 8081;
-
     @ArquillianResource()
     private URL base;
 
     @Deployment(testable = false)
-    public static final WebArchive app() {
+    public static WebArchive app() {
         return ShrinkWrap.create(WebArchive.class, "demo.war")
                 .addClasses(WebSocketResource.class)
                 .addAsWebInfResource(new File("src/main/webapp/WEB-INF/web.xml"), "web.xml")
@@ -68,6 +66,7 @@ public class WebSocketResourceTest {
     public void testConnectAndSendPayload() throws Exception {
 
         String payload = "I am the payload sent to this resource.";
+
         Session session = connectToServer(MyWebSocketClientObject.class);
         assertNotNull(session);
 
@@ -89,7 +88,7 @@ public class WebSocketResourceTest {
     public Session connectToServer(Class<?> endpoint) throws DeploymentException, IOException, URISyntaxException {
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         assertNotNull(container);
-        return container.connectToServer(endpoint, new URI("ws", base.getUserInfo(), "localhost", PORT,"/api/socket",null, null));
+        return container.connectToServer(endpoint, new URI("ws", base.getUserInfo(), base.getHost(), base.getPort(),base.getPath() + "api/socket",null, null));
     }
 
 }
