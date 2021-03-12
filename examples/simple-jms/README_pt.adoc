@@ -3,8 +3,7 @@
 :jbake-status: status=published
 
 = Simples JMS
-
-Este exemplo demostra como configuar um serviço JMS personalizadao ``CustomJmsService`` para produzir e consumir uma mensagem JMS ``Message`` .
+Este exemplo demonstra como configuar um serviço JMS personalizado ``CustomJmsService`` para produzir e consumir uma mensagem JMS ``Message`` .
 
 = Código
 
