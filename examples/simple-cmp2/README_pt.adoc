@@ -1,0 +1,327 @@
+:index-group: EJB Legacy
+:jbake-type: page
+:jbake-status: status=published
+= EJB 2.1 CMP EntityBeans (CMP2)
+
+OpenEJB, o contêiner EJB para TomEE e Geronimo, oferece suporte a todos os EJB 1.1 a 3.1, incluindo CMP2.
+
+A implementação do CMP2 é realmente feita adaptando o bean CMP2 em uma Entidade JPA dinamicamente no momento da implementação.
+
+Subclasses apropriadas, um arquivo JPA persistence.xml e um mapping.xml
+são gerados no momento da implementação para o CMP2 EntityBeans e todas as Entidades serão executadas no OpenJPA. Este código inovador foi usado como a única implementação CMP2 no Geronimo para suas certificações J2EE 1.4, JavaEE 5 e JavaEE 6.
+
+Os arquivos persistence.xml e mapping.xml gerados no momento da implantação podem ser salvos em disco e incluídos no aplicativo, permitindo que você:
+
+* obtenha controle mais preciso sobre as opções de persistência
+* converter lentamente entidades individuais de CMP2 para JPA
+
+Vamos ver um exemplo.
+
+== Aplicação de filmes
+
+A seguir está uma aplicação EJB 2.1 básico que consiste em uma entidade CMP2. 
+Para aqueles que estão lendo este exemplo por curiosidade e não estão familiarizado com CMP2 ou EJB 2.x, cada Entidade CMP2 é composta por duas partes:
+
+* *Uma interface Home* que possui métodos de acesso a dados como ``find'', ``create'' e ``remove''. É essencialmente para isso que as pessoas usam os beans `@Stateless` hoje, mas com a diferença que você não precisa fornecer a implementação da interface - o contêiner irá gerar um para você. Isso é parcialmente o que inspirou a criaçãodo OpenEJB específico link:../dynamic-dao-deployment/README.html [Dynamic DAO] feature.
+* *Uma classe abstrata EntityBean* que declara as ``propriedades'' persistentes da entidade sem realmente declarar nenhum campo. É função do contêiner implementar os métodos reais e criar os campos apropriados. OpenEJB implementará este bean como um bean JPA `@Entity`.
+
+Como tal, um EntityBean CMP2 é realmente apenas a descrição de um objeto persistente e a descrição de um objeto de acesso a dados. Não há nenhum código real para escrever.
+
+A maior parte do trabalho no CMP2 é feito no xml:
+
+* *ejb-jar.xml* informações de mapeamento, que descrevem as propriedades persistentes da entidade e as consultas para todos os métodos _Home_ de localizar, criar e remover. Essas informações serão convertidas pelo OpenEJB em um arquivo JPA mapping.xml. Todas as consultas na parte cmp2 do ejb-jar.xml são convertidas em consultas nomeadas em JPA e geralmente tudo é
+convertido em seu equivalente JPA.
+
+=== CMP2 EntityBean, MovieBean
+
+[source,java]
+----
+package org.superbiz.cmp2;
+
+import javax.ejb.EntityBean;
+
+public abstract class MovieBean implements EntityBean {
+
+    public MovieBean() {
+    }
+
+    public Integer ejbCreate(String director, String title, int year) {
+        this.setDirector(director);
+        this.setTitle(title);
+        this.setYear(year);
+        return null;
+    }
+
+    public abstract java.lang.Integer getId();
+
+    public abstract void setId(java.lang.Integer id);
+
+    public abstract String getDirector();
+
+    public abstract void setDirector(String director);
+
+    public abstract String getTitle();
+
+    public abstract void setTitle(String title);
+
+    public abstract int getYear();
+
+    public abstract void setYear(int year);
+
+}
+----
+
+=== CMP2 Home interface, Movies
+
+[source,java]
+----
+package org.superbiz.cmp2;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+import java.util.Collection;
+
+/**
+ * @version $Revision$ $Date$
+ */
+interface Movies extends javax.ejb.EJBLocalHome {
+    Movie create(String director, String title, int year) throws CreateException;
+
+    Movie findByPrimaryKey(Integer primarykey) throws FinderException;
+
+    Collection<Movie> findAll() throws FinderException;
+
+    Collection<Movie> findByDirector(String director) throws FinderException;
+}
+----
+
+=== CMP2 mapping no ejb-jar.xml
+
+[source,xml]
+----
+<ejb-jar>
+  <enterprise-beans>
+    <entity>
+      <ejb-name>MovieBean</ejb-name>
+      <local-home>org.superbiz.cmp2.Movies</local-home>
+      <local>org.superbiz.cmp2.Movie</local>
+      <ejb-class>org.superbiz.cmp2.MovieBean</ejb-class>
+      <persistence-type>Container</persistence-type>
+      <prim-key-class>java.lang.Integer</prim-key-class>
+      <reentrant>false</reentrant>
+      <cmp-version>2.x</cmp-version>
+      <abstract-schema-name>MovieBean</abstract-schema-name>
+      <cmp-field>
+        <field-name>id</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>director</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>year</field-name>
+      </cmp-field>
+      <cmp-field>
+        <field-name>title</field-name>
+      </cmp-field>
+      <primkey-field>id</primkey-field>
+      <query>
+        <query-method>
+          <method-name>findByDirector</method-name>
+          <method-params>
+            <method-param>java.lang.String</method-param>
+          </method-params>
+        </query-method>
+        <ejb-ql>SELECT m FROM MovieBean m WHERE m.director = ?1</ejb-ql>
+      </query>
+      <query>
+        <query-method>
+          <method-name>findAll</method-name>
+          <method-params/>
+        </query-method>
+        <ejb-ql>SELECT m FROM MovieBean as m</ejb-ql>
+      </query>
+    </entity>
+  </enterprise-beans>
+</ejb-jar>
+----
+
+=== openejb-jar.xml
+
+[source,xml]
+----
+<openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.1">
+  <enterprise-beans>
+    <entity>
+      <ejb-name>MovieBean</ejb-name>
+      <key-generator xmlns="http://www.openejb.org/xml/ns/pkgen-2.1">
+        <uuid/>
+      </key-generator>
+    </entity>
+  </enterprise-beans>
+</openejb-jar>
+----
+
+=== MoviesTest
+
+[source,java]
+----
+package org.superbiz.cmp2;
+
+import junit.framework.TestCase;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.Collection;
+import java.util.Properties;
+
+/**
+ * @version $Revision: 607077 $ $Date: 2007-12-27 06:55:23 -0800 (Thu, 27 Dec 2007) $
+ */
+public class MoviesTest extends TestCase {
+
+    public void test() throws Exception {
+        Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+        p.put("movieDatabase", "new://Resource?type=DataSource");
+        p.put("movieDatabase.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabase.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+
+        p.put("movieDatabaseUnmanaged", "new://Resource?type=DataSource");
+        p.put("movieDatabaseUnmanaged.JdbcDriver", "org.hsqldb.jdbcDriver");
+        p.put("movieDatabaseUnmanaged.JdbcUrl", "jdbc:hsqldb:mem:moviedb");
+        p.put("movieDatabaseUnmanaged.JtaManaged", "false");
+
+        Context context = new InitialContext(p);
+
+        Movies movies = (Movies) context.lookup("MovieBeanLocalHome");
+
+        movies.create("Quentin Tarantino", "Reservoir Dogs", 1992);
+        movies.create("Joel Coen", "Fargo", 1996);
+        movies.create("Joel Coen", "The Big Lebowski", 1998);
+
+        Collection<Movie> list = movies.findAll();
+        assertEquals("Collection.size()", 3, list.size());
+
+        for (Movie movie : list) {
+            movies.remove(movie.getPrimaryKey());
+        }
+
+        assertEquals("Movies.findAll()", 0, movies.findAll().size());
+    }
+}
+----
+
+== Executando
+
+[source,console]
+----
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.superbiz.cmp2.MoviesTest
+Apache OpenEJB 4.0.0-beta-1    build: 20111002-04:06
+http://tomee.apache.org/
+INFO - openejb.home = /Users/dblevins/examples/simple-cmp2/target
+INFO - openejb.base = /Users/dblevins/examples/simple-cmp2/target
+INFO - Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+INFO - Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+INFO - Configuring Service(id=movieDatabaseUnmanaged, type=Resource, provider-id=Default JDBC Database)
+INFO - Configuring Service(id=movieDatabase, type=Resource, provider-id=Default JDBC Database)
+INFO - Found EjbModule in classpath: /Users/dblevins/examples/simple-cmp2/target/classes
+INFO - Beginning load: /Users/dblevins/examples/simple-cmp2/target/classes
+INFO - Configuring enterprise application: /Users/dblevins/examples/simple-cmp2/target/classpath.ear
+INFO - Configuring Service(id=Default CMP Container, type=Container, provider-id=Default CMP Container)
+INFO - Auto-creating a container for bean MovieBean: Container(type=CMP_ENTITY, id=Default CMP Container)
+INFO - Configuring PersistenceUnit(name=cmp)
+INFO - Adjusting PersistenceUnit cmp <jta-data-source> to Resource ID 'movieDatabase' from 'null'
+INFO - Adjusting PersistenceUnit cmp <non-jta-data-source> to Resource ID 'movieDatabaseUnmanaged' from 'null'
+INFO - Enterprise application "/Users/dblevins/examples/simple-cmp2/target/classpath.ear" loaded.
+INFO - Assembling app: /Users/dblevins/examples/simple-cmp2/target/classpath.ear
+INFO - PersistenceUnit(name=cmp, provider=org.apache.openjpa.persistence.PersistenceProviderImpl) - provider time 160ms
+INFO - Jndi(name=MovieBeanLocalHome) --> Ejb(deployment-id=MovieBean)
+INFO - Jndi(name=global/classpath.ear/simple-cmp2/MovieBean!org.superbiz.cmp2.Movies) --> Ejb(deployment-id=MovieBean)
+INFO - Jndi(name=global/classpath.ear/simple-cmp2/MovieBean) --> Ejb(deployment-id=MovieBean)
+INFO - Created Ejb(deployment-id=MovieBean, ejb-name=MovieBean, container=Default CMP Container)
+INFO - Started Ejb(deployment-id=MovieBean, ejb-name=MovieBean, container=Default CMP Container)
+INFO - Deployed Application(path=/Users/dblevins/examples/simple-cmp2/target/classpath.ear)
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.919 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+----
+
+== CMP2 para JPA
+
+Como mencionado, OpenEJB implementará o CMP2 `EntityBean` abstrato como um JPA `@Entity`, criará um arquivo `persistence.xml` e converterá todos os mapeamentos e consultas `ejb-jar.xml` para um arquivo JPA `entity-mappings.xml`.
+
+Ambos os arquivos serão gravados no disco configurando a propriedade do sistema `openejb.descriptors.output` para `true`. No caso de teste acima, isso pode ser feito por meio dos parâmetros `InitialContext` por meio de um código como este:
+
+[source,java]
+----
+Properties p = new Properties();
+p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.core.LocalInitialContextFactory");
+
+// configurar as fontes de dados como de costume...
+
+// escreva os descritores gerados
+p.put("openejb.descriptors.output", "true");
+
+Context context = new InitialContext(p);
+----
+
+Abaixo estão os arquivos `persistence.xml` e `mapping.xml` gerados para
+nosso CMP2 `EntityBean`
+
+=== CMP2 para arquivo persistence.xml gerado por JPA
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+    <persistence-unit name="cmp" transaction-type="JTA">
+        <jta-data-source>movieDatabase</jta-data-source>
+        <non-jta-data-source>movieDatabaseUnmanaged</non-jta-data-source>
+        <mapping-file>META-INF/openejb-cmp-generated-orm.xml</mapping-file>
+        <class>openejb.org.superbiz.cmp2.MovieBean</class>
+        <properties>
+            <property name="openjpa.jdbc.SynchronizeMappings"
+            value="buildSchema(ForeignKeys=true, Indexes=false, IgnoreErrors=true)"/>
+            <property name="openjpa.Log" value="DefaultLevel=INFO"/>
+        </properties>
+    </persistence-unit>
+</persistence>
+----
+
+Tudo no `persistence.xml` pode ser alterado, no entanto o
+`persistence-unit` deve ter o `name` fixado em `cmp`.
+
+=== CMP2 para arquivo de mapeamento gerado por JPA
+
+Observe que o `persistence.xml` acima se refere a este arquivo de mapeamento como
+`META-INF/openejb-cmp-generated-orm.xml`. É possível renomear este arquivo para qualquer nome que você preferir, apenas certifique-se de atualizar o elemento `<mapping-file>` da unidade de persistência `cmp` em conformidade.
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" version="1.0">
+    <entity class="openejb.org.superbiz.cmp2.MovieBean" name="MovieBean">
+        <description>simple-cmp2#MovieBean</description>
+        <table/>
+        <named-query name="MovieBean.findByDirector(java.lang.String)">
+            <query>SELECT m FROM MovieBean m WHERE m.director = ?1</query>
+        </named-query>
+        <named-query name="MovieBean.findAll">
+            <query>SELECT m FROM MovieBean as m</query>
+        </named-query>
+        <attributes>
+            <id name="id">
+                <generated-value strategy="IDENTITY"/>
+            </id>
+            <basic name="director"/>
+            <basic name="year"/>
+            <basic name="title"/>
+        </attributes>
+    </entity>
+</entity-mappings>
+----
