@@ -253,7 +253,7 @@ Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
 
 == CMP2 para JPA
 
-Como mencionado, OpenEJB implementará o CMP2 `EntityBean` abstrato como um JPA `@Entity`, criará um arquivo `persistence.xml` e converterá todos os mapeamentos e consultas `ejb-jar.xml` para um JPA `entity-mappings.xml` Arquivo.
+Como mencionado, OpenEJB implementará o CMP2 `EntityBean` abstrato como um JPA `@Entity`, criará um arquivo `persistence.xml` e converterá todos os mapeamentos e consultas `ejb-jar.xml` para um arquivo JPA `entity-mappings.xml`.
 
 Ambos os arquivos serão gravados no disco configurando a propriedade do sistema `openejb.descriptors.output` para `true`. No caso de teste acima, isso pode ser feito por meio dos parâmetros `InitialContext` por meio de um código como este:
 
@@ -293,8 +293,8 @@ nosso CMP2 `EntityBean`
 </persistence>
 ----
 
-Tudo isso `persistence.xml` pode ser alterado, no entanto o
-`persistence-unit` deve ter o` name` fixado em `cmp`.
+Tudo no `persistence.xml` pode ser alterado, no entanto o
+`persistence-unit` deve ter o `name` fixado em `cmp`.
 
 === CMP2 para arquivo de mapeamento gerado por JPA
 
