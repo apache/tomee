@@ -3,15 +3,15 @@
 :jbake-type: page
 :jbake-status: published
 
-Below is a fun app, a chat application that uses JMS. We create a message driven bean, by marking our class with `@MessageDriven`. A message driven bean has some similarities with a stateless session bean, in the part that it is pooled too.
+Abaixo está uma aplicação divertida, uma aplicação de bate-papo que usa JMS. Criamos um bean controlado por mensagem(message driven bean), marcando nossa classe com `@MessageDriven`. Um bean controlado por mensagem tem algumas semelhanças com um bean de sessão sem estado(stateless session bean), na parte em que também é agrupado.
 
-Well, lets tell our chat-app to listen for incoming messages. That we do by implementing `MessageListener` and overriding the `onMessage(Message message)`.
+Bem, vamos dizer a nossa aplicação de bate-papo para ouvir as mensagens recebidas. Fazemos isso implementando `MessageListener` e substituindo `onMessage(Message message)`.
 
-Then this app "listens" for incoming messages, and the messages picked up are processed by `onMessage(Message message)` method.
+Então, esta aplicação "escuta" as mensagens recebidas e as mensagens capturadas são processadas pelo método `onMessage(Message message)`.
 
-That finishes our message driven bean implementation. The "processing" part could be anything that fits your business-requirement.
+Isso conclui nossa implementação de bean orientado por mensagem(message driven bean). A parte de "processamento" pode ser qualquer coisa que se encaixe nos requisitos do seu negócio.
 
-In this case, it is to respond to the user. The `respond` method shows how a Message can be sent.
+Nesse caso, é para responder ao usuário. O método `respond` mostra como uma mensagem pode ser enviada.
 
 == ChatBean
 
@@ -71,17 +71,17 @@ public class ChatBean implements MessageListener {
             connection = connectionFactory.createConnection();
             connection.start();
 
-            // Create a Session
+            // Cria a Sessão
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-            // Create a MessageProducer from the Session to the Topic or Queue
+            // Cria um MessageProducer da sessão para o tópico ou fila
             MessageProducer producer = session.createProducer(answerQueue);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
-            // Create a message
+            // Cria uma mensagem
             TextMessage message = session.createTextMessage(text);
 
-            // Tell the producer to send the message
+            // Diga ao produtor para enviar a mensagem
             producer.send(message);
         } finally {
             // Clean up
@@ -164,7 +164,7 @@ public class ChatBeanTest extends TestCase {
 }
 ----
 
-= Running
+= Executando
 
 [source,console]
 ----
