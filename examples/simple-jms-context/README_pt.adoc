@@ -4,11 +4,9 @@
 
 = Simples JMS Context
 
-This example demostrate how to set up a ``CustomJmsService`` in order to produce and consume a JMS ``Message``.
+Este exemplo demonstra como configurar um ``CustomJmsService`` para produzir e consumir uma ``Message`` JMS.
 
-= Código
-
-== OS serviços JMS: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
+== Os serviços JMS: ``Message``, ``Queue``, MessageProducer``, ``MessageConsumer``
 
 Aqui temos um endpoint REST simples, anotado na classe com ``@Path("/message")`` para indicar a rota correspondente à classe ``CustomJmsService``. Portanto, definimos ``sendMessage()`` como ``@POST`` e ``receiveMessage()`` como ``@GET`` para esta rota ``/message``.
 
