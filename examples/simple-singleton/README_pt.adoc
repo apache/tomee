@@ -1,20 +1,20 @@
 :index-group: Session Beans
 :jbake-type: page
 :jbake-status: status=published
-= Simple Singleton
+= Simples Singleton
 
-Como su nombre lo indica, un `javax.ejb.Singleton`, es un bean de sesión con la garantía de que existe  como máximo una instancia en la aplicación.
+Como o nome indica, um `javax.ejb.Singleton`, é um bean de sessão com a garantia de que há no máximo uma instância no aplicativo.
 
-Lo que falta por completo en EJB 3.0 y versiones anteriores, es la capacidad de tener un EJB que se notifique cuando la aplicación se inicia y cuando se detiene. Por lo tanto, puede hacer todo tipo de cosas que anteriormente solo podía hacer con un servlet de carga al inicio. También le brinda un lugar para almacenar datos que pertenecen a toda la aplicación y a todos los usuarios que la utilizan, sin la necesidad de un estático. Además, los beans Singleton pueden ser invocados por múltiples hilos
-al mismo tiempo similar a un servlet.
+O que está faltando completamente no EJB 3.0 e anteriores é a capacidade de ter um EJB que é notificado quando o aplicativo é iniciado e quando ele para. Portanto, você pode fazer todos os tipos de coisas que antes só podiam ser feitas com um servlet de carregamento na inicialização. Também oferece um local para armazenar dados que pertencem a todo o aplicativo e a todos os usuários que os utilizam, sem a necessidade de dados estáticos. Além disso, os beans singleton podem ser chamados por vários encadeamentos ao mesmo tempo semelhante a um servlet.
 
-Vea link:../../singleton-beans.html[Singleton Beans] para obtener una página completa de la descripción de la API javax.ejb.Singleton.
+Consulte o link:../../singleton-beans.html[Singleton Beans] para obter uma página inteira da descrição da API javax.ejb.Singleton.
 
-#El codigo
+== O codigo
 
-== Concurrencia Bean-Managed de PropertyRegistry 
-Aquí vemos un bean que usa la opción de concurrencia Bean-Managed, así como la anotación @Startup que hace que el bean sea confirmado por el contenedor cuando se inicia la aplicación. 
-Los beans Singleton con @ConcurrencyManagement(BEAN) son responsables de su propia seguridad de subprocesos. El bean que se muestra es un simple ``registry'' de propiedad y proporciona un lugar donde todos los beans de aplicación podrían establecer y recuperar opciones.
+== Concorrencia Bean-Managed de PropertyRegistry 
+
+Aqui, vemos um bean que usa a opção de concorrencia Bean-Managed, bem como a anotação @Startup que faz com que o bean seja confirmado pelo contêiner quando o aplicativo é iniciado.
+Beans singleton com @ConcurrencyManagement(BEAN) são responsáveis ​​por sua própria segurança de thread. O bean mostrado é um registro de propriedade simples e fornece um local onde todos os beans de aplicativo podem definir e recuperar opções.
 
 [source,java]
 ....
@@ -35,14 +35,14 @@ import static javax.ejb.ConcurrencyManagementType.BEAN;
 public class PropertyRegistry {
 
 
-// Tenga en cuenta que el objeto java.util.Properties es una 
-// colección segura para subprocesos que utiliza sincronización. Si no fuera así,
-// tendría que usar alguna forma de sincronización para asegurarse 
-// de que PropertyRegistryBean sea seguro para subprocesos.
+// Observe que o objeto java.util.Properties é um 
+// Uma coleção thread-safe que usa sincronização. Se não for assim,
+// Eu teria que usar alguma forma de sincronização para ter certeza
+// Certifique-se de que PropertyRegistryBean é seguro para thread.
     private final Properties properties = new Properties();
 
-// La anotación @Startup garantiza que se 
-// llame a este método cuando se inicia la aplicación.
+// A anotação @Startup garante que
+// Chame esse método quando o aplicativo for iniciado.
     @PostConstruct
     public void applicationStartup() {
         properties.putAll(System.getProperties());
@@ -69,9 +69,7 @@ public class PropertyRegistry {
 
 == ComponentRegistry Container-Managed Concurrency
 
-Aquí vemos un bean que usa la opción de concurrencia 'Container-Managed', el valor predeterminado. Con `@ConcurrencyManagement(CONTAINER)` el contenedor controla si se debe permitir el acceso multiproceso al bean
-(`@Lock(READ)`) o si se debe forzar el acceso de un solo subproceso
-(`@Lock(WRITE)`).
+Aqui, vemos um bean que usa a opção de concorrencia 'Container-Managed', o padrão. Com `@ConcurrencyManagement(CONTAINER)` o contêiner controla se deve permitir o acesso multithread ao bean `@Lock (READ)`) ou se deve forçar o acesso de thread único (`@Lock (WRITE)`).
 
 [source,java]
 ....
@@ -113,26 +111,23 @@ public class ComponentRegistry {
 }
 ....
 
-A menos que se especifique explícitamente en la clase de bean o un método, el valor predeterminado `@Lock` es `@Lock(WRITE)`. El código anterior utiliza la anotación `@Lock(READ)` en la clase bean para cambiar el valor predeterminado, de modo que se otorgue el acceso multiproceso por defecto. Entonces solo necesitamos aplicar la anotación `@Lock(WRITE)` a los métodos que modifican el estado del bean.
+A menos que explicitamente especificado na classe de bean ou um método, o padrão `@Lock` é `@Lock(WRITE)`. O código acima usa a anotação `@Lock(READ)` na classe do bean para alterar o valor padrão para que o acesso multithread seja concedido por padrão. Portanto, só precisamos aplicar a anotação `@Lock(WRITE)` aos métodos que modificam o estado do bean.
 
-Esencialmente, `@Lock(READ)` permite el acceso multiproceso a la instancia del bean Singleton, a menos que alguien invoque un método `@Lock(WRITE)`. Con `@Lock(WRITE)`, se garantizará que el subproceso que invoca el bean tendrá acceso exclusivo a la instancia del bean Singleton mientras dure su invocación. Esta combinación permite que la instancia de bean use tipos de datos que normalmente no son seguros para subprocesos.  Se debe tener mucho cuidado.
+Essencialmente, `@Lock(READ)` permite acesso multithread à instância do bean Singleton, a menos que alguém invoque um método `@Lock(WRITE)`. Usar `@Lock(WRITE)` garantirá que a thread que invoca o bean terá acesso exclusivo à instância do Singleton bean durante sua invocação. Essa combinação permite que a instância do bean use tipos de dados que normalmente não são seguros para thread. Muito cuidado deve ser tomado.três coisas:
 
-En el ejemplo vemos `ComponentRegistryBean` usando un
-`java.util.HashMap` que no está sincronizado. Para hacer esto bien, hacemos
-tres cosas:
+No exemplo, vemos `ComponentRegistryBean` usando um `java.util.HashMap` que está fora de sincronia. Para acertar, nós fazemos três coisas:
 
 [arabic]
-. Encapsulación. No exponemos la instancia de HashMap directamente; incluidos sus iteradores, conjunto de claves, conjunto de valores o conjunto de entradas.
-. Usamos `@Lock(WRITE)` en los métodos que mutan el mapa, como los métodos `put()` y `remove()`.
-. Utilizamos `@Lock(READ)` en los métodos `get()` y `values()` ya que no cambian el estado del mapa y se garantiza que no se invocarán al mismo tiempo que cualquiera de los `@Lock(WRITE)`, por lo que sabemos que el estado de HashMap no está siendo mutado y, por lo tanto, es seguro para la lectura.
+. Encapsulamento Não expomos a instância HashMap diretamente; incluindo seus iteradores, conjunto de chaves, conjunto de valores ou conjunto de entrada.
+. Usamos `@Lock(WRITE)` nos métodos que alteram o mapa, como os métodos `put()` e `remove()`.
+. Usamos `@Lock(READ)` nos métodos `get()` e `values ​()`, uma vez que eles não alteram o estado do mapa e têm a garantia de não serem chamados ao mesmo tempo que qualquer um dos `@Lock(WRITE)`, então sabemos que o estado do HashMap não está sofrendo mutação e, portanto, é seguro para leitura.
+
+O resultado final, o modelo de encadeamento para este bean mudará de acesso multi-encadeamento para acesso de encadeamento dinâmico conforme necessário, dependendo do método que é chamado. Isso dá aos singletons uma vantagem sobre os servlets para processar solicitações multithread.
+
+Consulte o link:../../singleton-beans.html[Singleton Beans] para obter detalhes mais avançados sobre concorrencia gerenciada por contêiner.
 
 
-El resultado final, el modelo de subprocesos para este bean cambiará de acceso, de subprocesos múltiples a acceso de subprocesos dinámicos, según sea necesario, dependiendo del método que se invoque. Esto le da a los singleton, una ventaja sobre los Servlets, para procesar solicitudes de subprocesos múltiples.
-
-Vea link:../../singleton-beans.html[Singleton Beans] página para obtener detalles más avanzados sobre la concurrencia Container-Managed.
-
-== Testing
-
+== Testando
 === ComponentRegistryTest
 
 [source,java]
@@ -140,6 +135,7 @@ Vea link:../../singleton-beans.html[Singleton Beans] página para obtener detall
 package org.superbiz.registry;
 
 import org.junit.AfterClass;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -158,12 +154,11 @@ public class ComponentRegistryTest {
 
         final Context context = ejbContainer.getContext();
 
-        // Las dos referencias a continuación apuntan a la misma instancia exacta
+        // As duas referências abaixo apontam exatamente para a mesma instância
         final ComponentRegistry one = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
         final ComponentRegistry two = (ComponentRegistry) context.lookup("java:global/simple-singleton/ComponentRegistry");
 
         final URI expectedUri = new URI("foo://bar/baz");
-        one.setComponent(URI.class, expectedUri);
         final URI actualUri = two.getComponent(URI.class);
         Assert.assertSame(expectedUri, actualUri);
 
@@ -203,6 +198,7 @@ package org.superbiz.registry;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+
 import org.junit.Test;
 
 import javax.ejb.embeddable.EJBContainer;
@@ -244,16 +240,16 @@ public class PropertiesRegistryTest {
 }
 ....
 
-#Ejecutar
+=== Executando
+....
+Executar o exemplo é muito simples. No diretório `simple-singleton` digite o seguinte comando:
 
-Ejecutar el ejemplo es bastante simple. En el directorio `simple-singleton`
- ejecutar:
-
+[source,console]
 ....
 $ mvn clean install
 ....
 
-Lo que debería crear resultados como los siguientes.
+Que deve criar resultados como o seguinte.
 
 [source,console]
 ....
