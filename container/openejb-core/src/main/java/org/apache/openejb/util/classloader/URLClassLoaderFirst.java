@@ -69,7 +69,9 @@ public class URLClassLoaderFirst extends URLClassLoader {
                 "META-INF/services/javax.ws.rs.client.ClientBuilder," +
                 "META-INF/services/javax.json.spi.JsonProvider," +
                 "META-INF/services/javax.cache.spi.CachingProvider," +
-                "META-INF/javamail.default.providers,META-INF/javamail.default.address.map," +
+                "META-INF/services/javax.persistence.spi.PersistenceProvider," +
+                "META-INF/javamail.default.providers," +
+                "META-INF/javamail.default.address.map," +
                 "META-INF/javamail.charset.map,META-INF/mailcap," +
                 SLF4J_BINDER_CLASS);
     }
@@ -204,7 +206,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
     //
     // /!\ please check org.apache.openejb.persistence.PersistenceUnitInfoImpl.isServerClass() too
     // when updating this method
-    public static boolean shouldSkip(final String name) {
+    public static boolean shouldSkip(final String input) {
+
+        String name = input;
+
         if (name == null) { // can happen with rest servlet definition or errors
             return false;
         }
@@ -218,6 +223,10 @@ public class URLClassLoaderFirst extends URLClassLoader {
             if (name.startsWith(prefix)) {
                 return false;
             }
+        }
+
+        if (name.startsWith("openejb.shade.")) {
+            name = name.substring("openejb.shade.".length());
         }
 
         if (name.startsWith("java.")) {

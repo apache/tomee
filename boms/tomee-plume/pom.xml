@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>8.0.6-SNAPSHOT</version>
+    <version>8.0.7-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>8.0.6-SNAPSHOT</version>
+      <version>8.0.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -828,17 +828,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.johnzon</groupId>
-      <artifactId>johnzon-core</artifactId>
-      <version>1.2.9</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
       <version>1.2.9</version>
       <exclusions>
@@ -895,7 +884,7 @@
     <dependency>
       <groupId>org.apache.openejb.shade</groupId>
       <artifactId>quartz-openejb-shade</artifactId>
-      <version>2.2.1</version>
+      <version>2.2.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1478,7 +1467,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>8.0.6-SNAPSHOT</version>
+      <version>8.0.7-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2216,6 +2205,17 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-jdk14</artifactId>
       <version>1.7.21</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.tomitribe.quartz</groupId>
+      <artifactId>quartz</artifactId>
+      <version>2.2.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

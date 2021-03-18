@@ -16,6 +16,7 @@ Vea link:../../singleton-beans.html[Singleton Beans] para obtener una página co
 Aquí vemos un bean que usa la opción de concurrencia Bean-Managed, así como la anotación @Startup que hace que el bean sea confirmado por el contenedor cuando se inicia la aplicación. 
 Los beans Singleton con @ConcurrencyManagement(BEAN) son responsables de su propia seguridad de subprocesos. El bean que se muestra es un simple ``registry'' de propiedad y proporciona un lugar donde todos los beans de aplicación podrían establecer y recuperar opciones.
 
+[source,java]
 ....
 package org.superbiz.registry;
 
@@ -72,6 +73,7 @@ Aquí vemos un bean que usa la opción de concurrencia 'Container-Managed', el v
 (`@Lock(READ)`) o si se debe forzar el acceso de un solo subproceso
 (`@Lock(WRITE)`).
 
+[source,java]
 ....
 package org.superbiz.registry;
 
@@ -133,6 +135,7 @@ Vea link:../../singleton-beans.html[Singleton Beans] página para obtener detall
 
 === ComponentRegistryTest
 
+[source,java]
 ....
 package org.superbiz.registry;
 
@@ -194,6 +197,7 @@ public class ComponentRegistryTest {
 
 === PropertiesRegistryTest
 
+[source,java]
 ....
 package org.superbiz.registry;
 
@@ -251,6 +255,7 @@ $ mvn clean install
 
 Lo que debería crear resultados como los siguientes.
 
+[source,console]
 ....
 -------------------------------------------------------
  T E S T S

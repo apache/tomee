@@ -20,6 +20,7 @@ package org.apache.openejb.jee.jpa;
 
 import junit.framework.TestCase;
 import org.apache.openejb.jee.JAXBContextFactory;
+import org.apache.openejb.jee.jpa.unit.JaxbPersistenceFactory;
 import org.apache.openejb.jee.jpa.unit.Persistence;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -95,6 +96,41 @@ public class PersistenceXmlTest extends TestCase {
         final Diff myDiff = new Diff(expected, actual);
         myDiff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
         assertTrue("Files are similar " + myDiff, myDiff.similar());
+    }
+
+    public void testPersistenceJakarta() throws Exception {
+
+        // make sure we can still parse previous versions
+        {
+            final URL resource = this.getClass().getClassLoader().getResource("persistence_2.0-example.xml");
+            final InputStream in = resource.openStream();
+
+            final Persistence element = JaxbPersistenceFactory.getPersistence(Persistence.class, in);
+
+            assertNotNull(element);
+            System.out.println("unmarshalled " + element);
+        }
+        {
+            final URL resource = this.getClass().getClassLoader().getResource("persistence-example.xml");
+            final InputStream in = resource.openStream();
+
+            final Persistence element = JaxbPersistenceFactory.getPersistence(Persistence.class, in);
+
+            assertNotNull(element);
+            System.out.println("unmarshalled " + element);
+        }
+
+        // try new jakarta namespace
+        {
+            final URL resource = this.getClass().getClassLoader().getResource("persistence_2.0-jakarta.xml");
+            final InputStream in = resource.openStream();
+
+            final Persistence element = JaxbPersistenceFactory.getPersistence(Persistence.class, in);
+
+            assertNotNull(element);
+            System.out.println("unmarshalled " + element);
+        }
+
     }
 
     private java.lang.String readContent(InputStream in) throws IOException {

@@ -104,6 +104,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
     private final TimeZone timezone;
     private final String rawValue;
+    private final boolean isExpired;
 
     public EJBCronTrigger(final ScheduleExpression expr) throws ParseException {
 
@@ -118,7 +119,32 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         timezone = expr.getTimezone() == null ? TimeZone.getDefault() : TimeZone.getTimeZone(expr.getTimezone());
         setStartTime(expr.getStart() == null ? new Date() : expr.getStart());
-        setEndTime(expr.getEnd());
+
+        /*
+         * @testName: endNeverExpires
+         *
+         * @test_Strategy: create a timer with year="currentYear - currentYear+1", and
+         * end="currentYear-1". The end value is prior to the year values, and this
+         * timer will never expire. Creating this timer will succeed, but any timer
+         * method access in a subsequent business method will result in
+         * NoSuchObjectLocalException.
+         *
+         * EJB32 TCK test tries to create an already expired Timer and it's supposed to not fail.
+         * This may happen whe you restart an application for instance.
+         * On the other hand, Quartz does not allow endTime to be before StartTime so we need to check first so we don't
+         * set the endDate but we flag up this timer as being expired.
+         *
+         * When the first time is computed we will fail and as a consequence TimerData will be flagged up as being expired.
+         * So if endDate is not set or endTime after startTime, then we can consider this timer as not expired.
+         * If endTime is set and it's before startTime, we swallow setEndTime to Quartz and set the expired flag to true
+         */
+        if (expr.getEnd() == null || !isBefore(expr.getEnd(), getStartTime())) {
+            setEndTime(expr.getEnd());
+            isExpired = false;
+
+        } else {
+            isExpired = true;
+        }
 
         // If parsing fails on a field, record the error and move to the next field
         final Map<Integer, ParseException> errors = new HashMap<>();
@@ -141,6 +167,10 @@ public class EJBCronTrigger extends CronTriggerImpl {
 
         rawValue = expr.getYear() + DELIMITER + expr.getMonth() + DELIMITER + expr.getDayOfMonth() + DELIMITER + expr.getDayOfWeek()
             + DELIMITER + expr.getHour() + DELIMITER + expr.getMinute() + DELIMITER + expr.getSecond();
+    }
+
+    private boolean isBefore(final Date end, final Date start) {
+        return start != null && end != null && start.after(end);
     }
 
     /**
@@ -354,7 +384,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
             } else if (currentFieldIndex >= 1) {
                 // No suitable value was found, so move back to the previous field
                 // and decrease the value
-                final int maxAffectedFieldType = upadteCalendar(calendar, expressions[currentFieldIndex - 1].field, -1);
+                final int maxAffectedFieldType = updateCalendar(calendar, expressions[currentFieldIndex - 1].field, -1);
                 currentFieldIndex = CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.get(maxAffectedFieldType);
                 resetFields(calendar, maxAffectedFieldType, true);
             } else {
@@ -365,6 +395,16 @@ public class EJBCronTrigger extends CronTriggerImpl {
         return calendar.after(stopCalendar) ? calendar.getTime() : null;
 
 
+    }
+
+    @Override
+    public Date computeFirstFireTime(final org.apache.openejb.quartz.Calendar calendar) {
+        // timer may be expired up on creation (see constructor comments)
+        if (isExpired) {
+            throw new TimerExpiredException(String.format("Timer %s expired.", this));
+        }
+
+        return super.computeFirstFireTime(calendar);
     }
 
     @Override
@@ -447,7 +487,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
                     // When current field is HOUR_OF_DAY, its upper field is DAY_OF_MONTH, so we need to -2 due to
                     // DAY_OF_WEEK.
                     final int parentFieldIndex = currentFieldIndex == 4 ? currentFieldIndex - 2 : currentFieldIndex - 1;
-                    final int maxAffectedFieldType = upadteCalendar(calendar, expressions[parentFieldIndex].field, 1);
+                    final int maxAffectedFieldType = updateCalendar(calendar, expressions[parentFieldIndex].field, 1);
                     currentFieldIndex = CALENDAR_FIELD_TYPE_ORDERED_INDEX_MAP.get(maxAffectedFieldType);
                     resetFields(calendar, maxAffectedFieldType, false);
                 }
@@ -491,7 +531,7 @@ public class EJBCronTrigger extends CronTriggerImpl {
      * @param field
      * @return
      */
-    private int upadteCalendar(final Calendar calendar, final int field, final int amount) {
+    private int updateCalendar(final Calendar calendar, final int field, final int amount) {
         final Calendar old = new GregorianCalendar(timezone);
         old.setTime(calendar.getTime());
         calendar.add(field, amount);

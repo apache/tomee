@@ -39,7 +39,6 @@ import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.sse.SseContextProvider;
-import org.apache.cxf.jaxrs.sse.SseEventSinkContextProvider;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
@@ -1236,7 +1235,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         private static final ClassLoader SYSTEM_LOADER = ClassLoader.getSystemClassLoader();
 
         public DefaultProviderComparator() {
-            super(null);
+            super(CxfUtil.getBus());
         }
 
         @Override

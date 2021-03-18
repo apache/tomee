@@ -1,4 +1,4 @@
-:index-group: Unrevised
+:index-group: JPA
 :jbake-type: page
 :jbake-status: status=published
 = Reload Persistence Unit Properties
