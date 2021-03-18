@@ -1,11 +1,14 @@
-= TomEE EAP 8.0.7-TT.2
+= TomEE EAP 8.0.6-TT.3
 
-=== Changes in TomEE EAP 8.0.7-TT.2
+=== Changes in TomEE EAP 8.0.6-TT.3
+* Updated Buncy castle to 1.68
+
+=== Changes in TomEE EAP 8.0.6 -TT.2
 * Update  myface to 2.3.8 to mitigate CVE-2021-26296
 * Update Tomcat to 9.0.43
 
 
-=== Changes in TomEE EAP 8.0.7-TT.1
+=== Changes in TomEE EAP 8.0.6-TT.1
 * Update  ActiveMQ to 5.16.1 to mitigate CVE-2021-26117
 * Updated commons-dbcp to 2.1-TT.1 to mitigate sonatype-2020-1349
 
