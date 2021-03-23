@@ -1,0 +1,57 @@
+:index-group: JPA
+:jbake-type: page
+:jbake-status: status=published
+= Recarregar propriedades do persistence unit
+
+Este exemplo tem como objetivo simular uma campanha de benchmark no JPA.
+
+Primeiro, você executará seu aplicativo e perceberá que precisa de um L2
+cache para estar em conformidade com o SLA (Service Level Agreement).
+
+Então, você altera sua configuração persistence.xml e reinicia sua
+aplicação, você espera um pouco porque está usando o OpenEJB;)… mas você
+espera.
+
+Portanto, para tentar ir mais rápido em uma campanha longa, basta alterar sua configuração em tempo de execução para testá-la e, quando funcionar, alterar seu arquivo de configuração para manter a modificação.
+
+Para fazer isso, podemos simplesmente usar o JMX.
+
+O OpenEJB registra automaticamente um MBean por entitymanager (persistence unit).
+
+Ele permite que você altere as propriedades do persistence unit, mesmo que mais seja possível.
+
+== Testando
+
+O teste é simples: persistimos uma entidade, a consultamos três vezes
+sem cache, então ativamos o cache e realizamos a execução novamente
+consulta que um é suficiente para fazer o mesmo.
+
+== Saída
+
+Na saída, encontramos as 3 partes descritas antes.
+
+[source,java]
+----
+INFO - TEST, data initialization
+DEBUG - <t 1523828380, conn 93608538> executing stmnt 1615782385 CREATE TABLE Person (id BIGINT NOT NULL, name VARCHAR(255), PRIMARY KEY (id))
+DEBUG - <t 1523828380, conn 93608538> [1 ms] spent
+DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 668144844 INSERT INTO Person (id, name) VALUES (?, ?) [params=?, ?]
+DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
+INFO - TEST, end of data initialization
+
+
+INFO - TEST, doing some queries without cache
+DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1093240870 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
+DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
+DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1983702821 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
+DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
+DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1178041898 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
+DEBUG - <t 1523828380, conn 1506565411> [1 ms] spent
+INFO - TEST, queries without cache done
+
+
+INFO - TEST, doing some queries with cache
+DEBUG - <t 1523828380, conn 1506565411> executing prepstmnt 1532943889 SELECT t0.name FROM Person t0 WHERE t0.id = ? [params=?]
+DEBUG - <t 1523828380, conn 1506565411> [0 ms] spent
+INFO - TEST, queries with cache done
+----

@@ -22,8 +22,8 @@ Official website: https://tomee.apache.org
 
 '''''
 
-* link:#to-start-using-tomee[To start using TomEE]
-* link:#to-start-developing-tomEE[To start developing TomEE]
+* link:#to-start-using-tomee[Start using TomEE]
+* link:#to-start-developing-tomEE[Start developing TomEE]
 * link:#contributing[Contributing]
 * link:#changelog[Changelog]
 * link:#license[License]
