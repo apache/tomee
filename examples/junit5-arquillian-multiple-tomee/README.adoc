@@ -43,15 +43,18 @@ public static WebArchive createDep2() {
 == Define `Deployment` context
 
 For each test method we have to define on which `Deployment` context the tests
-should be run. For that we use the `@OperateOnDeployment("war2")` annotation on our
-test method.
+should be run. For that we use the `@OperateOnDeployment("war2")` annotation on the related `URL` field.
 
 [source,java]
 ----
-@Test
+
+@ArquillianResource()
 @OperateOnDeployment("war2")
-public void testRunningInDep2(@ArquillianResource final URL url) throws IOException {
-    final String content = IO.slurp(url);
+private URL deployment2;
+
+@Test
+public void testRunningInDep2() throws IOException {
+    final String content = IO.slurp(deployment2);
     assertEquals("Hello from TomEE 2", content);
 }
 ----

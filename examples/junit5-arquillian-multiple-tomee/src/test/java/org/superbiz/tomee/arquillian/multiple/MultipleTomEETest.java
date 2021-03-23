@@ -37,6 +37,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(ArquillianExtension.class)
 public class MultipleTomEETest {
 
+    @ArquillianResource()
+    @OperateOnDeployment("war1")
+    private URL deployment1;
+
+    @ArquillianResource()
+    @OperateOnDeployment("war2")
+    private URL deployment2;
+
     @Deployment(name = "war1", testable = false)
     @TargetsContainer("tomee-1")
     public static WebArchive createDep1() {
@@ -52,16 +60,14 @@ public class MultipleTomEETest {
     }
 
     @Test
-    @OperateOnDeployment("war1")
-    public void testRunningInDep1(@ArquillianResource final URL url) throws IOException {
-        final String content = IO.slurp(url);
+    public void testRunningInDep1() throws IOException {
+        final String content = IO.slurp(deployment1);
         assertEquals("Hello from TomEE 1", content);
     }
 
     @Test
-    @OperateOnDeployment("war2")
-    public void testRunningInDep2(@ArquillianResource final URL url) throws IOException {
-        final String content = IO.slurp(url);
+    public void testRunningInDep2() throws IOException {
+        final String content = IO.slurp(deployment2);
         assertEquals("Hello from TomEE 2", content);
     }
 }

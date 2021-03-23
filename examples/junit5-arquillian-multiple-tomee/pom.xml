@@ -22,14 +22,14 @@
     <artifactId>junit5-multiple-tomee-arquillian</artifactId>
     <packaging>jar</packaging>
     <version>8.0.7-SNAPSHOT</version>
-    <name>TomEE :: Examples :: JUnit5 :: Multiple TomEE with Arquillian</name>
+    <name>TomEE :: Examples :: JUnit 5 :: Multiple TomEE with Arquillian</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <tomee.version>8.0.7-SNAPSHOT</tomee.version>
-        <junit.jupiter.version>5.7.0</junit.jupiter.version>
+        <junit.jupiter.version>5.8.0-M1</junit.jupiter.version>
 
         <!-- version >= 1.7.0.Alpha5 is required for JUnit5 -->
-        <arquillian.version>1.7.0.Alpha8</arquillian.version>
+        <arquillian.version>1.7.0.Alpha9</arquillian.version>
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -128,12 +128,6 @@
         <dependency>
             <groupId>org.jboss.arquillian.junit5</groupId>
             <artifactId>arquillian-junit5-container</artifactId>
-            <version>${arquillian.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-container-test-api</artifactId>
             <version>${arquillian.version}</version>
             <scope>test</scope>
         </dependency>
