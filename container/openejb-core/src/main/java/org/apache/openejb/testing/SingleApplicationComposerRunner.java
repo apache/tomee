@@ -16,12 +16,6 @@
  */
 package org.apache.openejb.testing;
 
-import org.apache.openejb.core.ThreadContext;
-import org.apache.openejb.util.JavaSecurityManagers;
-import org.apache.webbeans.config.WebBeansContext;
-import org.apache.webbeans.inject.OWBInjector;
-import org.apache.xbean.finder.AnnotationFinder;
-import org.apache.xbean.finder.archive.FileArchive;
 import org.junit.rules.MethodRule;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -31,19 +25,12 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
-import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 // goal is to share the same container for all embedded tests and hold the config there
 // only works if all tests use the same config
 public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
-    private static volatile boolean started = false;
-    private static final AtomicReference<Object> APP = new AtomicReference<>();
-    private static final AtomicReference<Thread> HOOK = new AtomicReference<>();
+    private static final SingleApplicationComposerBase BASE = new SingleApplicationComposerBase();
 
     // use when you use another runner like Parameterized of JUnit
     public static class Rule implements TestRule {
@@ -58,8 +45,8 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
             return new Statement() {
                 @Override
                 public void evaluate() throws Throwable {
-                    start(test.getClass());
-                    composerInject(test);
+                    BASE.start(test.getClass());
+                    BASE.composerInject(test);
                     base.evaluate();
                 }
             };
@@ -69,22 +56,12 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
     public static class Start extends RunListener {
         @Override
         public void testStarted(final Description description) throws Exception {
-            start(null);
+            BASE.start(null);
         }
     }
 
     public static void setApp(final Object o) {
-        APP.set(o);
-    }
-
-    public static void close() {
-        final Thread hook = HOOK.get();
-        if (hook != null) {
-            hook.run();
-            Runtime.getRuntime().removeShutdownHook(hook);
-            HOOK.compareAndSet(hook, null);
-            APP.set(null);
-        }
+        BASE.setApp(o);
     }
 
     public SingleApplicationComposerRunner(final Class<?> klass) throws InitializationError {
@@ -100,116 +77,13 @@ public class SingleApplicationComposerRunner extends BlockJUnit4ClassRunner {
                 return new Statement() {
                     @Override
                     public void evaluate() throws Throwable {
-                        start(getTestClass().getJavaClass());
-                        composerInject(target);
+                        BASE.start(getTestClass().getJavaClass());
+                        BASE.composerInject(target);
                         base.evaluate();
                     }
                 };
             }
         });
         return rules;
-    }
-
-    private static void start(final Class<?> marker) throws Exception {
-        if (APP.get() == null) {
-            final Class<?> type;
-            final String typeStr = JavaSecurityManagers.getSystemProperty("tomee.application-composer.application");
-            if (typeStr != null) {
-                try {
-                    type = Thread.currentThread().getContextClassLoader().loadClass(typeStr);
-                } catch (final ClassNotFoundException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            } else if (marker == null) {
-                throw new IllegalArgumentException("set tomee.application-composer.application system property or add a marker to the rule or runner");
-            } else {
-                final Iterator<Class<?>> descriptors =
-                    new AnnotationFinder(new FileArchive(Thread.currentThread().getContextClassLoader(), jarLocation(marker)), false)
-                        .findAnnotatedClasses(Application.class).iterator();
-                if (!descriptors.hasNext()) {
-                    throw new IllegalArgumentException("No descriptor class using @Application");
-                }
-                type = descriptors.next();
-                if (descriptors.hasNext()) {
-                    throw new IllegalArgumentException("Ambiguous @Application: " + type + ", " + descriptors.next());
-                }
-            }
-            try {
-                APP.compareAndSet(null, type.newInstance());
-            } catch (final InstantiationException | IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        if (!started) {
-            final Object app = APP.get();
-            final ApplicationComposers composers = new ApplicationComposers(app.getClass()) {
-                @Override
-                public void deployApp(final Object inputTestInstance) throws Exception {
-                    super.deployApp(inputTestInstance);
-                    if (!started) {
-                        final ThreadContext previous = ThreadContext.getThreadContext(); // done here for logging
-                        final ApplicationComposers comp = this;
-                        final Thread hook = new Thread() {
-                            @Override
-                            public void run() {
-                                try {
-                                    comp.after();
-                                } catch (final Exception e) {
-                                    ThreadContext.exit(previous);
-                                    throw new IllegalStateException(e);
-                                }
-                            }
-                        };
-                        HOOK.set(hook);
-                        Runtime.getRuntime().addShutdownHook(hook);
-                        started = true;
-                    }
-                }
-            };
-            composers.before(app);
-            composers.handleLifecycle(app.getClass(), app);
-        }
-    }
-
-    private static void composerInject(final Object target) throws IllegalAccessException {
-        WebBeansContext wbc = null;
-        try {
-            wbc = WebBeansContext.currentInstance();
-        } catch (final IllegalStateException ise) {
-            // no-op
-        }
-        if (wbc != null) {
-            OWBInjector.inject(wbc.getBeanManagerImpl(), target, null);
-        }
-
-        final Object app = APP.get();
-        final Class<?> aClass = target.getClass();
-        for (final Field f : aClass.getDeclaredFields()) {
-            if (f.isAnnotationPresent(RandomPort.class)) {
-                for (final Field field : app.getClass().getDeclaredFields()) {
-                    if (field.getType() ==  f.getType()) {
-                        if (!field.isAccessible()) {
-                            field.setAccessible(true);
-                        }
-                        if (!f.isAccessible()) {
-                            f.setAccessible(true);
-                        }
-
-                        final Object value = field.get(app);
-                        f.set(target, value);
-                        break;
-                    }
-                }
-            } else if (f.isAnnotationPresent(Application.class)) {
-                if (!f.isAccessible()) {
-                    f.setAccessible(true);
-                }
-                f.set(target, app);
-            }
-        }
-        final Class<?> superclass = aClass.getSuperclass();
-        if (superclass != Object.class) {
-            composerInject(superclass);
-        }
     }
 }
