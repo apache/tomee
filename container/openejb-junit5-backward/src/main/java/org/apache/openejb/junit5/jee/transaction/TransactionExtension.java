@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.junit5.jee.transaction;
 
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.core.transaction.JtaTransactionPolicyFactory;
 import org.apache.openejb.core.transaction.TransactionPolicy;
 import org.apache.openejb.core.transaction.TransactionType;
@@ -30,7 +31,8 @@ public class TransactionExtension implements AfterTestExecutionCallback {
 
     @Override
     public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
-        final Method mtd = extensionContext.getTestMethod().get();
+        final Method mtd = extensionContext.getTestMethod()
+                .orElseThrow(() -> new OpenEJBRuntimeException("Could not get test method from extension context."));
         final Transaction tx = mtd.getAnnotation(Transaction.class);
         if (tx != null) {
             final TransactionManager transactionManager = SystemInstance.get().getComponent(TransactionManager.class);
