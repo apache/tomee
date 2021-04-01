@@ -53,7 +53,7 @@ http://tomee.apache.org/community/sources.html[Contribute to TomEE]
 section from the official website for a complete Git, Github, Build,
 Test, and Continuous Integration details.
 
-==== Quick build
+==== Quick Build
 
 If you only like to compile all classes and package up TomEE _without_
 running tests then you can use the following build options
