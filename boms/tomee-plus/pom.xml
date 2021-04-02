@@ -114,7 +114,7 @@
     <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>3.0.8</version>
+      <version>3.0.11</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -235,7 +235,7 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -444,7 +444,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,7 +455,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -466,7 +466,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -477,7 +477,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -488,7 +488,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -499,7 +499,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -510,7 +510,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -521,7 +521,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -532,7 +532,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -543,7 +543,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -554,7 +554,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -565,7 +565,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-json-basic</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -576,7 +576,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -587,7 +587,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -598,7 +598,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -609,7 +609,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -620,7 +620,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -631,7 +631,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -642,7 +642,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -653,7 +653,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -664,7 +664,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -675,7 +675,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -686,7 +686,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -697,7 +697,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -708,7 +708,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -719,7 +719,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>3.3.8</version>
+      <version>3.4.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1962,7 +1962,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1973,7 +1973,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>txw2</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
