@@ -109,6 +109,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
     protected boolean enabled = true;
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
+    /**
+     * Deployment of JAX-RS services starts in response to a AfterApplicationCreated event
+     * after normal deployment is done
+     * @param appInfo the ear (real or auto-created) in which the webapp is contained
+     * @param webApp the webapp containing EJB or Pojo rest services to deploy
+     */
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
         if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
             return;
