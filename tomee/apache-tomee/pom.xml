@@ -506,6 +506,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.patch</groupId>
+        <artifactId>tomee-patch-plugin</artifactId>
+        <version>0.4-SNAPSHOT</version>
+        <configuration>
+          <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
+          <skipTransform>true</skipTransform>
+          <createTarGz>true</createTarGz>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
