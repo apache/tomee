@@ -155,6 +155,15 @@ public class Logs {
 
             return method.compareTo(o.method);
         }
+
+        @Override
+        public String toString() {
+            return "LogOperationEndpointInfo{" +
+                    "http='" + http + '\'' +
+                    ", address='" + address + '\'' +
+                    ", method='" + method + '\'' +
+                    '}';
+        }
     }
 
     public static class LogResourceEndpointInfo implements Comparable<LogResourceEndpointInfo> {
