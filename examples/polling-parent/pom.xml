@@ -79,29 +79,17 @@
     <dependencies>
       <!-- API -->
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>[8.0,)</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-api</artifactId>
-        <version>${tomee.version}</version>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-plus-api</artifactId>
+        <version>8.0.7-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
 
       <!-- impl - for standard code scope test is fine -->
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-core</artifactId>
-        <version>${tomee.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-rs</artifactId>
-        <version>${tomee.version}</version>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-plus-api</artifactId>
+        <version>8.0.7-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
 
