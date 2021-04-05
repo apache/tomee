@@ -81,7 +81,13 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
       <version>8.0.7-SNAPSHOT</version>
-      <scope>test</scope>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.tomee</groupId>
+          <artifactId>tomee-security</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
