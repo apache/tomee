@@ -30,7 +30,7 @@ Official website: https://tomee.apache.org
 
 '''''
 
-=== To start using TomEE
+=== Start using TomEE
 
 You can use TomEE to deploy Jakarta EE, Microprofile and Java EE
 compliant applications.
@@ -44,7 +44,7 @@ available in the official website.
 * The dozens of application included in the examples/ folder of the
 project.
 
-=== To start developing TomEE
+=== Start developing TomEE
 
 TomEE is open source and you can help in its creation.
 
