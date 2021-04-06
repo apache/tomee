@@ -9,11 +9,11 @@ stars]]
 Apache TomEE is a lightweight, yet powerful, JavaEE Application server
 with feature rich tooling.
 
-Is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
+It is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
 TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile
 compliant application server.
 
-The application server is totally open source and created with the
+The application server is completely open source and created with
 community efforts for the public good. Collaborative consensus and
 peer review according to the Apache Foundation guidelines are used to
 guarantee the highest quality standards.
