@@ -151,6 +151,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
@@ -1387,7 +1389,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         public Object newInstance(final Class<?> clazz) throws Exception {
             boolean found = false;
             Object instance = null;
-            for (final Constructor<?> c : clazz.getConstructors()) {
+
+            /*
+             * When there are multiple constructors, we must favor the one with the most arguments
+             * Tested in TCK com/sun/ts/tests/jaxrs/spec/provider/visibility
+             */
+            final List<? extends Constructor<?>> constructors = Stream.of(clazz.getConstructors())
+                    .sorted((a, b) -> Integer.compare(b.getParameterCount(), a.getParameterCount()))
+                    .collect(Collectors.toList());
+
+            for (final Constructor<?> c : constructors) {
                 int contextAnnotations = 0;
                 for (final Annotation[] annotations : c.getParameterAnnotations()) {
                     for (final Annotation a : annotations) {
