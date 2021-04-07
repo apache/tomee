@@ -111,8 +111,8 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
       <version>[8.0,)</version>
       <scope>provided</scope>
     </dependency>
@@ -123,22 +123,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-embedded</artifactId>
-      <version>${tomee.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webservices</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <version>8.0.7-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>ziplock</artifactId>
       <version>${tomee.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>

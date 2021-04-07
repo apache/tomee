@@ -30,27 +30,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-finder-shaded</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-reflect</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>jline</groupId>
@@ -62,8 +44,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
