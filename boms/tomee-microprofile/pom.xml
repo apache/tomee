@@ -246,7 +246,7 @@
     <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
-      <version>7.3.0</version>
+      <version>7.5.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1929,7 +1929,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-core</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1940,7 +1940,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-profile-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1951,7 +1951,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1962,7 +1962,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1973,7 +1973,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1984,7 +1984,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1995,7 +1995,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-soap-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2006,7 +2006,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2017,7 +2017,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2028,7 +2028,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2039,7 +2039,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2050,7 +2050,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2061,7 +2061,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
