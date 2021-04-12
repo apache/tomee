@@ -1,4 +1,8 @@
-= TomEE EAP 8.0.6-TT.3
+= TomEE EAP 8.0.6-TT.4
+
+=== Changes in TomEE EAP 8.0.6-TT.4
+* Updated Tomcat to 9.0.45
+* Updated CXF to 3.3.10 to mitigate CVE-2021-22696
 
 === Changes in TomEE EAP 8.0.6-TT.3
 * Updated Buncy castle to 1.68
