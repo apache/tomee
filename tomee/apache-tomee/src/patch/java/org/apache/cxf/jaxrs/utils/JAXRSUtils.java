@@ -1025,13 +1025,14 @@ public final class JAXRSUtils {
         MessageContext mc = new MessageContextImpl(m);
         MediaType mt = mc.getHttpHeaders().getMediaType();
 
+        final String entry = decode ? FormUtils.FORM_PARAM_MAP : FormUtils.FORM_PARAM_MAP + ".encoded";
         @SuppressWarnings("unchecked")
         MultivaluedMap<String, String> params =
-            (MultivaluedMap<String, String>)m.get(FormUtils.FORM_PARAM_MAP);
+            (MultivaluedMap<String, String>)m.get(entry);
 
         if (params == null) {
             params = new MetadataMap<>();
-            m.put(FormUtils.FORM_PARAM_MAP, params);
+            m.put(entry, params);
 
             if (mt == null || mt.isCompatible(MediaType.APPLICATION_FORM_URLENCODED_TYPE)) {
                 InputStream entityStream = copyAndGetEntityStream(m);
@@ -1895,16 +1896,16 @@ public final class JAXRSUtils {
         LOG.severe(errorMessage);
         return errorMessage;
     }
-    
+
     /**
-     * Get path URI template, combining base path, class & method & subresource templates 
+     * Get path URI template, combining base path, class & method & subresource templates
      * @param message message instance
      * @param cri class resource info
      * @param ori operation resource info
      * @param subOri operation subresource info
      * @return the URI template for the method in question
      */
-    public static String getUriTemplate(Message message, ClassResourceInfo cri, OperationResourceInfo ori, 
+    public static String getUriTemplate(Message message, ClassResourceInfo cri, OperationResourceInfo ori,
             OperationResourceInfo subOri) {
         final String template = getUriTemplate(message, cri, ori);
         final String methodPathTemplate = getUriTemplate(subOri);
@@ -1912,7 +1913,7 @@ public final class JAXRSUtils {
     }
 
     /**
-     * Get path URI template, combining base path, class & method templates 
+     * Get path URI template, combining base path, class & method templates
      * @param message message instance
      * @param cri class resource info
      * @param ori operation resource info
@@ -1931,14 +1932,14 @@ public final class JAXRSUtils {
         } else if (!template.startsWith("/")) {
             template = "/" + template;
         }
-        
+
         template = combineUriTemplates(template, classPathTemplate);
         return combineUriTemplates(template, methodPathTemplate);
     }
-    
+
     /**
      * Gets the URI template of the operation from its resource info
-     * to assemble final URI template 
+     * to assemble final URI template
      * @param ori operation resource info
      * @return URI template
      */
@@ -1950,10 +1951,10 @@ public final class JAXRSUtils {
             return null;
         }
     }
-    
+
     /**
      * Goes over sub-resource class resource templates (through parent chain) if necessary
-     * to assemble final URI template 
+     * to assemble final URI template
      * @param cri root or subresource class resource info
      * @return URI template chain
      */
@@ -1967,7 +1968,7 @@ public final class JAXRSUtils {
             return null; /* should not happen */
         }
     }
-    
+
     /**
      * Combines two URI templates together
      * @param parent parent URI template
@@ -1981,7 +1982,7 @@ public final class JAXRSUtils {
 
         // The way URI templates are normalized in org.apache.cxf.jaxrs.model.URITemplate:
         //  - empty or null become "/"
-        //  - "/" is added at the start if not present 
+        //  - "/" is added at the start if not present
         if ("/".equals(parent)) {
             return child;
         } else if ("/".equals(child)) {
@@ -1996,7 +1997,7 @@ public final class JAXRSUtils {
 
     // copy the input stream so that it is not inadvertently closed
     private static InputStream copyAndGetEntityStream(Message m) {
-        LoadingByteArrayOutputStream baos = new LoadingByteArrayOutputStream(); 
+        LoadingByteArrayOutputStream baos = new LoadingByteArrayOutputStream();
         try (InputStream in = m.getContent(InputStream.class)) {
             IOUtils.copy(in, baos);
         } catch (IOException e) {
