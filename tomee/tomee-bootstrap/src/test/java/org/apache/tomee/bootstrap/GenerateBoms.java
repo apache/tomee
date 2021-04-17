@@ -362,6 +362,7 @@ public class GenerateBoms {
                 .map(from)
                 .filter(Objects::nonNull)
                 .sorted()
+                .distinct()
                 .forEach(distribution.artifacts::add);
 
         return distribution;
@@ -567,8 +568,7 @@ public class GenerateBoms {
     /**
      * A simple representation of a Maven Coordinate
      */
-    @Getter
-    @ToString
+    @Data
     @lombok.Builder(toBuilder = true)
     public static class Artifact implements Comparable<Artifact> {
         private final String groupId;
