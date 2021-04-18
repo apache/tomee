@@ -36,12 +36,35 @@
   <properties>
     <tomee.build.name>${project.groupId}.tomee.plume.webapp</tomee.build.name>
   </properties>
+
   <dependencies>
 
+    <dependency><!-- needed by myfaces -->
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons-beanutils.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>javaee-api</artifactId>
+      <classifier>tomcat</classifier>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mp-common</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-client</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -87,8 +110,55 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-ejbd</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-hsql</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-http</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>openejb-rest</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-server</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>${project.groupId}</groupId>
@@ -109,6 +179,22 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-catalina</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
@@ -125,9 +211,49 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>tomee-webapp</artifactId>
+      <artifactId>tomee-jaxrs</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-loader</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+        <exclusion><!-- 'provided' -->
+          <groupId>org.apache.tomcat</groupId>
+          <artifactId>tomcat-catalina</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-mojarra</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-security</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>javaee-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -164,14 +290,61 @@
       </exclusions>
     </dependency>
     <dependency>
+      <groupId>org.apache.geronimo.javamail</groupId>
+      <artifactId>geronimo-javamail_1.6_mail</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.johnzon</groupId>
+      <artifactId>johnzon-jsonp-strict</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+      <version>${openwebbeans.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-coyote</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-juli</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>taglibs-shade</artifactId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.swizzle</groupId>
+      <artifactId>swizzle-stream</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <version>3.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.glassfish</groupId>
@@ -184,7 +357,6 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
-
   <build>
     <plugins>
       <!-- Looks like the war still have myfaces because of the overlay with tomee-webapp -->

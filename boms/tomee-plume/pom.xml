@@ -189,17 +189,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.2</version>
@@ -1555,17 +1544,6 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-security</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webapp</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
