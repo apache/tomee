@@ -29,12 +29,9 @@
     <fileSet>
       <directory>target/maven-shared-archive-resources</directory>
       <outputDirectory>/</outputDirectory>
-      <excludes>
-        <exclude>*.pom</exclude>
-      </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}</directory>
+      <directory>${project.basedir}</directory>
       <includes>
         <include>README.txt</include>
       </includes>
@@ -44,47 +41,61 @@
       <outputDirectory>/</outputDirectory>
     </fileSet>
     <fileSet>
-      <directory>${project.build.directory}/webjars-resources/META-INF/resources</directory>
-      <outputDirectory>/</outputDirectory>
-    </fileSet>
-    <fileSet>
       <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
-        <exclude>META-INF/org.apache.tomee/**</exclude>
         <exclude>org/**</exclude>
-        <exclude>**/LICENSE</exclude>
-        <exclude>**/NOTICE</exclude>
-        <exclude>**/LICENSE.txt</exclude>
-        <exclude>**/NOTICE.txt</exclude>
+        <exclude>META-INF/LICENSE</exclude>
+        <exclude>META-INF/NOTICE</exclude>
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target/classes</directory>
+      <directory>${project.basedir}/target/classes</directory>
       <outputDirectory>WEB-INF/classes</outputDirectory>
       <excludes>
-        <exclude>**/META-INF/org.apache.tomee/service-jar.xml</exclude>
-        <exclude>**/LICENSE</exclude>
-        <exclude>**/NOTICE</exclude>
-        <exclude>**/LICENSE.txt</exclude>
-        <exclude>**/NOTICE.txt</exclude>
+        <exclude>META-INF/LICENSE</exclude>
+        <exclude>META-INF/NOTICE</exclude>
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>${basedir}/target</directory>
-      <outputDirectory>lib</outputDirectory>
+      <directory>${project.build.directory}/${project.artifactId}-${project.version}/</directory>
+      <outputDirectory>/</outputDirectory>
       <includes>
-        <include>openejb-tomcat*.jar</include>
+        <include>WEB-INF/web.xml</include>
+        <include>WEB-INF/classes/**</include>
+        <include>**/*.html</include>
+        <include>**/*.css</include>
+        <include>**/*.js</include>
+        <!-- libs are handled with dependencies because exclude don't work too well bellow -->
+        <!-- if some deps are missing, they should be added as project dependencies -->
+        <include>lib/*.jar</include>
       </includes>
+      <excludes>
+        <exclude>%regex[(WEB-INF/)?lib/(tomee-)?myfaces(-api|-impl)?-.*.jar]</exclude>
+      </excludes>
     </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
       <outputDirectory>lib</outputDirectory>
-      <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}</outputFileNameMapping>
       <scope>runtime</scope>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <useTransitiveFiltering>true</useTransitiveFiltering>
       <excludes>
+        <!-- provided -->
+        <exclude>org.apache.tomcat:*</exclude>
+        <exclude>org.apache.myfaces:*</exclude>
+
+        <!-- should be in a pom exclusion but it does perfectly the trick -->
+        <exclude>org.springframework:*</exclude>
+
+        <!-- wars and pom -->
+        <exclude>*:war</exclude>
         <exclude>*:pom</exclude>
+        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.5_spec</exclude>
+        <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.5_mail</exclude>
+        <exclude>org.apache.geronimo.specs:geronimo-javamail_1.4_spec</exclude>
+        <exclude>org.apache.geronimo.javamail:geronimo-javamail_1.4_mail</exclude>
       </excludes>
     </dependencySet>
     <dependencySet>

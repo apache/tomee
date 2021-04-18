@@ -31,7 +31,7 @@
 
   <artifactId>tomee-plume-webapp</artifactId>
   <name>TomEE :: TomEE :: Plume Webapp</name>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <properties>
     <tomee.build.name>${project.groupId}.tomee.plume.webapp</tomee.build.name>
