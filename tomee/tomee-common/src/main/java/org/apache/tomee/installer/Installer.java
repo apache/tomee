@@ -36,6 +36,7 @@ public class Installer implements InstallerInterface {
 
     private static final boolean LISTENER_INSTALLED;
     private static final boolean AGENT_INSTALLED;
+
     static {
         final Options opts = SystemInstance.get().getOptions();
         // is the OpenEJB listener installed
@@ -284,6 +285,8 @@ public class Installer implements InstallerInterface {
 */
 
     private void moveLibs() {
+        final String tomeeVersion = System.getProperty("tomee.version");
+
         final File libs = paths.getCatalinaLibDir();
         final File[] files = paths.getOpenEJBLibDir().listFiles();
         if (files != null) {
@@ -291,24 +294,54 @@ public class Installer implements InstallerInterface {
                 if (file.isDirectory()) {
                     continue;
                 }
-                if (!file.getName().endsWith(".jar")) {
+
+                final String name = normalizeVersion(tomeeVersion, file.getName());
+
+                if (!name.endsWith(".jar")) {
                     continue;
                 }
 
                 try {
-                    Installers.copyFile(file, new File(libs, file.getName()));
+                    Installers.copyFile(file, new File(libs, name));
                     if (!file.delete()) {
                         file.deleteOnExit();
                     }
-                    alerts.addInfo("Copy " + file.getName() + " to lib");
+                    alerts.addInfo("Copy " + name + " to lib");
                 } catch (final IOException e) {
-                    alerts.addError("Unable to " + file.getName() + " to Tomcat lib directory.  This will need to be " +
+                    alerts.addError("Unable to " + name + " to Tomcat lib directory.  This will need to be " +
                             "performed manually.", e);
                 }
             }
         }
     }
 
+    /**
+     * Maven will occasionally give a datestamped version of a snapshot.  Our TCK
+     * test harness and likely tooling others have expects the version number to
+     * be predictable ("8.0.7-SNAPSHOT" or "8.0.5") so it can build paths without
+     * fancy logic, i.e. a simple "openejb-core-" + version +" .jar"
+     *
+     * This doesn't work if the version number essentially contains a random string.
+     *
+     * If we see any Maven datestamps on our jars where we are expecting SNAPSHOT,
+     * rename the jar to the expected "-SNAPSHOT" name.
+     */
+    public static String normalizeVersion(final String tomeeVersion, final String jarName) {
+        if (!tomeeVersion.contains("-SNAPSHOT")) return jarName;
+
+        final String versionNumber = tomeeVersion.replaceAll("-SNAPSHOT", "");
+        if (!jarName.contains(versionNumber)) return jarName;
+
+        // Replace 8.0.7-20210418.035728-165 with 8.0.7-SNAPSHOT
+
+        final String regex = ""
+                // turn 8.0.7 into 8\.0\.7
+                + versionNumber.replace(".", "\\.")
+                // replace the 'd' with '[0-9]'
+                + "-dddddddd.dddddd-ddd".replace("d", "[0-9]");
+
+        return jarName.replaceAll(regex, tomeeVersion);
+    }
     /*
     private void addJavaeeInEndorsed() {
         final File endorsed = new File(paths.getCatalinaHomeDir(), "endorsed");
@@ -550,14 +583,14 @@ public class Installer implements InstallerInterface {
         }
 
         boolean isCatalinaShExecutable = paths.getCatalinaShFile().canExecute();
-        if(!isCatalinaShExecutable) {
+        if (!isCatalinaShExecutable) {
             try {
                 isCatalinaShExecutable = paths.getCatalinaShFile().setExecutable(true);
             } catch (final SecurityException e) {
                 alerts.addWarning("Cannot change CatalinaSh executable attribute.");
             }
         }
-        if(!isCatalinaShExecutable) {
+        if (!isCatalinaShExecutable) {
             alerts.addWarning("CatalinaSh is not executable.");
         }
 
@@ -722,20 +755,20 @@ public class Installer implements InstallerInterface {
                 systemPropertiesWriter = new FileWriter(openejbSystemProperties);
 
                 systemPropertiesWriter.write("# Licensed to the Apache Software Foundation (ASF) under one or more\n" +
-                                             "# contributor license agreements.  See the NOTICE file distributed with\n" +
-                                             "# this work for additional information regarding copyright ownership.\n" +
-                                             "# The ASF licenses this file to You under the Apache License, Version 2.0\n" +
-                                             "# (the \"License\"); you may not use this file except in compliance with\n" +
-                                             "# the License.  You may obtain a copy of the License at\n" +
-                                             "#\n" +
-                                             "#     http://www.apache.org/licenses/LICENSE-2.0\n" +
-                                             "#\n" +
-                                             "# Unless required by applicable law or agreed to in writing, software\n" +
-                                             "# distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
-                                             "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
-                                             "# See the License for the specific language governing permissions and\n" +
-                                             "# limitations under the License.\n" +
-                                             "\n");
+                        "# contributor license agreements.  See the NOTICE file distributed with\n" +
+                        "# this work for additional information regarding copyright ownership.\n" +
+                        "# The ASF licenses this file to You under the Apache License, Version 2.0\n" +
+                        "# (the \"License\"); you may not use this file except in compliance with\n" +
+                        "# the License.  You may obtain a copy of the License at\n" +
+                        "#\n" +
+                        "#     http://www.apache.org/licenses/LICENSE-2.0\n" +
+                        "#\n" +
+                        "# Unless required by applicable law or agreed to in writing, software\n" +
+                        "# distributed under the License is distributed on an \"AS IS\" BASIS,\n" +
+                        "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
+                        "# See the License for the specific language governing permissions and\n" +
+                        "# limitations under the License.\n" +
+                        "\n");
 
 
                 systemPropertiesWriter.write("# all this properties are added at JVM system properties at startup\n");
@@ -744,8 +777,8 @@ public class Installer implements InstallerInterface {
 
                 systemPropertiesWriter.write("\n");
                 systemPropertiesWriter.write(
-                    "# allowed packages to be deserialized, by security we denied all by default, " +
-                    "tune tomee.serialization.class.whitelist packages to change it\n");
+                        "# allowed packages to be deserialized, by security we denied all by default, " +
+                                "tune tomee.serialization.class.whitelist packages to change it\n");
                 systemPropertiesWriter.write("# tomee.remote.support = true\n");
                 systemPropertiesWriter.write("tomee.serialization.class.blacklist = *\n");
                 systemPropertiesWriter.write("# tomee.serialization.class.whitelist = my.package\n");
