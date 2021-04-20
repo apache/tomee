@@ -246,8 +246,17 @@ public class DefaultServlet extends HttpServlet {
 
     /**
      * If a file has a BOM, should that be used in preference to fileEncoding?
+     *
+     * - true  - BoM is stripped if present and any BoM found used to determine
+     *            the encoding used to read the resource. This is the default.
+     *
+     * - false - BoM is stripped and resource is read using the configured file
+     *            encoding (which will be the platform default if not explicitly
+     *            configured)
+     *
+     * - path-through - as current false but does not strip the BoM from the output
      */
-    private boolean useBomIfPresent = true;
+    private String useBomIfPresent = "true";
 
     /**
      * Minimum size for sendfile usage in bytes.
@@ -335,8 +344,15 @@ public class DefaultServlet extends HttpServlet {
             }
         }
 
-        if (getServletConfig().getInitParameter("useBomIfPresent") != null) {
-            useBomIfPresent = Boolean.parseBoolean(getServletConfig().getInitParameter("useBomIfPresent"));
+        final String useBomIfPresentConfig = getServletConfig().getInitParameter("useBomIfPresent");
+        if (useBomIfPresentConfig != null) {
+            if (!Arrays.asList("true", "false", "pass-through").contains(useBomIfPresentConfig)) {
+                if (debug > 0) {
+                    log("DefaultServlet.init:  unsupported value " + useBomIfPresentConfig + " for useBomIfPresent." +
+                        " One of 'true', 'false', 'pass-through' is expected. Using 'true' by default.");
+                }
+            }
+            useBomIfPresent = useBomIfPresentConfig;
         }
 
         globalXsltFile = getServletConfig().getInitParameter("globalXsltFile");
@@ -1083,8 +1099,8 @@ public class DefaultServlet extends HttpServlet {
                             if (!renderResult.markSupported()) {
                                 renderResult = new BufferedInputStream(renderResult);
                             }
-                            Charset bomCharset = processBom(renderResult);
-                            if (bomCharset != null && useBomIfPresent) {
+                            Charset bomCharset = processBom(renderResult, isStripBOM());
+                            if (bomCharset != null && "true".equals(useBomIfPresent)) {
                                 inputEncoding = bomCharset.name();
                             }
                         }
@@ -1105,8 +1121,8 @@ public class DefaultServlet extends HttpServlet {
                             if (!source.markSupported()) {
                                 source = new BufferedInputStream(source);
                             }
-                            Charset bomCharset = processBom(source);
-                            if (bomCharset != null && useBomIfPresent) {
+                            Charset bomCharset = processBom(source, isStripBOM());
+                            if (bomCharset != null && "true".equals(useBomIfPresent)) {
                                 inputEncoding = bomCharset.name();
                             }
                             // Following test also ensures included resources

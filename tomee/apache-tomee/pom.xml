@@ -129,6 +129,14 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
+
+    <!-- needed to compile in intellij for tomcat patches -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
