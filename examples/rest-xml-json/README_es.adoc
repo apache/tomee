@@ -17,7 +17,7 @@ es una plantilla de ruta de URI parcial relativa al URI base del servidor en el 
 responde el servlet auxiliar de Jersey.
 La anotación @Produces se utiliza para especificar los tipos de medios MIME o las representaciones que un recurso puede producir y enviar al cliente.
 Si @Produces se aplica en
-el nivel de clase, todos los métodos de un recurso pueden producir los tipos MIME especificados de forma predeterminada. Si se aplica a nivel de método, sobrescribir cualquier @Produces
+el nivel de clase, todos los métodos de un recurso pueden producir los tipos MIME especificados de forma predeterminada. Si se aplica a nivel de método, sobrescribe cualquier @Produces
 anotaciones aplicadas a nivel de clase.
 La anotación @Consumes se utiliza para especificar qué tipos de representaciones de medios MIME puede aceptar o consumir un recurso del cliente.
 Si se aplica @Consumes
@@ -59,8 +59,8 @@ public class GreetingService {
 
 La prueba usa el ApplicationComposer de OpenEJB para hacerlo trivial.
 
-La idea es primero activar los servicios jaxrs. Esto se hace usando
-Anotación @EnableServices.
+La idea es primero activar los servicios jaxrs. Esto se hace usando la
+anotación @EnableServices.
 
 Luego creamos sobre la marcha la aplicación simplemente devolviendo un objeto
 que representa el web.xml. Aquí simplemente lo usamos para definir el contexto
@@ -138,7 +138,7 @@ public class GreetingServiceTest {
 
 #Running
 
-Ejecutar el ejemplo es bastante simple. En el directorio ``rest-xml-json''
+Ejecutar el ejemplo es bastante simple. En el directorio `rest-xml-json`
 run:
 
 [source,java]
