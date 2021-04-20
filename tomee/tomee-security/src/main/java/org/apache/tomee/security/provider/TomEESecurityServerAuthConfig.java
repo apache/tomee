@@ -49,7 +49,7 @@ public class TomEESecurityServerAuthConfig implements ServerAuthConfig {
 
     @Override
     public String getAuthContextID(final MessageInfo messageInfo) throws IllegalArgumentException {
-        return null;
+        return appContext; // not sure what's the difference with getAppContext()
     }
 
     @Override

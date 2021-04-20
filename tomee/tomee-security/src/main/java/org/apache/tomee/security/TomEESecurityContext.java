@@ -19,8 +19,11 @@ package org.apache.tomee.security;
 import org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.realm.GenericPrincipal;
+import org.apache.openejb.core.security.JaccProvider;
+import org.apache.openejb.core.security.jacc.BasicJaccProvider;
 import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.SecurityService;
+import org.apache.openejb.util.JavaSecurityManagers;
 import org.apache.tomee.catalina.OpenEJBSecurityListener;
 import org.apache.tomee.catalina.TomcatSecurityService;
 import org.apache.tomee.security.message.TomEEMessageInfo;
@@ -47,9 +50,12 @@ import java.util.Set;
 import static javax.security.auth.message.AuthStatus.SEND_CONTINUE;
 import static javax.security.auth.message.AuthStatus.SEND_FAILURE;
 import static javax.security.auth.message.AuthStatus.SUCCESS;
+import static org.apache.tomee.catalina.Contexts.toAppContext;
 
 public class TomEESecurityContext implements SecurityContext {
+
     private TomcatSecurityService securityService;
+    private JaccProvider jaccProvider;
 
     @PostConstruct
     private void init() {
@@ -57,6 +63,7 @@ public class TomEESecurityContext implements SecurityContext {
         if (securityService instanceof TomcatSecurityService) {
             this.securityService = (TomcatSecurityService) securityService;
         }
+        jaccProvider = JaccProvider.get();
     }
 
     @Override
@@ -66,8 +73,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public <T extends Principal> Set<T> getPrincipalsByType(final Class<T> pType) {
-        // todo
-        return Collections.emptySet();
+        return securityService.getPrincipalsByType(pType);
     }
 
     @Override
@@ -77,8 +83,7 @@ public class TomEESecurityContext implements SecurityContext {
 
     @Override
     public boolean hasAccessToWebResource(final String resource, final String... methods) {
-        // todo
-        return false;
+        return jaccProvider.hasAccessToWebResource(resource, methods);
     }
 
     @Override
@@ -115,7 +120,7 @@ public class TomEESecurityContext implements SecurityContext {
     }
 
     private ServerAuthContext getServerAuthContext(final HttpServletRequest request) throws AuthException {
-        final String appContext = request.getServletContext().getVirtualServerName() + " " + request.getContextPath();
+        final String appContext = toAppContext(request.getServletContext(), request.getContextPath());
 
         final AuthConfigProvider authConfigProvider =
                 AuthConfigFactory.getFactory().getConfigProvider("HttpServlet", appContext, null);
@@ -126,6 +131,7 @@ public class TomEESecurityContext implements SecurityContext {
     }
 
     public static void registerContainerAboutLogin(final Principal principal, final Set<String> groups) {
+
         final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
         if (securityService instanceof TomcatSecurityService) {
             final TomcatSecurityService tomcatSecurityService = (TomcatSecurityService) securityService;
@@ -136,9 +142,15 @@ public class TomEESecurityContext implements SecurityContext {
                         null,
                         groups == null ? Collections.emptyList() : new ArrayList<>(groups),
                         principal);
+
+            // todo should it be done in the enterWebApp?
+            JavaSecurityManagers.setContextID(toAppContext(request.getServletContext(), request.getContextPath()));
+
             tomcatSecurityService.enterWebApp(request.getWrapper().getRealm(),
                                               genericPrincipal,
                                               request.getWrapper().getRunAs());
         }
     }
+
+
 }
