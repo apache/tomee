@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.jar.JarFile;
 
 public class Installer implements InstallerInterface {
@@ -285,7 +286,54 @@ public class Installer implements InstallerInterface {
 */
 
     private void moveLibs() {
-        final String tomeeVersion = System.getProperty("tomee.version");
+
+        /*
+         * When there are several SNAPSHOT versions of a jar available, Maven will often copy
+         * the jar into the assembly as openejb-core-8.0.7-20210418.032600-163.jar rather than
+         * openejb-core-8.0.7-SNAPSHOT.jar.  This breaks our TCK setup which expects it can
+         * point at jars like "lib/openejb-core-$version.jar", where $version is something like
+         * "8.0.7-SNAPSHOT".
+         *
+         * If we see that for any jar containing our version we will rename it from the date
+         * stamped version to the "-SNAPSHOT" version.
+         */
+
+        Function<String, String> normalizeVersion = Function.identity();
+        if (properties.containsKey("remove.datestamp")) {
+            final String removeDatestamp = properties.get("remove.datestamp");
+            final String[] strings = removeDatestamp.split(" *, *");
+            for (final String string : strings) {
+                if (!string.contains("-SNAPSHOT")) continue;
+                normalizeVersion = normalizeVersion.andThen(removeDatestamp(string.trim()));
+            }
+        }
+
+        /*
+         * In TomEE 9 we produce the final server zip by bytecode transforming the classes
+         * so they use jakarta instead of javax.  We do this by inputting the TomEE 8.x
+         * jar and running them through a transformer and creating a new TomEE 9.x zip.
+         *
+         * In this process we also want to rename any libraries from 8.x to 9.x
+         */
+        if (properties.containsKey("rename.version")) {
+            final String renameVersion = properties.get("rename.version");
+
+            final String[] split = renameVersion.split(" *, *");
+            if (split.length != 2) {
+                throw new IllegalStateException("rename.version should be in the form of " +
+                        "'version1, version2' for example '8.0.7, 9.0.0'.  Found '" + renameVersion + "'");
+            }
+
+            final String from = split[0].trim();
+            final String to = split[1].trim();
+
+            normalizeVersion = normalizeVersion
+                    .andThen(removeDatestamp(from))
+                    .andThen(removeDatestamp(to))
+                    .andThen(changeVersion(from, to));
+
+        }
+
 
         final File libs = paths.getCatalinaLibDir();
         final File[] files = paths.getOpenEJBLibDir().listFiles();
@@ -295,7 +343,7 @@ public class Installer implements InstallerInterface {
                     continue;
                 }
 
-                final String name = normalizeVersion(tomeeVersion, file.getName());
+                final String name = normalizeVersion.apply(file.getName());
 
                 if (!name.endsWith(".jar")) {
                     continue;
@@ -315,6 +363,17 @@ public class Installer implements InstallerInterface {
         }
     }
 
+    public static Function<String, String> removeDatestamp(final String version) {
+        return jarName -> removeDatestamp(version, jarName);
+    }
+
+    public static Function<String, String> changeVersion(final String from, final String to) {
+        return jarName -> {
+            if (!jarName.endsWith(from + ".jar")) return jarName;
+            return jarName.replace(from + ".jar", to + ".jar");
+        };
+    }
+
     /**
      * Maven will occasionally give a datestamped version of a snapshot.  Our TCK
      * test harness and likely tooling others have expects the version number to
@@ -326,10 +385,10 @@ public class Installer implements InstallerInterface {
      * If we see any Maven datestamps on our jars where we are expecting SNAPSHOT,
      * rename the jar to the expected "-SNAPSHOT" name.
      */
-    public static String normalizeVersion(final String tomeeVersion, final String jarName) {
-        if (!tomeeVersion.contains("-SNAPSHOT")) return jarName;
+    public static String removeDatestamp(final String version, final String jarName) {
+        if (!version.contains("-SNAPSHOT")) return jarName;
 
-        final String versionNumber = tomeeVersion.replaceAll("-SNAPSHOT", "");
+        final String versionNumber = version.replaceAll("-SNAPSHOT", "");
         if (!jarName.contains(versionNumber)) return jarName;
 
         // Replace 8.0.7-20210418.035728-165 with 8.0.7-SNAPSHOT
@@ -340,7 +399,7 @@ public class Installer implements InstallerInterface {
                 // replace the 'd' with '[0-9]'
                 + "-dddddddd.dddddd-ddd".replace("d", "[0-9]");
 
-        return jarName.replaceAll(regex, tomeeVersion);
+        return jarName.replaceAll(regex, version);
     }
     /*
     private void addJavaeeInEndorsed() {
