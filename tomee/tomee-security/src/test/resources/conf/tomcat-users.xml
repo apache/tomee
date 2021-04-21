@@ -17,4 +17,8 @@
 <tomcat-users>
   <user name="tomcat" password="tomcat" roles="tomcat"/>
   <user name="user" password="user" roles="user"/>
+
+  <user name="tom" password="secret1" roles="Administrator,Manager"/>
+  <user name="emma" password="secret2" roles="Administrator,Employee"/>
+  <user name="bob" password="secret3" roles="Administrator"/>
 </tomcat-users>

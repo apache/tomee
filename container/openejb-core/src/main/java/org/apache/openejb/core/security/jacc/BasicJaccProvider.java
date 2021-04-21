@@ -18,6 +18,8 @@
 package org.apache.openejb.core.security.jacc;
 
 import org.apache.openejb.core.security.JaccProvider;
+import org.apache.openejb.loader.SystemInstance;
+import org.apache.openejb.spi.SecurityService;
 
 import javax.security.jacc.EJBMethodPermission;
 import javax.security.jacc.EJBRoleRefPermission;
@@ -40,6 +42,7 @@ import java.util.Set;
  * @version $Rev$ $Date$
  */
 public class BasicJaccProvider extends JaccProvider {
+
     private static final Set<Class> JACC_PERMISSIONS = new HashSet<Class>() {
         {
             add(EJBMethodPermission.class);
@@ -112,6 +115,16 @@ public class BasicJaccProvider extends JaccProvider {
             }
         }
 
-        return systemPolicy != null ? systemPolicy.implies(domain, permission) : false;
+        return systemPolicy != null && systemPolicy.implies(domain, permission);
     }
+
+    public boolean hasAccessToWebResource(final String resource, final String... methods) {
+        final SecurityService securityService = SystemInstance.get().getComponent(SecurityService.class);
+        if (securityService != null) {
+            return implies(securityService.getProtectionDomain(), new WebResourcePermission(resource, methods));
+        }
+        return false;
+
+    }
+
 }
