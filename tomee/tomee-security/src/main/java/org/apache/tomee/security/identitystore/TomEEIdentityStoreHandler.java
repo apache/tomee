@@ -105,6 +105,7 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
 
         // Ask all stores that were configured for group providing only to get the groups for the
         // authenticated caller
+        /* Comment out because it seems to be adding more roles and breaking TCK
         final CredentialValidationResult finalResult = validationResult; // compiler didn't like validationResult in the enclosed scope
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             public Void run() {
@@ -114,6 +115,7 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
                 return null;
             }
         });
+         */
 
         final CredentialValidationResult authorizedValidationResult = validationResult;
         final Set<String> additionalGroups =
