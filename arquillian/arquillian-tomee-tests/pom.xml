@@ -398,60 +398,6 @@
                 </configuration>
               </execution>
               <execution>
-                <id>test-tomee-webapp-remote</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.webapp.webprofile}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-plus</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.webapp.plus}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-plume</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.webapp.plume}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                  <excludes>
-                    <exclude>**/AppComposerTest.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-              <execution>
                 <id>test-tomee-remote-microprofile</id>
                 <phase>test</phase>
                 <goals>
@@ -466,26 +412,6 @@
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
                   </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-microprofile</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${skip.webapp.microprofile}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-microprofile-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                  <excludes>
-                    <exclude>**/AppComposerTest.java</exclude>
-                  </excludes>
                 </configuration>
               </execution>
             </executions>
@@ -644,63 +570,6 @@
                     <tomee.classifier>plume</tomee.classifier>
                     <arquillian.launch>tomee-remote</arquillian.launch>
                     <openejb.arquillian.adapter>tomee-remote</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                  <excludes>
-                    <exclude>**/AppComposerTest.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-
-              <!-- Tomcat + war against Web Profile, JAX-RS and Plus -->
-
-              <execution>
-                <id>test-tomee-webapp-remote-webprofile</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${maven.test.skip}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-plus</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${maven.test.skip}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-plus-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
-                  </systemPropertyVariables>
-                </configuration>
-              </execution>
-              <execution>
-                <id>test-tomee-webapp-remote-plume</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration>
-                  <skip>${maven.test.skip}</skip>
-                  <systemPropertyVariables>
-                    <tomee.version>${project.version}</tomee.version>
-                    <tomee.tomcatVersion>${tomcat.version}</tomee.tomcatVersion>
-                    <tomee.artifactId>tomee-plume-webapp</tomee.artifactId>
-                    <arquillian.launch>tomee-webapp</arquillian.launch>
-                    <openejb.arquillian.adapter>tomee-webapp</openejb.arquillian.adapter>
                   </systemPropertyVariables>
                   <excludes>
                     <exclude>**/AppComposerTest.java</exclude>
