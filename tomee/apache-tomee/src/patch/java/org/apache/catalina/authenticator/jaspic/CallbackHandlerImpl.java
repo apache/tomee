@@ -52,8 +52,7 @@ import java.util.List;
  */
 public class CallbackHandlerImpl implements CallbackHandler, Contained {
 
-    private static final StringManager sm = StringManager.getManager(
-            org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl.class);
+    private static final StringManager sm = StringManager.getManager(org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl.class);
     private final Log log = LogFactory.getLog(org.apache.catalina.authenticator.jaspic.CallbackHandlerImpl.class); // must not be static
 
     private Container container;
@@ -85,16 +84,16 @@ public class CallbackHandlerImpl implements CallbackHandler, Contained {
                         log.warn(sm.getString("callbackHandlerImpl.containerMissing", callback.getClass().getName()));
                     } else if (container.getRealm() == null) {
                         log.warn(sm.getString("callbackHandlerImpl.realmMissing",
-                                callback.getClass().getName(), container.getName()));
+                                              callback.getClass().getName(), container.getName()));
                     } else {
                         PasswordValidationCallback pvc = (PasswordValidationCallback) callback;
                         principal = container.getRealm().authenticate(pvc.getUsername(),
-                                String.valueOf(pvc.getPassword()));
+                                                                      String.valueOf(pvc.getPassword()));
                         subject = pvc.getSubject();
                     }
                 } else {
                     log.error(sm.getString("callbackHandlerImpl.jaspicCallbackMissing",
-                            callback.getClass().getName()));
+                                           callback.getClass().getName()));
                 }
             }
 
@@ -119,6 +118,11 @@ public class CallbackHandlerImpl implements CallbackHandler, Contained {
                 }
 
                 subject.getPrivateCredentials().add(new GenericPrincipal(mergeName, null, mergeRoles, mergePrincipal));
+
+                // may come from CallerPrincipalCallback and we need to being to get it from the Subject
+                if (principal != null) {
+                    subject.getPrincipals().add(principal);
+                }
             }
         }
     }

@@ -17,13 +17,11 @@
 
 package org.apache.openejb.assembler.classic;
 
+import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @version $Rev$ $Date$
- */
 public class PolicyContext {
 
     private final PermissionCollection excludedPermissions = new DelegatePermissionCollection();
@@ -45,6 +43,11 @@ public class PolicyContext {
 
     public Map<String, PermissionCollection> getRolePermissions() {
         return rolePermissions;
+    }
+
+    public void addRole(final String name, final Permission permission) {
+        rolePermissions.computeIfAbsent(name, (k) -> new DelegatePermissionCollection());
+        rolePermissions.get(name).add(permission);
     }
 
     public String getContextID() {
