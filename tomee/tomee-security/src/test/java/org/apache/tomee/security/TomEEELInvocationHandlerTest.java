@@ -25,6 +25,7 @@ import javax.enterprise.inject.Vetoed;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.security.enterprise.identitystore.DatabaseIdentityStoreDefinition;
+import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.PasswordHash;
 import java.lang.reflect.InvocationHandler;
 import java.util.Map;
@@ -46,6 +47,7 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
         Assert.assertEquals(90, proxiedAnnotation.priority());
 
         Assert.assertEquals("90", proxiedAnnotation.priorityExpression());
+        Assert.assertArrayEquals(new IdentityStore.ValidationType[] {IdentityStore.ValidationType.VALIDATE}, proxiedAnnotation.useFor());
 
     }
 
@@ -58,7 +60,9 @@ public class TomEEELInvocationHandlerTest extends AbstractTomEESecurityTest {
                                      callerQuery = "select password from caller where name = ?",
                                      groupsQuery = "select group_name from caller_groups where caller_name = ?",
                                      hashAlgorithm = CleartextPasswordHash.class,
-                                     priority = 30, priorityExpression = "90")
+                                     priority = 30,
+                                     priorityExpression = "90",
+                                     useForExpression = "#{'VALIDATE'}")
     public static class Color {
     }
 

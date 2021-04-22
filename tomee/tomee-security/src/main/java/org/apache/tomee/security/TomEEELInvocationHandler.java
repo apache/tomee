@@ -19,6 +19,7 @@ package org.apache.tomee.security;
 import javax.el.ELProcessor;
 import javax.enterprise.inject.spi.BeanManager;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -70,7 +71,62 @@ public class TomEEELInvocationHandler implements InvocationHandler {
         // expression maybe #{expression} instead of ${expression}
         // the ELProcessor anyways wraps it with ${}
         final String sanitizedExpression = expression.replaceAll("^[#$]\\{(.+)}$", "$1");
-        return processor.getValue(sanitizedExpression, expectedType);
+
+        // ELProcessor does not do a good job with enums, so try to be a bit better (not sure)
+        // otherwise, let the EL processor do its best to convert into the expected value
+        if (!isEnumOrArrayOfEnums(expectedType)) {
+            return processor.getValue(sanitizedExpression, expectedType);
+        }
+
+        final Object value = processor.getValue(sanitizedExpression, Object.class);
+
+        // Convert single enum name to single enum
+        if (expectedType.isEnum()  && value instanceof String) {
+            // yeah could use Enum.valueOf ....
+            return of(expectedType, value);
+        }
+
+        // Convert single enum name to enum array (multiple enum values not supported)
+        if (expectedType.isArray()  && value instanceof String) {
+            final Class<?> enumType = expectedType.getComponentType();
+
+            if (enumType.isEnum()) { // just in case
+                final Enum<?> enumConstant = (Enum<?>) of(enumType, value);
+                final Enum<?>[] outcomeArray = (Enum<?>[]) Array.newInstance(enumType, 1);
+                outcomeArray[0] = enumConstant;
+
+                return outcomeArray;
+            }
+
+            // else not sure what else we can do but let the Object go
+
+        }
+
+        return value;
+    }
+
+    private boolean isEnumOrArrayOfEnums(final Class type) {
+        if (type.isEnum()) {
+            return true;
+        }
+
+        if (type.isArray()) {
+            final Class componentType = type.getComponentType();
+            return componentType.isEnum();
+        }
+
+        return false;
+    }
+
+    private <T /*extends Enum<T>*/> T of(final Class<T> type, final Object name) {
+        try {
+            return (T) type.getDeclaredMethod("valueOf", String.class).invoke(null, name);
+
+        } catch (final Exception e) {
+            // this will most likely result in a conversion error, but at least we know
+            // it won't be swallowed
+            return (T) name;
+        }
     }
 
     public static <T extends Annotation> T of(final Class<T> annotationClass, final T annotation, final BeanManager beanManager) {
