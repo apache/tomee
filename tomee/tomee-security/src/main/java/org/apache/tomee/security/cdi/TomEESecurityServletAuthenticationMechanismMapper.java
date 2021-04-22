@@ -74,10 +74,11 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
 
         final Set<HttpAuthenticationMechanism> availableBeans = authenticationMechanisms.stream().collect(Collectors.toSet());
         availableBeans.removeAll(servletAuthenticationMapper.values());
-        availableBeans.remove(defaultAuthenticationMechanism);
+        availableBeans.remove(defaultAuthenticationMechanism); // this our wrapper
 
         if (availableBeans.size() == 1) {
             defaultAuthenticationMechanism.setDelegate(availableBeans.iterator().next());
+
         } else if (availableBeans.size() > 1) {
             throw new IllegalStateException(
                     "Multiple HttpAuthenticationMechanism found " +
@@ -86,6 +87,11 @@ public class TomEESecurityServletAuthenticationMechanismMapper {
                                   .collect(toList()) + " " +
                     "without a @WebServlet association. " +
                     "Deploy a single one for the application, or associate it with a @WebServlet.");
+
+        } else if (servletAuthenticationMapper.size() == 1) {
+            // don't think it's covered by the spec but sotera seems to support such a case
+            defaultAuthenticationMechanism.setDelegate(servletAuthenticationMapper.values().iterator().next());
+
         }
     }
 
