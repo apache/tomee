@@ -177,10 +177,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                     application = "true".equalsIgnoreCase(
                             appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
-                                                           SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
-                                  ?
-                                  new InternalApplication(application) /* caches singletons and classes */ :
-                                  application;
+                                    SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
+                            ?
+                            new InternalApplication(application) /* caches singletons and classes */ :
+                            application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
@@ -314,7 +314,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
-        if (useDiscoveredProviders(appInfo)) {
+        if (useDiscoveredProviders(appInfo, webApp.restApplications.size() == 0)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
@@ -587,11 +587,15 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private boolean useDiscoveredProviders(final AppInfo appInfo) {
+        return useDiscoveredProviders(appInfo, true);
+    }
+
+    private boolean useDiscoveredProviders(final AppInfo appInfo, final boolean defaultValue) {
         final String value = appInfo.properties.getProperty(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP);
         if (value != null) {
             return "true".equalsIgnoreCase(value.trim());
         }
-        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, true);
+        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, defaultValue);
     }
 
     private Collection<Object> appProviders(final Collection<String> jaxRsProviders, final ClassLoader classLoader) {
