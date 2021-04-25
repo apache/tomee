@@ -154,6 +154,10 @@ public abstract class ProviderFactory {
         new LazyProviderClass(JAXB_PROVIDER_NAME);
     private static final LazyProviderClass JAXB_ELEMENT_PROVIDER_CLASS =
         new LazyProviderClass("org.apache.cxf.jaxrs.provider.JAXBElementTypedProvider");
+    private static final LazyProviderClass JSONB_PROVIDER_CLASS =
+        new LazyProviderClass("org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider");
+    private static final LazyProviderClass JSONP_PROVIDER_CLASS =
+        new LazyProviderClass("org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider");
     private static final LazyProviderClass MULTIPART_PROVIDER_CLASS =
         new LazyProviderClass("org.apache.cxf.jaxrs.provider.MultipartProvider");
 
@@ -214,6 +218,8 @@ public abstract class ProviderFactory {
                      new PrimitiveTextProvider<Object>(),
                      JAXB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
                      JAXB_ELEMENT_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
+                     JSONP_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
+                     JSONB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
                      MULTIPART_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
         Object prop = factory.getBus().getProperty("skip.default.json.provider.registration");
         if (!PropertyUtils.isTrue(prop)) {
