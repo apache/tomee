@@ -81,8 +81,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class RESTService implements ServerService, SelfManaging {
@@ -314,7 +316,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
-        if (useDiscoveredProviders(appInfo, webApp.restApplications.size() == 0)) {
+
+        final boolean hasExplicitlyDefinedApplication = webApp.restApplications.stream()
+                .map((Function<String, Class<?>>) s -> {
+                    try {
+                        return classLoader.loadClass(s);
+                    } catch (ClassNotFoundException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .anyMatch(aClass -> aClass.getDeclaredMethods().length > 0);
+        
+        if (useDiscoveredProviders(appInfo, !hasExplicitlyDefinedApplication)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
