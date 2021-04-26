@@ -20,6 +20,7 @@ import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
 import org.apache.johnzon.mapper.access.AccessMode;
 
 import javax.activation.DataSource;
+import javax.annotation.Priority;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -35,6 +36,7 @@ import java.util.Locale;
 // This will sort the Provider to be after CXF defaults. Check org.apache.cxf.jaxrs.provider.ProviderFactory.sortReaders()
 @Produces({"application/json", "application/*+json"})
 @Consumes({"application/json", "application/*+json"})
+@Priority(value = 5000)
 public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
