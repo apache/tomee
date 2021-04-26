@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -125,6 +126,7 @@ public class GenerateBoms {
         verify(distributions);
 
         distributions.forEach(this::toBom);
+        distributions.forEach(this::toApiBom);
         distributions.forEach(this::saveConfigs);
     }
 
@@ -178,8 +180,8 @@ public class GenerateBoms {
 
             final String dependencies = Join.join("", Artifact::asBomDep, distribution.getArtifacts());
 
-            final String pom = template.replace("TomEE MicroProfile", distribution.getDisplayName())
-                    .replace("tomee-microprofile", distribution.getName())
+            final String pom = template.replace("TomEE Distribution", distribution.getDisplayName())
+                    .replace("tomee-distribution", distribution.getName())
                     .replace("<!--dependencies-->", dependencies);
 
             final File dist = Files.mkdir(boms, distribution.getName());
@@ -190,6 +192,70 @@ public class GenerateBoms {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    /**
+     * Overwrite (or create) the contents of the BOM files in:
+     *
+     *  - $project.dir/boms/tomee-microprofile-api
+     *  - $project.dir/boms/tomee-webprofile-api
+     *  - $project.dir/boms/tomee-plume-api
+     *  - $project.dir/boms/tomee-plus-api
+     */
+    private void toApiBom(final Distribution distribution) {
+        try {
+            final URL url = this.getClass().getClassLoader().getResource("api-pom-template.xml");
+            final String template = IO.slurp(url);
+
+            final Predicate<Artifact> isApi = artifactId("openejb-api")
+                    .or(artifactId("javaee-api"))
+                    .or(artifactId("jakartaee-api"))
+                    .or(artifactId("mbean-annotation-api"))
+                    .or(artifactId("opentracing-api"))
+                    .or(artifactId("jakarta.activation"))
+                    .or(artifactId("jakarta.faces"))
+                    .or(artifactId("myfaces-api"))
+                    .or(startsWith("geronimo-javamail_"))
+                    .or(startsWith("geronimo-").and(endsWith("_spec")))
+                    .or(startsWith("jakarta.").and(endsWith("-api")))
+                    .or(startsWith("microprofile-").and(endsWith("-api")))
+                    .or(startsWith("tomcat-").and(endsWith("-api")));
+
+            final List<Artifact> apiArtifacts = distribution.getArtifacts().stream()
+                    .filter(isApi)
+                    .collect(Collectors.toList());
+
+            final String dependencies = Join.join("", Artifact::asBomDep, apiArtifacts);
+
+            final String pom = template.replace("TomEE Distribution", distribution.getDisplayName() + " API")
+                    .replace("tomee-distribution", distribution.getName() + "-api")
+                    .replaceAll("<dependency>.*</dependency>", "")
+                    .replace("<!--dependencies-->", dependencies);
+
+            final File dist = Files.mkdir(boms, distribution.getName() + "-api");
+
+            final File pomFile = new File(dist, "pom.xml");
+
+            IO.copy(IO.read(pom), pomFile);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static Predicate<Artifact> artifactId(final String s) {
+        return artifact -> artifact.getArtifactId().equals(s);
+    }
+
+    private static Predicate<Artifact> startsWith(final String prefix) {
+        return artifact -> artifact.getArtifactId().startsWith(prefix);
+    }
+
+    private static Predicate<Artifact> endsWith(final String suffix) {
+        return artifact -> artifact.getArtifactId().endsWith(suffix);
+    }
+
+    private static Predicate<Artifact> contains(final String s) {
+        return artifact -> artifact.getArtifactId().contains(s);
     }
 
     /**
@@ -296,6 +362,7 @@ public class GenerateBoms {
                 .map(from)
                 .filter(Objects::nonNull)
                 .sorted()
+                .distinct()
                 .forEach(distribution.artifacts::add);
 
         return distribution;
@@ -501,8 +568,7 @@ public class GenerateBoms {
     /**
      * A simple representation of a Maven Coordinate
      */
-    @Getter
-    @ToString
+    @Data
     @lombok.Builder(toBuilder = true)
     public static class Artifact implements Comparable<Artifact> {
         private final String groupId;
@@ -522,17 +588,17 @@ public class GenerateBoms {
          */
         public String asBomDep() {
             return "" +
-                   "    <dependency>\n" +
-                   "      <groupId>" + groupId + "</groupId>\n" +
-                   "      <artifactId>" + artifactId + "</artifactId>\n" +
-                   "      <version>" + version + "</version>\n" +
-                   "      <exclusions>\n" +
-                   "        <exclusion>\n" +
-                   "          <artifactId>*</artifactId>\n" +
-                   "          <groupId>*</groupId>\n" +
-                   "        </exclusion>\n" +
-                   "      </exclusions>\n" +
-                   "    </dependency>\n";
+                    "    <dependency>\n" +
+                    "      <groupId>" + groupId + "</groupId>\n" +
+                    "      <artifactId>" + artifactId + "</artifactId>\n" +
+                    "      <version>" + version + "</version>\n" +
+                    "      <exclusions>\n" +
+                    "        <exclusion>\n" +
+                    "          <artifactId>*</artifactId>\n" +
+                    "          <groupId>*</groupId>\n" +
+                    "        </exclusion>\n" +
+                    "      </exclusions>\n" +
+                    "    </dependency>\n";
         }
 
         /**
@@ -542,11 +608,11 @@ public class GenerateBoms {
          */
         public String asManagedDep() {
             return "" +
-                   "    <dependency>\n" +
-                   "      <groupId>" + groupId + "</groupId>\n" +
-                   "      <artifactId>" + artifactId + "</artifactId>\n" +
-                   "      <version>" + version + "</version>\n" +
-                   "    </dependency>\n";
+                    "    <dependency>\n" +
+                    "      <groupId>" + groupId + "</groupId>\n" +
+                    "      <artifactId>" + artifactId + "</artifactId>\n" +
+                    "      <version>" + version + "</version>\n" +
+                    "    </dependency>\n";
         }
     }
 

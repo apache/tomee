@@ -129,6 +129,14 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
+
+    <!-- needed to compile in intellij for tomcat patches -->
+    <dependency>
+      <groupId>org.apache.tomcat</groupId>
+      <artifactId>tomcat-catalina</artifactId>
+      <version>${tomcat.version}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -294,7 +302,7 @@
           </dependency>
           <dependency>
             <groupId>org.apache.xbean</groupId>
-            <artifactId>xbean-asm7-shaded</artifactId>
+            <artifactId>xbean-asm9-shaded</artifactId>
             <version>${xbeanVersion}</version>
           </dependency>
           <dependency>
@@ -325,6 +333,7 @@
               <properties>
                 <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-webapp</tomee.webapp>
+                <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
               </properties>
               <source>
                 new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -341,6 +350,7 @@
               <properties>
                 <tomee.workdir>${plus.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plus-webapp</tomee.webapp>
+                <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
               </properties>
               <source>
                 new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -357,6 +367,7 @@
               <properties>
                 <tomee.workdir>${plume.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-plume-webapp</tomee.webapp>
+                <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
               </properties>
               <source>
                 new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -373,6 +384,7 @@
               <properties>
                 <tomee.workdir>${microprofile.work-dir}</tomee.workdir>
                 <tomee.webapp>tomee-microprofile-webapp</tomee.webapp>
+                <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
               </properties>
               <source>
                 new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -503,6 +515,27 @@
                 </artifact>
               </artifacts>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.tomee.patch</groupId>
+        <artifactId>tomee-patch-plugin</artifactId>
+        <version>0.4-SNAPSHOT</version>
+        <configuration>
+          <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
+          <skipTransform>true</skipTransform>
+          <createTarGz>true</createTarGz>
+          <sourceExcludes>
+            <exclude>org/apache/cxf</exclude>
+          </sourceExcludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>

@@ -39,6 +39,10 @@
     <module>tomee-webprofile</module>
     <module>tomee-plume</module>
     <module>tomee-plus</module>
+    <module>tomee-microprofile-api</module>
+    <module>tomee-webprofile-api</module>
+    <module>tomee-plume-api</module>
+    <module>tomee-plus-api</module>
   </modules>
 
 </project>

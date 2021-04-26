@@ -60,37 +60,9 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>[8.0,)</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-core</artifactId>
-        <version>${openejb.test.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-rs</artifactId>
-        <version>${openejb.test.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
         <groupId>org.omnifaces</groupId>
         <artifactId>omnifaces</artifactId>
         <version>1.7</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.jaxrs</groupId>
-        <artifactId>jackson-jaxrs-json-provider</artifactId>
-        <version>2.8.8</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>2.8.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.deltaspike.core</groupId>
@@ -122,24 +94,16 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>2.6.17</version>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-webprofile</artifactId>
+        <version>8.0.7-SNAPSHOT</version>
         <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-          </exclusion>
-        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-webprofile-api</artifactId>
+        <version>8.0.7-SNAPSHOT</version>
+        <scope>provided</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>

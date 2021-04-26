@@ -24,6 +24,8 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -94,9 +96,26 @@ public class TomEEIdentityStoreHandler implements IdentityStoreHandler {
         }
 
         final Set<String> groups = new HashSet<>();
+
+        // Take the groups from the identity store that validated the credentials only
+        // if it has been set to provide groups.
         if (authorizedStore.validationTypes().contains(PROVIDE_GROUPS)) {
             groups.addAll(validationResult.getCallerGroups());
         }
+
+        // Ask all stores that were configured for group providing only to get the groups for the
+        // authenticated caller
+        /* Comment out because it seems to be adding more roles and breaking TCK
+        final CredentialValidationResult finalResult = validationResult; // compiler didn't like validationResult in the enclosed scope
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
+                for (IdentityStore authorizationIdentityStore : authenticationStores) {
+                    groups.addAll(authorizationIdentityStore.getCallerGroups(finalResult));
+                }
+                return null;
+            }
+        });
+         */
 
         final CredentialValidationResult authorizedValidationResult = validationResult;
         final Set<String> additionalGroups =

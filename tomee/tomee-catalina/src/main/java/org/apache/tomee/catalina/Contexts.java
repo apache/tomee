@@ -25,10 +25,20 @@ import org.apache.catalina.core.StandardEngine;
 import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.util.ContextName;
 
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 
 public class Contexts {
+
+    public static String toAppContext(final ServletContext servletContext, final String contextPath) {
+        return servletContext.getVirtualServerName() + " " + contextPath;
+    }
+
+    public static String toAppContext(final StandardContext standardContext) {
+        return toAppContext(standardContext.getServletContext(), standardContext.getPath());
+    }
+
     public static String getHostname(final StandardContext ctx) {
         String hostName = null;
         final Container parentHost = ctx.getParent();

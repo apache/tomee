@@ -202,6 +202,7 @@ import javax.enterprise.inject.Stereotype;
 import javax.enterprise.inject.spi.DefinitionException;
 import javax.enterprise.inject.spi.Extension;
 import javax.inject.Inject;
+import javax.interceptor.AroundConstruct;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
@@ -1509,7 +1510,6 @@ public class AnnotationDeployer implements DynamicDeployer {
                 final Map<URL, List<String>> managedClasses;
                 Beans beans = ejbModule.getBeans();
 
-                final boolean deployComp;
                 if (beans == null && !ejbJar.getEnterpriseBeansByEjbName().isEmpty()
                         && isActivateCdiForEjbOnlyModules(ejbModule)) {
                     logger.info("Activating CDI in ACTIVATED mode in module '" + ejbModule.getModuleUri() + "' cause EJB were found\n" +
@@ -1526,38 +1526,33 @@ public class AnnotationDeployer implements DynamicDeployer {
                         beans.setUri(URI.create("jar:file://!/" + ejbModule.getModuleUri().toASCIIString() + "/META-INF/beans.xml").toASCIIString());
                     }
                     ejbModule.setBeans(beans);
-                    deployComp = false; // no need normally since mainly only EJB will be injectable
-                } else {
-                    deployComp = true;
                 }
 
                 if (beans != null) {
                     managedClasses = beans.getManagedClasses();
                     getBeanClasses(beans.getUri(), finder, managedClasses, beans.getNotManagedClasses(), ejbModule.getAltDDs());
+                }
 
-                    if (deployComp) {
-                        // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
-                        String id = ejbModule.getModuleId();
-                        if (ejbModule.getJarLocation() != null &&
-                                (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
-                                        ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
-                            // with maven/gradle if both src/main/java and src/test/java are deployed
-                            // moduleId.Comp exists twice so it fails
-                            // here we simply modify the test comp bean name to avoid it
-                            id += "_test";
-                        }
-                        final String name = BeanContext.Comp.openejbCompName(id);
-                        final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
-                        managedBean.setTransactionType(TransactionType.BEAN);
-                        ejbModule.getEjbJar().addEnterpriseBean(managedBean);
+                // passing jar location to be able to manage maven classes/test-classes which have the same moduleId
+                String id = ejbModule.getModuleId();
+                if (ejbModule.getJarLocation() != null &&
+                        (ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/target/test-classes".replace("/", File.separator)) ||
+                                ejbModule.getJarLocation().contains(ejbModule.getModuleId() + "/build/classes/test".replace("/", File.separator)))) {
+                    // with maven/gradle if both src/main/java and src/test/java are deployed
+                    // moduleId.Comp exists twice so it fails
+                    // here we simply modify the test comp bean name to avoid it
+                    id += "_test";
+                }
+                final String name = BeanContext.Comp.openejbCompName(id);
+                final org.apache.openejb.jee.ManagedBean managedBean = new CompManagedBean(name, BeanContext.Comp.class);
+                managedBean.setTransactionType(TransactionType.BEAN);
+                ejbModule.getEjbJar().addEnterpriseBean(managedBean);
 
-                        if ("true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
-                            final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
-                            final List<String> startupBeans = beans.getStartupBeans();
-                            for (final Annotated<Class<?>> clazz : forceStart) {
-                                startupBeans.add(clazz.get().getName());
-                            }
-                        }
+                if (beans != null && "true".equals(SystemInstance.get().getProperty("openejb.cdi.support.@Startup", "true"))) {
+                    final List<Annotated<Class<?>>> forceStart = finder.findMetaAnnotatedClasses(Startup.class);
+                    final List<String> startupBeans = beans.getStartupBeans();
+                    for (final Annotated<Class<?>> clazz : forceStart) {
+                        startupBeans.add(clazz.get().getName());
                     }
                 }
             }
@@ -1586,7 +1581,8 @@ public class AnnotationDeployer implements DynamicDeployer {
             return finder != null &&
                     (!finder.findAnnotatedFields(Inject.class).isEmpty()
                     || !finder.findAnnotatedConstructors(Inject.class).isEmpty()
-                    || !finder.findAnnotatedMethods(Inject.class).isEmpty());
+                    || !finder.findAnnotatedMethods(Inject.class).isEmpty()
+                    || !finder.findAnnotatedMethods(AroundConstruct.class).isEmpty());
         }
 
         private SessionType getSessionType(final Class<?> clazz) {

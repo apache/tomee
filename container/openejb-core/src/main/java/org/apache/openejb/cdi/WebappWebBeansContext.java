@@ -22,16 +22,19 @@ import java.util.Properties;
 
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.event.NotificationManager;
 
 import javax.enterprise.inject.spi.Bean;
 
 public class WebappWebBeansContext extends WebBeansContext {
     private final WebBeansContext parent;
     private BeanManagerImpl bm;
+    private final WebappNotificationManager webappNotificationManager;
 
     public WebappWebBeansContext(final Map<Class<?>, Object> services, final Properties properties, final WebBeansContext webBeansContext) {
         super(services, properties);
         parent = webBeansContext;
+        webappNotificationManager = new WebappNotificationManager(this);
     }
 
     @SuppressWarnings("PMD.DoubleCheckedLocking")
@@ -60,5 +63,10 @@ public class WebappWebBeansContext extends WebBeansContext {
             }
         }
         return false;
+    }
+
+    @Override
+    public NotificationManager getNotificationManager() {
+        return webappNotificationManager;
     }
 }

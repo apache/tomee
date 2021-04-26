@@ -38,6 +38,7 @@
     <module>openejb-jee-accessors</module>
     <module>openejb-jpa-integration</module>
     <module>openejb-junit</module>
+    <module>openejb-junit5</module>
     <module>openejb-junit5-backward</module>
   </modules>
 </project>

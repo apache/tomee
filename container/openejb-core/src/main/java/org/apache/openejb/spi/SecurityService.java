@@ -23,6 +23,8 @@ import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.security.Principal;
+import java.security.ProtectionDomain;
+import java.util.Set;
 
 /**
  * The generic value T is any serializable token of the SecurityService
@@ -68,6 +70,9 @@ public interface SecurityService<T> extends Service {
      * interface to denote the best fitting Principal for getCallerPrincipal.
      */
     Principal getCallerPrincipal();
+
+    <P extends Principal> Set<P> getPrincipalsByType(final Class<P> pType);
+    ProtectionDomain getProtectionDomain();
 
     /**
      * Active

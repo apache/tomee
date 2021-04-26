@@ -33,7 +33,9 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
-    <wss4j.version>2.2.5</wss4j.version>
+    <wss4j.version>2.3.1</wss4j.version>
+    <!-- XXX If wss4j is upgraded to >= 2.3.2 (unreleased yet), we can drop the overrides of opensaml -->
+    <opensaml.version>3.4.6</opensaml.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -78,6 +80,10 @@
           <artifactId>ehcache</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
+        </exclusion>
+        <exclusion>
           <artifactId>guava</artifactId>
           <groupId>com.google.guava</groupId>
         </exclusion>
@@ -89,6 +95,10 @@
           <groupId>io.dropwizard.metrics</groupId>
           <artifactId>metrics-core</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>jakarta.activation-api</artifactId>
+          <groupId>jakarta.activation</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- Override the bcprov from the previous artifact -->
@@ -96,6 +106,91 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
       <version>1.67</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wss4j</groupId>
+      <artifactId>wss4j-ws-security-common</artifactId>
+      <version>${wss4j.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-saml-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-xacml-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-xacml-saml-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.geronimo.javamail</groupId>
+          <artifactId>geronimo-javamail_1.4_mail</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>guava</artifactId>
+          <groupId>com.google.guava</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- TOMEE-2997: Override opensaml from the previous artifact "wss4j-ws-security-common" to get >= v3.4.6-->
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-saml-impl</artifactId>
+      <version>${opensaml.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-soap-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-storage-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opensaml</groupId>
+          <artifactId>opensaml-messaging-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.velocity</groupId>
+          <artifactId>velocity</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.httpcomponents</groupId>
+          <artifactId>httpclient</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.cryptacular</groupId>
+          <artifactId>cryptacular</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.dropwizard.metrics</groupId>
+          <artifactId>metrics-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-xacml-impl</artifactId>
+      <version>${opensaml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-xacml-saml-impl</artifactId>
+      <version>${opensaml.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
@@ -109,6 +204,10 @@
       <exclusions>
         <exclusion>
           <groupId>net.sf.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ehcache</groupId>
           <artifactId>ehcache</artifactId>
         </exclusion>
       </exclusions>
@@ -191,7 +290,7 @@
           <artifactId>jaxb-xjc</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>net.sf.ehcache</groupId>
+          <groupId>org.ehcache</groupId>
           <artifactId>ehcache</artifactId>
         </exclusion>
       </exclusions>

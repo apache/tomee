@@ -583,9 +583,11 @@ public class EjbTimerServiceImpl implements EjbTimerService, Serializable {
 
         final Collection<Timer> timers = new ArrayList<>();
         for (final TimerData timerData : timerStore.getTimers((String) deployment.getDeploymentID())) {
-            // if (!CalendarTimerData.class.isInstance(timerData) || !CalendarTimerData.class.cast(timerData).isAutoCreated()) {
-                timers.add(timerData.getTimer());
-            // }
+            // Returns all active timers associated with this bean.
+            if (timerData.isCancelled() || timerData.isExpired() || timerData.isStopped()) {
+                continue;
+            }
+            timers.add(timerData.getTimer());
         }
         return timers;
     }

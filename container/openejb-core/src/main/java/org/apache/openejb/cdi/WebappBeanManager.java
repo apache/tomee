@@ -66,17 +66,6 @@ public class WebappBeanManager extends BeanManagerImpl {
     }
 
     @Override
-    public void fireEvent(final Object event, final EventMetadataImpl metadata, final boolean isLifecycleEvent) {
-        super.fireEvent(event, metadata, isLifecycleEvent);
-        if (isEvent(event)) {
-            final BeanManagerImpl parentBm = getParentBm();
-            if (parentBm != null) {
-                parentBm.fireEvent(event, metadata, isLifecycleEvent);
-            }
-        }
-    }
-
-    @Override
     public List<Interceptor<?>> resolveInterceptors(InterceptionType type, Annotation... interceptorBindings) {
         final List<Interceptor<?>> interceptors = super.resolveInterceptors(type, interceptorBindings);
         final List<Interceptor<?>> parentInterceptors = getParentBm().resolveInterceptors(type, interceptorBindings);
@@ -86,20 +75,6 @@ public class WebappBeanManager extends BeanManagerImpl {
             }
         }
         return interceptors;
-    }
-
-    @Override
-    public <T> Set<ObserverMethod<? super T>> resolveObserverMethods(final T event, final EventMetadataImpl metadata) {
-        final Set<ObserverMethod<? super T>> set = new HashSet<>(super.resolveObserverMethods(event, metadata));
-
-        if (isEvent(event)) {
-            final BeanManagerImpl parentBm = getParentBm();
-            if (parentBm != null) {
-                set.addAll(parentBm.resolveObserverMethods(event, metadata));
-            }
-        } // else nothing since extensions are loaded by classloader so we already have it
-
-        return set;
     }
 
     @Override

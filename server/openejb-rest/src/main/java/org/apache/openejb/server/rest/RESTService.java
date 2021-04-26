@@ -81,8 +81,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Function;
 
 @SuppressWarnings("UnusedDeclaration")
 public abstract class RESTService implements ServerService, SelfManaging {
@@ -109,6 +111,12 @@ public abstract class RESTService implements ServerService, SelfManaging {
     protected boolean enabled = true;
     private final String wildcard = SystemInstance.get().getProperty("openejb.rest.wildcard", ".*"); // embedded = regex, tomee = servlet
 
+    /**
+     * Deployment of JAX-RS services starts in response to a AfterApplicationCreated event
+     * after normal deployment is done
+     * @param appInfo the ear (real or auto-created) in which the webapp is contained
+     * @param webApp the webapp containing EJB or Pojo rest services to deploy
+     */
     public void afterApplicationCreated(final AppInfo appInfo, final WebAppInfo webApp) {
         if ("false".equalsIgnoreCase(appInfo.properties.getProperty("openejb.jaxrs.on", "true"))) {
             return;
@@ -171,10 +179,10 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                     application = "true".equalsIgnoreCase(
                             appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
-                                                           SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
-                                  ?
-                                  new InternalApplication(application) /* caches singletons and classes */ :
-                                  application;
+                                    SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
+                            ?
+                            new InternalApplication(application) /* caches singletons and classes */ :
+                            application;
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
@@ -308,7 +316,19 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
-        if (useDiscoveredProviders(appInfo)) {
+
+        final boolean hasExplicitlyDefinedApplication = webApp.restApplications.stream()
+                .map((Function<String, Class<?>>) s -> {
+                    try {
+                        return classLoader.loadClass(s);
+                    } catch (ClassNotFoundException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .anyMatch(aClass -> aClass.getDeclaredMethods().length > 0);
+        
+        if (useDiscoveredProviders(appInfo, !hasExplicitlyDefinedApplication)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
             additionalProviders.addAll(appProviders(jaxRsProviders, classLoader));
@@ -581,11 +601,15 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private boolean useDiscoveredProviders(final AppInfo appInfo) {
+        return useDiscoveredProviders(appInfo, true);
+    }
+
+    private boolean useDiscoveredProviders(final AppInfo appInfo, final boolean defaultValue) {
         final String value = appInfo.properties.getProperty(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP);
         if (value != null) {
             return "true".equalsIgnoreCase(value.trim());
         }
-        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, true);
+        return SystemInstance.get().getOptions().get(OPENEJB_JAXRS_PROVIDERS_AUTO_PROP, defaultValue);
     }
 
     private Collection<Object> appProviders(final Collection<String> jaxRsProviders, final ClassLoader classLoader) {

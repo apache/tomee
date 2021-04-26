@@ -410,7 +410,7 @@ public class DataSourceFactory {
         properties.remove(key);
 
         // If someone is using the legacy property, use it
-        if (properties.contains(oldKey)) {
+        if (properties.containsKey(oldKey)) {
             return;
         }
         properties.remove(oldKey);

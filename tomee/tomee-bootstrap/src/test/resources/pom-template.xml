@@ -35,9 +35,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>tomee-microprofile</artifactId>
+  <artifactId>tomee-distribution</artifactId>
 
-  <name>TomEE :: BOMs :: TomEE MicroProfile</name>
+  <name>TomEE :: BOMs :: TomEE Distribution</name>
 
   <dependencies>
     <dependency>
