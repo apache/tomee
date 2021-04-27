@@ -526,9 +526,9 @@
           <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
           <skipTransform>true</skipTransform>
           <createTarGz>true</createTarGz>
-          <sourceExcludes>
-            <exclude>org/apache/cxf</exclude>
-          </sourceExcludes>
+<!--          <sourceExcludes>-->
+<!--            <exclude>org/apache/cxf</exclude>-->
+<!--          </sourceExcludes>-->
         </configuration>
         <executions>
           <execution>
