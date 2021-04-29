@@ -711,6 +711,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- javax.rmi.PortableRemoteObject -->
+    <dependency>
+      <groupId>org.apache.yoko</groupId>
+      <artifactId>yoko-rmi-spec</artifactId>
+      <version>1.4</version>
+      <!-- Not sure if we need the transitive yoko-spec-corba -->
+    </dependency>
   </dependencies>
 
   <profiles>
