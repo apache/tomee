@@ -195,7 +195,7 @@
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>2.3.8</myfaces.version>
+    <myfaces.version>2.3.9</myfaces.version>
     <mojarra.version>2.3.14</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
