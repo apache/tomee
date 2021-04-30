@@ -165,5 +165,10 @@
       <version>1.4</version>
       <!-- Not sure if we need the transitive yoko-spec-corba -->
     </dependency>
+    <dependency>
+      <groupId>org.apache.yoko</groupId>
+      <artifactId>yoko-rmi-impl</artifactId>
+      <version>1.4</version>
+    </dependency>
   </dependencies>
 </project>
