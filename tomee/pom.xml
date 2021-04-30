@@ -32,34 +32,46 @@
   <packaging>pom</packaging>
   <name>TomEE :: TomEE</name>
 
-  <modules>
-    <module>tomee-config</module>
-    <module>tomee-bootstrap</module>
-    <module>tomee-loader</module>
-    <module>tomee-catalina</module>
-    <module>tomee-common</module>
-    <module>tomee-myfaces</module>
-    <module>tomee-mojarra</module>
-    <module>tomee-jdbc</module>
-    <module>tomee-jaxrs</module>
-    <module>tomee-webapp</module>
-    <module>tomee-webaccess</module>
-    <module>tomee-plus-webapp</module>
-    <module>tomee-plume-webapp</module>
-    <module>tomee-webservices</module>
-    <module>tomee-embedded</module>
-    <module>tomee-microprofile</module>
-    <module>apache-tomee</module>
-    <module>tomee-util</module>
-    <module>tomee-juli</module>
-    <module>tomee-overlay-runner</module>
-    <!--<module>tomee-deb</module>-->
-    <module>tomee-security</module>
-  </modules>
-
 
   <!-- just set the good JPA provider. As openejb-core is needed in all modules it is easier to do it here -->
   <profiles>
+    <profile>
+      <id>main</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+         <module>tomee-config</module>
+         <module>tomee-bootstrap</module>
+         <module>tomee-loader</module>
+         <module>tomee-catalina</module>
+         <module>tomee-common</module>
+         <module>tomee-myfaces</module>
+         <module>tomee-mojarra</module>
+         <module>tomee-jdbc</module>
+         <module>tomee-jaxrs</module>
+         <module>tomee-webapp</module>
+         <module>tomee-webaccess</module>
+         <module>tomee-plus-webapp</module>
+         <module>tomee-plume-webapp</module>
+         <module>tomee-webservices</module>
+         <module>tomee-embedded</module>
+         <module>tomee-microprofile</module>
+         <module>apache-tomee</module>
+         <module>tomee-util</module>
+         <module>tomee-juli</module>
+         <module>tomee-overlay-runner</module>
+         <!--<module>tomee-deb</module>-->
+         <module>tomee-security</module>
+       </modules>
+    </profile>
+    <profile>
+      <id>plume</id>
+      <modules>
+        <module>tomee-plume-webapp</module>
+        <module>apache-tomee</module>
+      </modules>
+    </profile>
     <profile>
       <id>openjpa</id>
       <activation>
