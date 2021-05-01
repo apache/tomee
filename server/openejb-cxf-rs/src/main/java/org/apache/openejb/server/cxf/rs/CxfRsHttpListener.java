@@ -119,7 +119,11 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
@@ -435,7 +439,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(app));
-            configureFactory(additionalProviders, configuration, factory, webBeansContext);
+            configureFactory(additionalProviders, configuration, factory, webBeansContext, app);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -649,7 +653,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(prefix, createServiceJmxName(classLoader), createEndpointName(application));
-            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx);
+            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx, application);
             factory.setApplication(application);
 
             final List<Class<?>> classes = new ArrayList<>();
@@ -980,7 +984,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private void configureFactory(final Collection<Object> givenAdditionalProviders,
                                   final ServiceConfiguration serviceConfiguration,
                                   final JAXRSServerFactoryBean factory,
-                                  final WebBeansContext ctx) {
+                                  final WebBeansContext ctx, final Application application) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         boolean enforceCxfBvalMapper = false;
@@ -1111,7 +1115,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         // the other one is more generic but need another file
         final String key = CXF_JAXRS_PREFIX + "skip-provider-scanning";
         final boolean ignoreAutoProviders = "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, serviceConfiguration.getProperties().getProperty(key, "false")));
-        final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
+        final List<Object> additionalProviders = new ArrayList<Object>(ignoreAutoProviders ? Collections.EMPTY_LIST : givenAdditionalProviders);
+
+        for (final Class<?> clzz : application.getClasses()) {
+            if (isProvider(clzz) && !additionalProviders.contains(clzz)) {
+                additionalProviders.add(clzz);
+            }
+        }
+
         List<Object> providers = null;
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
@@ -1141,6 +1152,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         if (!providers.isEmpty()) {
             factory.setProviders(providers);
         }
+    }
+
+    private boolean isProvider(final Class<?> clazz) {
+        return ContextResolver.class.isAssignableFrom(clazz)
+                || ExceptionMapper.class.isAssignableFrom(clazz)
+                || MessageBodyReader.class.isAssignableFrom(clazz)
+                || MessageBodyWriter.class.isAssignableFrom(clazz)
+                || ParamConverterProvider.class.isAssignableFrom(clazz)
+                ;
     }
 
     private Object getServiceObject(final Message message) {
