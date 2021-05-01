@@ -726,6 +726,18 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
+            /*
+             * During setApplication CXF will inspect the binding annotations
+             * on the Application subclass and apply them to every Resource class
+             * definition.  This is how global bindings are supported.  Thus, if
+             * setApplication is called before we've called setResourceClasses()
+             * binding annotations on the Application subclass will not work.
+             *
+             * Global binding annotations are tested in:
+             * com/sun/ts/tests/jaxrs/spec/filter/globalbinding/JAXRSClient#globalBoundResourceTest_from_standalone
+             */
+            factory.setApplication(application);
+
             this.context = webContext;
             if (!webContext.startsWith("/")) {
                 this.context = "/" + webContext;
