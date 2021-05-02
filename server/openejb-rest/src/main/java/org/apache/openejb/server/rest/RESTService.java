@@ -70,6 +70,7 @@ import javax.ws.rs.ext.WriterInterceptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URI;
@@ -165,6 +166,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
 
                     try {
                         appClazz = classLoader.loadClass(app);
+
                         application = Application.class.cast(appClazz.newInstance());
                         if (owbCtx != null && owbCtx.getBeanManagerImpl().isInUse()) {
                             try {
@@ -177,12 +179,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                         throw new OpenEJBRestRuntimeException("can't create class " + app, e);
                     }
 
-                    application = "true".equalsIgnoreCase(
-                            appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
-                                    SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
-                            ?
-                            new InternalApplication(application) /* caches singletons and classes */ :
-                            application;
+                    application = wrapApplication(appInfo, application);
 
                     final Set<Class<?>> classes = new HashSet<>(application.getClasses());
                     final Set<Object> singletons = application.getSingletons();
@@ -315,6 +312,50 @@ public abstract class RESTService implements ServerService, SelfManaging {
         }
     }
 
+    public Application wrapApplication(final AppInfo appInfo, final Application application) {
+
+        /*
+         * JAX-RS supports the concept of CDI-like interceptor bindings, but for providers in the
+         * Application.  It is possible to annotate the Application class with annotations that
+         * indicate which providers should be used.  If we see binding annotations on the Application
+         * we must hand that application instance over to CXF for processing.
+         */
+        if (hasBindings(application)) {
+            return application;
+        }
+
+        return "true".equalsIgnoreCase(
+                appInfo.properties.getProperty("openejb.cxf-rs.cache-application",
+                        SystemInstance.get().getOptions().get("openejb.cxf-rs.cache-application", "true")))
+                ?
+                new InternalApplication(application) /* caches singletons and classes */ :
+                application;
+    }
+
+    public static boolean hasBindings(final Application application) {
+        return hasBindings(application.getClass());
+    }
+
+    private static boolean hasBindings(final Class<?> clazz) {
+        final Set<Class<?>> classes = new HashSet<Class<?>>();
+
+        if (!classes.add(clazz)) return false;
+
+        return hasBindings(clazz, classes);
+    }
+
+    private static boolean hasBindings(final Class<?> clazz, final Set<Class<?>> classes) {
+        for (final Annotation annotation : clazz.getAnnotations()) {
+            if (javax.ws.rs.NameBinding.class == annotation.annotationType()) {
+                return true;
+            }
+            if (hasBindings(annotation.annotationType(), classes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void addAppProvidersIfNeeded(final AppInfo appInfo, final WebAppInfo webApp, final ClassLoader classLoader, final Collection<Object> additionalProviders) {
 
         final boolean hasExplicitlyDefinedApplication = webApp.restApplications.stream()
@@ -327,7 +368,7 @@ public abstract class RESTService implements ServerService, SelfManaging {
                 })
                 .filter(Objects::nonNull)
                 .anyMatch(aClass -> aClass.getDeclaredMethods().length > 0);
-        
+
         if (useDiscoveredProviders(appInfo, !hasExplicitlyDefinedApplication)) {
             final Set<String> jaxRsProviders = new HashSet<>(webApp.jaxRsProviders);
             jaxRsProviders.addAll(appInfo.jaxRsProviders);
