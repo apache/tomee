@@ -46,6 +46,7 @@ public class WebModule extends Module implements WsModule, RESTModule {
     private Webservices webservices;
     private String host;
     private String contextRoot;
+    private String defaultContextPath;
     private final List<TldTaglib> taglibs = new ArrayList<>();
     private final Set<String> watchedResources = new TreeSet<>();
     // List of all faces configuration files found in this web module
@@ -117,6 +118,14 @@ public class WebModule extends Module implements WsModule, RESTModule {
     @Override
     public File getFile() {
         return id.getLocation();
+    }
+
+    public String getDefaultContextPath() {
+        return defaultContextPath;
+    }
+
+    public void setDefaultContextPath(final String defaultContextPath) {
+        this.defaultContextPath = defaultContextPath;
     }
 
     @Override

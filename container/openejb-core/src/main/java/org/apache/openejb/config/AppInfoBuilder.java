@@ -437,6 +437,8 @@ class AppInfoBuilder {
                 webAppInfo.contextRoot = webModule.getContextRoot();
             }
 
+            webAppInfo.defaultContextPath = webModule.getDefaultContextPath();
+
             webAppInfo.sessionTimeout = 30;
             if (webModule.getWebApp() != null && webModule.getWebApp().getSessionConfig() != null) {
                 for (final SessionConfig sessionConfig : webModule.getWebApp().getSessionConfig()) {

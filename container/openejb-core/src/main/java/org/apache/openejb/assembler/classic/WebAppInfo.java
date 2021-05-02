@@ -32,6 +32,7 @@ public class WebAppInfo extends CommonInfoObject {
     public String moduleId;
     public String host;
     public String contextRoot;
+    public String defaultContextPath;
     public int sessionTimeout;
     public final Set<String> watchedResources = new TreeSet<>();
     public final Set<String> restClass = new TreeSet<>();
