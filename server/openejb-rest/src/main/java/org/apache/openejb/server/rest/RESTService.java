@@ -337,20 +337,11 @@ public abstract class RESTService implements ServerService, SelfManaging {
     }
 
     private static boolean hasBindings(final Class<?> clazz) {
-        final Set<Class<?>> classes = new HashSet<Class<?>>();
-
-        if (!classes.add(clazz)) return false;
-
-        return hasBindings(clazz, classes);
-    }
-
-    private static boolean hasBindings(final Class<?> clazz, final Set<Class<?>> classes) {
         for (final Annotation annotation : clazz.getAnnotations()) {
-            if (javax.ws.rs.NameBinding.class == annotation.annotationType()) {
-                return true;
-            }
-            if (hasBindings(annotation.annotationType(), classes)) {
-                return true;
+            for (final Annotation metaAnnotation : annotation.annotationType().getAnnotations()) {
+                if (javax.ws.rs.NameBinding.class == metaAnnotation.annotationType()) {
+                    return true;
+                }
             }
         }
         return false;
