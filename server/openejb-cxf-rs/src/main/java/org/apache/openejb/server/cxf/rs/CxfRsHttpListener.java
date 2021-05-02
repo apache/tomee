@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusException;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Endpoint;
@@ -129,6 +130,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -726,6 +728,9 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
+
+            injectApplication(application, factory);
+
             /*
              * During setApplication CXF will inspect the binding annotations
              * on the Application subclass and apply them to every Resource class
@@ -802,6 +807,34 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    /**
+     * JAX-RS allows for the Application subclass to have @Context injectable fields, as is
+     * the case for Resources and Providers.  CXF will do the injection on the Application
+     * instance when ApplicationInfo is constructed passing in the Application instance.
+     *
+     * We don't actually need the ApplicationInfo, we just need the side effect of calling
+     * the constructor, which is all the @Context injections will be done.  Afterwards, we
+     * can throw the ApplicationInfo away.
+     *
+     * This is verified in test:
+     * com/sun/ts/tests/jaxrs/spec/context/server/JAXRSClient#applicationInjectionTest_from_standalone
+     */
+    public static void injectApplication(final Application application, final JAXRSServerFactoryBean factory) {
+        /*
+         * We may have wrapped the Application instance in an InternalApplication.  If so, unwrap
+         * it and do the injection on that instance.
+         */
+        if (application instanceof InternalApplication) {
+            final InternalApplication internalApplication = (InternalApplication) application;
+            final Application original = internalApplication.getOriginal();
+            injectApplication(original, factory);
+            return;
+        }
+        
+        final Bus bus = factory.getBus();
+        new ApplicationInfo(application, bus);
     }
 
     private boolean isConsideredSingleton(final Class<?> scope) {
