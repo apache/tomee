@@ -70,12 +70,16 @@ import javax.ws.rs.ext.WriterInterceptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -596,6 +600,22 @@ public abstract class RESTService implements ServerService, SelfManaging {
         final ApplicationPath path = appClazz.getAnnotation(ApplicationPath.class);
         if (path != null) {
             String appPath = path.value();
+
+            /*
+             * Percent encoded values are allowed in the value, an implementation will recognize
+             * such values and will not double encode the '%' character.  As such we need to
+             * decode the value now so that we hand it to CXF in raw, not url-safe, form.  CXF
+             * will then encode it to make it url-safe.  If we give CXF the encoded value it will
+             * still encode it and it will be encoded twice, which we do not want.
+             *
+             * Verified by
+             * com.sun.ts.tests.jaxrs.servlet3.rs.applicationpath.JAXRSClient#applicationPathAnnotationEncodedTest_from_standalone
+             */
+            try {
+                appPath = URLDecoder.decode(appPath, StandardCharsets.UTF_8.name());
+            } catch (UnsupportedEncodingException e) {
+                throw new UncheckedIOException(e);
+            }
             if (appPath.endsWith("*")) {
                 appPath = appPath.substring(0, appPath.length() - 1);
             }
