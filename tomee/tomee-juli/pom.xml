@@ -67,6 +67,12 @@
       <artifactId>commons-io</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.11</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <properties>
