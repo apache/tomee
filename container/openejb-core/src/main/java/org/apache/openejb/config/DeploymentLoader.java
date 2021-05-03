@@ -1075,6 +1075,7 @@ public class DeploymentLoader implements DeploymentFilterable {
         webModule.setAddedUrls(addedUrls);
         webModule.setRarUrls(Arrays.asList(urls.get(RAR_URLS_KEY)));
         webModule.setScannableUrls(scannableUrls);
+        webModule.setDefaultContextPath(webApp.getDefaultContextPath());
         webModule.getAltDDs().putAll(descriptors);
         webModule.getWatchedResources().add(warPath);
         webModule.getWatchedResources().add(warFile.getAbsolutePath());

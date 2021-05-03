@@ -833,6 +833,8 @@ public class ReadDescriptors implements DynamicDeployer {
     public static WebApp readWebApp(final URL url) throws OpenEJBException {
         final WebApp webApp;
         try {
+            // webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, IO.read(url));
+            // don't use the SXC version with the accessors as it's not up to date
             webApp = WebXml.unmarshal(url);
         } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);

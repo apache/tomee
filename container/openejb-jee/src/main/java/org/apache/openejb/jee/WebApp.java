@@ -70,6 +70,7 @@ import java.util.Map;
     "listener",
     "servlet",
     "servletMapping",
+    "defaultContextPath",
     "sessionConfig",
     "mimeMapping",
     "welcomeFileList",
@@ -177,6 +178,8 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
     @XmlElement(name = "module-name")
     protected String moduleName;
+    @XmlElement(name = "default-context-path")
+    protected String defaultContextPath;
     @XmlElement(name = "absolute-ordering")
     protected AbsoluteOrdering absoluteOrdering;
 
@@ -236,6 +239,14 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
     @Override
     public String getDisplayName() {
         return displayName.get();
+    }
+
+    public String getDefaultContextPath() {
+        return defaultContextPath;
+    }
+
+    public void setDefaultContextPath(final String defaultContextPath) {
+        this.defaultContextPath = defaultContextPath;
     }
 
     @Override
@@ -771,6 +782,11 @@ public class WebApp implements WebCommon, Lifecycle, NamedModule {
 
     public WebApp contextRoot(final String root) {
         setContextRoot(root);
+        return this;
+    }
+
+    public WebApp defaultContextPath(final String path) {
+        setDefaultContextPath(path);
         return this;
     }
 
