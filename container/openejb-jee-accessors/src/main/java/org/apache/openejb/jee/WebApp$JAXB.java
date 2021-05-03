@@ -609,6 +609,19 @@ public class WebApp$JAXB
                 }
 
                 webApp.moduleName = moduleName;
+            } else if (("default-context-path" == elementReader.getLocalName()) && ("http://java.sun.com/xml/ns/javaee" == elementReader.getNamespaceURI())) {
+                // ELEMENT: defaultContextPath
+                final String defaultContextPathRaw = elementReader.getElementAsString();
+
+                final String defaultContextPath;
+                try {
+                    defaultContextPath = Adapters.collapsedStringAdapterAdapter.unmarshal(defaultContextPathRaw);
+                } catch (final Exception e) {
+                    context.xmlAdapterError(elementReader, CollapsedStringAdapter.class, String.class, String.class, e);
+                    continue;
+                }
+
+                webApp.defaultContextPath = defaultContextPath;
             } /*
             else not yet used so ignored, here will come servlet 3.1 elements we don't parse cause don't need yet
             */

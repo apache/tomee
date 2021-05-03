@@ -58,6 +58,7 @@ import org.apache.openejb.sxc.EjbJarXml;
 import org.apache.openejb.sxc.FacesConfigXml;
 import org.apache.openejb.sxc.HandlerChainsXml;
 import org.apache.openejb.sxc.TldTaglibXml;
+import org.apache.openejb.sxc.WebXml;
 import org.apache.openejb.sxc.WebservicesXml;
 import org.apache.openejb.util.LengthInputStream;
 import org.apache.openejb.util.LogCategory;
@@ -832,9 +833,9 @@ public class ReadDescriptors implements DynamicDeployer {
     public static WebApp readWebApp(final URL url) throws OpenEJBException {
         final WebApp webApp;
         try {
-            webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, IO.read(url));
+            // webApp = (WebApp) JaxbJavaee.unmarshalJavaee(WebApp.class, IO.read(url));
             // don't use the SXC version with the accessors as it's not up to date
-            // webApp = WebXml.unmarshal(url);
+            webApp = WebXml.unmarshal(url);
         } catch (final SAXException e) {
             throw new OpenEJBException("Cannot parse the web.xml file: " + url.toExternalForm(), e);
         } catch (final JAXBException e) {
