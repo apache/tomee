@@ -3,7 +3,7 @@
 :jbake-type: page
 :jbake-status: published
 
-This example shows the persist, remove and creation a query in JPA Hibernate 5 using arquillian for the test.
+This example shows the persist, remove and creation  of an entity with JPA and Hibernate 5 using arquillian for the test.
 
 The Java Persistence API (JPA) is a Java specification for accessing, persisting, and managing data between Java objects / classes and a relational database.
 
@@ -170,10 +170,11 @@ Here we define which database will persist our movies, and we perform other conf
 </persistence>
 ----
 
+You always can refer to https://tomee.apache.org/latest/docs/datasource-config.html[Datasource configuration] documentation for more details.
 
 == arquillian.xml
 This file provides the configuration the server will have for running the tests.
-The property `additionalLibs` provide to the server the jar files required for Hibernate 5 as explained in the http://tomee.apache.org/latest/docs/tomee-and-hibernate.html[TomEE and Hibernate] documentation.
+The property `additionalLibs` provide to the server the jar files required for Hibernate 5 as explained in the https://tomee.apache.org/latest/docs/tomee-and-hibernate.html[TomEE and Hibernate] documentation.
 
 
 ----
