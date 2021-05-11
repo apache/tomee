@@ -39,8 +39,8 @@ import org.apache.cxf.jaxrs.model.ProviderInfo;
 import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.sse.SseContextProvider;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
+import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor;
 import org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor;
 import org.apache.cxf.jaxrs.validation.ValidationExceptionMapper;
@@ -119,8 +119,8 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -151,6 +151,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.apache.openejb.loader.JarLocation.jarLocation;
@@ -299,7 +301,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         if (pathInfo.endsWith("/") || pathInfo.isEmpty()) { // root of path is redirected to welcomefiles
             if (pathInfo.endsWith("/")) {
-              pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
+                pathInfo = pathInfo.substring(0, pathInfo.length() - 1);
             }
             for (final String n : welcomeFiles) {
                 final InputStream is = request.getServletContext().getResourceAsStream(pathInfo + n);
@@ -343,16 +345,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         return true;
     }
-        
+
     private Application findApplication() {
         try {
-            ApplicationInfo appInfo = (ApplicationInfo)server.getEndpoint().get(Application.class.getName());
-            return (Application)appInfo.getProvider();
+            ApplicationInfo appInfo = (ApplicationInfo) server.getEndpoint().get(Application.class.getName());
+            return (Application) appInfo.getProvider();
         } catch (final Exception e) {
         }
         return null;
     }
-    
+
     private boolean applicationProvidesResources(final Application application) {
         try {
             if (application == null) {
@@ -366,14 +368,14 @@ public class CxfRsHttpListener implements RsHttpListener {
             return false;
         }
     }
-    
+
     public boolean isCXFResource(final HttpServletRequest request) {
         try {
             Application application = findApplication();
             if (!applicationProvidesResources(application)) {
-                JAXRSServiceImpl service = (JAXRSServiceImpl)server.getEndpoint().getService();
+                JAXRSServiceImpl service = (JAXRSServiceImpl) server.getEndpoint().getService();
 
-                if( service == null ) {
+                if (service == null) {
                     return false;
                 }
 
@@ -384,7 +386,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                     if (info.getResourceClass() == null || info.getURITemplate() == null) { // possible?
                         continue;
                     }
-                   
+
                     final MultivaluedMap<String, String> parameters = new MultivaluedHashMap<>();
                     if (info.getURITemplate().match(pathToMatch, parameters)) {
                         return true;
@@ -591,8 +593,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             instances.add(new ValidationExceptionMapper());
             final String level = SystemInstance.get()
                     .getProperty(
-                        "openejb.cxf.rs.bval.log.level",
-                        serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.log.level"));
+                            "openejb.cxf.rs.bval.log.level",
+                            serviceConfiguration.getProperties().getProperty(CXF_JAXRS_PREFIX + "bval.log.level"));
             if (level != null) {
                 try {
                     LogUtils.getL7dLogger(ValidationExceptionMapper.class).setLevel(Level.parse(level));
@@ -1387,7 +1389,16 @@ public class CxfRsHttpListener implements RsHttpListener {
         public Object newInstance(final Class<?> clazz) throws Exception {
             boolean found = false;
             Object instance = null;
-            for (final Constructor<?> c : clazz.getConstructors()) {
+
+            /*
+             * When there are multiple constructors, we must favor the one with the most arguments
+             * Tested in TCK com/sun/ts/tests/jaxrs/spec/provider/visibility
+             */
+            final List<? extends Constructor<?>> constructors = Stream.of(clazz.getConstructors())
+                    .sorted((a, b) -> Integer.compare(b.getParameterCount(), a.getParameterCount()))
+                    .collect(Collectors.toList());
+
+            for (final Constructor<?> c : constructors) {
                 int contextAnnotations = 0;
                 for (final Annotation[] annotations : c.getParameterAnnotations()) {
                     for (final Annotation a : annotations) {

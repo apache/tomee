@@ -66,9 +66,9 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>[8.0,)</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile-api</artifactId>
+      <version>8.0.7-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -82,8 +82,8 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
       <version>8.0.7-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

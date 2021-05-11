@@ -315,7 +315,6 @@ public final class CxfUtil {
                 final InstrumentationManagerImpl manager = InstrumentationManagerImpl.class.cast(mgr);
                 manager.setEnabled(true);
                 manager.setServer(LocalMBeanServer.get());
-                manager.setDaemon(true);
 
                 try { // avoid to bother our nice logs
                     LogUtils.getL7dLogger(InstrumentationManagerImpl.class).setLevel(Level.WARNING);

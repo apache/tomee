@@ -18,10 +18,15 @@
 package org.apache.openejb.server.cxf.transport;
 
 import org.apache.cxf.Bus;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.http.AbstractHTTPDestination;
 import org.apache.cxf.transport.http.DestinationRegistry;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -37,5 +42,17 @@ public class HttpDestination extends AbstractHTTPDestination {
     @Override
     public Logger getLogger() {
         return Logger.getLogger(HttpDestination.class.getName());
+    }
+
+    @Override
+    protected void setupMessage(final Message inMessage, final ServletConfig config, final ServletContext context, final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
+        super.setupMessage(inMessage, config, context, req, resp);
+
+        /*
+         * This parameter is needed to pass these tests of the Jakarta EE TCK
+         *
+         * com.sun.ts.tests.jaxrs.ee.rs.pathparam.locator
+         */
+        inMessage.put("keep.subresource.candidates", true);
     }
 }

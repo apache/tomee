@@ -65,9 +65,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
+      <version>8.0.7-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -70,6 +70,8 @@ public class TomEESecurityExtension implements Extension {
     private final AtomicReference<Annotated> databaseStore = new AtomicReference<>();
     private final AtomicReference<Annotated> ldapStore = new AtomicReference<>();
 
+    private boolean applicationAuthenticationMechanisms = false;
+
     void observeBeforeBeanDiscovery(
         @Observes final BeforeBeanDiscovery beforeBeanDiscovery,
         final BeanManager beanManager) {
@@ -116,6 +118,10 @@ public class TomEESecurityExtension implements Extension {
 
         if (customMechanism.get() == null && annotatedType.isAnnotationPresent(CustomFormAuthenticationMechanismDefinition.class)) {
             customMechanism.set(annotatedType);
+        }
+
+        if (eventIn.getBean().getTypes().contains(HttpAuthenticationMechanism.class)) {
+            applicationAuthenticationMechanisms = true;
         }
     }
 
@@ -294,7 +300,7 @@ public class TomEESecurityExtension implements Extension {
     }
 
     public boolean hasAuthenticationMechanisms() {
-        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null;
+        return basicMechanism.get() != null || formMechanism.get() != null || customMechanism.get() != null || applicationAuthenticationMechanisms;
     }
 
     private Supplier<LoginToContinue> createFormLoginToContinueSupplier(final BeanManager beanManager) {

@@ -73,10 +73,12 @@ import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
+import org.apache.openejb.assembler.classic.JaccPermissionsBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.PolicyContext;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
@@ -122,6 +124,7 @@ import org.apache.tomcat.util.descriptor.web.ContextTransaction;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.http.CookieProcessor;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomee.catalina.cdi.ServletContextHandler;
@@ -131,6 +134,7 @@ import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
+import org.apache.tomee.catalina.security.TomcatSecurityConstaintsToJaccPermissionsTransformer;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.config.TomEESystemConfig;
@@ -145,6 +149,8 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
+import javax.security.jacc.PolicyConfiguration;
+import javax.security.jacc.PolicyConfigurationFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
@@ -597,6 +603,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     } else { // force a normal deployment with lazy building of AppInfo
                         deployWar(standardContext, host, null);
                     }
+
+                    // TODO should we copy the information in the appInfo using the jee object tree or add more to the info tree
+                    // this might then move to the assembler after webapp is deployed so we can read information from info tree
+                    // and build up all policy context from there instead of from Tomcat internal objects
+                    final TomcatSecurityConstaintsToJaccPermissionsTransformer transformer =
+                        new TomcatSecurityConstaintsToJaccPermissionsTransformer(standardContext);
+                    final PolicyContext policyContext = transformer.createResourceAndDataPermissions();
+
+                    final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
+                    jaccPermissionsBuilder.install(policyContext);
+
                 }
             }
         } finally { // cleanup temp var passing

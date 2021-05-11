@@ -48,7 +48,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
-      <version>2.12.0-rc1</version>
+      <version>2.12.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.12.0-rc1</version>
+      <version>2.12.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.12.0-rc1</version>
+      <version>2.12.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.12.0-rc1</version>
+      <version>2.12.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>com.fasterxml.woodstox</groupId>
       <artifactId>woodstox-core</artifactId>
-      <version>5.0.3</version>
+      <version>6.2.5</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -114,18 +114,7 @@
     <dependency>
       <groupId>com.sun.istack</groupId>
       <artifactId>istack-commons-runtime</artifactId>
-      <version>3.0.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.xml.fastinfoset</groupId>
-      <artifactId>FastInfoset</artifactId>
-      <version>1.2.16</version>
+      <version>3.0.11</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -200,17 +189,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.2</version>
@@ -235,7 +213,7 @@
     <dependency>
       <groupId>jakarta.xml.bind</groupId>
       <artifactId>jakarta.xml.bind-api</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -257,7 +235,7 @@
     <dependency>
       <groupId>net.shibboleth.utilities</groupId>
       <artifactId>java-support</artifactId>
-      <version>7.3.0</version>
+      <version>7.5.2</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +268,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -301,7 +279,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -312,7 +290,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +301,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -334,7 +312,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -345,7 +323,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
-      <version>5.16.0</version>
+      <version>5.16.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -411,7 +389,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -422,7 +400,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -433,7 +411,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -444,7 +422,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,7 +433,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -466,7 +444,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -477,7 +455,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-simple</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -488,7 +466,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -499,7 +477,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-client</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -510,7 +488,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -521,7 +499,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-search</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -532,7 +510,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-json-basic</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -543,7 +521,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-mp-client</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -554,7 +532,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-cors</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -565,7 +543,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -576,7 +554,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -587,7 +565,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-security-oauth2</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -598,7 +576,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -609,7 +587,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-sse</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -620,7 +598,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -631,7 +609,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -642,7 +620,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -653,7 +631,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-addr</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -664,7 +642,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-policy</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -675,7 +653,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -686,7 +664,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-wsdl</artifactId>
-      <version>3.3.8</version>
+      <version>3.5.0-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -818,7 +796,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.9</version>
+      <version>1.2.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -829,7 +807,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.9</version>
+      <version>1.2.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -840,7 +818,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.9</version>
+      <version>1.2.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -851,7 +829,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.9</version>
+      <version>1.2.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -862,7 +840,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.9</version>
+      <version>1.2.10</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -906,7 +884,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -917,7 +895,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee-common</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -928,7 +906,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -939,7 +917,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-el22</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -950,7 +928,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -961,7 +939,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -972,7 +950,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -983,7 +961,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
-      <version>2.0.12</version>
+      <version>2.0.22</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -994,7 +972,7 @@
     <dependency>
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
-      <version>2.1.4</version>
+      <version>2.2.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1576,17 +1554,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webapp</artifactId>
-      <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-webservices</artifactId>
       <version>${project.version}</version>
       <exclusions>
@@ -1610,7 +1577,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-bindings</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1621,7 +1588,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-policy</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1632,7 +1599,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-common</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1643,7 +1610,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1654,7 +1621,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-policy-stax</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1665,7 +1632,7 @@
     <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-stax</artifactId>
-      <version>2.2.5</version>
+      <version>2.3.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1675,8 +1642,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm7-shaded</artifactId>
-      <version>4.14</version>
+      <artifactId>xbean-asm-util</artifactId>
+      <version>4.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1697,8 +1664,19 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-asm9-shaded</artifactId>
+      <version>4.18</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-bundleutils</artifactId>
-      <version>4.14</version>
+      <version>4.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1709,7 +1687,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
-      <version>4.14</version>
+      <version>4.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1720,7 +1698,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-      <version>4.14</version>
+      <version>4.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1731,7 +1709,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>4.14</version>
+      <version>4.18</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1753,7 +1731,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.64</version>
+      <version>1.67</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1775,7 +1753,7 @@
     <dependency>
       <groupId>org.codehaus.woodstox</groupId>
       <artifactId>stax2-api</artifactId>
-      <version>3.1.4</version>
+      <version>4.2.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1929,7 +1907,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>jaxb-runtime</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1940,7 +1918,7 @@
     <dependency>
       <groupId>org.glassfish.jaxb</groupId>
       <artifactId>txw2</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2039,7 +2017,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-core</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2050,7 +2028,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-profile-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2061,7 +2039,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2072,7 +2050,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2083,7 +2061,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2094,7 +2072,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-security-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2105,7 +2083,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-soap-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2116,7 +2094,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2127,7 +2105,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2138,7 +2116,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2149,7 +2127,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xacml-saml-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2160,7 +2138,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-api</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2171,7 +2149,7 @@
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-xmlsec-impl</artifactId>
-      <version>3.3.1</version>
+      <version>3.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2183,6 +2161,17 @@
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.annotation.versioning</artifactId>
       <version>1.0.0</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.reactivestreams</groupId>
+      <artifactId>reactive-streams</artifactId>
+      <version>1.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

@@ -9,11 +9,11 @@ stars]]
 Apache TomEE is a lightweight, yet powerful, JavaEE Application server
 with feature rich tooling.
 
-Is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
+It is the Java Enterprise Edition of Apache Tomcat (Tomcat + Java EE =
 TomEE) and currently is a JakartaEE (formerly JavaEE) and Microprofile
 compliant application server.
 
-The application server is totally open source and created with the
+The application server is completely open source and created with
 community efforts for the public good. Collaborative consensus and
 peer review according to the Apache Foundation guidelines are used to
 guarantee the highest quality standards.
@@ -30,7 +30,7 @@ Official website: https://tomee.apache.org
 
 '''''
 
-=== To start using TomEE
+=== Start using TomEE
 
 You can use TomEE to deploy Jakarta EE, Microprofile and Java EE
 compliant applications.
@@ -44,7 +44,7 @@ available in the official website.
 * The dozens of application included in the examples/ folder of the
 project.
 
-=== To start developing TomEE
+=== Start developing TomEE
 
 TomEE is open source and you can help in its creation.
 
@@ -120,3 +120,5 @@ Releases] (*)
 === License
 
 link:LICENSE[Apache License 2.0]
+
+

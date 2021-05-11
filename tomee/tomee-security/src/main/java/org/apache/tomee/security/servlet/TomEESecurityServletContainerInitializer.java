@@ -24,11 +24,18 @@ import javax.enterprise.inject.spi.CDI;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Set;
 
-public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer {
+public class TomEESecurityServletContainerInitializer implements ServletContainerInitializer, ServletContextListener {
+
+    public static final String CONTEXT_REGISTRATION_ID = "org.apache.tomee.security.message.registrationId";
+
     @Override
     public void onStartup(final Set<Class<?>> c, final ServletContext ctx) throws ServletException {
 
@@ -49,15 +56,35 @@ public class TomEESecurityServletContainerInitializer implements ServletContaine
         }
 
         if (securityExtension.hasAuthenticationMechanisms()) {
-            AuthConfigFactory.getFactory().registerConfigProvider(
-                new TomEESecurityAuthConfigProvider(new HashMap(), null), // todo we can probably do better
-                "HttpServlet",                                              // from AuthenticatorBase.java:1245
-                    ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
-                "TomEE Security JSR-375");
+            final String registrationId = AccessController.doPrivileged(new PrivilegedAction<String>() {
+                public String run() {
+                    return AuthConfigFactory.getFactory().registerConfigProvider(
+                        new TomEESecurityAuthConfigProvider(new HashMap(), null), // todo we can probably do better
+                        "HttpServlet",                                              // from AuthenticatorBase.java:1245
+                        ctx.getVirtualServerName() + " " + ctx.getContextPath(),    // from AuthenticatorBase.java:1178
+                        "TomEE Security JSR-375");
+                }
+            });
+
+            if (registrationId != null) {
+                ctx.setAttribute(CONTEXT_REGISTRATION_ID, registrationId);
+            }
         }
     }
 
     private BeanManager getBeanManager() throws IllegalStateException {
         return CDI.current().getBeanManager();
+    }
+
+    @Override
+    public void contextDestroyed(final ServletContextEvent sce) {
+        String registrationId = (String) sce.getServletContext().getAttribute(CONTEXT_REGISTRATION_ID);
+        if (registrationId != null && registrationId.length() > 0) {
+            AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                public Boolean run() {
+                    return AuthConfigFactory.getFactory().removeRegistration(registrationId);
+                }
+            });
+        }
     }
 }

@@ -31,6 +31,7 @@ import org.apache.tomee.loader.TomcatHelper;
 import javax.security.auth.Subject;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.LoginException;
+import javax.security.jacc.PolicyContextException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.security.Principal;
@@ -119,13 +120,27 @@ public class TomcatSecurityService extends AbstractSecurityService {
     }
 
     private Subject createSubject(final Realm realm, final Principal principal) {
-        final Set<Principal> principals = new HashSet<>();
-        if (principal.getClass().isAnnotationPresent(CallerPrincipal.class)) {
-            principals.add(principal);
-        } else {
-            principals.add(new TomcatUser(realm, principal));
+        final Subject subject = new Subject();
+
+        // 1. Add the principal as is
+        subject.getPrincipals().add(principal);
+        subject.getPrincipals().add(new TomcatUser(realm, principal));
+
+        Principal p = principal;
+        if (principal instanceof TomcatUser) { // should never happen
+            p = ((TomcatUser) principal).getTomcatPrincipal();
+            subject.getPrincipals().add(p);
         }
-        return new Subject(true, principals, new HashSet(), new HashSet());
+
+        if (p instanceof GenericPrincipal) {
+            final GenericPrincipal genericPrincipal = (GenericPrincipal) p;
+            subject.getPrincipals().add(genericPrincipal.getUserPrincipal());
+
+            // todo should we create credentials with the roles? groups?
+            subject.getPrivateCredentials().add(p);
+        }
+
+        return subject;
     }
 
     @Override
@@ -366,4 +381,27 @@ public class TomcatSecurityService extends AbstractSecurityService {
         return super.getDefaultSecurityContext();
     }
 
+    @Override
+    public boolean supports(final String key) throws PolicyContextException {
+        return KEYS.contains(key);
+    }
+
+    @Override
+    public String[] getKeys() throws PolicyContextException {
+        return KEYS.toArray(new String[0]);
+    }
+
+    @Override
+    public Object getContext(final String key, final Object data) throws PolicyContextException {
+        switch (key) {
+            case KEY_REQUEST:
+                return OpenEJBSecurityListener.requests.get();
+            case KEY_SUBJECT:
+                // quite obvious as internally we keep track of it
+                // but we could also grab the request and the principals and build a new Subject with the principals
+                return getSubject();
+            default:
+                throw new PolicyContextException("Handler does not support key: " + key);
+        }
+    }
 }

@@ -136,4 +136,6 @@ public abstract class JaccProvider {
     public abstract void refresh();
 
     public abstract boolean implies(ProtectionDomain domain, Permission permission);
+
+    public abstract boolean hasAccessToWebResource(final String resource, final String... methods);
 }
