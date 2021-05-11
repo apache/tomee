@@ -217,6 +217,10 @@ public class JeeTest extends TestCase {
         marshalAndUnmarshal(WebApp.class, "web_2.3-example.xml", "web_2.3-example-expected.xml");
     }
 
+    public void testWar5() throws Exception {
+        marshalAndUnmarshal(WebApp.class, "web_5-example.xml", "web_5-example-expected.xml");
+    }
+
     public void testTld() throws Exception {
         marshalAndUnmarshal(TldTaglib.class, "tld-example.xml", null);
     }

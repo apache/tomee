@@ -124,7 +124,6 @@ import org.apache.tomcat.util.descriptor.web.ContextTransaction;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.descriptor.web.ResourceBase;
-import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apache.tomcat.util.http.CookieProcessor;
 import org.apache.tomcat.util.scan.StandardJarScanFilter;
 import org.apache.tomee.catalina.cdi.ServletContextHandler;
@@ -149,8 +148,6 @@ import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.security.jacc.PolicyConfiguration;
-import javax.security.jacc.PolicyConfigurationFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.http.HttpServletRequest;
@@ -158,6 +155,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -517,6 +515,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 standardContext.setUnpackWAR(!"false".equalsIgnoreCase(appInfo.properties.getProperty("tomcat.unpackWar")));
                 if (contextXmlUrl != null) {
                     standardContext.setConfigFile(contextXmlUrl);
+                }
+
+                // override path if needed - hack at this moment just to pass the TCK
+                // Tomcat should definitely implement it, but community does not seem to like the feature and therefore
+                // willing to implement it.
+                // default context path must start with / but not end with slash
+                try {
+                    if (webApp.defaultContextPath != null && webApp.defaultContextPath.matches("^/\\w*[^/]$")) {
+                        standardContext.setPath(webApp.defaultContextPath);
+                    }
+
+                } catch (final Exception e) {
+                    // don't fail because it's a hack, just output the exception
+                    e.printStackTrace();
                 }
 
                 if (standardContext.getPath() != null) {

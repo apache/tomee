@@ -53,6 +53,6 @@ public class HttpDestination extends AbstractHTTPDestination {
          *
          * com.sun.ts.tests.jaxrs.ee.rs.pathparam.locator
          */
-        inMessage.put("keep.subresource.candidates", true);
+//        inMessage.put("keep.subresource.candidates", true);
     }
 }

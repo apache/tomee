@@ -16,6 +16,7 @@
  */
 package org.apache.openejb.server.cxf.rs;
 
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusException;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Endpoint;
@@ -36,7 +37,6 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.MethodDispatcher;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.ProviderInfo;
-import org.apache.cxf.jaxrs.provider.ProviderFactory;
 import org.apache.cxf.jaxrs.provider.ServerProviderFactory;
 import org.apache.cxf.jaxrs.sse.SseContextProvider;
 import org.apache.cxf.jaxrs.utils.HttpUtils;
@@ -117,30 +117,27 @@ import javax.ws.rs.RuntimeType;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Configuration;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -155,7 +152,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static org.apache.openejb.loader.JarLocation.jarLocation;
 
 public class CxfRsHttpListener implements RsHttpListener {
 
@@ -445,7 +441,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(app));
-            configureFactory(additionalProviders, configuration, factory, webBeansContext);
+            configureFactory(additionalProviders, configuration, factory, webBeansContext, app);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -659,7 +655,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
             final JAXRSServerFactoryBean factory = newFactory(prefix, createServiceJmxName(classLoader), createEndpointName(application));
-            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx);
+            configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx, application);
             factory.setApplication(application);
 
             final List<Class<?>> classes = new ArrayList<>();
@@ -732,6 +728,21 @@ public class CxfRsHttpListener implements RsHttpListener {
             factory.setResourceClasses(classes);
             factory.setInvoker(new AutoJAXRSInvoker(restEjbs));
 
+
+            injectApplication(application, factory);
+
+            /*
+             * During setApplication CXF will inspect the binding annotations
+             * on the Application subclass and apply them to every Resource class
+             * definition.  This is how global bindings are supported.  Thus, if
+             * setApplication is called before we've called setResourceClasses()
+             * binding annotations on the Application subclass will not work.
+             *
+             * Global binding annotations are tested in:
+             * com/sun/ts/tests/jaxrs/spec/filter/globalbinding/JAXRSClient#globalBoundResourceTest_from_standalone
+             */
+            factory.setApplication(application);
+
             this.context = webContext;
             if (!webContext.startsWith("/")) {
                 this.context = "/" + webContext;
@@ -796,6 +807,34 @@ public class CxfRsHttpListener implements RsHttpListener {
                 CxfUtil.clearBusLoader(oldLoader);
             }
         }
+    }
+
+    /**
+     * JAX-RS allows for the Application subclass to have @Context injectable fields, as is
+     * the case for Resources and Providers.  CXF will do the injection on the Application
+     * instance when ApplicationInfo is constructed passing in the Application instance.
+     *
+     * We don't actually need the ApplicationInfo, we just need the side effect of calling
+     * the constructor, which is all the @Context injections will be done.  Afterwards, we
+     * can throw the ApplicationInfo away.
+     *
+     * This is verified in test:
+     * com/sun/ts/tests/jaxrs/spec/context/server/JAXRSClient#applicationInjectionTest_from_standalone
+     */
+    public static void injectApplication(final Application application, final JAXRSServerFactoryBean factory) {
+        /*
+         * We may have wrapped the Application instance in an InternalApplication.  If so, unwrap
+         * it and do the injection on that instance.
+         */
+        if (application instanceof InternalApplication) {
+            final InternalApplication internalApplication = (InternalApplication) application;
+            final Application original = internalApplication.getOriginal();
+            injectApplication(original, factory);
+            return;
+        }
+        
+        final Bus bus = factory.getBus();
+        new ApplicationInfo(application, bus);
     }
 
     private boolean isConsideredSingleton(final Class<?> scope) {
@@ -990,13 +1029,7 @@ public class CxfRsHttpListener implements RsHttpListener {
     private void configureFactory(final Collection<Object> givenAdditionalProviders,
                                   final ServiceConfiguration serviceConfiguration,
                                   final JAXRSServerFactoryBean factory,
-                                  final WebBeansContext ctx) {
-        if (!"true".equalsIgnoreCase(SystemInstance.get().getProperty("openejb.cxf.rs.skip-provider-sorting", "false"))) {
-            final Comparator<?> providerComparator = findProviderComparator(serviceConfiguration, ctx);
-            if (providerComparator != null) {
-                factory.setProviderComparator(providerComparator);
-            }
-        }
+                                  final WebBeansContext ctx, final Application application) {
         CxfUtil.configureEndpoint(factory, serviceConfiguration, CXF_JAXRS_PREFIX);
 
         boolean enforceCxfBvalMapper = false;
@@ -1127,7 +1160,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         // the other one is more generic but need another file
         final String key = CXF_JAXRS_PREFIX + "skip-provider-scanning";
         final boolean ignoreAutoProviders = "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, serviceConfiguration.getProperties().getProperty(key, "false")));
-        final Collection<Object> additionalProviders = ignoreAutoProviders ? Collections.emptyList() : givenAdditionalProviders;
+        final List<Object> additionalProviders = new ArrayList<Object>(ignoreAutoProviders ? Collections.EMPTY_LIST : givenAdditionalProviders);
+
+        for (final Class<?> clzz : application.getClasses()) {
+            if (isProvider(clzz) && !additionalProviders.contains(clzz)) {
+                additionalProviders.add(clzz);
+            }
+        }
+
         List<Object> providers = null;
         if (providersConfig != null) {
             providers = ServiceInfos.resolve(services, providersConfig.toArray(new String[providersConfig.size()]), OpenEJBProviderFactory.INSTANCE);
@@ -1159,6 +1199,15 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
+    private boolean isProvider(final Class<?> clazz) {
+        return ContextResolver.class.isAssignableFrom(clazz)
+                || ExceptionMapper.class.isAssignableFrom(clazz)
+                || MessageBodyReader.class.isAssignableFrom(clazz)
+                || MessageBodyWriter.class.isAssignableFrom(clazz)
+                || ParamConverterProvider.class.isAssignableFrom(clazz)
+                ;
+    }
+
     private Object getServiceObject(final Message message) {
         final OperationResourceInfo ori = message.getExchange().get(OperationResourceInfo.class);
         if (ori == null) {
@@ -1173,213 +1222,6 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
         final Object o = message.getExchange().get(CdiResourceProvider.INSTANCE_KEY);
         return o != null || !OpenEJBPerRequestPojoResourceProvider.class.isInstance(resourceProvider) ? o : resourceProvider.getInstance(message);
-    }
-
-    private Comparator<?> findProviderComparator(final ServiceConfiguration serviceConfiguration, final WebBeansContext ctx) {
-        final String comparatorKey = CXF_JAXRS_PREFIX + "provider-comparator";
-        final String comparatorClass = serviceConfiguration.getProperties()
-                .getProperty(comparatorKey, SystemInstance.get().getProperty(comparatorKey));
-
-        Comparator<Object> comparator = null;
-        if (comparatorClass == null) {
-            return null; // try to rely on CXF behavior otherwise just reactivate DefaultProviderComparator.INSTANCE if it is an issue
-        } else {
-            final BeanManagerImpl bm = ctx == null ? null : ctx.getBeanManagerImpl();
-            if (bm != null && bm.isInUse()) {
-                try {
-                    final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(comparatorClass);
-                    final Set<Bean<?>> beans = bm.getBeans(clazz);
-                    if (beans != null && !beans.isEmpty()) {
-                        final Bean<?> bean = bm.resolve(beans);
-                        final CreationalContextImpl<?> creationalContext = bm.createCreationalContext(bean);
-                        comparator = Comparator.class.cast(bm.getReference(bean, clazz, creationalContext));
-                        toRelease.add(creationalContext);
-                    }
-                } catch (final Throwable th) {
-                    LOGGER.debug("Can't use CDI to load comparator " + comparatorClass);
-                }
-            }
-
-            if (comparator == null) {
-                comparator = Comparator.class.cast(ServiceInfos.resolve(serviceConfiguration.getAvailableServices(), comparatorClass));
-            }
-            if (comparator == null) {
-                try {
-                    comparator = Comparator.class.cast(Thread.currentThread().getContextClassLoader().loadClass(comparatorClass).newInstance());
-                } catch (final Exception e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-
-            for (final Type itf : comparator.getClass().getGenericInterfaces()) {
-                if (!ParameterizedType.class.isInstance(itf)) {
-                    continue;
-                }
-
-                final ParameterizedType pt = ParameterizedType.class.cast(itf);
-                if (Comparator.class == pt.getRawType() && pt.getActualTypeArguments().length > 0) {
-                    final Type t = pt.getActualTypeArguments()[0];
-                    if (Class.class.isInstance(t) && ProviderInfo.class == t) {
-                        return comparator;
-                    }
-                    if (ParameterizedType.class.isInstance(t) && ProviderInfo.class == ParameterizedType.class.cast(t).getRawType()) {
-                        return comparator;
-                    }
-                }
-            }
-
-            return new ProviderComparatorWrapper(comparator);
-        }
-    }
-
-    // public to ensure it can be configured since not setup by default anymore
-    public static final class DefaultProviderComparator extends ProviderFactory implements Comparator<ProviderInfo<?>> {
-        private static final ClassLoader SYSTEM_LOADER = ClassLoader.getSystemClassLoader();
-
-        public DefaultProviderComparator() {
-            super(CxfUtil.getBus());
-        }
-
-        @Override
-        public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
-            if (o1 == o2 || (o1 != null && o1.equals(o2))) {
-                return 0;
-            }
-            if (o1 == null) {
-                return -1;
-            }
-            if (o2 == null) {
-                return 1;
-            }
-
-            final Class<?> c1 = o1.getProvider().getClass();
-            final Class<?> c2 = o2.getProvider().getClass();
-            if (c1.getName().startsWith("org.apache.cxf.")) {
-                if (!c2.getName().startsWith("org.apache.cxf.")) {
-                    return 1;
-                }
-                return -1;
-            }
-            if (c2.getName().startsWith("org.apache.cxf.")) {
-                return -1;
-            }
-
-            final ClassLoader classLoader1 = c1.getClassLoader();
-            final ClassLoader classLoader2 = c2.getClassLoader();
-
-            final boolean loadersNotNull = classLoader1 != null && classLoader2 != null;
-
-            if (classLoader1 != classLoader2
-                    && loadersNotNull
-                    && !classLoader1.equals(classLoader2) && !classLoader2.equals(classLoader1)) {
-                if (isParent(classLoader1, classLoader2)) {
-                    return 1;
-                }
-                if (isParent(classLoader2, classLoader1)) {
-                    return -1;
-                }
-            } else {
-                int result = compareClasses(o1.getProvider(), o2.getProvider());
-                if (result != 0) {
-                    return result;
-                }
-
-                if (MessageBodyWriter.class.isInstance(o1.getProvider())) {
-                    final List<MediaType> types1 =
-                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o1.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
-                    final List<MediaType> types2 =
-                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderProduceTypes(MessageBodyWriter.class.cast(o2.getProvider())), JAXRSUtils.MEDIA_TYPE_QS_PARAM);
-
-                    if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
-                        return 1;
-                    }
-                    if (types2.contains(MediaType.WILDCARD_TYPE) && !types1.contains(MediaType.WILDCARD_TYPE)) {
-                        return -1;
-                    }
-
-                    result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
-                    if (result != 0) {
-                        return result;
-                    }
-                } else if (MessageBodyReader.class.isInstance(o1.getProvider())) { // else is not super good but using both is not sa well so let it be for now
-                    final List<MediaType> types1 =
-                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o1.getProvider())), null);
-                    final List<MediaType> types2 =
-                            JAXRSUtils.sortMediaTypes(JAXRSUtils.getProviderConsumeTypes(MessageBodyReader.class.cast(o2.getProvider())), null);
-
-                    if (types1.contains(MediaType.WILDCARD_TYPE) && !types2.contains(MediaType.WILDCARD_TYPE)) {
-                        return 1;
-                    }
-                    if (types2.contains(MediaType.WILDCARD_TYPE) && !types1.contains(MediaType.WILDCARD_TYPE)) {
-                        return -1;
-                    }
-
-                    result = JAXRSUtils.compareSortedMediaTypes(types1, types2, JAXRSUtils.MEDIA_TYPE_QS_PARAM);
-                    if (result != 0) {
-                        return result;
-                    }
-                }
-
-                final Boolean custom1 = o1.isCustom();
-                final Boolean custom2 = o2.isCustom();
-                final int customComp = custom1.compareTo(custom2) * -1;
-                if (customComp != 0) {
-                    return customComp;
-                }
-
-                try { // WEB-INF/classes will be before WEB-INF/lib
-                    final File file1 = jarLocation(c1);
-                    final File file2 = jarLocation(c2);
-                    if ("classes".equals(file1.getName())) {
-                        if ("classes".equals(file2.getName())) {
-                            return c1.getName().compareTo(c2.getName());
-                        }
-                        return -1;
-                    }
-                    if ("classes".equals(file2.getName())) {
-                        return 1;
-                    }
-                } catch (final Exception e) {
-                    // no-op: sort by class name
-                }
-            }
-            return c1.getName().compareTo(c2.getName());
-        }
-
-        private static boolean isParent(final ClassLoader l1, ClassLoader l2) {
-            ClassLoader current = l2;
-            while (current != null && current != SYSTEM_LOADER) {
-                if (current.equals(l1) || l1.equals(current)) {
-                    return true;
-                }
-                current = current.getParent();
-            }
-            return false;
-        }
-
-        @Override
-        public Configuration getConfiguration(final Message message) {
-            throw new UnsupportedOperationException("not a real inheritance");
-        }
-
-        @Override
-        protected void setProviders(final boolean b, final boolean b1, final Object... objects) {
-            throw new UnsupportedOperationException("not a real inheritance");
-        }
-    }
-
-    // we use Object cause an app with a custom comparator can desire to compare instances
-    private static final class ProviderComparatorWrapper implements Comparator<ProviderInfo<?>> {
-        private final Comparator<Object> delegate;
-
-        private ProviderComparatorWrapper(final Comparator<Object> delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public int compare(final ProviderInfo<?> o1, final ProviderInfo<?> o2) {
-            return delegate.compare(o1.getProvider(), o2.getProvider());
-        }
     }
 
     private static class OpenEJBProviderFactory implements ServiceInfos.Factory {

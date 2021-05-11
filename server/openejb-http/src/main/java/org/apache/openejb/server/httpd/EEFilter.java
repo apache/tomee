@@ -36,6 +36,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
@@ -59,13 +60,13 @@ public class EEFilter implements Filter {
         final boolean shouldWrap = active && HttpServletRequest.class.isInstance(servletRequest);
         if (!HttpServletRequest.class.isInstance(servletRequest)) {
             filterChain.doFilter(shouldWrap ?
-                    new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), this) : servletRequest, servletResponse);
+                    new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), servletResponse, this) : servletRequest, servletResponse);
             return;
         }
         WebBeansContext ctx;
         filterChain.doFilter(servletRequest.isAsyncSupported() &&  (ctx = WebBeansContext.currentInstance()) != null ?
-                    new CdiRequest(HttpServletRequest.class.cast(servletRequest), ctx, this) :
-                    (shouldWrap ? new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), this) : servletRequest),
+                    new CdiRequest(HttpServletRequest.class.cast(servletRequest), servletResponse, ctx, this) :
+                    (shouldWrap ? new NoCdiRequest(HttpServletRequest.class.cast(servletRequest), servletResponse, this) : servletRequest),
                 servletResponse);
     }
 
@@ -79,10 +80,12 @@ public class EEFilter implements Filter {
     }
 
     public static class NoCdiRequest extends HttpServletRequestWrapper {
+        private final ServletResponse response;
         private final EEFilter filter;
 
-        public NoCdiRequest(final HttpServletRequest cast, final EEFilter filter) {
+        public NoCdiRequest(final HttpServletRequest cast, final ServletResponse response, final EEFilter filter) {
             super(cast);
+            this.response = response;
             this.filter = filter;
         }
 
@@ -104,7 +107,14 @@ public class EEFilter implements Filter {
         @Override
         public boolean equals(final Object obj) {
             // unwrap and delegate
+            if (obj instanceof NoCdiRequest /* and CDI Request */) {
+                return getRequest().equals(((NoCdiRequest) obj).getRequest());
+            }
             return getRequest().equals(obj);
+        }
+
+        protected ServletResponse getResponse() {
+            return response;
         }
     }
 
@@ -114,22 +124,22 @@ public class EEFilter implements Filter {
         // it's a request so not multi-threaded
         private final AtomicReference<AsynContextWrapper> asyncContextWrapperReference = new AtomicReference<>();
 
-        public CdiRequest(final HttpServletRequest cast, final WebBeansContext webBeansContext, final EEFilter filter) {
-            super(cast, filter);
+        public CdiRequest(final HttpServletRequest cast, final ServletResponse response, final WebBeansContext webBeansContext, final EEFilter filter) {
+            super(cast, response, filter);
             this.webBeansContext = webBeansContext;
         }
 
         @Override
         public AsyncContext startAsync() throws IllegalStateException {
             asyncContextWrapperReference.compareAndSet(null,
-                                                       new AsynContextWrapper(super.startAsync(), this, webBeansContext));
+                                                       new AsynContextWrapper(super.startAsync(), this, getResponse(), webBeansContext));
             return asyncContextWrapperReference.get();
         }
 
         @Override
         public AsyncContext startAsync(final ServletRequest servletRequest, final ServletResponse servletResponse) throws IllegalStateException {
             asyncContextWrapperReference.compareAndSet(null,
-                                                       new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest, webBeansContext));
+                                                       new AsynContextWrapper(super.startAsync(servletRequest, servletResponse), servletRequest, servletResponse, webBeansContext));
             return asyncContextWrapperReference.get();
         }
 
@@ -143,14 +153,17 @@ public class EEFilter implements Filter {
     public static class AsynContextWrapper implements AsyncContext {
         private final AsyncContext delegate;
         private final CdiAppContextsService service;
-        private final ServletRequest request;
+        private final ServletResponse response;
+        private volatile ServletRequest request;
         private volatile ServletRequestEvent event;
 
-        public AsynContextWrapper(final AsyncContext asyncContext, final ServletRequest request, final WebBeansContext webBeansContext) {
+        public AsynContextWrapper(final AsyncContext asyncContext, final ServletRequest request,
+                                  final ServletResponse response, final WebBeansContext webBeansContext) {
             this.delegate = asyncContext;
             this.service = CdiAppContextsService.class.cast(webBeansContext.getService(ContextsService.class));
             this.event = null;
             this.request = request;
+            this.response = response;
         }
 
         private boolean startRequestScope() {
@@ -179,7 +192,10 @@ public class EEFilter implements Filter {
 
         @Override
         public ServletRequest getRequest() {
-            return request;
+            if (request != null) {
+                return request;
+            }
+            return delegate.getRequest();
         }
 
         @Override
@@ -195,7 +211,12 @@ public class EEFilter implements Filter {
                 // Unfortunately we pass in the wrapped request so the flag is false
                 // we need to override the value returned by Tomcat in case we are wrapping the request
                 if (request instanceof NoCdiRequest) { // and CdiRequest
-                    return request == delegate.getRequest(); // Tomcat should have this as the request and not the RequestFacade
+                    final NoCdiRequest noCdiRequest = (NoCdiRequest) this.request;
+                    // Tomcat should have this as the request and not the RequestFacade because of the wrapping
+                    // compare with the response we captured during wrapping
+                    // they might have been wrapped bu the user during the start
+                    return noCdiRequest == delegate.getRequest()
+                           && noCdiRequest.getResponse() == delegate.getResponse();
                 }
             }
             return tomcatHasOriginalRequestAndResponse;
@@ -203,17 +224,29 @@ public class EEFilter implements Filter {
 
         @Override
         public void dispatch() {
-            delegate.dispatch();
+            try {
+                delegate.dispatch();
+            } finally {
+                request = null;
+            }
         }
 
         @Override
         public void dispatch(final String s) {
-            delegate.dispatch(s);
+            try {
+                delegate.dispatch(s);
+            } finally {
+                request = null;
+            }
         }
 
         @Override
         public void dispatch(final ServletContext servletContext, final String s) {
-            delegate.dispatch(servletContext, s);
+            try {
+                delegate.dispatch(servletContext, s);
+            } finally {
+                request = null;
+            }
         }
 
         @Override

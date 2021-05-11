@@ -1040,7 +1040,7 @@ public class HttpRequestImpl implements HttpRequest {
         final WebBeansContext webBeansContext = AppFinder.findAppContextOrWeb(
                 Thread.currentThread().getContextClassLoader(), AppFinder.WebBeansContextTransformer.INSTANCE);
         return webBeansContext != null ?
-                new EEFilter.AsynContextWrapper(asyncContext, servletRequest, webBeansContext) : asyncContext;
+                new EEFilter.AsynContextWrapper(asyncContext, servletRequest, servletResponse, webBeansContext) : asyncContext;
     }
 
     public void addInternalParameter(final String key, final String val) {

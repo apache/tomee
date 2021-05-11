@@ -105,7 +105,7 @@ public abstract class AbstractSecurityService implements DestroyableResource, Se
         // we can register policy handlers and the role mapper
         try {
             for (String key : getKeys()) {
-                PolicyContext.registerHandler(key, this, false);
+                PolicyContext.registerHandler(key, this, true);
             }
         } catch (final PolicyContextException e) {
             // best would probably to fail start if something wrong happens

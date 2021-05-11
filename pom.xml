@@ -88,7 +88,6 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/tomee.git</developerConnection>
     <url>http://git-wip-us.apache.org/repos/asf/tomee.git</url>
-    <tag>HEAD</tag>
   </scm>
 
   <properties>
@@ -148,7 +147,7 @@
 
     <tomcat.version>9.0.45</tomcat.version>
 
-    <cxf.version>3.5.0-SNAPSHOT</cxf.version>
+    <cxf.version>3.4.3</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -195,7 +194,7 @@
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>2.3.8</myfaces.version>
+    <myfaces.version>2.3.9</myfaces.version>
     <mojarra.version>2.3.14</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -968,6 +967,10 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>staging-tomee-patch-plugin</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1183</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>
