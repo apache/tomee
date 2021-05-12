@@ -822,6 +822,11 @@ public class CxfRsHttpListener implements RsHttpListener {
      * com/sun/ts/tests/jaxrs/spec/context/server/JAXRSClient#applicationInjectionTest_from_standalone
      */
     public static void injectApplication(final Application application, final JAXRSServerFactoryBean factory) {
+
+        if (application == null) {
+            return;
+        }
+
         /*
          * We may have wrapped the Application instance in an InternalApplication.  If so, unwrap
          * it and do the injection on that instance.
