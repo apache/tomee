@@ -93,6 +93,7 @@
     <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
+    <module>jpa-hibernate-arquillian</module>
     <module>jpa-enumerated</module>
     <module>jsf-managedBean-and-ejb</module>
     <module>jsf-cdi-and-ejb</module>
