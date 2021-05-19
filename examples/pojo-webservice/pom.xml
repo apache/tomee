@@ -25,7 +25,7 @@
   <name>TomEE :: Web Examples :: Pojo WS</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.7-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.8-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>

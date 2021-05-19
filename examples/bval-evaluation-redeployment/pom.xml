@@ -25,8 +25,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>8.0.7-SNAPSHOT</tomee.test.version>
-    <openejb.test.version>8.0.7-SNAPSHOT</openejb.test.version>
+    <tomee.test.version>8.0.8-SNAPSHOT</tomee.test.version>
+    <openejb.test.version>8.0.8-SNAPSHOT</openejb.test.version>
   </properties>
 
   <modules>
