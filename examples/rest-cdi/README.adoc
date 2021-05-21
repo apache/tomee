@@ -175,6 +175,7 @@ $ mvn clean install
 Which should create output like the following.
 
 [source,java]
+----
 -------------------------------------------------------
  T E S T S
 -------------------------------------------------------
