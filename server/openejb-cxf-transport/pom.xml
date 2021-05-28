@@ -37,9 +37,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
-      <version>${cxf.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>

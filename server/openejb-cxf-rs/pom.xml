@@ -58,9 +58,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-      <version>${cxf.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
@@ -74,17 +74,6 @@
           <groupId>jakarta.activation</groupId>
           <artifactId>jakarta.activation-api</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>org.glassfish.jaxb</groupId>
-          <artifactId>jaxb-xjc</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <version>${cxf.version}</version>
-      <exclusions>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-xjc</artifactId>
@@ -116,10 +105,6 @@
         <exclusion>
           <groupId>xalan</groupId>
           <artifactId>serializer</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.annotation</groupId>
-          <artifactId>jakarta.annotation-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
