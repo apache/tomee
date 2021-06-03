@@ -49,8 +49,13 @@ import org.apache.openejb.server.cxf.transport.OpenEJBHttpDestinationFactory;
 import org.apache.openejb.server.cxf.transport.event.BusCreated;
 import org.apache.openejb.util.PropertiesHelper;
 import org.apache.openejb.util.reflection.Reflections;
+import org.apache.webbeans.intercept.DefaultInterceptorHandler;
+import org.apache.webbeans.proxy.InterceptorHandler;
+import org.apache.webbeans.proxy.OwbInterceptorProxy;
+import org.apache.webbeans.util.ExceptionUtil;
 
 import javax.management.MBeanServer;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -61,6 +66,8 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+
+import static org.apache.webbeans.proxy.InterceptorDecoratorProxyFactory.FIELD_INTERCEPTOR_HANDLER;
 
 public final class CxfUtil {
     public static final String ENDPOINT_PROPERTIES = "properties";
@@ -129,7 +136,32 @@ public final class CxfUtil {
 
                 @Override
                 public Object getRealObject(Object o) {
+                    // special case for OWB proxies - ie, a webservice endpoint with a CDI interceptor
+                    // we'll want to unwrap this and set the field on the proxied instance, rather than set the field
+                    // straight on the proxy
+                    if (o instanceof OwbInterceptorProxy) {
+                        return getProxiedInstance(o);
+                    }
+
                     return o;
+                }
+
+                private Object getProxiedInstance(Object o) {
+                    try {
+                        final Field field = o.getClass().getDeclaredField(FIELD_INTERCEPTOR_HANDLER);
+                        field.setAccessible(true);
+
+                        final Object fieldValue = field.get(o);
+
+                        if (fieldValue instanceof DefaultInterceptorHandler) {
+                            final DefaultInterceptorHandler handler = (DefaultInterceptorHandler) fieldValue;
+                            return handler.getTarget();
+                        } else {
+                            throw new IllegalStateException("Expected OwbInterceptorProxy handler to be an instance of Default Interceptor Handler.");
+                        }
+                    } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
 
