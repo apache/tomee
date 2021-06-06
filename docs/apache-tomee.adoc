@@ -1,0 +1,126 @@
+= Apache TomEE
+:index-group: General Information
+:jbake-date: 2020-07-04
+:jbake-type: page
+:jbake-status: published
+
+Apache TomEE, pronounced "Tommy", is an all-Apache Java EE 6 Web Profile certified stack where Apache Tomcat is top dog. Apache TomEE is assembled from a vanilla Apache Tomcat zip file. We start with Apache Tomcat, add our jars and zip up the rest. The result is Tomcat with added EE features - TomEE.
+
+link:../download-ng.html[Download Apache TomEE Now]
+and
+link:../docs.html[get started today!]
+
+[width=100,frame=none,cols=2]
+|===
+
+a|
+== TomEE
+
+The Web Profile version of TomEE contains
+
+- **CDI** - Apache OpenWebBeans
+- **EJB** - Apache OpenEJB
+- **JPA** - Apache OpenJPA
+- **JSF** - Apache MyFaces
+- **JSP** - Apache Tomcat
+- **JSTL** - Apache Tomcat
+- **JTA** - Apache Geronimo Transaction
+- **Servlet** - Apache Tomcat
+- **Javamail** - Apache Geronimo JavaMail
+- **Bean Validation** - Apache BVal
+
+== TomEE+
+
+The TomEE Plus distribution adds the following:
+
+- **JAX-RS** - Apache CXF
+- **JAX-WS** - Apache CXF
+- **JMS** - Apache ActiveMQ
+- **Connector** - Apache Geronimo Connector
+
+a|
+image::/resources/images/microprofile.png[Microprofile]
+
+Microprofile is an open forum to optimize Enterprise Java for a microservices architecture by innovating across multiple implementations and collaborating on common areas of interest with a goal of standardization. TomEE is actively participating in this effort, and would welcome help from the community in moving this process forward.
+
+link:http://microprofile.io/[Find out more]
+
+image::/resources/images/Geek-Choice-Awards-App-Server-100x100-black.png[Geeks Choice Award]
+RebelLabs released an annual study with awards to recognize Geeky Excellence for 2014. Tomcat and TomEE were named as one of the 10 Geek Choice Awards winner. For a complete list of winners, check out the report
+link:https://www.jrebel.com/press-releases/rebellabs-identifies-top-10-technologies-modern-developers-love-and-names-2014-geek[10 Kick-Ass Technologies Modern Developers Love (updated)^].
+
+[.line-through]#link:http://zeroturnaround.com/rebellabs/10-kick-ass-technologies-modern-developers-love/10/[Read the Report^]#
+
+|===
+
+video::eCrtoSTZ2RE[youtube,width=500,height=280]
+
+== Our Goal
+
+Simple, get much more from Apache Tomcat, yet without giving anything up.
+
+== Principles
+
+Some core principles guide the integration:
+
+- Don't mess with Tomcat - Just take it as it comes and extend it
+- Keep it as simple as possible for the end user
+- Avoid architectural overhead - It should just run existing applications out of the box
+
+The desire to beef-up Tomcat installations has persisted despite the existence of full-profile application servers,
+many of which actually include Tomcat in some truncated or stripped-down form.
+TomEE strives to fill this gap.
+
+== Under the Covers
+
+Apache TomEE is assembled from a vanilla Apache Tomcat official distribution.
+No picking and choosing individual parts of Tomcat and building a "new" server
+leveraging Tomcat.  We start with Tomcat, add our jars and configuration and zip up the rest.
+The result is Tomcat with added EE features, TomEE.
+
+Tomcat provides plenty of hooks for filling out parts of its lifecycle.  We
+leverage them all to fill the gaps.  The result is a whole lotta sharing!
+
+Servlets now get access to JPA and Transactions, EJBs get access to Tomcat
+provided Security.  Any Tomcat provided resources, say from a context.xml,
+can be looked up or injected by *any* managed component in the system.
+
+== Keep it Tight, Keep it Simple
+
+There's a definite "less is more" philosophy in Apache TomEE.  It's too
+easy to go too far when developing an app server.  The result is usually a
+slow to start, memory hogging, beast.  We're not here to create an ultra
+flexible, super powerful, infinitely composable, be anything to anyone
+platform.  We're here to deliver Java EE 6 Web Profile in the simplest way
+possible.
+
+If you were to imagine taking a plain Tomcat install and integrating the
+missing components in the most direct and to-the-point style possible,
+you'd end up with TomEE.  The result speaks for itself:
+
+- Runs without any additional memory requirements
+- Compatible with most Tomcat-aware tools
+- Compatible with Tomcat-tested apps
+
+== History
+
+In Apache TomEE's previous life, it was simply known as the OpenEJB+Tomcat
+integration.  That description was always quite misleading.  For one,
+there's incredible benefit even if EJB is never used.
+
+Quite simply, EJB as a technology integrates with the most number of specs
+than any other spec.  It touches JMS, Web Services, Connectors, Servlets
+(EJB Web Services are still driven by Servlets!), JPA, JDBC, Transactions,
+Security.  Integrating with all these technologies takes time and expertise
+and in the end has very little to do with EJB specifically.  To apply this
+all to Tomcat and leverage it all from a simple Servlet is a natural
+extension and the reason most app servers started out as EJB servers.
+
+Whereas most app servers pluck Tomcat out of its environment, Apache
+OpenEJB has always existed as an embeddable container focused on being as
+tiny and invisible as possible.  The natural extension of this is to embed
+the "EE" into Tomcat, rather than the other way around.
+
+But in the end, it is not about EJB.  It's about the other guys: ActiveMQ,
+CXF, MyFaces, OpenJPA, OpenWebBeans, and of course Tomcat!  So out with
+OpenEJB+Tomcat and in with Apache TomEE!

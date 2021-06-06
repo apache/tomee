@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- START SNIPPET: code -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+  <!-- START SNIPPET: annotations -->
+
+  <context:annotation-config/>
+
+  <!-- END SNIPPET: annotations -->
+
+  <!-- START SNIPPET: bootstrapping -->
+
+  <!--
+  Required:  Set up a TransactionManager for use by OpenEJB or Spring.
+  The Spring PlatformTransactionManager may be used instead.
+
+  In future versions this will not be a required step.
+  -->
+  <bean name="TransactionManager" class="org.apache.geronimo.transaction.manager.GeronimoTransactionManager"/>
+
+
+  <!--
+  Required:  Set up a SecurityService for use by OpenEJB.
+  In future versions this will not be a required step.
+  -->
+  <bean name="SecurityService" class="org.apache.openejb.core.security.SecurityServiceImpl"/>
+
+
+  <!--
+  Loads the EJBs from the classpath just as when embedding OpenEJB via
+  the org.apache.openejb.client.LocalInitialContextFactory.  All the discovered
+  EJBs are imported into this context and available for injection here.
+  -->
+  <bean name="classPathApplication" class="org.apache.openejb.spring.ClassPathApplication"/>
+
+  <!-- END SNIPPET: bootstrapping -->
+
+  <!-- START SNIPPET: resources -->
+
+  <bean name="MovieDatabase" class="org.apache.openejb.spring.Resource">
+    <property name="type" value="DataSource"/>
+    <property name="properties">
+      <props>
+        <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+        <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean name="MovieDatabaseUnmanaged" class="org.apache.openejb.spring.Resource">
+    <property name="type" value="DataSource"/>
+    <property name="properties">
+      <props>
+        <prop key="JdbcDriver">org.hsqldb.jdbcDriver</prop>
+        <prop key="JdbcUrl">jdbc:hsqldb:mem:moviedb</prop>
+        <prop key="JtaManaged">false</prop>
+      </props>
+    </property>
+  </bean>
+
+  <!-- END SNIPPET: resources -->
+
+  <!-- START SNIPPET: pojos -->
+  <bean name="AvailableMovies" class="org.superbiz.spring.AvailableMovies">
+    <property name="movies">
+      <list>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Fargo"/>
+          <property name="director" value="Joel Coen"/>
+          <property name="year" value="1996"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Reservoir Dogs"/>
+          <property name="director" value="Quentin Tarantino"/>
+          <property name="year" value="1992"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="The Big Lebowski"/>
+          <property name="director" value="Joel Coen"/>
+          <property name="year" value="1998"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="You, Me and Dupree"/>
+          <property name="director" value="Anthony Russo"/>
+          <property name="year" value="2006"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Wedding Crashers"/>
+          <property name="director" value="David Dobkin"/>
+          <property name="year" value="2005"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Zoolander"/>
+          <property name="director" value="Ben Stiller"/>
+          <property name="year" value="2001"/>
+        </bean>
+        <bean class="org.superbiz.spring.Movie">
+          <property name="title" value="Shanghai Noon"/>
+          <property name="director" value="Tom Dey"/>
+          <property name="year" value="2000"/>
+        </bean>
+      </list>
+    </property>
+    <!--property name="moviesEjb">
+      <ref bean="MoviesLocal" />
+    </property-->
+  </bean>
+
+  <bean name="theater1" class="org.superbiz.spring.Theater">
+    <property name="nowPlaying">
+      <list>
+        <value>Fargo</value>
+        <value>Reservoir Dogs</value>
+        <value>The Big Lebowski</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="theater2" class="org.superbiz.spring.Theater">
+    <property name="nowPlaying">
+      <list>
+        <value>You, Me and Dupree</value>
+        <value>Wedding Crashers</value>
+        <value>Zoolander</value>
+        <value>Shanghai Noon</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean name="theaters" class="org.superbiz.spring.Theaters">
+    <property name="theaters">
+      <list>
+        <ref bean="theater1"/>
+        <ref bean="theater2"/>
+      </list>
+    </property>
+  </bean>
+  <!-- END SNIPPET: pojos -->
+
+</beans>
+    <!-- END SNIPPET: code -->

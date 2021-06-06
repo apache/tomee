@@ -31,7 +31,7 @@ that needs to pull objects from the Embedded EJB container. Classes with
 module may have as many classes annotated with `@LocalClient` as it
 wishes.
 
-= Injection
+== Injection
 
 The injection occurs via acquiring a LocalInitialContext via the
 LocalInitialContextFactory and calling _bind("inject", instance)_
@@ -52,17 +52,17 @@ public class MoviesTest extends TestCase {
     private EntityManager entityManager;
 
     public void setUp() throws Exception {
-    Properties p = new Properties();
-    p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
-    InitialContext initialContext = new InitialContext(p);
-    initialContext.bind("inject", this);
+        Properties p = new Properties();
+        p.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
+        InitialContext initialContext = new InitialContext(p);
+        initialContext.bind("inject", this);
     }
 
     //... other test methods
 }
 ----
 
-= Discovery
+== Discovery
 
 All EJB modules are scanned for `@LocalClient` classes, even if those EJB
 Modules are inside .war files as with the
