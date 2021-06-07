@@ -130,7 +130,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -760,7 +759,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 factory.setProvider(new TomEESseEventSinkContextProvider());
 
                 server = factory.create();
-                fixProviderIfKnown();
+                fixProviders(serviceConfiguration);
                 fireServerCreated(oldLoader);
 
                 final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
@@ -846,7 +845,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         return Singleton.class == scope || Dependent.class == scope;
     }
 
-    private void fixProviderIfKnown() {
+    /**
+     * Fix providers set in ProviderFactory
+     * - changes default Jonhzon by the TomEE specific one
+     * - remove deactivated providers
+     * @param serviceConfiguration
+     */
+    private void fixProviders(final ServiceConfiguration serviceConfiguration) {
         final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
         for (final String field : asList("messageWriters", "messageReaders")) {
             final List<ProviderInfo<?>> values = List.class.cast(Reflections.get(spf, field));
@@ -863,19 +868,29 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            if (customJsonProvider) { // remove JohnzonProvider default versions
-                final Iterator<ProviderInfo<?>> it = values.iterator();
-                while (it.hasNext()) {
-                    final String name = it.next().getResourceClass().getName();
-                    if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
-                            "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) {
-                        it.remove();
-                        break;
-                    }
+            final Iterator<ProviderInfo<?>> it = values.iterator();
+            while (it.hasNext()) {
+                final String name = it.next().getResourceClass().getName();
+
+                // remove JohnzonProvider default versions
+                if (("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
+                        "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) && customJsonProvider) {
+                    it.remove();
+                }
+
+                // remove deactivated providers
+                if (!isActive(name, serviceConfiguration)) {
+                    it.remove();
                 }
             }
+
         }
 
+    }
+
+    public boolean isActive(final String name, final ServiceConfiguration serviceConfiguration) {
+        final String key = name + ".activated";
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, serviceConfiguration.getProperties().getProperty(key, "true")));
     }
 
     private static Class<?> realClass(final Class<?> aClass) {

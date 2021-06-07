@@ -51,7 +51,8 @@ import static org.junit.Assert.assertEquals;
 @Classes(DisableTomEEJohnzonTest.Endpoint.class)
 @JaxrsProviders(DisableTomEEJohnzonTest.TestWriter.class)
 @ContainerProperties({
-        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider.activated", value = "false")
+        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated", value = "false"),
+        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider.activated", value = "false")
 })
 @RunWith(ApplicationComposer.class)
 public class DisableTomEEJohnzonTest {

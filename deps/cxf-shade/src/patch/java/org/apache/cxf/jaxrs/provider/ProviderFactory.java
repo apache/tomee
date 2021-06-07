@@ -210,20 +210,28 @@ public abstract class ProviderFactory {
         return new ProviderCache(checkAll);
     }
     protected static void initFactory(ProviderFactory factory) {
+
+        final List<Object> providers = new ArrayList<>();
+        providers.add(new BinaryDataProvider<Object>());
+        providers.add(new SourceProvider<Object>());
+        providers.add(DATA_SOURCE_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        providers.add(new FormEncodingProvider<Object>());
+        providers.add(new StringTextProvider());
+        providers.add(new PrimitiveTextProvider<Object>());
+        providers.add(JAXB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        providers.add(MULTIPART_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+
+        // property set in CxfRsHttpListener
+        if (!PropertyUtils.isFalse(factory.getBus().getProperty("org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider.activated"))) {
+            providers.add(JSONP_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        }
+        if (!PropertyUtils.isFalse(factory.getBus().getProperty("org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated"))) {
+            providers.add(JSONB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        }
+
         // ensure to not load providers not available in a module environment if not needed
-        factory.setProviders(false,
-                             false,
-                     new BinaryDataProvider<Object>(),
-                     new SourceProvider<Object>(),
-                     DATA_SOURCE_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
-                     new FormEncodingProvider<Object>(),
-                     new StringTextProvider(),
-                     new PrimitiveTextProvider<Object>(),
-                     JAXB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
-                     JAXB_ELEMENT_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
-                     JSONP_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
-                     JSONB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()),
-                     MULTIPART_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        factory.setProviders(false, false, providers.toArray(new Object[0]));
+
         Object prop = factory.getBus().getProperty("skip.default.json.provider.registration");
         if (!PropertyUtils.isTrue(prop)) {
             factory.setProviders(false, false, createProvider(JSON_PROVIDER_NAME, factory.getBus()));
