@@ -25,6 +25,7 @@
                <property name="stopPort">-1</property>
                <property name="ajpPort">-1</property>
                <property name="dir">target/tomee</property>
+              <property name="debug">false</property>
             </configuration>
         </container>
 </arquillian>
