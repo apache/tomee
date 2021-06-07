@@ -179,6 +179,14 @@ public class EEFilter implements Filter {
         }
 
         private ServletRequestEvent getEvent() {
+            if (event != null) {
+                return event;
+            }
+
+            if (request == null) {
+                return null;
+            }
+
             final ServletRequest request = getRequest();
             if (event == null || event.getServletRequest() != request) {
                 synchronized (this) {
