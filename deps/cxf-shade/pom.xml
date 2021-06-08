@@ -62,6 +62,23 @@
       <version>${cxf.version}</version>
     </dependency>
 
+    <!-- add transitive dependencies so including this is equivalent to including regular deps -->
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>2.3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.ws.xmlschema</groupId>
+      <artifactId>xmlschema-core</artifactId>
+      <version>2.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.woodstox</groupId>
+      <artifactId>woodstox-core</artifactId>
+      <version>6.2.4</version>
+    </dependency>
+
     <!-- for IntelliJ in case patch is added as sources
     <dependency>
       <groupId>org.springframework</groupId>
