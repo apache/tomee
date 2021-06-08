@@ -33,7 +33,6 @@ import org.apache.cxf.management.InstrumentationManager;
 import org.apache.cxf.management.counters.CounterRepository;
 import org.apache.cxf.management.jmx.InstrumentationManagerImpl;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.http.CXFAuthenticator;
 import org.apache.cxf.transport.http.HttpDestinationFactory;
 import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;

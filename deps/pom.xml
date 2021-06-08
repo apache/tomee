@@ -29,5 +29,6 @@
 
   <modules>
     <module>taglibs-shade</module>
+    <module>cxf-shade</module>
   </modules>
 </project>
