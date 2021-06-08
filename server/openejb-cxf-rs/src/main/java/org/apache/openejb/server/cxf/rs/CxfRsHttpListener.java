@@ -398,9 +398,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     @Deprecated // we could drop it now I think
-    public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application appInstance,
+    public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application application,
                                 final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
-        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration, null);
+        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, application, null, additionalProviders, configuration, null);
     }
 
     @Override
@@ -409,14 +409,14 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final String contextRoot,
                            final String fullContext,
                            final Class<?> loadedClazz,
-                           final Application app,
+                           final Application application,
                            final Collection<Injection> injections,
                            final Context context,
                            final WebBeansContext owbCtx,
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-                null, app, null, additionalProviders, configuration, owbCtx);
+                null, application, null, additionalProviders, configuration, owbCtx);
     }
 
     @Override
@@ -429,18 +429,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
+                proxy, new InternalApplication(null), new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
                 beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
-                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
+                        final Application application, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
                         final WebBeansContext webBeansContext) {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(app));
-            configureFactory(additionalProviders, configuration, factory, webBeansContext, app);
+            final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(application));
+            configureFactory(additionalProviders, configuration, factory, webBeansContext, application);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -453,8 +453,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (rp != null) {
                 factory.setResourceProvider(rp);
             }
-            if (app != null) {
-                factory.setApplication(app);
+            if (application != null) {
+                factory.setApplication(application);
             }
             if (invoker != null) {
                 factory.setInvoker(invoker);
