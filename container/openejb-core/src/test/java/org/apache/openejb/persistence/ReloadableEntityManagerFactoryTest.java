@@ -46,7 +46,7 @@ public class ReloadableEntityManagerFactoryTest {
         unit.addClass(MyEntity.class);
         unit.setProperty("openjpa.jdbc.SynchronizeMappings", "buildSchema(ForeignKeys=true)");
         unit.getProperties().setProperty("openjpa.RuntimeUnenhancedClasses", "supported");
-        unit.getProperties().setProperty("openjpa.DatCache", "false");
+        unit.getProperties().setProperty("openjpa.DataCache", "false");
         unit.setExcludeUnlistedClasses(true);
 
         final Persistence persistence = new org.apache.openejb.jee.jpa.unit.Persistence(unit);
