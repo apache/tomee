@@ -278,17 +278,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-dbcp2</artifactId>
       <version>2.1</version>
       <exclusions>
@@ -313,17 +302,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-pool2</artifactId>
       <version>2.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>cxf-shade</artifactId>
-      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -675,7 +653,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.11</version>
+      <version>1.2.13</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -686,7 +664,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.11</version>
+      <version>1.2.13</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -697,7 +675,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.11</version>
+      <version>1.2.13</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -708,7 +686,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.11</version>
+      <version>1.2.13</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -719,7 +697,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.11</version>
+      <version>1.2.13</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -774,7 +752,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1105,6 +1083,17 @@
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-websocket-api</artifactId>
       <version>${tomcat.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>8.0.8-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1567,17 +1556,6 @@
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm-util</artifactId>
       <version>4.18</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm8-shaded</artifactId>
-      <version>4.17</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
