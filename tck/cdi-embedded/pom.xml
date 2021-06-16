@@ -255,7 +255,7 @@
         <jdk>1.8</jdk>
       </activation>
       <properties>
-        <surefire.argline>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
+        <surefire.argline>-Xmx3096m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
       </properties>
     </profile>
   </profiles>

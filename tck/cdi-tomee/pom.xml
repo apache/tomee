@@ -247,7 +247,7 @@
         <jdk>1.8</jdk>
       </activation>
       <properties>
-        <tomee.opts>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</tomee.opts>
+        <tomee.opts>-Xmx3096m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</tomee.opts>
       </properties>
     </profile>
   </profiles>
