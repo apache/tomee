@@ -1,0 +1,172 @@
+:index-group: Jakarta Security
+:jbake-type: page
+:jbake-status: status=published
+= Jakarta Security with Tomcat tomcat-users.xml identity store
+
+TomEE has its own independent Jakarta Security implementation https://eclipse-ee4j.github.io/security-api/ .
+
+[NOTE]
+====
+Jakarta Security defines a standard for creating secure Jakarta EE applications in modern application paradigms. It defines an overarching (end-user targeted) Security API for Jakarta EE Applications.
+
+Jakarta Security builds on the lower level Security SPIs defined by Jakarta Authentication and Jakarta Authorization, which are both not end-end targeted.
+====
+
+This example focuses in showing how to leverage Jakarta Security in TomEE with Tomcat's tomcat-users.xml.
+TomEE out of the box supports it as an identity store.
+
+== Implement a simple JAX-RS application
+
+This movie example has 2 resources, one of them `MovieAdminResource` is a protected resource to ensure only admin users can add or delete movies.
+
+[source,xml]
+----
+<web-app
+  xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+  version="3.1"
+>
+
+  <!-- Security constraints  -->
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Protected admin resource/url</web-resource-name>
+      <url-pattern>/api/movies/*</url-pattern>
+      <http-method-omission>GET</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+</web-app>
+----
+
+== Defining identity store and authentication mechanism
+
+Jakarta Security requires 2 things to authenticate a user
+
+* the identity store (aka `tomcat-users.xml` in this case): this is basically where users are stored with their user
+name, password, and the roles
+* the authentication mechanism: how the credentials are passed in.
+
+In this example, we want to use `tomcat-users.xml` identity store and basic authentication.
+We can define that in the resource itself using 2 annotations
+
+[source,java]
+----
+@Path("/movies")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@TomcatUserIdentityStoreDefinition
+@BasicAuthenticationMechanismDefinition
+@ApplicationScoped
+public class MovieAdminResource {
+
+    private static final Logger LOGGER = Logger.getLogger(MovieAdminResource.class.getName());
+
+    @Inject
+    private MovieStore store;
+
+    // JAXRS security context also wired with Jakarta Security
+    @Context
+    private javax.ws.rs.core.SecurityContext securityContext;
+
+    @POST
+    public Movie addMovie(final Movie newMovie) {
+        LOGGER.info(getUserName() + " adding new movie " + newMovie);
+        return store.addMovie(newMovie);
+    }
+
+    // See source file for full content
+
+    private String getUserName() {
+        if (securityContext.getUserPrincipal() != null) {
+            return String.format("%s[admin=%s]",
+                                 securityContext.getUserPrincipal().getName(),
+                                 securityContext.isUserInRole("admin"));
+        }
+
+        return null;
+    }
+
+}
+----
+
+IMPORTANT:
+====
+In TomEE, Jakarta Security is wired in all layers, you can use
+
+* `javax.ws.rs.core.SecurityContext#getUserPrincipal` and `isUserInRole` to get the User Principal and check if the user has a given role
+* `javax.security.enterprise.SecurityContext#getCallerPrincipal` and `isCallerInRole` to get the Caller Principal (notice the difference in terms of naming) and check if a caller has a given role
+* `javax.servlet.http.HttpServletRequest#getUserPrincipal` and `isUserInRole`
+* `javax.ejb.SessionContext#getCallerPrincipal` and `isCallerInRole`
+* the `Subject` from the `PolicyContext` but this is less used
+====
+
+A lot of different APIs to retrieve the principal and check whereas it has a given role.
+It's all wired in and consistent in TomEE. No special configuration is needed.
+
+Finally, `MovieResource` does not require any authentication or user permissions, but for logging purposes in this test, it will use the Jakarta Security `SecurityContext` to grab the caller principal and do some role checks.
+
+== Add users to the regular `tomcat-users.xml`
+
+The file location is by default `${catalina.base}/conf`.
+The file can be located anywhere.
+If you are not using the default location, make sure to update the `server.xml` accordingly.
+
+[source,xml]
+----
+<tomcat-users>
+  <user name="tomcat" password="tomcat" roles="tomcat"/>
+  <user name="user" password="user" roles="user"/>
+
+  <user name="tom" password="secret1" roles="admin,manager"/>
+  <user name="emma" password="secret2" roles="admin,employee"/>
+  <user name="bob" password="secret3" roles="admin"/>
+</tomcat-users>
+----
+
+== Running
+
+Were we to run the above Main class or Test Case we'd see output like the following:
+
+[source,bash]
+----
+INFOS:      Service URI: http://localhost:56147/api/movies                      -> Pojo org.superbiz.movie.MovieAdminResource
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:            DELETE http://localhost:56147/api/movies/{id}                 ->      Movie deleteMovie(int)
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:              POST http://localhost:56147/api/movies                      ->      Movie addMovie(Movie)
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:      Service URI: http://localhost:56147/api/movies                      -> Pojo org.superbiz.movie.MovieResource
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:               GET http://localhost:56147/api/movies                      ->      List<Movie> getAllMovies()
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:               GET http://localhost:56147/api/movies/{id}                 ->      Movie getMovie(int)
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:      Service URI: http://localhost:56147/api/openapi                     -> Pojo org.apache.geronimo.microprofile.openapi.jaxrs.OpenAPIEndpoint
+juin 15, 2021 3:48:32 PM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFOS:               GET http://localhost:56147/api/openapi                     ->      OpenAPI get()
+juin 15, 2021 3:48:32 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Deployment of web application directory [/private/var/folders/03/fjcmr3cs2rnbtfcqd9w1nntc0000gn/T/temp2373416631427015263dir/apache-tomee/webapps/ROOT] has finished in [15,655] ms
+juin 15, 2021 3:48:32 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Starting ProtocolHandler ["http-nio-56147"]
+juin 15, 2021 3:48:32 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Server startup in [15904] milliseconds
+juin 15, 2021 3:48:32 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Full bootstrap in [22621] milliseconds
+juin 15, 2021 3:48:33 PM org.superbiz.movie.MovieAdminResource addMovie
+INFOS: tom[admin=true] adding new movie Movie{title='Shanghai Noon', director='Tom Dey', genre='Comedy', id=7, year=2000}
+juin 15, 2021 3:48:34 PM org.superbiz.movie.MovieResource getAllMovies
+INFOS: tomcat[admin=false] reading movies
+juin 15, 2021 3:48:34 PM org.superbiz.movie.MovieResource getAllMovies
+INFOS: null reading movies
+juin 15, 2021 3:48:34 PM org.superbiz.movie.MovieResource getAllMovies
+INFOS: emma[admin=true] reading movies
+juin 15, 2021 3:48:34 PM org.superbiz.movie.MovieResource getMovie
+INFOS: bob[admin=true] reading movie 2 / Movie{title='Starsky & Hutch', director='Todd Phillips', genre='Action', id=2, year=2004}
+
+----
