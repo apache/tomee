@@ -173,6 +173,14 @@
           <parallel>classes</parallel>
           <threadCount>1</threadCount>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.tomee.bom</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

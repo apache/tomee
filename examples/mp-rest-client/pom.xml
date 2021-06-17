@@ -75,6 +75,13 @@
       <classifier>microprofile</classifier>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>${tomee.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

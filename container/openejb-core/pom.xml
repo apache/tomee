@@ -427,7 +427,6 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>javaee-api</artifactId>
     </dependency>
-
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>

@@ -14,20 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.openejb.spi.corba;
 
-package org.apache.openejb.core;
+public interface ORBFactoryProvider {
 
-import org.apache.openejb.loader.SystemInstance;
-import org.omg.CORBA.ORB;
-
-public class OrbFactory {
-    public ORB create() {
-        ORB orb = SystemInstance.get().getComponent(ORB.class);
-        if (orb == null) {
-            // todo add support for args and properties
-            orb = ORB.init();
-            SystemInstance.get().setComponent(ORB.class, orb);
-        }
-        return orb;
-    }
+    ORBAdapter create();
 }
