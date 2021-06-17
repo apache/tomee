@@ -1,0 +1,14 @@
+<resources>
+  <!--
+  Must be defined in the application and in the container level (aka tomee.xml)
+  Because the comparator is application specific and is delivered in this application itself
+  not in the container
+  -->
+  <Service id="johnzonProvider" class-name="org.apache.johnzon.jaxrs.ConfigurableJohnzonProvider">
+    # any config
+    #bufferSize = 1048576
+    skipNull = false
+    skipEmptyArray = false
+    pretty = true
+  </Service>
+</resources>

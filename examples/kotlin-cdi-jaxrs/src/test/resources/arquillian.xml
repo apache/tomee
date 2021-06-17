@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+Optional file.  Allows us to use random ports when running tests.
+The ports are communicated to the test via the @ArquillianResource annotation
+
+
+  @RunWith(Arquillian.class)
+  public class ColorBeanTest {
+
+      @ArquillianResource
+      private URL webappUrl;
+
+      // ....
+  }
+
+If this file is deleted the default Tomcat 8080 port is used
+-->
+<arquillian xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns="http://jboss.org/schema/arquillian"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://www.jboss.org/schema/arquillian/arquillian_1_0.xsd">
+  <!--<defaultProtocol type="Servlet 3.0"/>-->
+  <!--<container qualifier="wildfly" default="true">-->
+    <!--<configuration>-->
+      <!--<property name="chameleonTarget">wildfly:10.1.0.Final:remote</property>-->
+    <!--</configuration>-->
+  <!--</container>-->
+  <!--<extension qualifier="webdriver">-->
+    <!--&lt;!&ndash;<property name="browser">firefox</property>&ndash;&gt;-->
+    <!--<property name="remoteReusable">false</property>-->
+  <!--</extension>-->
+</arquillian>
