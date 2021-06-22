@@ -1,4 +1,9 @@
-= TomEE EAP 8.0.6-TT.4
+= TomEE EAP 8.0.6-TT.5
+
+=== Changes in TomEE EAP 8.0.6-TT.5
+* Updated CXF to 3.3.11 to mitigate CVE-2021-30468
+* Updated Tomcat to 9.0.48
+* Updated ActiveMQ to 5.16.2
 
 === Changes in TomEE EAP 8.0.6-TT.4
 * Updated Tomcat to 9.0.45
