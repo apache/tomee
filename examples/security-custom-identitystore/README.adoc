@@ -1,0 +1,142 @@
+:index-group: Jakarta Security
+:jbake-type: page
+:jbake-status: status=published
+= Jakarta Security with a custom identity store
+
+TomEE has its own independent Jakarta Security implementation https://eclipse-ee4j.github.io/security-api/ .
+
+[NOTE]
+====
+Jakarta Security defines a standard for creating secure Jakarta EE applications in modern application paradigms. It defines an overarching (end-user targeted) Security API for Jakarta EE Applications.
+
+Jakarta Security builds on the lower level Security SPIs defined by Jakarta Authentication and Jakarta Authorization, which are both not end-end targeted.
+====
+
+As the specification requires, TomEE supports by default JDBC and JDAP identity stores. It also has a default support for Tomcat's 'tomcat-users.xml' (See security-tomcat-user-identitystore example).
+
+This example will show how you can leverage your own identity store to authenticate users.
+This is very often required for integrating your systems.
+
+== Implement a simple servlet
+
+This movie servlet, is a very simple example that defines a BasicAuthenticationMechanism, some roles and security constraints.
+
+[source,java]
+----
+@WebServlet("/movies")
+@DeclareRoles({"foo","bar","kaz"})
+@ServletSecurity(@HttpConstraint(rolesAllowed = "foo"))
+@BasicAuthenticationMechanismDefinition
+public class MovieServlet extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public void doGet(final HttpServletRequest request, final HttpServletResponse response)
+        throws ServletException, IOException {
+
+        String webName = null;
+        if (request.getUserPrincipal() != null) {
+            webName = request.getUserPrincipal().getName();
+        }
+
+        response.getWriter().write(
+            "<html><body> Welcome to Movie servlet <br><br>\n" +
+
+            "web username: " + webName + "<br><br>\n" +
+
+            "web user has role \"foo\": " + request.isUserInRole("foo") + "<br>\n" +
+            "web user has role \"bar\": " + request.isUserInRole("bar") + "<br>\n" +
+            "web user has role \"kaz\": " + request.isUserInRole("kaz") + "<br><br>");
+    }
+
+}
+----
+
+IMPORTANT:
+====
+In TomEE, Jakarta Security is wired in all layers, you can use
+
+* `javax.ws.rs.core.SecurityContext#getUserPrincipal` and `isUserInRole` to get the User Principal and check if the user has a given role
+* `javax.security.enterprise.SecurityContext#getCallerPrincipal` and `isCallerInRole` to get the Caller Principal (notice the difference in terms of naming) and check if a caller has a given role
+* `javax.servlet.http.HttpServletRequest#getUserPrincipal` and `isUserInRole`
+* `javax.ejb.SessionContext#getCallerPrincipal` and `isCallerInRole`
+* the `Subject` from the `PolicyContext` but this is less used
+====
+
+A lot of different APIs to retrieve the principal and check whereas it has a given role.
+It's all wired in and consistent in TomEE. No special configuration is needed.
+
+== Create your own IdentityStore implementation
+
+For the sake of keeping this example as simple as possible, the `TestIdentityStore` is very simple.
+
+It recognizes only 2 users and only one of them has the right roles to call the servlet.
+
+[source,java]
+----
+@ApplicationScoped
+public class TestIdentityStore implements IdentityStore {
+
+    public CredentialValidationResult validate(Credential credential) {
+
+        if (!(credential instanceof UsernamePasswordCredential)) {
+            return INVALID_RESULT;
+        }
+
+        final UsernamePasswordCredential usernamePasswordCredential = (UsernamePasswordCredential) credential;
+        if (usernamePasswordCredential.compareTo("jon", "doe")) {
+            return new CredentialValidationResult("jon", new HashSet<>(asList("foo", "bar")));
+        }
+
+        if (usernamePasswordCredential.compareTo("iron", "man")) {
+            return new CredentialValidationResult("iron", new HashSet<>(Collections.singletonList("avengers")));
+        }
+
+        return INVALID_RESULT;
+    }
+
+}
+----
+
+There is nothing else to configure or do.
+The identity store must implement the IdentityStore interface.
+It must be a CDI bean and then TomEE will pick it up automatically and delegate user authentication.
+
+== Running
+
+Were we to run the above Main class or Test Case we'd see output like the following:
+
+[source,bash]
+----
+....
+INFOS: Starting ProtocolHandler ["http-nio-54313"]
+juin 24, 2021 2:58:42 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Server startup in [4703] milliseconds
+juin 24, 2021 2:58:42 PM sun.reflect.DelegatingMethodAccessorImpl invoke
+INFOS: Full bootstrap in [7638] milliseconds
+
+
+Calling MovieServlet without any credentials provided.
+juin 24, 2021 2:58:43 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: statusCode=[401] contentType=[text/html]
+juin 24, 2021 2:58:43 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: <!doctype html><html lang="en"><head><title>HTTP Status 401 – Unauthorized</title><style type="text/css">body {font-family:Tahoma,Arial,sans-serif;} h1, h2, h3, b {color:white;background-color:#525D76;} h1 {font-size:22px;} h2 {font-size:16px;} h3 {font-size:14px;} p {font-size:12px;} a {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 401 – Unauthorized</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The request has not been applied because it lacks valid authentication credentials for the target resource.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.45 (8.0.8-SNAPSHOT)</h3></body></html>
+
+
+Calling MovieServlet with a valid user and valid permissions.
+
+
+Calling MovieServlet with the wrong credentials.
+juin 24, 2021 2:58:44 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: statusCode=[401] contentType=[text/html]
+juin 24, 2021 2:58:44 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: <!doctype html><html lang="en"><head><title>HTTP Status 401 – Unauthorized</title><style type="text/css">body {font-family:Tahoma,Arial,sans-serif;} h1, h2, h3, b {color:white;background-color:#525D76;} h1 {font-size:22px;} h2 {font-size:16px;} h3 {font-size:14px;} p {font-size:12px;} a {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 401 – Unauthorized</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Description</b> The request has not been applied because it lacks valid authentication credentials for the target resource.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.45 (8.0.8-SNAPSHOT)</h3></body></html>
+
+
+Calling MovieServlet with a valid user but without required permissions.
+juin 24, 2021 2:58:44 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: statusCode=[403] contentType=[text/html]
+juin 24, 2021 2:58:44 PM com.gargoylesoftware.htmlunit.WebClient printContentIfNecessary
+INFOS: <!doctype html><html lang="en"><head><title>HTTP Status 403 – Forbidden</title><style type="text/css">body {font-family:Tahoma,Arial,sans-serif;} h1, h2, h3, b {color:white;background-color:#525D76;} h1 {font-size:22px;} h2 {font-size:16px;} h3 {font-size:14px;} p {font-size:12px;} a {color:black;} .line {height:1px;background-color:#525D76;border:none;}</style></head><body><h1>HTTP Status 403 – Forbidden</h1><hr class="line" /><p><b>Type</b> Status Report</p><p><b>Message</b> Access to the requested resource has been denied</p><p><b>Description</b> The server understood the request but refuses to authorize it.</p><hr class="line" /><h3>Apache Tomcat (TomEE)/9.0.45 (8.0.8-SNAPSHOT)</h3></body></html>
+----

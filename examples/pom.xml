@@ -219,6 +219,7 @@
 
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>
+    <module>security-custom-identitystore</module>
 
   </modules>
   <dependencies>
