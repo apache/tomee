@@ -73,12 +73,12 @@ public class RememberMeInterceptor {
             if (rememberMeIdentityStore.isUnsatisfied()) {
                 throw new IllegalStateException("RememberMe annotated AuthenticationMechanism  " +
                                                 httpMechanismBean.getBeanClass() +
-                                                " required an implementation of RememberMeIndentityStore");
+                                                " required an implementation of RememberMeIdentityStore");
             }
 
             if (rememberMeIdentityStore.isAmbiguous()) {
                 throw new IllegalStateException(
-                    "Multiple implementations of RememberMeIndentityStore found. Only one should be supplied.");
+                    "Multiple implementations of RememberMeIdentityStore found. Only one should be supplied.");
             }
 
             return validateRequest(invocationContext);

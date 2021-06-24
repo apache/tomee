@@ -220,6 +220,16 @@ public class TomEESecurityExtension implements Extension {
         if (basicMechanism.get() != null) {
             afterBeanDiscovery
                 .addBean()
+                .id(BasicAuthenticationMechanism.class.getName() + "#" + BasicAuthenticationMechanismDefinition.class.getName())
+                .beanClass(Supplier.class)
+                .addType(Object.class)
+                .addType(new TypeLiteral<Supplier<BasicAuthenticationMechanismDefinition>>() {})
+                .qualifiers(Default.Literal.INSTANCE, Any.Literal.INSTANCE)
+                .scope(ApplicationScoped.class)
+                .createWith(creationalContext -> createBasicAuthenticationMechanismDefinitionSupplier(beanManager));
+
+            afterBeanDiscovery
+                .addBean()
                 .id(BasicAuthenticationMechanism.class.getName())
                 .beanClass(BasicAuthenticationMechanism.class)
                 .types(Object.class, HttpAuthenticationMechanism.class, BasicAuthenticationMechanism.class)
@@ -314,14 +324,23 @@ public class TomEESecurityExtension implements Extension {
         };
     }
 
+    private Supplier<BasicAuthenticationMechanismDefinition> createBasicAuthenticationMechanismDefinitionSupplier(final BeanManager beanManager) {
+        return () -> {
+            final BasicAuthenticationMechanismDefinition annotation = basicMechanism.get()
+                                                                   .getAnnotation(BasicAuthenticationMechanismDefinition.class);
+
+            return TomEEELInvocationHandler.of(BasicAuthenticationMechanismDefinition.class, annotation, beanManager);
+        };
+    }
+
     private Supplier<LoginToContinue> createCustomFormLoginToContinueSupplier(final BeanManager beanManager) {
         return () -> {
-            final LoginToContinue loginToContinue = customMechanism.get()
-                                                                        .getAnnotation(
-                                                                            CustomFormAuthenticationMechanismDefinition.class)
-                                                                        .loginToContinue();
+            final LoginToContinue annotation = customMechanism.get()
+                                                                   .getAnnotation(
+                                                                       CustomFormAuthenticationMechanismDefinition.class)
+                                                                   .loginToContinue();
 
-            return TomEEELInvocationHandler.of(LoginToContinue.class, loginToContinue, beanManager);
+            return TomEEELInvocationHandler.of(LoginToContinue.class, annotation, beanManager);
         };
     }
 

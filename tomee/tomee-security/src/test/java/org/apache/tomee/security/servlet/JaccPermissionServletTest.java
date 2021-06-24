@@ -107,7 +107,9 @@ public class JaccPermissionServletTest extends AbstractTomEESecurityTest {
 
     @WebServlet("/servlet2")
     @TomcatUserIdentityStoreDefinition
-    @BasicAuthenticationMechanismDefinition
+    @BasicAuthenticationMechanismDefinition(
+        realmName = "${'fun EL realm'}" // constant so we could avoid EL but it's just for the test
+        )
     public static class Servlet2 extends HttpServlet {
 
         private static final long serialVersionUID = 1L;
