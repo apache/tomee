@@ -350,6 +350,7 @@ public abstract class TimerData implements Serializable {
                     return scheduler.getTrigger(key);
                 }
             } catch (final SchedulerException e) {
+                log.warning(e.getLocalizedMessage(), e);
                 return null;
             }
         }
