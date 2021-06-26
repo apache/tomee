@@ -93,7 +93,7 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @WebServlet(urlPatterns = "/basic")
     @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
     @BasicAuthenticationMechanismDefinition(
-        realmName = "${'fun EL realm'}" // constant so we could avoid EL but it's just for the test
+        realmName = "fun EL realm" // constant so we could avoid EL but it's just for the test
     )
     public static class TestServlet extends HttpServlet {
         @Override
