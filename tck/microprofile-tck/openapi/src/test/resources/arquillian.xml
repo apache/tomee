@@ -33,6 +33,7 @@
       <property name="cleanOnStartUp">true</property>
       <property name="properties">
         geronimo.openapi.application.append-context-path = false
+        openejb.jaxrs.providers.auto = true
       </property>
     </configuration>
   </container>
@@ -49,6 +50,7 @@
       <property name="properties">
         tomee.mp.scan = all
         geronimo.openapi.application.append-context-path = false
+        openejb.jaxrs.providers.auto = true
       </property>
     </configuration>
   </container>
@@ -65,6 +67,7 @@
       <property name="properties">
         tomee.mp.scan = all
         geronimo.openapi.application.append-context-path = false
+        openejb.jaxrs.providers.auto = true
       </property>
     </configuration>
   </container>
