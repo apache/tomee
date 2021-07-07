@@ -206,7 +206,11 @@
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
-    <version.hsqldb>2.3.2</version.hsqldb>
+    <!--
+      Some modules from the 'examples' like 'testing-security' have test failures
+      with a hsqldb version > 2.3.5
+    -->
+    <version.hsqldb>2.3.5</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.4.10.Final</version.hibernate>
