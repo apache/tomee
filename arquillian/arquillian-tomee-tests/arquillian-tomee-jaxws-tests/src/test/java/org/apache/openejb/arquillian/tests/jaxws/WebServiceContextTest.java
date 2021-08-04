@@ -50,7 +50,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
 public class WebServiceContextTest {
@@ -66,7 +65,8 @@ public class WebServiceContextTest {
                 .up().exportAsString();
 
         return ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addClasses(Echo.class, EchoWS.class, SimpleRequestContext.class, Log.class, LogInterceptor.class)
+                .addClasses(WebServiceContextTest.class, /* needs to be packaged as well as some workflows require the outer class name to be available at runtime */
+                        Echo.class, EchoWS.class, SimpleRequestContext.class, Log.class, LogInterceptor.class)
                 .addAsWebInfResource(new StringAsset(beansXml), "beans.xml");
     }
 
@@ -86,7 +86,7 @@ public class WebServiceContextTest {
         public String remote();
     }
 
-    @WebService
+    @WebService(serviceName = "EchoWSService")
     public static class EchoWS implements Echo {
         @Resource
         private WebServiceContext wsc;
