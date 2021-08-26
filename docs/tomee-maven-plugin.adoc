@@ -12,7 +12,7 @@ feature-rich plugin that allows for:
 * Server start and stop
 * Application deployment and undeployment
 
-Simply add the following to the , and optionally the ), section of your
+Simply add the following to the `<plugins>`, and optionally the `<pluginManagement>`), section of your
 `pom.xml`
 
 [source,xml]
