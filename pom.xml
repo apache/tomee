@@ -443,7 +443,7 @@
           <pushChanges>false</pushChanges>
           <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <arguments>-Pmain,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+          <arguments>-Pno-examples,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
         </configuration>
       </plugin>
 
