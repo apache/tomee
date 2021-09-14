@@ -39,7 +39,7 @@
         <enabled>false</enabled>
       </releases>
       <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
+      <url>https://snapshots.repository.codehaus.org/</url>
     </repository>
   </repositories>
   <build>
