@@ -46,13 +46,10 @@
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
     </dependency>
-    <!--
-    Note that <scope>test</scope> is NOT specified here because some OpenEJB specific classes
-    are used in the JobBean example.
-    -->
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <!--
