@@ -185,7 +185,28 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
+    <!-- ActiveMQ is optional in openejb-core (embedded needs openejb-core + all deps)-->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-ra</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>activemq-broker</artifactId>
+          <groupId>org.apache.activemq</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
