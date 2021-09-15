@@ -92,7 +92,7 @@
   </scm>
 
   <properties>
-    <!-- allows release plugin to be overriden -->
+    <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
