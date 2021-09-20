@@ -23,6 +23,7 @@ import org.apache.openejb.testing.ContainerProperties;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.JaxrsProviders;
 import org.apache.openejb.testing.RandomPort;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,9 +52,12 @@ import static org.junit.Assert.assertEquals;
 @Classes(DisableTomEEJohnzonTest.Endpoint.class)
 @JaxrsProviders(DisableTomEEJohnzonTest.TestWriter.class)
 @ContainerProperties({
-        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJohnzonProvider.activated", value = "false")
+        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider.activated", value = "false"),
+        @ContainerProperties.Property(name = "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider.activated", value = "false")
 })
 @RunWith(ApplicationComposer.class)
+@Ignore("Not sure this is used - we can implement it back if needed as discussed in mailing list and slack. " +
+        "This is partially implemented in the server side but not quite happy with the hack")
 public class DisableTomEEJohnzonTest {
 
     private static final String PAYLOAD = "{\"not\": \"johnzon\"}";

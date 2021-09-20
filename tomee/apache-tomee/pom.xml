@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.7-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -88,6 +88,13 @@
       <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency> <!-- to be sure to have it -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tomee-webapp</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency> <!-- to be sure to have it -->
@@ -530,7 +537,7 @@
           <plugin>
             <groupId>org.apache.tomee.patch</groupId>
             <artifactId>tomee-patch-plugin</artifactId>
-            <version>0.5</version>
+            <version>0.7-SNAPSHOT</version>
             <configuration>
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
@@ -741,7 +748,7 @@
           <plugin>
             <groupId>org.apache.tomee.patch</groupId>
             <artifactId>tomee-patch-plugin</artifactId>
-            <version>0.5</version>
+            <version>0.7-SNAPSHOT</version>
             <configuration>
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>

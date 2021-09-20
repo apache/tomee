@@ -31,7 +31,7 @@
   <parent>
     <groupId>org.apache.tomee.bom</groupId>
     <artifactId>boms</artifactId>
-    <version>8.0.7-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>tomee-bootstrap</artifactId>
-      <version>8.0.7-SNAPSHOT</version>
+      <version>8.0.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -279,7 +279,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +290,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +323,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -334,7 +334,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
-      <version>5.16.1</version>
+      <version>5.16.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -345,7 +345,7 @@
     <dependency>
       <groupId>org.apache.batchee</groupId>
       <artifactId>batchee-jbatch</artifactId>
-      <version>0.6</version>
+      <version>1.0.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -366,19 +366,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-collections4</artifactId>
-      <version>4.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-dbcp2</artifactId>
-      <version>2.1</version>
+      <version>2.3.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -422,18 +411,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-pool2</artifactId>
-      <version>2.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
-      <version>3.4.3</version>
+      <version>2.10.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -455,28 +433,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-xml</artifactId>
-      <version>3.4.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-databinding-jaxb</artifactId>
-      <version>3.4.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>3.4.3</version>
       <exclusions>
         <exclusion>
@@ -510,17 +466,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-management</artifactId>
-      <version>3.4.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
       <version>3.4.3</version>
       <exclusions>
         <exclusion>
@@ -653,17 +598,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-security-saml</artifactId>
-      <version>3.4.3</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-transports-http</artifactId>
       <version>3.4.3</version>
       <exclusions>
         <exclusion>
@@ -840,7 +774,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.14</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -851,7 +785,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.14</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -862,7 +796,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.14</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -873,7 +807,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.14</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -884,7 +818,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.10</version>
+      <version>1.2.14</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -939,7 +873,7 @@
     <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1279,6 +1213,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>*</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
       <artifactId>javaee-api</artifactId>
       <version>8.0-5</version>
       <exclusions>
@@ -1511,7 +1456,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>taglibs-shade</artifactId>
-      <version>8.0.7-SNAPSHOT</version>
+      <version>8.0.9-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1730,30 +1675,8 @@
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm-util</artifactId>
-      <version>4.18</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm8-shaded</artifactId>
-      <version>4.17</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-asm9-shaded</artifactId>
-      <version>4.18</version>
+      <version>4.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1764,7 +1687,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-bundleutils</artifactId>
-      <version>4.18</version>
+      <version>4.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1775,7 +1698,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-finder-shaded</artifactId>
-      <version>4.18</version>
+      <version>4.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1786,7 +1709,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-naming</artifactId>
-      <version>4.18</version>
+      <version>4.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1797,7 +1720,7 @@
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-reflect</artifactId>
-      <version>4.18</version>
+      <version>4.20</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -1863,7 +1786,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.67</version>
+      <version>1.69</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -2039,7 +1962,7 @@
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>2.3.2</version>
+      <version>2.3.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

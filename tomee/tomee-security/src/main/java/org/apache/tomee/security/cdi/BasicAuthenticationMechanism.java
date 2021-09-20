@@ -20,14 +20,17 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.security.enterprise.AuthenticationException;
 import javax.security.enterprise.AuthenticationStatus;
+import javax.security.enterprise.authentication.mechanism.http.BasicAuthenticationMechanismDefinition;
 import javax.security.enterprise.authentication.mechanism.http.HttpAuthenticationMechanism;
 import javax.security.enterprise.authentication.mechanism.http.HttpMessageContext;
+import javax.security.enterprise.authentication.mechanism.http.LoginToContinue;
 import javax.security.enterprise.credential.BasicAuthenticationCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStoreHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static javax.security.enterprise.identitystore.CredentialValidationResult.Status.VALID;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
@@ -37,6 +40,10 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
 
     @Inject
     private IdentityStoreHandler identityStoreHandler;
+
+    @Inject
+    private Supplier<BasicAuthenticationMechanismDefinition> basicAuthenticationMechanismDefinition;
+
 
     @Override
     public AuthenticationStatus validateRequest(final HttpServletRequest request,
@@ -57,10 +64,14 @@ public class BasicAuthenticationMechanism implements HttpAuthenticationMechanism
         }
 
         if (httpMessageContext.isProtected()) {
-            response.setHeader("WWW-Authenticate", "Basic");
 
-            // todo use the annotation to define the realm
-            // response.setHeader("WWW-Authenticate", format("Basic realm=\"%s\"", realm));
+            final String realmName = basicAuthenticationMechanismDefinition.get().realmName();
+            if (realmName.isEmpty()) {
+                response.setHeader("WWW-Authenticate", "Basic");
+            } else {
+                response.setHeader("WWW-Authenticate", String.format("Basic realm=\"%s\"", realmName));
+
+            }
 
             return httpMessageContext.responseUnauthorized();
         }

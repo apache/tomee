@@ -21,11 +21,11 @@
   <groupId>org.superbiz</groupId>
   <artifactId>cdi-realm</artifactId>
   <packaging>war</packaging>
-  <version>8.0.7-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Examples :: CDI Realm</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.7-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.9-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -74,7 +74,7 @@
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
+      <url>https://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
   <dependencies>

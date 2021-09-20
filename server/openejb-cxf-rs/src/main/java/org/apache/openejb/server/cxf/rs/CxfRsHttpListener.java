@@ -130,7 +130,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -399,9 +398,9 @@ public class CxfRsHttpListener implements RsHttpListener {
 
     @Override
     @Deprecated // we could drop it now I think
-    public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application appInstance,
+    public void deploySingleton(final String contextRoot, final String fullContext, final Object o, final Application application,
                                 final Collection<Object> additionalProviders, final ServiceConfiguration configuration) {
-        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, appInstance, null, additionalProviders, configuration, null);
+        deploy(contextRoot, o.getClass(), fullContext, new SingletonResourceProvider(o), o, application, null, additionalProviders, configuration, null);
     }
 
     @Override
@@ -410,14 +409,14 @@ public class CxfRsHttpListener implements RsHttpListener {
                            final String contextRoot,
                            final String fullContext,
                            final Class<?> loadedClazz,
-                           final Application app,
+                           final Application application,
                            final Collection<Injection> injections,
                            final Context context,
                            final WebBeansContext owbCtx,
                            final Collection<Object> additionalProviders,
                            final ServiceConfiguration configuration) {
         deploy(contextRoot, loadedClazz, fullContext, new OpenEJBPerRequestPojoResourceProvider(loader, loadedClazz, injections, context, owbCtx),
-                null, app, null, additionalProviders, configuration, owbCtx);
+                null, application, null, additionalProviders, configuration, owbCtx);
     }
 
     @Override
@@ -430,18 +429,18 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Object proxy = ProxyEJB.subclassProxy(beanContext);
 
         deploy(contextRoot, beanContext.getBeanClass(), fullContext, new NoopResourceProvider(beanContext.getBeanClass(), proxy),
-                proxy, null, new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
+                proxy, new InternalApplication(null), new OpenEJBEJBInvoker(Collections.singleton(beanContext)), additionalProviders, configuration,
                 beanContext.getWebBeansContext());
     }
 
     private void deploy(final String contextRoot, final Class<?> clazz, final String address, final ResourceProvider rp, final Object serviceBean,
-                        final Application app, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
+                        final Application application, final Invoker invoker, final Collection<Object> additionalProviders, final ServiceConfiguration configuration,
                         final WebBeansContext webBeansContext) {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
-            final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(app));
-            configureFactory(additionalProviders, configuration, factory, webBeansContext, app);
+            final JAXRSServerFactoryBean factory = newFactory(address, createServiceJmxName(clazz.getClassLoader()), createEndpointName(application));
+            configureFactory(additionalProviders, configuration, factory, webBeansContext, application);
             factory.setResourceClasses(clazz);
             context = contextRoot;
             if (context == null) {
@@ -454,8 +453,8 @@ public class CxfRsHttpListener implements RsHttpListener {
             if (rp != null) {
                 factory.setResourceProvider(rp);
             }
-            if (app != null) {
-                factory.setApplication(app);
+            if (application != null) {
+                factory.setApplication(application);
             }
             if (invoker != null) {
                 factory.setInvoker(invoker);
@@ -760,7 +759,7 @@ public class CxfRsHttpListener implements RsHttpListener {
                 factory.setProvider(new TomEESseEventSinkContextProvider());
 
                 server = factory.create();
-                fixProviderIfKnown();
+                fixProviders(serviceConfiguration);
                 fireServerCreated(oldLoader);
 
                 final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
@@ -822,6 +821,11 @@ public class CxfRsHttpListener implements RsHttpListener {
      * com/sun/ts/tests/jaxrs/spec/context/server/JAXRSClient#applicationInjectionTest_from_standalone
      */
     public static void injectApplication(final Application application, final JAXRSServerFactoryBean factory) {
+
+        if (application == null) {
+            return;
+        }
+
         /*
          * We may have wrapped the Application instance in an InternalApplication.  If so, unwrap
          * it and do the injection on that instance.
@@ -841,7 +845,13 @@ public class CxfRsHttpListener implements RsHttpListener {
         return Singleton.class == scope || Dependent.class == scope;
     }
 
-    private void fixProviderIfKnown() {
+    /**
+     * Fix providers set in ProviderFactory
+     * - changes default Jonhzon by the TomEE specific one
+     * - remove deactivated providers
+     * @param serviceConfiguration
+     */
+    private void fixProviders(final ServiceConfiguration serviceConfiguration) {
         final ServerProviderFactory spf = ServerProviderFactory.class.cast(server.getEndpoint().get(ServerProviderFactory.class.getName()));
         for (final String field : asList("messageWriters", "messageReaders")) {
             final List<ProviderInfo<?>> values = List.class.cast(Reflections.get(spf, field));
@@ -858,19 +868,29 @@ public class CxfRsHttpListener implements RsHttpListener {
                 }
             }
 
-            if (customJsonProvider) { // remove JohnzonProvider default versions
-                final Iterator<ProviderInfo<?>> it = values.iterator();
-                while (it.hasNext()) {
-                    final String name = it.next().getResourceClass().getName();
-                    if ("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
-                            "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) {
-                        it.remove();
-                        break;
-                    }
+            final Iterator<ProviderInfo<?>> it = values.iterator();
+            while (it.hasNext()) {
+                final String name = it.next().getResourceClass().getName();
+
+                // remove JohnzonProvider default versions
+                if (("org.apache.johnzon.jaxrs.JohnzonProvider".equals(name) ||
+                        "org.apache.openejb.server.cxf.rs.CxfRSService$TomEEJohnzonProvider".equals(name)) && customJsonProvider) {
+                    it.remove();
+                }
+
+                // remove deactivated providers
+                if (!isActive(name, serviceConfiguration)) {
+                    it.remove();
                 }
             }
+
         }
 
+    }
+
+    public boolean isActive(final String name, final ServiceConfiguration serviceConfiguration) {
+        final String key = name + ".activated";
+        return "true".equalsIgnoreCase(SystemInstance.get().getProperty(key, serviceConfiguration.getProperties().getProperty(key, "true")));
     }
 
     private static Class<?> realClass(final Class<?> aClass) {

@@ -15,18 +15,18 @@
   <groupId>org.superbiz</groupId>
   <artifactId>connector-war</artifactId>
   <packaging>war</packaging>
-  <version>8.0.7-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Connector Examples :: Connector in WAR</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.7-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.9-SNAPSHOT</tomee.version>
     <version.shrinkwrap.resolver>2.1.0</version.shrinkwrap.resolver>
   </properties>
   <repositories>
     <repository>
       <id>apache-m2-snapshot</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
+      <url>https://repository.apache.org/snapshots</url>
     </repository>
   </repositories>
   <build>

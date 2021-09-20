@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.superbiz.quartz</groupId>
     <artifactId>quartz-app</artifactId>
-    <version>8.0.7-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>quartz-beans</artifactId>
@@ -43,37 +43,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.mail</groupId>
-          <artifactId>mail</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>oro</groupId>
-          <artifactId>oro</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <!--
-    Note that <scope>test</scope> is NOT specified here because some OpenEJB specific classes
-    are used in the JobBean example.
-    -->
-    <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <!--

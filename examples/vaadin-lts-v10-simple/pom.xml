@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-lts-v10-simple</artifactId>
-  <version>8.0.7-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Examples :: Vaadin LTS V10</name>
   <packaging>war</packaging>
   <!--
@@ -58,12 +58,12 @@ http://maven.apache.org/plugins/maven-deploy-plugin/
     <!--Releases-->
     <repository>
       <id>vaadin-addons</id>
-      <url>http://maven.vaadin.com/vaadin-addons</url>
+      <url>https://maven.vaadin.com/vaadin-addons</url>
     </repository>
     <!--Pre-Releases-->
     <repository>
       <id>vaadin-prereleases</id>
-      <url>http://maven.vaadin.com/vaadin-prereleases</url>
+      <url>https://maven.vaadin.com/vaadin-prereleases</url>
     </repository>
   </repositories>
   <dependencyManagement>

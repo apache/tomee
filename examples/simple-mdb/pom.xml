@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-mdb</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.7-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple MDB Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -66,15 +66,15 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>[8.0,)</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <!--
@@ -82,9 +82,9 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
-      <version>8.0.7-SNAPSHOT</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

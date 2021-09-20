@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.superbiz.quartz</groupId>
     <artifactId>quartz-app</artifactId>
-    <version>8.0.7-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>quartz-ra</artifactId>
@@ -36,8 +36,8 @@
       <artifactId>quartz</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
     </dependency>
   </dependencies>
   <!--

@@ -20,13 +20,13 @@
 
   <groupId>org.superbiz</groupId>
   <artifactId>bval-evaluation-redeployment</artifactId>
-  <version>8.0.7-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.test.version>8.0.7-SNAPSHOT</tomee.test.version>
-    <openejb.test.version>8.0.7-SNAPSHOT</openejb.test.version>
+    <tomee.test.version>8.0.9-SNAPSHOT</tomee.test.version>
+    <openejb.test.version>8.0.9-SNAPSHOT</openejb.test.version>
   </properties>
 
   <modules>
@@ -78,7 +78,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-remote</artifactId>
-        <version>8.0.7-SNAPSHOT</version>
+        <version>8.0.9-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -96,13 +96,13 @@
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-webprofile</artifactId>
-        <version>8.0.7-SNAPSHOT</version>
+        <version>8.0.9-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.tomee.bom</groupId>
         <artifactId>tomee-webprofile-api</artifactId>
-        <version>8.0.7-SNAPSHOT</version>
+        <version>8.0.9-SNAPSHOT</version>
         <scope>provided</scope>
       </dependency>
     </dependencies>
@@ -122,7 +122,7 @@
         <enabled>false</enabled>
       </releases>
       <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
+      <url>https://snapshots.repository.codehaus.org/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>

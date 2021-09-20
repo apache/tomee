@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.7-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
@@ -93,6 +93,7 @@
     <module>jaxrs-json-provider-jettison</module>
     <module>jpa-eclipselink</module>
     <module>jpa-hibernate</module>
+    <module>jpa-hibernate-arquillian</module>
     <module>jpa-enumerated</module>
     <module>jsf-managedBean-and-ejb</module>
     <module>jsf-cdi-and-ejb</module>
@@ -215,6 +216,11 @@
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
+
+    <!-- Jakarta Security Examples -->
+    <module>security-tomcat-user-identitystore</module>
+    <module>security-custom-identitystore</module>
+
   </modules>
   <dependencies>
     <dependency>
