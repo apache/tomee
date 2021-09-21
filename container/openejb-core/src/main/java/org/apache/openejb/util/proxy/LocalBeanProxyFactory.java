@@ -139,8 +139,8 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
 
             final byte[] proxyBytes = generateProxy(classToProxy, classFileName, interfaces);
-            return Unsafe.defineClass(cl, classToProxy, proxyName, proxyBytes);
-
+            return ClassDefiner.defineClass(cl, proxyName, proxyBytes, classToProxy, classToProxy.getProtectionDomain());
+            // return Unsafe.defineClass(cl, classToProxy, proxyName, proxyBytes);
         } catch (final Exception e) {
             throw new InternalError("LocalBeanProxyFactory.createProxy: " + Debug.printStackTrace(e));
         } finally {
