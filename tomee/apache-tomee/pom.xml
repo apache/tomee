@@ -186,6 +186,14 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>org.apache.tomee.bom</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+              </dependency>
+            </dependencies>
             <executions>
               <execution>
                 <goals>
