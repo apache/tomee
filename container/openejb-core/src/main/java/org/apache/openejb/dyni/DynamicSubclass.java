@@ -19,6 +19,7 @@ package org.apache.openejb.dyni;
 
 import org.apache.openejb.loader.IO;
 import org.apache.openejb.util.Debug;
+import org.apache.openejb.util.proxy.ClassDefiner;
 import org.apache.openejb.util.proxy.LocalBeanProxyFactory;
 import org.apache.openejb.util.proxy.ProxyGenerationException;
 import org.apache.xbean.asm9.AnnotationVisitor;
@@ -84,7 +85,7 @@ public class DynamicSubclass implements Opcodes {
                 // no-op
             }
 
-            return LocalBeanProxyFactory.Unsafe.defineClass(cl, abstractClass, proxyName, generateBytes(abstractClass, proxyNonAbstractMethods));
+            return ClassDefiner.defineClass(cl, proxyName, generateBytes(abstractClass, proxyNonAbstractMethods), abstractClass, abstractClass.getProtectionDomain());
 
         } catch (final Exception e) {
             throw new InternalError(DynamicSubclass.class.getSimpleName() + ".createSubclass: " + Debug.printStackTrace(e));
