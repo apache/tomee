@@ -752,6 +752,25 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>java11plus</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.yoko</groupId>
+          <artifactId>yoko-spec-corba</artifactId>
+          <version>1.4</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>*</artifactId>
+              <groupId>*</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>
 
