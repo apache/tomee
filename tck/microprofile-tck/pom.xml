@@ -22,22 +22,45 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>tck</artifactId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-tck</artifactId>
   <packaging>pom</packaging>
   <name>TomEE :: TCK :: MicroProfile</name>
 
-  <modules>
-    <module>config</module>
-    <module>jwt</module>
-    <module>fault-tolerance</module>
-    <module>health</module>
-    <module>metrics</module>
-    <module>rest-client</module>
-    <module>openapi</module>
-    <module>opentracing</module>
-  </modules>
-
+  <!-- JWT TCK has a dependency on Nashorn, which has disappeared in JDK12 onwards, we'll need to test on JDK 11 for now -->
+  <profiles>
+    <profile>
+      <id>java12plus</id>
+      <activation>
+        <jdk>[12,)</jdk>
+      </activation>
+      <modules>
+        <module>config</module>
+        <module>fault-tolerance</module>
+        <module>health</module>
+        <module>metrics</module>
+        <module>rest-client</module>
+        <module>openapi</module>
+        <module>opentracing</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>main</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <modules>
+        <module>config</module>
+        <module>jwt</module>
+        <module>fault-tolerance</module>
+        <module>health</module>
+        <module>metrics</module>
+        <module>rest-client</module>
+        <module>openapi</module>
+        <module>opentracing</module>
+      </modules>
+    </profile>
+  </profiles>
 </project>

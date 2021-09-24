@@ -21,11 +21,11 @@ package org.apache.openejb.util.proxy;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.Debug;
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.Label;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Opcodes;
-import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm9.ClassWriter;
+import org.apache.xbean.asm9.Label;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Opcodes;
+import org.apache.xbean.asm9.Type;
 
 import javax.ejb.EJBException;
 import java.io.Serializable;
@@ -139,8 +139,8 @@ public class LocalBeanProxyFactory implements Opcodes {
             }
 
             final byte[] proxyBytes = generateProxy(classToProxy, classFileName, interfaces);
-            return Unsafe.defineClass(cl, classToProxy, proxyName, proxyBytes);
-
+            return ClassDefiner.defineClass(cl, proxyName, proxyBytes, classToProxy, classToProxy.getProtectionDomain());
+            // return Unsafe.defineClass(cl, classToProxy, proxyName, proxyBytes);
         } catch (final Exception e) {
             throw new InternalError("LocalBeanProxyFactory.createProxy: " + Debug.printStackTrace(e));
         } finally {

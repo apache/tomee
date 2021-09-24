@@ -57,7 +57,13 @@ public class Setup {
 
     private static double javaVersion() {
         try {
-            return Double.parseDouble(System.getProperty("java.version", "1.7").substring(0, 3));
+            String version = System.getProperty("java.version", "1.7");
+
+            if(version.length() > 3) {
+                version = version.substring(0, 3);
+            }
+
+            return Double.parseDouble(version);
         } catch (final Exception nfe) {
             return 1.6;
         }

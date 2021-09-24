@@ -227,9 +227,7 @@ public class CxfRSService extends RESTService {
             List<String> jsonProviders;
             String userConfiguredJsonProviders = SystemInstance.get().getProperty("openejb.jaxrs.jsonProviders");
             if (userConfiguredJsonProviders == null) {
-                jsonProviders = asList(
-                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonbProvider",
-                        "org.apache.openejb.server.cxf.rs.johnzon.TomEEJsonpProvider");
+                jsonProviders = Collections.emptyList();
             } else {
                 jsonProviders = asList(userConfiguredJsonProviders.split(","));
             }

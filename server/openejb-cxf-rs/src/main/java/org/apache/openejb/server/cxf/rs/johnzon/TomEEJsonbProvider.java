@@ -20,15 +20,13 @@ import org.apache.johnzon.jaxrs.jsonb.jaxrs.JsonbJaxrsProvider;
 import org.apache.johnzon.mapper.access.AccessMode;
 
 import javax.activation.DataSource;
+import javax.annotation.Priority;
 import javax.json.bind.JsonbConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 import java.io.File;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -38,6 +36,7 @@ import java.util.Locale;
 // This will sort the Provider to be after CXF defaults. Check org.apache.cxf.jaxrs.provider.ProviderFactory.sortReaders()
 @Produces({"application/json", "application/*+json"})
 @Consumes({"application/json", "application/*+json"})
+@Priority(value = 5000)
 public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public TomEEJsonbProvider() {
         config.withPropertyVisibilityStrategy(new TomEEJsonbPropertyVisibilityStrategy());
@@ -48,21 +47,10 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         // let the CXF built-in writer handle this one
         // TODO: add a setting?
-        if (DataSource.class.isAssignableFrom(type)) {
-            return false;
-        }
-
-        if (byte[].class.isAssignableFrom(type)) {
-            return false;
-        }
-
-        if (File.class.isAssignableFrom(type)) {
-            return false;
-        }
-
-        if (Reader.class.isAssignableFrom(type)) {
-            return false;
-        }
+        if (DataSource.class.isAssignableFrom(type)) return false;
+        if (byte[].class.isAssignableFrom(type)) return false;
+        if (File.class.isAssignableFrom(type)) return false;
+        if (Reader.class.isAssignableFrom(type)) return false;
 
         return super.isWriteable(type, genericType, annotations, mediaType);
     }
@@ -71,13 +59,10 @@ public class TomEEJsonbProvider<T> extends JsonbJaxrsProvider<T> {
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         // let the CXF built-in writer handle this one
         // TODO: add a setting?
-        if (DataSource.class.isAssignableFrom(type)) {
-            return false;
-        }
-
-        if (byte[].class.isAssignableFrom(type)) {
-            return false;
-        }
+        if (DataSource.class.isAssignableFrom(type)) return false;
+        if (byte[].class.isAssignableFrom(type)) return false;
+        if (File.class.isAssignableFrom(type)) return false;
+        if (Reader.class.isAssignableFrom(type)) return false;
 
         return super.isReadable(type, genericType, annotations, mediaType);
     }

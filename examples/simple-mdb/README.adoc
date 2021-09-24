@@ -13,10 +13,6 @@ That finishes our message driven bean implementation. The "processing" part coul
 
 In this case, it is to respond to the user. The `respond` method shows how a Message can be sent.
 
-This sequence diagram shows how a message is sent.
-
-image::../../resources/mdb-flow.png[]
-
 == ChatBean
 
 [source,java]

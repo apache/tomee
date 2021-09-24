@@ -33,6 +33,7 @@ import javax.security.jacc.PolicyContextException;
 import java.lang.reflect.Method;
 import java.security.Permission;
 import java.security.PermissionCollection;
+import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,10 +56,12 @@ public class JaccPermissionsBuilder {
             return;
         }
 
+        final String contextID = policyContext.getContextID();
         try {
             final PolicyConfigurationFactory factory = PolicyConfigurationFactory.getPolicyConfigurationFactory();
 
-            final PolicyConfiguration policy = factory.getPolicyConfiguration(policyContext.getContextID(), false);
+            // final boolean needsCommit = factory.inService(contextID);
+            final PolicyConfiguration policy = factory.getPolicyConfiguration(contextID, false);
 
             policy.addToExcludedPolicy(policyContext.getExcludedPermissions());
 
@@ -68,11 +71,15 @@ public class JaccPermissionsBuilder {
                 policy.addToRole(entry.getKey(), entry.getValue());
             }
 
-            policy.commit();
+            // not sure if this is required or not
+            // if (needsCommit) {
+                policy.commit();
+            // }
         } catch (final ClassNotFoundException e) {
             throw new OpenEJBException("PolicyConfigurationFactory class not found", e);
+
         } catch (final PolicyContextException e) {
-            throw new OpenEJBException("JACC PolicyConfiguration failed: ContextId=" + policyContext.getContextID(), e);
+            throw new OpenEJBException("JACC PolicyConfiguration failed: ContextId=" + contextID, e);
         }
     }
 

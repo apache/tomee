@@ -21,7 +21,7 @@
   <parent>
     <artifactId>arquillian</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>arquillian-tomee-webapp-remote</artifactId>
@@ -172,7 +172,7 @@
           <groupId>org.apache.geronimo.javamail</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>xbean-asm7-shaded</artifactId>
+          <artifactId>xbean-asm9-shaded</artifactId>
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>

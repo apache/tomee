@@ -19,13 +19,13 @@
   <parent>
     <artifactId>tck</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cdi-embedded</artifactId>
   <packaging>jar</packaging>
   <name>TomEE :: TCK :: CDI Embedded</name>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
 
   <properties>
     <testngSuiteXml>src/test/resources/passing.xml</testngSuiteXml>
@@ -185,7 +185,28 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-
+    <!-- ActiveMQ is optional in openejb-core (embedded needs openejb-core + all deps)-->
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-ra</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-jdbc-store</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>activemq-broker</artifactId>
+          <groupId>org.apache.activemq</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -255,7 +276,7 @@
         <jdk>1.8</jdk>
       </activation>
       <properties>
-        <surefire.argline>-Xmx1536m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
+        <surefire.argline>-Xmx3096m -XX:PermSize=512m -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSPermGenSweepingEnabled</surefire.argline>
       </properties>
     </profile>
   </profiles>

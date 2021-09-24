@@ -21,16 +21,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.superbiz</groupId>
   <artifactId>mtom</artifactId>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Examples :: MTOM</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.6-TT.6-SNAPSHOT</tomee.version>
+    <tomee.version>8.0.9-SNAPSHOT</tomee.version>
   </properties>
   <repositories>
     <repository>
       <id>snapshots-apache</id>
-      <url>http://repository.apache.org/content/groups/snapshots/</url>
+      <url>https://repository.apache.org/content/groups/snapshots/</url>
     </repository>
     <repository>
       <id>tomitribe-all</id>
@@ -70,9 +70,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>${tomee.version}</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-microprofile</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -940,6 +940,11 @@ public class ApplicationComposers {
         }
     }
 
+    public void enrich(final Object inputTestInstance) throws org.apache.openejb.OpenEJBException {
+        final BeanContext context = SystemInstance.get().getComponent(ContainerSystem.class).getBeanContext(inputTestInstance.getClass());
+        enrich(inputTestInstance, context);
+    }
+
     private void enrich(final Object inputTestInstance, final BeanContext context) throws org.apache.openejb.OpenEJBException {
         if (context == null) {
             return;

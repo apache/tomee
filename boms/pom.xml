@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -39,6 +39,10 @@
     <module>tomee-webprofile</module>
     <module>tomee-plume</module>
     <module>tomee-plus</module>
+    <module>tomee-microprofile-api</module>
+    <module>tomee-webprofile-api</module>
+    <module>tomee-plume-api</module>
+    <module>tomee-plus-api</module>
   </modules>
 
 </project>

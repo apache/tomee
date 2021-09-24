@@ -73,10 +73,12 @@ import org.apache.openejb.assembler.classic.ConnectorInfo;
 import org.apache.openejb.assembler.classic.DeploymentExceptionManager;
 import org.apache.openejb.assembler.classic.EjbJarInfo;
 import org.apache.openejb.assembler.classic.InjectionBuilder;
+import org.apache.openejb.assembler.classic.JaccPermissionsBuilder;
 import org.apache.openejb.assembler.classic.JndiEncBuilder;
 import org.apache.openejb.assembler.classic.OpenEjbConfiguration;
 import org.apache.openejb.assembler.classic.OpenEjbConfigurationFactory;
 import org.apache.openejb.assembler.classic.PersistenceUnitInfo;
+import org.apache.openejb.assembler.classic.PolicyContext;
 import org.apache.openejb.assembler.classic.ReloadableEntityManagerFactory;
 import org.apache.openejb.assembler.classic.ResourceInfo;
 import org.apache.openejb.assembler.classic.ServletInfo;
@@ -131,6 +133,7 @@ import org.apache.tomee.catalina.cluster.TomEEClusterListener;
 import org.apache.tomee.catalina.environment.Hosts;
 import org.apache.tomee.catalina.event.AfterApplicationCreated;
 import org.apache.tomee.catalina.routing.RouterValve;
+import org.apache.tomee.catalina.security.TomcatSecurityConstaintsToJaccPermissionsTransformer;
 import org.apache.tomee.common.NamingUtil;
 import org.apache.tomee.common.UserTransactionFactory;
 import org.apache.tomee.config.TomEESystemConfig;
@@ -152,6 +155,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -513,6 +517,20 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     standardContext.setConfigFile(contextXmlUrl);
                 }
 
+                // override path if needed - hack at this moment just to pass the TCK
+                // Tomcat should definitely implement it, but community does not seem to like the feature and therefore
+                // willing to implement it.
+                // default context path must start with / but not end with slash
+                try {
+                    if (webApp.defaultContextPath != null && webApp.defaultContextPath.matches("^/\\w*[^/]$")) {
+                        standardContext.setPath(webApp.defaultContextPath);
+                    }
+
+                } catch (final Exception e) {
+                    // don't fail because it's a hack, just output the exception
+                    e.printStackTrace();
+                }
+
                 if (standardContext.getPath() != null) {
                     webApp.contextRoot = standardContext.getPath();
                 }
@@ -597,6 +615,17 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                     } else { // force a normal deployment with lazy building of AppInfo
                         deployWar(standardContext, host, null);
                     }
+
+                    // TODO should we copy the information in the appInfo using the jee object tree or add more to the info tree
+                    // this might then move to the assembler after webapp is deployed so we can read information from info tree
+                    // and build up all policy context from there instead of from Tomcat internal objects
+                    final TomcatSecurityConstaintsToJaccPermissionsTransformer transformer =
+                        new TomcatSecurityConstaintsToJaccPermissionsTransformer(standardContext);
+                    final PolicyContext policyContext = transformer.createResourceAndDataPermissions();
+
+                    final JaccPermissionsBuilder jaccPermissionsBuilder = new JaccPermissionsBuilder();
+                    jaccPermissionsBuilder.install(policyContext);
+
                 }
             }
         } finally { // cleanup temp var passing

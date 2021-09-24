@@ -46,7 +46,7 @@ public class ThreadLocalContextManager {
     public static final ThreadLocalSecurityContext SECURITY_CONTEXT = new ThreadLocalSecurityContext();
     public static final ThreadLocalContextResolver CONTEXT_RESOLVER = new ThreadLocalContextResolver();
     public static final ThreadLocalProviders PROVIDERS = new ThreadLocalProviders();
-    public static final ThreadLocal<Application> APPLICATION = new ThreadLocal<>();
+    public static final ThreadLocalApplication APPLICATION = new ThreadLocalApplication();
     public static final ThreadLocalConfiguration CONFIGURATION = new ThreadLocalConfiguration();
     public static final ThreadLocalResourceInfo RESOURCE_INFO = new ThreadLocalResourceInfo();
     public static final ThreadLocalResourceContext RESOURCE_CONTEXT = new ThreadLocalResourceContext();

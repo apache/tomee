@@ -23,7 +23,7 @@
   <parent>
     <artifactId>server</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -33,7 +33,7 @@
 
   <properties>
     <tomee.build.name>${project.groupId}.server.cxf</tomee.build.name>
-    <wss4j.version>2.2.5</wss4j.version>
+    <wss4j.version>2.3.3</wss4j.version>
     <openejb.osgi.import.pkg>
       org.apache.xml.resolver*;resolution:=optional,
       *
@@ -61,10 +61,19 @@
       <artifactId>wsdl4j</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.santuario</groupId>
+      <artifactId>xmlsec</artifactId>
+      <version>2.2.3</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.wss4j</groupId>
       <artifactId>wss4j-ws-security-dom</artifactId>
       <version>${wss4j.version}</version>
       <exclusions>
+        <exclusion>
+          <groupId>org.apache.santuario</groupId>
+          <artifactId>xmlsec</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-javamail_1.4_spec</artifactId>
@@ -89,13 +98,17 @@
           <groupId>io.dropwizard.metrics</groupId>
           <artifactId>metrics-core</artifactId>
         </exclusion>
+        <exclusion>
+          <artifactId>jakarta.activation-api</artifactId>
+          <groupId>jakarta.activation</groupId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- Override the bcprov from the previous artifact -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.68</version>
+      <version>1.69</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wss4j</groupId>
@@ -140,10 +153,30 @@
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-core</artifactId>
-      <version>${cxf.version}</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${project.version}</version>
       <exclusions>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-rs-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.glassfish.jaxb</groupId>
           <artifactId>jaxb-xjc</artifactId>
@@ -179,6 +212,18 @@
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-impl</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-databinding-jaxb</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -191,8 +236,20 @@
           <artifactId>jaxb-xjc</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>net.sf.ehcache</groupId>
+          <groupId>org.ehcache</groupId>
           <artifactId>ehcache</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-databinding-jaxb</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.tomee</groupId>
     <artifactId>microprofile-tck</artifactId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>microprofile-rest-client-tck</artifactId>
@@ -225,12 +225,16 @@
           <artifactId>javax.ws.rs-api</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
+          <groupId>jakarta.annotation</groupId>
+          <artifactId>jakarta.annotation-api</artifactId>
         </exclusion>
         <exclusion>
           <groupId>jakarta.ws.rs</groupId>
           <artifactId>jakarta.ws.rs-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.json</groupId>
+          <artifactId>jakarta.json-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

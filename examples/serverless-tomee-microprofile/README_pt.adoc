@@ -1,0 +1,168 @@
+:index-group: Serverless
+:jbake-type: page
+:jbake-status: status=published
+= Serverless TomEE MicroProfile
+
+Apache Tomee pode ser executad como uma biblioteca dentro da sua propria JVM, sem a necessidade de separar processos ou instalar um servidor standalone. Nesta abordagem, incluímos as bibliotecas certas em nosso projeto e então inicializamos o TomEE usando a API `Server.Builder`.
+
+== Incluindo a dependência `tomee-microprofile`
+
+Para tornar as coisas o mais fáceis possível, há apenas uma dependência que fornecerá um caminho de classe 100% idêntico à sua distribuição favorita do Apache TomEE. A seguinte dependência fornecerá a você um ambiente idêntico a uma distribuição binária Apache TomEE MicroProfile.
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.tomee.bom</groupId>
+  <artifactId>tomee-microprofile</artifactId>
+  <version>${version.tomee}</version>
+</dependency>
+----
+
+NOTE: O `org.apache.tomee.bom:tomee-microprofile` é, na verdade, gerado pela análise do apache-tomee-microprofile-xyz.zip, portanto, é garantido ser 100% idêntico, facilitando a transição de um arquivo zip para um maven simples dependência.
+
+== Escrevendo um código regular
+
+Aqui a gente ve um simples API JAX-RS para enviar/receber objetos `Movie` como JSON.
+
+[source,java]
+----
+@Path("/movies")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@RequestScoped
+public class MovieService {
+
+    private Map<Integer, Movie> store = new ConcurrentHashMap<>();
+
+    @PostConstruct
+    public void construct(){
+        this.addMovie(new Movie("Wedding Crashers", "David Dobkin", "Comedy", 1, 2005));
+        this.addMovie(new Movie("Starsky & Hutch", "Todd Phillips", "Action", 2, 2004));
+        this.addMovie(new Movie("Shanghai Knights", "David Dobkin", "Action", 3, 2003));
+        this.addMovie(new Movie("I-Spy", "Betty Thomas", "Adventure", 4, 2002));
+        this.addMovie(new Movie("The Royal Tenenbaums", "Wes Anderson", "Comedy", 5, 2001));
+        this.addMovie(new Movie("Zoolander", "Ben Stiller", "Comedy", 6, 2001));
+    }
+    @GET
+    public List<Movie> getAllMovies() {
+        return new ArrayList<>(store.values());
+    }
+
+    @POST
+    public Movie addMovie(final Movie newMovie) {
+        store.put(newMovie.getId(), newMovie);
+        return newMovie;
+    }
+
+}
+----
+
+== Bootstrap TomEE com o Server Builder
+
+Neste ponto, temos um projeto Maven com as dependências corretas e algum código de aplicação em nosso projeto. 
+A partir daqui, usamos a API `Server.Builder` para construir uma instância do `Server` dentro de nossa JVM.
+
+Aqui, vemos uma classe Main simples que inicializa uma instância do `Server` na porta `8080` e bloqueia:
+
+[source,java]
+----
+import org.apache.tomee.bootstrap.Archive;
+import org.apache.tomee.bootstrap.Server;
+
+import java.util.concurrent.Semaphore;
+
+public class Main {
+    public static void main(String[] args) throws InterruptedException {
+
+        final Server server = Server.builder()
+                .httpPort(8080)
+                .add("webapps/ROOT/WEB-INF/classes", Archive.archive()
+                        .add(Api.class)
+                        .add(Movie.class)
+                        .add(MovieService.class))
+                .build();
+
+        System.out.println("Listening for requests at " + server.getURI());
+        new Semaphore(0).acquire();
+    }
+}
+----
+
+O exemplo abaixo inicializa uma instância do `Server` em portas aleatórias dentro de um caso de teste e sai quando o caso de teste é concluído:
+
+[source,java]
+----
+import org.apache.tomee.bootstrap.Archive;
+import org.apache.tomee.bootstrap.Server;
+
+public class MovieServiceTest {
+
+    private static URI serverURI;
+
+    @BeforeClass
+    public static void setup() {
+        // Adicione as classes de que você precisa a um Archive
+        // ou adicione-os a um jar por qualquer meio
+        final Archive classes = Archive.archive()
+                .add(Api.class)
+                .add(Movie.class)
+                .add(MovieService.class);
+
+        // Coloque as classes onde você gostaria
+        // eles em uma instalação do Tomcat
+        final Server server = Server.builder()
+                // Isso cria efetivamente um webapp chamado ROOT
+                .add("webapps/ROOT/WEB-INF/classes", classes)
+                .build();
+
+        serverURI = server.getURI();
+    }
+
+    @Test
+    public void getAllMovies() {
+        final WebTarget target = ClientBuilder.newClient().target(serverURI);
+
+        final Movie[] movies = target.path("/api/movies").request().get(Movie[].class);
+
+        assertEquals(6, movies.length);
+
+        final Movie movie = movies[1];
+        assertEquals("Todd Phillips", movie.getDirector());
+        assertEquals("Starsky & Hutch", movie.getTitle());
+        assertEquals("Action", movie.getGenre());
+        assertEquals(2004, movie.getYear());
+        assertEquals(2, movie.getId());
+    }
+}
+----
+
+No código acima, reunimos as classes `Api`,`Movie` e `MovieService` em um arquivo virtual, então adicionamos esse arquivo em uma instalação virtual do Tomcat no local `webapps/ROOT/WEB-INF/classes`. Quando chamamos `build()`, a instância do servidor Tomcat é iniciada em nossa JVM e começará a servir solicitações HTTP no host/porta identificado por `server.getURI()`
+
+Resumindo, inicializamos um servidor Tomcat em nossa JVM que ocupa um espaço de disco muito pequeno; três classes e um punhado de arquivos de configuração padrão.
+
+== Executando
+
+Se executássemos a classe principal ou caso de teste acima, veríamos uma saída como a seguinte:
+
+[source,bash]
+----
+Sep 03, 2020 8:41:29 AM org.apache.openejb.server.cxf.rs.CxfRsHttpListener deployApplication
+INFO:      org.apache.cxf.jaxrs.validation.ValidationExceptionMapper@2d313c8c
+Sep 03, 2020 8:41:29 AM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO: REST Application: http://localhost:8080/api        -> org.superbiz.movie.Api@6b2dd3df
+Sep 03, 2020 8:41:29 AM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:      Service URI: http://localhost:8080/api/movies -> Pojo org.superbiz.movie.MovieService
+Sep 03, 2020 8:41:29 AM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:               GET http://localhost:8080/api/movies ->      List<Movie> getAllMovies()
+Sep 03, 2020 8:41:29 AM org.apache.openejb.server.cxf.rs.CxfRsHttpListener logEndpoints
+INFO:              POST http://localhost:8080/api/movies ->      Movie addMovie(Movie)     
+Sep 03, 2020 8:41:29 AM jdk.internal.reflect.DelegatingMethodAccessorImpl invoke
+INFO: Deployment of web application directory [/private/var/folders/bd/f9ntqy1m8xj_fs006s6crtjh0000gn/T/temp14966428831095231081dir/apache-tomee/webapps/ROOT] has finished in [1,798] ms
+Sep 03, 2020 8:41:29 AM jdk.internal.reflect.DelegatingMethodAccessorImpl invoke
+INFO: Starting ProtocolHandler ["http-nio-8080"]
+Sep 03, 2020 8:41:29 AM jdk.internal.reflect.DelegatingMethodAccessorImpl invoke
+INFO: Server startup in [1877] milliseconds
+Sep 03, 2020 8:41:29 AM jdk.internal.reflect.DelegatingMethodAccessorImpl invoke
+INFO: Full bootstrap in [3545] milliseconds
+Listening for requests at http://localhost:8080
+----

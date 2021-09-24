@@ -19,7 +19,7 @@
   <groupId>org.superbiz.struts</groupId>
   <artifactId>struts</artifactId>
   <packaging>war</packaging>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: Struts</name>
   <url>http://tomee.apache.org</url>
   <properties>
@@ -39,7 +39,7 @@
         <enabled>false</enabled>
       </releases>
       <id>Codehaus Snapshots</id>
-      <url>http://snapshots.repository.codehaus.org/</url>
+      <url>https://snapshots.repository.codehaus.org/</url>
     </repository>
     <repository>
       <id>tomitribe-all</id>

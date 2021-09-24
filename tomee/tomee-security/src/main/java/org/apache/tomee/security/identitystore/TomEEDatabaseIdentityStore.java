@@ -16,6 +16,8 @@
  */
 package org.apache.tomee.security.identitystore;
 
+import org.apache.tomee.security.TomEEELInvocationHandler;
+
 import javax.annotation.PostConstruct;
 import javax.el.ELProcessor;
 import javax.enterprise.context.ApplicationScoped;
@@ -43,7 +45,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -53,8 +54,6 @@ import static java.util.stream.Collectors.toMap;
 
 @ApplicationScoped
 public class TomEEDatabaseIdentityStore implements IdentityStore {
-
-    private final Pattern elExpressionPattern = Pattern.compile("^[#$]\\{(.+)}$");
 
     @Inject
     private BeanManager beanManager;
@@ -77,10 +76,16 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
         final ELProcessor elProcessor = new ELProcessor();
         elProcessor.getELManager().addELResolver(beanManager.getELResolver());
 
+        // the trick with hashAlgorithmParameters is that it returns a String[]
+        // each of them may be an EL to evaluate
+        // and then we need to create a Map to pass in the password hash class
+
+        // 1. get the list of String and evaluate expressions
+        // 2. then split and create the map
         passwordHash.initialize(stream(definition.hashAlgorithmParameters())
-                    .flatMap(s -> toStream(eval(elProcessor, s, String.class)))
-                    .collect(toMap(s -> (String) s.substring(0, s.indexOf('=')) ,
-                                   s -> (String) eval(elProcessor, s.substring(s.indexOf('=') + 1), String.class)))
+                                    .flatMap(s -> toStream(eval(elProcessor, s, Object.class)))
+                                    .collect(toMap(s -> (String) s.substring(0, s.indexOf('=')) ,
+                                                   s -> (String) eval(elProcessor, s.substring(s.indexOf('=') + 1), String.class)))
                                );
     }
 
@@ -167,8 +172,9 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
         try {
             ctx = new InitialContext();
 
-            // todo is it the best way to look it up
-            return (DataSource) ctx.lookup("java:openejb/Resource/" + name);
+            // todo improve logic may be
+            final String jndiName = name.startsWith("java:") ? name : "java:openejb/Resource/" + name;
+            return (DataSource) ctx.lookup(jndiName);
 
         } catch (final NamingException ne) {
             throw new RuntimeException("Can't find datasource with name in DatabaseIdentityStoreDefinition.", ne);
@@ -184,21 +190,15 @@ public class TomEEDatabaseIdentityStore implements IdentityStore {
         }
     }
 
-    private Object eval(final ELProcessor processor, final String expression, final Class<?> expectedType) {
-        // expression maybe #{expression} instead of ${expression}
-        // the ELProcessor anyways wraps it with ${}
-
-        final Matcher matcher = elExpressionPattern.matcher(expression);
-
-        if (!matcher.matches()) {
+    public static Object eval(final ELProcessor processor, final String expression, final Class<?> expectedType) {
+        if (!TomEEELInvocationHandler.isExpression(expression)) {
             return expression;
         }
-
-        final String sanitizedExpression = matcher.replaceAll("$1");
+        final String sanitizedExpression = TomEEELInvocationHandler.sanitizeExpression(expression);
         return processor.getValue(sanitizedExpression, expectedType);
     }
 
-    private Stream<String> toStream(final Object raw) {
+    public static Stream<String> toStream(final Object raw) {
         if (raw instanceof String[]) {
             return stream((String[])raw);
         }

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.superbiz</groupId>
     <artifactId>bval-evaluation-redeployment</artifactId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <artifactId>runner</artifactId>
   <packaging>jar</packaging>
@@ -41,27 +41,13 @@
       <artifactId>arquillian-junit-container</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.annotation</groupId>
-          <artifactId>javax.annotation-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.ws.rs</groupId>
-          <artifactId>javax.ws.rs-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>jakarta.ws.rs</groupId>
-          <artifactId>jakarta.ws.rs-api</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-webprofile</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>apache-tomee</artifactId>
-      <version>8.0.6-TT.6-SNAPSHOT</version>
+      <version>8.0.9-SNAPSHOT</version>
       <type>zip</type>
       <classifier>webprofile</classifier>
       <scope>test</scope>

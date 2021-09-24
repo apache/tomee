@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>webservice-security</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Web Examples :: EJB WebService with Security</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -71,9 +71,9 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>[8.0,)</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -86,9 +86,9 @@
     code is dependent on any OpenEJB classes.
     -->
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf</artifactId>
-      <version>8.0.6-TT.6-SNAPSHOT</version>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus</artifactId>
+      <version>8.0.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- This is required on IBM JDKs (and potentially others) because saaj-impl depends

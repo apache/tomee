@@ -124,7 +124,8 @@ public class TomEEJarScanner extends StandardJarScanner {
     }
 
     public /*context.xml*/ static class TomEEFilter implements JarScanFilter {
-        private static final Filter INCLUDE = Filters.tokens("javax.faces-2.", "jakarta.faces-2.", "spring-security-taglibs", "spring-webmvc");
+        private static final Filter INCLUDE = Filters.tokens("javax.faces-2.", "jakarta.faces-2.",
+                "jakarta.faces-3.", "jakarta.faces-4.", "spring-security-taglibs", "spring-webmvc");
         private final JarScanFilter delegate;
 
         public TomEEFilter() {

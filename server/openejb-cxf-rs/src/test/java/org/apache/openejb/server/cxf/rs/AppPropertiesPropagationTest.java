@@ -45,6 +45,7 @@ import org.apache.openejb.testing.Classes;
 import org.apache.openejb.testing.EnableServices;
 import org.apache.openejb.testing.JaxrsProviders;
 import org.apache.openejb.testing.RandomPort;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,6 +53,7 @@ import org.junit.runner.RunWith;
 @JaxrsProviders(AppPropertiesPropagationTest.Registrator.class)
 @RunWith(ApplicationComposer.class)
 @Classes(innerClassesAsBean = true)
+@Ignore("Not sure this is used - we can implement it back if needed as discussed in mailing list and slack")
 public class AppPropertiesPropagationTest {
     @RandomPort("http")
     private int port;

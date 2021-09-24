@@ -26,7 +26,7 @@
   <parent>
     <artifactId>container</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
 
   <artifactId>openejb-core</artifactId>
@@ -195,8 +195,8 @@
       org.apache.webbeans.util;version="[1.1,2)",
       org.apache.webbeans.web.context;version="[1.1,2)",
       org.apache.webbeans.xml;version="[1.1,2)",
-      org.apache.xbean.asm7;version="[3.1,5)",
-      org.apache.xbean.asm7.commons;version="[3.1,5)",
+      org.apache.xbean.asm9;version="[3.1,5)",
+      org.apache.xbean.asm9.commons;version="[3.1,5)",
       org.apache.xbean.finder;version="[3.8,4)",
       org.apache.xbean.finder.archive;version="[3.8,4)",
       org.apache.xbean.finder.filter;version="[3.8,4)",
@@ -313,10 +313,10 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${surefire.version}</version>
         <configuration>
           <childDelegation>true</childDelegation>
           <reuseForks>false</reuseForks>
@@ -400,7 +400,7 @@
             <manifestEntries>
               <Automatic-Module-Name>${tomee.build.name}</Automatic-Module-Name>
               <Class-Path>openejb-loader-${project.version}.jar openejb-client-${project.version}.jar
-                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm7-shaded-${xbeanVersion}.jar
+                xbean-finder-shaded-${xbeanVersion}.jar xbean-asm9-shaded-${xbeanVersion}.jar
               </Class-Path>
               <J2EE-DeploymentFactory-Implementation-Class>
                 org.apache.openejb.config.VmDeploymentFactory
@@ -517,14 +517,17 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
+      <optional>true</optional>
       <exclusions>
         <exclusion>
           <artifactId>activemq-broker</artifactId>
@@ -545,10 +548,6 @@
       <artifactId>howl</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-activation_1.1_spec</artifactId>
       <version>${geronimo-activation_1.1_spec.version}</version>
@@ -562,7 +561,7 @@
     <!-- End: JavaMail -->
     <dependency>
       <groupId>org.apache.xbean</groupId>
-      <artifactId>xbean-asm7-shaded</artifactId>
+      <artifactId>xbean-asm9-shaded</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
@@ -752,6 +751,25 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>java11plus</id>
+      <activation>
+        <jdk>[11,)</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.yoko</groupId>
+          <artifactId>yoko-spec-corba</artifactId>
+          <version>1.4</version>
+          <exclusions>
+            <exclusion>
+              <artifactId>*</artifactId>
+              <groupId>*</groupId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

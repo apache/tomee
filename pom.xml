@@ -33,7 +33,7 @@
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-project</artifactId>
   <packaging>pom</packaging>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
 
   <name>Apache OpenEJB</name>
   <description>Apache OpenEJB is an open source, modular, configurable and extensible EJB Container System and EJB Server.</description>
@@ -92,13 +92,12 @@
   </scm>
 
   <properties>
-    <!-- allows release plugin to be overriden -->
+    <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <surefire.version>2.21.0</surefire.version>
-    <surefire.junit5.version>3.0.0-M5</surefire.junit5.version>
+    <surefire.version>3.0.0-M5</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
@@ -115,17 +114,17 @@
     <geronimo-javamail_1.6_spec.version>1.0.0</geronimo-javamail_1.6_spec.version>
     <geronimo-javamail_1.6_mail.version>1.0.0</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.1.2</openjpa.version>
-    <openwebbeans.version>2.0.12</openwebbeans.version>
+    <openjpa.version>3.2.0</openjpa.version>
+    <openwebbeans.version>2.0.22</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.10</johnzon.version>
+    <johnzon.version>1.2.15-SNAPSHOT</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
     <maven-bundle-plugin.version>3.3.0</maven-bundle-plugin.version>
 
     <!-- This is used by a manifest classpath entry -->
-    <xbeanVersion>4.14</xbeanVersion>
+    <xbeanVersion>4.20</xbeanVersion>
 
     <!-- OSGi bundles properties -->
     <openejb.bundle.activator />
@@ -141,15 +140,15 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>0.5-incubating</batchee.version>
+    <batchee.version>1.0.0</batchee.version>
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.48</tomcat.version>
+    <tomcat.version>9.0.52</tomcat.version>
 
-    <cxf.version>3.3.11</cxf.version>
+    <cxf.version>3.4.3</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.5.3.v20111011</jetty.version>
@@ -177,33 +176,42 @@
     <commons-cli.version>1.4</commons-cli.version>
     <commons-logging.version>1.2</commons-logging.version>
     <commons-logging-api.version>1.1</commons-logging-api.version>
-    <commons-dbcp.version>2.1-TT.1</commons-dbcp.version>
-    <commons-pool.version>2.3</commons-pool.version>
+    <!--
+      'QuartzPersistenceForEJBTimersTest' is unable to obtain DB connection with
+      commons-dbcp.version > 2.3.0
+    -->
+    <commons-dbcp.version>2.3.0</commons-dbcp.version>
+    <commons-pool.version>2.10.0</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang3.version>3.11</commons-lang3.version>
-    <commons-io.version>2.8.0</commons-io.version>
+    <commons-io.version>2.10.0</commons-io.version>
     <commons-net.version>3.7.2</commons-net.version>
 
     <bval.version>2.0.5</bval.version>
-    <org.apache.activemq.version>5.16.2</org.apache.activemq.version>
+    <org.apache.activemq.version>5.16.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
-    <junit.version>4.13.1</junit.version>
-    <junit.jupiter.version>5.7.0</junit.jupiter.version>
+    <junit.version>4.13.2</junit.version>
+    <junit.jupiter.version>5.8.0-RC1</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
-    <myfaces.version>2.3.8</myfaces.version>
+    <myfaces.version>2.3.9</myfaces.version>
     <mojarra.version>2.3.14</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
-    <version.hsqldb>2.3.2</version.hsqldb>
+    <!--
+      'arquillian-tomee-webprofile-tests' has issues with hsqldb > 2.3.4
+      'examples' have issues with hsqldb > 2.3.5
+      'QuartzPersistenceForEJBTimersTest' cannot obtain a connection -> never timeouts
+    -->
+    <version.hsqldb>2.3.4</version.hsqldb>
     <version.axiom>1.2.20</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.4.10.Final</version.hibernate>
@@ -396,7 +404,7 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>6.0.5</version>
+          <version>6.1.5</version>
           <configuration>
             <suppressionFile>owasp-dc-suppression.xml</suppressionFile>
           </configuration>
@@ -435,7 +443,7 @@
           <pushChanges>false</pushChanges>
           <releaseProfiles />
           <autoVersionSubmodules>true</autoVersionSubmodules>
-          <arguments>-Pmain,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
+          <arguments>-Pno-examples,apache-release -DskipTests -DfailIfNoTests=false -Dadditionalparam=-Xdoclint:none -DadditionalJOption=-Xdoclint:none ${arguments}</arguments>
         </configuration>
       </plugin>
 
@@ -451,6 +459,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>-Dfile.encoding=UTF-8</argLine>
           <trimStackTrace>false</trimStackTrace>
           <reuseForks>false</reuseForks>
           <!-- to be removed when all test lifecycles are fixed -->
@@ -995,6 +1004,10 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
+    <pluginRepository>
+      <id>staging-tomee-patch-plugin</id>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1183</url>
+    </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>
     <dependencies>
@@ -1124,6 +1137,24 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.jupiter.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit.jupiter.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <version>${junit.jupiter.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -1512,8 +1543,18 @@
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-asm7-shaded</artifactId>
+        <artifactId>xbean-asm9-shaded</artifactId>
         <version>${xbeanVersion}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.xbean</groupId>
@@ -1570,7 +1611,7 @@
       <dependency>
         <artifactId>xmlsec</artifactId>
         <groupId>org.apache.santuario</groupId>
-        <version>2.1.4</version>
+        <version>2.2.3</version>
       </dependency>
       <dependency>
         <groupId>wsdl4j</groupId>
@@ -1985,7 +2026,7 @@
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>taglibs-shade</artifactId>
-	<version>${project.version}</version>
+	      <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>*</groupId>

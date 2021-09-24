@@ -20,14 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>jug</groupId>
   <artifactId>polling-parent</artifactId>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TomEE :: Examples :: Polling</name>
   <properties>
-    <xbean.version>4.14</xbean.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <tomee.version>8.0.6-TT.6-SNAPSHOT</tomee.version>
-    <cxf.version>3.3.1</cxf.version>
+    <tomee.version>8.0.9-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -77,29 +75,17 @@
     <dependencies>
       <!-- API -->
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>[8.0,)</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-api</artifactId>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-plus-api</artifactId>
         <version>${tomee.version}</version>
         <scope>provided</scope>
       </dependency>
       <!-- impl - for standard code scope test is fine -->
       <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-core</artifactId>
+        <groupId>org.apache.tomee.bom</groupId>
+        <artifactId>tomee-plus</artifactId>
         <version>${tomee.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.tomee</groupId>
-        <artifactId>openejb-cxf-rs</artifactId>
-        <version>${tomee.version}</version>
-        <scope>provided</scope>
+        <scope>test</scope>
       </dependency>
       <!-- test -->
       <dependency>
@@ -145,21 +131,6 @@
         <scope>test</scope>
       </dependency>
       <!-- client -->
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-core</artifactId>
-        <version>${cxf.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-finder-shaded</artifactId>
-        <version>${xbean.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.xbean</groupId>
-        <artifactId>xbean-reflect</artifactId>
-        <version>${xbean.version}</version>
-      </dependency>
       <dependency>
         <groupId>jline</groupId>
         <artifactId>jline</artifactId>

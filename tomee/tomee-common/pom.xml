@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>tomee-common</artifactId>
@@ -34,6 +34,11 @@
     <tomee.build.name>${project.groupId}.tomee.common</tomee.build.name>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openejb-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>openejb-loader</artifactId>

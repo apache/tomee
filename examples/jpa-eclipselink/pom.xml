@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>jpa-eclipselink</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.6-TT.6-SNAPSHOT</version>
+  <version>8.0.9-SNAPSHOT</version>
   <name>TomEE :: Examples :: JPA with EclipseLink</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -80,7 +80,7 @@
     <repository>
       <id>eclipselink-repo</id>
       <name>EclipseLink Repository</name>
-      <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+      <url>https://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
     </repository>
   </repositories>
   <dependencies>
@@ -101,7 +101,7 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-core</artifactId>
-      <version>8.0.6-TT.6-SNAPSHOT</version>
+      <version>8.0.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <!-- EclipseLink dependencies -->

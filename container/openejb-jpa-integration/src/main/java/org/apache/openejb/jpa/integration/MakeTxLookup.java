@@ -16,11 +16,11 @@
  */
 package org.apache.openejb.jpa.integration;
 
-import org.apache.xbean.asm7.ClassWriter;
-import org.apache.xbean.asm7.Label;
-import org.apache.xbean.asm7.MethodVisitor;
-import org.apache.xbean.asm7.Opcodes;
-import org.apache.xbean.asm7.Type;
+import org.apache.xbean.asm9.ClassWriter;
+import org.apache.xbean.asm9.Label;
+import org.apache.xbean.asm9.MethodVisitor;
+import org.apache.xbean.asm9.Opcodes;
+import org.apache.xbean.asm9.Type;
 
 import java.io.File;
 import java.io.FileOutputStream;

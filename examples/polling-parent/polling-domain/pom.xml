@@ -20,7 +20,7 @@
   <parent>
     <artifactId>polling-parent</artifactId>
     <groupId>jug</groupId>
-    <version>8.0.6-TT.6-SNAPSHOT</version>
+    <version>8.0.9-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,8 +29,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.tomee</groupId>
-      <artifactId>javaee-api</artifactId>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>tomee-plus-api</artifactId>
     </dependency>
   </dependencies>
 

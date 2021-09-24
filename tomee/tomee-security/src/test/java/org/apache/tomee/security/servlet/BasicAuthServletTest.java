@@ -63,6 +63,15 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     }
 
     @Test
+    public void realmName() throws Exception {
+        final String servlet = getAppUrl() + "/basic";
+        assertEquals("Basic realm=\"fun EL realm\"", ClientBuilder.newBuilder().register(new BasicAuthFilter("unknown", "tomcat")).build()
+                                       .target(servlet)
+                                       .request()
+                                       .get().getHeaderString("WWW-Authenticate"));
+    }
+
+    @Test
     public void wrongPassword() throws Exception {
         final String servlet = getAppUrl() + "/basic";
         assertEquals(401, ClientBuilder.newBuilder().register(new BasicAuthFilter("tomcat", "wrong")).build()
@@ -83,7 +92,9 @@ public class BasicAuthServletTest extends AbstractTomEESecurityTest {
     @TomcatUserIdentityStoreDefinition
     @WebServlet(urlPatterns = "/basic")
     @ServletSecurity(@HttpConstraint(rolesAllowed = "tomcat"))
-    @BasicAuthenticationMechanismDefinition
+    @BasicAuthenticationMechanismDefinition(
+        realmName = "${'fun EL realm'}" // constant so we could avoid EL but it's just for the test
+    )
     public static class TestServlet extends HttpServlet {
         @Override
         protected void doGet(final HttpServletRequest req, final HttpServletResponse resp)

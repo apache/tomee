@@ -18,6 +18,7 @@ package org.apache.openejb.junit5.jee;
 
 import org.apache.openejb.Injector;
 import org.apache.openejb.OpenEJBException;
+import org.apache.openejb.OpenEJBRuntimeException;
 import org.apache.openejb.OpenEjbContainer;
 import org.apache.openejb.injection.FallbackPropertyInjector;
 import org.apache.openejb.junit.jee.config.Properties;
@@ -48,12 +49,8 @@ public class EjbContainerExtension implements AfterAllCallback, BeforeAllCallbac
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
 
-        Optional<Class<?>> oClazz = extensionContext.getTestClass();
-
-        if (!oClazz.isPresent()) {
-            throw new RuntimeException("Could not get class from extension context");
-        }
-        Class<?> clazz = oClazz.get();
+        Class<?> clazz = extensionContext.getTestClass()
+                .orElseThrow(() -> new OpenEJBRuntimeException("Could not get class from extension context"));
 
         properties = new java.util.Properties();
 
@@ -119,8 +116,8 @@ public class EjbContainerExtension implements AfterAllCallback, BeforeAllCallbac
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) throws Exception {
-        Class<?> clazz = extensionContext.getTestClass().isPresent()  ? extensionContext.getTestClass().get() : null;
-        Object test =  extensionContext.getTestInstance().isPresent() ? extensionContext.getTestInstance().get() : null;
+        Class<?> clazz = extensionContext.getTestClass().orElse(null);
+        Object test =  extensionContext.getTestInstance().orElse(null);
 
         if (clazz != null){
 

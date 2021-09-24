@@ -1,0 +1,20 @@
+:index-group: Debugging
+:jbake-date: 2021-04-02
+:jbake-type: page
+:jbake-status: published
+
+= Debugging JAX-RS Services
+
+Key classes:
+
+ - org.apache.cxf.jaxrs.model.OperationResourceInfo
+
+Key breakpoints for deployment
+
+ - org.apache.openejb.server.rest.RESTService#afterApplicationCreated
+ - org.apache.openejb.server.rest.RESTService#deployApplication
+
+Key breakpoints for runtime
+
+ - org.apache.cxf.jaxrs.utils.JAXRSUtils#findTargetMethod
+ - 

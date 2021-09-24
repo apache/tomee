@@ -394,7 +394,13 @@
                 <methods><exclude name=".*" /></methods>
             </class>
 
-
+            <!-- TODO https://issues.apache.org/jira/browse/TOMEE-3786 -->
+            <class name="org.jboss.cdi.tck.tests.context.session.async.SessionContextAsyncListenerTest">
+                <methods>
+                    <exclude name="testSessionContextActiveOnError"/>
+                    <exclude name="testSessionContextActiveOnStartAsync"/>
+                </methods>
+            </class>
 
         </classes>
 
