@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.6-TT.5
+= TomEE EAP 8.0.9-TT.1
+
+=== Changes in TomEE EAP 8.0.9-TT.1
+* Updated xmlsec to 2.2.3 to mitigate CVE-2021-40690
 
 === Changes in TomEE EAP 8.0.6-TT.5
 * Updated CXF to 3.3.11 to mitigate CVE-2021-30468
