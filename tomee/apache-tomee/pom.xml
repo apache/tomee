@@ -545,7 +545,7 @@
           <plugin>
             <groupId>org.apache.tomee.patch</groupId>
             <artifactId>tomee-patch-plugin</artifactId>
-            <version>0.7-SNAPSHOT</version>
+            <version>0.7-TT.1</version>
             <configuration>
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
@@ -756,7 +756,7 @@
           <plugin>
             <groupId>org.apache.tomee.patch</groupId>
             <artifactId>tomee-patch-plugin</artifactId>
-            <version>0.7-SNAPSHOT</version>
+            <version>0.7-TT.1</version>
             <configuration>
               <select>apache-tomee-(plus|plume|webprofile|microprofile).*\.zip</select>
               <skipTransform>true</skipTransform>
