@@ -22,8 +22,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 
-public class ClassDefiner
-{
+public class ClassDefiner {
     private static final Method CLASS_LOADER_DEFINE_CLASS;
     private static final Method GET_MODULE;
     private static final Method CAN_READ;
@@ -31,18 +30,14 @@ public class ClassDefiner
     private static final Method PRIVATE_LOOKUP_IN;
     private static final Method DEFINE_CLASS;
 
-    static
-    {
+    static {
         Method classLoaderDefineClass = null;
-        try
-        {
-            java.lang.reflect.Method method = ClassLoader.class.getDeclaredMethod(
+        try {
+            final java.lang.reflect.Method method = ClassLoader.class.getDeclaredMethod(
                     "defineClass", String.class, byte[].class, int.class, int.class, ProtectionDomain.class);
             method.setAccessible(true);
             classLoaderDefineClass = method;
-        }
-        catch (Exception ex)
-        {
+        } catch (final Exception ex) {
             // Ignore
         }
         CLASS_LOADER_DEFINE_CLASS = classLoaderDefineClass;
@@ -52,17 +47,14 @@ public class ClassDefiner
         Method addReads = null;
         Method privateLookupIn = null;
         Method defineClass = null;
-        try
-        {
+        try {
             getModule = Class.class.getMethod("getModule");
-            Class<?> moduleClass = getModule.getReturnType();
+            final Class<?> moduleClass = getModule.getReturnType();
             canRead = moduleClass.getMethod("canRead", moduleClass);
             addReads = moduleClass.getMethod("addReads", moduleClass);
             privateLookupIn = MethodHandles.class.getMethod("privateLookupIn", Class.class, MethodHandles.Lookup.class);
             defineClass = MethodHandles.Lookup.class.getMethod("defineClass", byte[].class);
-        }
-        catch (Exception ex)
-        {
+        } catch (final Exception ex) {
             // Ignore
         }
         GET_MODULE = getModule;
@@ -72,89 +64,49 @@ public class ClassDefiner
         DEFINE_CLASS = defineClass;
     }
 
-    private ClassDefiner()
-    {
+    private ClassDefiner() {
 
     }
 
-    public static Class<?> defineClass(ClassLoader loader, String className, byte[] b,
-                                       Class<?> originalClass, ProtectionDomain protectionDomain)
-    {
-        if (CLASS_LOADER_DEFINE_CLASS == null)
-        {
+    public static Class<?> defineClass(final ClassLoader loader, final String className, final byte[] b,
+                                       final Class<?> originalClass, final ProtectionDomain protectionDomain) {
+        if (CLASS_LOADER_DEFINE_CLASS == null) {
             return defineClassMethodHandles(loader, className, b, originalClass, protectionDomain);
-        }
-        else
-        {
+        } else {
             return defineClassClassLoader(loader, className, b, originalClass, protectionDomain);
         }
     }
+
     /**
      * Adapted from http://asm.ow2.org/doc/faq.html#Q5
-     *
-     * @param b
-     *
-     * @return Class<?>
      */
-    static Class<?> defineClassClassLoader(ClassLoader loader, String className, byte[] b,
-                                           Class<?> originalClass, ProtectionDomain protectionDomain)
-    {
-        try
-        {
+    static Class<?> defineClassClassLoader(final ClassLoader loader, final String className, final byte[] b,
+                                           final Class<?> originalClass, final ProtectionDomain protectionDomain) {
+        try {
             return (Class<?>) CLASS_LOADER_DEFINE_CLASS.invoke(
                     loader, className, b, Integer.valueOf(0), Integer.valueOf(b.length), protectionDomain);
-        }
-        catch (Exception e)
-        {
+        } catch (final Exception e) {
             throw e instanceof RuntimeException ? ((RuntimeException) e) : new RuntimeException(e);
         }
     }
 
     /**
      * Implementation based on MethodHandles.Lookup.
-     *
-     * @return Class<?>
      */
-    static Class<?> defineClassMethodHandles(ClassLoader loader, String className, byte[] b,
-                                             Class<?> originalClass, ProtectionDomain protectionDomain)
-    {
-        try
-        {
-            Object thisModule = GET_MODULE.invoke(LocalBeanProxyFactory.class);
-            Object lookupClassModule = GET_MODULE.invoke(originalClass);
-            if (!(boolean) CAN_READ.invoke(thisModule, lookupClassModule))
-            {
+    static Class<?> defineClassMethodHandles(final ClassLoader loader, final String className, final byte[] b,
+                                             final Class<?> originalClass, final ProtectionDomain protectionDomain) {
+        try {
+            final Object thisModule = GET_MODULE.invoke(LocalBeanProxyFactory.class);
+            final Object lookupClassModule = GET_MODULE.invoke(originalClass);
+            if (!(boolean) CAN_READ.invoke(thisModule, lookupClassModule)) {
                 // we need to read the other module in order to have privateLookup access
                 // see javadoc for MethodHandles.privateLookupIn()
                 ADD_READS.invoke(thisModule, lookupClassModule);
             }
-            Object lookup = PRIVATE_LOOKUP_IN.invoke(null, originalClass, MethodHandles.lookup());
+            final Object lookup = PRIVATE_LOOKUP_IN.invoke(null, originalClass, MethodHandles.lookup());
             return (Class<?>) DEFINE_CLASS.invoke(lookup, b);
-        }
-        catch (Exception e)
-        {
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
-//    static Class<?> defineClassMethodHandles(ClassLoader loader, String className, byte[] b,
-//                                Class<?> originalClass, ProtectionDomain protectionDomain)
-//    {
-//        Module thisModule = AsmDeltaSpikeProxyClassGenerator.class.getModule();
-//        try
-//        {
-//            Module lookupClassModule = originalClass.getModule();
-//            if (!thisModule.canRead(lookupClassModule))
-//            {
-//                // we need to read the other module in order to have privateLookup access
-//                // see javadoc for MethodHandles.privateLookupIn()
-//                thisModule.addReads(lookupClassModule);
-//            }
-//            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(originalClass, MethodHandles.lookup());
-//            return lookup.defineClass(b);
-//        }
-//        catch (IllegalAccessException e)
-//        {
-//            throw new RuntimeException(e);
-//        }
-//    }
 }
