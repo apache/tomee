@@ -53,7 +53,7 @@ public class QuartzPersistenceForEJBTimersTest {
     @EJB
     private MyTimedEjb bean;
 
-    @Test
+    @Test(timeout = 60 * 1000 * 5) /* Timeout the test after 5min - should only require ~5-10sec to succeed */
     public void doTest() {
         assertEquals(1, bean.timers().size());
         bean.newTimer();
