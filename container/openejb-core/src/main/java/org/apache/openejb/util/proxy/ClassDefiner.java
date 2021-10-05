@@ -65,15 +65,19 @@ public class ClassDefiner {
     }
 
     private ClassDefiner() {
+        // no-op
+    }
 
+    public static boolean isClassLoaderDefineClass() {
+        return CLASS_LOADER_DEFINE_CLASS != null;
     }
 
     public static Class<?> defineClass(final ClassLoader loader, final String className, final byte[] b,
                                        final Class<?> originalClass, final ProtectionDomain protectionDomain) {
-        if (CLASS_LOADER_DEFINE_CLASS == null) {
-            return defineClassMethodHandles(loader, className, b, originalClass, protectionDomain);
-        } else {
+        if (isClassLoaderDefineClass()) {
             return defineClassClassLoader(loader, className, b, originalClass, protectionDomain);
+        } else {
+            return defineClassMethodHandles(loader, className, b, originalClass, protectionDomain);
         }
     }
 

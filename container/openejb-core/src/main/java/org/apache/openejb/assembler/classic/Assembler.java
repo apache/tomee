@@ -145,6 +145,7 @@ import org.apache.openejb.util.URISupport;
 import org.apache.openejb.util.URLs;
 import org.apache.openejb.util.classloader.ClassLoaderAwareHandler;
 import org.apache.openejb.util.classloader.URLClassLoaderFirst;
+import org.apache.openejb.util.proxy.ClassDefiner;
 import org.apache.openejb.util.proxy.ProxyFactory;
 import org.apache.openejb.util.proxy.ProxyManager;
 import org.apache.webbeans.component.ResourceBean;
@@ -152,9 +153,11 @@ import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
 import org.apache.webbeans.inject.OWBInjector;
 import org.apache.webbeans.logger.JULLoggerFactory;
+import org.apache.webbeans.service.ClassLoaderProxyService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
+import org.apache.webbeans.spi.DefiningClassService;
 import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
@@ -1793,6 +1796,13 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             properties.setProperty(ContextsService.class.getName(), CdiAppContextsService.class.getName());
             properties.setProperty(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
             properties.setProperty(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
+
+            // for Java 9 and above, using Unsafe does not work well to create proxies
+            // OWB has support for classloader defineClass but this isn't done automagically
+            // like in ClassDefiner. We need to explicitly set the Proxy service
+            if (ClassDefiner.isClassLoaderDefineClass()) {
+                properties.setProperty(DefiningClassService.class.getName(), ClassLoaderProxyService.class.getName());
+            }
 
             webBeansContext = new WebBeansContext(services, properties);
 
