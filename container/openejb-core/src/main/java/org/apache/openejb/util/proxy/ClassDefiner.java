@@ -18,11 +18,14 @@
  */
 package org.apache.openejb.util.proxy;
 
+import org.apache.webbeans.spi.DefiningClassService;
+import org.apache.webbeans.spi.InstantiatingClassService;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.security.ProtectionDomain;
 
-public class ClassDefiner {
+public class ClassDefiner implements DefiningClassService, InstantiatingClassService {
     private static final Method CLASS_LOADER_DEFINE_CLASS;
     private static final Method GET_MODULE;
     private static final Method CAN_READ;
@@ -64,7 +67,9 @@ public class ClassDefiner {
         DEFINE_CLASS = defineClass;
     }
 
-    private ClassDefiner() {
+    // needs to be public because OpenWebBeans will instanciate it as a service to call the
+    // implmemented methods at the bottom of the class
+    public ClassDefiner() {
         // no-op
     }
 
@@ -112,5 +117,33 @@ public class ClassDefiner {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static <T> T allocateProxy(final Class<T> proxyClass) {
+        // let's still use Unsafe for the moment so we avoid calling the constructor
+        return (T) LocalBeanProxyFactory.Unsafe.allocateInstance(proxyClass);
+    }
+
+    @Override
+    public ClassLoader getProxyClassLoader(final Class<?> forClass) {
+        final ClassLoader classLoader = forClass.getClassLoader();
+        if (classLoader == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+        return classLoader;
+    }
+
+    @Override
+    public <T> Class<T> defineAndLoad(final String name, final byte[] bytecode, final Class<T> proxiedClass) {
+        return (Class<T>) defineClass(getProxyClassLoader(proxiedClass),
+                                      name,
+                                      bytecode,
+                                      proxiedClass,
+                                      proxiedClass.getProtectionDomain());
+    }
+
+    @Override
+    public <T> T newInstance(final Class<? extends T> proxyClass) {
+        return allocateProxy(proxyClass);
     }
 }

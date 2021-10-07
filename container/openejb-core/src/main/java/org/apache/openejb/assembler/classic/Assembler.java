@@ -1801,7 +1801,7 @@ public class Assembler extends AssemblerTool implements org.apache.openejb.spi.A
             // OWB has support for classloader defineClass but this isn't done automagically
             // like in ClassDefiner. We need to explicitly set the Proxy service
             if (ClassDefiner.isClassLoaderDefineClass()) {
-                properties.setProperty(DefiningClassService.class.getName(), ClassLoaderProxyService.class.getName());
+                properties.setProperty(DefiningClassService.class.getName(), ClassDefiner.class.getName());
             }
 
             webBeansContext = new WebBeansContext(services, properties);
