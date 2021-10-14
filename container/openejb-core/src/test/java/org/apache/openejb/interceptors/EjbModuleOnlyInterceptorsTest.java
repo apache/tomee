@@ -16,11 +16,13 @@
  */
 package org.apache.openejb.interceptors;
 
-import org.apache.openejb.core.OpenEJBInitialContextFactory;
+import org.apache.openejb.jee.AssemblyDescriptor;
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.jee.Interceptor;
+import org.apache.openejb.jee.InterceptorBinding;
+import org.apache.openejb.jee.SingletonBean;
 import org.apache.openejb.junit.ApplicationComposer;
-import org.apache.openejb.testing.Classes;
-import org.apache.openejb.testng.PropertiesBuilder;
-import org.junit.Before;
+import org.apache.openejb.testing.Module;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,8 +34,6 @@ import javax.interceptor.AroundConstruct;
 import javax.interceptor.ExcludeDefaultInterceptors;
 import javax.interceptor.Interceptors;
 import javax.interceptor.InvocationContext;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(ApplicationComposer.class)
-@Classes(innerClassesAsBean = true) // don't activate CDI here because on TCK it won't get activated
+// don't activate CDI here - we are full EJB
 public class EjbModuleOnlyInterceptorsTest {
 
     @EJB
@@ -50,13 +50,19 @@ public class EjbModuleOnlyInterceptorsTest {
     @EJB
     private HistorySingletonBean historySingletonBean;
 
-    @Before
-    public void setUp() throws Exception {
-        final Context ctx = new InitialContext(new PropertiesBuilder()
-                                                   .p(Context.INITIAL_CONTEXT_FACTORY,
-                                                      OpenEJBInitialContextFactory.class.getName())
-                                                   .build());
-        ctx.bind("inject", this);
+    @Module
+    public EjbJar setUp() throws Exception {
+        final EjbJar ejbJar = new EjbJar("bla");
+        ejbJar.addEnterpriseBean(new SingletonBean(InterceptorBean.class));
+        ejbJar.addEnterpriseBean(new SingletonBean(HistorySingletonBean.class));
+        ejbJar.addInterceptor(new Interceptor(InterceptorColor.class));
+        ejbJar.addInterceptor(new Interceptor(InterceptorJuice.class));
+        final AssemblyDescriptor assemblyDescriptor = new AssemblyDescriptor();
+        final InterceptorBinding binding =
+            new InterceptorBinding("*", InterceptorJuice.class.getName(), InterceptorColor.class.getName());
+        assemblyDescriptor.addInterceptorBinding(binding);
+        ejbJar.setAssemblyDescriptor(assemblyDescriptor);
+        return ejbJar;
     }
 
     @Test
