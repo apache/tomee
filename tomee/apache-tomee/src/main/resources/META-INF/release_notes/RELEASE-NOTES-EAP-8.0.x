@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.9-TT.1
+= TomEE EAP 8.0.9-TT.2
+
+=== Changes in TomEE EAP 8.0.9-TT.2
+* Updated to Tomcat 9.0.54 to mitigate CVE-2021-42340
 
 === Changes in TomEE EAP 8.0.9-TT.1
 * Updated xmlsec to 2.2.3 to mitigate CVE-2021-40690
