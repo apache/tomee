@@ -345,7 +345,7 @@
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.6_mail</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -356,7 +356,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-core</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
+      <version>1.2.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -367,7 +367,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jaxrs</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
+      <version>1.2.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -378,7 +378,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
+      <version>1.2.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -389,7 +389,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonp-strict</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
+      <version>1.2.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -400,7 +400,7 @@
     <dependency>
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-mapper</artifactId>
-      <version>1.2.15-SNAPSHOT</version>
+      <version>1.2.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
