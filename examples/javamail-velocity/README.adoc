@@ -1,0 +1,436 @@
+:index-group: Unrevised
+:jbake-type: page
+:jbake-status: status=published
+= Javamail API with Apache Velocity Templating
+
+This examples demonstrates the use of the Javamail API in combination with https://velocity.apache.org/[Apache Velocity] to create templated HTML Emails.
+
+
+== A simple @Stateless service using the Javamail API
+
+Here we see a very simple `@Stateless` service that can be called to send an Email.
+It uses https://velocity.apache.org/[Apache Velocity] to load velocity templates from a pre-defined location `templates`, which is located in the `resources` folder.
+
+Please note, that we need to use some additional velocity configuration options to specify `org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader`
+as a resource loader in order to actually load the templates when running inside TomEE.
+
+[source,java]
+----
+package org.superbiz;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.Stateless;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.Map;
+import java.util.Properties;
+
+@Stateless
+public class EMailServiceImpl {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EMailServiceImpl.class);
+
+    private static final String HEADER_HTML_EMAIL = "text/html; charset=UTF-8";
+    private static final String TEMPLATE_DIRECTORY = "templates/";
+    private static final String VELOCITY_RESOURCE_CLASS_LOADER_KEY = "resource.loader.class.class";
+    private static final String VELOCITY_RESOURCE_CLASS_LOADER = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
+    private static final String VELOCITY_RESOURCE_LOADER_KEY = "resource.loaders";
+    private static final String VELOCITY_RESOURCE_LOADER = "class";
+
+    @Resource(mappedName = "java:comp/env/tomee/mail/exampleSMTP")
+    private Session mailSession;
+
+    private VelocityEngine velocityEngine;
+
+    @PostConstruct
+    public void init() {
+        // Properties documented here: https://wiki.apache.org/velocity/VelocityAndWeblogic
+        final Properties prop = new Properties();
+        prop.setProperty(VELOCITY_RESOURCE_LOADER_KEY, VELOCITY_RESOURCE_LOADER);
+        prop.setProperty(VELOCITY_RESOURCE_CLASS_LOADER_KEY, VELOCITY_RESOURCE_CLASS_LOADER);
+
+        velocityEngine = new VelocityEngine();
+        velocityEngine.init(prop);
+
+        /* Ensures that smtp authentication mechanism works as configured */
+        boolean authenticate = "true".equals(mailSession.getProperty("mail.smtp.auth"));
+        if (authenticate) {
+            final String username = mailSession.getProperty("mail.smtp.user");
+            final String password = mailSession.getProperty("mail.smtp.password");
+
+            final URLName url = new URLName(
+                    mailSession.getProperty("mail.transport.protocol"),
+                    mailSession.getProperty("mail.smtp.host"), -1, null,
+                    username, null);
+
+            mailSession.setPasswordAuthentication(url, new PasswordAuthentication(username, password));
+        } else {
+            LOGGER.warn("Using EMailService without SMTP auth configured. This might be valid, but could also be dangerous!");
+        }
+
+    }
+
+    public void sendMail(EMail eMail, String htmlTemplate, Map<String, String> templateResources) {
+        if (!eMail.getMailType().equals(MailType.MAIL_HTML)) {
+            throw new RuntimeException("You can't send an HTML eMail with the Mail instance provided: '" + eMail.getMailType().toString() + "'!");
+        } else {
+            htmlTemplate = TEMPLATE_DIRECTORY + htmlTemplate;
+            try {
+                MimeMessage message = createMimeMessage(eMail);
+
+                if (!velocityEngine.resourceExists(htmlTemplate)) {
+                    throw new RuntimeException("Could not find the given email template '" + htmlTemplate + "' in the classpath.");
+                } else {
+                    final Template template = velocityEngine.getTemplate(htmlTemplate);
+                    final VelocityContext velocityContext = new VelocityContext();
+                    for (Map.Entry<String, String> templateEntry : templateResources.entrySet()) {
+                        velocityContext.put(templateEntry.getKey(), templateEntry.getValue());
+                    }
+                    final StringWriter stringWriter = new StringWriter();
+                    template.merge(velocityContext, stringWriter);
+                    // setting the eMail's content as HTML mail body
+                    final Multipart mp = new MimeMultipart();
+                    final MimeBodyPart htmlPart = new MimeBodyPart();
+                    htmlPart.setContent(stringWriter.toString(), HEADER_HTML_EMAIL);
+                    mp.addBodyPart(htmlPart);
+                    message.setContent(mp);
+
+                    Transport.send(message);
+                    // mark this eMail as sent with the current date
+                    eMail.setSentDate(new Date());
+                }
+
+            } catch (MessagingException ex) {
+                LOGGER.warn("Could not send template HTML eMail: {}", ex.getLocalizedMessage());
+                throw new RuntimeException(ex.getLocalizedMessage(), ex);
+            }
+        }
+    }
+
+    private MimeMessage createMimeMessage(EMail eMail) throws MessagingException {
+        MimeMessage message = new MimeMessage(mailSession);
+        message.setFrom(new InternetAddress(eMail.getMailFrom()));
+        for (String mailTo : eMail.getMailTo()) {
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(mailTo));
+        }
+
+        message.setSubject(eMail.getMailSubject());
+        message.setSentDate(new Date());
+
+        for (String ccRecipient : eMail.getMailCc()) {
+            message.addRecipient(Message.RecipientType.CC, new InternetAddress(ccRecipient));
+        }
+        for (String bccRecipient : eMail.getMailBcc()) {
+            message.addRecipient(Message.RecipientType.BCC, new InternetAddress(bccRecipient));
+        }
+        return message;
+    }
+
+    @PreDestroy
+    public void close() {
+        if (mailSession != null) {
+            mailSession = null;
+        }
+    }
+}
+----
+
+The configuration of the mail session can be done via a `resource.xml`, which looks like
+
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <Resource id="tomee/mail/exampleSMTP" type="javax.mail.Session">
+        mail.debug=false
+        mail.transport.protocol=smtp
+        mail.smtp.starttls.enable=true
+        mail.smtp.starttls.required=true
+        <!-- mail.smtp.ssl.protocols=TLSv1.2 TLSv1.3 -->
+        <!-- mail.smtp.ssl.ciphersuites=TLS_AES_128_GCM_SHA256 TLS_AES_256_GCM_SHA384 -->
+        mail.smtp.host=mail.mymailprovider.com
+        mail.smtp.port=587
+        mail.smtp.auth=true
+        mail.smtp.user=myself@mymailprovider.com
+        <!-- your password, and not 'mail.smtp.password' -->
+        password=mypassword
+    </Resource>
+</resources>
+----
+
+You can tune this `resource.xml` for your specific Email provider. Please note, that you can specifiy the `ssl.protocols` and `ciphersuites`, which are used to connect to the specific mail server.
+If not specified, JVM defaults are used.
+
+== Testing
+
+=== Test for the EMailService
+
+The test uses the ApplicationComposer to make testing easy.
+To test our service, we rely on https://greenmail-mail-test.github.io/greenmail/[GreenMail],
+which allows us to spawn a catch-all smtp server during the unit test.
+
+The idea is to create our `EMailServiceImpl` by creating a `EjbJar` on the fly.
+To do so, we add `@Classes` annotation to define the set of classes to use in the `EjbJar`.
+In addition, we use `@Configuration` to define the Mail Session Resource for the test context to ensure,
+that we are not bound to a pre-defined port.As mentioned above, the `resource.xml` can also be used to configure the mail session..
+Finally, we use our service to send an Email to our catch-all smtp server and check the related results.
+
+[source,java]
+----
+package org.superbiz;
+
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
+
+import org.apache.openejb.jee.EjbJar;
+import org.apache.openejb.junit5.RunWithApplicationComposer;
+import org.apache.openejb.testing.Classes;
+import org.apache.openejb.testing.Configuration;
+import org.apache.openejb.testing.Module;
+import org.apache.openejb.util.NetworkUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+import javax.mail.BodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@RunWithApplicationComposer
+public class EMailServiceTest {
+
+    private static final int SMTP_TEST_PORT = NetworkUtil.getNextAvailablePort();
+    private static final String USER_PASSWORD = "s3cr3t";
+    private static final String USER_NAME = "admin@localhost";
+    private static final String EMAIL_USER_ADDRESS = "admin@localhost";
+
+    private static GreenMail mailServer;
+    private static CountDownLatch started = new CountDownLatch(1);
+
+    @Module
+    @Classes(cdi = true, value = {EMailServiceImpl.class})
+    public EjbJar beans() {
+        return new EjbJar("javamail-velocity");
+    }
+
+    @Configuration
+    public Properties config() {
+        //Note: We can also configure this via a resource.xml or via tomee.xml
+        Properties properties = new Properties();
+        properties.put("tomee/mail/mySMTP", "new://Resource?type=javax.mail.Session");
+        properties.put("tomee/mail/mySMTP.mail.debug", "false");
+        properties.put("tomee/mail/mySMTP.mail.transport.protocol", "smtp");
+        properties.put("tomee/mail/mySMTP.mail.smtp.host", "localhost");
+        properties.put("tomee/mail/mySMTP.mail.smtp.port", SMTP_TEST_PORT);
+        properties.put("tomee/mail/mySMTP.mail.smtp.auth", "true");
+        properties.put("tomee/mail/mySMTP.mail.smtp.user", USER_NAME);
+        properties.put("tomee/mail/mySMTP.password", USER_PASSWORD);
+        return properties;
+    }
+
+    @Inject
+    private EMailServiceImpl eMailService;
+
+    @BeforeAll
+    public static void setUp() throws InterruptedException {
+        mailServer = new CustomGreenMailServer(new ServerSetup(SMTP_TEST_PORT, null, "smtp"));
+        mailServer.start();
+
+        //wait for the server startup...
+        started.await();
+
+        // create user on mail server
+        mailServer.setUser(EMAIL_USER_ADDRESS, USER_NAME, USER_PASSWORD);
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if (mailServer != null) {
+            mailServer.stop();
+        }
+    }
+
+    @Test
+    public void testSendMailHTMLTemplate() throws Exception {
+        // prepare
+        String eMailTemplateName = "email-html-template.vm";
+        Map<String, String> mailTemplateProps = new HashMap<>();
+        mailTemplateProps.put("name", "Jon Doe");
+
+        String fromMail = "admin@localhost";
+        String toEmail = "john@localhost.com";
+        String subject = "Template HTML email!";
+
+        Collection<String> toRecipients = new ArrayList<>();
+        toRecipients.add(toEmail);
+
+        EMail eMail = new EMail(MailType.MAIL_HTML,toRecipients, subject, "", Collections.emptyList(),Collections.emptyList());
+        eMail.setMailFrom(fromMail);
+        // test
+        assertNull(eMail.getSentDate());
+        eMailService.sendMail(eMail, eMailTemplateName,  mailTemplateProps);
+        assertNotNull(eMail.getSentDate());
+
+        // fetch messages from server
+        MimeMessage[] messages = mailServer.getReceivedMessages();
+        assertNotNull(messages);
+        assertEquals(1, messages.length);
+        MimeMessage msg = messages[0];
+        assertTrue(msg.getContentType().contains("multipart/mixed;"));
+
+        assertEquals(subject, msg.getSubject());
+
+        MimeMultipart message = (MimeMultipart) msg.getContent();
+        BodyPart bodyPart = message.getBodyPart(0);
+        assertEquals("text/html; charset=UTF-8", bodyPart.getHeader("Content-Type")[0]);
+        String receivedMailContent = String.valueOf(bodyPart.getContent());
+
+        assertTrue(receivedMailContent.contains("Dear Jon Doe"));
+        assertTrue(receivedMailContent.contains("templated"));
+        assertEquals(fromMail, msg.getFrom()[0].toString());
+    }
+
+    public static class CustomGreenMailServer extends GreenMail {
+
+        public CustomGreenMailServer(ServerSetup config) {
+            super(new ServerSetup[]{config});
+        }
+
+        public synchronized void start() {
+            super.start();
+            started.countDown();
+        }
+    }
+}
+----
+
+== Running
+
+Running the example is fairly simple. In the `javamail-velocity` directory run:
+
+[source,java]
+----
+$ mvn clean install
+----
+
+Which should create output as follows:
+
+[source,java]
+----
+[INFO] Running org.superbiz.EMailServiceTest
+Okt 25, 2021 4:38:24 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created new singletonService org.apache.openejb.cdi.ThreadSingletonServiceImpl@55fe41ea
+Okt 25, 2021 4:38:24 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Succeeded in installing singleton service
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Cannot find the configuration file [conf/openejb.xml].  Will attempt to create one for the beans deployed.
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Security Service, type=SecurityService, provider-id=Default Security Service)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Transaction Manager, type=TransactionManager, provider-id=Default Transaction Manager)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating TransactionManager(id=Default Transaction Manager)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating SecurityService(id=Default Security Service)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring enterprise application: /home/rzo1/coding/tomee/examples/javamail-velocity/EMailServiceTest
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-deploying ejb EMailServiceImpl: EjbDeployment(deployment-id=EMailServiceImpl)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=EMailServiceTest/tomee/mail/mySMTP, type=Resource, provider-id=Default Mail Session)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Managed Container, type=Container, provider-id=Default Managed Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a container for bean org.superbiz.EMailServiceTest: Container(type=MANAGED, id=Default Managed Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Container(id=Default Managed Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Using directory /tmp for stateful session passivation
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/EMailServiceTest/tomee/mail/mySMTP' in bean org.superbiz.EMailServiceTest to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/tomee/mail/mySMTP' in bean org.superbiz.EMailServiceTest to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/EMailServiceTest/tomee/mail/mySMTP' in bean EjbModule652176954.Comp937277082 to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/tomee/mail/mySMTP' in bean EjbModule652176954.Comp937277082 to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Configuring Service(id=Default Stateless Container, type=Container, provider-id=Default Stateless Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-creating a container for bean EMailServiceImpl: Container(type=STATELESS, id=Default Stateless Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Creating Container(id=Default Stateless Container)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'java:comp/env/org.superbiz.EMailServiceImpl/mailSession' in bean EMailServiceImpl to Resource(id=tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/EMailServiceTest/tomee/mail/mySMTP' in bean EMailServiceImpl to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/tomee/mail/mySMTP' in bean EMailServiceImpl to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'java:comp/env/org.superbiz.EMailServiceImpl/mailSession' in bean javamail-velocity.Comp234740890 to Resource(id=tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/EMailServiceTest/tomee/mail/mySMTP' in bean javamail-velocity.Comp234740890 to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Auto-linking resource-ref 'openejb/Resource/tomee/mail/mySMTP' in bean javamail-velocity.Comp234740890 to Resource(id=EMailServiceTest/tomee/mail/mySMTP)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Enterprise application "/home/rzo1/coding/tomee/examples/javamail-velocity/EMailServiceTest" loaded.
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Not creating another application classloader for EMailServiceTest
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Assembling app: /home/rzo1/coding/tomee/examples/javamail-velocity/EMailServiceTest
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=EMailServiceImplLocalBean) --> Ejb(deployment-id=EMailServiceImpl)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=global/EMailServiceTest/javamail-velocity/EMailServiceImpl!org.superbiz.EMailServiceImpl) --> Ejb(deployment-id=EMailServiceImpl)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Jndi(name=global/EMailServiceTest/javamail-velocity/EMailServiceImpl) --> Ejb(deployment-id=EMailServiceImpl)
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Existing thread singleton service in SystemInstance(): org.apache.openejb.cdi.ThreadSingletonServiceImpl@55fe41ea
+Okt 25, 2021 4:38:25 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: OpenWebBeans Container is starting...
+Okt 25, 2021 4:38:25 PM org.apache.webbeans.plugins.PluginLoader startUp
+INFORMATION: Adding OpenWebBeansPlugin : [CdiPlugin]
+Okt 25, 2021 4:38:26 PM org.apache.webbeans.config.BeansDeployer validateInjectionPoints
+INFORMATION: All injection points were validated successfully.
+Okt 25, 2021 4:38:26 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: OpenWebBeans Container has started, it took 758 ms.
+Okt 25, 2021 4:38:26 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Created Ejb(deployment-id=EMailServiceImpl, ejb-name=EMailServiceImpl, container=Default Stateless Container)
+Okt 25, 2021 4:38:26 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Started Ejb(deployment-id=EMailServiceImpl, ejb-name=EMailServiceImpl, container=Default Stateless Container)
+Okt 25, 2021 4:38:26 PM org.apache.batchee.container.services.ServicesManager init
+WARNUNG: You didn't specify org.apache.batchee.jmx.application and JMX is already registered, skipping
+Okt 25, 2021 4:38:26 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Deployed Application(path=/home/rzo1/coding/tomee/examples/javamail-velocity/EMailServiceTest)
+Okt 25, 2021 4:38:26 PM com.icegreen.greenmail.smtp.SmtpManager$Incoming handle
+INFORMATION: Created user login john@localhost.com for address john@localhost.com with password john@localhost.com because it didn't exist before.
+Okt 25, 2021 4:38:26 PM org.apache.openejb.util.LogStreamAsync run
+INFORMATION: Undeploying app: /home/rzo1/coding/tomee/examples/javamail-velocity/EMailServiceTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.179 s - in org.superbiz.EMailServiceTest
+----
