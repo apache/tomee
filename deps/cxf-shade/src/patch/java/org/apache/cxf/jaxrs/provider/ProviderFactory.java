@@ -219,6 +219,7 @@ public abstract class ProviderFactory {
         providers.add(new StringTextProvider());
         providers.add(new PrimitiveTextProvider<Object>());
         providers.add(JAXB_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
+        providers.add(JAXB_ELEMENT_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
         providers.add(MULTIPART_PROVIDER_CLASS.tryCreateInstance(factory.getBus()));
 
         // property set in CxfRsHttpListener

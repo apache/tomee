@@ -76,7 +76,7 @@
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
       <artifactId>geronimo-javamail_1.6_mail</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -274,7 +274,7 @@
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>jakarta.faces</artifactId>
-      <version>2.3.14</version>
+      <version>2.3.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

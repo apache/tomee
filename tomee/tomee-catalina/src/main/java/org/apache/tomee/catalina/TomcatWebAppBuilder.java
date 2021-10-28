@@ -685,6 +685,8 @@ public class TomcatWebAppBuilder implements WebAppBuilder, ContextListener, Pare
                 }
 
                 theHost.addChild(standardContext);
+            } else {
+                throw new IllegalStateException("Host '"+host+"' not found for application "+standardContext.getPath());
             }
         }
     }

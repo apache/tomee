@@ -23,6 +23,7 @@ import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.container.InjectableBeanManager;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
 import org.apache.webbeans.event.EventMetadataImpl;
 import org.apache.webbeans.util.Asserts;

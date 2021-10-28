@@ -219,12 +219,12 @@
       <dependency>
         <groupId>org.eclipse.jdt.core.compiler</groupId>
         <artifactId>ecj</artifactId>
-        <version>4.4</version>
+        <version>${version.ecj}</version>
       </dependency>
       <dependency>
         <artifactId>commons-beanutils</artifactId>
         <groupId>commons-beanutils</groupId>
-        <version>1.8.3</version>
+        <version>${commons-beanutils.version}</version>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>

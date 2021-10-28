@@ -33,6 +33,7 @@ import org.apache.openejb.util.ExecutorBuilder;
 import org.apache.openejb.util.LogCategory;
 import org.apache.openejb.util.Logger;
 import org.apache.openejb.util.classloader.MultipleClassLoader;
+import org.apache.openejb.util.proxy.ClassDefiner;
 import org.apache.webbeans.config.OpenWebBeansConfiguration;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
@@ -41,11 +42,13 @@ import org.apache.webbeans.intercept.ApplicationScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.NormalScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.RequestScopedBeanInterceptorHandler;
 import org.apache.webbeans.intercept.SessionScopedBeanInterceptorHandler;
+import org.apache.webbeans.service.ClassLoaderProxyService;
 import org.apache.webbeans.spi.ApplicationBoundaryService;
 import org.apache.webbeans.spi.BeanArchiveService;
 import org.apache.webbeans.spi.ContainerLifecycle;
 import org.apache.webbeans.spi.ContextsService;
 import org.apache.webbeans.spi.ConversationService;
+import org.apache.webbeans.spi.DefiningClassService;
 import org.apache.webbeans.spi.JNDIService;
 import org.apache.webbeans.spi.LoaderService;
 import org.apache.webbeans.spi.ResourceInjectionService;
@@ -147,6 +150,13 @@ public class ThreadSingletonServiceImpl implements ThreadSingletonService {
         properties.put(ResourceInjectionService.class.getName(), CdiResourceInjectionService.class.getName());
         properties.put(TransactionService.class.getName(), OpenEJBTransactionService.class.getName());
         properties.put("org.apache.webbeans.component.PrincipalBean.proxy", "false");
+
+        // for Java 9 and above, using Unsafe does not work well to create proxies
+        // OWB has support for classloader defineClass but this isn't done automagically
+        // like in ClassDefiner. We need to explicitly set the Proxy service
+        if (ClassDefiner.isClassLoaderDefineClass()) {
+            properties.setProperty(DefiningClassService.class.getName(), ClassDefiner.class.getName());
+        }
 
 
         // NOTE: ensure user can extend/override all the services = set it only if not present in properties, see WebBeansContext#getService()

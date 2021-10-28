@@ -111,13 +111,13 @@
       to update and release the javaee-api.jar. Different lifecycle.
     -->
     <geronimo-activation_1.1_spec.version>1.1</geronimo-activation_1.1_spec.version>
-    <geronimo-javamail_1.6_spec.version>1.0.0</geronimo-javamail_1.6_spec.version>
-    <geronimo-javamail_1.6_mail.version>1.0.0</geronimo-javamail_1.6_mail.version>
+    <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
+    <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
     <openjpa.version>3.2.0</openjpa.version>
-    <openwebbeans.version>2.0.22</openwebbeans.version>
+    <openwebbeans.version>2.0.24-TT.1</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.10</johnzon.version>
+    <johnzon.version>1.2.15</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
@@ -148,10 +148,10 @@
 
     <tomcat.version>9.0.54</tomcat.version>
 
-    <cxf.version>3.4.3</cxf.version>
+    <cxf.version>3.4.4</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
-    <jetty.version>7.5.3.v20111011</jetty.version>
+    <jetty.version>7.6.9.v20130131</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
     <aether.version>1.13.1</aether.version>
     <maven.version>3.0.5</maven.version>
@@ -181,26 +181,26 @@
       commons-dbcp.version > 2.3.0
     -->
     <commons-dbcp.version>2.3.0</commons-dbcp.version>
-    <commons-pool.version>2.10.0</commons-pool.version>
+    <commons-pool.version>2.11.1</commons-pool.version>
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-codec.version>1.15</commons-codec.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang3.version>3.11</commons-lang3.version>
-    <commons-io.version>2.10.0</commons-io.version>
-    <commons-net.version>3.7.2</commons-net.version>
+    <commons-io.version>2.11.0</commons-io.version>
+    <commons-net.version>3.8.0</commons-net.version>
 
     <bval.version>2.0.5</bval.version>
     <org.apache.activemq.version>5.16.3</org.apache.activemq.version>
     <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
     <junit.version>4.13.2</junit.version>
-    <junit.jupiter.version>5.8.0-RC1</junit.jupiter.version>
+    <junit.jupiter.version>5.8.1</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>2.3.9</myfaces.version>
-    <mojarra.version>2.3.14</mojarra.version>
+    <mojarra.version>2.3.15</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.0.1</log4j2.version>
@@ -212,11 +212,12 @@
       'QuartzPersistenceForEJBTimersTest' cannot obtain a connection -> never timeouts
     -->
     <version.hsqldb>2.3.4</version.hsqldb>
-    <version.axiom>1.2.20</version.axiom>
+    <version.axiom>1.3.0</version.axiom>
     <version.xalan>2.7.2</version.xalan>
     <version.hibernate>5.4.10.Final</version.hibernate>
-    <version.eclipselink>2.7.7</version.eclipselink>
+    <version.eclipselink>2.7.9</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
+    <version.ecj>4.6.1</version.ecj>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -244,8 +245,8 @@
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
-    <jackson.version>2.12.1</jackson.version>
-    <jackson.dataformat.version>2.12.1</jackson.dataformat.version>
+    <jackson.version>2.13.0-rc2</jackson.version>
+    <jackson.dataformat.version>2.13.0-rc2</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
@@ -1919,7 +1920,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-compress</artifactId>
-        <version>1.20</version>
+        <version>1.21</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>

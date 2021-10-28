@@ -22,12 +22,14 @@ import java.util.Properties;
 
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
+import org.apache.webbeans.container.InjectableBeanManager;
 import org.apache.webbeans.event.NotificationManager;
 
 import javax.enterprise.inject.spi.Bean;
 
 public class WebappWebBeansContext extends WebBeansContext {
     private final WebBeansContext parent;
+    private final InjectableBeanManager ibm;
     private BeanManagerImpl bm;
     private final WebappNotificationManager webappNotificationManager;
 
@@ -35,6 +37,12 @@ public class WebappWebBeansContext extends WebBeansContext {
         super(services, properties);
         parent = webBeansContext;
         webappNotificationManager = new WebappNotificationManager(this);
+        ibm = new InjectableBeanManager(getBeanManagerImpl());
+    }
+
+    @Override
+    public InjectableBeanManager getInjectableBeanManager() {
+        return ibm;
     }
 
     @SuppressWarnings("PMD.DoubleCheckedLocking")
