@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.9-TT.2
+= TomEE EAP 8.0.9-TT.3
+
+=== Changes in TomEE EAP 8.0.9-TT.3
+* Updated to openwebbeans to 2.0.24-TT.1 and CXF to 3.4.4 to mitigate CVE-2021-30468
 
 === Changes in TomEE EAP 8.0.9-TT.2
 * Updated to Tomcat 9.0.54 to mitigate CVE-2021-42340
