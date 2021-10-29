@@ -26,7 +26,7 @@ jobs:
         repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" } }]'
         plugin_repositories: '[{ "id": "tomitribe-all", "name": "tomitribe-all", "url": "https://repository.tomitribe.com/content/groups/tomitribe/", "releases": { "enabled": "true" }, "snapshots": { "enabled": "false" }}]'
         servers: '[{ "id": "tomitribe-all", "username": "${env.MAVEN_USERNAME}", "password": "${env.MAVEN_PASSWORD}" }]'
-
+        
     - name: maven-settings-xml-cat
       run: cat ~/.m2/settings.xml
 
