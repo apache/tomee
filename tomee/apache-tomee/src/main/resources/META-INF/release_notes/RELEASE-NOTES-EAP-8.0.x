@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.9-TT.3
+= TomEE EAP 8.0.9-TT.4
+
+=== Changes in TomEE EAP 8.0.9-TT.4
+* Updated openejb-cxf to exclude org.ehcache.ehcache instead of net.sf.ehcache.ehcache
 
 === Changes in TomEE EAP 8.0.9-TT.3
 * Updated to openwebbeans to 2.0.24-TT.1 and CXF to 3.4.4 to mitigate CVE-2021-30468
