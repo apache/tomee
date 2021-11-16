@@ -262,8 +262,13 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
     private void starts(final BeanManager beanManager, final Class<?> clazz) {
         final Bean<?> bean = beanManager.resolve(beanManager.getBeans(clazz));
+
+        logger.debug("Starting bean " + clazz.getName());
         if (!beanManager.isNormalScope(bean.getScope())) {
-            throw new IllegalStateException("Only normal scoped beans can use @Startup - likely @ApplicationScoped");
+            throw new IllegalStateException("Unable to start bean " + clazz.getName() +
+                    ", from " + CdiScanner.getLocation(clazz) +
+                    ", with scope " + bean.getScope().getName() +
+                    ". Only normal scoped beans can use @Startup (e.g. @ApplicationScoped)");
         }
 
         final CreationalContext<Object> creationalContext = beanManager.createCreationalContext(null);

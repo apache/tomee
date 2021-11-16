@@ -61,6 +61,7 @@ import static java.util.Arrays.asList;
  * @version $Rev:$ $Date:$
  */
 public class CdiScanner implements BdaScannerService {
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
@@ -310,6 +311,10 @@ public class CdiScanner implements BdaScannerService {
                     if (isBean(clazz)) {
                         classes.add(clazz);
                         if (beans.startupClasses.contains(name)) {
+                            logger.debug("Adding class " + clazz.getName()
+                                    + " from " + getLocation(clazz) + " to startup list. Scan mode="
+                                    + information.getBeanDiscoveryMode().toString() + ". EAR webapp=" + !isNotEarWebApp);
+
                             startupClasses.add(clazz);
                         }
                     }
@@ -322,6 +327,11 @@ public class CdiScanner implements BdaScannerService {
                             || ((loader.equals(scl) || loader == containerLoader) && isNotEarWebApp)) {
                         classes.add(clazz);
                         if (beans.startupClasses.contains(name)) {
+                            logger.debug("Adding class " + clazz.getName()
+                                    + " from " + getLocation(clazz)
+                                    + " to startup list. Scan mode=" + information.getBeanDiscoveryMode().toString()
+                                    + ". EAR webapp=" + !isNotEarWebApp);
+                            
                             startupClasses.add(clazz);
                         }
                     }
@@ -409,5 +419,18 @@ public class CdiScanner implements BdaScannerService {
 
     public Set<Class<?>> getStartupClasses() {
         return startupClasses;
+    }
+
+    public static String getLocation(final Class<?> clazz) {
+
+        if (clazz != null
+                && clazz.getProtectionDomain() != null
+                && clazz.getProtectionDomain().getCodeSource() != null
+                && clazz.getProtectionDomain().getCodeSource().getLocation() != null) {
+
+            return clazz.getProtectionDomain().getCodeSource().getLocation().toString();
+        }
+
+        return "<not available>";
     }
 }
