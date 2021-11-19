@@ -226,6 +226,7 @@ public class OpenEJBLifecycle implements ContainerLifecycle {
 
             for (final Class<?> clazz : cdiScanner.getStartupClasses()) {
                 if (ejbs.contains(clazz)) {
+                    logger.debug("Skipping " + clazz.getName() + ", already registered as an EJB.");
                     continue;
                 }
                 starts(beanManager, clazz);
