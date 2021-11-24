@@ -146,7 +146,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.54</tomcat.version>
+    <tomcat.version>9.0.55</tomcat.version>
 
     <cxf.version>3.4.4</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
