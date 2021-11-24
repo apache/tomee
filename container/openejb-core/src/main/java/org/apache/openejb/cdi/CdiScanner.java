@@ -61,6 +61,7 @@ import static java.util.Arrays.asList;
  * @version $Rev:$ $Date:$
  */
 public class CdiScanner implements BdaScannerService {
+    private static final Logger logger = Logger.getInstance(LogCategory.OPENEJB_CDI, OpenEJBLifecycle.class);
     public static final String OPENEJB_CDI_FILTER_CLASSLOADER = "openejb.cdi.filter.classloader";
 
     private static final Class<?>[] TRANSACTIONAL_INTERCEPTORS = new Class<?>[]{
@@ -171,7 +172,7 @@ public class CdiScanner implements BdaScannerService {
                         // no-op
                     }
                 }
-                infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda));
+                infoByBda.put(bda, handleBda(startupObject, classLoader, comparator, ejbJar, scl, filterByClassLoader, beanArchiveService, openejb, bda));
             }
 /*
             if (!startupObject.isFromWebApp() && ejbJar.webapp && !appInfo.webAppAlone) {
@@ -180,7 +181,7 @@ public class CdiScanner implements BdaScannerService {
             
             for (final BeansInfo.BDAInfo bda : beans.noDescriptorBdas) {
                 // infoByBda.put() not needed since we know it means annotated
-                handleBda(startupObject, classLoader, comparator, beans, scl, filterByClassLoader, beanArchiveService, openejb, bda);
+                handleBda(startupObject, classLoader, comparator, ejbJar, scl, filterByClassLoader, beanArchiveService, openejb, bda);
             }
 
             if (startupObject.getBeanContexts() != null) {
@@ -254,13 +255,13 @@ public class CdiScanner implements BdaScannerService {
     }
 
     private BeanArchiveService.BeanArchiveInformation handleBda(final StartupObject startupObject, final ClassLoader classLoader, final ClassLoaderComparator comparator,
-                                                                final BeansInfo beans, final ClassLoader scl, final boolean filterByClassLoader,
+                                                                final EjbJarInfo ejbJarInfo, final ClassLoader scl, final boolean filterByClassLoader,
                                                                 final BeanArchiveService beanArchiveService, final boolean openejb,
                                                                 final BeansInfo.BDAInfo bda) {
         BeanArchiveService.BeanArchiveInformation information;
         if (openejb) {
             final OpenEJBBeanInfoService beanInfoService = OpenEJBBeanInfoService.class.cast(beanArchiveService);
-            information = beanInfoService.createBeanArchiveInformation(bda, beans, classLoader);
+            information = beanInfoService.createBeanArchiveInformation(bda, ejbJarInfo.beans, classLoader);
             // TODO: log a warn is discoveryModes.get(key) == null
             try {
                 beanInfoService.getBeanArchiveInfo().put(bda.uri == null ? null : bda.uri.toURL(), information);
@@ -309,7 +310,12 @@ public class CdiScanner implements BdaScannerService {
                 if (scanModeAnnotated) {
                     if (isBean(clazz)) {
                         classes.add(clazz);
-                        if (beans.startupClasses.contains(name)) {
+                        if (ejbJarInfo.beans.startupClasses.contains(name)) {
+                            logger.debug("Adding class " + clazz.getName()
+                                    + " from " + getLocation(clazz) + ", in module " + ejbJarInfo.moduleId
+                                    + " to startup list. Scan mode="
+                                    + information.getBeanDiscoveryMode().toString() + ". EAR webapp=" + !isNotEarWebApp);
+
                             startupClasses.add(clazz);
                         }
                     }
@@ -321,7 +327,12 @@ public class CdiScanner implements BdaScannerService {
                             || comparator.isSame(loader)
                             || ((loader.equals(scl) || loader == containerLoader) && isNotEarWebApp)) {
                         classes.add(clazz);
-                        if (beans.startupClasses.contains(name)) {
+                        if (ejbJarInfo.beans.startupClasses.contains(name)) {
+                            logger.debug("Adding class " + clazz.getName()
+                                    + " from " + getLocation(clazz) + ", in module " + ejbJarInfo.moduleId
+                                    + " to startup list. Scan mode=" + information.getBeanDiscoveryMode().toString()
+                                    + ". EAR webapp=" + !isNotEarWebApp);
+                            
                             startupClasses.add(clazz);
                         }
                     }
@@ -409,5 +420,18 @@ public class CdiScanner implements BdaScannerService {
 
     public Set<Class<?>> getStartupClasses() {
         return startupClasses;
+    }
+
+    public static String getLocation(final Class<?> clazz) {
+
+        if (clazz != null
+                && clazz.getProtectionDomain() != null
+                && clazz.getProtectionDomain().getCodeSource() != null
+                && clazz.getProtectionDomain().getCodeSource().getLocation() != null) {
+
+            return clazz.getProtectionDomain().getCodeSource().getLocation().toString();
+        }
+
+        return "<not available>";
     }
 }
