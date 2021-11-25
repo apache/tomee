@@ -430,6 +430,11 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.apache.tomee.patch</groupId>
+          <artifactId>tomee-patch-plugin</artifactId>
+          <version>0.7</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -978,10 +983,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>staging-tomee-patch-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1183</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>
