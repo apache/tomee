@@ -34,7 +34,7 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import java.net.URL;
 
-@Ignore
+//@Ignore
 @RunWith(Arquillian.class)
 public class FormSubmissionTest {
 
