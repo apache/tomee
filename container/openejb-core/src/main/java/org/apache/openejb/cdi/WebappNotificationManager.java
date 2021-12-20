@@ -45,10 +45,8 @@ public final class WebappNotificationManager extends NotificationManager {
     }
 
 
-    @Override
     public void afterStart() {
         hasStarted = true;
-        super.afterStart();
     }
 
     /**
