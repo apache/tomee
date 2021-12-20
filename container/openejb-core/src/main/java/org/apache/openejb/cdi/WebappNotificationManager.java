@@ -30,23 +30,11 @@ import java.util.List;
 public final class WebappNotificationManager extends NotificationManager {
     private final NotificationManager parentNotificationManager;
 
-    /**
-     * We need to know when we did start.
-     * Lifecycle events will only get sent to the parent NotificationManager once the boot is finished.
-     * This is necessary to e.g. handle ProcessInjectionPoint for manual InjectionPointFactory calls.
-     */
-    private boolean hasStarted = false;
-
     public WebappNotificationManager(WebappWebBeansContext webappWebBeansContext) {
         super(webappWebBeansContext);
         this.parentNotificationManager = webappWebBeansContext.getParent() != null
                 ? webappWebBeansContext.getParent().getNotificationManager()
                 : null;
-    }
-
-
-    public void afterStart() {
-        hasStarted = true;
     }
 
     /**

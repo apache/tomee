@@ -23,10 +23,7 @@ import org.apache.webbeans.component.ExtensionBean;
 import org.apache.webbeans.component.OwbBean;
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.container.BeanManagerImpl;
-import org.apache.webbeans.container.InjectableBeanManager;
 import org.apache.webbeans.context.creational.CreationalContextImpl;
-import org.apache.webbeans.event.EventMetadataImpl;
-import org.apache.webbeans.event.NotificationManager;
 import org.apache.webbeans.util.Asserts;
 import org.apache.webbeans.util.WebBeansUtil;
 
@@ -42,7 +39,6 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
 import javax.enterprise.inject.spi.InterceptionType;
 import javax.enterprise.inject.spi.Interceptor;
-import javax.enterprise.inject.spi.ObserverMethod;
 import javax.enterprise.inject.spi.PassivationCapable;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -302,10 +298,6 @@ public class WebappBeanManager extends BeanManagerImpl {
         started = true;
         deploymentBeans = mergeBeans();
         webappCtx.getBeanManagerImpl().getInjectionResolver().clearCaches(); // to force new resolution with new beans
-        final NotificationManager notificationManager = webappCtx.getNotificationManager();
-        if (notificationManager instanceof WebappNotificationManager) { // should always be the case
-            ((WebappNotificationManager) notificationManager).afterStart();
-        } // otherwise, OWB itself knows when it's ready
     }
 
     private Set<Bean<?>> mergeBeans() {
