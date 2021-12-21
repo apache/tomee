@@ -69,7 +69,7 @@ public class GenerateBoms {
     public GenerateBoms() {
         /*
          * Resolve all project paths relative to this built class
-         * that lives in `tomee/tomee-bootstrap/target/test-classes/`
+         * that lives in `tomee/apache-tomee/target/test-classes/`
          *
          * We walk backwards from that directory till we find the
          * project root and then we can build all relative paths

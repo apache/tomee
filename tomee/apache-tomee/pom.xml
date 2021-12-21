@@ -144,6 +144,14 @@
       <version>${tomcat.version}</version>
       <scope>provided</scope>
     </dependency>
+
+    <!-- needed for BOM generation -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.20</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -157,7 +165,12 @@
         <filtering>false</filtering>
       </resource>
     </resources>
-
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
   </build>
 
   <profiles>
@@ -562,6 +575,25 @@
               </execution>
             </executions>
           </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <classpathScope>test</classpathScope>
+              <mainClass>org.apache.tomee.bootstrap.GenerateBoms</mainClass>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -771,6 +803,25 @@
                 <phase>package</phase>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.0.0</version>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>java</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <includeProjectDependencies>true</includeProjectDependencies>
+              <includePluginDependencies>false</includePluginDependencies>
+              <classpathScope>test</classpathScope>
+              <mainClass>org.apache.tomee.bootstrap.GenerateBoms</mainClass>
+            </configuration>
           </plugin>
         </plugins>
       </build>
