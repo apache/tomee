@@ -542,17 +542,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
-      <artifactId>geronimo-connector</artifactId>
-      <version>3.1.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-transaction</artifactId>
       <version>3.1.4</version>
       <exclusions>
@@ -588,17 +577,6 @@
       <groupId>org.apache.geronimo.safeguard</groupId>
       <artifactId>safeguard-impl</artifactId>
       <version>1.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-      <version>1.0</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
