@@ -246,7 +246,7 @@
 
     <!-- Jackson required by OpenAPI Impl -->
     <jackson.version>2.13.1</jackson.version>
-    <jackson.dataformat.version>2.13.0-rc2</jackson.dataformat.version>
+    <jackson.dataformat.version>2.13.1</jackson.dataformat.version>
 
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
