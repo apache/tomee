@@ -332,7 +332,7 @@ public class CdiPlugin extends AbstractOwbPlugin implements OpenWebBeansJavaEEPl
 
         final Set<ObserverMethod<?>> observerMethods;
         if (bean.isEnabled()) {
-            observerMethods = new ObserverMethodsBuilder<>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean);
+            observerMethods = new ObserverMethodsBuilder<>(webBeansContext, bean.getAnnotatedType()).defineObserverMethods(bean, true);
         } else {
             observerMethods = new HashSet<>();
         }

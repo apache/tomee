@@ -88,6 +88,7 @@
     <module>injection-of-env-entry</module>
     <module>interceptors</module>
     <module>javamail</module>
+    <module>javamail-velocity</module>
     <module>java-modules</module>
     <module>jaxrs-filter</module>
     <module>jaxrs-json-provider-jettison</module>

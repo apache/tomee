@@ -115,7 +115,7 @@
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
     <openjpa.version>3.2.0</openjpa.version>
-    <openwebbeans.version>2.0.24-TT.1</openwebbeans.version>
+    <openwebbeans.version>2.0.25</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.15</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
@@ -146,9 +146,9 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.54</tomcat.version>
+    <tomcat.version>9.0.56</tomcat.version>
 
-    <cxf.version>3.4.4</cxf.version>
+    <cxf.version>3.4.5</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>7.6.9.v20130131</jetty.version>
@@ -429,6 +429,11 @@
               </goals>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.tomee.patch</groupId>
+          <artifactId>tomee-patch-plugin</artifactId>
+          <version>0.7</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -1004,10 +1009,6 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>staging-tomee-patch-plugin</id>
-      <url>https://repository.apache.org/content/repositories/orgapachetomee-1183</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>
