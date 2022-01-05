@@ -255,8 +255,13 @@ set PR_STDERROR=auto
 rem before this option was added: "++JvmOptions=-Djava.library.path="%CATALINA_BASE%\bin" ^"
 rem the drawback was it was preventing custom native lib to be loaded even if added to Path
 "%EXECUTABLE%" //US//%SERVICE_NAME% ^
-	++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties;-Djava.awt.headless=true;-XX:+UseParallelGC;-XX:MaxPermSize=256M"
+	++JvmOptions "-Djava.io.tmpdir=%CATALINA_BASE%\temp;-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager;-Djava.util.logging.config.file=%CATALINA_BASE%\conf\logging.properties;-Djava.awt.headless=true;-XX:+UseParallelGC"
 
+rem the JVM option "-XX:MaxPermSize=256M" was removed in Java 17+
+if %JAVA_MAJOR_VERSION% lss 17 (
+    "%EXECUTABLE%" //US//%SERVICE_NAME% ^
+    	++JvmOptions "-XX:MaxPermSize=256M"
+)
 echo The service '%SERVICE_NAME%' has been installed.
 
 :end
