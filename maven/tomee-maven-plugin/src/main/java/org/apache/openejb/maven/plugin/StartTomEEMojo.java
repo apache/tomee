@@ -35,4 +35,9 @@ public class StartTomEEMojo extends UpdatableTomEEMojo {
     protected boolean getWaitTomEE() {
         return false;
     }
+
+    @Override
+    protected int getConnectAttempts() {
+        return (checkStarted ? checkStartedAttempts : 1);
+    }
 }
