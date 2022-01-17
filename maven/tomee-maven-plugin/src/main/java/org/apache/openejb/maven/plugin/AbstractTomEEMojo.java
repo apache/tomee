@@ -498,6 +498,12 @@ public abstract class AbstractTomEEMojo extends AbstractAddressMojo {
     protected boolean checkStarted;
 
     /**
+     * The amount of attempts to check if the container is started.
+     */
+    @Parameter(property = "tomee-plugin.check-started-attempts", defaultValue = "60")
+    protected int checkStartedAttempts;
+
+    /**
      * The Use console.
      */
     @Parameter(property = "tomee-plugin.use-console", defaultValue = "true")
