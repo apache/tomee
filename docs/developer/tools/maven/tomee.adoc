@@ -1,4 +1,4 @@
-= TomEE Maven Plugin
+= TomEE Maven Plugin - Goals & Configuration
 :index-group: TomEE Maven Plugin
 :jbake-date: 2016-03-16
 :jbake-type: page
@@ -82,6 +82,7 @@ The most commonly used goal, it allows to start a tomee with applications. Here 
 |tomeeAlreadyInstalled|false|skip all the setup configuration
 |ejbRemote|true|should EJBd be activated
 |checkStarted|false|should the plugin check the server is up (useful when used with `pre-integration` phase
+|checkStartedAttempts|60| only active, if `checkStarted` is set to `true`. Specifies amount of connection attempts (active waiting) for the server to be up
 |useConsole|true|wait for the end of the execution reading inputs from the console (like `quit` command)
 |useOpenEJB|false|use openejb-standalone instead of tomee
 |inlinedServerXml|-|a server.xml content in pom.xml directly
@@ -140,7 +141,7 @@ remove:prefix
 <plugin>
   <groupId>org.apache.tomee.maven</groupId>
   <artifactId>tomee-maven-plugin</artifactId>
-  <version>${tomee7.version}</version>
+  <version>8.0.9</version>
   <configuration>
     <tomeeClassifier>plus</tomeeClassifier>
     <debug>false</debug>

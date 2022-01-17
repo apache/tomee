@@ -1,4 +1,4 @@
-= TomEE Maven Plugins
+= TomEE Maven Plugins - Introduction
 :index-group: TomEE Maven Plugin
 :jbake-date: 2016-03-16
 :jbake-type: page

@@ -1,4 +1,4 @@
-= TomEE Maven Plugin
+= TomEE Maven Plugin - Getting Started
 :index-group: TomEE Maven Plugin
 :jbake-date: 2018-12-05
 :jbake-type: page
