@@ -186,7 +186,7 @@
     <commons-codec.version>1.15</commons-codec.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
-    <commons-lang3.version>3.11</commons-lang3.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-net.version>3.8.0</commons-net.version>
 
