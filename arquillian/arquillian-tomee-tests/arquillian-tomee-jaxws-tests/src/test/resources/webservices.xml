@@ -37,6 +37,14 @@ http://www.ibm.com/webservices/xsd/j2ee_web_services_1_1.xsd"
         <ejb-link>InternalHelloServiceEjb</ejb-link>
       </service-impl-bean>
     </port-component>
+    <port-component>
+      <port-component-name>TomeeHelloServiceEjbPort</port-component-name>
+      <wsdl-port>HelloService</wsdl-port>
+      <service-endpoint-interface>org.apache.openejb.arquillian.tests.jaxws.WebServiceContextEJBTest$HelloServicePort</service-endpoint-interface>
+      <service-impl-bean>
+        <ejb-link>TomeeHelloServiceEjb</ejb-link>
+      </service-impl-bean>
+    </port-component>
   </webservice-description>
 
 </webservices>

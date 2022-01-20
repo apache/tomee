@@ -26,6 +26,7 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,7 +57,7 @@ import java.nio.charset.StandardCharsets;
 
 
 @RunWith(Arquillian.class)
-// @Ignore
+@Ignore
 public class WebServiceContextEJBTest {
     @ArquillianResource
     private URL url;
@@ -75,6 +76,10 @@ public class WebServiceContextEJBTest {
                 .createServletMapping()
                 .servletName("HelloService")
                 .urlPattern("/internal/Hello")
+                .up()
+                .createServletMapping()
+                .servletName("HelloService")
+                .urlPattern("/tomee/Hello")
                 .up()
             ;
 
@@ -101,6 +106,13 @@ public class WebServiceContextEJBTest {
         assertServiceInvocation(service, portQName);
     }
 
+    @Test
+    public void invokePojoAlternate2() throws Exception {
+        final Service service = Service.create(new URL(url.toExternalForm() + "/tomee/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
+        final QName portQName = new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloService");
+        assertServiceInvocation(service, portQName);
+    }
+
     /*
         CAUTION: by default JAX-WS webservices are deployed under /webservices subcontext
         It's possible to override or change it to something else.
@@ -122,6 +134,12 @@ public class WebServiceContextEJBTest {
     @Test
     public void invokeEjbAlternate() throws Exception {
         final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/internal/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
+        assertServiceInvocationWithPort(service);
+    }
+
+    @Test
+    public void invokeEjbAlternate2() throws Exception {
+        final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/tomee/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         assertServiceInvocationWithPort(service);
     }
 
