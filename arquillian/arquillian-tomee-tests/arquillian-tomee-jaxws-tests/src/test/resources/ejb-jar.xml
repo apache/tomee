@@ -38,6 +38,14 @@
       <transaction-type>Container</transaction-type>
     </session>
 
+    <session>
+      <ejb-name>TomeeHelloServiceEjb</ejb-name>
+      <service-endpoint>org.apache.openejb.arquillian.tests.jaxws.WebServiceContextEJBTest$HelloServicePort</service-endpoint>
+      <ejb-class>org.apache.openejb.arquillian.tests.jaxws.WebServiceContextEJBTest$HelloService</ejb-class>
+      <session-type>Stateless</session-type>
+      <transaction-type>Container</transaction-type>
+    </session>
+
   </enterprise-beans>
 
 </ejb-jar>
