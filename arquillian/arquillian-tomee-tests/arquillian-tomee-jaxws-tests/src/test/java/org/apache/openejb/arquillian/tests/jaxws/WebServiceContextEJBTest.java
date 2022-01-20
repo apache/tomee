@@ -26,12 +26,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -57,7 +55,6 @@ import java.nio.charset.StandardCharsets;
 
 
 @RunWith(Arquillian.class)
-@Ignore
 public class WebServiceContextEJBTest {
     @ArquillianResource
     private URL url;
@@ -145,7 +142,7 @@ public class WebServiceContextEJBTest {
 
     @WebService(name = "Hello", targetNamespace = "http://jaxws.tests.arquillian.openejb.apache.org/", serviceName = "Hello", portName = "HelloService")
     @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED, use = SOAPBinding.Use.LITERAL)
-    @Stateless
+    //@Stateless
     public static class HelloService implements HelloServicePort {
 
         @Resource
