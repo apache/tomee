@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.9-TT.4
+= TomEE EAP 8.0.9-TT.5
+
+=== Changes in TomEE EAP 8.0.9-TT.5
+* Updated to jackson-annotations 2.13.1 to mitigate sonatype-2021-4682
 
 === Changes in TomEE EAP 8.0.9-TT.4
 * Updated openejb-cxf to exclude org.ehcache.ehcache instead of net.sf.ehcache.ehcache
