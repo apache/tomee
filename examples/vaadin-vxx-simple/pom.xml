@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tomee</groupId>
   <artifactId>vaadin-vxx-simple</artifactId>
-  <version>8.0.9-TT.6-SNAPSHOT</version>
+  <version>8.0.9-TT.6</version>
 
   <name>TomEE :: Examples :: Vaadin LATEST</name>
   <packaging>war</packaging>
