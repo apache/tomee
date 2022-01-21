@@ -1,4 +1,8 @@
-= TomEE EAP 8.0.9-TT.5
+= TomEE EAP 8.0.9-TT.6
+
+=== Changes in TomEE EAP 8.0.9-TT.6
+* Updated to tomee-patch-plugin to 0.8 and skipped bcprov-jdk15on 1.69 signed jar
+
 
 === Changes in TomEE EAP 8.0.9-TT.5
 * Updated to jackson-annotations 2.13.1 to mitigate sonatype-2021-4682
