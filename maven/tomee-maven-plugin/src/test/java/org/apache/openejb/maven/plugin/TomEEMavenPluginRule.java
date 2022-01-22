@@ -234,6 +234,7 @@ public class TomEEMavenPluginRule implements MethodRule {
 
         tomEEMojo.useConsole = true;
         tomEEMojo.checkStarted = true;
+        tomEEMojo.checkStartedAttempts = 60;
 
         tomEEMojo.overrideOnUnzip = true;
         tomEEMojo.skipRootFolderOnUnzip = true;
