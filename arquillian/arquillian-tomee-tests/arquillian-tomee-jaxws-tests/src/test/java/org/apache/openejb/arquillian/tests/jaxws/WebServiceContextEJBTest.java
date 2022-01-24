@@ -81,7 +81,7 @@ public class WebServiceContextEJBTest {
             ;
 
         return ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addClasses(HelloService.class, HelloServicePort.class)
+                .addClasses(HelloService.class, HelloServicePort.class, WebServiceContextEJBTest.class)
                          .addAsWebInfResource(new ClassLoaderAsset("ejb-jar.xml"), "ejb-jar.xml")
                          .addAsWebInfResource(new ClassLoaderAsset("openejb-jar.xml"), "openejb-jar.xml")
                          .addAsWebInfResource(new ClassLoaderAsset("webservices.xml"), "webservices.xml")
