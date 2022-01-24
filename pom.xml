@@ -138,13 +138,13 @@
     <openejb.osgi.dynamic.import>${openejb.osgi.dynamic.import.pkg}</openejb.osgi.dynamic.import>
     <openejb.osgi.symbolic.name>${project.groupId}.${project.artifactId}</openejb.osgi.symbolic.name>
 
-    <batchee.version>1.0.0</batchee.version>
+    <batchee.version>1.0.1</batchee.version>
 
     <version.arquillian>1.1.13.Final</version.arquillian>
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>9.0.56</tomcat.version>
+    <tomcat.version>9.0.58</tomcat.version>
 
     <cxf.version>3.4.5</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
@@ -201,7 +201,7 @@
     <mojarra.version>2.3.15</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.0.1</log4j2.version>
+    <log4j2.version>2.17.1</log4j2.version>
     <osgi.framework.version>4.2.0</osgi.framework.version>
     <derby.version>10.14.2.0</derby.version>
     <!--
@@ -431,7 +431,7 @@
         <plugin>
           <groupId>org.apache.tomee.patch</groupId>
           <artifactId>tomee-patch-plugin</artifactId>
-          <version>0.7</version>
+          <version>0.8</version>
         </plugin>
       </plugins>
     </pluginManagement>
