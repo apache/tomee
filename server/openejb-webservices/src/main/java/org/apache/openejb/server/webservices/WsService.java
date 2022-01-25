@@ -438,12 +438,14 @@ public abstract class WsService implements ServerService, SelfManaging {
                     // one of the registered addresses to be the connonical address
                     final String address = HttpUtil.selectSingleAddress(addresses);
 
-                    // add address to global registry
-                    portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
-                    setWsdl(container, address);
-                    LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
-                    servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
-                    addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
+                    if (address != null) {
+                        // add address to global registry
+                        portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
+                        setWsdl(container, address);
+                        LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                        servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
+                        addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
+                    }
                 }
             } catch (final Throwable e) {
                 LOGGER.error("Error deploying CXF webservice for servlet " + portInfo.serviceLink, e);

@@ -37,6 +37,7 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.server.httpd.HttpListener;
 import org.apache.openejb.server.webservices.WsRegistry;
 import org.apache.openejb.server.webservices.WsServlet;
+import org.apache.openejb.util.Strings;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
@@ -57,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Arrays.asList;
 
 public class TomcatWsRegistry implements WsRegistry {
-    private static final String WEBSERVICE_SUB_CONTEXT = forceSlash(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
+    private static final String WEBSERVICE_SUB_CONTEXT = Strings.slashify(SystemInstance.get().getOptions().get("tomee.jaxws.subcontext", "/webservices"));
 
     private static final boolean WEBSERVICE_OLDCONTEXT_ACTIVE = SystemInstance.get().getOptions().get("tomee.jaxws.oldsubcontext", false);
     private static final String TOMEE_JAXWS_SECURITY_ROLE_PREFIX = "tomee.jaxws.security-role.";
@@ -79,17 +80,6 @@ public class TomcatWsRegistry implements WsRegistry {
         }
     }
 
-    private static String forceSlash(final String property) {
-        if (property == null) {
-            return "/";
-        }
-        if (!property.startsWith("/")) {
-            return "/" + property;
-        }
-        return property;
-    }
-
-
     @Override
     public List<String> setWsContainer(final HttpListener httpListener,
                                        final ClassLoader classLoader,
@@ -103,7 +93,7 @@ public class TomcatWsRegistry implements WsRegistry {
 
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
-            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
+            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
         }
 
         if ("ROOT".equals(contextRoot)) { // doesn't happen in tomee itself but with all our tooling around
@@ -124,7 +114,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         // for Pojo web services, we need to change the servlet class which is the service implementation
-        // by the WsServler class
+        // by the WsServlet class
         wrapper.setServletClass(WsServlet.class.getName());
         if (wrapper.getServlet() != null) {
             wrapper.unload(); // deallocate previous one
@@ -138,14 +128,15 @@ public class TomcatWsRegistry implements WsRegistry {
         // add service locations
         final List<String> addresses = new ArrayList<>();
         for (final Connector connector : connectors) {
-            for (final String mapping : wrapper.findMappings()) {
-                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), (contextRoot.startsWith("/") ? "" : "/") + contextRoot + mapping, null, null);
+            for (final String mapping : servletInfo.mappings) {
+                final String absoluteMapping = Strings.slashify(contextRoot, mapping);
+                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(),
+                                            absoluteMapping, null, null);
                 addresses.add(address.toString());
             }
         }
         return addresses;
     }
-
 
     @Override
     public void clearWsContainer(final String contextRoot, String virtualHost, final ServletInfo servletInfo, final String moduleId) {
@@ -155,7 +146,7 @@ public class TomcatWsRegistry implements WsRegistry {
 
         final Container host = engine.findChild(virtualHost);
         if (host == null) {
-            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matchiing Host entry in the server.xml?");
+            throw new IllegalArgumentException("Invalid virtual host '" + virtualHost + "'.  Do you have a matching Host entry in the server.xml?");
         }
 
         final Context context = (Context) host.findChild("/" + contextRoot);
@@ -193,9 +184,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         // assure context root with a leading slash
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
+        path = Strings.slashify(path);
 
         // find the existing host (we do not auto-create hosts)
         if (virtualHost == null) {
@@ -220,15 +209,11 @@ public class TomcatWsRegistry implements WsRegistry {
 
             if (webAppContext != null) {
                 // sub context = '/' means the service address is provided by webservices
-                if (WEBSERVICE_SUB_CONTEXT.equals("/") && path.startsWith("/")) {
-                    addServlet(host, webAppContext, path, httpListener, path, addresses, false, moduleId);
-                } else if (WEBSERVICE_SUB_CONTEXT.equals("/") && !path.startsWith("/")) {
-                    addServlet(host, webAppContext, '/' + path, httpListener, path, addresses, false, moduleId);
-                } else {
-                    addServlet(host, webAppContext, WEBSERVICE_SUB_CONTEXT + path, httpListener, path, addresses, false, moduleId);
-                }
+                    addServlet(host, webAppContext, Strings.slashify(WEBSERVICE_SUB_CONTEXT, path), httpListener,
+                               path, addresses, false, moduleId);
             } else if (!WEBSERVICE_OLDCONTEXT_ACTIVE) { // deploying in a jar
-                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee, realmName, host, httpListener, addresses, context);
+                deployInFakeWebapp(path, classLoader, authMethod, transportGuarantee,
+                                   realmName, host, httpListener, addresses, context);
             }
         }
         return addresses;
@@ -271,24 +256,12 @@ public class TomcatWsRegistry implements WsRegistry {
             fakeContextReferences.put(name, ref + 1);
         }
 
-        String mapping = path;
-        if (!mapping.startsWith("/")) { // TODO: check it can happen or move it away
-            mapping = '/' + mapping;
-        }
-        addServlet(host, (Context) context, mapping, httpListener, path, addresses, true, null);
+        addServlet(host, (Context) context, Strings.slashify(path), httpListener, path, addresses, true, null);
     }
 
     private static Context createNewContext(final ClassLoader classLoader, String authMethod, String transportGuarantee, final String realmName, final String name) {
-        String path = name;
-        if (path == null) {
-            path = "/";
-        }
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-
         final StandardContext context = new IgnoredStandardContext();
-        context.setPath(path);
+        context.setPath(Strings.slashify(name));
         context.setDocBase("");
         context.setParentClassLoader(classLoader);
         context.setDelegate(true);
@@ -371,28 +344,15 @@ public class TomcatWsRegistry implements WsRegistry {
 
         // register wsdl locations for service-ref resolution
         for (final Connector connector : connectors) {
-            final StringBuilder fullContextpath;
+            final String fullContextPath;
             if (!WEBSERVICE_OLDCONTEXT_ACTIVE && !fakeDeployment) {
-                String contextPath = context.getPath();
-                if (contextPath == null ||  !contextPath.isEmpty()) {
-                    if (contextPath != null && !contextPath.startsWith("/")) {
-                        contextPath = "/" + contextPath;
-                    } else if (contextPath == null) {
-                        contextPath = "/";
-                    }
-                }
-
-                fullContextpath = new StringBuilder(contextPath);
-                if (!WEBSERVICE_SUB_CONTEXT.equals("/")) {
-                    fullContextpath.append(WEBSERVICE_SUB_CONTEXT);
-                }
-                fullContextpath.append(path);
+                fullContextPath = Strings.slashify(context.getPath(), WEBSERVICE_SUB_CONTEXT, path);
             } else {
-                fullContextpath = new StringBuilder(context.getPath()).append(path);
+                fullContextPath = Strings.slashify(context.getPath(), path);
             }
 
             try {
-                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), fullContextpath.toString(), null, null);
+                final URI address = new URI(connector.getScheme(), null, host.getName(), connector.getPort(), fullContextPath, null, null);
                 addresses.add(address.toString());
             } catch (final URISyntaxException ignored) {
                 // no-op
@@ -407,9 +367,7 @@ public class TomcatWsRegistry implements WsRegistry {
         }
 
         // assure context root with a leading slash
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
+        path = Strings.slashify(path);
 
         if (TomcatHelper.isStopping()) {
             return;
