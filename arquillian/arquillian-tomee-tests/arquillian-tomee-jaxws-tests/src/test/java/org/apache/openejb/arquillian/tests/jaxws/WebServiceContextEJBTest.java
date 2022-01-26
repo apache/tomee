@@ -76,7 +76,7 @@ public class WebServiceContextEJBTest {
                 .up()
                 .createServletMapping()
                 .servletName("HelloService")
-                .urlPattern("/tomee/Hello")
+                .urlPattern("/account/Hello")
                 .up()
             ;
 
@@ -105,7 +105,7 @@ public class WebServiceContextEJBTest {
 
     @Test
     public void invokePojoAlternate2() throws Exception {
-        final Service service = Service.create(new URL(url.toExternalForm() + "/tomee/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
+        final Service service = Service.create(new URL(url.toExternalForm() + "/account/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         final QName portQName = new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloService");
         assertServiceInvocation(service, portQName);
     }
