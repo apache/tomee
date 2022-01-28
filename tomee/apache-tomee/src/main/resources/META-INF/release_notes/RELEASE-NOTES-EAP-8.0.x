@@ -1,4 +1,7 @@
-= TomEE EAP 8.0.9-TT.6
+= TomEE EAP 8.0.9-TT.7
+
+=== Changes in TomEE EAP 8.0.9-TT.7
+* Updated to Tomcat 9.0.58 to mitigate CVE-2022-23181
 
 === Changes in TomEE EAP 8.0.9-TT.6
 * Updated to tomee-patch-plugin to 0.8 and skipped bcprov-jdk15on 1.69 signed jar
