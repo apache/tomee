@@ -26,12 +26,10 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -57,7 +55,6 @@ import java.nio.charset.StandardCharsets;
 
 
 @RunWith(Arquillian.class)
-@Ignore
 public class WebServiceContextEJBTest {
     @ArquillianResource
     private URL url;
@@ -79,12 +76,12 @@ public class WebServiceContextEJBTest {
                 .up()
                 .createServletMapping()
                 .servletName("HelloService")
-                .urlPattern("/tomee/Hello")
+                .urlPattern("/account/Hello")
                 .up()
             ;
 
         return ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addClasses(HelloService.class, HelloServicePort.class)
+                .addClasses(HelloService.class, HelloServicePort.class, WebServiceContextEJBTest.class)
                          .addAsWebInfResource(new ClassLoaderAsset("ejb-jar.xml"), "ejb-jar.xml")
                          .addAsWebInfResource(new ClassLoaderAsset("openejb-jar.xml"), "openejb-jar.xml")
                          .addAsWebInfResource(new ClassLoaderAsset("webservices.xml"), "webservices.xml")
@@ -108,7 +105,7 @@ public class WebServiceContextEJBTest {
 
     @Test
     public void invokePojoAlternate2() throws Exception {
-        final Service service = Service.create(new URL(url.toExternalForm() + "/tomee/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
+        final Service service = Service.create(new URL(url.toExternalForm() + "/account/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         final QName portQName = new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloService");
         assertServiceInvocation(service, portQName);
     }
@@ -145,7 +142,7 @@ public class WebServiceContextEJBTest {
 
     @WebService(name = "Hello", targetNamespace = "http://jaxws.tests.arquillian.openejb.apache.org/", serviceName = "Hello", portName = "HelloService")
     @SOAPBinding(style = SOAPBinding.Style.DOCUMENT, parameterStyle = SOAPBinding.ParameterStyle.WRAPPED, use = SOAPBinding.Use.LITERAL)
-    @Stateless
+    //@Stateless
     public static class HelloService implements HelloServicePort {
 
         @Resource

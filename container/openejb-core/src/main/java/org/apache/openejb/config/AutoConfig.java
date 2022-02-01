@@ -2087,7 +2087,7 @@ public class AutoConfig implements DynamicDeployer, JndiConstants {
     }
 
     private void logAutoCreateResource(final ResourceInfo resourceInfo, final String type, final String beanName) {
-        logger.info("Auto-creating a Resource with id '" + resourceInfo.id + "' of type '" + type + " for '" + beanName + "'.");
+        logger.info("Auto-creating a Resource with id '" + resourceInfo.id + "' of type '" + type + "' for '" + beanName + "'.");
     }
 
     private String firstMatching(final String prefix, final String type, final Properties required, final AppResources appResources) {
