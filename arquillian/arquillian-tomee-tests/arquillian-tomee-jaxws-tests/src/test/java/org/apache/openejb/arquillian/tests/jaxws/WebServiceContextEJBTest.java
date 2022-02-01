@@ -148,9 +148,6 @@ public class WebServiceContextEJBTest {
         @Resource
         private WebServiceContext context;
 
-        @Inject
-        private HttpServletRequest httpServletRequest;
-
         @WebMethod
         public String sayHello(final @WebParam(name="name") String name) {
 
