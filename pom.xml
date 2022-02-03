@@ -132,7 +132,7 @@
     <version.shrinkwrap.descriptor>2.0.0</version.shrinkwrap.descriptor>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
 
-    <tomcat.version>8.5.60</tomcat.version>
+    <tomcat.version>8.5.61</tomcat.version>
 
     <cxf.version>3.1.18</cxf.version>
     <version.shrinkwrap.shrinkwrap>1.2.6</version.shrinkwrap.shrinkwrap>
@@ -166,7 +166,7 @@
     <commons-fileupload.version>1.3.1</commons-fileupload.version>
     <commons-discovery.version>0.5</commons-discovery.version>
     <commons-lang3.version>3.8</commons-lang3.version>
-    <commons-io.version>2.4</commons-io.version>
+    <commons-io.version>2.8.0</commons-io.version>
     <commons-net.version>3.3</commons-net.version>
 
     <bval.version>1.1.2</bval.version>
@@ -178,7 +178,7 @@
     <geronimo.connector.version>3.1.4</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <geronimo-javamail_1.4_spec.version>1.9.0-alpha-2</geronimo-javamail_1.4_spec.version>
-    <myfaces.version>2.2.12</myfaces.version>
+    <myfaces.version>2.2.14</myfaces.version>
     <mojarra.version>2.2.20</mojarra.version>
     <slf4j.version>1.7.21</slf4j.version>
     <log4j.version>1.2.17</log4j.version>
@@ -191,7 +191,7 @@
     <version.eclipselink>2.6.4</version.eclipselink>
     <version.groovy>2.4.12</version.groovy>
 
-    <jackson.version>2.10.0</jackson.version>
+    <jackson.version>2.12.0</jackson.version>
 
     <!-- arquillian related -->
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
@@ -364,7 +364,10 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>4.0.0</version>
+          <version>6.0.5</version>
+          <configuration>
+            <suppressionFiles>owasp-dc-suppression.xml</suppressionFiles>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -661,7 +664,6 @@
             <configuration>
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>
@@ -685,7 +687,6 @@
               <skipProvidedScope>true</skipProvidedScope>
               <skipRuntimeScope>true</skipRuntimeScope>
               <failBuildOnCVSS>8.0</failBuildOnCVSS>
-              <suppressionFiles>${maven.multiModuleProjectDirectory}/owasp-dc-suppression.xml</suppressionFiles>
             </configuration>
             <executions>
               <execution>

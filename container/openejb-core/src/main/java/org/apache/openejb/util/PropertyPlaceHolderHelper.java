@@ -31,17 +31,30 @@ import java.util.Properties;
 public final class PropertyPlaceHolderHelper {
     private static final String PREFIX = "${";
     private static final String SUFFIX = "}";
+    private static final String VALUE_DELIMITER;
+
     private static final Properties CACHE = new Properties();
 
-    private static final PropertiesLookup RESOLVER = new PropertiesLookup();
-    public static final StrSubstitutor SUBSTITUTOR = new StrSubstitutor(RESOLVER);
+    private static final PropertiesLookup RESOLVER_TO_NULL_IF_MISSING = new PropertiesLookup(false);
+    private static final PropertiesLookup RESOLVER_TO_KEY_IF_MISSING = new PropertiesLookup(true);
+
+    private static final StrSubstitutor DEFAULT_SUBSTITUTOR = new StrSubstitutor(RESOLVER_TO_KEY_IF_MISSING);
+
+    private static final StrSubstitutor VALUE_DELIMITER_SUBSTITUTOR = new StrSubstitutor(RESOLVER_TO_NULL_IF_MISSING);
 
     static {
-        SUBSTITUTOR.setEnableSubstitutionInVariables(true);
-        SUBSTITUTOR.setValueDelimiter(JavaSecurityManagers.getSystemProperty("openejb.placehodler.delimiter", ":-")); // default one of [lang3]
+        VALUE_DELIMITER = JavaSecurityManagers.getSystemProperty("openejb.placehodler.delimiter", ":-"); // default one of [lang3]
+
+        DEFAULT_SUBSTITUTOR.setEnableSubstitutionInVariables(true);
+        DEFAULT_SUBSTITUTOR.setValueDelimiter(VALUE_DELIMITER);
+
+        VALUE_DELIMITER_SUBSTITUTOR.setPreserveEscapes(true);
+        VALUE_DELIMITER_SUBSTITUTOR.setEnableSubstitutionInVariables(true);
+        VALUE_DELIMITER_SUBSTITUTOR.setValueDelimiter(VALUE_DELIMITER);
     }
 
-    public static final String CIPHER_PREFIX = "cipher:";
+    private static final String CIPHER_PREFIX = "cipher:";
+    private static final String JAVA_PREFIX = "java:";
 
     private PropertyPlaceHolderHelper() {
         // no-op
@@ -49,37 +62,33 @@ public final class PropertyPlaceHolderHelper {
 
     public static void reset() {
         CACHE.clear();
-        RESOLVER.reload();
+        RESOLVER_TO_NULL_IF_MISSING.reload();
+        RESOLVER_TO_KEY_IF_MISSING.reload();
     }
 
     public static String simpleValue(final String raw) {
-        if (raw == null) {
-            return null;
-        }
-        if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
-            return String.class.cast(decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""), false));
-        }
-
-        String value = SUBSTITUTOR.replace(raw);
-        if (!value.equals(raw) && value.startsWith("java:")) {
-            value = value.substring(5);
-        }
-        return String.class.cast(decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""), false));
+        return String.class.cast(simpleValueAsStringOrCharArray(raw, false));
     }
 
     public static Object simpleValueAsStringOrCharArray(final String raw) {
+        return simpleValueAsStringOrCharArray(raw, true);
+    }
+
+    private static Object simpleValueAsStringOrCharArray(final String raw, boolean acceptCharArray) {
         if (raw == null) {
             return null;
         }
         if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
-            return decryptIfNeeded(raw.replace(PREFIX, "").replace(SUFFIX, ""), true);
+            return decryptIfNeeded(raw, acceptCharArray);
         }
 
-        String value = SUBSTITUTOR.replace(raw);
-        if (!value.equals(raw) && value.startsWith("java:")) {
+        String value = replace(raw);
+
+        if (!value.equals(raw) && value.startsWith(JAVA_PREFIX)) {
             value = value.substring(5);
         }
-        return decryptIfNeeded(value.replace(PREFIX, "").replace(SUFFIX, ""), true);
+
+        return decryptIfNeeded(value, acceptCharArray);
     }
 
     private static Object decryptIfNeeded(final String replace, final boolean acceptCharArray) {
@@ -104,21 +113,21 @@ public final class PropertyPlaceHolderHelper {
         return replace;
     }
 
-    public static String value(final String aw) {
-        if (aw == null) {
+    public static String value(final String raw) {
+        if (raw == null) {
             return null;
         }
-        if (!aw.contains(PREFIX) || !aw.contains(SUFFIX)) {
-            return String.class.cast(decryptIfNeeded(aw, false));
+        if (!raw.contains(PREFIX) || !raw.contains(SUFFIX)) {
+            return String.class.cast(decryptIfNeeded(raw, false));
         }
 
-        String value = CACHE.getProperty(aw);
+        String value = CACHE.getProperty(raw);
         if (value != null) {
             return value;
         }
 
-        value = simpleValue(aw);
-        CACHE.setProperty(aw, value);
+        value = simpleValue(raw);
+        CACHE.setProperty(raw, value);
         return value;
     }
 
@@ -154,8 +163,26 @@ public final class PropertyPlaceHolderHelper {
         props.putAll(toUpdate);
     }
 
+    public static String replace(final String raw) {
+        if(raw == null) {
+            return null;
+        }
+
+        if(raw.contains(VALUE_DELIMITER)) {
+            return DEFAULT_SUBSTITUTOR.replace(VALUE_DELIMITER_SUBSTITUTOR.replace(raw));
+        } else {
+            return DEFAULT_SUBSTITUTOR.replace(raw);
+        }
+    }
+
     private static class PropertiesLookup extends StrLookup<Object> {
         private static final Map<String, String> ENV = System.getenv();
+
+        private final boolean resolveToKey;
+
+        public PropertiesLookup(boolean resolveToKey) {
+            this.resolveToKey = resolveToKey;
+        }
 
         @Override
         public synchronized String lookup(final String key) {
@@ -169,11 +196,12 @@ public final class PropertyPlaceHolderHelper {
                 return value;
             }
 
-            return null;
+            return this.resolveToKey ? key : null;
         }
 
         public synchronized void reload() {
             //no-op
         }
     }
+
 }

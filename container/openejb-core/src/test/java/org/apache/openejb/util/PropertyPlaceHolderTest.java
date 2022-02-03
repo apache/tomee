@@ -76,4 +76,193 @@ public class PropertyPlaceHolderTest {
         final String foo = PropertyPlaceHolderHelper.simpleValue("jdbc://${PropertyPlaceHolderTest1}/${PropertyPlaceHolderTest2}");
         assertEquals("jdbc://uno/due", foo);
     }
+
+    /*
+     * Start of tests related to TOMEE-2968
+     */
+
+    @Test
+    public void singleCurlyBrace() {
+        final String foo = PropertyPlaceHolderHelper.simpleValue("tiger...}");
+        assertEquals("tiger...}", foo);
+    }
+
+    @Test
+    public void singleCurlyBraceAsStringOrCharArray() {
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("tiger...}");
+        assertEquals("tiger...}", foo);
+    }
+
+    @Test
+    public void singleCurlyBraceWithSubstitution() {
+        SystemInstance.get().setProperty("PropertyPlaceHolderTest1", "tiger...}");
+        SystemInstance.get().setProperty("PropertyPlaceHolderTest2", "due");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${PropertyPlaceHolderTest1}/${PropertyPlaceHolderTest2}");
+        assertEquals("tiger...}/due", foo);
+    }
+
+    @Test
+    public void singleCurlyBraceAsStringOrCharArrayWithSubstitution() {
+        SystemInstance.get().setProperty("PropertyPlaceHolderTest1", "tiger...}");
+        SystemInstance.get().setProperty("PropertyPlaceHolderTest2", "due");
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${PropertyPlaceHolderTest1}/${PropertyPlaceHolderTest2}");
+        assertEquals("tiger...}/due", foo);
+    }
+
+    @Test
+    public void singleCurlyBraceAfterVariableReplacementGroup() {
+        SystemInstance.get().setProperty("foo", "bar");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${foo}}");
+        assertEquals("bar}", foo);
+    }
+
+    @Test
+    public void singleCurlyBraceAsStringOrCharArrayAfterVariableReplacementGroup() {
+        SystemInstance.get().setProperty("foo", "bar");
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${foo}}");
+        assertEquals("bar}", foo);
+    }
+
+    @Test
+    public void escapeCharacterSubstitutionSkip() {
+        SystemInstance.get().setProperty("{foo}", "bar");
+        //$ is treated as an escape character, thus skipping substitution of variable with key = '{foo}'.
+        final String foo = PropertyPlaceHolderHelper.simpleValue("$${{foo}}");
+        assertEquals("${{foo}}", foo);
+    }
+
+    @Test
+    public void escapeCharacterSubstitutionSkipAsStringOrCharArray() {
+        SystemInstance.get().setProperty("{foo}", "bar");
+        //$ is treated as an escape character, thus skipping substitution of variable with key = '{foo}'.
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("$${{foo}}");
+        assertEquals("${{foo}}", foo);
+    }
+
+    @Test
+    public void nestingSubstitution() {
+        SystemInstance.get().setProperty("foo", "abc}");
+        SystemInstance.get().setProperty("abc}", "foo");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${${foo}}");
+        assertEquals("foo", foo);
+    }
+
+    @Test
+    public void nestingSubstitutionAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "abc}");
+        SystemInstance.get().setProperty("abc}", "foo");
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${${foo}}");
+        assertEquals("foo", foo);
+    }
+
+    @Test
+    public void escapedNestingWithNonExistentKey() {
+        SystemInstance.get().setProperty("bar", "bar");
+        //'$${foo}' is substituted to '${foo}', which does not exist. `${foo}` is thus substituted to its key `foo`.
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${$${foo}}");
+        assertEquals("foo", foo);
+    }
+
+    @Test
+    public void escapedNestingWithNonExistentKeyAsStringOrCharArray() {
+        SystemInstance.get().setProperty("bar", "bar");
+        //'$${foo}' is substituted to '${foo}', which does not exist. `${foo}` is thus substituted to its key `foo`.
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${$${foo}}");
+        assertEquals("foo", foo);
+    }
+
+    @Test
+    public void combinedNestingWithNonExistentKey() {
+        SystemInstance.get().setProperty("foo", "bar");
+        //variable for key 'bar' does not exist
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${foo}-${${bar}}");
+        assertEquals("bar-bar", foo);
+    }
+
+    @Test
+    public void combinedNestingWithNonExistentKeyAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "bar");
+        //variable for key 'bar' does not exist
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${foo}-${${bar}}");
+        assertEquals("bar-bar", foo);
+    }
+
+    @Test
+    public void nestedMultipleReplacementsWithClosingCurlyBraces() {
+        SystemInstance.get().setProperty("foo", "abc}");
+        SystemInstance.get().setProperty("abc}", "food");
+        SystemInstance.get().setProperty("bar", "yammie");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${bar}/${${foo}}");
+        assertEquals("yammie/food", foo);
+    }
+
+    @Test
+    public void nestedMultipleReplacementsWithClosingCurlyBracesAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "abc}");
+        SystemInstance.get().setProperty("abc}", "food");
+        SystemInstance.get().setProperty("bar", "yammie");
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${bar}/${${foo}}");
+        assertEquals("yammie/food", foo);
+    }
+
+    @Test
+    public void nestedMissingPropertiesKeyAsStringOrCharArray() {
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${${foo}.bar}");
+        assertEquals("foo.bar", foo);
+    }
+
+    @Test
+    public void nestedMissingPropertiesKey() {
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${${foo}.bar}");
+        assertEquals("foo.bar", foo);
+    }
+
+    @Test
+    public void nestedPropertiesKeyAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("bar.bar", "val");
+        final Object foo = PropertyPlaceHolderHelper.simpleValueAsStringOrCharArray("${${foo}.bar}");
+        assertEquals("val", foo);
+    }
+
+    @Test
+    public void nestedPropertiesKey() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("bar.bar", "val");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${${foo}.bar}");
+        assertEquals("val", foo);
+    }
+
+    @Test
+    public void escapedPropertyKey() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("bar", "val");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("$${foo}.${bar}");
+        assertEquals("${foo}.val", foo);
+    }
+
+    @Test
+    public void escapedPropertyKeyAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("bar", "val");
+        final Object foo = PropertyPlaceHolderHelper.simpleValue("$${foo}.${bar}");
+        assertEquals("${foo}.val", foo);
+    }
+
+    @Test
+    public void escapedPropertyKeyUnknownAndKnownVar() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("known", "bar");
+        final String foo = PropertyPlaceHolderHelper.simpleValue("${bar}.$${foo}.${known}");
+        assertEquals("bar.${foo}.bar", foo);
+    }
+
+    @Test
+    public void escapedPropertyKeyUnknownAndKnownVarAsStringOrCharArray() {
+        SystemInstance.get().setProperty("foo", "bar");
+        SystemInstance.get().setProperty("known", "bar");
+        final Object foo = PropertyPlaceHolderHelper.simpleValue("${bar}.$${foo}.${known}");
+        assertEquals("bar.${foo}.bar", foo);
+    }
+
 }
