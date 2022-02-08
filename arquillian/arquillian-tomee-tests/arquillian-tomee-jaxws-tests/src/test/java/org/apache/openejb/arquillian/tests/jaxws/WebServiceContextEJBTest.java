@@ -133,6 +133,11 @@ public class WebServiceContextEJBTest {
 
     @Test
     public void invokeEjbAlternate2() throws Exception {
+        /*
+        System.out.println("----");
+        System.out.println(IO.slurp(new URL(url.toExternalForm() + "/webservices/tomee/HelloEjb?wsdl")));
+        System.out.println("----");
+        */
         final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/tomee/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         assertServiceInvocationWithPort(service);
     }
