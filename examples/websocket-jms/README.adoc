@@ -1,0 +1,8 @@
+:index-group: Websockets with JMS
+:jbake-type: page
+:jbake-status: status=published
+
+= Websocket JMS
+
+This example demonstrates a simple 'chat' application that uses Websockets and JMS.
+
