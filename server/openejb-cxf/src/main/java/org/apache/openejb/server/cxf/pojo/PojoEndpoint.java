@@ -141,6 +141,8 @@ public class PojoEndpoint extends CxfEndpoint {
 
                             // not a plain Pojo or CDI bean so it will fail on invocation because we use a JAXWSMethodInvoker
                             // instead of an EjbMethodInvoker - let's fallback to old style pojo bellow
+                            // this should not happen anymore because the createPojoWsContainer in the CxfService will
+                            // retrieve a previously deployed EJB and reuse it.
                             if (bean instanceof CdiEjbBean) {
                                 implementor = null;
                             }
