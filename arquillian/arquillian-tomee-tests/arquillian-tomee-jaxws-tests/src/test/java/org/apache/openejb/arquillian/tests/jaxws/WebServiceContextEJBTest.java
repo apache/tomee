@@ -26,13 +26,11 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -97,7 +95,6 @@ public class WebServiceContextEJBTest {
     }
 
     @Test
-    @Ignore
     public void invokePojoAlternate() throws Exception {
         final Service service = Service.create(new URL(url.toExternalForm() + "/internal/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         final QName portQName = new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloService");
@@ -105,7 +102,6 @@ public class WebServiceContextEJBTest {
     }
 
     @Test
-    @Ignore
     public void invokePojoAlternate2() throws Exception {
         /*
         System.out.println("----");
@@ -135,14 +131,12 @@ public class WebServiceContextEJBTest {
     }
 
     @Test
-    @Ignore
     public void invokeEjbAlternate() throws Exception {
         final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/internal/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         assertServiceInvocationWithPort(service);
     }
 
     @Test
-    @Ignore
     public void invokeEjbAlternate2() throws Exception {
         /*
         System.out.println("----");
