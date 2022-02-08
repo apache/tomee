@@ -443,6 +443,21 @@ public abstract class WsService implements ServerService, SelfManaging {
                         portAddressRegistry.addPort(portInfo.serviceId, portInfo.wsdlService, portInfo.portId, portInfo.wsdlPort, portInfo.seiInterfaceName, address);
                         setWsdl(container, address);
                         LOGGER.info("Webservice(wsdl=" + address + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+
+                        /*
+                        In POJO webservices it is very common to have the same JAW-WS endpoint published under different URLs
+                        using url-pattern for the servlet. We only deploy one instance of the WsServlet and keep the same
+                        set of url-pattern the user defined. At the moment we can't add additional ports, with different
+                        addresses. So at least we should list other URLs so the user knows they are successfully deployed
+                        and is aware of the different URLs
+                         */
+                        for (String urlAddress : addresses) {
+                            if (address.equals(urlAddress)) {
+                                continue;
+                            }
+                            LOGGER.info("Webservice(wsdl=" + urlAddress + ", qname=" + port.getWsdlService() + ") --> Pojo(id=" + portInfo.portId + ")");
+                        }
+
                         servletAddresses.put(webApp.moduleId + "." + servlet.servletName, address);
                         addressesForApp(webApp.moduleId).add(new EndpointInfo(address, port.getWsdlService(), target.getName()));
                     }
@@ -576,7 +591,7 @@ public abstract class WsService implements ServerService, SelfManaging {
             case EnterpriseBeanInfo.MESSAGE:
                 return "MessageDrivenBean";
             case EnterpriseBeanInfo.ENTITY:
-                return "StatefulBean";
+                return "EntityBean";
             default:
                 return "UnknownBean";
         }

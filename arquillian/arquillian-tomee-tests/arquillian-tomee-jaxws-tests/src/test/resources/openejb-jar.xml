@@ -28,7 +28,7 @@
     </session>
     <session>
       <ejb-name>TomeeHelloServiceEjb</ejb-name>
-      <web-service-address>/tomee/HelloEjb</web-service-address>
+      <web-service-address>/account/HelloEjb</web-service-address>
     </session>
   </enterprise-beans>
 
