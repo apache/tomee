@@ -104,11 +104,6 @@ public class WebServiceContextEJBTest {
 
     @Test
     public void invokePojoAlternate2() throws Exception {
-        /*
-        System.out.println("----");
-        System.out.println(IO.slurp(new URL(url.toExternalForm() + "/account/Hello?wsdl")));
-        System.out.println("----");
-        */
         final Service service = Service.create(new URL(url.toExternalForm() + "/account/Hello?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         final QName portQName = new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "HelloService");
         assertServiceInvocation(service, portQName);
@@ -139,12 +134,7 @@ public class WebServiceContextEJBTest {
 
     @Test
     public void invokeEjbAlternate2() throws Exception {
-        /*
-        System.out.println("----");
-        System.out.println(IO.slurp(new URL(url.toExternalForm() + "/webservices/tomee/HelloEjb?wsdl")));
-        System.out.println("----");
-        */
-        final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/account/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
+        final Service service = Service.create(new URL(url.toExternalForm() + "/webservices/tomee/HelloEjb?wsdl"), new QName("http://jaxws.tests.arquillian.openejb.apache.org/", "Hello"));
         assertServiceInvocationWithPort(service);
     }
 
