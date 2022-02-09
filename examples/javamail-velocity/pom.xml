@@ -20,7 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.superbiz</groupId>
     <artifactId>javamail-with-velocity</artifactId>
-    <version>8.0.9-TT.7</version>
+    <version>8.0.9-TT.8-SNAPSHOT</version>
     <name>TomEE :: Examples :: JavaMail API with Velocity</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -114,13 +114,13 @@
         <dependency>
             <groupId>org.apache.tomee.bom</groupId>
             <artifactId>tomee-plus</artifactId>
-            <version>8.0.9-TT.7</version>
+            <version>8.0.9-TT.8-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomee</groupId>
             <artifactId>openejb-junit5</artifactId>
-            <version>8.0.9-TT.7</version>
+            <version>8.0.9-TT.8-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

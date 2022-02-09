@@ -22,7 +22,7 @@
   <groupId>org.superbiz</groupId>
   <artifactId>simple-mdb-with-descriptor</artifactId>
   <packaging>jar</packaging>
-  <version>8.0.9-TT.7</version>
+  <version>8.0.9-TT.8-SNAPSHOT</version>
   <name>TomEE :: Examples :: Simple MDB Using Deployment Descriptor Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>8.0.9-TT.7</version>
+      <version>8.0.9-TT.8-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -89,7 +89,7 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>8.0.9-TT.7</version>
+      <version>8.0.9-TT.8-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
