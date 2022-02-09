@@ -35,4 +35,20 @@ jobs:
       env:
         MAVEN_OPTS: -Xmx2048m
 
+    - name: Create Pull Request after BOM Regeneration
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: master
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Minor: Regenerated BOMs for ${{ github.sha }}"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: true
+          branch: bom_regeneration
+          delete-branch: true
+          title: "Regenerated BOMs"
+          body: |
+            Found some uncommited changes after running build on master
+          labels: |
+            dependencies
 
