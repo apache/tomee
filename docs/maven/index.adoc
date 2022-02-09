@@ -21,9 +21,9 @@ Simply add the following to the `<plugins>` and optionally the `<pluginManagemen
     <plugin>
       <groupId>org.apache.tomee.maven</groupId>
       <artifactId>tomee-maven-plugin</artifactId>
-      <version>8.0.9</version>
+      <version>${TOMEE_VERSION}</version>
       <configuration>
-        <tomeeVersion>8.0.9</tomeeVersion>
+        <tomeeVersion>${TOMEE_VERSION}</tomeeVersion>
         <tomeeClassifier>plus</tomeeClassifier>
       </configuration>
     </plugin>
@@ -87,9 +87,9 @@ deploy apps then run the server.
   <plugin>
     <groupId>org.apache.openejb.maven</groupId>
     <artifactId>tomee-maven-plugin</artifactId>
-    <version>8.0.9</version>
+    <version>${TOMEE_VERSION}</version>
     <configuration>
-      <tomeeVersion>8.0.9</tomeeVersion>
+      <tomeeVersion>${TOMEE_VERSION}</tomeeVersion>
       <tomeeClassifier>plus</tomeeClassifier>
       <debug>false</debug>
       <debugPort>5005</debugPort>
@@ -121,7 +121,7 @@ deploy apps then run the server.
 <plugin>
   <groupId>org.apache.openejb.maven</groupId>
   <artifactId>tomee-maven-plugin</artifactId>
-  <version>8.0.9</version>
+  <version>${TOMEE_VERSION}</version>
   <configuration>
     <synchronization>
       <extensions>

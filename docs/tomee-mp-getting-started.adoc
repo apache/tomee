@@ -33,12 +33,12 @@ template project is preconfigured with `javaee-api` (scope provided) and
 with the link:maven/index.html[`tomee-maven-plugin`] for starting the
 application with TomEE.
 
-For example, if current version of the archetype is '8.0.3', then the
+For example, if current version of the archetype is '${TOMEE_VERSION}', then the
 required command to generate an application would be:
 
 [source,bash]
 ----
-mvn archetype:generate -DarchetypeGroupId=org.apache.tomee.maven -DarchetypeArtifactId=tomee-webapp-archetype -DarchetypeVersion=8.0.3
+mvn archetype:generate -DarchetypeGroupId=org.apache.tomee.maven -DarchetypeArtifactId=tomee-webapp-archetype -DarchetypeVersion=${TOMEE_VERSION}
 ----
 
 The first time you run this command maven downloads the archetype and
