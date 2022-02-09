@@ -22,6 +22,7 @@
 *.jspf          text    eol=lf
 *.md            text    eol=lf
 *.properties    text    eol=lf
+*.policy        text    eol=lf
 *.sbt           text    eol=lf
 *.scala         text    eol=lf
 *.sh            text    eol=lf
