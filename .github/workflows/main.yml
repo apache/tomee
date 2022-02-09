@@ -53,3 +53,4 @@ jobs:
           dependencies
         add-paths: |
           boms/tomee*/pom.xml
+        assignees: jeanouii,jgallimore,rzo1
