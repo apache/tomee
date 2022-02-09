@@ -52,4 +52,4 @@ jobs:
         labels: |
           dependencies
         add-paths: |
-          boms/tomee*
+          boms/tomee*/pom.xml
