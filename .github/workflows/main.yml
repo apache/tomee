@@ -51,4 +51,5 @@ jobs:
           Found some uncommited changes after running build on master
         labels: |
           dependencies
-
+        add-paths: |
+          boms/tomee*
