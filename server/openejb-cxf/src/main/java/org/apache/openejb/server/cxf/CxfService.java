@@ -108,6 +108,15 @@ public class CxfService extends WsService {
     }
 
     protected HttpListener createPojoWsContainer(ClassLoader loader, URL moduleBaseUrl, PortData port, String serviceId, Class target, Context context, String contextRoot, Map<String, Object> bdgs, ServiceConfiguration services) {
+        // if the POJO web service has by mistake an @Stateless or @Singleton, then just returned already created container.
+        // this is undefined by the spec and if we let it go to the POJO deployment logic, the POJO endpoint
+        // will ask the bean manager for the instance and it will get an EJB Proxy that will fail
+        // during invocation because we'll use the default JAXWSMethodInvoker instead of the EJBMethodInvoker
+        // if it's deployed with EJB scanning already the serviceId should match beanContext.getDeploymentID()
+        if (wsContainers.get(serviceId) != null) {
+            return wsContainers.get(serviceId);
+        }
+
         Bus bus = CxfUtil.getBus();
 
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
