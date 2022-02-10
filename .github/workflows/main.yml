@@ -14,11 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set git to use LF
-      run: |
-        git config --global core.autocrlf false
-        git config --global core.eol lf
-
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
@@ -40,6 +35,10 @@ jobs:
       env:
         MAVEN_OPTS: -Xmx2048m
 
+      # We have some LF vs CRLF files from the Tomcat ZIPs, so we need to convert them to avoid diffs in git
+    - name: Convert Config Files in BOM Module from CRLF to LF
+      run: find ./boms -type f -exec sed -i -e 's/\r$//' {} \;
+
     - name: Create Pull Request after BOM Regeneration
       uses: peter-evans/create-pull-request@v3
       with:
@@ -53,7 +52,7 @@ jobs:
         delete-branch: true
         title: "Regenerated BOMs after dependency upgrades"
         body: |
-          Found some uncommited changes (BOM regeneration) after running build on TomEE master
+          Found some uncommited changes (from BOM regeneration) after running build on TomEE master
         labels: |
           dependencies
-        assignees: jeanouii,jgallimore,rzo1
+        assignees: cesarhernandezgt,dblevins,jeanouii,jgallimore,rzo1
