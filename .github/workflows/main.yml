@@ -35,4 +35,24 @@ jobs:
       env:
         MAVEN_OPTS: -Xmx2048m
 
+      # We have some LF vs CRLF files from the Tomcat ZIPs, so we need to convert them to avoid diffs in git
+    - name: Convert Config Files in BOM Module from CRLF to LF
+      run: find ./boms -type f -exec sed -i -e 's/\r$//' {} \;
 
+    - name: Create Pull Request after BOM Regeneration
+      uses: peter-evans/create-pull-request@v3
+      with:
+        base: master
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "Minor: Regenerated BOMs for ${{ github.sha }}"
+        committer: GitHub <noreply@github.com>
+        author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+        signoff: true
+        branch: regenerate_boms_after_dep_upgrade
+        delete-branch: true
+        title: "Regenerated BOMs after dependency upgrades"
+        body: |
+          Found some uncommited changes (from BOM regeneration) after running build on TomEE master
+        labels: |
+          dependencies
+        assignees: cesarhernandezgt,dblevins,jeanouii,jgallimore,rzo1
