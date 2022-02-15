@@ -268,7 +268,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -279,7 +279,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-client</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -290,7 +290,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -301,7 +301,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -312,7 +312,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -323,7 +323,7 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-ra</artifactId>
-      <version>5.16.3</version>
+      <version>5.16.4</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
