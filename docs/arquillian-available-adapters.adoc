@@ -98,23 +98,23 @@ dependencies to your Maven pom.xml:
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>arquillian-tomee-embedded</artifactId>
-  <version>${tomee.version}</version> <!--Current version-->
+  <version>${TOMEE_VERSION}</version> <!--Current version-->
 </dependency>
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-embedded</artifactId>
-  <version>${tomee.version}</version>
+  <version>${TOMEE_VERSION}</version>
 </dependency>
 <!--Required for WebServices and RESTful WebServices-->
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-webservices</artifactId>
-  <version>${tomee.version}</version>
+  <version>${TOMEE_VERSION}</version>
 </dependency>
 <dependency>
   <groupId>org.apache.tomee</groupId>
   <artifactId>tomee-jaxrs</artifactId>
-  <version>${tomee.version}</version>
+  <version>${TOMEE_VERSION}</version>
 </dependency>
 ----
 
@@ -160,7 +160,7 @@ The following shows a typical configuration for testing against TomEE
 [source,xml]
 ----
 <properties>
-  <tomee.version>${tomee.version}</tomee.version>
+  <tomee.version>${TOMEE_VERSION}</tomee.version>
   <tomee.classifier>webprofile</tomee.classifier>
 </properties>
 <build>
@@ -238,7 +238,7 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
       <dependency>
         <groupId>org.apache.tomee</groupId>
         <artifactId>arquillian-tomee-embedded</artifactId>
-        <version>${tomee.version}</version>
+        <version>${TOMEE_VERSION}</version>
       </dependency>
     </dependencies>
   </profile>
@@ -246,7 +246,7 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
   <profile>
     <id>tomee-webprofile-remote</id>
     <properties>
-      <tomee.version>${tomee.version}</tomee.version>
+      <tomee.version>${TOMEE_VERSION}</tomee.version>
       <tomee.classifier>webprofile</tomee.classifier>
     </properties>
     <build>
@@ -282,7 +282,7 @@ with `-Ptomee-webprofile-remote` specified as a `mvn` command argument.
   <profile>
     <id>tomee-plus-remote</id>
     <properties>
-      <tomee.version>${tomee.version}</tomee.version>
+      <tomee.version>${TOMEE_VERSION}</tomee.version>
       <tomee.classifier>plus</tomee.classifier>
     </properties>
     <build>

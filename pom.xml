@@ -113,10 +113,10 @@
     <geronimo-javamail_1.6_spec.version>1.0.1</geronimo-javamail_1.6_spec.version>
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
-    <openjpa.version>3.2.0</openjpa.version>
-    <openwebbeans.version>2.0.25</openwebbeans.version>
+    <openjpa.version>3.2.1</openjpa.version>
+    <openwebbeans.version>2.0.26</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.15</johnzon.version>
+    <johnzon.version>1.2.16</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
@@ -404,7 +404,7 @@
         <plugin>
           <groupId>org.owasp</groupId>
           <artifactId>dependency-check-maven</artifactId>
-          <version>6.1.5</version>
+          <version>6.5.3</version>
           <configuration>
             <suppressionFile>owasp-dc-suppression.xml</suppressionFile>
           </configuration>
