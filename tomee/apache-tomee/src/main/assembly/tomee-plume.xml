@@ -38,6 +38,7 @@
         <exclude>NOTICE</exclude>
         <exclude>**/bin/**/*</exclude>
         <exclude>**/lib/tomcat-annotations-api*.jar</exclude>
+        <exclude>**/conf/catalina.policy</exclude>
       </excludes>
     </fileSet>
     <fileSet>
@@ -52,6 +53,13 @@
       <outputDirectory>/apache-tomee-plume-${project.version}</outputDirectory>
       <includes>
         <include>*</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.basedir}/target/classes</directory>
+      <outputDirectory>/apache-tomee-plume-${project.version}/conf</outputDirectory>
+      <includes>
+        <include>catalina.policy</include>
       </includes>
     </fileSet>
     <fileSet>
