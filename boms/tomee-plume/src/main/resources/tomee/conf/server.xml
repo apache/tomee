@@ -87,10 +87,9 @@
     -->
     <!--
     <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
-               maxThreads="150" SSLEnabled="true">
+               maxThreads="150" SSLEnabled="true" xpoweredBy="false" server="Apache TomEE"> 
         <SSLHostConfig>
-            <Certificate certificateKeystoreFile="conf/localhost-rsa.jks"
-                         type="RSA" xpoweredBy="false" server="Apache TomEE" />
+            <Certificate certificateKeystoreFile="conf/localhost-rsa.jks" type="RSA"/>
         </SSLHostConfig>
     </Connector>
     -->
