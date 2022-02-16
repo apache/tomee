@@ -94,6 +94,10 @@ grant codeBase "file:${catalina.home}/bin/tomcat-juli.jar" {
         permission java.util.PropertyPermission "org.apache.juli.ClassLoaderLogManager.debug", "read";
         permission java.util.PropertyPermission "catalina.base", "read";
 
+        // TOMEE-3840
+        permission java.util.PropertyPermission "tomee.skip-tomcat-log", "read";
+        permission java.lang.RuntimePermission "accessDeclaredMembers";
+
         // Note: To enable per context logging configuration, permit read access to
         // the appropriate file. Be sure that the logging configuration is
         // secure before enabling such access.
