@@ -85,4 +85,6 @@ public interface PathsInterface {
     File getSetClasspathSh();
 
     File getSetClasspathBat();
+
+    File getCatalinaPolicy();
 }
