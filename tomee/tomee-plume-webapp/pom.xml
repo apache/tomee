@@ -330,20 +330,21 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jdbc-store</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-jdbc-store-shade</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -364,6 +365,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

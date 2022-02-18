@@ -863,6 +863,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
       <version>2.0.26</version>
       <exclusions>
         <exclusion>

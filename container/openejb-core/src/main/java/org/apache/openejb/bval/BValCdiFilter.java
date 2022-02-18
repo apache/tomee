@@ -33,4 +33,5 @@ public class BValCdiFilter implements BValExtension.AnnotatedTypeFilter {
         }
         return delegate.accept(name);
     }
+
 }

@@ -148,12 +148,12 @@
           <groupId>commons-cli</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>activemq-ra</artifactId>
-          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-ra-shade</artifactId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>activemq-broker</artifactId>
-          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker-shade</artifactId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
           <artifactId>geronimo-connector</artifactId>

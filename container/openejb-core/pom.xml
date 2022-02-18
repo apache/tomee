@@ -313,6 +313,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -515,29 +535,30 @@
 
     <!-- ActiveMQ -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jdbc-store</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-jdbc-store-shade</artifactId>
       <optional>true</optional>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker</artifactId>
-          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker-shade</artifactId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
       <artifactId>geronimo-connector</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.geronimo.components</groupId>
@@ -656,14 +677,17 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-spi</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
+      <classifier>jakarta</classifier>
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
@@ -674,14 +698,17 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ee</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <artifactId>openwebbeans-ee-common</artifactId>
       <groupId>org.apache.openwebbeans</groupId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-web</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.openjpa</groupId>
@@ -696,6 +723,7 @@
     <dependency>
       <groupId>org.apache.bval</groupId>
       <artifactId>bval-jsr</artifactId>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->

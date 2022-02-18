@@ -88,16 +88,16 @@
               <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-jdbc-store-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-ra-shade</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.geronimo.components</groupId>
@@ -137,16 +137,16 @@
               <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-jdbc-store-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-ra-shade</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.geronimo.components</groupId>
@@ -173,16 +173,16 @@
               <artifactId>jakartaee-api</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-broker</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-jdbc-store-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-ra</artifactId>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>activemq-ra-shade</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.geronimo.components</groupId>

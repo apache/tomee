@@ -123,20 +123,20 @@
 
     <!-- ActiveMQ is optional in openejb-core -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jdbc-store</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-jdbc-store-shade</artifactId>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker</artifactId>
-          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker-shade</artifactId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>

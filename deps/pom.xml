@@ -31,5 +31,13 @@
     <module>taglibs-shade</module>
     <module>cxf-shade</module>
     <module>sxc-shade</module>
+    <module>activemq-broker-shade</module>
+    <module>activemq-client-shade</module>
+    <module>activemq-jaas-shade</module>
+    <module>activemq-jdbc-store-shade</module>
+    <module>activemq-kahadb-store-shade</module>
+    <module>activemq-openwire-legacy-shade</module>
+    <module>activemq-ra-shade</module>
+    <module>bval-jsr-shade</module>
   </modules>
 </project>

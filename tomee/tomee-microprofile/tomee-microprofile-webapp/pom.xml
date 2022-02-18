@@ -387,6 +387,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

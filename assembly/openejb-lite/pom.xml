@@ -82,12 +82,12 @@
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-broker</artifactId>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>activemq-broker-shade</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.apache.activemq</groupId>
-          <artifactId>activemq-ra</artifactId>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>activemq-ra-shade</artifactId>
         </exclusion>
         <exclusion>
           <artifactId>slf4j-jdk14</artifactId>

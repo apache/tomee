@@ -93,8 +93,6 @@
     <!-- allows release plugin to be overridden -->
     <arguments />
     <tomee.version>${project.version}</tomee.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <surefire.version>3.0.0-M5</surefire.version>
 
     <!-- for the default name of the module. Needs to be overridden -->
@@ -469,8 +467,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <release>11</release>
         </configuration>
       </plugin>
       <plugin>
@@ -1069,6 +1066,7 @@
         <groupId>org.apache.bval</groupId>
         <artifactId>bval-jsr</artifactId>
         <version>${bval.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>
@@ -1140,9 +1138,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-jdbc-store</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>activemq-jdbc-store-shade</artifactId>
+        <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -1151,9 +1149,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-ra</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>activemq-ra-shade</artifactId>
+        <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.springframework</groupId>
@@ -1207,9 +1205,9 @@
         <version>${commons-net.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-broker</artifactId>
-        <version>${org.apache.activemq.version}</version>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>activemq-broker-shade</artifactId>
+        <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.fusesource.mqtt-client</groupId>
@@ -1276,8 +1274,8 @@
             <artifactId>mx4j-impl</artifactId>
           </exclusion>
           <exclusion>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-jaas</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>activemq-jaas-shade</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1388,7 +1386,12 @@
         <groupId>org.apache.geronimo.components</groupId>
         <artifactId>geronimo-connector</artifactId>
         <version>${geronimo.connector.version}</version>
+        <classifier>jakarta</classifier>
         <exclusions>
+          <exclusion>
+            <groupId>org.apache.geronimo.components</groupId>
+            <artifactId>geronimo-transaction</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jta_1.1_spec</artifactId>
@@ -1749,6 +1752,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-impl</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1760,11 +1764,13 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-spi</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1787,6 +1793,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ejb</artifactId>
+        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1806,6 +1813,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-ee</artifactId>
+        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1837,6 +1845,7 @@
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-web</artifactId>
+        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
@@ -1848,6 +1857,7 @@
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
         <groupId>org.apache.openwebbeans</groupId>
+        <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>

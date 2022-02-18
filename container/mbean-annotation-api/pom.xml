@@ -30,4 +30,18 @@
   <properties>
     <tomee.build.name>${project.groupId}.container.mbean.api</tomee.build.name>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>--patch-module=java.management=${basedir}/src/main/java</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

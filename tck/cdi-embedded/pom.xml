@@ -102,6 +102,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-porting</artifactId>
       <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -171,6 +172,7 @@
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
       <version>${openwebbeans.version}</version>
+      <classifier>jakarta</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -187,23 +189,23 @@
     </dependency>
     <!-- ActiveMQ is optional in openejb-core (embedded needs openejb-core + all deps)-->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-ra</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-ra-shade</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-broker</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-broker-shade</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-jdbc-store</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>activemq-jdbc-store-shade</artifactId>
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker</artifactId>
-          <groupId>org.apache.activemq</groupId>
+          <artifactId>activemq-broker-shade</artifactId>
+          <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
     </dependency>
