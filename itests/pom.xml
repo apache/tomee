@@ -46,6 +46,7 @@
     <module>openejb-itests-interceptor-beans</module>
     <module>openejb-itests-servlets</module>
     <module>openejb-itests-web</module>
+    <module>jaxrs</module>
   </modules>
 
 </project>
