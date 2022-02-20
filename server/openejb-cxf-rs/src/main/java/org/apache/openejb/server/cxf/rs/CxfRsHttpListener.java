@@ -848,17 +848,37 @@ public class CxfRsHttpListener implements RsHttpListener {
             declaredSingletons.addAll(application.getSingletons());
         }
 
+        for (final Object declaredSingleton : new ArrayList<>(declaredSingletons)) {
+            if (declaredSingleton instanceof Class) {
+                continue;
+            }
+            declaredSingletons.add(declaredSingleton.getClass());
+        }
+
+        final Set<Class<?>> seen = new HashSet<>();
         for (final Object additionalProvider : additionalProviders) {
-            if (additionalProvider instanceof Class) {
 
-                final boolean discovered = !declaredSingletons.contains(additionalProvider);
+            final Class<?> providerClass = (additionalProvider instanceof Class) ? (Class<?>) additionalProvider : additionalProvider.getClass();
 
-                applicationData.addProvider(discovered, (Class<?>) additionalProvider, null);
+            // If we have already seen this provider class, skip it
+            // For some reason we add a duplicate version, one of the instance and one of the class
+            if (!seen.add(providerClass)) continue;
+
+            if (declaredSingletons.contains(providerClass)) {
+
+                applicationData.addProvider(false, providerClass, additionalProvider);
+
+            } else if (declaredClasses.contains(providerClass)) {
+
+                applicationData.addProvider(false, providerClass, null);
+
+            } else if (additionalProvider instanceof Class) {
+
+                applicationData.addProvider(true, providerClass, null);
 
             } else {
-                final boolean discovered = !declaredSingletons.contains(additionalProvider);
 
-                applicationData.addProvider(discovered, additionalProvider.getClass(), null);
+                applicationData.addProvider(true, providerClass, additionalProvider);
 
             }
         }
@@ -881,7 +901,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             } else {
 
-                final boolean discovered = !declaredClasses.contains(clazz);
+                final boolean discovered = !(declaredClasses.contains(clazz) || declaredSingletons.contains(clazz));
 
                 applicationData.addResource(discovered, clazz, null);
 
@@ -894,7 +914,7 @@ public class CxfRsHttpListener implements RsHttpListener {
 
             final Class<?> clazz = realClass(singleton.getClass());
 
-            final boolean configured = declaredClasses.contains(clazz) || declaredClasses.contains(singleton.getClass());
+            final boolean configured = declaredSingletons.contains(clazz) || declaredSingletons.contains(singleton.getClass());
 
             applicationData.addResource(!configured, clazz, singleton);
         }

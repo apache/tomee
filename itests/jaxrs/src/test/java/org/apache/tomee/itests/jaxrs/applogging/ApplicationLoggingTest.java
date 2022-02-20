@@ -79,13 +79,6 @@ public class ApplicationLoggingTest {
                 "Resource{clazz=org.apache.tomee.itests.jaxrs.applogging.TriangleResource, discovered=false, singleton=false}", normalize(join));
     }
 
-    /**
-     * This test shows two bugs:
-     * - singletons show up as discovered when they were explicitly configured
-     *
-     * @throws Exception
-     */
-    @Ignore
     @Test
     public void getSingletons() throws Exception {
 
@@ -98,13 +91,12 @@ public class ApplicationLoggingTest {
                         .add(AnnotatedWriter.class)
                         .asJar())
                 .watch("org.apache.openejb.server.cxf.rs.CxfRsHttpListener.logApplication ", "\n", output::add)
-//                .debug(5005)
                 .build();
 
         Collections.sort(output);
 
         final String join = Join.join("\n", output);
-        assertEquals("Application{path='http://localhost:0/test/red', class=org.apache.tomee.itests.jaxrs.applogging.GetSingletons, resources=2, providers=2, invalids=0}\n" +
+        assertEquals("Application{path='http://localhost:0/test/red', class=org.apache.tomee.itests.jaxrs.applogging.GetSingletons, resources=2, providers=1, invalids=0}\n" +
                 "Provider{clazz=org.apache.tomee.itests.jaxrs.applogging.AnnotatedWriter, discovered=false, singleton=true}\n" +
                 "Resource{clazz=org.apache.tomee.itests.jaxrs.applogging.SquareResource, discovered=false, singleton=true}\n" +
                 "Resource{clazz=org.apache.tomee.itests.jaxrs.applogging.TriangleResource, discovered=false, singleton=true}", normalize(join));
