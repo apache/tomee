@@ -55,6 +55,7 @@ public abstract class ServerBuilder<T extends ServerBuilder<T>> {
     protected FileFilter filter = pathname -> true;
     protected Duration await = new Duration("1 minute");
     protected boolean list = false;
+    protected boolean debug = false;
     protected final ArrayList<Consumer<File>> homeConsumers = new ArrayList<>();
     protected final ArrayList<Consumer<T>> builderConsumers = new ArrayList<>();
     protected final ArrayList<Consumer<StreamBuilder>> watches = new ArrayList<>();
@@ -160,6 +161,15 @@ public abstract class ServerBuilder<T extends ServerBuilder<T>> {
      */
     public T await(final long time, final TimeUnit unit) {
         this.await = new Duration(time, unit);
+        return (T) this;
+    }
+
+    public T debug() {
+        return debug(true);
+    }
+
+    public T debug(final boolean debug) {
+        this.debug = debug;
         return (T) this;
     }
 
