@@ -179,6 +179,17 @@ public class TomEE {
             }
         }
 
+        public Builder debug(final int port, boolean suspend) {
+            env("JPDA_ADDRESS", port + "");
+            env("JPDA_SUSPEND", suspend ? "y" : "n");
+
+            return debug();
+        }
+
+        public Builder debug(final int port) {
+            return debug(port, true);
+        }
+
         public TomEE build() throws IOException {
 
             applyBuilderConsumers();
@@ -228,8 +239,15 @@ public class TomEE {
             final File catalinaSh = Files.file(home, "bin", "catalina" + extension);
 
             final ProcessBuilder builder = new ProcessBuilder()
-                    .directory(home)
-                    .command(catalinaSh.getAbsolutePath(), "run");
+                    .directory(home);
+
+            // todo maybe use the list approach to fill in the arguments
+            // but this way we are sure about the order  to put them for tomcat
+            if (debug) {
+                builder.command(catalinaSh.getAbsolutePath(), "jpda", "run");
+            } else {
+                builder.command(catalinaSh.getAbsolutePath(), "run");
+            }
 
             // make sure to configure the Locale to english otherwise the watch bellow will fail on other countries
             if (env.containsKey("JAVA_OPTS")) {
