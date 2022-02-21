@@ -37,5 +37,6 @@
     <module>activemq-ra-shade</module>
     <module>bval-jsr-shade</module>
     <module>commons-dbcp2-shade</module>
+    <module>commons-fileupload-shade</module>
   </modules>
 </project>

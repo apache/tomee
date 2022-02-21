@@ -79,7 +79,7 @@ public class AsyncConsoleHandler extends AsyncFileHandler {
     }
 
     @Override
-    protected void open() {
+    public void open() {
         // no-op
     }
 
