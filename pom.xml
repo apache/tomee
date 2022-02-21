@@ -1755,6 +1755,11 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-spi</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
@@ -1797,6 +1802,11 @@
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-impl</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-interceptor_1.2_spec</artifactId>
           </exclusion>
@@ -1815,7 +1825,22 @@
         <artifactId>openwebbeans-ee</artifactId>
         <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
-        <exclusions>
+          <exclusions>
+          <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-impl</artifactId>
+          </exclusion>
+          <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-ee-common</artifactId>
+          </exclusion>
+          <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-el22</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-el_2.2_spec</artifactId>
@@ -1849,10 +1874,26 @@
         <version>${openwebbeans.version}</version>
         <exclusions>
           <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-impl</artifactId>
+          </exclusion>
+          <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-el22</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-finder-shaded</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.openwebbeans</groupId>
+        <artifactId>openwebbeans-el22</artifactId>
+        <classifier>jakarta</classifier>
+        <version>${openwebbeans.version}</version>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
@@ -1860,6 +1901,11 @@
         <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
         <exclusions>
+          <exclusion>
+            <!-- impl references a non jakarta classifier version -->
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>openwebbeans-impl</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>

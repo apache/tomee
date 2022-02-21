@@ -678,6 +678,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-el22</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-ejb</artifactId>
       <classifier>jakarta</classifier>
       <exclusions>
