@@ -1138,9 +1138,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>${project.groupId}</groupId>
+        <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-jdbc-store</artifactId>
-        <version>${project.version}</version>
+        <version>${org.apache.activemq.version}</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.derby</groupId>
@@ -1462,9 +1462,9 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.openjpa</groupId>
-        <artifactId>openjpa</artifactId>
-        <version>${openjpa.version}</version>
+        <groupId>org.apache.tomee</groupId>
+        <artifactId>openjpa-shade</artifactId>
+        <version>${project.version}</version>
         <exclusions>
           <exclusion>
             <groupId>asm</groupId>
@@ -1579,9 +1579,9 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-dbcp2</artifactId>
-        <version>${commons-dbcp.version}</version>
+        <artifactId>org.apache.tomee</artifactId>
+        <groupId>commons-dbcp2-shade</groupId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>

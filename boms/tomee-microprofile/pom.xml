@@ -277,9 +277,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
-      <version>2.3.0</version>
+      <artifactId>org.apache.tomee</artifactId>
+      <groupId>commons-dbcp2-shade</groupId>
+      <version>${project.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>

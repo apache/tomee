@@ -134,4 +134,14 @@ public class EndpointFactory implements MessageEndpointFactory {
         final TransactionType transactionType = beanContext.getTransactionType(method);
         return TransactionType.Required == transactionType;
     }
+
+    @Override
+    public String getActivationName() {
+        return container.getContainerID().toString();
+    }
+
+    @Override
+    public Class<?> getEndpointClass() {
+        return beanContext.getBeanClass();
+    }
 }

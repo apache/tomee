@@ -76,13 +76,13 @@
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>jakartaee-api</artifactId>
-      <version>[9.0,)</version>
+      <version>9.1.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openjpa-shade</artifactId>
+      <version>9.0.0-M8-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -112,8 +112,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <artifactId>openjpa</artifactId>
-          <groupId>org.apache.openjpa</groupId>
+          <artifactId>openjpa-shade</artifactId>
+          <groupId>org.apache.tomee</groupId>
         </exclusion>
       </exclusions>
     </dependency>

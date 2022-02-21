@@ -65,9 +65,9 @@
 
         <dependencies>
           <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>${openjpa.version}</version>
+            <groupId>org.apache.tomee</groupId>
+            <artifactId>openjpa-shade</artifactId>
+            <version>${project.version}</version>
           </dependency>
         </dependencies>
       </plugin>

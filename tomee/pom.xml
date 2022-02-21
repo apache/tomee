@@ -92,7 +92,7 @@
               <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
+              <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
@@ -125,8 +125,8 @@
           <version>${project.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>org.apache.openjpa</groupId>
-              <artifactId>openjpa</artifactId>
+              <groupId>org.apache.tomee</groupId>
+              <artifactId>openjpa-shade</artifactId>
             </exclusion>
             <exclusion>
               <groupId>org.apache.bval</groupId>
@@ -141,7 +141,7 @@
               <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
+              <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
@@ -177,7 +177,7 @@
               <artifactId>activemq-broker-shade</artifactId>
             </exclusion>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
+              <groupId>org.apache.activemq</groupId>
               <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>

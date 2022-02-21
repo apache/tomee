@@ -537,7 +537,7 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-jdbc-store</artifactId>
       <optional>true</optional>
       <exclusions>
@@ -608,8 +608,8 @@
       <artifactId>hsqldb</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-dbcp2</artifactId>
+      <artifactId>org.apache.tomee</artifactId>
+      <groupId>commons-dbcp2-shade</groupId>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -708,8 +708,8 @@
       <classifier>jakarta</classifier>
     </dependency>
     <dependency>
-      <groupId>org.apache.openjpa</groupId>
-      <artifactId>openjpa</artifactId>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>openjpa-shade</artifactId>
     </dependency>
     <!--
     <dependency>
