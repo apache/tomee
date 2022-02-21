@@ -1398,7 +1398,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+            <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
@@ -1422,7 +1422,7 @@
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
+            <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.objectweb.howl</groupId>
