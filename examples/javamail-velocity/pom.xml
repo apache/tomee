@@ -24,6 +24,7 @@
   <name>TomEE :: Examples :: JavaMail API with Velocity</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tomee.version>8.0.11-SNAPSHOT</tomee.version>
   </properties>
   <build>
     <defaultGoal>install</defaultGoal>
@@ -71,13 +72,13 @@
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus-api</artifactId>
-      <version>[8.0,)</version>
+      <version>${tomee.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.20</version>
+      <version>1.18.22</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -90,7 +91,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.21</version>
+      <version>1.7.36</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
@@ -102,31 +103,31 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <version>5.8.1</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.8.1</version>
+      <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee.bom</groupId>
       <artifactId>tomee-plus</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
       <artifactId>openejb-junit5</artifactId>
-      <version>8.0.11-SNAPSHOT</version>
+      <version>${tomee.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.icegreen</groupId>
       <artifactId>greenmail</artifactId>
-      <version>1.6.1</version>
+      <version>1.6.5</version>
       <exclusions>
         <exclusion>
           <groupId>junit</groupId>
