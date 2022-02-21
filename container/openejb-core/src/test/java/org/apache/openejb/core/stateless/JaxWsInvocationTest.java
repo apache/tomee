@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -189,7 +190,7 @@ public class JaxWsInvocationTest extends TestCase {
 
             // Try to get JAX-RPC context, should throw an exception since it's JAX-WS
             try {
-                ctx.getMessageContext();
+                ((BaseSessionContext) ctx).getMessageContext();
                 org.junit.Assert.fail("Did not throw exception");
             } catch (final IllegalStateException e) {
                 // that's expected since it's JAX-WS

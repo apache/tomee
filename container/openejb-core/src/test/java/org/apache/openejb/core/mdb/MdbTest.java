@@ -135,6 +135,16 @@ public class MdbTest extends JmsTest {
         public boolean isDeliveryTransacted(final Method method) throws NoSuchMethodException {
             return false;
         }
+
+        @Override
+        public String getActivationName() {
+            return null;
+        }
+
+        @Override
+        public Class<?> getEndpointClass() {
+            return null;
+        }
     }
 
     public static class JmsEndpoint implements MessageEndpoint, MessageListener {

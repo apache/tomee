@@ -29,6 +29,7 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
+import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -171,7 +172,7 @@ public class JaxRpcInvocationTest extends TestCase {
              * and the container should then ensure it's available via the SessionContext
              * for the duration of this call.
              */
-            final MessageContext messageContext = ctx.getMessageContext();
+            final MessageContext messageContext = ((BaseSessionContext) ctx).getMessageContext();
 
             org.junit.Assert.assertNotNull("message context should not be null", messageContext);
             org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);

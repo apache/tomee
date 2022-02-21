@@ -49,11 +49,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.faces</groupId>
-      <artifactId>jakarta.faces-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <scope>provided</scope>

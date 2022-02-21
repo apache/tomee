@@ -215,6 +215,93 @@
                   <resource>META-INF/cxf/bus-extensions.txt</resource>
                 </transformer>
               </transformers>
+              <relocations>
+                <relocation>
+                  <pattern>javax.activation</pattern>
+                  <shadedPattern>jakarta.activation</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.annotation</pattern>
+                  <shadedPattern>jakarta.annotation</shadedPattern>
+                  <excludes>
+                    <exclude>javax.annotation.processing.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>javax.ejb</pattern>
+                  <shadedPattern>jakarta.ejb</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.enterprise</pattern>
+                  <shadedPattern>jakarta.enterprise</shadedPattern>
+                  <excludes>
+                    <exclude>javax.enterprise.deploy.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>javax.inject</pattern>
+                  <shadedPattern>jakarta.inject</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.interceptor</pattern>
+                  <shadedPattern>jakarta.interceptor</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.jms</pattern>
+                  <shadedPattern>jakarta.jms</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.json</pattern>
+                  <shadedPattern>jakarta.json</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.jws</pattern>
+                  <shadedPattern>jakarta.jws</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.mail</pattern>
+                  <shadedPattern>jakarta.mail</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.persistence</pattern>
+                  <shadedPattern>jakarta.persistence</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.resource</pattern>
+                  <shadedPattern>jakarta.resource</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.servlet</pattern>
+                  <shadedPattern>jakarta.servlet</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.transaction</pattern>
+                  <shadedPattern>jakarta.transaction</shadedPattern>
+                  <excludes>
+                    <exclude>javax.transaction.xa.**</exclude>
+                  </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>javax.validation</pattern>
+                  <shadedPattern>jakarta.validation</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.ws.rs</pattern>
+                  <shadedPattern>jakarta.ws.rs</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.xml.bind</pattern>
+                  <shadedPattern>jakarta.xml.bind</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.xml.soap</pattern>
+                  <shadedPattern>jakarta.xml.soap</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>javax.xml.ws</pattern>
+                  <shadedPattern>jakarta.xml.ws</shadedPattern>
+                </relocation>
+              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -229,7 +316,7 @@
           <source>1.8</source>
           <target>1.8</target>
           <dependencies>
-            <dependency>${project.groupId}:javaee-api:jar:8.0-5</dependency>
+            <dependency>${project.groupId}:jakartaee-api:jar:9.1.1-SNAPSHOT</dependency>
 
             <dependency>org.apache.aries.blueprint:blueprint-parser:jar:1.6.0</dependency>
             <dependency>org.apache.aries.blueprint:org.apache.aries.blueprint.api:jar:1.0.1</dependency>

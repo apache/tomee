@@ -379,11 +379,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>jakarta.faces</groupId>
-        <artifactId>jakarta.faces-api</artifactId>
-        <version>2.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.glassfish</groupId>
         <artifactId>jakarta.faces</artifactId>
         <version>${mojarra.version}</version>
