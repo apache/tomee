@@ -291,6 +291,7 @@
     <dependency>
       <groupId>org.apache.openwebbeans</groupId>
       <artifactId>openwebbeans-jsf</artifactId>
+      <classifier>jakarta</classifier>
       <scope>compile</scope>
     </dependency>
     <dependency>

@@ -112,7 +112,7 @@
     <geronimo-javamail_1.6_mail.version>1.0.1</geronimo-javamail_1.6_mail.version>
 
     <openjpa.version>3.2.1</openjpa.version>
-    <openwebbeans.version>2.0.26</openwebbeans.version>
+    <openwebbeans.version>2.0.27-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
     <johnzon.version>1.2.16</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
@@ -1139,7 +1139,7 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>activemq-jdbc-store-shade</artifactId>
+        <artifactId>activemq-jdbc-store</artifactId>
         <version>${project.version}</version>
         <exclusions>
           <exclusion>
@@ -1275,7 +1275,7 @@
           </exclusion>
           <exclusion>
             <groupId>${project.groupId}</groupId>
-            <artifactId>activemq-jaas-shade</artifactId>
+            <artifactId>activemq-jaas</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>

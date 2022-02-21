@@ -538,7 +538,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>activemq-jdbc-store-shade</artifactId>
+      <artifactId>activemq-jdbc-store</artifactId>
       <optional>true</optional>
       <exclusions>
         <exclusion>

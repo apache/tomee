@@ -93,7 +93,7 @@
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
+              <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
@@ -142,7 +142,7 @@
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
+              <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
@@ -178,7 +178,7 @@
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-jdbc-store-shade</artifactId>
+              <artifactId>activemq-jdbc-store</artifactId>
             </exclusion>
             <exclusion>
               <groupId>${project.groupId}</groupId>
@@ -286,6 +286,7 @@
         <groupId>org.apache.openwebbeans</groupId>
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.myfaces.core</groupId>
