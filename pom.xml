@@ -104,7 +104,8 @@
 
     <!-- To easily change the javaee api version -->
     <version.javaee-api>8.0-5</version.javaee-api>
-
+    <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
+    
     <!--
       Activation and JavaMail are both API and IMPL so we don't have them in the javaee-api uber jar.
       We decided to add them here in the project so we can patch/update the 2 libraries without having
@@ -433,7 +434,20 @@
         <plugin>
           <groupId>org.apache.tomee.patch</groupId>
           <artifactId>tomee-patch-plugin</artifactId>
-          <version>0.8</version>
+          <version>${version.tomee-patch-plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.tomee.patch</groupId>
+              <artifactId>tomee-patch-core</artifactId>
+              <version>${version.tomee-patch-plugin}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.apache.tomee</groupId>
+                  <artifactId>openejb-cxf-rs</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
