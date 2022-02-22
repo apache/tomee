@@ -65,6 +65,7 @@
       <groupId>org.apache.johnzon</groupId>
       <artifactId>johnzon-jsonb</artifactId>
       <scope>provided</scope>
+      <classifier>jakarta</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.tomcat</groupId>

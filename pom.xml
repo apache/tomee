@@ -114,7 +114,7 @@
     <openjpa.version>3.2.2-SNAPSHOT</openjpa.version>
     <openwebbeans.version>2.0.27-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.16</johnzon.version>
+    <johnzon.version>1.2.17-SNAPSHOT</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
@@ -468,6 +468,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>11</release>
+          <verbose>true</verbose>
+          <fork>true</fork>
+          <executable>/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/javac</executable>
         </configuration>
       </plugin>
       <plugin>
@@ -1885,26 +1888,31 @@
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-core</artifactId>
         <version>${johnzon.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-mapper</artifactId>
         <version>${johnzon.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jaxrs</artifactId>
         <version>${johnzon.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonb</artifactId>
         <version>${johnzon.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
       <dependency>
         <groupId>org.apache.johnzon</groupId>
         <artifactId>johnzon-jsonp-strict</artifactId>
         <version>${johnzon.version}</version>
+        <classifier>jakarta</classifier>
       </dependency>
 
       <dependency>
