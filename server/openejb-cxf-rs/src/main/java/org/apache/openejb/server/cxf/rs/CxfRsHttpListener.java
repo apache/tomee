@@ -839,7 +839,7 @@ public class CxfRsHttpListener implements RsHttpListener {
         final Set<Class<?>> declaredClasses = new HashSet<>();
         final Set<Object> declaredSingletons = new HashSet<>();
 
-        if (application instanceof InternalApplication) {
+        if (application instanceof InternalApplication && ((InternalApplication) application).getOriginal() != null) {
             final InternalApplication internalApplication = (InternalApplication) application;
             declaredClasses.addAll(internalApplication.getOriginal().getClasses());
             declaredSingletons.addAll(internalApplication.getOriginal().getSingletons());

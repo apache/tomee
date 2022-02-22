@@ -36,7 +36,7 @@ public class ApplicationData {
         this.path = path;
         this.application = application;
 
-        if (application instanceof InternalApplication) {
+        if (application instanceof InternalApplication && ((InternalApplication) application).getOriginal() != null) {
             final InternalApplication internalApplication = (InternalApplication) application;
             this.applicationClass = internalApplication.getOriginal().getClass();
         } else {
