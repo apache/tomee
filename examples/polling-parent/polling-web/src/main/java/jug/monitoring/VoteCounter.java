@@ -19,10 +19,11 @@ package jug.monitoring;
 import jug.domain.Subject;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import javax.management.Description;
-import javax.management.MBean;
-import javax.management.ManagedAttribute;
-import javax.management.ManagedOperation;
+import org.apache.openejb.api.jmx.Description;
+import org.apache.openejb.api.jmx.MBean;
+import org.apache.openejb.api.jmx.ManagedAttribute;
+import org.apache.openejb.api.jmx.ManagedOperation;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
