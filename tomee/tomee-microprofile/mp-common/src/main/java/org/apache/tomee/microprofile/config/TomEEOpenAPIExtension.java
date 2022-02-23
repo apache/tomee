@@ -124,7 +124,7 @@ public class TomEEOpenAPIExtension extends GeronimoOpenAPIExtension implements E
     }
 
     // adds a check to not register endpoints that have @RegisterRestClient
-    protected WsServle<T> void findEndpointsAndApplication(@Observes final ProcessBean<T> event) {
+    protected <T> void findEndpointsAndApplication(@Observes final ProcessBean<T> event) {
         final String typeName = event.getAnnotated().getBaseType().getTypeName();
         if (classes == null && !skipScan && event.getAnnotated().isAnnotationPresent(Path.class) &&
                 !event.getAnnotated().isAnnotationPresent(RegisterRestClient.class) &&
