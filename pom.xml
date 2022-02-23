@@ -223,22 +223,22 @@
     <!-- Micro Profile -->
     <microprofile.version>2.0</microprofile.version>
     <microprofile.config.version>1.3</microprofile.config.version>
-    <microprofile.config.impl.version>1.2.1</microprofile.config.impl.version>
+    <microprofile.config.impl.version>1.2.3-SNAPSHOT</microprofile.config.impl.version>
     <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <!-- 1.1 Implementation not started yet -->
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
-    <microprofile.health.impl.version>1.0.1</microprofile.health.impl.version>
+    <microprofile.health.impl.version>2.0.1-SNAPSHOT</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
-    <microprofile.metrics.impl.version>1.0.2</microprofile.metrics.impl.version>
+    <microprofile.metrics.impl.version>1.0.6-SNAPSHOT</microprofile.metrics.impl.version>
     <microprofile.rest-client.version>1.3.3</microprofile.rest-client.version>
     <microprofile.rest-client.impl.version>${cxf.version}</microprofile.rest-client.impl.version>
     <microprofile.openapi.version>1.1.2</microprofile.openapi.version>
-    <microprofile.openapi.impl.version>1.0.12</microprofile.openapi.impl.version>
+    <microprofile.openapi.impl.version>1.0.15-SNAPSHOT</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1.2</microprofile.opentracing.version>
-    <microprofile.opentracing.impl.version>1.0.0</microprofile.opentracing.impl.version>
+    <microprofile.opentracing.impl.version>1.0.3-SNAPSHOT</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->

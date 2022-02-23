@@ -59,6 +59,7 @@
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
       <version>${microprofile.config.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
@@ -107,6 +108,7 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health</artifactId>
       <version>${microprofile.health.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
@@ -119,6 +121,7 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics</artifactId>
       <version>${microprofile.metrics.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
@@ -198,6 +201,7 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-openapi-impl</artifactId>
       <version>${microprofile.openapi.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <!-- Jackson required by OpenAPI Impl -->
@@ -226,6 +230,7 @@
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing</artifactId>
       <version>${microprofile.opentracing.impl.version}</version>
+      <classifier>jakarta</classifier>
     </dependency>
 
     <dependency>
