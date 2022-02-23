@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>MicroProfile :: Examples :: Config Source Database</name>
   <properties>
-    <version.jakartaee-api>8.0-2</version.jakartaee-api>
+    <version.jakartaee-api>9.1.1-SNAPSHOT</version.jakartaee-api>
     <version.microprofile>2.0.1</version.microprofile>
     <version.arquillian>1.1.13.Final</version.arquillian>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
