@@ -359,6 +359,7 @@ public class GenerateBoms {
                 .filter(jar -> !jar.getName().equals("bootstrap.jar"))
                 .filter(jar -> !jar.getName().equals("catalina-ant.jar"))
                 .filter(jar -> !jar.getName().startsWith("tomcat-i18n"))
+                .filter(jar -> !jar.getName().startsWith("jakartaee-migration"))
                 .map(from)
                 .filter(Objects::nonNull)
                 .sorted()
