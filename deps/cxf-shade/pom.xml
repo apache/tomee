@@ -61,6 +61,11 @@
       <artifactId>cxf-rt-databinding-jaxb</artifactId>
       <version>${cxf.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-sse</artifactId>
+      <version>${cxf.version}</version>
+    </dependency>
 
     <!-- add transitive dependencies so including this is equivalent to including regular deps -->
     <dependency>
