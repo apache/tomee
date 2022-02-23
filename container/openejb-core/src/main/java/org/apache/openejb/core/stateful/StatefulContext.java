@@ -17,13 +17,11 @@
 
 package org.apache.openejb.core.stateful;
 
+import jakarta.transaction.UserTransaction;
 import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.spi.SecurityService;
-
-import jakarta.transaction.UserTransaction;
-import javax.xml.rpc.handler.MessageContext;
 
 
 /**
@@ -95,8 +93,4 @@ public class StatefulContext extends BaseSessionContext {
         }
     }
 
-    @Override
-    public MessageContext getMessageContext() throws IllegalStateException {
-        throw new IllegalStateException("@Stateful beans do not support Web Service interfaces");
-    }
 }

@@ -16,6 +16,14 @@
  */
 package org.apache.openejb.core.stateless;
 
+import jakarta.annotation.Resource;
+import jakarta.ejb.SessionContext;
+import jakarta.interceptor.AroundInvoke;
+import jakarta.interceptor.Interceptors;
+import jakarta.interceptor.InvocationContext;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
 import junit.framework.TestCase;
 import org.apache.openejb.BeanContext;
 import org.apache.openejb.InterfaceType;
@@ -29,7 +37,6 @@ import org.apache.openejb.assembler.classic.StatelessSessionContainerInfo;
 import org.apache.openejb.assembler.classic.TransactionServiceInfo;
 import org.apache.openejb.config.ConfigurationFactory;
 import org.apache.openejb.config.EjbModule;
-import org.apache.openejb.core.BaseSessionContext;
 import org.apache.openejb.core.ivm.naming.InitContextFactory;
 import org.apache.openejb.jee.EjbJar;
 import org.apache.openejb.jee.StatelessBean;
@@ -37,14 +44,6 @@ import org.apache.openejb.loader.SystemInstance;
 import org.apache.openejb.spi.ContainerSystem;
 import org.junit.AfterClass;
 
-import jakarta.annotation.Resource;
-import jakarta.ejb.SessionContext;
-import jakarta.interceptor.AroundInvoke;
-import jakarta.interceptor.Interceptors;
-import jakarta.interceptor.InvocationContext;
-import jakarta.jws.WebService;
-import jakarta.xml.ws.WebServiceContext;
-import jakarta.xml.ws.handler.MessageContext;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,14 +186,6 @@ public class JaxWsInvocationTest extends TestCase {
 
             org.junit.Assert.assertNotNull("message context should not be null", messageContext);
             org.junit.Assert.assertTrue("the Web Service Provider's message context should be used", messageContext instanceof FakeMessageContext);
-
-            // Try to get JAX-RPC context, should throw an exception since it's JAX-WS
-            try {
-                ((BaseSessionContext) ctx).getMessageContext();
-                org.junit.Assert.fail("Did not throw exception");
-            } catch (final IllegalStateException e) {
-                // that's expected since it's JAX-WS
-            }
 
             // test @Resource WebServiceContext injection
             org.junit.Assert.assertNotNull("web service context should not be null", wsContext);

@@ -17,11 +17,11 @@
 
 package org.apache.openejb.core.interceptor;
 
+import jakarta.interceptor.InvocationContext;
 import org.apache.openejb.core.Operation;
 import org.apache.openejb.core.ThreadContext;
 import org.apache.openejb.util.proxy.DynamicProxyImplFactory;
 
-import jakarta.interceptor.InvocationContext;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,13 +100,4 @@ public class InterceptorStack {
         }
     }
 
-    public Object invoke(final javax.xml.rpc.handler.MessageContext messageContext, final Object... parameters) throws Exception {
-        try {
-            final InvocationContext invocationContext = new JaxRpcInvocationContext(operation, interceptors, beanInstance, targetMethod, messageContext, parameters);
-            ThreadContext.getThreadContext().set(InvocationContext.class, invocationContext);
-            return invocationContext.proceed();
-        } finally {
-            ThreadContext.getThreadContext().remove(InvocationContext.class);
-        }
-    }
 }
