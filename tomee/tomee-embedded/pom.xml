@@ -289,12 +289,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.openwebbeans</groupId>
-      <artifactId>openwebbeans-jsf</artifactId>
-      <classifier>jakarta</classifier>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
     </dependency>
@@ -314,6 +308,19 @@
         <exclusion>
           <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
           <groupId>org.apache.geronimo.specs</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-jsf</artifactId>
+      <classifier>jakarta</classifier>
+      <scope>compile</scope>
+      <!-- we already have jakarta version coming from core. We don't want non jakarta version transitively -->
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
