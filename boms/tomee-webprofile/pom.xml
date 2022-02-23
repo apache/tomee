@@ -1224,7 +1224,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>mbean-annotation-api-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>mbean-annotation-api</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1235,7 +1235,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-api-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-api</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1246,7 +1246,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-client-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-client</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1257,7 +1257,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-core-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-core</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1268,7 +1268,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-rs-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-cxf-rs</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1279,7 +1279,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-cxf-transport-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-cxf-transport</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1290,7 +1290,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-ejbd-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-ejbd</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1301,7 +1301,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-hsql-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-hsql</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1312,7 +1312,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-http-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-http</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1334,7 +1334,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jee</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1345,7 +1345,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jee-accessors-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jee-accessors</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1356,7 +1356,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-jpa-integration-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-jpa-integration</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1367,7 +1367,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-loader-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-loader</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1378,7 +1378,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-rest-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-rest</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1389,7 +1389,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>openejb-server-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>openejb-server</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1422,7 +1422,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-catalina-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-catalina</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1433,7 +1433,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-common-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-common</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1444,7 +1444,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-config-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-config</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1455,7 +1455,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-jaxrs-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-jaxrs</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1466,7 +1466,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-jdbc-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-jdbc</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1488,7 +1488,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-loader-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-loader</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1499,7 +1499,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-mojarra-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-mojarra</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1510,7 +1510,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-myfaces-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-myfaces</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1521,7 +1521,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-security-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-security</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
@@ -1532,7 +1532,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tomee</groupId>
-      <artifactId>tomee-webapp-9.0.0-M8-SNAPSHOT.jar</artifactId>
+      <artifactId>tomee-webapp</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
