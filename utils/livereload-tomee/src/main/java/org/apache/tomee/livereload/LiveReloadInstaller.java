@@ -59,7 +59,7 @@ public class LiveReloadInstaller {
         // add connector
         final Connector connector = new Connector();
         connector.setPort(port);
-        connector.setAttribute("connectionTimeout", "30000");
+        connector.setProperty("connectionTimeout", "30000");
         service.addConnector(connector);
 
         // and the endpoint and start the watcher
