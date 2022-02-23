@@ -26,7 +26,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
-    <version.jakartaee-api>8.0</version.jakartaee-api>
+    <version.jakartaee-api>9.1.1-SNAPSHOT</version.jakartaee-api>
     <junit.version>4.23</junit.version>
     <arquillian-bom.version>1.4.1.Final</arquillian-bom.version>
     <mp-jwt.version>1.1.1</mp-jwt.version>
@@ -49,6 +49,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

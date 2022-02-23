@@ -34,7 +34,7 @@
     <profile>
       <id>java12plus</id>
       <activation>
-        <jdk>[12,)</jdk>
+        <jdk>[11,)</jdk>
       </activation>
       <modules>
         <module>config</module>

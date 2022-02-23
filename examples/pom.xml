@@ -66,7 +66,7 @@
     <module>decorators</module>
     <module>deltaspike-configproperty</module>
     <module>deltaspike-exception-handling</module>
-    <module>deltaspike-fullstack</module>
+<!--    <module>deltaspike-fullstack</module>-->
     <module>deltaspike-i18n</module>
     <module>dynamic-dao-implementation</module>
     <module>dynamic-datasource-routing</module>
@@ -128,10 +128,10 @@
     <module>multi-jpa-provider-testing</module>
     <module>multiple-arquillian-adapters</module>
     <module>multiple-tomee-arquillian</module>
-    <module>myfaces-codi-demo</module>
+<!--    <module>myfaces-codi-demo</module>-->
     <module>persistence-fragment</module>
     <module>pojo-webservice</module>
-    <module>polling-parent</module>
+<!--    <module>polling-parent</module>-->
     <module>projectstage-demo</module>
     <module>quartz-app</module>
     <module>realm-in-tomee</module>
@@ -176,8 +176,8 @@
     <module>simple-webservice</module>
     <module>simple-webservice-without-interface</module>
     <module>async-servlet</module>
-    <module>spring-data-proxy</module>
-    <module>spring-data-proxy-meta</module>
+<!--    <module>spring-data-proxy</module>-->
+<!--    <module>spring-data-proxy-meta</module>-->
     <module>struts</module>
     <module>telephone-stateful</module>
     <module>testcase-injection</module>
@@ -188,7 +188,7 @@
     <module>testing-security-4</module>
     <module>testing-transactions</module>
     <module>testing-transactions-bmt</module>
-    <module>tomee-jersey-eclipselink</module>
+<!--    <module>tomee-jersey-eclipselink</module>-->
     <module>tomee-jms-portability</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
@@ -212,9 +212,9 @@
     <module>mp-custom-healthcheck</module>
     <module>jsonb-configuration</module>
     <module>jsonb-custom-serializer</module>
-    <module>vaadin-lts-v08-simple</module>
-    <module>vaadin-lts-v10-simple</module>
-    <module>vaadin-vxx-simple</module>
+<!--    <module>vaadin-lts-v08-simple</module>-->
+<!--    <module>vaadin-lts-v10-simple</module>-->
+<!--    <module>vaadin-vxx-simple</module>-->
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>

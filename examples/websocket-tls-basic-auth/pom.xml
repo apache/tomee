@@ -25,8 +25,8 @@
   <name>TomEE :: Examples :: WebSocket with tls and basic auth Example</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jakartaee-api.version>8.0</jakartaee-api.version>
-    <jakarta.websocket-api.version>1.1</jakarta.websocket-api.version>
+    <jakartaee-api.version>9.1.1-SNAPSHOT</jakartaee-api.version>
+    <javax.websocket-api.version>1.1</javax.websocket-api.version>
     <tomee.classifier>webprofile</tomee.classifier>
     <tomcat.version>9.0.12</tomcat.version>
     <junit.version>4.12</junit.version>
@@ -51,9 +51,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.websocket</groupId>
-      <artifactId>jakarta.websocket-api</artifactId>
-      <version>${jakarta.websocket-api.version}</version>
+      <groupId>javax.websocket</groupId>
+      <artifactId>javax.websocket-api</artifactId>
+      <version>${javax.websocket-api.version}</version>
       <scope>provided</scope>
     </dependency>
     <!--tests-->

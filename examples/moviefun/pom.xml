@@ -44,7 +44,7 @@
             <configuration>
               <artifactItems>
                 <artifactItem>
-                  <groupId>jakarta.servlet</groupId>
+                  <groupId>javax.servlet</groupId>
                   <artifactId>jstl</artifactId>
                   <version>1.2</version>
                 </artifactItem>
@@ -87,6 +87,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
+        <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

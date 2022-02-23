@@ -23,7 +23,7 @@
   <packaging>war</packaging>
   <name>TomEE :: Examples :: Microprofile JSONB Custom Serializer/Deserializer</name>
   <properties>
-    <version.jakartaee-api>8.0</version.jakartaee-api>
+    <version.jakartaee-api>9.1.1-SNAPSHOT</version.jakartaee-api>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
