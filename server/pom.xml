@@ -39,7 +39,6 @@
     <module>openejb-derbynet</module>
     <module>openejb-hsql</module>
     <module>openejb-webservices</module>
-    <module>openejb-axis</module>
     <module>openejb-cxf</module>
     <module>openejb-multicast</module>
     <module>openejb-daemon</module>
