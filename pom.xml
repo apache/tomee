@@ -223,7 +223,7 @@
     <!-- Micro Profile -->
     <microprofile.version>2.0</microprofile.version>
     <microprofile.config.version>1.3</microprofile.config.version>
-    <microprofile.config.impl.version>1.2.3-SNAPSHOT</microprofile.config.impl.version>
+    <microprofile.config.impl.version>1.2.3</microprofile.config.impl.version>
     <microprofile.jwt.version>1.1.1</microprofile.jwt.version>
     <microprofile.jwt.impl.version>${project.version}</microprofile.jwt.impl.version>
     <!-- 1.1 Implementation not started yet -->
@@ -649,6 +649,11 @@
           <id>geronimo-tx-manager-3.1.5</id>
           <name>Apache Geronimo Tx Manager 3.1.5</name>
           <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1146/</url>
+        </repository>
+        <repository>
+          <id>geronimo-config-1.2.3</id>
+          <name>Apache Geronimo Config 1.2.3</name>
+          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1147/</url>
         </repository>
       </repositories>
     </profile>
