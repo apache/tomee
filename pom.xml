@@ -230,7 +230,7 @@
     <microprofile.fault-tolerance.version>1.1.4</microprofile.fault-tolerance.version>
     <microprofile.fault-tolerance.impl.version>1.2.1</microprofile.fault-tolerance.impl.version>
     <microprofile.health.version>1.0</microprofile.health.version>
-    <microprofile.health.impl.version>2.0.1-SNAPSHOT</microprofile.health.impl.version>
+    <microprofile.health.impl.version>2.0.1</microprofile.health.impl.version>
     <microprofile.metrics.version>1.1.1</microprofile.metrics.version>
     <microprofile.metrics.impl.version>1.0.6-SNAPSHOT</microprofile.metrics.impl.version>
     <microprofile.rest-client.version>1.3.3</microprofile.rest-client.version>
@@ -654,6 +654,11 @@
           <id>geronimo-config-1.2.3</id>
           <name>Apache Geronimo Config 1.2.3</name>
           <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1147/</url>
+        </repository>
+        <repository>
+          <id>geronimo-health-2.0.1</id>
+          <name>Apache Geronimo Health 2.0.1</name>
+          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1148</url>
         </repository>
       </repositories>
     </profile>
