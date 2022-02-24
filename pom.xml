@@ -194,7 +194,7 @@
     <junit.jupiter.version>5.8.2</junit.jupiter.version>
     <org.apache.axis2.version>1.4.1</org.apache.axis2.version>
     <scannotation.version>1.0.2</scannotation.version>
-    <geronimo.connector.version>3.1.5-SNAPSHOT</geronimo.connector.version>
+    <geronimo.connector.version>3.1.5</geronimo.connector.version>
     <geronimo-osgi.version>1.1</geronimo-osgi.version>
     <myfaces.version>3.0.0</myfaces.version>
     <mojarra.version>3.0.0</mojarra.version>
@@ -468,9 +468,11 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>11</release>
+          <!--
           <verbose>true</verbose>
           <fork>true</fork>
           <executable>/Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/bin/javac</executable>
+          -->
         </configuration>
       </plugin>
       <plugin>
@@ -642,6 +644,11 @@
           <id>jakartaee-api-9.1.1</id>
           <name>Jakarta EE API 9.1.1 Staging</name>
           <url>https://repository.apache.org/content/repositories/orgapachetomee-1194/</url>
+        </repository>
+        <repository>
+          <id>geronimo-tx-manager-3.1.5</id>
+          <name>Apache Geronimo Tx Manager 3.1.5</name>
+          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1146/</url>
         </repository>
       </repositories>
     </profile>
