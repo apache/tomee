@@ -238,7 +238,7 @@
     <microprofile.openapi.version>1.1.2</microprofile.openapi.version>
     <microprofile.openapi.impl.version>1.0.15</microprofile.openapi.impl.version>
     <microprofile.opentracing.version>1.1.2</microprofile.opentracing.version>
-    <microprofile.opentracing.impl.version>1.0.3-SNAPSHOT</microprofile.opentracing.impl.version>
+    <microprofile.opentracing.impl.version>1.0.3</microprofile.opentracing.impl.version>
     <opentracing.api>0.31.0</opentracing.api>
 
     <!-- Jackson required by OpenAPI Impl -->
@@ -664,6 +664,11 @@
           <id>geronimo-openapi-1.0.15</id>
           <name>Apache Geronimo OpenAPI 1.0.15</name>
           <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1149</url>
+        </repository>
+        <repository>
+          <id>geronimo-opentracing-1.0.3</id>
+          <name>Apache Geronimo OpenTracing 1.0.3</name>
+          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1150</url>
         </repository>
       </repositories>
     </profile>
