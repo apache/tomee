@@ -884,7 +884,7 @@
     <dependency>
       <groupId>org.apache.geronimo.config</groupId>
       <artifactId>geronimo-config-impl</artifactId>
-      <version>1.2.3-SNAPSHOT</version>
+      <version>1.2.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -928,7 +928,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health</artifactId>
-      <version>2.0.1-SNAPSHOT</version>
+      <version>2.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -939,7 +939,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-health-common</artifactId>
-      <version>2.0.1-SNAPSHOT</version>
+      <version>2.0.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -950,7 +950,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics</artifactId>
-      <version>1.0.6-SNAPSHOT</version>
+      <version>1.0.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -961,7 +961,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-metrics-common</artifactId>
-      <version>1.0.6-SNAPSHOT</version>
+      <version>1.0.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -972,7 +972,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-openapi-impl</artifactId>
-      <version>1.0.15-SNAPSHOT</version>
+      <version>1.0.15</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -983,7 +983,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -994,7 +994,7 @@
     <dependency>
       <groupId>org.apache.geronimo</groupId>
       <artifactId>geronimo-opentracing-common</artifactId>
-      <version>1.0.3-SNAPSHOT</version>
+      <version>1.0.3</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
