@@ -114,7 +114,7 @@
     <openjpa.version>3.2.2-SNAPSHOT</openjpa.version>
     <openwebbeans.version>2.0.27-SNAPSHOT</openwebbeans.version>
     <jcs.version>2.1</jcs.version>
-    <johnzon.version>1.2.17-SNAPSHOT</johnzon.version>
+    <johnzon.version>1.2.17</johnzon.version>
     <quartz-openejb-shade.version>2.2.4</quartz-openejb-shade.version>
 
     <!-- Maven module versions -->
@@ -674,6 +674,11 @@
           <id>geronimo-metrics-1.0.6</id>
           <name>Apache Geronimo Metrics 1.0.6</name>
           <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1151</url>
+        </repository>
+        <repository>
+          <id>johnzon-1.2.17</id>
+          <name>Apache Johnzon 1.2.17</name>
+          <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1053</url>
         </repository>
       </repositories>
     </profile>
