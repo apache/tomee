@@ -248,6 +248,10 @@
     <!-- Javadoc & Asciidoclet -->
     <javadoc.version>3.0.1</javadoc.version>
     <asciidoclet.version>1.5.0</asciidoclet.version>
+
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+    <maven.compiler.release>11</maven.compiler.release>
   </properties>
 
   <build>
@@ -1257,6 +1261,16 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
+        <artifactId>activemq-client-shade</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>activemq-kahadb-store-shade</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
         <artifactId>activemq-broker-shade</artifactId>
         <version>${project.version}</version>
         <exclusions>
@@ -1513,24 +1527,13 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>net.sourceforge.serp</groupId>
-        <artifactId>serp</artifactId>
-        <version>1.15.1</version>
-        <exclusions>
-          <exclusion>
-            <groupId>*</groupId>
-            <artifactId>*</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa</artifactId>
         <version>${openjpa.version}</version>
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>

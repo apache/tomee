@@ -41,7 +41,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.3</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -61,6 +61,10 @@
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
               </transformers>
               <relocations>
+                <relocation>
+                  <pattern>javax.enterprise.inject.spi</pattern>
+                  <shadedPattern>jakarta.enterprise.inject.spi</shadedPattern>
+                </relocation>
                 <relocation>
                   <pattern>javax.inject</pattern>
                   <shadedPattern>jakarta.inject</shadedPattern>
