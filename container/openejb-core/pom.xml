@@ -426,6 +426,11 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>jakartaee-api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.tomee.bom</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <type>pom</type>
+    </dependency>
 
     <dependency>
       <groupId>log4j</groupId>

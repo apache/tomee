@@ -51,7 +51,7 @@
             <configuration>
               <createSourcesJar>true</createSourcesJar>
               <useBaseVersion>true</useBaseVersion>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
               <artifactSet>
                 <includes>
                   <include>org.apache.activemq:*</include> <!-- only this dep to make sure we don't add other things -->
