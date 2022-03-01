@@ -99,7 +99,7 @@
     <tomee.build.name>${project.groupId}.${project.artifactId}</tomee.build.name>
 
     <!-- To easily change the javaee api version -->
-    <version.jakartaee-api>9.1.1</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M1</version.jakartaee-api>
     <version.tomee-patch-plugin>0.8</version.tomee-patch-plugin>
 
     <!--
@@ -640,46 +640,6 @@
           <id>Apache Snapshots</id>
           <url>https://repository.apache.org/content/repositories/snapshots</url>
         </repository>
-        <repository>
-          <id>jakartaee-api-9.1.1</id>
-          <name>Jakarta EE API 9.1.1 Staging</name>
-          <url>https://repository.apache.org/content/repositories/orgapachetomee-1194/</url>
-        </repository>
-        <repository>
-          <id>geronimo-tx-manager-3.1.5</id>
-          <name>Apache Geronimo Tx Manager 3.1.5</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1146/</url>
-        </repository>
-        <repository>
-          <id>geronimo-config-1.2.3</id>
-          <name>Apache Geronimo Config 1.2.3</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1147/</url>
-        </repository>
-        <repository>
-          <id>geronimo-health-2.0.1</id>
-          <name>Apache Geronimo Health 2.0.1</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1148</url>
-        </repository>
-        <repository>
-          <id>geronimo-openapi-1.0.15</id>
-          <name>Apache Geronimo OpenAPI 1.0.15</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1149</url>
-        </repository>
-        <repository>
-          <id>geronimo-opentracing-1.0.3</id>
-          <name>Apache Geronimo OpenTracing 1.0.3</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1150</url>
-        </repository>
-        <repository>
-          <id>geronimo-metrics-1.0.6</id>
-          <name>Apache Geronimo Metrics 1.0.6</name>
-          <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1151</url>
-        </repository>
-        <repository>
-          <id>johnzon-1.2.17</id>
-          <name>Apache Johnzon 1.2.17</name>
-          <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1053</url>
-        </repository>
       </repositories>
     </profile>
     <profile>
@@ -1025,6 +985,47 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+
+    <repository>
+      <id>jakartaee-api-9.1-M1</id>
+      <name>Jakarta EE API 9.1-M1 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
+    </repository>
+    <repository>
+      <id>geronimo-tx-manager-3.1.5</id>
+      <name>Apache Geronimo Tx Manager 3.1.5</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1146/</url>
+    </repository>
+    <repository>
+      <id>geronimo-config-1.2.3</id>
+      <name>Apache Geronimo Config 1.2.3</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1147/</url>
+    </repository>
+    <repository>
+      <id>geronimo-health-2.0.1</id>
+      <name>Apache Geronimo Health 2.0.1</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1148</url>
+    </repository>
+    <repository>
+      <id>geronimo-openapi-1.0.15</id>
+      <name>Apache Geronimo OpenAPI 1.0.15</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1149</url>
+    </repository>
+    <repository>
+      <id>geronimo-opentracing-1.0.3</id>
+      <name>Apache Geronimo OpenTracing 1.0.3</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1150</url>
+    </repository>
+    <repository>
+      <id>geronimo-metrics-1.0.6</id>
+      <name>Apache Geronimo Metrics 1.0.6</name>
+      <url>https://repository.apache.org/content/repositories/orgapachegeronimo-1151</url>
+    </repository>
+    <repository>
+      <id>johnzon-1.2.17</id>
+      <name>Apache Johnzon 1.2.17</name>
+      <url>https://repository.apache.org/content/repositories/orgapachejohnzon-1053</url>
+    </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
@@ -1037,6 +1038,11 @@
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>plugin-jakartaee-api-9.1-M1</id>
+      <name>Jakarta EE API 9.1-M1 Staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachetomee-1195/</url>
     </pluginRepository>
   </pluginRepositories>
   <dependencyManagement>

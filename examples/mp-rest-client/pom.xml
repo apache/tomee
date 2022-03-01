@@ -25,7 +25,7 @@
   <name>TomEE :: Examples :: Microprofile REST Client</name>
   <properties>
     <microprofile.rest-client.version>1.1</microprofile.rest-client.version>
-    <version.jakartaee-api>9.1.1</version.jakartaee-api>
+    <version.jakartaee-api>9.1-M1</version.jakartaee-api>
     <version.arquillian.bom>1.1.13.Final</version.arquillian.bom>
     <junit.version>4.12</junit.version>
     <tomee.version>9.0.0-M8-SNAPSHOT</tomee.version>
