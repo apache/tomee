@@ -84,28 +84,8 @@
           <version>${project.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -125,40 +105,8 @@
           <version>${project.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>org.apache.tomee</groupId>
-              <artifactId>openjpa-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.bval</groupId>
-              <artifactId>bval-jsr</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.slf4j</groupId>
-              <artifactId>slf4j-jdk14</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
         </dependency>
@@ -169,28 +117,8 @@
           <version>${project.version}</version>
           <exclusions>
             <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>jakartaee-api</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-broker-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.activemq</groupId>
-              <artifactId>activemq-jdbc-store</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>activemq-ra-shade</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.components</groupId>
-              <artifactId>geronimo-connector</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.apache.geronimo.specs</groupId>
-              <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+              <groupId>*</groupId>
+              <artifactId>*</artifactId>
             </exclusion>
           </exclusions>
         </dependency>

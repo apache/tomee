@@ -1118,10 +1118,15 @@
         <version>${jetty.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.bval</groupId>
-        <artifactId>bval-jsr</artifactId>
-        <version>${bval.version}</version>
-        <classifier>jakarta</classifier>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>bval-jsr-shade</artifactId>
+        <version>${project.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>commons-cli</groupId>

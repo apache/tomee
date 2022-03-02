@@ -62,8 +62,11 @@
               </transformers>
               <relocations>
                 <relocation>
-                  <pattern>javax.enterprise.inject.spi</pattern>
-                  <shadedPattern>jakarta.enterprise.inject.spi</shadedPattern>
+                  <pattern>javax.enterprise</pattern>
+                  <shadedPattern>jakarta.enterprise</shadedPattern>
+                  <excludes>
+                    <exclude>javax.enterprise.deploy.**</exclude>
+                  </excludes>
                 </relocation>
                 <relocation>
                   <pattern>javax.inject</pattern>

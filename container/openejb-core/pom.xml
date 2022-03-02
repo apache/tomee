@@ -559,6 +559,12 @@
       <version>${geronimo-activation_1.1_spec.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <optional>true</optional>
+    </dependency>
     <!-- JavaMail -->
     <dependency>
       <groupId>org.apache.geronimo.javamail</groupId>
@@ -711,9 +717,8 @@
     </dependency>
     -->
     <dependency>
-      <groupId>org.apache.bval</groupId>
-      <artifactId>bval-jsr</artifactId>
-      <classifier>jakarta</classifier>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>bval-jsr-shade</artifactId>
     </dependency>
 
     <dependency> <!-- licence apache, only 110ko -->

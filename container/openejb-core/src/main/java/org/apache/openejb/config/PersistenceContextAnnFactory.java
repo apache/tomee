@@ -214,9 +214,9 @@ public class PersistenceContextAnnFactory {
 
         @Override
         public AnnotationVisitor visitAnnotation(final String name, final String desc) {
-            if ("Ljavax/persistence/PersistenceContext;".equals(desc)) {
+            if ("Ljakarta/persistence/PersistenceContext;".equals(desc)) {
                 return new PersistenceContextVisitor(className, currentName, contexts);
-            } else if ("Ljavax/persistence/PersistenceContexts;".equals(desc)) {
+            } else if ("Ljakarta/persistence/PersistenceContexts;".equals(desc)) {
                 return super.visitAnnotation(name, desc);
             }
             return new EmptyVisitor().annotationVisitor();
