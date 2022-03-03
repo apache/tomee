@@ -41,6 +41,10 @@
       <artifactId>openejb-loader</artifactId>
     </dependency>
     <dependency>
+      <artifactId>slf4j-api</artifactId>
+      <groupId>org.slf4j</groupId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-catalina</artifactId>
       <scope>provided</scope>
@@ -50,6 +54,10 @@
           <artifactId>tomcat-juli</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.xbean</groupId>
+      <artifactId>xbean-finder-shaded</artifactId>
     </dependency>
     <!--The order of the next two deps is important-->
     <dependency>
