@@ -68,6 +68,7 @@
                   <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
+                  <exclude>*:jaxb-runtime</exclude>
                 </excludes>
               </artifactSet>
             </configuration>
@@ -85,6 +86,7 @@
                   <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
+                  <exclude>*:jaxb-runtime</exclude>
                   <exclude>org.apache.activemq:*</exclude>
                   <exclude>org.apache.activemq.protobuf:*</exclude>
                   <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>
@@ -136,6 +138,7 @@
                   <exclude>org.junit.jupiter:junit-jupiter-api</exclude>
                   <exclude>*:jaxb-api</exclude>
                   <exclude>*:jaxb-impl</exclude>
+                  <exclude>*:jaxb-runtime</exclude>
                   <exclude>org.apache.activemq:*</exclude>
                   <exclude>org.apache.activemq.protobuf:*</exclude>
                   <exclude>org.fusesource.hawtbuf:hawtbuf</exclude>

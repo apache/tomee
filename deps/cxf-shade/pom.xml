@@ -311,6 +311,16 @@
                   <pattern>javax.xml.ws</pattern>
                   <shadedPattern>jakarta.xml.ws</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>com.sun.xml.bind</pattern>
+                  <shadedPattern>org.glassfish.jaxb</shadedPattern>
+                  <rawString>true</rawString>
+                </relocation>
+                <relocation>
+                  <pattern>com.sun.xml.internal.bind</pattern>
+                  <shadedPattern>org.glassfish.jaxb</shadedPattern>
+                  <rawString>true</rawString>
+                </relocation>
               </relocations>
             </configuration>
           </execution>
