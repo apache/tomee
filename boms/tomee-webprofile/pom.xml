@@ -1773,17 +1773,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.tomitribe.quartz</groupId>
-      <artifactId>quartz</artifactId>
-      <version>2.2.4</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>wsdl4j</groupId>
       <artifactId>wsdl4j</artifactId>
       <version>1.6.3</version>

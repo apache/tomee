@@ -1647,6 +1647,10 @@
             <artifactId>quartz</artifactId>
           </exclusion>
           <exclusion>
+            <groupId>org.tomitribe.quartz</groupId>
+            <artifactId>quartz</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jta</artifactId>
           </exclusion>
