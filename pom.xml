@@ -160,7 +160,7 @@
       Old CXF versions were only compatible with 1.3.x. But JDK 9+ requires 1.4.x and higher
       We used to have some weird exclusions to not run test, but we should try to upgrade to 1.4.x anyway
     -->
-    <saaj-impl.version>1.5.1</saaj-impl.version>
+    <saaj-impl.version>2.0.0</saaj-impl.version>
 
     <!--
     - http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding

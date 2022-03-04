@@ -135,7 +135,7 @@
       <artifactId>activemq-jdbc-store</artifactId>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker-shade</artifactId>
+          <artifactId>activemq-broker</artifactId>
           <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>

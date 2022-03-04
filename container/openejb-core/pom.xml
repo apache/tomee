@@ -524,6 +524,11 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>org.fusesource.hawtbuf</groupId>
+      <artifactId>hawtbuf</artifactId>
+      <version>1.11</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>activemq-broker-shade</artifactId>
       <optional>true</optional>
@@ -534,7 +539,7 @@
       <optional>true</optional>
       <exclusions>
         <exclusion>
-          <artifactId>activemq-broker-shade</artifactId>
+          <artifactId>activemq-broker</artifactId>
           <groupId>${project.groupId}</groupId>
         </exclusion>
       </exclusions>
