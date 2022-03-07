@@ -409,6 +409,24 @@ public class Client {
             }
 
             if (null != in) {
+                // Without consuming anything that is left in the buffer at the end of the call, we will cause the HttpUrlConnection to
+                // be closed, and a new one created every time. This is wildly inefficient, particularly for clients using HTTPS,
+                // as they'll need to handshake everytime. The JDK does do an element of connection pooling on HTTP connections, so we should use it.
+                // Not consuming the remainder of the response buffer breaks this and forces a new connection. Please do not revert this
+                // without some discussion on the mailing list, and testing that connections are not reset.
+
+                // consume anything left in the buffer if we're running in http(s) mode
+                if (HttpConnectionFactory.HttpConnection.class.isInstance(conn)) {
+                    try {
+                        int read = 0;
+                        while (read > -1) {
+                            read = in.read();
+                        }
+                    } catch (Throwable e) {
+                        // ignore
+                    }
+                }
+
                 try {
                     in.close();
                 } catch (final Throwable e) {
