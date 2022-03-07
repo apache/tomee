@@ -110,8 +110,32 @@ public class Strings {
     public static String lastPart(final String className, final char sep) {
         final int idx = className.lastIndexOf(sep);
         if (idx >= 0) {
-            return className.substring(idx + 1, className.length());
+            return className.substring(idx + 1);
         }
         return className;
+    }
+
+    public static String forceSlash(final String property) {
+        if (property == null) {
+            return "/";
+        }
+        if (!property.startsWith("/")) {
+            return "/" + property;
+        }
+        return property;
+    }
+
+    public static String slashify(final String ... parts) {
+        if (parts == null || parts.length == 0) {
+            return "/";
+        }
+        final StringBuilder path = new StringBuilder();
+        for (String part : parts) {
+            if (path.length() >= 1 && path.charAt(path.length() - 1) == '/') {
+                path.deleteCharAt(path.length() - 1);
+            }
+            path.append(forceSlash(part));
+        }
+        return path.toString();
     }
 }

@@ -1,24 +1,22 @@
-= Log4j2 Configuration
+= Log4j2 Configuration with TomEE
 :index-group: Configuration
 :jbake-date: 2019-07-09
 :jbake-type: page
 :jbake-status: published
 :jbake-tomeepdf:
 
-Title: Log4j2 with TomEE
-
 Out of the box, TomEE is uses a Java-Util-Logging (JUL) based logging system, which is configured using conf/logging.properties.
 
-Occassionally, users may wish to swap over to using Log4j2. These instructions detail how to do this with the latest TomEE versions.
-These instructions have been tested with TomEE 7.x and TomEE 8 SNAPSHOT (master) on July 9th, 2019.
+Occasionally, users may wish to swap over to using Log4j2. These instructions detail how to do this with the latest TomEE versions.
+These instructions have been tested with TomEE 7.x and TomEE 8.x (master).
 
 == Setup
 
-You'll need to obtain the following jars: log4j-core, log4j-api and log4j-jul. These instructions were tested with the 2.12.0 versions:
+You'll need to obtain the following jars: log4j-core, log4j-api and log4j-jul. These instructions were tested with the 2.17.1 versions:
 
-https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.12.0/log4j-core-2.12.0.jar
-https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.12.0/log4j-api-2.12.0.jar
-https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-jul/2.12.0/log4j-jul-2.12.0.jar
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-core/2.17.1/log4j-core-2.17.1.jar
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-api/2.17.1/log4j-api-2.17.1.jar
+https://repo1.maven.org/maven2/org/apache/logging/log4j/log4j-jul/2.17.1/log4j-jul-2.17.1.jar
 
 Add these to the TomEE bin directory. Add the following to setenv.sh on *nix:
 
@@ -26,7 +24,7 @@ Add these to the TomEE bin directory. Add the following to setenv.sh on *nix:
     JAVA_OPTS="$JAVA_OPTS -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
     LOGGING_CONFIG="-DnoOp"
     LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"
-    CLASSPATH=".:$CATALINA_BASE/bin:$CATALINA_BASE/bin/log4j-core-2.12.0.jar:$CATALINA_BASE/bin/log4j-api-2.12.0.jar:$CATALINA_BASE/bin/log4j-jul-2.12.0.jar"
+    CLASSPATH=".:$CATALINA_BASE/bin:$CATALINA_BASE/bin/log4j-core-2.17.1.jar:$CATALINA_BASE/bin/log4j-api-2.17.1.jar:$CATALINA_BASE/bin/log4j-jul-2.17.1.jar"
 ```
 
 or add the following to setenv.bat on Windows:
@@ -36,7 +34,30 @@ or add the following to setenv.bat on Windows:
     set "JAVA_OPTS=%JAVA_OPTS% -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
     set LOGGING_CONFIG=-DnoOpp
     set LOGGING_MANAGER=-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager
-    set "CLASSPATH=.;%CATALINA_BASE%\bin;%CATALINA_BASE%\bin\log4j-core-2.12.0.jar;%CATALINA_BASE%\bin\log4j-api-2.12.0.jar;%CATALINA_BASE%\bin\log4j-jul-2.12.0.jar"
+    set "CLASSPATH=.;%CATALINA_BASE%\bin;%CATALINA_BASE%\bin\log4j-core-2.17.1.jar;%CATALINA_BASE%\bin\log4j-api-2.17.1.jar;%CATALINA_BASE%\bin\log4j-jul-2.17.1.jar"
+```
+
+If you are using the TomEE Maven Plugin, it can be configured as follows:
+
+```
+<plugin>
+    <groupId>org.apache.tomee.maven</groupId>
+    <artifactId>tomee-maven-plugin</artifactId>
+    <version>${tomee.plugin.version}</version>
+    <configuration>
+        <tomeeVersion>${tomee.version}</tomeeVersion>
+        <tomeeClassifier>plus</tomeeClassifier>
+        <classpaths>
+            <classpath>org.apache.logging.log4j:log4j-api:2.17.1</classpath>
+            <classpath>org.apache.logging.log4j:log4j-jul:2.17.1</classpath>
+            <classpath>org.apache.logging.log4j:log4j-core:2.17.1</classpath>
+        </classpaths>
+        <systemVariables>
+            <log4j.configurationFile>${project.basedir}/src/test/tomee/conf/log4j2.xml</log4j.configurationFile>
+            <java.util.logging.manager>org.apache.logging.log4j.jul.LogManager</java.util.logging.manager>
+        </systemVariables>
+    </configuration>
+</plugin>
 ```
 
 Take care to match the jar filenames if you have downloaded jars for a slightly different version of log4j2.

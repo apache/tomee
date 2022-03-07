@@ -23,7 +23,7 @@
   <parent>
     <artifactId>tomee-project</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.9-TT.8-SNAPSHOT</version>
+    <version>8.0.10-TT.1-SNAPSHOT</version>
   </parent>
   <artifactId>examples</artifactId>
   <packaging>pom</packaging>
@@ -189,6 +189,7 @@
     <module>testing-transactions</module>
     <module>testing-transactions-bmt</module>
     <module>tomee-jersey-eclipselink</module>
+    <module>tomee-jms-portability</module>
     <module>transaction-rollback</module>
     <module>troubleshooting</module>
     <module>webservice-attachments</module>
@@ -217,6 +218,7 @@
     <module>cloud-tomee-azure</module>
     <module>mp-faulttolerance-timeout</module>
     <module>xa-datasource</module>
+    <module>websocket-jms</module>
 
     <!-- Jakarta Security Examples -->
     <module>security-tomcat-user-identitystore</module>

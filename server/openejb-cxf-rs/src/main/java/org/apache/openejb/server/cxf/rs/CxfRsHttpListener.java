@@ -653,6 +653,14 @@ public class CxfRsHttpListener implements RsHttpListener {
         final ClassLoader oldLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(CxfUtil.initBusLoader());
         try {
+            final ApplicationData applicationData = getApplicationData(application, prefix, additionalProviders);
+
+            logApplication(applicationData);
+
+            if (applicationData.getResources().size() == 0) {
+                throw new NoResourcesFoundException(applicationData);
+            }
+
             final JAXRSServerFactoryBean factory = newFactory(prefix, createServiceJmxName(classLoader), createEndpointName(application));
             configureFactory(additionalProviders, serviceConfiguration, factory, owbCtx, application);
             factory.setApplication(application);
@@ -808,6 +816,112 @@ public class CxfRsHttpListener implements RsHttpListener {
         }
     }
 
+    private void logApplication(final ApplicationData applicationData) {
+        LOGGER.info(applicationData.toString());
+        for (ApplicationData.Resource resource : applicationData.getResources()) {
+            String toString = resource.toString();
+            LOGGER.info(toString);
+        }
+        for (ApplicationData.Provider provider1 : applicationData.getProviders()) {
+            String toString = provider1.toString();
+            LOGGER.info(toString);
+        }
+        for (ApplicationData.Invalid invalid : applicationData.getInvalids()) {
+            String toString = invalid.toString();
+            LOGGER.warning(toString);
+        }
+    }
+
+    private ApplicationData getApplicationData(final Application application, final String prefix, final Collection<Object> additionalProviders) {
+
+        final ApplicationData applicationData = new ApplicationData(prefix, application);
+
+        final Set<Class<?>> declaredClasses = new HashSet<>();
+        final Set<Object> declaredSingletons = new HashSet<>();
+
+        if (application instanceof InternalApplication && ((InternalApplication) application).getOriginal() != null) {
+            final InternalApplication internalApplication = (InternalApplication) application;
+            declaredClasses.addAll(internalApplication.getOriginal().getClasses());
+            declaredSingletons.addAll(internalApplication.getOriginal().getSingletons());
+        } else {
+            declaredClasses.addAll(application.getClasses());
+            declaredSingletons.addAll(application.getSingletons());
+        }
+
+        for (final Object declaredSingleton : new ArrayList<>(declaredSingletons)) {
+            if (declaredSingleton instanceof Class) {
+                continue;
+            }
+            declaredSingletons.add(declaredSingleton.getClass());
+        }
+
+        final Set<Class<?>> seen = new HashSet<>();
+        for (final Object additionalProvider : additionalProviders) {
+
+            final Class<?> providerClass = (additionalProvider instanceof Class) ? (Class<?>) additionalProvider : additionalProvider.getClass();
+
+            // If we have already seen this provider class, skip it
+            // For some reason we add a duplicate version, one of the instance and one of the class
+            if (!seen.add(providerClass)) continue;
+
+            if (declaredSingletons.contains(providerClass)) {
+
+                applicationData.addProvider(false, providerClass, additionalProvider);
+
+            } else if (declaredClasses.contains(providerClass)) {
+
+                applicationData.addProvider(false, providerClass, null);
+
+            } else if (additionalProvider instanceof Class) {
+
+                applicationData.addProvider(true, providerClass, null);
+
+            } else {
+
+                applicationData.addProvider(true, providerClass, additionalProvider);
+
+            }
+        }
+
+        for (final Class<?> clazz : application.getClasses()) {
+            // We've already added the provider above.  This is a duplicate
+            if (additionalProviders.contains(clazz)) continue;
+
+            if (clazz.isInterface()) {
+
+                applicationData.addInvalid(clazz, "is interface");
+
+            } else if (clazz.isEnum()) {
+
+                applicationData.addInvalid(clazz, "is enum");
+
+            } else if (clazz.isPrimitive()) {
+
+                applicationData.addInvalid(clazz, "is primitive");
+
+            } else {
+
+                final boolean discovered = !(declaredClasses.contains(clazz) || declaredSingletons.contains(clazz));
+
+                applicationData.addResource(discovered, clazz, null);
+
+            }
+        }
+
+        for (final Object singleton : application.getSingletons()) {
+            // We've already added the provider above.  This is a duplicate
+            if (additionalProviders.contains(singleton)) continue;
+
+            final Class<?> clazz = realClass(singleton.getClass());
+
+            final boolean configured = declaredSingletons.contains(clazz) || declaredSingletons.contains(singleton.getClass());
+
+            applicationData.addResource(!configured, clazz, singleton);
+        }
+
+        return applicationData;
+    }
+
     /**
      * JAX-RS allows for the Application subclass to have @Context injectable fields, as is
      * the case for Resources and Providers.  CXF will do the injection on the Application
@@ -836,7 +950,7 @@ public class CxfRsHttpListener implements RsHttpListener {
             injectApplication(original, factory);
             return;
         }
-        
+
         final Bus bus = factory.getBus();
         new ApplicationInfo(application, bus);
     }

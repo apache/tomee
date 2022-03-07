@@ -1,4 +1,9 @@
-= TomEE EAP 8.0.9-TT.7
+= TomEE EAP 8.0.10-TT.1
+
+=== Changes in TomEE EAP 8.0.10.TT.1
+* Updated to Tomcat 9.0.59
+* Cherry pick patch for TOMEE-3850
+
 
 === Changes in TomEE EAP 8.0.9-TT.7
 * Updated to Tomcat 9.0.58 to mitigate CVE-2022-23181

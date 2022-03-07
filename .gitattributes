@@ -6,49 +6,50 @@
 # The above will handle all files NOT found below
 #
 # These files are text and should be normalized (Convert crlf => lf)
-*.adoc          text
-*.conf          text
-*.config        text
-*.css           text
-*.df            text
-*.extension     text
-*.groovy        text
-*.htm           text
-*.html          text
-*.java          text
-*.js            text
-*.json          text
-*.jsp           text
-*.jspf          text
-*.md            text
-*.properties    text
-*.sbt           text
-*.scala         text
-*.sh            text
-*.sql           text
-*.svg           text
-*.template      text
-*.tld           text
-*.txt           text
-*.vm            text
-*.wadl          text
-*.wsdl          text
-*.xhtml         text
-*.xml           text
-*.xsd           text
-*.yml           text
+*.adoc          text    eol=lf
+*.conf          text    eol=lf
+*.config        text    eol=lf
+*.css           text    eol=lf
+*.df            text    eol=lf
+*.extension     text    eol=lf
+*.groovy        text    eol=lf
+*.htm           text    eol=lf
+*.html          text    eol=lf
+*.java          text    eol=lf
+*.js            text    eol=lf
+*.json          text    eol=lf
+*.jsp           text    eol=lf
+*.jspf          text    eol=lf
+*.md            text    eol=lf
+*.properties    text    eol=lf
+*.policy        text    eol=lf
+*.sbt           text    eol=lf
+*.scala         text    eol=lf
+*.sh            text    eol=lf
+*.sql           text    eol=lf
+*.svg           text    eol=lf
+*.template      text    eol=lf
+*.tld           text    eol=lf
+*.txt           text    eol=lf
+*.vm            text    eol=lf
+*.wadl          text    eol=lf
+*.wsdl          text    eol=lf
+*.xhtml         text    eol=lf
+*.xml           text    eol=lf
+*.xsd           text    eol=lf
+*.yml           text    eol=lf
 
-activemq        text
-amq4factory     text
-amq5factory     text
-cipher          text
-ejbd            text
-ejbds           text
-jaas            text
-LICENSE         text
-NOTICE          text
-openejb         text
-Static3DES      text
+activemq        text    eol=lf
+amq4factory     text    eol=lf
+amq5factory     text    eol=lf
+cipher          text    eol=lf
+ejbd            text    eol=lf
+ejbds           text    eol=lf
+jaas            text    eol=lf
+LICENSE         text    eol=lf
+NOTICE          text    eol=lf
+openejb         text    eol=lf
+Static3DES      text    eol=lf
 
 # These files are binary and should be left untouched
 # (binary is a macro for -text -diff)

@@ -20,7 +20,7 @@
   <parent>
     <artifactId>tomee-microprofile</artifactId>
     <groupId>org.apache.tomee</groupId>
-    <version>8.0.9-TT.8-SNAPSHOT</version>
+    <version>8.0.10-TT.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -162,7 +162,30 @@
           <groupId>jakarta.activation</groupId>
           <artifactId>jakarta.activation-api</artifactId>
         </exclusion>
+        <!-- exclude in favor of cxf-shade -->
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-transports-http</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-rs-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomee</groupId>
+      <artifactId>cxf-shade</artifactId>
+      <version>${tomee.version}</version>
     </dependency>
 
     <dependency>
