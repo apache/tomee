@@ -309,7 +309,7 @@
           <groupId>${project.groupId}</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>geronimo-j2ee-connector_1.6_spec</artifactId>
+          <artifactId>*</artifactId>
           <groupId>org.apache.geronimo.specs</groupId>
         </exclusion>
       </exclusions>

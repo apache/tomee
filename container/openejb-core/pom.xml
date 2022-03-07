@@ -558,12 +558,6 @@
       <groupId>org.objectweb.howl</groupId>
       <artifactId>howl</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-activation_1.1_spec</artifactId>
-      <version>${geronimo-activation_1.1_spec.version}</version>
-      <scope>provided</scope>
-    </dependency>
     <!-- Jackson required by OpenAPI Impl and ActiveMQ Broker -->
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
@@ -691,7 +685,7 @@
       <exclusions>
         <exclusion>
           <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-ejb_3.1_spec</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
