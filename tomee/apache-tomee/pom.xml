@@ -37,6 +37,7 @@
     <plus.work-dir>${project.build.directory}/plus-work-dir</plus.work-dir>
     <plume.work-dir>${project.build.directory}/plume-work-dir</plume.work-dir>
     <microprofile.work-dir>${project.build.directory}/microprofile-work-dir</microprofile.work-dir>
+    <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
   </properties>
 
   <dependencies>
@@ -136,6 +137,17 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>openejb-javaagent</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+
+
+
 
     <!-- needed to compile in intellij for tomcat patches -->
     <dependency>
@@ -320,6 +332,7 @@
           <plugin>
             <groupId>org.codehaus.gmaven</groupId>
             <artifactId>groovy-maven-plugin</artifactId>
+            <version>2.1.1</version>
             <dependencies>
               <dependency>
                 <groupId>org.apache.tomee</groupId>
@@ -371,6 +384,7 @@
                     <tomee.workdir>${webprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-webapp</tomee.webapp>
                     <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -388,6 +402,7 @@
                     <tomee.workdir>${plus.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plus-webapp</tomee.webapp>
                     <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -405,6 +420,7 @@
                     <tomee.workdir>${plume.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-plume-webapp</tomee.webapp>
                     <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
@@ -422,6 +438,7 @@
                     <tomee.workdir>${microprofile.work-dir}</tomee.workdir>
                     <tomee.webapp>tomee-microprofile-webapp</tomee.webapp>
                     <remove.datestamp>${tomee.version}, ${project.version}, ${cxf.version}</remove.datestamp>
+                    <jdk.attach.allowAttachSelf>true</jdk.attach.allowAttachSelf>
                   </properties>
                   <source>
                     new commands.SetupCommand(pom: this, log: log, project: project, ant: ant, properties: properties).execute()
