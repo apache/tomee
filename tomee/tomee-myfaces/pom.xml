@@ -66,5 +66,10 @@
       <artifactId>xbean-finder-shaded</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.openwebbeans</groupId>
+      <artifactId>openwebbeans-impl</artifactId>
+      <classifier>jakarta</classifier>
+    </dependency>
   </dependencies>
 </project>

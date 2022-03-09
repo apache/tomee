@@ -147,6 +147,7 @@
 
     <cxf.version>3.5.0</cxf.version>
     <ehcache.version>2.10.3</ehcache.version>
+    <wss4j.version>2.4.0</wss4j.version>
     <!-- used by cxf for security (replay attack) -->
     <jetty.version>11.0.8</jetty.version>
     <pax-url.version>1.3.5</pax-url.version>
@@ -252,6 +253,7 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <maven.compiler.release>11</maven.compiler.release>
+
   </properties>
 
   <build>
@@ -1056,11 +1058,23 @@
         <artifactId>jakartaee-api</artifactId>
         <version>${version.jakartaee-api}</version>
         <classifier>tomcat</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>jakartaee-api</artifactId>
         <version>${version.jakartaee-api}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>*</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>xml-resolver</groupId>
@@ -1762,9 +1776,8 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <!-- impl references a non jakarta classifier version -->
             <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-spi</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1777,6 +1790,12 @@
         <artifactId>openwebbeans-jsf</artifactId>
         <version>${openwebbeans.version}</version>
         <classifier>jakarta</classifier>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.openwebbeans</groupId>
@@ -1788,6 +1807,11 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>*</artifactId>
           </exclusion>
+          <exclusion>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+
         </exclusions>
       </dependency>
       <dependency>
@@ -1799,7 +1823,7 @@
           <exclusion>
             <!-- impl references a non jakarta classifier version -->
             <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1820,17 +1844,7 @@
           <exclusion>
             <!-- impl references a non jakarta classifier version -->
             <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
-          </exclusion>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-ee-common</artifactId>
-          </exclusion>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-el22</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1851,12 +1865,7 @@
           <exclusion>
             <!-- impl references a non jakarta classifier version -->
             <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
-          </exclusion>
-          <exclusion>
-            <!-- impl references a non jakarta classifier version -->
-            <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-el22</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.xbean</groupId>
@@ -1869,6 +1878,12 @@
         <artifactId>openwebbeans-el22</artifactId>
         <classifier>jakarta</classifier>
         <version>${openwebbeans.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.openwebbeans</groupId>
+            <artifactId>*</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
       <dependency>
         <artifactId>openwebbeans-ee-common</artifactId>
@@ -1879,7 +1894,7 @@
           <exclusion>
             <!-- impl references a non jakarta classifier version -->
             <groupId>org.apache.openwebbeans</groupId>
-            <artifactId>openwebbeans-impl</artifactId>
+            <artifactId>*</artifactId>
           </exclusion>
           <exclusion>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -1899,7 +1914,7 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.johnzon</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
@@ -1911,7 +1926,7 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.johnzon</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
@@ -1923,7 +1938,7 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.johnzon</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
@@ -1935,7 +1950,7 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.johnzon</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
@@ -1947,7 +1962,7 @@
         <classifier>jakarta</classifier>
         <exclusions>
           <exclusion>
-            <groupId>*</groupId>
+            <groupId>org.apache.johnzon</groupId>
             <artifactId>*</artifactId>
           </exclusion>
         </exclusions>
